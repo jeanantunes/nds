@@ -80,20 +80,53 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		hql.append("			), 0) ");
 		hql.append("		else ");	
 		hql.append("			(COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA, 0) ");
-		hql.append("			- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
-		hql.append("					COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
-		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
-		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
-		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0) ");		
-		hql.append("			   )");
+		hql.append(" -  (select ");
+		hql.append("  COALESCE(sum(if(movimento.TIPO_MOVIMENTO_ID = '66',movimento.QTDE,-1*movimento.QTDE)),0) ");
+		hql.append(" from ");
+		hql.append("           movimento_estoque movimento ");
+		hql.append("       where ");
+		hql.append("          movimento.ESTOQUE_PRODUTO_ID = ESTOQUE_PROD.ID ");
+		hql.append("             and movimento.TIPO_MOVIMENTO_ID in( '66','210') ");
+		hql.append("            and movimento.INTEGRADO_COM_CE = false) ");
+//		hql.append("			- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,0)");
+//		hql.append("					COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
+//		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
+//		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
+//		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0) ");		
+//		hql.append("			   )");
 		hql.append("			)");
-		hql.append("	end AS venda,");
+		hql.append("	end ");
+		hql.append(" - if(chmFornecedor.STATUS_CE_NDS = 'FECHADO',0, ");
+		hql.append("    case when ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'PARCIAL' "); 
+		hql.append("    	then");
+		hql.append("			COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA, 0) ");
+		hql.append("		else ");
+		hql.append("			if(chmFornecedor.STATUS_CE_NDS = 'FECHADO' or (ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA is not null  ) ,COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,0), ");
+		hql.append("			COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
+		hql.append("			+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
+		hql.append("			+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
+		hql.append("			+ COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0)) ");	
+		hql.append("	end  ");
+		hql.append("	)  ");
+		
+		
+		hql.append("  AS venda,");
 		
 		hql.append("	case when ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'PARCIAL'");
 		hql.append("		then");
-		hql.append("			COALESCE(COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA, ").append(this.sqlVendaParcial()).append(") * ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO,0)"); 
+		hql.append("			COALESCE(COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA, ")
+		          .append(this.sqlVendaParcial()).append(") * ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO,0)"); 
 		hql.append("		else ");     		
 		hql.append("			(COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA,0) ");
+		hql.append(" -  (select ");
+		hql.append("            COALESCE(sum(if(movimento.TIPO_MOVIMENTO_ID = '66',movimento.QTDE,-1*movimento.QTDE)), 0) ");
+		hql.append(" from ");
+		hql.append("           movimento_estoque movimento ");
+		hql.append("       where ");
+		hql.append("          movimento.ESTOQUE_PRODUTO_ID = ESTOQUE_PROD.ID ");
+		hql.append("             and movimento.TIPO_MOVIMENTO_ID in ( '66','210') ");
+		hql.append("            and movimento.INTEGRADO_COM_CE = false) ");
+
 		hql.append("			- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
 		hql.append("					COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
 		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
@@ -107,7 +140,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		hql.append("    	then");
 		hql.append("			COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA, 0) ");
 		hql.append("		else ");
-		hql.append("			if(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA is not null,COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,0), ");
+		hql.append("			if(chmFornecedor.STATUS_CE_NDS = 'FECHADO' or (ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA is not null  ) ,COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,0), ");
 		hql.append("			COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
 		hql.append("			+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
 		hql.append("			+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
@@ -166,6 +199,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		query.setParameter("envioJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name());
 		query.setParameter("recebimentoEncalhe", GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE.name());
 		
+		
 		if(filtro.getPaginacao()!=null) {
 			
 			if(filtro.getPaginacao().getPosicaoInicial() != null) {
@@ -184,10 +218,10 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		StringBuilder sql = new StringBuilder();
 		//TODO - alterar para nao pegar '55'
-		sql.append(" (select COALESCE(sum(movimento.QTDE),0) ");
+		sql.append(" (select COALESCE(sum(if(movimento.TIPO_MOVIMENTO_ID = '66',movimento.QTDE,-1*movimento.QTDE)),0) ");
 		sql.append(" from movimento_estoque movimento ");
 		sql.append(" where movimento.ESTOQUE_PRODUTO_ID = ESTOQUE_PROD.ID ");
-		sql.append(" and movimento.TIPO_MOVIMENTO_ID = '66' ");
+		sql.append(" and movimento.TIPO_MOVIMENTO_ID in ('66','210') ");
 		sql.append(" and movimento.INTEGRADO_COM_CE = false ) as qtdeDevSemCE, ");
 		
 		return sql.toString();
@@ -337,7 +371,11 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 			hql.append(" AND ITEM_CH_ENC_FORNECEDOR.ID = :idItemChamadaEncalheFornecedor ");
 		}
 		
-		
+		if(filtro.getIdChamadaEncalhe() != null){
+			
+			hql.append(" AND chmFornecedor.num_chamada_encalhe = :idChamadaEncalhe ");
+		}
+
 		return hql.toString();
 	}
 
@@ -494,6 +532,12 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		if(filtro.getIdItemChamadaEncalheFornecedor() != null) {
 			query.setParameter("idItemChamadaEncalheFornecedor", filtro.getIdItemChamadaEncalheFornecedor());
 		}
+		
+		if(filtro.getIdChamadaEncalhe() != null && filtro.getIdChamadaEncalhe() != -1 ){
+			
+			query.setParameter("idChamadaEncalhe", filtro.getIdChamadaEncalhe());
+			
+		}
 	}
 	
 	private void aplicarParametrosSemCE(FiltroFechamentoCEIntegracaoDTO filtro, Query query) {
@@ -511,12 +555,17 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 				   " numeroSemana = :numeroSemana" +
 				   " and anoReferencia= :anoReferencia"+
 				   " and cef.statusCeNDS = :statusCeNDS");
+		if ( filtro.getIdChamadaEncalhe() != null )
+			hql.append("  and cef.numeroChamadaEncalhe = :idChamadaEncalhe");
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
 		query.setParameter("numeroSemana", filtro.getNumeroSemana());
 		query.setParameter("anoReferencia", filtro.getAnoReferente());
 		query.setParameter("statusCeNDS", StatusCeNDS.FECHADO);
+		if(filtro.getIdChamadaEncalhe() != null && filtro.getIdChamadaEncalhe() != -1 ){
+			query.setParameter("idChamadaEncalhe", filtro.getIdChamadaEncalhe());		
+		}
 		
 		List<ChamadaEncalheFornecedor> resultado = query.list();
 		

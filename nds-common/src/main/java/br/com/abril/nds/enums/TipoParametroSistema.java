@@ -128,6 +128,8 @@ public enum TipoParametroSistema {
     
 	FTF_CODIGO_CENTRO_EMISSOR,
 	
+	PATH_TRANSFERENCIA_ARQUIVO,
+	
 	;
 
 	

@@ -524,9 +524,9 @@ public class NFeServiceImpl implements NFeService {
 			this.notaFiscalService.exportarNotasFiscais(notas);
 		}
 		
-		if(parametrosSistema.get("NFE_INFORMACOES_AMBIENTE").getValor().equals(String.valueOf(TipoAmbiente.HOMOLOGACAO))) {			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
-		}
+		//if(parametrosSistema.get("NFE_INFORMACOES_AMBIENTE").getValor().equals(String.valueOf(TipoAmbiente.HOMOLOGACAO))) {			
+			//throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
+		//}
 		
 		return notas;
 	}
@@ -547,7 +547,7 @@ public class NFeServiceImpl implements NFeService {
 		
 		for (final Editor editor : editores) {
 			
-			final NotaFiscal notaFiscal = new NotaFiscal();
+			NotaFiscal notaFiscal = new NotaFiscal();
 			naturezaOperacao.setNotaFiscalNumeroNF(naturezaOperacao.getNotaFiscalNumeroNF() + 1);
 			naturezaOperacaoRepository.merge(naturezaOperacao);
 			
@@ -582,11 +582,7 @@ public class NFeServiceImpl implements NFeService {
 			
 			filtro.setIdEditor(editor.getId());
 			
-			List<MovimentoEstoque> movimentosEstoque = this.notaFiscalRepository.obterMovimentosEstoqueEditor(filtro);
-			
-			if(movimentosEstoque == null || movimentosEstoque.isEmpty()) {
-				return;
-			} 
+			List<MovimentoEstoque> movimentosEstoque = this.notaFiscalRepository.obterMovimentosEstoqueEditor(filtro); 
 			
 			for (MovimentoEstoque movimentoEstoque : movimentosEstoque) {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoque, tributoRegimeTributario);

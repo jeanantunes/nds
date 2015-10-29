@@ -8,7 +8,7 @@ var analiseParcialController = $.extend(true, {
     edicoesBase : [],
     edicoesBaseDadosEdicoes : [],
     detalheEdicoesBases : [],
-    inputReparteSugerido: '<input #disabled reducaoReparte="#redReparte" nmCota="#nmCota" reparteInicial="#repEstudo" reparteAtual="#value" numeroCota="#numeroCota" ajustado="#ajustado" qtdPDV="#qtdPDV" quantidadeAjuste="#quantidadeAjuste" value="#value" idrowGrid="#idrow" percentualVenda="#percVenda"  class="reparteSugerido" onkeydown="onlyNumeric(event);" />',
+    inputReparteSugerido: '<input #disabled reducaoReparte="#redReparte" vendaMediaCota="#vendaMedia" nmCota="#nmCota" reparteInicial="#repEstudo" reparteAtual="#value" numeroCota="#numeroCota" ajustado="#ajustado" qtdPDV="#qtdPDV" quantidadeAjuste="#quantidadeAjuste" value="#value" idrowGrid="#idrow" percentualVenda="#percVenda"  class="reparteSugerido" onkeydown="onlyNumeric(event);" />',
     tipoExibicao : 'NORMAL',
     
     totalizarEdicoesBasesDadosEdicoes : function(indice, reparte, venda){
@@ -686,6 +686,7 @@ var analiseParcialController = $.extend(true, {
                             .replace(/#qtdPDV/g, cell.npdv)
                             .replace(/#idrow/g, i+1)
                             .replace(/#percVenda/g, porcentagemVendaCota)
+                            .replace(/#vendaMedia/g, cell.mediaVenda)
                             .replace(/#nmCota/g, cell.nome);
             
             cell.reparteSugerido = input;
@@ -1079,6 +1080,16 @@ var analiseParcialController = $.extend(true, {
         	
         	unbindAjaxLoading();
         	
+        }).on('focus', 'tr td input:text', function(event){
+        	
+        	var atual = $("#baseEstudoGridParcial").parent().scrollTop();
+        	
+        	if($(this).position().top > $("#baseEstudoGridParcial").parent().height()-20){
+        		$("#baseEstudoGridParcial").parent().scrollTop(atual + ($("#baseEstudoGridParcial").parent().height()-20));
+        	}else if ($(this).position().top < 0){
+        		$("#baseEstudoGridParcial").parent().scrollTop(atual - ($(this).position().top)*-1);
+        	}
+        	
         }).on('blur', 'tr td input:text', function(event){
             
         	analiseParcialController.atualizaReparte(this, true);
@@ -1104,7 +1115,8 @@ var analiseParcialController = $.extend(true, {
             event.preventDefault();
             analiseParcialController.carregarDetalhesCota($(this).attr('numeroCota'));
         });
-
+        
+        
         analiseParcialController.tipoExibicao = _tipoExibicao;
 
         var estudoOrigem = $('#estudoOrigem').val();
@@ -1157,8 +1169,9 @@ var analiseParcialController = $.extend(true, {
                         {display: 'Nome',         name: 'nomeCota',        width: 160, sortable: true, align: 'left'},
                         {display: 'Sigla Motivo', name: 'siglaMotivo',     width: 10,  sortable: true, hide: true},
                         {display: 'Motivo',       name: 'motivo', 		   width: 160, sortable: true, align: 'left'},
+                        {display: 'Venda Média',  name: 'vendaMedia', 	   width: 70, sortable: true, align: 'center'},
                         {display: 'Qtde',         name: 'quantidade',      width: 60,  sortable: false, align: 'center'}],
-            width : 490,
+            width : 575,
             height : 200,
             autoload: false
         });
@@ -1279,6 +1292,8 @@ var analiseParcialController = $.extend(true, {
             value.cell.quantidade = '<input type="text" motivo="' + value.cell.siglaMotivo + '" id="'+i+'" style="width: 50px;" value="'+
             value.cell.quantidade +'" onchange="analiseParcialController.validaMotivoCotaReparte(this);" ' + 
             ' situacaoCota="'+ value.cell.situacaoCota +'" ' + ' numeroCota="'+ value.cell.numeroCota +'" ' + isReadOnly + ' />';
+            
+            value.cell.vendaMedia = Math.round(value.cell.vendaMedia);
         });
         
         if($("[id='dialog-cotas-estudos']", analiseParcialController.workspace).length > 1){
@@ -1490,7 +1505,7 @@ var analiseParcialController = $.extend(true, {
             escondeHeader: false,
             resizable : false,
             height : 530,
-            width : 550,
+            width : 650,
             modal : true,
             buttons : {
                 "Confirmar" : function() {

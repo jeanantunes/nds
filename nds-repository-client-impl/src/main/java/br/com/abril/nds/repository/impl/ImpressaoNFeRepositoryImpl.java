@@ -14,7 +14,6 @@ import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
-import br.com.abril.nds.dto.filtro.FiltroNFe;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -50,7 +49,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		
 		//Complementa o HQL com as clausulas de filtro
 		Query q = montarFiltroConsultaNfeParaImpressao(filtro, sql, filtro.getPaginacao());
-
+		
 		return q.list();
 		
 	}
@@ -671,6 +670,11 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			hql.append(" AND box.codigo between :codigoBoxInicial AND :codigoBoxFinal ");
 		}
 		
+		// Intervalo de Nota:
+		if(filtro.getNumeroNotaDe() != null && filtro.getNumeroNotaAte() != null) {
+			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal BETWEEN :numeroNotaDe AND :numeroNotaAte ");
+		}
+		
 		if(filtro.getIdsFornecedores() != null) {
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
@@ -788,6 +792,11 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			query.setParameter("codigoBoxFinal", filtro.getIdBoxFinal());
 		}
 		
+		if(filtro.getNumeroNotaDe() != null && filtro.getNumeroNotaAte() != null) {
+			query.setParameter("numeroNotaDe", filtro.getNumeroNotaDe());
+			query.setParameter("numeroNotaAte", filtro.getNumeroNotaAte());
+		}
+		
 		if(filtro.getIdsFornecedores() != null) {
 			query.setParameterList("fornecedor", filtro.getIdsFornecedores());
 		}
@@ -821,13 +830,15 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			query.setParameterList("fornecedor", filtro.getIdsFornecedores());
 		}
 		
-		// Data numeroNotaDe:	...  Até   ...
+		// Intervalo de numero de Nota De:	...  Até   ...
 		if(filtro.getNumeroNotaDe() != null && filtro.getNumeroNotaAte() != null) {
 			query.setParameter("numeroNotaDe", filtro.getNumeroNotaDe());
 			query.setParameter("numeroNotaAte", filtro.getNumeroNotaAte());
 		}
 		
 		query.setResultTransformer(Transformers.aliasToBean(BandeirasDTO.class));
+		
+		this.configurarPaginacao(filtro, query);
 		
 		return query.list();
 	}
@@ -853,6 +864,9 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		.append(" INNER JOIN DESTINO_ENCALHE de on de.produto_edicao_id = pe.id                                ")
 		.append(" INNER JOIN EDITOR e on p.EDITOR_ID = e.ID                                                    ")
 		.append(" INNER JOIN PESSOA pessoa on e.juridica_id = pessoa.id                                        ")
+		.append(" INNER JOIN PRODUTO_FORNECEDOR prodForn on prodForn.PRODUTO_ID = p.ID                         ")
+		.append(" INNER JOIN fornecedor fornc ON prodForn.fornecedores_ID = fornc.ID                           ")
+		
 		.append(" where 1=1 and nf.status_retornado = :statusNFe                                               ");
 		
 		if(filtro.isBandGerado()) {			
@@ -872,7 +886,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		}
 		
 		if(filtro.getIdsFornecedores() != null) {
-			hql.append(" AND fornecedor.id in (:fornecedor) ");
+			hql.append(" AND fornc.id in (:fornecedor) ");
 		}
 		
 		// Data Emissão:		
@@ -885,9 +899,39 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		// Realizar a consulta e converter ao objeto cota exemplares.
 		hql.append(" GROUP BY e.codigo, nf.numero_Documento_Fiscal, nf.serie ");
 		
+		if((filtro.getPaginacao() != null) && (filtro.getPaginacao().getSortColumn() != null)){
+			hql.append(" ORDER BY ");
+			hql.append(filtro.getPaginacao().getSortColumn());
+			hql.append(" ");
+		}else{
+			hql.append(" ORDER BY numeroNotaFiscal ");			
+		}
+		
+		if ((filtro.getPaginacao() != null) && (filtro.getPaginacao().getOrdenacao() != null)) {
+	    	hql.append(filtro.getPaginacao().getOrdenacao().toString());
+	    }
 		
 		return hql;
 		
+	}
+	
+	private void configurarPaginacao(FiltroImpressaoNFEDTO filtro, Query query) {
+
+		PaginacaoVO paginacao = filtro.getPaginacao();
+
+		if ( paginacao == null)
+			return;
+		if ( paginacao.getQtdResultadosTotal() == null || paginacao.getQtdResultadosTotal().equals(0)) {
+			paginacao.setQtdResultadosTotal( query.list().size());
+		}
+
+		if(paginacao.getQtdResultadosPorPagina() != null) {
+			query.setMaxResults(paginacao.getQtdResultadosPorPagina());
+		}
+
+		if (paginacao.getPosicaoInicial() != null) {
+			query.setFirstResult(paginacao.getPosicaoInicial());
+		}
 	}
 
 	@Override

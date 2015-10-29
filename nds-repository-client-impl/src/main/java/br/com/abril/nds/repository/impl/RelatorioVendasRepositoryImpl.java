@@ -110,8 +110,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("         COALESCE(temp.NOME_COTA, temp.RAZAO_SOCIAL_COTA) AS nomeCota, ");
 		sql.append("         temp.CIDADE_COTA AS municipio, ");
 		sql.append("         sum(temp.vendaSum * (temp.PRECO_VENDA - ((temp.PRECO_VENDA * coalesce(temp.valorDesconto,0)) / 100))) as participacao, ");
-		sql.append("         temp.vendaSum as vendaExemplares, ");
-		sql.append("         (temp.vendaSum * temp.PRECO_VENDA) as faturamentoCapa ");
+		sql.append("         sum(temp.vendaSum) as vendaExemplares, ");
+		sql.append("         sum(temp.vendaSum * temp.PRECO_VENDA) as faturamentoCapa ");
 		sql.append("  ");
 		sql.append("         FROM ");
 		sql.append("         ( ");
@@ -124,8 +124,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("           SUM(T.reparte) reparteSum, ");
 		sql.append("           SUM(T.venda) vendaSum, ");
 		sql.append("           T.PRECO_VENDA, ");
-		sql.append("           T.valorDesconto ");
-		sql.append("            ");
+		sql.append("           T.valorDesconto, ");
+		sql.append("           T.lancId as lancId  ");
 		sql.append("          ");
 		sql.append("         from ( ");
 		sql.append("          ");
@@ -137,6 +137,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("             pess.RAZAO_SOCIAL AS RAZAO_SOCIAL_COTA, ");
 		sql.append("             endereco.CIDADE AS CIDADE_COTA, ");
 		sql.append("             pe.PRECO_VENDA AS PRECO_VENDA, ");
+		sql.append("             l.id as lancId, ");
 		sql.append("             cast(sum(case  ");
 		sql.append("                 when tipo.OPERACAO_ESTOQUE = 'ENTRADA'  ");
 		sql.append("                 THEN if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0) ");
@@ -226,7 +227,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("             mecReparte.cota_id, plp.numero_periodo  ");
 		sql.append("         ORDER BY ");
 		sql.append("             l.ID desc )T  ");
-		sql.append("                         group by numeroCota ORDER BY vendaSum desc) temp  ");
+		sql.append("                         group by numeroCota, lancId ORDER BY vendaSum desc) temp  ");
 		sql.append(" 							group by numeroCota                           ");
 		sql.append(" 						        ORDER BY faturamentoCapa desc) consolidado,");
 		sql.append(" 						            (select");
@@ -521,7 +522,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                                   if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null,mecReparte.QTDE,0) ");
 		sql.append("                                   ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null,-mecReparte.QTDE,0)                                          ");
 		sql.append("                              end ) as unsigned int) AS reparte, ");
-		sql.append("                     (case when l.status IN ('FECHADO','RECOLHIDO','EM_RECOLHIMENTO')then                                 ");
+		sql.append("                    coalesce( (case when l.status IN ('FECHADO','RECOLHIDO','EM_RECOLHIMENTO')then                                 ");
 		sql.append("                           cast(sum(CASE WHEN tipo.OPERACAO_ESTOQUE = 'ENTRADA' THEN                              ");
 		sql.append("                                       if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null,mecReparte.QTDE,0)  ");
 		sql.append("                                       ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null,-mecReparte.QTDE,0)                                         ");
@@ -550,7 +551,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                             lanc.id = l.id                                                  ");
 		sql.append("                             and cota.id = c.id) AS UNSIGNED INT)                                               ");
 		sql.append("                         else      null                                       ");
-		sql.append("                     end) as venda                                       ");
+		sql.append("                     end),0) as venda                                       ");
 		sql.append("                 FROM ");
 		sql.append("                     lancamento l                               ");
 		sql.append("                 JOIN ");
@@ -1138,14 +1139,15 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		StringBuilder sql = new StringBuilder();
 		
-		if(tipoConsulta == TipoConsultaCurvaABC.DISTRIBUIDOR){
+		if (filtro.getDataDe() != null && filtro.getDataAte() != null) {
+
 			if (query == null){
-				sql = new StringBuilder();
-				sql.append(" and l.DATA_REC_DISTRIB BETWEEN DATE_FORMAT(:dataDe,'%Y-%m-%d') AND DATE_FORMAT(:dataAte,'%Y-%m-%d') ");
+				sql.append(" AND l.DATA_REC_DISTRIB BETWEEN DATE_FORMAT(:dataDe,'%Y-%m-%d') AND DATE_FORMAT(:dataAte,'%Y-%m-%d') ");
 			} else {
-				query.setParameter("dataDe",  filtro.getDataDe());
+				query.setParameter("dataDe", filtro.getDataDe());
 				query.setParameter("dataAte", filtro.getDataAte());
 			}
+			
 		}
 		
 		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {

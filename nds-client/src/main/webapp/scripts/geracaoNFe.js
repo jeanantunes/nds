@@ -211,7 +211,7 @@ var geracaoNFeController = $.extend({
 		params.push({name:"filtro.idRota" , value: $("#geracaoNfe-filtro-listRota").val()});
 		
 		// Por limitacao do vRaptor, nao instancia dentro do filtro
-		if($('input[name^="tipoDestinatario"]:checked').val() != 'FORNECEDOR') {
+		if($('input[name^="geracaoNfe-tipoDestinatario"]:checked').val() != 'FORNECEDOR') {
 			
 			if($(".emissaoRegimeEspecial").is(":visible")) {
 				
@@ -273,10 +273,10 @@ var geracaoNFeController = $.extend({
 		});
 		
 		$("#geracaoNfe-flexigrid-fornecedor-pesquisa").flexigrid({
-			preProcess : _this.preProcessGridPesquisa,
+			preProcess : _this.preProcessFornecedorGridPesquisa,
 			colModel : _this.colunasGridForncedorPesquisa,
 			dataType : 'json',
-			sortname : "idFornecedor",
+			sortname : "codigoEditor",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -335,10 +335,41 @@ var geracaoNFeController = $.extend({
 						data.rows[index].cell["numeroCota"] = '<span style="color: red;">'+ data.rows[index].cell["numeroCota"] +' *</span>';
 					}
 					
-					data.rows[index].cell["situacaoCadastro"] = "";
+					if(data.rows[index].cell["situacaoCadastro"] != 'undefined') {						
+						data.rows[index].cell["situacaoCadastro"] = "";
+					}
 				}
 				data.rows[index].cell["total"] = floatToPrice(data.rows[index].cell["total"]);
 				data.rows[index].cell["totalDesconto"] = floatToPrice(data.rows[index].cell["totalDesconto"]);
+				
+			}
+			return data;
+		}
+	},
+	
+	
+	/**
+	 * Metodo de pre-processamento dos dados inseridos na grid Pesquisa
+	 * 
+	 * @param data - dados inseridos na grid
+	 * @returns dados normalizados para a grid
+	 */
+	preProcessFornecedorGridPesquisa : function(data) {
+		
+		if (typeof data.mensagens == "object") {
+		
+			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+			$("#geracaoNfe-pesquisa", geracaoNFeController.workspace).empty();
+		
+		} else {
+			var count = 0;
+			for(var index in data.rows) {
+				count ++;
+				
+				if(count <= data.rows.length) {					
+					data.rows[index].cell["total"] = floatToPrice(data.rows[index].cell["total"]);
+					data.rows[index].cell["totalDesconto"] = floatToPrice(data.rows[index].cell["totalDesconto"]);
+				}
 				
 			}
 			return data;
@@ -390,15 +421,21 @@ var geracaoNFeController = $.extend({
 	 * objeto utilizado para encapsular as colunas da grid de Pesquisas
 	 */
 	colunasGridForncedorPesquisa:[ {
-		display : 'Fornecedor',
-		name : 'numeroFornecedor',
-		width : 100,
+		display : 'Codigo',
+		name : 'codigo',
+		width : 60,
 		sortable : true,
 		align : 'left',
 	}, {
-		display : 'Nome',
-		name : 'nomeFornecedor',
+		display : 'Descrição',
+		name : 'nome',
 		width : 215,
+		sortable : true,
+		align : 'left',
+	}, {
+		display : 'Edição',
+		name : 'edicao',
+		width : 80,
 		sortable : true,
 		align : 'left',
 	}, {
@@ -410,19 +447,19 @@ var geracaoNFeController = $.extend({
 	}, {
 		display : 'Nome Editor',
 		name : 'nomeEditor',
-		width : 150,
+		width : 110,
 		sortable : true,
 		align : 'left',
 	}, {
 		display : 'Total Exemplares',
 		name : 'exemplares',
-		width : 110,
+		width : 90,
 		sortable : true,
 		align : 'center',
 	}, {
 		display : 'Total R$',
 		name : 'total',
-		width : 120,
+		width : 100,
 		sortable : true,
 		align : 'right',
 	},  {
@@ -462,7 +499,7 @@ var geracaoNFeController = $.extend({
 		
 		// FIXME: Verificar o motivo do vRaptor nao instanciar
 		// Por limitacao do vRaptor, nao instancia dentro do filtro
-		if($('input[name^="tipoDestinatario"]:checked').val() != 'FORNECEDOR') {
+		if($('input[name^="geracaoNfe-tipoDestinatario"]:checked').val() != 'FORNECEDOR') {
 			
 			if($(".emissaoRegimeEspecial").is(":visible")) {
 				
@@ -498,7 +535,7 @@ var geracaoNFeController = $.extend({
 		
 		var grid;
 		
-		if($('input[name=tipoDestinatario]:checked').val() == 'FORNECEDOR') {
+		if($('input[name=geracaoNfe-tipoDestinatario]:checked').val() == 'FORNECEDOR') {
 			grid = $("#geracaoNfe-flexigrid-fornecedor-pesquisa");
 		} else {
 			grid = $("#geracaoNfe-flexigrid-pesquisa");
@@ -517,7 +554,7 @@ var geracaoNFeController = $.extend({
 		
 		grid.flexReload();
 		
-		if($('input[name=tipoDestinatario]:checked').val() == 'FORNECEDOR') {
+		if($('input[name=geracaoNfe-tipoDestinatario]:checked').val() == 'FORNECEDOR') {
 			$(".grids").hide();
 			$(".grids-forn").show();
 		} else {
@@ -636,7 +673,7 @@ var geracaoNFeController = $.extend({
 		params.push({name:"filtro.idRoteiro" , value: $("#geracaoNfe-filtro-listRoteiro").val()});
 		params.push({name:"filtro.idRota" , value: $("#geracaoNfe-filtro-listRota").val()});
 		
-		if($('input[name^="tipoDestinatario"]:checked').val() != 'FORNECEDOR') {
+		if($('input[name^="geracaoNfe-tipoDestinatario"]:checked').val() != 'FORNECEDOR') {
 			
 			if($(".emissaoRegimeEspecial").is(":visible")) {
 				params.push({name:"notaFiscalTipoEmissaoRegimeEspecial", value: $("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").val()});
@@ -725,14 +762,16 @@ var geracaoNFeController = $.extend({
 	
 	verificarTipoDestinatario : function(element) {
 		
-		$('input[name^="tipoDestinatario"]:not(:checked)').removeAttr('checked');
+		$('input[name^="geracaoNfe-tipoDestinatario"]:not(:checked)').removeAttr('checked');
 		$(element).attr('checked', true);
 		
 		if(element.value != "FORNECEDOR") {
 			$("#geracaoNfe-filtro-selectFornecedoresDestinatarios option:selected").removeAttr("selected");
 			$("#geracaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
+			geracaoNFeController.habilitarFiltro();
 		} else {
 			$("#geracaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("enable");
+			geracaoNFeController.desabilitarFiltro();
 		}
 		
 		var emitente = '';
@@ -770,7 +809,7 @@ var geracaoNFeController = $.extend({
 			    }));
 			});
 			
-			if($('input[name^="tipoDestinatario"]:checked').val() != 'FORNECEDOR') {
+			if($('input[name^="geracaoNfe-tipoDestinatario"]:checked').val() != 'FORNECEDOR') {
 				geracaoNFeController.verificarRegimeEspecialNaturezaOperacao($('#geracaoNfe-filtro-naturezaOperacao'));
 				$(".emissaoEditorDestinacaoEncalhe").hide();
 			} else {
@@ -797,7 +836,7 @@ var geracaoNFeController = $.extend({
 				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 			}
 			
-			if($('input[name^="tipoDestinatario"]:checked').val() != 'FORNECEDOR' 
+			if($('input[name^="geracaoNfe-tipoDestinatario"]:checked').val() != 'FORNECEDOR' 
 					&& (data.tipoEmissaoRegimeEspecial == 'CONSOLIDA_EMISSAO_POR_DESTINATARIO'
 						|| data.tipoEmissaoRegimeEspecial == 'CONSOLIDA_EMISSAO_A_JORNALEIROS_DIVERSOS')) {
 				
@@ -953,6 +992,36 @@ var geracaoNFeController = $.extend({
 	    	
 	        $(comboNameComponent).val('');
 	    }
+	},
+	
+	desabilitarFiltro : function() {
+		// roteiro 
+		$("#geracaoNfe-filtro-selectRoteiro").attr('disabled', 'disabled');
+		$("#geracaoNfe-filtro-selectRoteiro", geracaoNFeController.workspace).val("-1");
+		
+		// rota
+		$("#geracaoNfe-filtro-selectRota", geracaoNFeController.workspace).val("-1");
+		$("#geracaoNfe-filtro-selectRota").attr('disabled', 'disabled');
+		
+		$("#geracaoNfe-filtro-inputIntervaloCotaDe").attr('disabled', 'disabled');
+		$("#geracaoNfe-filtro-inputIntervaloCotaAte").attr('disabled', 'disabled');
+		$("#geracaoNfe-filtro-inputIntervaloCotaDe").val("");
+		$("#geracaoNfe-filtro-inputIntervaloCotaAte").val("");
+		$("#geracaoNfe-filtro-inputIntervaloBoxDe", geracaoNFeController.workspace).val("-1");
+		$("#geracaoNfe-filtro-inputIntervaloBoxDe").attr('disabled', 'disabled');
+		$("#geracaoNfe-filtro-inputIntervaloBoxAte", geracaoNFeController.workspace).val("-1");
+		$("#geracaoNfe-filtro-inputIntervaloBoxAte").attr('disabled', 'disabled');
+		
+	},
+	
+	habilitarFiltro : function() {
+		
+		$("#geracaoNfe-filtro-selectRoteiro").removeAttr('disabled');
+		$("#geracaoNfe-filtro-selectRota").removeAttr('disabled');
+		$("#geracaoNfe-filtro-inputIntervaloCotaDe").removeAttr('disabled');
+		$("#geracaoNfe-filtro-inputIntervaloCotaAte").removeAttr('disabled');
+		$("#geracaoNfe-filtro-inputIntervaloBoxDe").removeAttr('disabled');
+		$("#geracaoNfe-filtro-inputIntervaloBoxAte").removeAttr('disabled');
 	},
 	
 }, BaseController);

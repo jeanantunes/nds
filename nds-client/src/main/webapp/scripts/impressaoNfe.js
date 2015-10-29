@@ -104,9 +104,8 @@ var impressaoNfeController = $.extend(true, {
 		$("#impressaoNfe-filtro-idRota").removeAttr('disabled');
 		$("#impressaoNfe-filtro-idCotaInicial").removeAttr('disabled');
 		$("#impressaoNfe-filtro-idCotaFinal").removeAttr('disabled');
-		$("#impressaoNfe-filtro-inputIntervaloBoxDe").removeAttr('disabled');;
-		$("#impressaoNfe-filtro-inputIntervaloBoxAte").removeAttr('disabled');;
-		
+		$("#impressaoNfe-filtro-inputIntervaloBoxDe").removeAttr('disabled');
+		$("#impressaoNfe-filtro-inputIntervaloBoxAte").removeAttr('disabled');
 		
 	},
 	
@@ -231,7 +230,9 @@ var impressaoNfeController = $.extend(true, {
 		           	{name:'filtro.idCotaInicial', value:$('#impressaoNfe-filtro-idCotaInicial', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.idCotaFinal', value:$('#impressaoNfe-filtro-idCotaInicial', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.idBoxInicial', value:$('#impressaoNfe-filtro-inputIntervaloBoxDe', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.idBoxFinal', value:$('#impressaoNfe-filtro-inputIntervaloBoxAte', impressaoNfeController.workspace).val()}
+		           	{name:'filtro.idBoxFinal', value:$('#impressaoNfe-filtro-inputIntervaloBoxAte', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.numeroNotaDe', value:$('#impressaoNfe-filtro-notaDe', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.numeroNotaAte', value:$('#impressaoNfe-filtro-notaAte', impressaoNfeController.workspace).val()}
 		           	];
 		
 		if ($('#impressaoNfe-filtro-selectFornecedoresDestinatarios').val()) {

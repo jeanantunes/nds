@@ -24,10 +24,15 @@ public class TipoMovimentoFinanceiroServiceImpl implements TipoMovimentoFinancei
 	
 	@Override
 	@Transactional
-	public List<TipoMovimentoFinanceiro> obterTipoMovimentosFinanceirosCombo() {
+	public List<TipoMovimentoFinanceiro> obterTipoMovimentosFinanceirosCombo(boolean flag) {
 		
+		List <GrupoMovimentoFinaceiro>  grupoMovimentoFinaceiro = this.movimentoFinanceiroCotaService.getGrupoMovimentosFinanceirosDebitosCreditos();
+		
+		if ( flag )
+			grupoMovimentoFinaceiro.add(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
 		return this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiro(
-				this.movimentoFinanceiroCotaService.getGrupoMovimentosFinanceirosDebitosCreditos());
+				grupoMovimentoFinaceiro);
+		
 	}
 
 

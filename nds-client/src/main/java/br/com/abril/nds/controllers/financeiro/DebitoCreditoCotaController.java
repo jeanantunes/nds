@@ -122,9 +122,12 @@ public class DebitoCreditoCotaController extends BaseController{
 	private void preencherComboTipoMovimento() {
 
 		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiro = 
-				this.tipoMovimentoFinanceiroService.obterTipoMovimentosFinanceirosCombo();
+				this.tipoMovimentoFinanceiroService.obterTipoMovimentosFinanceirosCombo(false);
+		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroMain = 
+				this.tipoMovimentoFinanceiroService.obterTipoMovimentosFinanceirosCombo(true);
 
 		this.result.include("tiposMovimentoFinanceiro", tiposMovimentoFinanceiro);
+		this.result.include("tiposMovimentoFinanceiroMain", tiposMovimentoFinanceiroMain);
 	}
 
 	/**

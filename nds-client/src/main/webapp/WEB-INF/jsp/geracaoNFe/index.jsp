@@ -77,7 +77,7 @@ $(function(){
 				<td width="91">Destinat&aacute;rio:</td>
 				<td width="204"><c:forEach items="${tiposDestinatarios}"
 						var="tipoDestinatario" varStatus="status">
-						<input type="radio" name="tipoDestinatario"
+						<input type="radio" name="geracaoNfe-tipoDestinatario"
 							id="tipoDestinatario${status.index}" value="${tipoDestinatario}"
 							<c:if test="${status.index == 0}">checked="checked"</c:if>
 							onchange="geracaoNFeController.verificarTipoDestinatario(this);" /> ${tipoDestinatario.descricao}

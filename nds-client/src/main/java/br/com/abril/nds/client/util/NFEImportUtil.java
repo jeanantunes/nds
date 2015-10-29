@@ -74,9 +74,9 @@ public abstract class NFEImportUtil {
         
         if(tipoRetorno.equals("A")) {
         	return processarProcNfe(arquivo, schemaPath);
-        } else if(tipoRetorno.equals("canc")) {
+        } else if(tipoRetorno.equals("C")) {
         	return processarCancNfe(arquivo, schemaPath);
-        } else if(tipoRetorno.equals("rej")) {
+        } else if(tipoRetorno.equals("R")) {
         	return processarRejeitadoNfe(arquivo, schemaPath);
         }
         
@@ -284,6 +284,7 @@ public abstract class NFEImportUtil {
     		retornoNFEDTO.setTpEvento(evento.getInfEvento().getTpEvento());
 
     		StatusRetornado status = StatusRetornado.AUTORIZADO;
+    		
     		switch (evento.getInfEvento().getTpEvento()) {
 			case "110111":
 				

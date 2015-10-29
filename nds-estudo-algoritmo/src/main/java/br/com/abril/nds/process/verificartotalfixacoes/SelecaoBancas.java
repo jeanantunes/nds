@@ -82,7 +82,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	}
 
 	Map<Long, CotaEstudo> cotasComHistoricoMap = new LinkedHashMap<>();
-
+	
 	// excluindo cotas que nao recebem o segmento, ou nao recebem a classificacao ou sao alternativas e nao possuem mix
     // ou nao recebem do fornecedor
 	for (CotaEstudo cota : cotas) {
@@ -93,8 +93,13 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	    }
 	    cotasComHistoricoMap.put(cota.getId(), cota);
 	}
+	
 	for (CotaEstudo cota : estudo.getCotasExcluidas()) {
-	    cotasComHistoricoMap.remove(cota.getId());
+	    
+		cotasComHistoricoMap.remove(cota.getId());
+		
+		//Calcular venda média cotas excluídas
+		calcularTotais(cota, estudo);
 	}
 	// fim da exclusao
 	
@@ -347,7 +352,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	    cota.setVendaMedia(cota.getVendaMediaNominal());
 	}
 	if (cota.getClassificacao().notIn(ClassificacaoCota.CotaNova, ClassificacaoCota.CotaMix, ClassificacaoCota.ReparteFixado,
-		ClassificacaoCota.BancaForaDaRegiaoDistribuicao) &&
+		ClassificacaoCota.BancaForaDaRegiaoDistribuicao, ClassificacaoCota.BancaMixSemDeterminadaPublicacao) &&
 		!(estudo.getDistribuicaoVendaMediaDTO() != null && estudo.getDistribuicaoVendaMediaDTO().getAbrangencia() != null &&
 		estudo.getReparteMinimo() != null)) {
 	    

@@ -128,8 +128,19 @@
 				  		Semana:
 				  	</td>
 				  	<td width="151">
-				  		<input type="text" id="semana" name="semana" />
+				  		<input type="text" id="semana" name="semana" onchange="fechamentoCEIntegracaoController.buscarCESemana();"/>
 				  	</td>
+				  	<td width="48">
+				  		CE:
+				  	</td>
+				  	<td style="width:100px;">
+				  	
+						<select id="comboCE-fechamentoCe-integracao" style="width:130px;">
+							<option value="-1" >Selecione</option>
+							
+						</select>
+					</td>
+					
 			  		<td style="width:100px;">
 						<select id="combo-fechamentoCe-integracao" style="width:130px;">
 							<option value="-1" >Selecione</option>

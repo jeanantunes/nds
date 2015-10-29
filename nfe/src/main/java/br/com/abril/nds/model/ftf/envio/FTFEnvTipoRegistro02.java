@@ -267,7 +267,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodBarrasProduto(String codBarrasProduto) {
-		codBarrasProduto = codBarrasProduto != null ? StringUtils.leftPad(codBarrasProduto, 18, "0") : StringUtils.leftPad("", 18, '0');
+		codBarrasProduto = codBarrasProduto != null ? StringUtils.leftPad(codBarrasProduto, 18, ' ') : StringUtils.leftPad("", 18, ' ');
 		this.codBarrasProduto = codBarrasProduto;
 	}
 

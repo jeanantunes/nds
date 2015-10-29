@@ -70,6 +70,7 @@ import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -78,6 +79,7 @@ import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.OrigemItem;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
@@ -295,7 +297,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					if (informacaoEletronica.getChaveAcesso().equals(dadosRetornoNFE.getChaveAcesso())) {
 
 						if (StatusProcessamento.EM_PROCESSAMENTO.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamento())) {
-							if (StatusRetornado.AUTORIZADO.equals(dadosRetornoNFE.getStatus()) || StatusRetornado.USO_DENEGADO.equals(dadosRetornoNFE.getStatus())) {
+							if (StatusRetornado.AUTORIZADO.equals(dadosRetornoNFE.getStatus()) 
+									|| StatusRetornado.USO_DENEGADO.equals(dadosRetornoNFE.getStatus())
+									|| StatusRetornado.CANCELAMENTO_HOMOLOGADO.equals(dadosRetornoNFE.getStatus())) {
 								listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
 							}
 
@@ -332,6 +336,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		}
 
 		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarNotaFiscalChaveAcesso(dadosRetornoNFE.getChaveAcesso());
+		
 		if(notaFiscal != null && notaFiscal.getNotaFiscalInformacoes() != null && notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal() != null) {
 			
 			for(DetalheNotaFiscal detNF : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
@@ -342,11 +347,18 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 						MovimentoEstoqueCota mec = ((OrigemItemNotaFiscalMovimentoEstoqueCota) origemItem).getMovimentoEstoqueCota();
 						mec.setNotaFiscalEmitida(false);
 					}
+					
+					if(origemItem.getOrigem().equals(OrigemItem.MOVIMENTO_ESTOQUE)) {
+						
+						MovimentoEstoque me = ((OrigemItemNotaFiscalMovimentoEstoque) origemItem).getMovimentoEstoque();
+						
+					}
 				}
 			}
 		}
 		
-//		this.gerarArquivoSolicitacaoCancelamento(notaFiscal);
+		this.movimentoEstoqueService.devolucaoRecolhimentoNotaCancelada(notaFiscal);
+		// this.gerarArquivoSolicitacaoCancelamento(notaFiscal);
 
 	}
 
@@ -728,7 +740,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					OutputStream os = null;
 					
 					if(numeroCota != null ) {
-						os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + numeroCota + serieNF + "-" + numeroNF + ".xml");						
+						os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + numeroCota + "-" + serieNF + "-" + numeroNF + ".xml");						
 					} else {
 						os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + serieNF + "-" + numeroNF + ".xml");
 					}

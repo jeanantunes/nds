@@ -5,6 +5,7 @@ var retornoNFEController  = $.extend(true, {
 	init : function() {
 		this.initFlexiGrids();
 		this.initFiltroDatas();
+		
 	},
 
 	initFlexiGrids : function() {
@@ -61,7 +62,8 @@ var retornoNFEController  = $.extend(true, {
 	pesquisar : function() {
 		
 		var dataReferencia = $("#retornoNFEDataReferencia", this.workspace).val();
-		var tipoRetorno = $("#tipoRetorno", this.workspace).val();
+		
+		var tipoRetorno = $('input[name^="tipoRetorno"]:checked').val();
 		var params = [];
 		
 		if(!dataReferencia) {
@@ -72,7 +74,6 @@ var retornoNFEController  = $.extend(true, {
 			params.push({name : "dataReferencia", value : dataReferencia});
 			params.push({name : "tipoRetorno", value : tipoRetorno});
 			
-			
 			$("#retornoNfe-flexigrid-pesquisa", retornoNFEController.workspace).flexOptions({
 				dataType : 'json',
 				url: contextPath + "/nfe/retornoNFe/pesquisarArquivos.json",
@@ -81,7 +82,7 @@ var retornoNFEController  = $.extend(true, {
 			
 			$("#retornoNfe-flexigrid-pesquisa", retornoNFEController.workspace).flexReload();
 			$(".grids").show();
-			
+				
 		}
 	},
 	

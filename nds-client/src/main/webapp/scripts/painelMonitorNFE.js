@@ -15,40 +15,9 @@ var PainelMonitorNFE = $.extend(true, {
 		
 		$("#numeroFinal", PainelMonitorNFE.workspace).numeric();
 		
-		$("#nfeGrid", PainelMonitorNFE.workspace).flexigrid({
-			onSuccess: function() {bloquearItensEdicao(PainelMonitorNFE.workspace);},
-			colModel : colunas,
-			preProcess: PainelMonitorNFE.executarPreProcessamento,
-			dataType : 'json',
-			sortname : "numero",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960
-		});
-		
 		this.initFiltroDatas();
 		this.initInputs();
-		
-		$('#dataInicial', PainelMonitorNFE.workspace).datepicker({
-			showOn: "button",
-			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true,
-			dateFormat: "dd/mm/yy"
-		});
-		
-		$('#dataInicial', PainelMonitorNFE.workspace).mask("99/99/9999");	
-		
-		$('#dataFinal', PainelMonitorNFE.workspace).datepicker({
-			showOn: "button",
-			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true,
-			dateFormat: "dd/mm/yy"
-		});
-		
-		$('#dataFinal', PainelMonitorNFE.workspace).mask("99/99/9999");	
+		this.initGridNotaFiscal(colunas);	
 		
 		$(".grids", PainelMonitorNFE.workspace).hide();
 		
@@ -104,7 +73,27 @@ var PainelMonitorNFE = $.extend(true, {
 					
 					$("#dataFinal", this.workspace).val(result);
 		        }
-		); 
+		);
+	    
+	    
+
+		$('#dataInicial', PainelMonitorNFE.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true,
+			dateFormat: "dd/mm/yy"
+		});
+		
+		$('#dataInicial', PainelMonitorNFE.workspace).mask("99/99/9999");	
+		
+		$('#dataFinal', PainelMonitorNFE.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true,
+			dateFormat: "dd/mm/yy"
+		});
+		
+		$('#dataFinal', PainelMonitorNFE.workspace).mask("99/99/9999");
 	},
 	
 	initInputs : function() {
@@ -129,6 +118,23 @@ var PainelMonitorNFE = $.extend(true, {
 		
 	},
 	
+	initGridNotaFiscal : function(colunas) {
+		
+		$("#nfeGrid", PainelMonitorNFE.workspace).flexigrid({
+			onSuccess: function() {bloquearItensEdicao(PainelMonitorNFE.workspace);},
+			colModel : colunas,
+			preProcess: PainelMonitorNFE.executarPreProcessamento,
+			dataType : 'json',
+			sortname : "numero",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 960
+		});
+	},
+	
 	pesquisar: function() {
 		
 		var box = $("#box", PainelMonitorNFE.workspace).val();
@@ -137,12 +143,12 @@ var PainelMonitorNFE = $.extend(true, {
 		var documentoPessoa = $('input:radio[name=painelNfe-radioTipoDoc]:checked', PainelMonitorNFE.workspace).val();
 		var documento = $("#documento", PainelMonitorNFE.workspace).val();
 		var tipoNfe = $("#painelNfe-filtro-naturezaOperacao", PainelMonitorNFE.workspace).val();
-		var numeroInicial = $("#numeroInicial", PainelMonitorNFE.workspace).val();
-		var numeroFinal = $("#numeroFinal", PainelMonitorNFE.workspace).val();
 		var chaveAcesso = $("#chaveAcesso", PainelMonitorNFE.workspace).val();
 		var situacaoNfe = $("#situacaoNfe", PainelMonitorNFE.workspace).val();
-		var serieNfe	= $("#serieNfe", PainelMonitorNFE.workspace).val();	
+		var serieNfe	= $("#serieNfe", PainelMonitorNFE.workspace).val();
 		var nrDocumento	= $("#painelNfe-documento", PainelMonitorNFE.workspace).val();
+		var numeroNotaInicial	= $("#painelNfe-notaDe", PainelMonitorNFE.workspace).val();
+		var numeroNotaFinal	= $("#painelNfe-notaAte", PainelMonitorNFE.workspace).val();
 		
 		var params = [
 		        {name:'filtro.box', value: box },
@@ -151,8 +157,8 @@ var PainelMonitorNFE = $.extend(true, {
 		        {name:'filtro.documentoPessoa', value: documentoPessoa },
 		        {name:'filtro.documento', value: documento },
 		        {name:'filtro.tipoNfe', value: tipoNfe },
-		        {name:'filtro.numeroNotaInicial', value: numeroInicial },
-		        {name:'filtro.numeroNotaFinal', value: numeroFinal },
+		        {name:'filtro.numeroNotaInicial', value: numeroNotaInicial},
+		        {name:'filtro.numeroNotaFinal', value: numeroNotaFinal},
 		        {name:'filtro.chaveAcesso', value: chaveAcesso },
 		        {name:'filtro.situacaoNfe', value: situacaoNfe },
 		        {name:'filtro.serie',    value: serieNfe},
@@ -271,7 +277,7 @@ var PainelMonitorNFE = $.extend(true, {
 			
 			var linha = $(value, PainelMonitorNFE.workspace);
 			
-			var colunaSelecao = linha.find("td")[11];
+			var colunaSelecao = linha.find("td")[9];
 		
 			var inputSelecao = $(colunaSelecao, PainelMonitorNFE.workspace).find("div").find('input[name="checkgroup"]');
 			
@@ -282,12 +288,13 @@ var PainelMonitorNFE = $.extend(true, {
 			}
 			
 		});
+		
 		var params = {indEmissaoDepec:indEmissaoDepec };
 		params = serializeArrayToPost('listaLineIdsImpressaoDanfes',selecionados, params );
 		
 		$.postJSON(contextPath + "/nfe/painelMonitorNFe/prepararDanfesImpressao", params, 
 			function(){
-			window.location = contextPath + "/nfe/painelMonitorNFe/imprimirDanfes" + '?indEmissaoDepec='+indEmissaoDepec;
+			window.open(contextPath + "/nfe/painelMonitorNFe/imprimirDanfes", "_blank");
 		});
 		
 	},
@@ -350,12 +357,13 @@ var PainelMonitorNFE = $.extend(true, {
 	
 	imprimirDanfeUnica : function(lineId) {
 		
-		var params = {lineIdImpressaoDanfe:+lineId};
+		var params = {lineIdImpressaoDanfe:lineId};
 		
 		$.postJSON(contextPath + "/nfe/painelMonitorNFe/prepararDanfeUnicaImpressao",
-			params,
-			function(){
-				window.location = contextPath + "/nfe/painelMonitorNFe/imprimirDanfes" ;
+			params, function(){
+				
+				window.open(contextPath + "/nfe/painelMonitorNFe/imprimirDanfes", "_blank");
+		
 			}		
 		);
 		
@@ -422,71 +430,69 @@ var PainelMonitorNFE = $.extend(true, {
 	},
 	
 	obterColModel : function() {
-
-
-			var colModel = [ {
-				display : 'Nota',
-				name : 'numero',
-				width : 55,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Série',
-				name : 'serie',
-				width : 40,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Emissão',
-				name : 'emissao',
-				width : 60,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Tipo Emissão',
-				name : 'tipoEmissao',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'CNPJ Destinatário',
-				name : 'cnpjDestinatario',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'CNPJ / CPF Remetente',
-				name : 'cnpjRemetente',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Status NF-e',
-				name : 'statusNfe',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Tipo NF-e',
-				name : 'tipoNfe',
-				width : 220,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : ' ',
-				name : 'imprimirLinha',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : ' ',
-				name : 'sel',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			} ];	
-			
-			return colModel;
+		var colModel = [ {
+			display : 'Nota',
+			name : 'numero',
+			width : 55,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Série',
+			name : 'serie',
+			width : 40,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Emissão',
+			name : 'emissao',
+			width : 60,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Tipo Emissão',
+			name : 'tipoEmissao',
+			width : 70,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'CNPJ Destinatário',
+			name : 'cnpjDestinatario',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'CNPJ / CPF Remetente',
+			name : 'cnpjRemetente',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Status NF-e',
+			name : 'statusNfe',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Tipo NF-e',
+			name : 'tipoNfe',
+			width : 220,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : ' ',
+			name : 'imprimirLinha',
+			width : 30,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : ' ',
+			name : 'sel',
+			width : 30,
+			sortable : true,
+			align : 'center'
+		} ];	
+		
+		return colModel;
 	},
 	
 }, BaseController);

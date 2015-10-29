@@ -324,6 +324,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		    parametersSlip.put("VALOR_MULTA_MORA", slip.getValorTotalPagar());
 		    parametersSlip.put("VALOR_CREDITO_DIF", slip.getValorCreditoDif());
 		    parametersSlip.put("LOGOTIPO", logo);
+
 		    
 		    List<DebitoCreditoCota> debCre = this.slipRepository.obterComposicaoSlip(slip.getId(), true);
 		    slip.setListaComposicaoCobranca(debCre);
@@ -1089,7 +1090,12 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
             }
         }
         
-        totalComposicao = slipDTO.getValorSlip().add(totalComposicao).abs();
+        totalComposicao = slipDTO.getValorSlip().add(totalComposicao);
+        if ( slipDTO.getValorSlip().add(totalComposicao).doubleValue() >= 0 )
+        	parametersSlip.put("CD","D"); // CREDITO 
+        else
+        	parametersSlip.put("CD","C"); //  debito
+        totalComposicao = totalComposicao.abs();
         
         final BigDecimal totalPagar = totalComposicao;
         
@@ -1109,6 +1115,8 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         parametersSlip.put("VALOR_TOTAL_DESCONTO", slipDTO.getValorTotalDesconto().setScale(2,java.math.RoundingMode.HALF_UP));
         
         parametersSlip.put("VALOR_TOTAL_PAGAR", CurrencyUtil.formatarValor(totalPagar));
+        
+        
         
         parametersSlip.put("RAZAO_SOCIAL_DISTRIBUIDOR", distribuidorService.obterRazaoSocialDistribuidor());
         
@@ -1329,7 +1337,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         final URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
         
         try{
-            
+        	
             slipDTO.getParametersSlip().put("SUBREPORT_DIR", subReportDir.toURI().getPath());
         }
         catch(final Exception e){

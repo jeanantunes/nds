@@ -119,12 +119,13 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			
 		}
 		
-		if (notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica() == null || 
+		if (notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso() == null || 
 				notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getRetornoComunicacaoEletronica() == null){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nota ainda não submetida ao SEFAZ");
 		} else if (!notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getRetornoComunicacaoEletronica().getStatusRetornado().equals(
-				StatusRetornado.AUTORIZADO)) {
+				StatusRetornado.AUTORIZADO) && !notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getRetornoComunicacaoEletronica().getStatusRetornado().equals(
+						StatusRetornado.CANCELAMENTO_HOMOLOGADO) ) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nota não autorizada pelo SEFAZ");
 		}

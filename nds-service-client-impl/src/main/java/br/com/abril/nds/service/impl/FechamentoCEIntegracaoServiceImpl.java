@@ -498,6 +498,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 								tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.PERDA_EM_DEVOLUCAO);
 					}
 					
+					
+			
 					MovimentoEstoque movimentoEstoque = 
 							movimentoEstoqueService.gerarMovimentoEstoque(
 							item.getProdutoEdicao().getId(),
@@ -543,7 +545,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			
 			itemCE.setQtdeVendaInformada(Util.nvl(item.getVenda(), 0L).longValue());
 			
-			item.setEncalhe(Util.nvl(item.getEncalhe(), BigInteger.ZERO).add(Util.nvl(item.getQtdeDevSemCE(), BigInteger.ZERO))); 
+			item.setEncalhe(Util.nvl(item.getEncalhe(), BigInteger.ZERO)); 
 			
 			itemCE.setQtdeDevolucaoInformada(Util.nvl(item.getEncalhe(), 0L).longValue());
 			
@@ -670,6 +672,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	private ItemChamadaEncalheFornecedor atualizarItemCE(ItemChamadaEncalheFornecedor item,
 			Map<Long,ItemFechamentoCEIntegracaoDTO> itensAlterados, EstoqueProduto estoqueProduto) {
 		
+	
+		
 		if(item == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Item de Fechamento inválido.");
@@ -678,12 +682,15 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		Long qntVenda = Util.nvl(item.getQtdeVendaInformada(), 0L);
 		Long qntEncalhe = item.getQtdeDevolucaoInformada();
 		
+		
+		
 		if(itensAlterados != null && itensAlterados.containsKey(item.getId())) {
 			
 			ItemFechamentoCEIntegracaoDTO itemCE = itensAlterados.get(item.getId());
 			
 			qntVenda = Util.nvl(itemCE.getVenda(), 0L).longValue();
-			qntEncalhe = Util.nvl(itemCE.getEncalhe(), 0L).longValue();
+		
+			qntEncalhe = Util.nvl(itemCE.getEncalhe(),  BigInteger.ZERO).add(Util.nvl(itemCE.getQtdeDevSemCE(),  BigInteger.ZERO)).longValue();
 		} else {
 			
 			if(qntEncalhe == null) {
@@ -706,7 +713,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			item.setQtdeVendaApurada(qntVenda);
 		} else {
 			
-			item.setQtdeVendaApurada(item.getQtdeEnviada() - qntEncalhe);
+			item.setQtdeVendaApurada(qntVenda);
 		}
 		
 		item.setQtdeDevolucaoInformada(qntEncalhe);
@@ -854,7 +861,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		for(ChamadaEncalheFornecedor cef : chamadasFornecedor){
 			
-			if(cef.getDataFechamentoNDS().compareTo(dataOperacao)!=0
+			if(cef.getDataFechamentoNDS() == null || cef.getDataFechamentoNDS().compareTo(dataOperacao)!=0
 					|| StatusIntegracao.INTEGRADO.equals(cef.getStatusIntegracao())){
 				
 				fornecedorSemReabertura.append((cef.getFornecedor().getJuridica()!= null)
@@ -1060,7 +1067,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
         		   }
         	   }
         	   
-        	   return !(item.getDiferenca().compareTo(BigInteger.ZERO) == 0) ;
+        	   return !(BigInteger.ZERO.compareTo(item.getDiferenca()==null?BigInteger.ZERO:item.getDiferenca()) == 0) ;
            }
 		};
        
@@ -1151,6 +1158,12 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
                 }
                 
         }
+        	
+        @Override
+    	@Transactional
+       public List <ChamadaEncalheFornecedor> obterChamadasEncalheFornecedorCE(FiltroFechamentoCEIntegracaoDTO filtro){
+    	   return chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor( filtro);
+       }
         
 
 }

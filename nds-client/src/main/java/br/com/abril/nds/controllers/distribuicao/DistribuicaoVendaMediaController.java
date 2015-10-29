@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.BeanUtils;
@@ -60,7 +59,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.view.Results;
 
 @Path("/distribuicaoVendaMedia")
@@ -77,13 +75,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     private Result result;
 
     @Autowired
-    private Validator validator;
-
-    @Autowired
     private HttpSession session;
-
-    @Autowired
-    private HttpServletResponse httpResponse;
 
     @Autowired
     private ProdutoEdicaoService produtoEdicaoService;
@@ -509,6 +501,19 @@ public class DistribuicaoVendaMediaController extends BaseController {
     		result.nothing();
     	}else{
     		throw new ValidacaoException(TipoMensagem.WARNING, "Este produto está com o Código ICD inválido, ajuste-o no Cadastro de Produto.");
+    	}
+    }
+    
+    @Post
+    @Path("verificarSegmento")
+    public void verificarSegmento(String codProduto){
+    	
+    	Produto produto = prodService.obterProdutoPorCodigo(codProduto);
+    	
+    	if(produto.getTipoSegmentoProduto() != null){
+    		result.nothing();
+    	}else{
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Este produto está com o segmento inválido, ajuste-o no Cadastro de Produto.");
     	}
     }
     

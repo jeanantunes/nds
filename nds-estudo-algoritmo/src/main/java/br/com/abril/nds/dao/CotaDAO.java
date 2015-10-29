@@ -195,6 +195,7 @@ public class CotaDAO {
 		
 	    cota.setId(rs.getLong("COTA_ID"));
 		cota.setNumeroCota(rs.getInt("NUMERO_COTA"));
+		
 		cota.setRecebeReparteComplementar(rs.getBoolean("RECEBE_COMPLEMENTAR"));
 		cota.setQuantidadePDVs(rs.getBigDecimal("QTDE_PDVS"));
 		cota.setSituacaoCadastro(SituacaoCadastro.valueOf(rs.getString("SITUACAO_CADASTRO")));
@@ -240,7 +241,7 @@ public class CotaDAO {
 		
 		if (cota.getTipoDistribuicaoCota() != null && (!cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO) || cota.isMix())) {
 		    if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(Long.valueOf(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
-				if (cota.isNova()) {
+				if (cota.isNova() && cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
 				    cota.setClassificacao(ClassificacaoCota.CotaNova);
 				}
 		    }

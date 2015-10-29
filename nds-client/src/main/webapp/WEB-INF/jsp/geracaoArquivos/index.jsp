@@ -37,24 +37,22 @@ $(function(){
 					border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif"></a>
 			</span>
 			
+			<!--  
 		  	 <span class="bt_novos"
 			    title="Unificar arquivos FC/DINAP"><a id="btnUnificar"  isEdicao="true" href="javascript:;" rel="tipsy">
 			    <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_change.png"></a>
 			</span>
-			
+			-->
 			
 			
 			
 			
 			 <span class="bt_novos"
-			    title="Gerar Arquivo Vendas/Reparte Unificado por cota"><a id="btnUnificarCotasCRUD"  isEdicao="true" href="javascript:;" rel="tipsy">
+			    title="Manutencao de cotas unificadas"><a id="btnUnificarCotasCRUD"  isEdicao="true" href="javascript:;" rel="tipsy">
 			    <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif"></a>
 			</span>
 			
-			<span class="bt_novos"
-			    title="Abrir Arquivo Vendas/Reparte Unificado por cota"><a id="btnOpenCRUD"  isEdicao="true" href="javascript:;" rel="tipsy">
-			    <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_excel.png"></a>
-			</span>
+			
 		
 		</div>
 	</div>
@@ -66,7 +64,7 @@ $(function(){
 	<table width="950" border="0" cellpadding="2" cellspacing="1"
 		class="filtro">
 		<tr>
-			<td width="99">Tipo de Arquivo:</td>
+			<td width="199">Tipo de Arquivo:</td>
 			<td width="206"><select name="tipoArquivo" id="tipoArquivo"
 				style="width: 150px;">
 					<option value="">Selecione...</option>
@@ -74,18 +72,29 @@ $(function(){
 					<option value="ENCALHE">Encalhe</option>
 					<option value="PICKING" selected="selected">Picking</option>
 					<option value="VENDA">Venda</option>
+					<option value="UNIFICAR">Unificar</option>
 			</select></td>
-			<td width="105">
+			<td width="205">
 				<div id="dtLancto" style="display: none;">Data Lançamento:</div>
 				<div id="dtRecolhimento">Data Recolhimento:</div>
 				<div id="dtVenda" style="display: none;">Data:</div>
+				<div id="arqDinap" style="display: none;">Arquivo Dinap:</div>
 			</td>
-			<td width="386"><div id="dtEscolha">
+			<td width="286"><div id="dtEscolha" >
 					<input type="text" name="datepickerDe" id="datepickerDe"
 						style="width: 70px;" />
+					</div>	
+				<div id="arquivo" >
+				<select name="nomeArquivo" id="nomeArquivo" style="width:200px;" >
+			<option value="">Selecione...</option>
+		<c:forEach items="${arquivosDinapList}" var="arquivos">
+			<option value="${arquivos}">${arquivos}</option>
+		</c:forEach>
+        </select>
 				</div></td>
-			<td width="128">
+			<td width="228">
 		    </td>
+		   
 		</tr>
 	</table>
 

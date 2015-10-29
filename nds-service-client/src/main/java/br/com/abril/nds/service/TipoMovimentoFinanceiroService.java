@@ -8,7 +8,7 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 
 public interface TipoMovimentoFinanceiroService {
 
-	List<TipoMovimentoFinanceiro> obterTipoMovimentosFinanceirosCombo();
+	List<TipoMovimentoFinanceiro> obterTipoMovimentosFinanceirosCombo(boolean flag);
 	
 	TipoMovimentoFinanceiro obterTipoMovimentoFincanceiroPorId(Long idTipoMovimentoFinanceiro);
 	

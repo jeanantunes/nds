@@ -65,9 +65,9 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 	
 	private boolean bandGerado;
 	
-	private String numeroNotaDe;
+	private Long numeroNotaDe;
 	
-	private String numeroNotaAte;
+	private Long numeroNotaAte;
 	
 	public enum ColunaOrdenacaoImpressaoNFE {
 
@@ -402,19 +402,19 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 		this.bandGerado = bandGerado;
 	}
 
-	public String getNumeroNotaDe() {
+	public Long getNumeroNotaDe() {
 		return numeroNotaDe;
 	}
 
-	public void setNumeroNotaDe(String numeroNotaDe) {
+	public void setNumeroNotaDe(Long numeroNotaDe) {
 		this.numeroNotaDe = numeroNotaDe;
 	}
 
-	public String getNumeroNotaAte() {
+	public Long getNumeroNotaAte() {
 		return numeroNotaAte;
 	}
 
-	public void setNumeroNotaAte(String numeroNotaAte) {
+	public void setNumeroNotaAte(Long numeroNotaAte) {
 		this.numeroNotaAte = numeroNotaAte;
 	}
 	

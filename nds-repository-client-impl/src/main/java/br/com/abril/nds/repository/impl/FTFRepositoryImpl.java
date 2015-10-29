@@ -592,10 +592,10 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		
 		  sql.append(" select " )
 		   .append(" nota.id as notaId,")
-		   .append("  1  as  tipoNota,")
+		   .append("  109  as  tipoNota,")
 		   .append(" numero_documento_fiscal as numNota, ")
 		   .append("   1 as codVolume,")
-		   .append("      1 as qtdSacosPaletes ,")
+		   .append("     nota.qtd_volume_pallet as qtdSacosPaletes ,")
 		   .append("  nome_destinatario nomeDestinoEncalhe ")
 		   .append(" 	  from nota_fiscal_novo nota  where natureza_operacao_id in ")
 		   .append(" (select id from natureza_operacao  ")

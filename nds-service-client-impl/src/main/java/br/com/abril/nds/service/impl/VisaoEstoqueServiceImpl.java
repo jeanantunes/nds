@@ -229,6 +229,10 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			
 			BigInteger qtdeDiferenca = new BigInteger(dto.getQtde().toString());
 			
+			if (BigInteger.ZERO.compareTo(qtdeDiferenca) == 0) {
+				continue;
+			}
+			
 			diferenca.setProdutoEdicao(produtoEdicao);
 			diferenca.setQtde(qtdeDiferenca.abs());
 			

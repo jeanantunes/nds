@@ -1,8 +1,8 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -16,7 +16,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
+import org.apache.commons.io.IOUtils;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
 import org.slf4j.Logger;
@@ -184,11 +186,24 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	private CouchDbClient couchDbClient;
 	
+	
+	@PreDestroy
+	public void cleanUp() throws Exception {
+		if  ( this.couchDbClient != null ) {
+			LOGGER.error("shutdownd couchdbclient no cleanup");
+			this.couchDbClient.shutdown();
+		}
+	}
+	
 	@PostConstruct
 	public void initCouchDbClient() {
 		
 		String codigoDistribuidor = distribuidorService.obter().getCodigoDistribuidorDinap();
 		try {
+			if  ( this.couchDbClient != null ) {
+				LOGGER.error("shutdownd couchdbclient no initcouchdbclient");
+				this.couchDbClient.shutdown();
+			}
 			Long codigoDistribuidorNumerico = Long.parseLong(codigoDistribuidor);
 			if(codigoDistribuidorNumerico < 1) {
 				codigoDistribuidor = distribuidorService.obter().getCodigoDistribuidorFC();
@@ -1103,6 +1118,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setEnderecoDistribuidor(this.gravarEnderecoDistribuidor(distribuidor, parametrosDistribuidor.getEndereco()));
 		
 		//Recarrega os codigos do Distribuidor para acessar o CouchDB
+		
 		this.initCouchDbClient();
 		
 		this.salvarLogo(imgLogotipo, imgContentType);
@@ -1373,7 +1389,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	private void removerLogo() {
 		
 		JsonObject jsonObject = null;
-		
+		bytesLogo=null; // linpar cache
 		try {
 		
 			jsonObject = couchDbClient.find(JsonObject.class, TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name());
@@ -1386,6 +1402,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		this.couchDbClient.remove(jsonObject);
 	}
 	
+	private byte [] bytesLogo;
 	@Override
 	public InputStream getLogotipoDistribuidor() {
 		
@@ -1393,8 +1410,15 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		try {
 			LOGGER.warn("obtendo logo do distribuidor");
-			inputStream = couchDbClient.find(TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name()+ "/" + ATTACHMENT_LOGOTIPO);
-			LOGGER.warn("obtido logo do distribuidor");
+			if ( bytesLogo == null || bytesLogo.length == 0 ) {
+			    inputStream = couchDbClient.find(TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name()+ "/" + ATTACHMENT_LOGOTIPO);
+				LOGGER.warn("obtido logo do distribuidor via couch");
+				bytesLogo = IOUtils.toByteArray(inputStream);
+			} else {
+				LOGGER.warn("obtido logo do distribuidor via cach");
+				
+			}
+			inputStream = new ByteArrayInputStream(bytesLogo);
 		} catch (Exception e) {
 			try {
 			LOGGER.error("Erro obtendo logo do distribuidor.Usando no_image.jpeg",e);

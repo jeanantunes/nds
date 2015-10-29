@@ -187,6 +187,119 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		return popularMapRanking(resultList);
 	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Map<Long, RankingDTO> obterRankingCotaSomenteFaturamento(FiltroCurvaABCDTO filtro) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("  SELECT ");
+		sql.append("         consolidado.chave, ");
+		sql.append("         @posicaoRanking\\:=@posicaoRanking + 1 as ranking ");
+		sql.append("     FROM ");
+		sql.append("         (select ");
+		sql.append("             temp.cotaId as chave, ");
+		sql.append("             (temp.vendaSum * temp.PRECO_VENDA) as faturamentoCapa ");
+		sql.append("         FROM ");
+		sql.append("             (Select ");
+		sql.append("                 T.COTA_ID as cotaId, ");
+		sql.append("                 SUM(T.venda) vendaSum, ");
+		sql.append("                 T.PRECO_VENDA, ");
+		sql.append("                 T.lancID ");
+		sql.append("             FROM ");
+		sql.append("                 (   ");
+		sql.append("                 SELECT ");
+		sql.append("                     mecReparte.COTA_ID AS COTA_ID, ");
+		sql.append("                     pe.PRECO_VENDA AS PRECO_VENDA, ");
+		sql.append("                     l.ID lancID, ");
+		sql.append("                     (case                    ");
+		sql.append("                         when l.status IN ('FECHADO','RECOLHIDO','EM_RECOLHIMENTO')                        ");
+		sql.append("                             then      cast(sum(        CASE                                   ");
+		sql.append("                             WHEN tipo.OPERACAO_ESTOQUE = 'ENTRADA'                                   ");
+		sql.append("                             THEN if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0)                       ");
+		sql.append("                             ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, -mecReparte.QTDE, 0)                   ");
+		sql.append("                         END)        - (select ");
+		sql.append("                             sum(mecEncalhe.qtde)                               ");
+		sql.append("                         from ");
+		sql.append("                             lancamento lanc                               ");
+		sql.append("                         LEFT JOIN ");
+		sql.append("                             chamada_encalhe_lancamento cel                            ");
+		sql.append("                                 on cel.LANCAMENTO_ID = lanc.ID                               ");
+		sql.append("                         LEFT JOIN ");
+		sql.append("                             chamada_encalhe ce                            ");
+		sql.append("                                 on ce.id = cel.CHAMADA_ENCALHE_ID                               ");
+		sql.append("                         LEFT JOIN ");
+		sql.append("                             chamada_encalhe_cota cec                            ");
+		sql.append("                                 on cec.CHAMADA_ENCALHE_ID = ce.ID                               ");
+		sql.append("                         JOIN ");
+		sql.append("                             cota cota                            ");
+		sql.append("                                 on cota.id = cec.COTA_ID                               ");
+		sql.append("                         LEFT JOIN ");
+		sql.append("                             conferencia_encalhe confEnc                            ");
+		sql.append("                                 on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID                               ");
+		sql.append("                         LEFT JOIN ");
+		sql.append("                             movimento_estoque_cota mecEncalhe                            ");
+		sql.append("                                 on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID                   ");
+		sql.append("                         WHERE ");
+		sql.append("                             lanc.id = l.id and cota.ID = mecReparte.COTA_ID) AS UNSIGNED INT)                         ");
+		sql.append("                         else      null                     ");
+		sql.append("                     end) as venda           ");
+		sql.append("                 FROM ");
+		sql.append("                     lancamento l                 ");
+		sql.append("                 JOIN ");
+		sql.append("                     produto_edicao pe                    ");
+		sql.append("                         ON pe.id = l.produto_edicao_id                 ");
+		sql.append("                 LEFT JOIN ");
+		sql.append("                     periodo_lancamento_parcial plp                    ");
+		sql.append("                         ON plp.id = l.periodo_lancamento_parcial_id                 ");
+		sql.append("                 JOIN ");
+		sql.append("                     produto p                    ");
+		sql.append("                         ON p.id = pe.produto_id                   ");
+		sql.append("                 LEFT JOIN ");
+		sql.append("                     movimento_estoque_cota mecReparte                    ");
+		sql.append("                         on mecReparte.LANCAMENTO_ID = l.id                 ");
+		sql.append("                 LEFT JOIN ");
+		sql.append("                     tipo_movimento tipo                    ");
+		sql.append("                         ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID                 ");
+		sql.append("                 WHERE ");
+		sql.append("                     l.DATA_REC_DISTRIB BETWEEN DATE_FORMAT(:dataDe,'%Y-%m-%d') AND DATE_FORMAT(:dataAte,'%Y-%m-%d') ");
+		sql.append("                     and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE'                 ");
+		sql.append("                     and l.status in ('FECHADO','RECOLHIDO','EM_RECOLHIMENTO')            ");
+		sql.append("                 GROUP BY ");
+		sql.append("                     pe.numero_edicao, ");
+		sql.append("                     pe.id, ");
+		sql.append("                     mecReparte.cota_id, ");
+		sql.append("                     plp.numero_periodo            ");
+		sql.append("                 ORDER BY ");
+		sql.append("                     l.ID desc  ");
+		sql.append("                     )T                ");
+		sql.append("                 group by ");
+		sql.append("                     COTA_ID, lancID) temp           ");
+		sql.append("             GROUP BY ");
+		sql.append("                 cotaId           ");
+		sql.append("             ORDER BY ");
+		sql.append("                 faturamentoCapa desc, ");
+		sql.append("                 chave) consolidado, ");
+		sql.append("                 (select ");
+		sql.append("                     @posicaoRanking\\:=0) as s   ");
+		
+		SQLQuery query  = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataDe", filtro.getDataDe());
+		query.setParameter("dataAte", filtro.getDataAte());
+		
+		query.addScalar("chave", StandardBasicTypes.LONG);
+		query.addScalar("ranking", StandardBasicTypes.LONG);
+		
+		getFiltroRanking(filtro, query);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(RankingDTO.class));
+		
+		List<RankingDTO> resultList = query.list();
+		
+		return popularMapRanking(resultList);
+	}
+	
 	private Map<Long, RankingDTO> popularMapRanking(List<RankingDTO> resultList){
 		
 		Map<Long, RankingDTO> mapRanking = new HashMap<>();

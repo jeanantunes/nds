@@ -19,6 +19,16 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 	
 	private Long idItemChamadaEncalheFornecedor;
 	
+	private Long idChamadaEncalhe;
+	
+	public Long getIdChamadaEncalhe() {
+		return idChamadaEncalhe;
+	}
+
+	public void setIdChamadaEncalhe(Long idChamadaEncalhe) {
+		this.idChamadaEncalhe = idChamadaEncalhe;
+	}
+
 	private Long idChamadaEncalheFornecedor;
 	
 	private String semana;

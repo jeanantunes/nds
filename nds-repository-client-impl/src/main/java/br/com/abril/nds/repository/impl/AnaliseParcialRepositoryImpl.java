@@ -71,6 +71,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         
         sql.append("    ec.qtde_efetiva reparteEstudo, ");
         
+        sql.append("    ec.venda_media mediaVenda, ");
+        
         sql.append("    coalesce(ecg_origem.reparte,0) reparteEstudoOrigemCopia, ");
         
         sql.append("    coalesce(ec.reparte,0) reparteSugerido, ");
@@ -102,15 +104,37 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		sql.append("                                     where _ul.produto_edicao_id = _ped.id and _ul.status in (:statusLancamento)) ");
 		sql.append("                                     order by l.data_lcto_distribuidor desc limit 1) ultimoReparte, ");*/
         
-        sql.append(" (select epc.QTDE_RECEBIDA ");
-        sql.append(" from estoque_produto_cota epc ");
-        sql.append(" where (epc.cota_id = c.id) "); 
-        sql.append(" 		AND epc.PRODUTO_EDICAO_ID = (select lct.PRODUTO_EDICAO_ID from lancamento lct ");
-        sql.append("                                   join produto_edicao pe ON lct.PRODUTO_EDICAO_ID = pe.ID ");
-        sql.append("                                   join produto pd ON pe.PRODUTO_ID = pd.ID ");
-        sql.append("                                where pd.codigo = p.codigo ");
-        sql.append("                                and lct.STATUS in (:statusLancamento)");
-        sql.append("                                order by lct.DATA_LCTO_DISTRIBUIDOR desc limit 1)) ultimoReparte,");
+        sql.append(" (SELECT  ");
+        sql.append("       cast(sum(case ");
+        sql.append("                   when tipo.OPERACAO_ESTOQUE = 'ENTRADA'                    ");
+        sql.append("                     THEN if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0)                   ");
+        sql.append("                   ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, -mecReparte.QTDE, 0)               ");
+        sql.append("                 end) as unsigned int) AS reparte ");
+        sql.append("       FROM ");
+        sql.append("           lancamento l                 ");
+        sql.append("       JOIN ");
+        sql.append("           produto_edicao pe                    ");
+        sql.append("               ON pe.id = l.produto_edicao_id                 ");
+        sql.append("       LEFT JOIN ");
+        sql.append("           periodo_lancamento_parcial plp                    ");
+        sql.append("               ON plp.id = l.periodo_lancamento_parcial_id                 ");
+        sql.append("       straight_join ");
+        sql.append("           movimento_estoque_cota mecReparte                    ");
+        sql.append("               on l.id = mecReparte.LANCAMENTO_ID  ");
+        sql.append("       LEFT JOIN ");
+        sql.append("           tipo_movimento tipo ");
+        sql.append("               ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
+        sql.append("       WHERE ");
+        sql.append("           l.id = (select lct.id ");
+        sql.append("                         from lancamento lct  ");
+        sql.append("                             join produto_edicao pe ON lct.PRODUTO_EDICAO_ID = pe.ID  ");
+        sql.append("                             join produto pd ON pe.PRODUTO_ID = pd.ID  ");
+        sql.append("                           where pd.codigo = p.codigo  ");
+        sql.append("                           and lct.STATUS in (:statusLancamento) ");
+        sql.append("                           order by lct.DATA_LCTO_DISTRIBUIDOR desc  ");
+        sql.append("                           limit 1) ");
+        sql.append("           and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
+        sql.append("           and mecReparte.cota_id = c.id) ultimoReparte,  ");
         
         sql.append("     (coalesce(ec.reparte_inicial,0) <> coalesce(ec.reparte,0)) ajustado, ");
         
@@ -346,6 +370,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         ((SQLQuery) query).addScalar("nome", StandardBasicTypes.STRING);
         ((SQLQuery) query).addScalar("npdv", StandardBasicTypes.BIG_INTEGER);
         ((SQLQuery) query).addScalar("reparteEstudo", StandardBasicTypes.BIG_DECIMAL);
+        ((SQLQuery) query).addScalar("mediaVenda", StandardBasicTypes.BIG_DECIMAL);
         ((SQLQuery) query).addScalar("reparteEstudoOrigemCopia", StandardBasicTypes.BIG_DECIMAL);
         ((SQLQuery) query).addScalar("reparteSugerido", StandardBasicTypes.BIG_INTEGER);
         ((SQLQuery) query).addScalar("leg", StandardBasicTypes.STRING);
@@ -462,7 +487,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
         StringBuilder sql = new StringBuilder();
         
-        sql.append(" select pe.id produtoEdicaoId, ");
+        sql.append(" select    pe.id produtoEdicaoId, ");
         sql.append("        p.codigo codigoProduto, ");
         sql.append("        p.nome nomeProduto, ");
         sql.append("        pe.numero_edicao edicao, ");
@@ -767,6 +792,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("select cota.numero_cota numeroCota, ");
         sql.append("       coalesce(pe.nome, pe.razao_social, pe.nome_fantasia, '') nomeCota, ");
         sql.append("       ec.reparte quantidade, ");
+        sql.append("       ec.venda_media vendaMedia, ");
         sql.append("       cast(cota.situacao_cadastro as char) as situacaoCota, ");
         sql.append("       ec.classificacao motivo ");
         sql.append("  from estudo_cota_gerado ec ");
@@ -868,6 +894,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 .addScalar("numeroCota", StandardBasicTypes.INTEGER)
                 .addScalar("nomeCota", StandardBasicTypes.STRING)
                 .addScalar("quantidade", StandardBasicTypes.BIG_INTEGER)
+                .addScalar("vendaMedia", StandardBasicTypes.BIG_DECIMAL)
                 .addScalar("situacaoCota", StandardBasicTypes.STRING)
                 .addScalar("motivo", StandardBasicTypes.STRING);
 
@@ -930,7 +957,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" SELECT  ");
+		sql.append(" SELECT  straight_join ");
 		sql.append("	   p.CODIGO as codigoProduto, ");
 		sql.append("       p.NOME_COMERCIAL as nomeProduto, ");
 		sql.append("       pe.NUMERO_EDICAO as edicao, ");

@@ -82,7 +82,7 @@ public class RetornoNFEController extends BaseController {
 		}
 		
 		if (listaNotas == null || listaNotas.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrado nenhum retorno de nota");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrado nenhum item para o retorno de nota");
 		}
 			
 		List<RetornoNFEDTO> listaNotasRetorno = this.notaFiscalService.processarRetornoNotaFiscal(this.gerarParseListaNotasRetorno(listaNotas, tipoRetorno));

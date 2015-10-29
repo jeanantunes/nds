@@ -72,6 +72,12 @@ public class FornecedorExemplaresDTO implements Serializable {
 	
 	private boolean inativo;
 
+	private String codigo;
+	
+	private String nome;
+	
+	private Long edicao;
+	
 	/**
 	 * @return the idFornecedor
 	 */
@@ -174,5 +180,29 @@ public class FornecedorExemplaresDTO implements Serializable {
 
 	public void setNumeroFornecedor(Long numeroFornecedor) {
 		this.numeroFornecedor = numeroFornecedor;
+	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public Long getEdicao() {
+		return edicao;
+	}
+
+	public void setEdicao(Long edicao) {
+		this.edicao = edicao;
 	}
 }

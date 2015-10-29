@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -179,9 +180,9 @@ public class PainelMonitorNFEController extends BaseController {
 		
 		nfesParaImpressaoDanfes.add(nfeParaImpressao);
 		
-		session.setAttribute(NFES_PARA_IMPRESSAO_DANFES, nfesParaImpressaoDanfes);
+		request.getSession().setAttribute(NFES_PARA_IMPRESSAO_DANFES, nfesParaImpressaoDanfes);
 		
-		result.use(Results.json()).from("").serialize();
+		result.use(Results.json()).from("OK").serialize();
 		
 	}
 	
@@ -219,7 +220,7 @@ public class PainelMonitorNFEController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item selecionado");
 		}
 		
-		session.setAttribute(NFES_PARA_IMPRESSAO_DANFES, listaNfeParaImpressao);
+		request.getSession().setAttribute(NFES_PARA_IMPRESSAO_DANFES, listaNfeParaImpressao);
 		
 		result.use(Results.json()).from("").serialize();
 		
@@ -254,19 +255,16 @@ public class PainelMonitorNFEController extends BaseController {
 		
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Rules(Permissao.ROLE_NFE_PAINEL_MONITOR_NFE_ALTERACAO)
 	public void imprimirDanfes(final boolean indEmissaoDepec) {
 		
-		List<NfeVO> listaNfesParaImpressaoDanfe = (List<NfeVO>) session.getAttribute(NFES_PARA_IMPRESSAO_DANFES);
-		
-		session.setAttribute(NFES_PARA_IMPRESSAO_DANFES, null);
+		List<NfeVO> listaNfesParaImpressaoDanfe = (List<NfeVO>) getListaGridNfeFromSession();
 		
 		byte[] danfeBytes = monitorNFEService.obterDanfes(listaNfesParaImpressaoDanfe, indEmissaoDepec);
 		
 		try {
 			
-			escreverArquivoParaResponse(danfeBytes, "danfes");
+			escreverArquivoParaResponse(danfeBytes, "danfe-painel-processamento");
 			
 		} catch(IOException e) {
 			
@@ -281,7 +279,7 @@ public class PainelMonitorNFEController extends BaseController {
 		
 		this.httpResponse.setContentType("application/pdf");
 		
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo +".pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+ nomeArquivo + "_"+ new Date() +".pdf");
 
 		OutputStream output = this.httpResponse.getOutputStream();
 		
@@ -405,5 +403,13 @@ public class PainelMonitorNFEController extends BaseController {
 
 	public void setListaNfeToSession(List<CellModelKeyValue<NfeVO>> listaNfe) {
 		request.getSession().setAttribute(LISTA_NFE, listaNfe);
+	}
+	
+	public List<NfeVO> getListaGridNfeFromSession() {
+		return (List<NfeVO>) request.getSession().getAttribute(NFES_PARA_IMPRESSAO_DANFES);
+	}
+
+	public void setListaGridNfeToSession(List<NfeVO> listaNfe) {
+		request.getSession().setAttribute(NFES_PARA_IMPRESSAO_DANFES, listaNfe);
 	}
 }

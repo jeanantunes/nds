@@ -170,19 +170,22 @@ $(function() {
 			</td>
 		</tr>
 		<tr>
+			
+			<td>Intervalo Nota:</td>
 			<td>
-				Box:
+				<input type="text" name="painelNfe-notaDe" id="painelNfe-notaDe" style="width: 60px;" /> &nbsp;Até&nbsp; 
+				<input type="text" name="painelNfe-notaAte" id="painelNfe-notaAte" style="width: 60px;" />
 			</td>
-			<td>
-				<input type="text" id="box" style="width: 80px;" />
-			</td>
+			
 			<td width="85">
 				S&eacute;rie:
 			</td>
+			
 			<td>	
 				<input type="text" id="serieNfe" style="width: 100px;" />
 			</td>
-			<td colspan="3">
+			
+			<td>
 				<span class="bt_pesquisar">
 					<a href="javascript:;" onclick="PainelMonitorNFE.pesquisar();"><b> Pesquisar </b></a>
 				</span>

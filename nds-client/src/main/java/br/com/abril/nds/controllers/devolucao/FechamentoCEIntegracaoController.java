@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.devolucao;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,12 @@ import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO.ColunaOrdenacaoFechamentoCEIntegracao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal.DistribuidorGrupoNotaFiscal;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.FornecedorService;
@@ -122,6 +128,23 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		validarAnoSemana(filtro.getSemana());
 		
+		// ver se pode reabrir ce = paramentro NOTA_FISCAL_DEVOLUCAO_AO_FORNECEDOR tem que estar desobriga emissao 
+		// marcado para poder reabrir ce 
+		Distribuidor distribuidor = distribuidorService.obterParaNFe();
+		boolean permiteReabertura=false;
+		if(distribuidor.getTiposNotaFiscalDistribuidor() != null && !distribuidor.getTiposNotaFiscalDistribuidor().isEmpty() ) {
+			for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+				if ( dtnf.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_DEVOLUCAO_AO_FORNECEDOR)) {
+					if ( dtnf.getTipoEmissao() != null &&  dtnf.getTipoEmissao().getTipoEmissao() != null && dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO))
+					permiteReabertura=true;
+				}
+			}
+		}
+		if ( !permiteReabertura ) {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING,"Reabertura não Permitida pois já foram emitidas notas fiscais."),"result").recursive().serialize();
+			return;
+		}
+		
 		String mensagemReaberturaNaoRealizada = fechamentoCEIntegracaoService.reabrirCeIntegracao(filtro); 
 		
 		if (mensagemReaberturaNaoRealizada!= null){
@@ -136,9 +159,10 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	@Post
 	@Path("/pesquisaPrincipal")
-	public void pesquisaPrincipal(String semana, Long idFornecedor, String comboCEIntegracao, String sortorder, String sortname, int page, int rp){
+	public void pesquisaPrincipal(String semana, Long idFornecedor, String comboCEIntegracao,String idChamadaEncalhe, String sortorder, String sortname, int page, int rp){
 		
 		validarAnoSemana(semana);
+		
 		
 		FiltroFechamentoCEIntegracaoDTO filtroCE = new FiltroFechamentoCEIntegracaoDTO();
 		filtroCE.setSemana(semana);
@@ -148,6 +172,9 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		filtroCE.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
 		filtroCE.setOrdenacaoColuna(Util.getEnumByStringValue(ColunaOrdenacaoFechamentoCEIntegracao.values(),sortname));
+		
+		if ( idChamadaEncalhe != null && !"-1".equals(idChamadaEncalhe))
+		filtroCE.setIdChamadaEncalhe(Long.parseLong(idChamadaEncalhe));
 		
 		this.tratarFiltro(filtroCE);
 		
@@ -203,7 +230,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	public void fecharCE(List<ItemFechamentoCEIntegracaoDTO> itens){
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
-		
+		fechamentoCEIntegracaoService.salvarCE(itens);
 		if(filtro.getComboCeIntegracao().equals("COM")){ 
 			fechamentoCEIntegracaoService.fecharCE(filtro, this.obterMapItensCE(itens));
 		} else {
@@ -355,6 +382,29 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		result.use(Results.json()).withoutRoot().from(fechamentoCEIntegracao).recursive().serialize();
 	}
 	
+	
+	  @Get
+	    @Path("/obterCESemana")
+	    public void obterCESemana(final String semana) {
+		  if ( semana == null ) return;
+		  FiltroFechamentoCEIntegracaoDTO filtro = new FiltroFechamentoCEIntegracaoDTO();
+		  filtro.setSemana(semana);
+		  	List<ItemDTO<Long, String>> resultList = new ArrayList<ItemDTO<Long, String>>();
+		    resultList.add(new ItemDTO(-1,"Selecione"));
+	
+		  List<ChamadaEncalheFornecedor> listaChamadaEncalheFornecedor = 
+				  fechamentoCEIntegracaoService.obterChamadasEncalheFornecedorCE(filtro);
+		    if (listaChamadaEncalheFornecedor != null && listaChamadaEncalheFornecedor.size() > 0 ) {
+		  
+		    for(ChamadaEncalheFornecedor cef:listaChamadaEncalheFornecedor )
+		    	resultList.add(new ItemDTO(cef.getNumeroChamadaEncalhe(),cef.getNumeroChamadaEncalhe().toString()));
+		  
+		    }
+		   // else
+		   // 	throw new ValidacaoException(TipoMensagem.WARNING, "Nao encontrado chamada encalhe para esta semana.");
+		    result.use(Results.json()).from(resultList, "result").recursive().serialize();
+	    }
+	
 	@Post
 	@Path("/salvarCE")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
@@ -432,6 +482,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	public void pesquisarPerdaGanho(String semana, 
 									Long idFornecedor,
 									String comboCEIntegracao,
+									String idChamadaEncalhe,
 									String sortorder, 
 									String sortname, 
 									int page, 
@@ -444,6 +495,8 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		filtroCE.setSemana(semana);
 		filtroCE.setIdFornecedor(idFornecedor);
 		filtroCE.setComboCeIntegracao(comboCEIntegracao);
+		if ( idChamadaEncalhe != null && !"-1".equals(idChamadaEncalhe))
+			filtroCE.setIdChamadaEncalhe(Long.parseLong(idChamadaEncalhe));
 		
 		filtroCE.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
@@ -461,11 +514,13 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		List<ItemFechamentoCEIntegracaoDTO> itensCE = PaginacaoUtil.paginarEmMemoria(fechamentoCEIntegracao.getItensFechamentoCE(),filtroCE.getPaginacao());
 		
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(itensCE));
-		
-		tableModel.setPage(filtroCE.getPaginacao().getPaginaAtual());
-		
-		tableModel.setTotal(fechamentoCEIntegracao.getQntItensCE());
+		if ( itensCE != null && itensCE.size() > 0 ) {
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(itensCE));
+			
+			tableModel.setPage(filtroCE.getPaginacao().getPaginaAtual());
+			
+			tableModel.setTotal(fechamentoCEIntegracao.getQntItensCE());
+		}
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		

@@ -155,8 +155,9 @@
 							<br clear="all" />
 						</c:forEach>
 					</div></td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
+				<td>Intervalo Nota:</td>
+				<td><input type="text" name="impressaoNfe-filtro-notaDe" id="impressaoNfe-filtro-notaDe" style="width: 60px;" /> &nbsp;Até&nbsp; 
+					<input type="text" name="impressaoNfe-filtro-notaAte" id="impressaoNfe-filtro-notaAte" style="width: 60px;" /></td>
 				<td>&nbsp;</td>
 				<td>
 					<span class="bt_pesquisar"> 

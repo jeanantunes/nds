@@ -1,7 +1,7 @@
 package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -143,6 +143,10 @@ public class NotaFiscalInformacoes implements Serializable {
 	@XmlTransient
 	@Column(name = "QTD_VOLUME_PALLET", nullable = false)
 	private Long qtdVolumePallet;
+	
+	@XmlTransient
+	@Column(name = "PESO_BRUTO_LIQUIDO", nullable = false)
+	private BigDecimal pesoBrutoLiquido;
 	
 	/**
 	 * Construtor padrão.
@@ -358,5 +362,13 @@ public class NotaFiscalInformacoes implements Serializable {
 
 	public void setqtdVolumePallet(Long qtdVolumePallet) {
 		this.qtdVolumePallet = qtdVolumePallet;
+	}
+
+	public BigDecimal getPesoBrutoLiquido() {
+		return pesoBrutoLiquido;
+	}
+
+	public void setPesoBrutoLiquido(BigDecimal pesoBrutoLiquido) {
+		this.pesoBrutoLiquido = pesoBrutoLiquido;
 	}
 }

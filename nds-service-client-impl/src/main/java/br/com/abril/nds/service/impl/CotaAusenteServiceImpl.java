@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
+import org.apache.tools.ant.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -464,7 +465,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 				|| movimentosEstoqueCota.isEmpty()) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.WARNING, "Cota '" + cota.getNumeroCota() + "' não possui reparte na data.");
+				TipoMensagem.WARNING, "Cota '" + cota.getNumeroCota() + "' não possui reparte na data de lancamento "+DateUtils.format(data, "dd/MM/yyyy"));
 		}
 	}
 	

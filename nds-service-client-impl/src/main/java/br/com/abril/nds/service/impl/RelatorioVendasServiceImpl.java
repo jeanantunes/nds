@@ -21,17 +21,15 @@ import br.com.abril.nds.dto.RegistroRankingSegmentoDTO;
 import br.com.abril.nds.dto.TotalizadorRankingSegmentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO.TipoConsultaCurvaABC;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroRankingSegmentoDTO;
-import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO.TipoConsultaCurvaABC;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.RankingRepository;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
 import br.com.abril.nds.repository.RelatorioVendasRepository.TipoPesquisaRanking;
@@ -46,12 +44,6 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 	
 	@Autowired
 	private RankingRepository rankingRepository;
-	
-	@Autowired
-	private ProdutoRepository produtoRepository;
-
-	@Autowired
-	private CotaRepository cotaRepository;
 	
 	@Autowired
 	private PdvRepository pdvRepository;
@@ -148,8 +140,7 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 			filtroDistribuidor.setDataDe(filtroCurvaABCDistribuidorDTO.getDataDe());
 			filtroDistribuidor.setDataAte(filtroCurvaABCDistribuidorDTO.getDataAte());
 		
-			Map<Long, RankingDTO> mapRankingCota =
-                    this.rankingRepository.obterRankingCota(filtroDistribuidor);
+			Map<Long, RankingDTO> mapRankingCota = this.rankingRepository.obterRankingCotaSomenteFaturamento(filtroDistribuidor);
 			
 			for(RegistroCurvaABCDistribuidorVO dto : lista){
 				
@@ -166,8 +157,6 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 				}
 				
 			}
-		
-		
 		}
 	
 		carregarParticipacaoCurvaABCDistribuidor(lista, participacaoTotal);
@@ -348,11 +337,12 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 				
 				registro.setPorcentagemVenda(obterPercentualVendaExemplares(registro.getVendaExemplares(), registro.getReparte()));
 				
-				participacaoRegistro =
+				if(registro.getParticipacao() != null) {
+			    	participacaoRegistro =
 						registro.getParticipacao().multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN);
-				
-				registro.setParticipacao(participacaoRegistro);
-				
+				  
+				}
+				 registro.setParticipacao(participacaoRegistro);
 				if(registro.getParticipacaoAcumulada()!=null) {
 					BigDecimal participacaoAcumulada = registro.getParticipacaoAcumulada();
 					registro.setParticipacaoAcumulada(participacaoAcumulada.multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN));

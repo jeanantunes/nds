@@ -15,6 +15,38 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 
 	},
 	
+	
+	buscarCESemana : function(){
+		
+		var semana = $("#semana", fechamentoCEIntegracaoController.workspace).val();
+		
+		if (  semana.length > 0 ) {
+			
+		var data = [
+	   				{
+	   					name: 'semana', value:semana
+	   				}
+	   			];
+				
+				$.getJSON(
+						contextPath + '/devolucao/fechamentoCEIntegracao/obterCESemana', 
+					data,
+					function(result) {	
+							
+						if (result) {	
+							
+							var op = "";
+							$.each(result, function(index,row){
+								op+="<option value="+row.key.$+">"+row.value.$+"</option>";
+							});
+							$("#comboCE-fechamentoCe-integracao").empty().append(op);
+							
+							
+						}
+					}
+				);
+		}
+	},
 	verificarDataFechamentoCE : function(fechada) {
 			
 			$("#btnReabertura", fechamentoCEIntegracaoController.workspace).unbind("click");
@@ -128,8 +160,9 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		var itens = [];
 		
 		$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
-			
-			if(itemCEIntegracao.alteracao) {
+			itemCEIntegracao.alteracao=true;
+			if(itemCEIntegracao.alteracao) 
+			{
 
 				itens.push({name:"itens[" + index + "].idItemCeIntegracao",value:itemCEIntegracao.id});
 				itens.push({name:"itens[" + index + "].encalhe",value:itemCEIntegracao.encalhe});
@@ -220,6 +253,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 						if (result) {	
 							
 							$("#semana", fechamentoCEIntegracaoController.workspace).val(result.int);
+							fechamentoCEIntegracaoController.buscarCESemana();
 						}
 					}
 				);
@@ -279,31 +313,31 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			}, {
 				display : 'Qtde Dev Inf',
 				name : 'qtdeDevSemCE',
-				width : 80,
+				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Reparte',
 				name : 'reparte',
-				width : 80,
+				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Estoque',
 				name : 'estoque',
-				width : 80,
+				width : 100,
 				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Encalhe',
 				name : 'encalhe',
-				width : 80,
+				width : 100,
 				sortable : false,
 				align : 'center'
 			},  {
 				display : 'Diferenca',
 				name : 'diferenca',
-				width : 80,
+				width : 100,
 				sortable : false,
 				align : 'center'
 			},  {
@@ -315,13 +349,13 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			},  {
 				display : 'Preço Capa R$',
 				name : 'precoCapaFormatado',
-				width : 80,
+				width : 100,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Valor Venda R$',
 				name : 'valorVendaFormatado',
-				width : 80,
+				width : 100,
 				sortable : false,
 				align : 'right'
 			}],
@@ -393,7 +427,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			}, {
 				display : 'Diferença',
 				name : 'diferenca',
-				width : 60,
+				width : 100,
 				sortable : false,
 				align : 'center'
 			},{
@@ -431,7 +465,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		var diferenca = $("#diferenca" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		var estoque = $("#estoque" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		
-		var venda = reparte - encalhe;
+		var venda = eval(reparte) - ( eval(encalhe) + eval(qtdeDevSemCE));
+		
 		var valorVenda = venda * priceToFloat(precoCapa);
 		var valorVendaFormatado = floatToPrice(valorVenda);
 		
@@ -553,7 +588,9 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			
 			$("#diferenca" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(valorDiferenca);
 			
-			$("#venda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(reparte - encalhe);
+			var qtdeDevSemCE = $("#qtdeDevSemCE" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+			
+			$("#venda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(eval(reparte) - ( eval(encalhe) + eval(qtdeDevSemCE)));
 			
 		} else {
 			
@@ -736,7 +773,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							'</span>';
 						
 						colunaVenda =
-							' <input isEdicao="true" type="text" name="inputVenda"' +
+							' <input style="width:45px;" isEdicao="true" type="text" name="inputVenda"' +
 							' id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
 							' value="' + row.cell.venda + '" size="5px"' +
 							' tabindex="' + (++index) +'"' +
@@ -756,7 +793,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							'</span>';
 						
 						colunaEncalhe =
-							' <input isEdicao="true" type="text" name="inputEncalhe" ' +
+							' <input style="width:45px;" isEdicao="true" type="text" name="inputEncalhe" ' +
 							' id="inputEncalhe' + row.cell.idItemCeIntegracao + '" ' +
 							' value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
 							' tabindex="' + (++index) +'"' +
@@ -765,7 +802,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							row.cell.idItemCeIntegracao + ', this)"/>';
 							
 							colunaVenda =
-								' <input isEdicao="true" type="text" name="inputVenda"' +
+								' <input style="width:45px;" isEdicao="true" type="text" name="inputVenda"' +
 								' id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
 								' value="' + row.cell.venda + '" size="5px"' +
 								' tabindex="' + (++index) +'"' +
@@ -785,7 +822,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							'</span>';
 						
 						colunaEncalhe =
-							' <input isEdicao="true" type="text" name="inputEncalhe" ' +
+							' <input style="width:45px;" isEdicao="true" type="text" name="inputEncalhe" ' +
 							' id="inputEncalhe' + row.cell.idItemCeIntegracao + '" ' +
 							' value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
 							' tabindex="' + (++index) +'"' +
@@ -936,7 +973,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							'</span>';
 						
 						colunaVenda =
-							' <input isEdicao="true" type="text" name="inputVenda"' +
+							' <input style="width:45px;" isEdicao="true" type="text" name="inputVenda"' +
 							' id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
 							' value="' + row.cell.venda + '" size="5px"' +
 							' tabindex="' + (++index) +'"' +
@@ -951,7 +988,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							'</span>';
 						
 						colunaEncalhe =
-							' <input isEdicao="true" type="text" name="inputEncalhe" ' +
+							' <input style="width:45px;" isEdicao="true" type="text" name="inputEncalhe" ' +
 							' id="inputEncalhe' + row.cell.idItemCeIntegracao + '" ' +
 							' value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
 							' tabindex="' + (++index) +'"' +
@@ -960,7 +997,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							row.cell.idItemCeIntegracao + ', this)"/>';
 							
 							colunaVenda =
-								' <input isEdicao="true" type="text" name="inputVenda"' +
+								' <input style="width:45px;" isEdicao="true" type="text" name="inputVenda"' +
 								' id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
 								' value="' + row.cell.venda + '" size="5px"' +
 								' tabindex="' + (++index) +'"' +
@@ -990,7 +1027,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 								'</span>';
 						
 							colunaEncalhe =
-								' <input isEdicao="true" type="text" name="inputEncalhe" ' +
+								' <input style="width:45px;"  isEdicao="true" type="text" name="inputEncalhe" ' +
 								' id="inputEncalhe' + row.cell.idItemCeIntegracao + '" ' +
 								' value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
 								' tabindex="' + (++index) +'"' +
@@ -999,7 +1036,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 								row.cell.idItemCeIntegracao + ', this)"/>';
 							
 							colunaVenda =
-								' <input isEdicao="true" type="text" name="inputVenda"' +
+								' <input style="width:45px;" isEdicao="true" type="text" name="inputVenda"' +
 								' id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
 								' value="' + row.cell.encalhe + '" size="5px"' +
 								' tabindex="' + (++index) +'"' +
@@ -1238,6 +1275,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 		var semana = $("#semana", fechamentoCEIntegracaoController.workspace).val();
 		
+		var idChamadaEncalhe =  $("#comboCE-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val();
+		
 		if($("#combo-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val() == "-1") {
 			exibirMensagem('WARNING', ['Favor selecionar um item na combo!']);
 			return;
@@ -1252,7 +1291,9 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				params: [
 				         {name:'idFornecedor' , value:idFornecedor},
 				         {name:'semana' , value:semana},
-				         {name:'comboCEIntegracao' , value:comboCEIntegracao}
+				         {name:'comboCEIntegracao' , value:comboCEIntegracao},
+				         {name:'idChamadaEncalhe' , value:idChamadaEncalhe}
+				         
 				        ]		         
 			});
 			$($(".fechamentoSemCeGrid", fechamentoCEIntegracaoController.workspace).parent().parent()).hide();
@@ -1266,7 +1307,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				params: [
 				         {name:'idFornecedor' , value:idFornecedor},
 				         {name:'semana' , value:semana},
-				         {name:'comboCEIntegracao' , value:comboCEIntegracao}
+				         {name:'comboCEIntegracao' , value:comboCEIntegracao},
+				         {name:'idChamadaEncalhe' , value:idChamadaEncalhe}
 				        ]		         
 			});
 			$($(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).parent().parent()).hide();
@@ -1295,6 +1337,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 		var comboCEIntegracao = $("#combo-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val();
 		
+		var idChamadaEncalhe =  $("#comboCE-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val();
+		
 		var parametros = fechamentoCEIntegracaoController.getItensAlteradosCE();
 		
 		parametros.push({name:'semana' , value:semana});
@@ -1302,6 +1346,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		parametros.push({name:'idFornecedor' , value:idFornecedor});
 		
 		parametros.push({name:'comboCEIntegracao' , value:comboCEIntegracao});
+		
+		parametros.push({name:'idChamadaEncalhe' , value:idChamadaEncalhe});
 		
 		$(".perdaGanhoGrid", fechamentoCEIntegracaoController.workspace).flexOptions({
 			url: contextPath + '/devolucao/fechamentoCEIntegracao/pesquisarPerdaGanho',
@@ -1462,25 +1508,25 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			},  {
 				display : 'Reparte',
 				name : 'reparte',
-				width : 60,
+				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Estoque',
 				name : 'estoque',
-				width : 60,
+				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Encalhe',
 				name : 'encalhe',
-				width : 60,
+				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Diferenca',
 				name : 'diferenca',
-				width : 60,
+				width : 100,
 				sortable : true,
 				align : 'center'
 			}],

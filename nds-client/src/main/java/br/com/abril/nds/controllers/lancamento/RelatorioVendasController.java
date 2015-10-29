@@ -40,13 +40,11 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EditorService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RelatorioVendasService;
 import br.com.abril.nds.service.TipoSegmentoProdutoService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
@@ -91,12 +89,6 @@ public class RelatorioVendasController extends BaseController {
 	@Autowired
 	private RelatorioVendasService relatorioVendasService;
 
-	@Autowired
-	private DistribuidorService distribuidorService;
-
-	@Autowired
-	private CotaService cotaService;
-	
 	@Autowired
 	private EditorService editorService;
 	
@@ -869,9 +861,11 @@ public class RelatorioVendasController extends BaseController {
 
 		for (RegistroCurvaABCCotaDTO registroCurvaABCDistribuidor : listaCurvaABCCota) {
 
+		if ( registroCurvaABCDistribuidor.getVendaExemplares() != null )
 			totalVendaExemplares =
 				totalVendaExemplares.add(registroCurvaABCDistribuidor.getVendaExemplares());
 			
+		if ( registroCurvaABCDistribuidor.getFaturamento() != null )
 			totalFaturamento =
 				totalFaturamento.add(registroCurvaABCDistribuidor.getFaturamento());
 		}

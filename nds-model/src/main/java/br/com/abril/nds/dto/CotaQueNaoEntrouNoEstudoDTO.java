@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 public class CotaQueNaoEntrouNoEstudoDTO implements Serializable {
@@ -12,6 +13,7 @@ public class CotaQueNaoEntrouNoEstudoDTO implements Serializable {
 	private String siglaMotivo;
 	private BigInteger quantidade;
 	private String situacaoCota;
+	private BigDecimal vendaMedia;
 	
 	public Integer getNumeroCota() {
 	    return numeroCota;
@@ -49,4 +51,11 @@ public class CotaQueNaoEntrouNoEstudoDTO implements Serializable {
 	public void setSituacaoCota(String situacaoCota) {
 		this.situacaoCota = situacaoCota;
 	}
+	public BigDecimal getVendaMedia() {
+		return vendaMedia;
+	}
+	public void setVendaMedia(BigDecimal vendaMedia) {
+		this.vendaMedia = vendaMedia;
+	}
+	
 }

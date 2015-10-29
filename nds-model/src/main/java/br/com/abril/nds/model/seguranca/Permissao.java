@@ -52,6 +52,10 @@ public enum Permissao {
 	ROLE_CADASTRO_BOX_ALTERACAO("Box", 												 		   				Permissao.ROLE_CADASTRO, true),
 	ROLE_CADASTRO_BOX("Box", 												 						  	   	Permissao.ROLE_CADASTRO, ROLE_CADASTRO_BOX_ALTERACAO, true, null),
 	
+	ROLE_CADASTRO_DEPARA_ALTERACAO("Depara", 												 		   		Permissao.ROLE_CADASTRO, true),
+	ROLE_CADASTRO_DEPARA("Depara", 												 						  	Permissao.ROLE_CADASTRO, ROLE_CADASTRO_DEPARA_ALTERACAO, true, null),
+	
+	
 	ROLE_CADASTRO_BANCO_ALTERACAO("Banco", 											 		   				Permissao.ROLE_CADASTRO, true),
 	ROLE_CADASTRO_BANCO("Banco", 											 						  	   	Permissao.ROLE_CADASTRO, ROLE_CADASTRO_BANCO_ALTERACAO, true, null),
 	
@@ -373,6 +377,9 @@ public enum Permissao {
 	
 	ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO("Parâmetros Distribuidor",	 						Permissao.ROLE_ADMINISTRACAO, true),
 	ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR("Parâmetros Distribuidor",	 						 	   	Permissao.ROLE_ADMINISTRACAO, ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO, true, null),
+	
+	ROLE_ADMINISTRACAO_REPOSITORIO_ALTERACAO("Transferência de Arquivos",	 								Permissao.ROLE_ADMINISTRACAO, true),
+	ROLE_ADMINISTRACAO_REPOSITORIO("Transferência de Arquivos",	 						 	   				Permissao.ROLE_ADMINISTRACAO, ROLE_ADMINISTRACAO_REPOSITORIO_ALTERACAO, true, null),
 	
 	ROLE_ADMINISTRACAO_HELP_ALTERACAO("Help",									          					Permissao.ROLE_ADMINISTRACAO, true),
 	ROLE_ADMINISTRACAO_HELP("Help",									          					 		   	Permissao.ROLE_ADMINISTRACAO, ROLE_ADMINISTRACAO_HELP_ALTERACAO, false, null),

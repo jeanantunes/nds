@@ -9,15 +9,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import br.com.abril.nds.dto.DeparaDTO;
 
+
+
+
+import br.com.abril.nds.dto.DeparaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Depara;
-
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.repository.DeparaRepository;
-
 import br.com.abril.nds.service.DeparaService;
+import br.com.abril.nds.service.exception.RelationshipRestrictionException;
+import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -72,7 +77,45 @@ public class DeparaServiceImpl implements DeparaService  {
 		 return deparaRepository.obterBoxDinap(boxfc);
 	}
 	
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Depara> busca(String fc, String dinap, String orderBy, Ordenacao ordenacao, Integer initialResult, Integer maxResults) {
+		return deparaRepository.busca(fc, dinap, orderBy, ordenacao, initialResult, maxResults);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Long quantidade(String fc, String dinap) {
+		return deparaRepository.quantidade(fc, dinap);
+	}
 
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Depara buscarPorId(Long id) {
+		return deparaRepository.buscarPorId(id);
+	}
 
+	@Override
+	@Transactional
+	public Depara merge(Depara entity) throws UniqueConstraintViolationException, RelationshipRestrictionException {
+		
+		if (entity.getFc() == null || entity.getDinap() == null ) {
+			throw new RelationshipRestrictionException(
+						"Informar codigo FC e codigo DINAP.");
+			
+		}
+		
+		if (entity.getId() == null &&  deparaRepository.hasFc(entity.getFc())) {
+			throw new RelationshipRestrictionException(
+						"Ja existe este codigo FC cadastrado.");
+			
+		}
+		
+		
+		return deparaRepository.merge(entity);
+	}
+	
 	
 }

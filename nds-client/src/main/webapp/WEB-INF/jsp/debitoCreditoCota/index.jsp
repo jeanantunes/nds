@@ -234,7 +234,7 @@
 		    <td colspan="4">
 			    <select name="filtroDebitoCredito.idTipoMovimento" id="idTipoMovimento" style="width:250px;">
 				  <option selected="selected"></option>
-				  <c:forEach items="${tiposMovimentoFinanceiro}" var="tipoMovimento">
+				  <c:forEach items="${tiposMovimentoFinanceiroMain}" var="tipoMovimento">
 				  	<option value="${tipoMovimento.id}">${tipoMovimento.descricao}</option>
 				  </c:forEach>
 				</select>
