@@ -297,7 +297,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					if (informacaoEletronica.getChaveAcesso().equals(dadosRetornoNFE.getChaveAcesso())) {
 
 						if (StatusProcessamento.EM_PROCESSAMENTO.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamento())) {
-							if (StatusRetornado.AUTORIZADO.equals(dadosRetornoNFE.getStatus()) || StatusRetornado.USO_DENEGADO.equals(dadosRetornoNFE.getStatus())) {
+							if (StatusRetornado.AUTORIZADO.equals(dadosRetornoNFE.getStatus()) 
+									|| StatusRetornado.USO_DENEGADO.equals(dadosRetornoNFE.getStatus())
+									|| StatusRetornado.CANCELAMENTO_HOMOLOGADO.equals(dadosRetornoNFE.getStatus())) {
 								listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
 							}
 
@@ -334,6 +336,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		}
 
 		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarNotaFiscalChaveAcesso(dadosRetornoNFE.getChaveAcesso());
+		
 		if(notaFiscal != null && notaFiscal.getNotaFiscalInformacoes() != null && notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal() != null) {
 			
 			for(DetalheNotaFiscal detNF : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
@@ -348,12 +351,13 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					if(origemItem.getOrigem().equals(OrigemItem.MOVIMENTO_ESTOQUE)) {
 						
 						MovimentoEstoque me = ((OrigemItemNotaFiscalMovimentoEstoque) origemItem).getMovimentoEstoque();
-						me.setNotaFiscalEmitida(false);
+						
 					}
 				}
 			}
 		}
 		
+		this.movimentoEstoqueService.devolucaoRecolhimentoNotaCancelada(notaFiscal);
 		// this.gerarArquivoSolicitacaoCancelamento(notaFiscal);
 
 	}

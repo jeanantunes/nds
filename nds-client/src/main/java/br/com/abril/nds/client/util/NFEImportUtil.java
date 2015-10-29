@@ -284,6 +284,7 @@ public abstract class NFEImportUtil {
     		retornoNFEDTO.setTpEvento(evento.getInfEvento().getTpEvento());
 
     		StatusRetornado status = StatusRetornado.AUTORIZADO;
+    		
     		switch (evento.getInfEvento().getTpEvento()) {
 			case "110111":
 				
