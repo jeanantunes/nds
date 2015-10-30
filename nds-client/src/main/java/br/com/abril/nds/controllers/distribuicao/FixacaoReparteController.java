@@ -659,21 +659,25 @@ public class FixacaoReparteController extends BaseController {
 				if(fixacaoReparteDTO.getQtdeEdicoes() != null ){
 					if(fixacaoReparteDTO.getQtdeEdicoes() > MAX_EDICOES) {
                         return "O numero de edições fixadas não pode ser maior que 6";
-					} else if(fixacaoReparteDTO.getQtdeExemplares() == null || fixacaoReparteDTO.getQtdeExemplares() == 0) {
-                        return "Quantidade de exemplares não pode ser vazia ou 0.";
+					} 
+					if(fixacaoReparteDTO.getQtdeEdicoes() <= 0) {
+                        return "O numero de edições fixadas não pode ser menor/igual a 0.";
+					} 
+					if(fixacaoReparteDTO.getQtdeExemplares() == null || fixacaoReparteDTO.getQtdeExemplares() <= 0) {
+                        return "Quantidade de exemplares não pode ser vazia ou menor/igual a 0.";
 					}
 				}
 			} else {
-				if(fixacaoReparteDTO.getEdicaoInicial() == null || fixacaoReparteDTO.getEdicaoInicial() == 0) {
+				if(fixacaoReparteDTO.getEdicaoInicial() == null || fixacaoReparteDTO.getEdicaoInicial() <= 0) {
                     return "Edição inicial não pode ser vazia ou 0.";
-				} else if( fixacaoReparteDTO.getEdicaoFinal() == null ||  fixacaoReparteDTO.getEdicaoFinal() == 0){
+				} else if( fixacaoReparteDTO.getEdicaoFinal() == null ||  fixacaoReparteDTO.getEdicaoFinal() <= 0){
                     return "Edição final não pode ser vazia ou 0.";
 				} else if( fixacaoReparteDTO.getEdicaoFinal() < fixacaoReparteDTO.getEdicaoInicial()) {
                     return "Edição final não pode ser inferior a inicial.";
 				} else if(fixacaoReparteDTO.getEdicaoFinal() - fixacaoReparteDTO.getEdicaoInicial() > MAX_EDICOES) {
                     return "O intervalo não deve ultrapassar 6 edições!";
-				} else if(fixacaoReparteDTO.getQtdeExemplares() == null || fixacaoReparteDTO.getQtdeExemplares() == 0) {
-                    return "Quantidade de exemplares não pode ser vazia ou 0.";
+				} else if(fixacaoReparteDTO.getQtdeExemplares() == null || fixacaoReparteDTO.getQtdeExemplares() <= 0) {
+                    return "Quantidade de exemplares não pode ser vazia ou menor/igual a 0.";
 				}
 			}
 			
