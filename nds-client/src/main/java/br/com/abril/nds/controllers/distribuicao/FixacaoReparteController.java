@@ -663,8 +663,8 @@ public class FixacaoReparteController extends BaseController {
 					if(fixacaoReparteDTO.getQtdeEdicoes() <= 0) {
                         return "O numero de edições fixadas não pode ser menor/igual a 0.";
 					} 
-					if(fixacaoReparteDTO.getQtdeExemplares() == null || fixacaoReparteDTO.getQtdeExemplares() <= 0) {
-                        return "Quantidade de exemplares não pode ser vazia ou menor/igual a 0.";
+					if(fixacaoReparteDTO.getQtdeExemplares() == null || fixacaoReparteDTO.getQtdeExemplares() < 0) {
+                        return "Quantidade de exemplares não pode ser vazia ou negativa.";
 					}
 				}
 			} else {
@@ -676,8 +676,8 @@ public class FixacaoReparteController extends BaseController {
                     return "Edição final não pode ser inferior a inicial.";
 				} else if(fixacaoReparteDTO.getEdicaoFinal() - fixacaoReparteDTO.getEdicaoInicial() > MAX_EDICOES) {
                     return "O intervalo não deve ultrapassar 6 edições!";
-				} else if(fixacaoReparteDTO.getQtdeExemplares() == null || fixacaoReparteDTO.getQtdeExemplares() <= 0) {
-                    return "Quantidade de exemplares não pode ser vazia ou menor/igual a 0.";
+				} else if(fixacaoReparteDTO.getQtdeExemplares() == null || fixacaoReparteDTO.getQtdeExemplares() < 0) {
+                    return "Quantidade de exemplares não pode ser vazia ou negativa.";
 				}
 			}
 			
