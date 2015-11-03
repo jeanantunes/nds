@@ -191,94 +191,95 @@ public class CotaDAO {
 	    @Override
 	    public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
 		
-	    CotaEstudo cota = new CotaEstudo();
-		
-	    cota.setId(rs.getLong("COTA_ID"));
-		cota.setNumeroCota(rs.getInt("NUMERO_COTA"));
-		
-		cota.setRecebeReparteComplementar(rs.getBoolean("RECEBE_COMPLEMENTAR"));
-		cota.setQuantidadePDVs(rs.getBigDecimal("QTDE_PDVS"));
-		cota.setSituacaoCadastro(SituacaoCadastro.valueOf(rs.getString("SITUACAO_CADASTRO")));
-		cota.setMix(rs.getBoolean("MIX"));
-		
-		if(rs.getString("TIPO_DISTRIBUICAO_COTA")!=null && !rs.getString("TIPO_DISTRIBUICAO_COTA").isEmpty()) {
-			cota.setTipoDistribuicaoCota(TipoDistribuicaoCota.valueOf(rs.getString("TIPO_DISTRIBUICAO_COTA")));
-		} else {
-			cota.setTipoDistribuicaoCota(TipoDistribuicaoCota.CONVENCIONAL);
-		}
-		
-		cota.setRecebeParcial(rs.getBoolean("RECEBE_RECOLHE_PARCIAIS"));
-		cota.setExcecaoParcial(rs.getBoolean("COTA_EXCECAO_PARCIAL"));
-		traduzAjusteReparte(rs, cota);
-		
-		if (rs.getBigDecimal("QTDE_RANKING_SEGMENTO") != null) {
-		    cota.setQtdeRankingSegmento(rs.getBigDecimal("QTDE_RANKING_SEGMENTO").toBigInteger());
-		}
-		
-		if (rs.getBigDecimal("QTDE_RANKING_FATURAMENTO") != null) {
-		    cota.setQtdeRankingFaturamento(rs.getBigDecimal("QTDE_RANKING_FATURAMENTO"));
-		}
-		
-		if (rs.getBigDecimal("REPARTE_MAX") != null) {
-		    if(estudo.isUsarMix()){
-		    	cota.setIntervaloMaximo(rs.getBigDecimal("REPARTE_MAX").toBigInteger());
-		    }
-		}
-		
-		if (rs.getBigDecimal("REPARTE_MIN") != null) {
-			if(estudo.isUsarMix()){
-				cota.setIntervaloMinimo(rs.getBigDecimal("REPARTE_MIN").toBigInteger());
+		    CotaEstudo cota = new CotaEstudo();
+			
+		    cota.setId(rs.getLong("COTA_ID"));
+			cota.setNumeroCota(rs.getInt("NUMERO_COTA"));
+			
+			cota.setRecebeReparteComplementar(rs.getBoolean("RECEBE_COMPLEMENTAR"));
+			cota.setQuantidadePDVs(rs.getBigDecimal("QTDE_PDVS"));
+			cota.setSituacaoCadastro(SituacaoCadastro.valueOf(rs.getString("SITUACAO_CADASTRO")));
+			cota.setMix(rs.getBoolean("MIX"));
+			
+			if(rs.getString("TIPO_DISTRIBUICAO_COTA")!=null && !rs.getString("TIPO_DISTRIBUICAO_COTA").isEmpty()) {
+				cota.setTipoDistribuicaoCota(TipoDistribuicaoCota.valueOf(rs.getString("TIPO_DISTRIBUICAO_COTA")));
+			} else {
+				cota.setTipoDistribuicaoCota(TipoDistribuicaoCota.CONVENCIONAL);
 			}
-		}
-		
-		if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO) && rs.getBigDecimal("REPARTE_FIXADO") != null) {
-		    cota.setReparteFixado(rs.getBigDecimal("REPARTE_FIXADO").toBigInteger());
-		}
-		
-		if (rs.getLong("COTA_BASE_ID") != 0) {
-		    cota.setNova(true);
-		}
-		
-		if (cota.getTipoDistribuicaoCota() != null && (!cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO) || cota.isMix())) {
-		    if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(Long.valueOf(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
-				if (cota.isNova() && cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
-				    cota.setClassificacao(ClassificacaoCota.CotaNova);
+			
+			cota.setRecebeParcial(rs.getBoolean("RECEBE_RECOLHE_PARCIAIS"));
+			cota.setExcecaoParcial(rs.getBoolean("COTA_EXCECAO_PARCIAL"));
+			traduzAjusteReparte(rs, cota);
+			
+			if (rs.getBigDecimal("QTDE_RANKING_SEGMENTO") != null) {
+			    cota.setQtdeRankingSegmento(rs.getBigDecimal("QTDE_RANKING_SEGMENTO").toBigInteger());
+			}
+			
+			if (rs.getBigDecimal("QTDE_RANKING_FATURAMENTO") != null) {
+			    cota.setQtdeRankingFaturamento(rs.getBigDecimal("QTDE_RANKING_FATURAMENTO"));
+			}
+			
+			if (rs.getBigDecimal("REPARTE_MAX") != null) {
+			    if(estudo.isUsarMix()){
+			    	cota.setIntervaloMaximo(rs.getBigDecimal("REPARTE_MAX").toBigInteger());
+			    }
+			}
+			
+			if (rs.getBigDecimal("REPARTE_MIN") != null) {
+				if(estudo.isUsarMix()){
+					cota.setIntervaloMinimo(rs.getBigDecimal("REPARTE_MIN").toBigInteger());
 				}
-		    }
-		}
-		
-		if (cota.isMix()) {
-			if(estudo.isUsarMix()){
-				cota.setClassificacao(ClassificacaoCota.CotaMix);
-			}else{
-				cota.setClassificacao(ClassificacaoCota.CotaMixSemMinMax);
 			}
-		}
-		
-		if (!cota.isMix() && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
-			cota.setClassificacao(ClassificacaoCota.BancaMixSemDeterminadaPublicacao);
-		}
-		
-		if (rs.getBoolean("COTA_NAO_RECEBE_FORNECEDOR")) {
-			cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeDesseFornecedor);
-		}
-		
-		if (rs.getBoolean("COTA_NAO_RECEBE_CLASSIFICACAO")) {
-			cota.setClassificacao(ClassificacaoCota.BancaSemClassificacaoDaPublicacao);
-		}
-		
-		if ((cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) && (cota.getClassificacao().getCodigo().equalsIgnoreCase(""))) {
-		    cota.setClassificacao(ClassificacaoCota.BancaSuspensa);
-		} else {
-		    if (rs.getBoolean("COTA_NAO_RECEBE_SEGMENTO")) {
-		    	cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeEsseSegmento);
-		    }
-		    
-		    if (rs.getBoolean("COTA_EXCECAO_SEGMENTO")) {
-		    	cota.setClassificacao(ClassificacaoCota.CotaExcecaoSegmento);
-		    }
-        }
-		return cota;
+			
+			if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO) && rs.getBigDecimal("REPARTE_FIXADO") != null) {
+			    cota.setReparteFixado(rs.getBigDecimal("REPARTE_FIXADO").toBigInteger());
+			}
+			
+			if (rs.getLong("COTA_BASE_ID") != 0) {
+			    cota.setNova(true);
+			}
+			
+			if (cota.getTipoDistribuicaoCota() != null && (!cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO) || cota.isMix())) {
+			    if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(Long.valueOf(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
+					if (cota.isNova() && cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
+					    cota.setClassificacao(ClassificacaoCota.CotaNova);
+					}
+			    }
+			}
+			
+			if (cota.isMix()) {
+				if(estudo.isUsarMix()){
+					cota.setClassificacao(ClassificacaoCota.CotaMix);
+				}else{
+					cota.setClassificacao(ClassificacaoCota.CotaMixSemMinMax);
+				}
+			}
+			
+			if (!cota.isMix() && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
+				cota.setClassificacao(ClassificacaoCota.BancaMixSemDeterminadaPublicacao);
+			}
+			
+			if (rs.getBoolean("COTA_NAO_RECEBE_FORNECEDOR")) {
+				cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeDesseFornecedor);
+			}
+			
+			if (rs.getBoolean("COTA_NAO_RECEBE_CLASSIFICACAO")) {
+				cota.setClassificacao(ClassificacaoCota.BancaSemClassificacaoDaPublicacao);
+			}
+			
+			if (rs.getBoolean("COTA_NAO_RECEBE_SEGMENTO")) {
+			    cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeEsseSegmento);
+			}
+			    
+			if ((cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) && (cota.getClassificacao().getCodigo().equalsIgnoreCase(""))) {
+			    cota.setClassificacao(ClassificacaoCota.BancaSuspensa);
+			}else{
+				if (rs.getBoolean("COTA_EXCECAO_SEGMENTO")) {
+				    cota.setClassificacao(ClassificacaoCota.CotaExcecaoSegmento);
+				}
+			}
+			
+			return cota;
 	    }
 	});
 	return retorno;
