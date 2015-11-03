@@ -490,6 +490,24 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	sql.append("   ct.NUMERO_COTA as cod_jornaleiro, ");
     	sql.append("   CAST((DATE_FORMAT(cb.DT_EMISSAO, '%d-%m-%Y')) as char) AS data_operacao, ");
 
+    	sql.append("   (coalesce((select sum(mfc_s.VALOR) ");
+    	sql.append("     from movimento_financeiro_cota mfc_s ");
+    	sql.append("       join consolidado_mvto_financeiro_cota cf_s ");
+    	sql.append("         ON cf_s.MVTO_FINANCEIRO_COTA_ID = mfc_s.ID ");
+    	sql.append("       join consolidado_financeiro_cota cfc_s  ");
+    	sql.append("         ON cf_s.CONSOLIDADO_FINANCEIRO_ID = cfc_s.ID ");
+    	sql.append("       join divida_consolidado dc_s ");
+    	sql.append("         ON dc_s.CONSOLIDADO_ID = cfc_s.ID ");
+    	sql.append("       join divida d_s ");
+    	sql.append("         ON d_s.ID = dc_s.DIVIDA_ID ");
+    	sql.append("       join cobranca cb_s ");
+    	sql.append("         ON cb_s.DIVIDA_ID = d_s.ID ");
+    	sql.append("       join tipo_movimento tm_s  ");
+    	sql.append("         ON mfc_s.TIPO_MOVIMENTO_ID = tm_s.ID ");
+    	sql.append("     where d_s.DATA = :dtOperacao ");
+    	sql.append("       and mfc_s.COTA_ID = mfc.COTA_ID ");
+    	sql.append("       and tm_s.GRUPO_MOVIMENTO_FINANCEIRO = :recebimento_reparte),0) - ");
+    	
     	sql.append("   coalesce((select sum(mfc_s.VALOR) ");
     	sql.append("     from movimento_financeiro_cota mfc_s ");
     	sql.append("       join consolidado_mvto_financeiro_cota cf_s ");
@@ -506,7 +524,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	sql.append("         ON mfc_s.TIPO_MOVIMENTO_ID = tm_s.ID ");
     	sql.append("     where d_s.DATA = :dtOperacao ");
     	sql.append("       and mfc_s.COTA_ID = mfc.COTA_ID ");
-    	sql.append("       and tm_s.GRUPO_MOVIMENTO_FINANCEIRO = :recebimento_reparte),0) as vlr_cobranca, ");
+    	sql.append("       and tm_s.GRUPO_MOVIMENTO_FINANCEIRO = :envio_encalhe),0)) as vlr_cobranca, ");
 
     	/*
     	sql.append("   coalesce((select sum(mfc_s.VALOR) ");
@@ -737,7 +755,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	query.setParameter("compra_encalhe_suplementar", GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR.name());
     	query.setParameter("credito", GrupoMovimentoFinaceiro.CREDITO.name());
     	query.setParameter("credito_sobre_faturamento", GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO.name());
-    	//query.setParameter("envio_encalhe", GrupoMovimentoFinaceiro.ENVIO_ENCALHE.name());
+    	query.setParameter("envio_encalhe", GrupoMovimentoFinaceiro.ENVIO_ENCALHE.name());
     	query.setParameter("juros", GrupoMovimentoFinaceiro.JUROS.name());
     	query.setParameter("multa", GrupoMovimentoFinaceiro.MULTA.name());
     	query.setParameter("pendente", GrupoMovimentoFinaceiro.PENDENTE.name());
