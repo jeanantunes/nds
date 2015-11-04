@@ -98,7 +98,7 @@ public class FTFEnvTipoRegistro08 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCpfOuCnpj(String cpfOuCnpj) {
-		cpfOuCnpj = cpfOuCnpj != null ? StringUtils.leftPad(cpfOuCnpj, 14, ' ') : StringUtils.leftPad(cpfOuCnpj, 14, ' ');
+		cpfOuCnpj = cpfOuCnpj != null ? StringUtils.rightPad(cpfOuCnpj, 14, "") : StringUtils.rightPad(cpfOuCnpj, 14, "");
 		this.cpfOuCnpj = cpfOuCnpj;
 	}
 

@@ -1234,8 +1234,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		// OBTER COTA EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("SELECT me ");
+		
 		Query query = queryConsultaMENfeParameters(queryConsultaEditorMENfe(filtro, hql, false, false, false), filtro);
-
+		
 		return query.list();
 		
 	}
