@@ -179,7 +179,7 @@ public class ItemNotaFiscalBuilder  {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de movimento não suportado para geração da NF-e.");
 		}
 		
-		pesoBrutoLiquido = BigDecimal.valueOf(((MovimentoEstoque) movimentoEstoque).getProdutoEdicao().getProduto().getPeso());
+		pesoBrutoLiquido = BigDecimal.valueOf(((AbstractMovimentoEstoque) movimentoEstoque).getProdutoEdicao().getProduto().getPeso());
 		
 		if(notaFiscal.getNotaFiscalInformacoes().getPesoBrutoLiquido() == null ) {
 			notaFiscal.getNotaFiscalInformacoes().setPesoBrutoLiquido(BigDecimal.ZERO);
@@ -253,9 +253,12 @@ public class ItemNotaFiscalBuilder  {
 			((OrigemItemNotaFiscalMovimentoEstoqueCota) oinf).setMovimentoEstoqueCota((MovimentoEstoqueCota) movimentoEstoque);
 			origemItens.add(oinf);
 		} else if(movimentoEstoque instanceof MovimentoEstoque) {
-			OrigemItemNotaFiscal oinfME = new OrigemItemNotaFiscalMovimentoEstoque();
-			((OrigemItemNotaFiscalMovimentoEstoque) oinfME).setMovimentoEstoque((MovimentoEstoque) movimentoEstoque);
-			origemItens.add(oinfME);
+			if(!movimentoEstoque.getProdutoEdicao().getId().equals(produtoServico.getProdutoEdicao().getId())) {
+				OrigemItemNotaFiscal oinfME = new OrigemItemNotaFiscalMovimentoEstoque();
+				((OrigemItemNotaFiscalMovimentoEstoque) oinfME).setMovimentoEstoque((MovimentoEstoque) movimentoEstoque);
+				origemItens.add(oinfME);				
+			}
+			
 		}
 		
 		produtoServico.setOrigemItemNotaFiscal(origemItens);
