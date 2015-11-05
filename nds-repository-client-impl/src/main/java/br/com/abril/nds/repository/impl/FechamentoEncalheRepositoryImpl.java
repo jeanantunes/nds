@@ -517,12 +517,22 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append(" select count(idCota) from  ");
         
         sql.append(" ( ");
+        boolean fechado=false;
+        fechado = isChamadaEncalheFechada(dataEncalhe);
+        if (fechado ) {
+	        sql.append(getSqlCotaAusenteComChamadaEncalheFechado(true, isSomenteCotasSemAcao, numeroCota).toString());
+	        
+	        sql.append(" union all ");
+       
+	        sql.append(getSqlCotaAusenteSemChamadaEncalheFechado(true, false, numeroCota).toString());
+        } else {
+        	 sql.append(getSqlCotaAusenteComChamadaEncalhe(true, isSomenteCotasSemAcao, numeroCota).toString());
+ 	        
+ 	        sql.append(" union all ");
         
-        sql.append(getSqlCotaAusenteComChamadaEncalhe(true, isSomenteCotasSemAcao, numeroCota).toString());
-        
-        sql.append(" union all ");
-        
-        sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, false, numeroCota).toString());
+ 	        sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, false, numeroCota).toString());
+         }
+        	
         
         sql.append(" ) as ausentes	");
         
@@ -612,9 +622,12 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("    left outer join                                                     ");
         sql.append("        ROTA_PDV rotaPdv                                                ");
         sql.append("            on pdv.ID=rotaPdv.PDV_ID                                    ");
+        sql.append("        and rotaPdv.ROTA_ID not in ( select ro.id from Rota ro inner join Roteiro  rt on ro.roteiro_id  = rt.id and rt.tipo_roteiro = 'ESPECIAL')");
+
         sql.append("	left outer join                                                     ");
         sql.append("    	ROTA rota                                                       ");
         sql.append("    		on rotaPdv.ROTA_ID=rota.ID                                  ");
+     
         sql.append("    left outer join                                                     ");
         sql.append("        ROTEIRO roteiro                                                 ");
         sql.append("        	on rota.ROTEIRO_ID=roteiro.ID                               ");
@@ -722,6 +735,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("    left outer join                                                     ");
         sql.append("        ROTA_PDV rotaPdv                                                ");
         sql.append("            on pdv.ID=rotaPdv.PDV_ID                                    ");
+        sql.append("        and rotaPdv.ROTA_ID not in ( select ro.id from Rota ro inner join Roteiro  rt on ro.roteiro_id  = rt.id and rt.tipo_roteiro = 'ESPECIAL')");
+
         sql.append("	left outer join                                                     ");
         sql.append("    	ROTA rota                                                       ");
         sql.append("    		on rotaPdv.ROTA_ID=rota.ID                                  ");
@@ -854,6 +869,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("    left outer join                                         ");
         sql.append("        ROTA_PDV rotaPdv                                    ");
         sql.append("            on pdv.ID=rotaPdv.PDV_ID                        ");
+        sql.append("        and rotaPdv.ROTA_ID not in ( select ro.id from Rota ro inner join Roteiro  rt on ro.roteiro_id  = rt.id and rt.tipo_roteiro = 'ESPECIAL')");
+
         sql.append("	left outer join                                         ");
         sql.append("    	ROTA rota                                           ");
         sql.append("    		on rotaPdv.ROTA_ID=rota.ID                      ");
@@ -936,12 +953,23 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         final StringBuilder sql = new StringBuilder();
         
-        sql.append(getSqlCotaAusenteComChamadaEncalhe(false, isSomenteCotasSemAcao, null).toString());
+        boolean fechado=false;
+        fechado = isChamadaEncalheFechada(dataEncalhe);
+        if (fechado ) {
+	        sql.append(getSqlCotaAusenteComChamadaEncalheFechado(false, isSomenteCotasSemAcao, null).toString());
+	        
+	        sql.append(" union all ");
+	        
+	        sql.append(getSqlCotaAusenteSemChamadaEncalheFechado(false, false, null).toString());
+	        
+        } else {
+        	  sql.append(getSqlCotaAusenteComChamadaEncalhe(false, isSomenteCotasSemAcao, null).toString());
+              
+              sql.append(" union all ");
+              
+              sql.append(getSqlCotaAusenteSemChamadaEncalhe(false, false, null).toString());
         
-        sql.append(" union all ");
-        
-        sql.append(getSqlCotaAusenteSemChamadaEncalhe(false, false, null).toString());
-        
+        }
         if("acao".equals(sortname)) {
             
             sortname = "fechado";
@@ -1569,4 +1597,280 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         return dia != null ? dia : 1; // se nao tem devolucao ainda, inicar como primeiro dia
         
     }
+    
+    
+    
+    private StringBuilder getSqlCotaAusenteComChamadaEncalheFechado(final boolean indCount, final boolean isSomenteCotasSemAcao,
+            Integer numeroCota) {
+        
+        final StringBuilder sql = new StringBuilder();
+        
+        if(indCount) {
+            
+            sql.append("	 select                                                             ");
+            sql.append("        cota.ID as idCota,                                              ");
+            sql.append("        false as indMFCNaoConsolidado                                   ");
+            
+        } else {
+            
+            sql.append("	 select                                                             ");
+            sql.append("        cota.ID as idCota,                                              ");
+            sql.append("        cota.NUMERO_COTA as numeroCota,                                 ");
+            sql.append("        coalesce(pessoa.NOME,                                           ");
+            sql.append("        pessoa.RAZAO_SOCIAL) as colaboradorName,                        ");
+            sql.append("        box.NOME as boxName,                                            ");
+            sql.append("        roteiro.DESCRICAO_ROTEIRO as roteiroName,                       ");
+            sql.append("        rota.DESCRICAO_ROTA as rotaName,                                ");
+            sql.append(" 		true as indPossuiChamadaEncalheCota, 							");
+            sql.append(" 		false as indMFCNaoConsolidado, 									");
+            
+            sql.append(" 		case when (grupoCota.id is null) then false			");
+            sql.append(" 		else true end as operacaoDiferenciada,				");
+            
+            sql.append("        coalesce(chamadaEncalheCota.FECHADO, 0)  as fechado,            ");
+            sql.append("        coalesce(chamadaEncalheCota.POSTERGADO, 0) as postergado,       		");
+            sql.append("        coalesce(chamadaEncalhe.DATA_RECOLHIMENTO, :dataEncalhe) as dataEncalhe, ");
+            sql.append("		(select count(cu.id) from COTA_UNIFICACAO cu ");
+            sql.append("		join COTAUNIFICACAO_COTAUNIFICADA co_un on (cu.ID = co_un.COTA_UNIFICACAO_ID) ");
+            sql.append("		where cu.COTA_ID = cota.ID or ");
+            sql.append("		co_un.COTA_UNIFICADA_ID = cota.ID > 0) as unificacao ");
+        }
+        
+        sql.append("	from                                                                ");
+        sql.append("        Cota cota                                                       ");
+        sql.append("	inner join                                                          ");
+        sql.append("        CHAMADA_ENCALHE_COTA chamadaEncalheCota                         ");
+        sql.append("            on chamadaEncalheCota.COTA_ID=cota.ID                       ");
+        
+        sql.append("            and ( cota.TIPO_COTA <> :tipoCotaAVista ) ");
+        				
+        sql.append("	inner join                                                          ");
+        sql.append("        CHAMADA_ENCALHE chamadaEncalhe                                  ");
+        sql.append("            on chamadaEncalheCota.CHAMADA_ENCALHE_ID=chamadaEncalhe.ID  ");
+        sql.append("	inner join                                                          ");
+        sql.append("        PESSOA pessoa                                                   ");
+        sql.append("            on cota.PESSOA_ID=pessoa.ID                                 ");
+        sql.append("	inner join                                                          ");
+        sql.append("        BOX box                                                         ");
+        sql.append("            on cota.BOX_ID=box.ID                                       ");
+        sql.append("	inner join                                                          ");
+        sql.append("        PDV pdv                                                         ");
+        sql.append("            on cota.ID=pdv.COTA_ID                                      ");
+        sql.append("    left outer join                                                     ");
+        sql.append("        ROTA_PDV rotaPdv                                                ");
+        sql.append("            on pdv.ID=rotaPdv.PDV_ID                                    ");
+        sql.append("	left outer join                                                     ");
+        sql.append("    	ROTA rota                                                       ");
+        sql.append("    		on rotaPdv.ROTA_ID=rota.ID                                  ");
+        sql.append("    left outer join                                                     ");
+        sql.append("        ROTEIRO roteiro                                                 ");
+        sql.append("        	on rota.ROTEIRO_ID=roteiro.ID                               ");
+        
+        sql.append("	left outer join COTA_GRUPO cotaGrupo	");
+        sql.append("	on cotaGrupo.cota_id = cota.id			");
+        
+        sql.append("	left outer join GRUPO_COTA grupoCota 		");
+        sql.append("	on grupoCota.id = cotaGrupo.grupo_cota_id	");
+        
+        sql.append("	left outer join DIA_RECOLHIMENTO_GRUPO_COTA diaRecolhimentoGrupoCota	");
+        sql.append("	on grupoCota.id = diaRecolhimentoGrupoCota.grupo_id						");
+        
+        sql.append("    where (grupoCota.DATA_VIGENCIA_INICIO is null or grupoCota.DATA_VIGENCIA_INICIO <= :dataEncalhe) ");
+        sql.append("           and (grupoCota.DATA_VIGENCIA_FIM is null or grupoCota.DATA_VIGENCIA_FIM >= :dataEncalhe) and ");
+        
+        sql.append("    (	grupoCota.id is null		");
+        sql.append("    or diaRecolhimentoGrupoCota.dia_id = :diaRecolhimento ) and	");
+        
+        sql.append("        chamadaEncalhe.DATA_RECOLHIMENTO = 	:dataEncalhe                ");
+                                                              
+        sql.append("		and pdv.PONTO_PRINCIPAL = :principal                            ");
+        
+        
+        if (isSomenteCotasSemAcao) {
+            
+            sql.append(" and ( chamadaEncalheCota.FECHADO = false or chamadaEncalheCota.FECHADO is null ) 		");
+            
+            sql.append(" and ( chamadaEncalheCota.POSTERGADO = false or chamadaEncalheCota.POSTERGADO is null ) ");
+        }
+        
+        if (numeroCota != null){
+            
+            sql.append(" and cota.NUMERO_COTA = :numeroCota ");
+        }
+        
+        sql.append("	group by                                      ");
+        sql.append("        cota.ID                                   ");
+        sql.append(" having ");
+        sql.append("		 cota.ID  in (                                ");
+        sql.append("			select                                          ");
+        sql.append("				distinct(cota.ID )                                   ");
+        sql.append("			from                                            ");
+        sql.append("		        Cota cota                                   ");
+        sql.append("			inner join                                      ");
+        sql.append("		        CHAMADA_ENCALHE_COTA chamadaEncalheCota     ");
+        sql.append("		            on chamadaEncalheCota.COTA_ID=cota.ID  and  chamadaEncalheCota.fechado = true  ");
+        sql.append("			inner join                                                                     ");
+        sql.append("			CHAMADA_ENCALHE chamadaEncalhe                                                 ");
+        sql.append("		            on ( chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID and     ");
+        sql.append("						 chamadaEncalhe.DATA_RECOLHIMENTO = :dataEncalhe )                 ");
+        sql.append("		)     ");
+   
+        
+        
+        return sql;
+    }
+    
+    
+    private StringBuilder getSqlCotaAusenteSemChamadaEncalheFechado(final boolean indCount,
+            final boolean ignorarUnificacao, Integer numeroCota) {
+        
+        final StringBuilder sqlMovimentoFinaceiroCotaNaoConsolidado = new StringBuilder();
+        
+        sqlMovimentoFinaceiroCotaNaoConsolidado.append("( select count(mfc.id)>0  ");
+        sqlMovimentoFinaceiroCotaNaoConsolidado.append(" from ");
+        sqlMovimentoFinaceiroCotaNaoConsolidado.append(" movimento_financeiro_cota mfc ");
+        sqlMovimentoFinaceiroCotaNaoConsolidado.append(" where ");
+        sqlMovimentoFinaceiroCotaNaoConsolidado.append("	mfc.cota_id = cota.id ");
+        sqlMovimentoFinaceiroCotaNaoConsolidado.append("	and mfc.data <= :dataEncalhe ");
+        sqlMovimentoFinaceiroCotaNaoConsolidado.append("	and mfc.STATUS = :statusAprovacao ");
+        sqlMovimentoFinaceiroCotaNaoConsolidado.append("	and mfc.id not in ( ");
+        sqlMovimentoFinaceiroCotaNaoConsolidado.append("                       select cmfc.MVTO_FINANCEIRO_COTA_ID from ");
+        sqlMovimentoFinaceiroCotaNaoConsolidado.append("                       CONSOLIDADO_MVTO_FINANCEIRO_COTA cmfc )");
+        sqlMovimentoFinaceiroCotaNaoConsolidado.append(" ) ");
+        
+        final StringBuilder sql = new StringBuilder();
+        
+        if(indCount) {
+            
+            sql.append(" 	select                                                  ");
+            sql.append("    cota.ID as idCota,                                      ");
+            sql.append(sqlMovimentoFinaceiroCotaNaoConsolidado.toString()).append(" as indMFCNaoConsolidado ");
+            
+        } else {
+            
+            sql.append(" 	select                                                  ");
+            sql.append("    cota.ID as idCota,                                      ");
+            sql.append("    cota.NUMERO_COTA as numeroCota,                         ");
+            sql.append("    coalesce(pessoa.NOME,                                   ");
+            sql.append("    pessoa.RAZAO_SOCIAL) as colaboradorName,                ");
+            sql.append("    box.NOME as boxName,                                    ");
+            sql.append("    roteiro.DESCRICAO_ROTEIRO as roteiroName,               ");
+            sql.append("    rota.DESCRICAO_ROTA as rotaName,                        ");
+            sql.append(" 	false as indPossuiChamadaEncalheCota, 					");
+            
+            sql.append(sqlMovimentoFinaceiroCotaNaoConsolidado.toString()).append(" as indMFCNaoConsolidado, ");
+            
+            sql.append(" 		case when (grupoCota.id is null) then false			");
+            sql.append(" 		else true end as operacaoDiferenciada,				");
+            
+            
+            sql.append("   false as fechado, ");
+            sql.append("   false as postergado, ");
+            sql.append("   coalesce(:dataEncalhe) as dataEncalhe, ");
+            sql.append("		(select count(cu.ID) from COTA_UNIFICACAO cu ");
+            sql.append("		join COTAUNIFICACAO_COTAUNIFICADA co_un on (cu.ID = co_un.COTA_UNIFICACAO_ID) ");
+            sql.append("		where cu.COTA_ID = cota.ID or ");
+            sql.append("		co_un.COTA_UNIFICADA_ID = cota.ID > 0) as unificacao ");
+            
+        }
+        
+        sql.append("	from                                                    ");
+        sql.append("        Cota cota                                           ");
+        sql.append("	inner join                                              ");
+        sql.append("        PESSOA pessoa                                       ");
+        sql.append("            on cota.PESSOA_ID=pessoa.ID                     ");
+        
+        sql.append("            and ( cota.TIPO_COTA <> :tipoCotaAVista ) ");
+        
+        sql.append("	inner join                                              ");
+        sql.append("        BOX box                                             ");
+        sql.append("            on cota.BOX_ID=box.ID                           ");
+        sql.append("	inner join                                              ");
+        sql.append("        PDV pdv                                             ");
+        sql.append("            on cota.ID=pdv.COTA_ID                          ");
+        sql.append("    left outer join                                         ");
+        sql.append("        ROTA_PDV rotaPdv                                    ");
+        sql.append("            on pdv.ID=rotaPdv.PDV_ID                        ");
+        sql.append("        and rotaPdv.ROTA_ID not in ( select ro.id from Rota ro inner join Roteiro  rt on ro.roteiro_id  = rt.id and rt.tipo_roteiro = 'ESPECIAL')");
+        sql.append("	left outer join                                         ");
+        sql.append("    	ROTA rota                                           ");
+        sql.append("    		on rotaPdv.ROTA_ID=rota.ID                      ");
+        sql.append("    left outer join                                         ");
+        sql.append("        ROTEIRO roteiro                                     ");
+        sql.append("        	on rota.ROTEIRO_ID=roteiro.ID                   ");
+        
+        sql.append("	left outer join COTA_GRUPO cotaGrupo	");
+        sql.append("	on cotaGrupo.cota_id = cota.id			");
+        
+        sql.append("	left outer join GRUPO_COTA grupoCota 		");
+        sql.append("	on grupoCota.id = cotaGrupo.grupo_cota_id	");
+        
+        sql.append("	left outer join DIA_RECOLHIMENTO_GRUPO_COTA diaRecolhimentoGrupoCota	");
+        sql.append("	on grupoCota.id = diaRecolhimentoGrupoCota.grupo_id						");
+        
+        sql.append("    where  ");
+        
+        sql.append("	cota.SITUACAO_CADASTRO <> :inativo and cota.SITUACAO_CADASTRO <> :pendente ");
+        
+        
+        sql.append("    and (	grupoCota.id is null		");
+        sql.append("    or diaRecolhimentoGrupoCota.dia_id = :diaRecolhimento )	");
+        
+        
+        if (ignorarUnificacao){
+            
+            sql.append("	and cota.ID not in ( 								");
+            sql.append("		select aoada.COTA_UNIFICADA_ID					");
+            sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada)	");
+            
+            sql.append("	and cota.ID not in ( 								");
+            sql.append("		select uni.cota_id 								");
+            sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada join COTA_UNIFICACAO uni ON (aoada.COTA_UNIFICACAO_ID = uni.ID	)) ");
+            
+        }
+        
+              
+        sql.append("		and pdv.PONTO_PRINCIPAL = :principal                ");
+                                                                                   
+        
+        if (numeroCota != null){
+            
+            sql.append("and cota.NUMERO_COTA = :numeroCota ");
+        }
+        
+        sql.append("	group by    ");
+        
+        sql.append("    cota.ID, indMFCNaoConsolidado ");
+        
+        sql.append(" having indMFCNaoConsolidado = true and ");
+        sql.append("		 cota.ID  in (                                ");
+        sql.append("			select                                          ");
+        sql.append("				distinct(cota.ID )                                   ");
+        sql.append("			from                                            ");
+        sql.append("		        Cota cota                                   ");
+        sql.append("			inner join                                      ");
+        sql.append("		        CHAMADA_ENCALHE_COTA chamadaEncalheCota     ");
+        sql.append("		            on chamadaEncalheCota.COTA_ID=cota.ID  and  chamadaEncalheCota.fechado = true  ");
+        sql.append("			inner join                                                                     ");
+        sql.append("			CHAMADA_ENCALHE chamadaEncalhe                                                 ");
+        sql.append("		            on ( chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID and     ");
+        sql.append("						 chamadaEncalhe.DATA_RECOLHIMENTO = :dataEncalhe )                 ");
+        sql.append("		)     ");
+        
+        return sql;
+    }
+    
+    private boolean isChamadaEncalheFechada(Date dataEncalhe ) {
+    
+    	 final StringBuilder sql = new StringBuilder("select count(*) ");
+         sql.append(" from fechamento_encalhe fe ")
+         .append(" where data_encalhe = :dataEncalhe ");
+         
+         final Query query = this.getSession().createSQLQuery(sql.toString());
+         query.setParameter("dataEncalhe", dataEncalhe);
+         
+         return (BigInteger)query.uniqueResult() != BigInteger.ZERO;
+      
+    }
+    
 }
