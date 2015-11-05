@@ -635,14 +635,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("    or diaRecolhimentoGrupoCota.dia_id = :diaRecolhimento ) and	");
         
         sql.append("        chamadaEncalhe.DATA_RECOLHIMENTO = 	:dataEncalhe                ");
-        sql.append("        and cota.ID not in  (                                           ");
-        sql.append("            select                                                      ");
-        sql.append("                distinct( cec.COTA_ID )                                 ");
-        sql.append("            from                                                        ");
-        sql.append("                controle_conferencia_encalhe_cota cec                   ");
-        sql.append("            where                                                       ");
-        sql.append("                cec.data_operacao = :dataEncalhe                        ");
-        sql.append("        )                                                               ");
+                                                              
         sql.append("		and pdv.PONTO_PRINCIPAL = :principal                            ");
         
         
@@ -660,6 +653,21 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         sql.append("	group by                                      ");
         sql.append("        cota.ID                                   ");
+        sql.append(" having ");
+        sql.append("		 cota.ID  in (                                ");
+        sql.append("			select                                          ");
+        sql.append("				distinct(cota.ID )                                   ");
+        sql.append("			from                                            ");
+        sql.append("		        Cota cota                                   ");
+        sql.append("			inner join                                      ");
+        sql.append("		        CHAMADA_ENCALHE_COTA chamadaEncalheCota     ");
+        sql.append("		            on chamadaEncalheCota.COTA_ID=cota.ID  and  chamadaEncalheCota.fechado = true  ");
+        sql.append("			inner join                                                                     ");
+        sql.append("			CHAMADA_ENCALHE chamadaEncalhe                                                 ");
+        sql.append("		            on ( chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID and     ");
+        sql.append("						 chamadaEncalhe.DATA_RECOLHIMENTO = :dataEncalhe )                 ");
+        sql.append("		)     ");
+   
         
         
         return sql;
@@ -722,6 +730,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("    left outer join                                                     ");
         sql.append("        ROTA_PDV rotaPdv                                                ");
         sql.append("            on pdv.ID=rotaPdv.PDV_ID                                    ");
+        sql.append("        and rotaPdv.ROTA_ID not in ( select ro.id from Rota ro inner join Roteiro  rt on ro.roteiro_id  = rt.id and rt.tipo_roteiro = 'ESPECIAL')");
         sql.append("	left outer join                                                     ");
         sql.append("    	ROTA rota                                                       ");
         sql.append("    		on rotaPdv.ROTA_ID=rota.ID                                  ");
@@ -746,14 +755,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         sql.append("        chamadaEncalhe.DATA_RECOLHIMENTO = 	:dataEncalhe                ");
         sql.append("        and chamadaEncalheCota.postergado = :postergadoCota             ");
-        sql.append("        and cota.ID not in  (                                           ");
-        sql.append("            select                                                      ");
-        sql.append("                distinct( cec.COTA_ID )                                 ");
-        sql.append("            from                                                        ");
-        sql.append("                controle_conferencia_encalhe_cota cec                   ");
-        sql.append("            where                                                       ");
-        sql.append("                cec.data_operacao = :dataEncalhe                        ");
-        sql.append("        )                                                               ");
+        
+        
         
         if (ignorarUnificacao){
             
@@ -769,7 +772,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         sql.append("		and pdv.PONTO_PRINCIPAL = :principal                            ");
         
-        if (isSomenteCotasSemAcao) {
+        if (isSomenteCotasSemAcao) 
+        {
             
             sql.append(" and ( chamadaEncalheCota.FECHADO = false or chamadaEncalheCota.FECHADO is null ) 		");
             
@@ -778,6 +782,22 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         sql.append("	group by                                      ");
         sql.append("        cota.ID                                   ");
+        
+        sql.append(" having ");
+        sql.append("		 cota.ID  in (                                ");
+        sql.append("			select                                          ");
+        sql.append("				distinct(cota.ID )                                   ");
+        sql.append("			from                                            ");
+        sql.append("		        Cota cota                                   ");
+        sql.append("			inner join                                      ");
+        sql.append("		        CHAMADA_ENCALHE_COTA chamadaEncalheCota     ");
+        sql.append("		            on chamadaEncalheCota.COTA_ID=cota.ID  and  chamadaEncalheCota.fechado = true  ");
+        sql.append("			inner join                                                                     ");
+        sql.append("			CHAMADA_ENCALHE chamadaEncalhe                                                 ");
+        sql.append("		            on ( chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID and     ");
+        sql.append("						 chamadaEncalhe.DATA_RECOLHIMENTO = :dataEncalhe )                 ");
+        sql.append("		)     ");
+        
         
         
         return sql;
@@ -854,6 +874,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("    left outer join                                         ");
         sql.append("        ROTA_PDV rotaPdv                                    ");
         sql.append("            on pdv.ID=rotaPdv.PDV_ID                        ");
+        sql.append("        and rotaPdv.ROTA_ID not in ( select ro.id from Rota ro inner join Roteiro  rt on ro.roteiro_id  = rt.id and rt.tipo_roteiro = 'ESPECIAL')");
         sql.append("	left outer join                                         ");
         sql.append("    	ROTA rota                                           ");
         sql.append("    		on rotaPdv.ROTA_ID=rota.ID                      ");
@@ -891,14 +912,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             
         }
         
-        sql.append("	and cota.ID not in  (                                   ");
-        sql.append("            select                                          ");
-        sql.append("                distinct( cec.COTA_ID )                     ");
-        sql.append("            from                                            ");
-        sql.append("                controle_conferencia_encalhe_cota cec       ");
-        sql.append("            where                                           ");
-        sql.append("                cec.data_operacao = :dataEncalhe            ");
-        sql.append("        )                                                   ");
+              
         sql.append("		and pdv.PONTO_PRINCIPAL = :principal                ");
                                                                                    
         
@@ -911,15 +925,15 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         sql.append("    cota.ID, indMFCNaoConsolidado ");
         
-        sql.append(" having indMFCNaoConsolidado = true ");
-        sql.append("		and cota.ID not in (                                ");
+        sql.append(" having indMFCNaoConsolidado = true and ");
+        sql.append("		 cota.ID  in (                                ");
         sql.append("			select                                          ");
         sql.append("				distinct(cota.ID )                                   ");
         sql.append("			from                                            ");
         sql.append("		        Cota cota                                   ");
         sql.append("			inner join                                      ");
         sql.append("		        CHAMADA_ENCALHE_COTA chamadaEncalheCota     ");
-        sql.append("		            on chamadaEncalheCota.COTA_ID=cota.ID   ");
+        sql.append("		            on chamadaEncalheCota.COTA_ID=cota.ID  and  chamadaEncalheCota.fechado = true  ");
         sql.append("			inner join                                                                     ");
         sql.append("			CHAMADA_ENCALHE chamadaEncalhe                                                 ");
         sql.append("		            on ( chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID and     ");
