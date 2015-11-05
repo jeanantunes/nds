@@ -230,8 +230,8 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	public void fecharCE(List<ItemFechamentoCEIntegracaoDTO> itens){
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
-		fechamentoCEIntegracaoService.salvarCE(itens);
 		if(filtro.getComboCeIntegracao().equals("COM")){ 
+			fechamentoCEIntegracaoService.salvarCE(itens);
 			fechamentoCEIntegracaoService.fecharCE(filtro, this.obterMapItensCE(itens));
 		} else {
 			fechamentoCEIntegracaoService.fecharSemCE(itens);
