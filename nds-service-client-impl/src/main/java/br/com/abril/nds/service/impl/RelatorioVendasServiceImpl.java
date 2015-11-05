@@ -18,7 +18,6 @@ import br.com.abril.nds.dto.RankingDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCDTO;
 import br.com.abril.nds.dto.RegistroRankingSegmentoDTO;
-import br.com.abril.nds.dto.TotalizadorRankingSegmentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO.TipoConsultaCurvaABC;
@@ -69,16 +68,26 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 				if(r.getParticipacao()!=null) {
 					participacaoTotal = participacaoTotal.add(r.getParticipacao());
 				}
-				
-				r.setQuantidadePdvs(this.pdvRepository.obterQntPDV(r.getIdCota(), null));
-				
 			}
-			
+
 		}
 	
 		this.carregarParticipacaoCurvaABCDistribuidor(lista, participacaoTotal);
 		
 		return lista;
+	}
+
+	@Override
+	@Transactional	
+	public void buscarQuantidadeDePdvs(List<RegistroCurvaABCDistribuidorVO> lista) {
+		
+		if (!lista.isEmpty()) {
+
+			for (RegistroCurvaABCDistribuidorVO cotaCurvaDistribuidor : lista) {
+				cotaCurvaDistribuidor.setQuantidadePdvs(this.pdvRepository.obterQntPDV(cotaCurvaDistribuidor.getIdCota(), null));
+			}
+
+		}
 	}
 	
 	
@@ -119,8 +128,6 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		
 	}
 	
-	
-	
 	@Override
 	@Transactional
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCProduto(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO) {
@@ -148,7 +155,7 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 					participacaoTotal = participacaoTotal.add(dto.getParticipacao());
 				}
 				
-				dto.setQuantidadePdvs(this.pdvRepository.obterQntPDV(dto.getIdCota(), null));
+				//buscarQuantidadeDePdvs(dto);
 				
 				if( mapRankingCota.get(dto.getIdCota()) != null ) {
 					dto.setRkCota(mapRankingCota.get(dto.getIdCota()).getRanking());
@@ -226,12 +233,6 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		return this.relatorioVendasRepository.obterRankingSegmento(filtro);
 	}
 
-	@Override
-	@Transactional(readOnly=true)
-	public TotalizadorRankingSegmentoDTO obterQuantidadeRegistrosRankingSegmento(FiltroRankingSegmentoDTO filtro) {		
-		return this.relatorioVendasRepository.obterQuantidadeRegistrosRankingSegmento(filtro);		
-	}
-	
 	/**
 	 * Obtéma a porcentagem de participação e participação acumulada no resultado da consulta.
 	 */
