@@ -21,6 +21,11 @@ public class RegistroCurvaABCExportacaoDistribuidorVO {
 		return registroCurvaABCDistribuidorVO.getRkCota();
 	}
 	
+	@Export(label = "RK. Produto", exhibitionOrder = 1, columnType = ColumnType.NUMBER)
+	public Long getRkProduto(){
+		return registroCurvaABCDistribuidorVO.getRkProduto();
+	}
+	
 	@Export(label = "Número", exhibitionOrder = 3, columnType = ColumnType.NUMBER)
 	public String getNumeroCota(){
 		return registroCurvaABCDistribuidorVO.getNumeroCotaString();

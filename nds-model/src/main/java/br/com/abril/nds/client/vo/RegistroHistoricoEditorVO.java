@@ -120,6 +120,7 @@ public class RegistroHistoricoEditorVO implements Serializable {
 
 	public void setVendaExemplares(BigInteger vendaExemplares) {
 		this.vendaExemplares = vendaExemplares;
+		this.vendaExemplaresFormatado = vendaExemplares.toString();
 	}
 
 	public String getNomeEditor() {
@@ -144,6 +145,7 @@ public class RegistroHistoricoEditorVO implements Serializable {
 
 	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
+		this.reparteFormatado = reparte.toString();
 	}
 
 	public String getReparteFormatado() {

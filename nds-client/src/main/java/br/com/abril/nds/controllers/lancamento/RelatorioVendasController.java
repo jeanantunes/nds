@@ -29,7 +29,6 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.RegistroRankingSegmentoDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
-import br.com.abril.nds.dto.TotalizadorRankingSegmentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO.TipoConsultaCurvaABC;
@@ -196,6 +195,8 @@ public class RelatorioVendasController extends BaseController {
 			lista = relatorioVendasService.obterCurvaABCProduto(filtroSessao);
 		
 		}
+		
+		relatorioVendasService.buscarQuantidadeDePdvs(lista);
 		
 		List<RegistroCurvaABCExportacaoDistribuidorVO> exportacao = new ArrayList<RegistroCurvaABCExportacaoDistribuidorVO>();
 		
@@ -488,37 +489,48 @@ public class RelatorioVendasController extends BaseController {
 		
 		filtro.setDescricaoTipoSegmento(descricaoSegmento);
 		
-		TotalizadorRankingSegmentoDTO totalizador = this.relatorioVendasService.obterQuantidadeRegistrosRankingSegmento(filtro);
-		
-		if (totalizador.getQuantidadeRegistros() == 0) {			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-		}
-		
-		filtro.setTotalFaturamento(totalizador.getTotalFaturamentoCapa());
-		
 		this.session.setAttribute(FILTRO_PESQUISA_RANKING_SEGMENTO, filtro);
-		
-		TableModel<CellModelKeyValue<RegistroRankingSegmentoDTO>> tableModel = this.obterTableModelRankingSegmento(filtro);
 		
 		Map<String, Object> retorno = new HashMap<String, Object>();
 		
-		retorno.put("tableModel", tableModel);
-		retorno.put("totalFaturamentoCapa", totalizador.getTotalFaturamentoCapaFormatado());
+		this.obterTableModelRankingSegmento(filtro, retorno);
 		
 		this.result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
 	}
 	
-	private TableModel<CellModelKeyValue<RegistroRankingSegmentoDTO>> obterTableModelRankingSegmento(FiltroRankingSegmentoDTO filtro) {
+	private void obterTableModelRankingSegmento(FiltroRankingSegmentoDTO filtro, Map<String, Object> retorno) {
 
 		TableModel<CellModelKeyValue<RegistroRankingSegmentoDTO>> tableModel = new TableModel<CellModelKeyValue<RegistroRankingSegmentoDTO>>();
 		
 		List<RegistroRankingSegmentoDTO> lista = this.relatorioVendasService.obterRankingSegmento(filtro);
+		
+		if (lista == null || lista.size() <= 0) {			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
+		filtro.getPaginacao().setQtdResultadosTotal(lista.size());
+		
+		PaginacaoVO paginacao = filtro.getPaginacao();
+		
+		retorno.put("totalFaturamentoCapa", obterFaturamentoTotalABCSegmento(lista));
 
+		lista = PaginacaoUtil.paginarEmMemoria(lista, paginacao);
+		
 		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
 		tableModel.setPage(filtro.getPaginacao() == null ? 1 : filtro.getPaginacao().getPaginaAtual());
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
 
-		return tableModel;
+		retorno.put("tableModel", tableModel);
+		
+	}
+
+	private BigDecimal obterFaturamentoTotalABCSegmento(List<RegistroRankingSegmentoDTO> lista) {
+		BigDecimal totalFaturamento = BigDecimal.ZERO;
+		
+		for (RegistroRankingSegmentoDTO registro : lista) {
+			  totalFaturamento = totalFaturamento.add(registro.getFaturamentoCapa());
+		}
+		return totalFaturamento;
 	}
 	
 	/**
@@ -586,14 +598,22 @@ public class RelatorioVendasController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
 
+			ResultadoCurvaABCDistribuidor resultado = this.obterTotaisCurvaABCDistribuidor(resultadoCurvaABCDistribuidor);
+			
+			filtro.getPaginacao().setQtdResultadosTotal(resultadoCurvaABCDistribuidor.size());
+			
+			PaginacaoVO paginacao = filtro.getPaginacao();
+			
+			resultadoCurvaABCDistribuidor = PaginacaoUtil.paginarEmMemoria(resultadoCurvaABCDistribuidor, paginacao);
+			
+			relatorioVendasService.buscarQuantidadeDePdvs(resultadoCurvaABCDistribuidor);
+			
 			TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>>();
 
 			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoCurvaABCDistribuidor));
 			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
 			
-			ResultadoCurvaABCDistribuidor resultado =
-				this.obterTotaisCurvaABCDistribuidor(resultadoCurvaABCDistribuidor);
 			
 			resultado.setTableModel(tableModel);
 			
@@ -602,8 +622,7 @@ public class RelatorioVendasController extends BaseController {
 		}
 	}
 
-	private ResultadoCurvaABCDistribuidor obterTotaisCurvaABCDistribuidor(
-			List<RegistroCurvaABCDistribuidorVO> listaCurvaABCDistribuidor) {
+	private ResultadoCurvaABCDistribuidor obterTotaisCurvaABCDistribuidor(List<RegistroCurvaABCDistribuidorVO> listaCurvaABCDistribuidor) {
 
 		ResultadoCurvaABCDistribuidor resultadoCurvaABCDistribuidor = new ResultadoCurvaABCDistribuidor();
 		
@@ -683,14 +702,21 @@ public class RelatorioVendasController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
 		} else {
 
+			ResultadoCurvaABCEditor resultado = this.obterTotaisCurvaABCEditor(resultadoCurvaABCEditor);
+			
+			filtroCurvaABCEditorDTO.getPaginacao().setQtdResultadosTotal(resultadoCurvaABCEditor.size());
+			
+			PaginacaoVO paginacao = filtroCurvaABCEditorDTO.getPaginacao();
+			
+			resultadoCurvaABCEditor = PaginacaoUtil.paginarEmMemoria(resultadoCurvaABCEditor, paginacao);
+			
+			
 			TableModel<CellModelKeyValue<RegistroCurvaABCEditorVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCEditorVO>>();
 	
 			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoCurvaABCEditor));
 			tableModel.setPage(filtroCurvaABCEditorDTO.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(filtroCurvaABCEditorDTO.getPaginacao().getQtdResultadosTotal());
 			
-			ResultadoCurvaABCEditor resultado =
-				this.obterTotaisCurvaABCEditor(resultadoCurvaABCEditor);
 			
 			resultado.setTableModel(tableModel);
 			
@@ -836,13 +862,20 @@ public class RelatorioVendasController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
 
+			ResultadoCurvaABCCotaDTO resultado = this.obterTotaisCurvaABCCota(resultadoCurvaABCCota);
+			
+			filtroCurvaABCCotaDTO.getPaginacao().setQtdResultadosTotal(resultadoCurvaABCCota.size());
+			
+			PaginacaoVO paginacao = filtroCurvaABCCotaDTO.getPaginacao();
+			
+			resultadoCurvaABCCota = PaginacaoUtil.paginarEmMemoria(resultadoCurvaABCCota, paginacao);
+			
 			TableModel<CellModelKeyValue<RegistroCurvaABCCotaDTO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCCotaDTO>>();
 	
 			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoCurvaABCCota));
 			tableModel.setPage(filtroCurvaABCCotaDTO.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(filtroCurvaABCCotaDTO.getPaginacao().getQtdResultadosTotal());
 			
-			ResultadoCurvaABCCotaDTO resultado = this.obterTotaisCurvaABCCota(resultadoCurvaABCCota);
 			resultado.setTableModel(tableModel);
 			
 			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
