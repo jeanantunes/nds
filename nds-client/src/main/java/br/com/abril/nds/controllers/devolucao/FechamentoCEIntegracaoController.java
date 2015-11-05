@@ -397,13 +397,16 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		    if (listaChamadaEncalheFornecedor != null && listaChamadaEncalheFornecedor.size() > 0 ) {
 		  
 		    for(ChamadaEncalheFornecedor cef:listaChamadaEncalheFornecedor )
-		    	resultList.add(new ItemDTO(cef.getNumeroChamadaEncalhe(),cef.getNumeroChamadaEncalhe().toString()));
+		    	resultList.add(new ItemDTO(cef.getNumeroChamadaEncalhe(),cef.getNumeroChamadaEncalhe().toString()+" ("+cef.getStatusCeNDS()+")"));
 		  
 		    }
 		   // else
 		   // 	throw new ValidacaoException(TipoMensagem.WARNING, "Nao encontrado chamada encalhe para esta semana.");
 		    result.use(Results.json()).from(resultList, "result").recursive().serialize();
 	    }
+	  
+	  
+	  
 	
 	@Post
 	@Path("/salvarCE")
