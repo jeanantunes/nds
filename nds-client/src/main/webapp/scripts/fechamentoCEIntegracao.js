@@ -36,10 +36,14 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 						if (result) {	
 							
 							var op = "";
+							
 							$.each(result, function(index,row){
 								op+="<option value="+row.key.$+">"+row.value.$+"</option>";
 							});
 							$("#comboCE-fechamentoCe-integracao").empty().append(op);
+							if(op.indexOf("ABERTO")> 0  && op.indexOf("FECHADO")> 0 )
+								exibirMensagem('WARNING', ["Existem CE em aberto. É necessário efetuar o fechamento."]);
+							
 							
 							
 						}
@@ -160,7 +164,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		var itens = [];
 		
 		$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
-			itemCEIntegracao.alteracao=true;
+		
 			if(itemCEIntegracao.alteracao) 
 			{
 
