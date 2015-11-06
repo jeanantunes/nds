@@ -3,7 +3,6 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.util.Date;
 
-
 public class NotaFiscalDTO implements Serializable {
 	
 	private static final long serialVersionUID = -3086270158463917395L;
@@ -15,6 +14,10 @@ public class NotaFiscalDTO implements Serializable {
 	private	String protocolo;
 	
 	private	String versao;
+	
+	private Long serieNota;
+	
+	private Long numeroNota;
 	
 	protected Long numero;
 	
@@ -116,5 +119,21 @@ public class NotaFiscalDTO implements Serializable {
 
 	public void setCodigoUF(Integer codigoUF) {
 		this.codigoUF = codigoUF;
+	}
+
+	public Long getNumeroNota() {
+		return numeroNota;
+	}
+
+	public void setNumeroNota(Long numeroNota) {
+		this.numeroNota = numeroNota;
+	}
+
+	public Long getSerieNota() {
+		return serieNota;
+	}
+
+	public void setSerieNota(Long serieNota) {
+		this.serieNota = serieNota;
 	}
 }
