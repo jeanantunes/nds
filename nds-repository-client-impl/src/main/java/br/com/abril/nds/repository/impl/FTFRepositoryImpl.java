@@ -117,7 +117,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 		StringBuilder sqlBuilder = new StringBuilder();
 
-		sqlBuilder.append(" select DISTINCT ");
+		sqlBuilder.append(" select ");
 		sqlBuilder.append(" '1' as tipoRegistro, ");
 
 		sqlBuilder.append(" paramFtf.CODIGO_ESTABELECIMENTO_EMISSOR_GFF as codigoEstabelecimentoEmissor, ");
@@ -218,14 +218,15 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" from nota_fiscal_novo nfn ");
 		sqlBuilder.append(" inner join nota_fiscal_produto_servico nfps on nfps.NOTA_FISCAL_ID = nfn.ID ");
 		sqlBuilder.append(" inner join produto_edicao pe on nfps.PRODUTO_EDICAO_ID = pe.ID ");
-		sqlBuilder.append(" inner join natureza_operacao no ON no.ID = nfn.NATUREZA_OPERACAO_ID ");
+		sqlBuilder.append(" left join natureza_operacao no ON no.ID = nfn.NATUREZA_OPERACAO_ID ");
 		sqlBuilder.append(" join parametros_ftf_geracao paramFtf ON no.ID = paramftf.NATUREZA_OPERACAO_ID ");
 		sqlBuilder.append(" left join nota_fiscal_endereco endereco on endereco.ID = nfn.ENDERECO_ID_DESTINATARIO ");
-		sqlBuilder.append(" inner join nota_fiscal_pessoa nfp on nfp.ID = nfn.PESSOA_DESTINATARIO_ID_REFERENCIA ");
+		sqlBuilder.append(" left join nota_fiscal_pessoa nfp on nfp.ID = nfn.PESSOA_DESTINATARIO_ID_REFERENCIA ");
 
 		sqlBuilder.append(" where 1 = 1 ");
 		sqlBuilder.append(" and nfn.id in (:idsNotasFiscais) ");
 		sqlBuilder.append(" and no.id = :idNaturezaOperacao ");
+		sqlBuilder.append(" GROUP BY nfn.id, pe.id ");
 		
 		SQLQuery query = getSession().createSQLQuery(sqlBuilder.toString());
 
@@ -250,12 +251,13 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 	}
 
 	private List<Long> obterIdsFrom(List<NotaFiscal> notas){
-		int length = notas.size();
+		
 		List<Long> ids = new ArrayList<>();
 
-		for (int i = 0; i < length; i++) {
-			ids.add(notas.get(i).getId());
+		for (NotaFiscal nota : notas) {
+			ids.add(nota.getId());
 		}
+		
 		return ids;
 	}
 

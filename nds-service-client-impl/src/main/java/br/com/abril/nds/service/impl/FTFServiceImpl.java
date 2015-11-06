@@ -70,7 +70,7 @@ public class FTFServiceImpl implements FTFService {
 	private NotaFiscalService notaFiscalService;
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public FTFReportDTO gerarFtf(final List<NotaFiscal> notas) {
 
 		if(notas == null || notas.isEmpty()) {

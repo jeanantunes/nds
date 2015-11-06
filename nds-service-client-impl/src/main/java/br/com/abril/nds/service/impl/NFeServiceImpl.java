@@ -518,15 +518,16 @@ public class NFeServiceImpl implements NFeService {
 		if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(ProcessoEmissao.valueOf(ps.getValor())) && TipoAtividade.PRESTADOR_FILIAL.equals(distribuidor.getTipoAtividade())) {
 			
 			this.ftfService.gerarFtf(notas);
-//			throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
 		} else {
 			
 			this.notaFiscalService.exportarNotasFiscais(notas);
 		}
 		
+		
 		if(parametrosSistema.get("NFE_INFORMACOES_AMBIENTE").getValor().equals(String.valueOf(TipoAmbiente.HOMOLOGACAO))) {			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
 		}
+		
 		
 		return notas;
 	}
