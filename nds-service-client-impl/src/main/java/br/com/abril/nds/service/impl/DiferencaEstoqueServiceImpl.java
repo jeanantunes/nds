@@ -1167,12 +1167,19 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         
         final List<RateioDiferencaCotaDTO> detalhesDiferenca = rateioDiferencaRepository.obterRateioDiferencaCota(filtro);
         
-        DetalheDiferencaCotaDTO detalheDiferencaCota = rateioDiferencaRepository.obterDetalhesDiferencaCota(filtro);
+        DetalheDiferencaCotaDTO detalheDiferencaCota = new DetalheDiferencaCotaDTO();
+        detalheDiferencaCota.setValorTotal(BigDecimal.ZERO);
+        detalheDiferencaCota.setQuantidadeTotalRegistrosDiferencaCota(0L);
         
-        if (detalheDiferencaCota == null) {
-            
-            detalheDiferencaCota = new DetalheDiferencaCotaDTO();
+        BigInteger quantidadeAux = BigInteger.ZERO;
+        
+        for(RateioDiferencaCotaDTO rateioDiferencaCota : detalhesDiferenca) {
+        	
+        	detalheDiferencaCota.setValorTotal(detalheDiferencaCota.getValorTotal().add(rateioDiferencaCota.getValorTotal()));
+        	quantidadeAux = quantidadeAux.add(rateioDiferencaCota.getExemplares());
         }
+        detalheDiferencaCota.setTotalExemplares(quantidadeAux);
+        detalheDiferencaCota.setQuantidadeTotalRegistrosDiferencaCota(Long.valueOf(quantidadeAux.intValue()));
         
         detalheDiferencaCota.setDetalhesDiferenca(detalhesDiferenca);
         
