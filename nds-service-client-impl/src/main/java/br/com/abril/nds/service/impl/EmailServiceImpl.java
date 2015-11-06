@@ -184,7 +184,7 @@ public class EmailServiceImpl implements EmailService {
 		if (Boolean.valueOf(autenticar.getValor())) {
 			
 			mailSender.getJavaMailProperties().setProperty("mail.smtps.auth", "true");
-			mailSender.getJavaMailProperties().setProperty("mail.smtps.starttls.enable", "true");
+			mailSender.getJavaMailProperties().setProperty("mail.smtps.starttls.enable", "false");
 			
 			mailSender.getJavaMailProperties().setProperty("mail.smtp.socketFactory.port", porta.getValor());
 			mailSender.getJavaMailProperties().setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
