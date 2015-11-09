@@ -38,6 +38,7 @@ public class EdicoesProdutosDTO implements Serializable {
     private boolean parcial;
     private boolean edicaoAberta;
     private Integer numeroCota;
+    private Integer idCota;
     
     private BigInteger idProdutoEdicao;
 
@@ -202,4 +203,13 @@ public class EdicoesProdutosDTO implements Serializable {
 	public void setIdProdutoEdicao(BigInteger idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
+
+	public Integer getIdcota() {
+		return idCota;
+	}
+
+	public void setIdcota(Integer idcota) {
+		this.idCota = idcota;
+	}
+	
 }

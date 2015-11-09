@@ -2,7 +2,9 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
@@ -690,6 +692,112 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
 
         return query.list();
+    }
+    
+    @Override
+	@SuppressWarnings("unchecked")
+	public Map<Integer, List<EdicoesProdutosDTO>> buscaHistoricoDeVendaTodasCotas(List<Long> listCotaId, List<Long> listProdutoEdicaoId) {
+        
+    	StringBuilder sql = new StringBuilder();
+                                                                                                                                        
+    	sql.append(" select ");
+    	sql.append("         c.NUMERO_COTA as numeroCota, ");
+    	sql.append("         c.id as idCota, ");
+    	sql.append("         mec.produto_edicao_id produtoEdicaoId, ");
+    	sql.append("         cast(sum( case  ");
+    	sql.append("             when tm.OPERACAO_ESTOQUE = 'ENTRADA' then mec.QTDE  ");
+    	sql.append("             else -mec.QTDE  ");
+    	sql.append("         end ) as unsigned int) AS reparte, ");
+    	sql.append("         (case  ");
+    	sql.append("             when l.status IN (:statusLancFechadoRecolhido) then");
+    	sql.append("                  cast(sum( CASE ");
+    	sql.append("                 WHEN tm.OPERACAO_ESTOQUE = 'ENTRADA' THEN ");
+    	sql.append("                 mec.QTDE ELSE -mec.QTDE ");
+    	sql.append("             END) - (select ");
+    	sql.append("                 sum(mecEncalhe.qtde) ");
+    	sql.append("             from ");
+    	sql.append("                 lancamento lanc ");
+    	sql.append("             LEFT JOIN ");
+    	sql.append("                 chamada_encalhe_lancamento cel  ");
+    	sql.append("                     on cel.LANCAMENTO_ID = lanc.ID ");
+    	sql.append("             LEFT JOIN ");
+    	sql.append("                 chamada_encalhe ce  ");
+    	sql.append("                     on ce.id = cel.CHAMADA_ENCALHE_ID ");
+    	sql.append("             LEFT JOIN ");
+    	sql.append("                 chamada_encalhe_cota cec  ");
+    	sql.append("                     on cec.CHAMADA_ENCALHE_ID = ce.ID ");
+    	sql.append("             LEFT JOIN ");
+    	sql.append("                 cota cota  ");
+    	sql.append("                     on cota.id = cec.COTA_ID ");
+    	sql.append("             LEFT JOIN ");
+    	sql.append("                 conferencia_encalhe confEnc  ");
+    	sql.append("                     on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID ");
+    	sql.append("             LEFT JOIN ");
+    	sql.append("                 movimento_estoque_cota mecEncalhe  ");
+    	sql.append("                     on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
+    	sql.append("             WHERE ");
+    	sql.append("                 lanc.id = l.id  ");
+    	sql.append("                 and cota.id = c.id) AS UNSIGNED INT) ");
+    	sql.append("             else null ");
+    	sql.append("         end) as venda ");
+    	sql.append("     from ");
+    	sql.append("         movimento_estoque_cota mec force index (NDX_PRODUTO_EDICAO) ");
+    	sql.append("     inner join ");
+    	sql.append("         tipo_movimento tm  ");
+    	sql.append("             on tm.id = mec.tipo_movimento_id   ");
+    	sql.append("     inner join ");
+    	sql.append("         cota c  ");
+    	sql.append("             on c.id in (:listIdsCota)   ");
+    	sql.append("     inner join ");
+    	sql.append("         lancamento l  ");
+    	sql.append("             on mec.lancamento_id = l.id   ");
+    	sql.append("     left outer join ");
+    	sql.append("         periodo_lancamento_parcial plp  ");
+    	sql.append("             on plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID   ");
+    	sql.append("     where ");
+    	sql.append("         c.id in (:listIdsCota)  ");
+    	sql.append("         and mec.PRODUTO_EDICAO_ID in (:produtoEdicaoId)  ");
+    	sql.append("         and mec.cota_id = c.id   ");
+    	sql.append("         and mec.cota_id in (:listIdsCota)  ");
+    	sql.append("         and l.STATUS IN (:lancamentosPosExpedicao)  ");
+    	sql.append("         and tm.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
+    	sql.append("         and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null   ");
+    	sql.append("     group by ");
+    	sql.append("         mec.PRODUTO_EDICAO_ID, mec.cota_id ");
+    	
+    	
+        Query query = getSession().createSQLQuery(sql.toString())
+        		.addScalar("numeroCota", StandardBasicTypes.INTEGER)
+        		.addScalar("idCota", StandardBasicTypes.INTEGER)
+                .addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
+                .addScalar("reparte", StandardBasicTypes.BIG_DECIMAL)
+                .addScalar("venda", StandardBasicTypes.BIG_DECIMAL);
+
+        query.setParameterList("listIdsCota", listCotaId);
+        query.setParameterList("produtoEdicaoId", listProdutoEdicaoId);
+        query.setParameterList("lancamentosPosExpedicao", LancamentoHelper.getStatusLancamentosPosExpedicaoString());
+        query.setParameterList("statusLancFechadoRecolhido", Arrays.asList(StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name(), StatusLancamento.EM_RECOLHIMENTO.name()));
+        
+        query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
+        
+        List<EdicoesProdutosDTO> listaCotasComVenda = query.list();
+        
+		Map<Integer, List<EdicoesProdutosDTO>> mapCotasComVenda = new HashMap<>(); 
+		
+		for (EdicoesProdutosDTO vendaCota : listaCotasComVenda) {
+			
+			List<EdicoesProdutosDTO> listaVendaCota = mapCotasComVenda.get(vendaCota.getIdcota());
+			
+			if(listaVendaCota == null){
+				listaVendaCota = new ArrayList<EdicoesProdutosDTO>();
+			}
+			
+			listaVendaCota.add(vendaCota);
+			
+			mapCotasComVenda.put(vendaCota.getIdcota(), listaVendaCota);
+		}
+		
+		return mapCotasComVenda;
     }
 
     @Override

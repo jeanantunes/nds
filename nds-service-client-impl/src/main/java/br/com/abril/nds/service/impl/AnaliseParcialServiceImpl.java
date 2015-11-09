@@ -195,15 +195,27 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 idsProdutoEdicao.add(edicao.getProdutoEdicaoId());
             }
 
+            List<Long> listaCotasId = new ArrayList<>();
+            
+            for (AnaliseParcialDTO cota : lista) {
+            	listaCotasId.add((long) cota.getCotaId());
+			}
+            
+            Map<Integer, List<EdicoesProdutosDTO>> cotasComVenda = analiseParcialRepository.buscaHistoricoDeVendaTodasCotas(listaCotasId, idsProdutoEdicao);
+            
+            
             for (AnaliseParcialDTO item : lista) {
                 item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));
+                
                 List<EdicoesProdutosDTO> edicoesComVenda = new LinkedList<>();
                 Map<Integer, EdicoesProdutosDTO> edicoesProdutosDTOMap = new HashMap<>();
                 Integer ordemExibicaoHelper = 0;
+
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>());
 
                 if(idsProdutoEdicao.size() > 0) {
-                	Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas = buscaHistoricoDeVendas(item.getCotaId(), idsProdutoEdicao);
+                	Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas = buscaHistoricoDeVendas(item.getCotaId(), idsProdutoEdicao, cotasComVenda);
+//                	Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas = buscaHistoricoDeVendas(item.getCotaId(), idsProdutoEdicao);
                     edicoesComVenda.addAll(buscaHistoricoDeVendas);
 
                     for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
@@ -328,26 +340,53 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         }
     }
 
-    private Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas(int cota, List<Long> idsProdutoEdicao) {
+//    private Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas(int cota, List<Long> idsProdutoEdicao) {
+//
+//    	
+//        List<EdicoesProdutosDTO> edicoesProdutosDTOs = analiseParcialRepository.buscaHistoricoDeVendaParaCota((long) cota, idsProdutoEdicao);
+//
+//        for (Long id : idsProdutoEdicao) {
+//            boolean idExiste = false;
+//            for (EdicoesProdutosDTO dto : edicoesProdutosDTOs) {
+//                if (id.equals(dto.getProdutoEdicaoId())) {
+//                    idExiste = true;
+//                    break;
+//                }
+//            }
+//            if (!idExiste) {
+//                edicoesProdutosDTOs.add(new EdicoesProdutosDTO(id));
+//            }
+//        }
+//
+//        return edicoesProdutosDTOs;
+//    }
+    
+    private Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas(int cota, List<Long> idsProdutoEdicao, Map<Integer, List<EdicoesProdutosDTO>> cotasComVenda) {
 
     	
-        List<EdicoesProdutosDTO> edicoesProdutosDTOs = analiseParcialRepository.buscaHistoricoDeVendaParaCota((long) cota, idsProdutoEdicao);
+  	List<EdicoesProdutosDTO> edicoesProdutosDTOs = cotasComVenda.get(cota);
+  	
+      for (Long id : idsProdutoEdicao) {
+          boolean idExiste = false;
+          
+          if(edicoesProdutosDTOs != null){
+          	for (EdicoesProdutosDTO dto : edicoesProdutosDTOs) {
+          		if (id.equals(dto.getProdutoEdicaoId())) {
+          			idExiste = true;
+          			break;
+          		}
+          	}
+          }else{
+          	edicoesProdutosDTOs = new ArrayList<EdicoesProdutosDTO>();
+          }
+          
+          if (!idExiste) {
+              edicoesProdutosDTOs.add(new EdicoesProdutosDTO(id));
+          }
+      }
 
-        for (Long id : idsProdutoEdicao) {
-            boolean idExiste = false;
-            for (EdicoesProdutosDTO dto : edicoesProdutosDTOs) {
-                if (id.equals(dto.getProdutoEdicaoId())) {
-                    idExiste = true;
-                    break;
-                }
-            }
-            if (!idExiste) {
-                edicoesProdutosDTOs.add(new EdicoesProdutosDTO(id));
-            }
-        }
-
-        return edicoesProdutosDTOs;
-    }
+      return edicoesProdutosDTOs;
+  }
 
     @Override
     @Transactional
