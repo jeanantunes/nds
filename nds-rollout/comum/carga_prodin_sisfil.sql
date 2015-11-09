@@ -679,7 +679,7 @@ ENGINE=MEMORY
 ;
 
 
-
+/*
 LOAD DATA INFILE '/opt/rollout/load_files/COTA.NEW' INTO TABLE CARGA_MDC_COTA CHARACTER SET UTF8
 (@linha) SET 
 codigoCota=SUBSTR(@linha,221,5), -- 1,4
@@ -712,7 +712,7 @@ data_alteracao_cota=SUBSTR(@linha,235,10),
 tipo_logradouro=SUBSTR(@linha,245,30),
 complemento=trim(SUBSTR(@linha,245,60)),
 bairro=trim(SUBSTR(@linha,305,60));
-
+*/
 
 update CARGA_MDC_COTA set cpf = null where tipoPessoa ='J';
 
@@ -862,6 +862,7 @@ KEY codigoCota (codigoCota))
 ENGINE=MEMORY
 ;
 
+/*
 LOAD DATA INFILE '/opt/rollout/load_files/COTA_TEL.NEW' INTO TABLE CARGA_MDC_COTA_TEL CHARACTER SET UTF8
 (@linha) SET 
 codigoCota=SUBSTR(@linha,11,5),
@@ -869,7 +870,7 @@ codigoDP=SUBSTR(@linha,6,5),
 codigoFC=SUBSTR(@linha,11,5),
 ddd=SUBSTR(@linha,16,4),
 telefone=SUBSTR(@linha,20,8);
-
+*/
 -- update CARGA_MDC_COTA_TEL set ddd = '11';
 
 
@@ -909,7 +910,7 @@ KEY codigoCota (codigoCota))
 ENGINE=MEMORY
 ;
 
-
+/*
 LOAD DATA INFILE '/opt/rollout/load_files/BANCA.NEW' INTO TABLE CARGA_MDC_BANCA CHARACTER SET UTF8
 (@linha) SET 
 codigoCota=SUBSTR(@linha,143,5),
@@ -926,7 +927,7 @@ cotaDP=SUBSTR(@linha,138,5),
 cotaFC=SUBSTR(@linha,143,5),
 bairro=trim(SUBSTR(@linha,216,60)),
 complemento=trim(SUBSTR(@linha,156,60));
-
+*/
 -- update CARGA_MDC_BANCA set ddd = '11';
 
 select 'CARGA_MDC_BANCA:',count(*) from CARGA_MDC_BANCA; -- Log
@@ -945,6 +946,7 @@ KEY codigoCota (codigoCota))
 ENGINE=MEMORY
 ;
 
+/*
 LOAD DATA INFILE '/opt/rollout/load_files/BANCA_TEL.NEW' INTO TABLE CARGA_MDC_BANCA_TEL CHARACTER SET UTF8
 (@linha) SET 
 -- codigoCota=SUBSTR(@linha,1,5),
@@ -953,7 +955,7 @@ codigoDP=SUBSTR(@linha,5,5),
 codigoFC=SUBSTR(@linha,11,5),
 ddd=SUBSTR(@linha,1,4),
 telefone=SUBSTR(@linha,20,8);
-
+*/
 -- update CARGA_MDC_BANCA_TEL set ddd = '11';
 
 select 'CARGA_MDC_BANCA_TEL:',count(*) from CARGA_MDC_BANCA_TEL; -- Log
@@ -1086,17 +1088,18 @@ select 'DESCONTO_LOGISTICA:',count(*) from DESCONTO_LOGISTICA; -- Log
 -- where trim(LEADING '0' FROM cnpj) ='' ;
 
 -- Editor (Fornecedor Terceiro)
-INSERT INTO CARGA_PRODIN_EDI VALUES
+/*INSERT INTO CARGA_PRODIN_EDI VALUES
 ('8300428','I', '0008000','ROTEIROBR EDITORA','RUA','JOSE BENEDITO DUARTE','140','(12) 3014 7992','JACAREI','SP','12307-200','','','','','','','','','','','','','','','J','','S','','','','','11791785000184','392252849118',0,0); 
-
+*/
 
 -- pessoa FIXME * corrigir abaixo ASSIM QUE CORRIGIREM CNPJ/INSCRICAO ESTADUAL
+/*
 insert into pessoa (TIPO,CNPJ,INSC_ESTADUAL,RAZAO_SOCIAL,SOCIO_PRINCIPAL)
 select max('J') ,cnpj,max(inscricaoEstadual),trim(LEADING ' ' from nomeEditor),0
 from CARGA_PRODIN_EDI 
-where cnpj not in ('28322873000130','03555225000100','61438248000123','11791785000184') -- FIXME
+where cnpj not in ('28322873000130','03555225000100','61438248000123','11791785000184','00000000000000') -- FIXME
 group by cnpj;
-
+*/
 select 'EDITOR - PESSOA:',count(*) from PESSOA; -- Log
 
 -- editor
@@ -1706,11 +1709,14 @@ select id,1 from produto where id not in (select distinct produto_id from produt
 -- FIXME -- SOMENTE PARA SAO JOSE
 -- 
 
+update produto_fornecedor 
+set fornecedores_ID = 16;
 
+/*
 update produto_fornecedor 
 set fornecedores_ID = 3
 where produto_id in (select id from produto where codigo in (select codigoProduto from carga_mdc_produto where codigoFornecedorPublic <> '9999999'));
-
+*/
 
 
 
@@ -2147,10 +2153,12 @@ select 'COTA + BANCA:',count(*) from COTA; -- Log
 
 insert into COTA_FORNECEDOR
 SELECT c.id, f.id FROM COTA c, FORNECEDOR f
-where f.id in (1,2,16) ;
+-- where f.id in (1,2,16) ;
+where f.id in (16) ;
 
 select 'COTA_FORNECEDOR:',count(*) from COTA_FORNECEDOR; -- Log
 
+/*
 insert into historico_situacao_cota
 (DATA_EDICAO, TIPO_EDICAO, RESTAURADO, PROCESSADO, DATA_FIM_VALIDADE,DATA_INICIO_VALIDADE,
 DESCRICAO,MOTIVO,NOVA_SITUACAO,SITUACAO_ANTERIOR,USUARIO_ID,COTA_ID)
@@ -2158,7 +2166,7 @@ select now(),
 'ALTERACAO', null, 1, null, DATE(sysdate()), 'CARGA', 'OUTROS', situacao_cadastro, situacao_cadastro, 1, id
 from cota a
 where id not in (select cota_id from historico_situacao_cota);
-
+*/
 select 'historico_situacao_cota:',count(*) from historico_situacao_cota; -- Log
 
 -- Atualiza para cotas ALTERNATIVO as cotas vindas da carga inicial.

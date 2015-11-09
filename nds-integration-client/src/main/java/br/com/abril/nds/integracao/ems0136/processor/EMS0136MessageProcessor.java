@@ -334,7 +334,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 		Date dataOriginal = input.getDataLancamento();
 		Date dataSugerida = lancamentoService.obterDataLancamentoValido(dataOriginal, produtoEdicao.getProduto().getFornecedor().getId());
 		
-		Date dataRecolhimento = recolhimentoService.obterDataRecolhimentoValido(this.getProximaDataUtil(input.getDataRecolhimento(), produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO),produtoEdicao.getProduto().getFornecedor().getId());
+		Date dataRecolhimentoOriginal = input.getDataRecolhimento();
+		Date dataRecolhimentoSugerida = recolhimentoService.obterDataRecolhimentoValido(this.getProximaDataUtil(input.getDataRecolhimento(), produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO),produtoEdicao.getProduto().getFornecedor().getId());
 
 		
 		if(dataOriginal.compareTo(dataSugerida) != 0) {
@@ -347,10 +348,26 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 							+" Produto "+ produtoEdicao.getProduto().getCodigo()
 							+" Edição "+ produtoEdicao.getNumeroEdicao());
 			 
+			 input.setDataLancamento(dataSugerida);
+			 
 		}
 		
-		input.setDataLancamento(dataSugerida);
-		input.setDataRecolhimento(dataRecolhimento);
+		if(dataRecolhimentoOriginal.compareTo(dataRecolhimentoSugerida) != 0) {
+			
+			 this.ndsiLoggerFactory.getLogger().logWarning(message,
+			 		 EventoExecucaoEnum.INF_DADO_ALTERADO,
+					 "Alteração da Data Recolhimento (Arquivo)"
+							+" de "+ DateUtil.formatarDataPTBR(dataRecolhimentoOriginal)
+							+" para "+ DateUtil.formatarDataPTBR(dataRecolhimentoSugerida)
+							+" Produto "+ produtoEdicao.getProduto().getCodigo()
+							+" Edição "+ produtoEdicao.getNumeroEdicao());
+			 
+			 input.setDataRecolhimento(dataRecolhimentoSugerida);
+			 
+		}
+		
+		
+		
 	}
 	
 	private boolean validarDatasLancamento(Date dataLancamento, Date dataRecolhimento) {
