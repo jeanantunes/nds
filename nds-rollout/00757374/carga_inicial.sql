@@ -11,6 +11,111 @@
 
 -- ######################################################################################################################################################################################
 
+-- LIMPEZA DAS TEBELAS PARA SP
+
+SET FOREIGN_KEY_CHECKS=0;
+
+truncate table acumulo_divida;
+truncate table baixa_cobranca;
+truncate table chamada_encalhe;
+truncate table chamada_encalhe_cota;
+truncate table chamada_encalhe_fornecedor;
+truncate table chamada_encalhe_lancamento;
+truncate table cobranca;
+truncate table cobranca_controle_conferencia_encalhe_cota;
+truncate table comprador;
+truncate table concentracao_cobranca_cota;
+truncate table conferencia_encalhe;
+truncate table conferencia_encalhe_backup;
+truncate table conferencia_enc_parcial;
+truncate table consolidado_financeiro_cota;
+truncate table consolidado_mvto_financeiro_cota;
+truncate table controle_baixa_bancaria;
+truncate table controle_conferencia_encalhe;
+truncate table controle_conferencia_encalhe_cota;
+truncate table controle_fechamento_encalhe;
+truncate table debito_credito_cota;
+truncate table diferenca;
+truncate table diretorio;
+-- '1', 'Notas_Geradas', '/opt/ambiente2/parametros_nds/notas/exportado'
+-- '2', 'Notas_Retorno', '/opt/ambiente2/parametros_nds/notas/importado'
+truncate table divida;
+truncate table divida_consolidado;
+truncate table estoque_produto;
+truncate table estoque_produto_cota;
+truncate table estudo;
+truncate table estudo_cota;
+truncate table estudo_cota_gerado;
+truncate table estudo_produto_edicao;
+truncate table estudo_produto_edicao_base;
+truncate table expedicao;
+truncate table fechamento_diario;
+truncate table fechamento_diario_consolidado_cota;
+truncate table fechamento_diario_consolidado_divida;
+truncate table fechamento_diario_consolidado_encalhe;
+truncate table fechamento_diario_consolidado_reparte;
+truncate table fechamento_diario_consolidado_suplementar;
+truncate table fechamento_diario_cota;
+truncate table fechamento_diario_diferenca;
+truncate table fechamento_diario_divida;
+truncate table fechamento_diario_lancamento_encalhe;
+truncate table fechamento_diario_lancamento_reparte;
+truncate table fechamento_diario_resumo_consignado;
+truncate table fechamento_diario_resumo_consolidado_divida;
+truncate table fechamento_diario_resumo_estoque;
+truncate table fechamento_encalhe;
+truncate table furo_produto;
+truncate table historico_estoque_produto;
+truncate table historico_lancamento;
+truncate table historico_movto_financeiro_cota;
+truncate table item_nota_fiscal_entrada;
+truncate table item_nota_fiscal_saida;
+truncate table item_receb_fisico;
+truncate table lancamento;
+truncate table lancamento_diferenca;
+truncate table lancamento_diferenca_movimento_estoque_cota;
+truncate table lancamento_item_receb_fisico;
+truncate table movimento_estoque;
+truncate table movimento_estoque_cota;
+truncate table movimento_fechamento_fiscal_cota;
+truncate table movimento_fechamento_fiscal_fornecedor;
+truncate table movimento_fechamento_fiscal_origem_item;
+truncate table movimento_financeiro_cota;
+truncate table negociacao;
+truncate table negociacao_cobranca_originaria;
+truncate table nota_envio;
+truncate table nota_envio_endereco;
+truncate table nota_envio_item;
+truncate table nota_fiscal_endereco;
+truncate table nota_fiscal_entrada;
+truncate table nota_fiscal_item_nota_fiscal_origem_item;
+truncate table nota_fiscal_novo;
+truncate table nota_fiscal_origem_item;
+truncate table nota_fiscal_pessoa;
+truncate table nota_fiscal_produto_servico;
+truncate table nota_fiscal_referenciada;
+truncate table nota_fiscal_retencao_icms_transporte;
+truncate table nota_fiscal_telefone;
+truncate table nota_fiscal_valor_calculado;
+-- parametro_sistema  -- VERIFICAR
+truncate table parcela_negociacao;
+truncate table produto;
+truncate table produto_edicao;
+truncate table produto_edicao_slip;
+truncate table produto_fornecedor;
+truncate table ranking_faturamento;
+truncate table ranking_faturamento_gerados;
+truncate table ranking_segmento;
+truncate table ranking_segmento_gerados;
+truncate table rateio_diferenca;
+truncate table recebimento_fisico;
+truncate table segmento_nao_recebido;
+truncate table semaforo;
+truncate table slip;
+truncate table seq_generator;
+truncate table COTA_FORNECEDOR;
+
+SET FOREIGN_KEY_CHECKS=1;
 
 -- SAO PAULO
 
@@ -18,9 +123,11 @@
 -- PESSOA
 --
 
-LOCK TABLES `pessoa` WRITE;
+-- LOCK TABLES `pessoa` WRITE;
+
 /*!40000 ALTER TABLE `pessoa` DISABLE KEYS */;
-INSERT INTO `pessoa` VALUES 
+
+/*INSERT INTO `pessoa` VALUES 
 ('J' ,1,'sac@dinap.com.br',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'03555225000100','492522011117','99.999-9','Dinap','DINAP DISTRIBUIDORA NACIONAL DE PUBLICAÇÕES LTDA',NULL),
 ('J' ,2,'sac@fc.com.br',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'28322873000130','492390417112','99.999-9','FC','FC COMERCIAL E DISTRIBUIDORA LTDA',NULL),
 -- ('J' ,3,'sac@treelog.com.br',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'61438248002762',   '027942171','99.999-9','TREELOG S.A. - LOGISTICA E DISTRIBUICAO', 'TREELOG S.A. - LOGISTICA E DISTRIBUICAO',NULL),
@@ -28,8 +135,9 @@ INSERT INTO `pessoa` VALUES
 ('J' ,5,'dmcamp@terra.com.br',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'07348198000148','244989941114','467022','DMCAMP','DMCAMP DISTRIB. REV. LTDA. EPP',NULL),
 ('J' ,6,'roselene.oller@escala.com.br', NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'67526301000710','241085581114','99.999-9','ESCALA EDITORIAL','EDITORA E DISTRIBUIDORA EDIPRESS LTDA',NULL),
 ('J',16,'sac@treelog.com.br',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'61438248000123','492127567118','99.999-9','Treelog','TREELOG S.A. - LOGISTICA E DISTRIBUICAO',NULL);
+*/
 /*!40000 ALTER TABLE `pessoa` ENABLE KEYS */;
-UNLOCK TABLES;
+-- UNLOCK TABLES;
 
 --
 -- ENDERECO_DISTRIBUIDOR
@@ -37,60 +145,67 @@ UNLOCK TABLES;
 
 
 
-LOCK TABLES `endereco` WRITE;
+-- LOCK TABLES `endereco` WRITE;
 /*!40000 ALTER TABLE `endereco` DISABLE KEYS */;
-INSERT INTO `endereco` VALUES 
+/*INSERT INTO `endereco` VALUES 
 ('5', 'Vila João Jorge', '13041-302', 'Campinas', NULL, NULL, NULL,NULL,'Artur Ramos', '215', 'Rua', 'SP', 5,0),
 ('6', 'Parque Empresarial', '07750-000', 'Cajamar', NULL, NULL, NULL, NULL,'Osasco', '782', 'Rua', 'SP', 6,1);
+*/
 /*!40000 ALTER TABLE `endereco` ENABLE KEYS */;
-UNLOCK TABLES;
+-- UNLOCK TABLES;
 
 --
 -- DISTRIBUICAO
 -- 
 
-LOCK TABLES `distribuidor` WRITE;
+-- LOCK TABLES `distribuidor` WRITE;
 /*!40000 ALTER TABLE `distribuidor` DISABLE KEYS */;
-INSERT INTO `distribuidor` VALUES 
+/*INSERT INTO `distribuidor` VALUES 
 (1,1,150000.0000,150000.0000,1,'0','0757350',NULL,'2015-10-21',2.0000,1,0.0000,4,1,NULL,'SEGUNDA_FEIRA','QUARTA_FEIRA',10,0,NULL,NULL,NULL,NULL,0,0,0,0,0,0,1,0,1,0,0,1,1,0,1,15,0.0000,3,NULL,NULL,0,0,360,NULL,0,0,0,0,1,1,'4647802','MERCANTIL',NULL,'MODELO_2','MODELO_2','PICKING1.TXT','PICKING2.TXT','PICKING3.TXT','MODELO_2',0,0,0,1,9999999.0000,5,NULL,1,1,1,'Boleto','<p><br></p>',NULL,0,0,NULL,NULL,0,0,'2015','2020-12-31',1,1,1,'CPJ',0.30,'NAO INCIDENCIA DO ICMS CONF. ART. 47, INCISO I DO DECRETO 27.427/00 - RICMS/RJ',NULL,NULL,NULL,NULL,1);
 -- INSERT INTO `distribuidor` VALUES 
 -- (1,1,80000.0000,70000.0000,1,'6248116','7359227',49941,'2014-10-28',2.0000,1,0.0000,3,0,NULL,'SEGUNDA_FEIRA','QUARTA_FEIRA',10,0,'DEVOLUCAO_FORNECEDOR',NULL,NULL,NULL,NULL,0,0,0,0,0,0,0,0,1,0,0,1,1,0,1,15,0.0000,2,NULL,NULL,0,0,0,60,NULL,0,0,0,0,0,1,1,'4618403','MERCANTIL',NULL,'MODELO_1','MODELO_1','PICKING1.TXT','PICKING2.TXT','PICKING3.TXT','MODELO_1',1,0,0,1,9999999.0000,5,NULL,0,0,0,'Boleto - Treelog','<p>Caro jornaleiro,</p><p><br></p><p>segue sua cobrança para pagamento conforme data de vencimento estipulada.</p><p><br></p><p>Att.</p><p>Filial Campinas</p>',NULL,0,0,NULL,NULL,0,0,NULL,NULL,0,1,1,NULL,NULL,'NAO INCIDENCIA DO ICMS CONF. ART. 7, INCISO XIII DECRETO 45.490/00 - RICMS/SP',NULL,NULL,NULL,NULL);
+*/
 /*!40000 ALTER TABLE `distribuidor` ENABLE KEYS */;
-UNLOCK TABLES;
+-- UNLOCK TABLES;
 
-LOCK TABLES `fornecedor` WRITE;
+-- LOCK TABLES `fornecedor` WRITE;
 /*!40000 ALTER TABLE `fornecedor` DISABLE KEYS */;  
-INSERT INTO `fornecedor` VALUES 
+/*INSERT INTO `fornecedor` VALUES 
 (1,0,'dinap@dinap.com.br','2014-03-10',10.0000,'INTERFACE',0,'Comercial Dinap','ATIVO',NULL,NULL,1,3,NULL,NULL,'BANCAS',16,1,1),
 (2,757374,'fc@fc.com.br','2014-03-10',10.0000,'INTERFACE',0,'Comercial FC','ATIVO',NULL,NULL,2,3,NULL,NULL,'BANCAS',16,1,1),
 (6,6,'roselene.oller@escala.com.br','2014-03-10',10.0000,'MANUAL',0,'Rose','ATIVO',NULL,NULL,6,3,NULL,NULL,'BANCAS',16,0,1),
 (16,16,'sac@treelog.com.br','2014-03-10',10.0000,'INTERFACE',0,'Comercial Treelog','ATIVO',NULL,NULL,16,3,NULL,NULL,'BANCAS',NULL,0,1);
+*/
 /*!40000 ALTER TABLE `fornecedor` ENABLE KEYS */;
-UNLOCK TABLES;
+-- UNLOCK TABLES;
 
 
-LOCK TABLES `endereco_fornecedor` WRITE;
+-- LOCK TABLES `endereco_fornecedor` WRITE;
 /*!40000 ALTER TABLE `endereco_fornecedor` DISABLE KEYS */;
+/*
 INSERT INTO `endereco_fornecedor` VALUES 
 (6,1,'COMERCIAL',6,6);
+*/
 /*!40000 ALTER TABLE `endereco_fornecedor` ENABLE KEYS */;
-UNLOCK TABLES;
+-- UNLOCK TABLES;
 
 --
 -- BANCO
 --
 
-LOCK TABLES `banco` WRITE;
+-- LOCK TABLES `banco` WRITE;
 /*!40000 ALTER TABLE `banco` DISABLE KEYS */; 
-INSERT INTO `banco` VALUES 
+
+/*INSERT INTO `banco` VALUES 
 (1,'2938','Treelog',1, 175,16,'08378',5, 8378, '0', '5', 'Pagável em qualquer banco até o vencimento','*** NÃO RECEBER APÓS O VENCIMENTO  ***',null,null, 1.0000, 2.0000, 'Banco Itaú', '341', NULL),
 (2,'310','DMCamp'  ,1, 6,5,   '98971',1, 98971, '7', '1', 'Pagável em qualquer banco até o vencimento.','*** NÃO RECEBER APÓS O VENCIMENTO  ***',null,null,1.0000, 2.0000, 'Banco Bradesco', '237', NULL);
 -- (3,'51','Treelog_1' ,1, 0,   '3775631', 16, '0', '46', 'Pagável em qualquer banco até a data de vencimento', '1.0000', '2.0000', 'Banco HSBC', '399', NULL),
 -- (4,'52','CEF'       ,1, 9,   '10', '8879', 1, '9', NULL, '1.0000', '2.0000', 'Caixa Econômica Federal', '144', NULL),
 -- (5,'53','BB'        ,1, 18,  '10', '3324', 8, '1', NULL, '1.0000', '3.0000', 'Banco do Brasil', '1', NULL),
 -- (6,'54','Santander' ,1, 23,  '32', '1827', 1, '8', NULL, '2.0000', '2.0000', 'Santander', '399', NULL)
+*/
 /*!40000 ALTER TABLE `banco` ENABLE KEYS */;
-UNLOCK TABLES;
+-- UNLOCK TABLES;
 
 
 
@@ -148,51 +263,8 @@ insert into CARGA_MDC_COTA_ALTERNATIVAS VALUES
 -- PARAMETRO_SISTEMA
 --
 
-LOCK TABLES `parametro_sistema` WRITE;
-/*!40000 ALTER TABLE `parametro_sistema` DISABLE KEYS */;
-INSERT INTO `parametro_sistema` VALUES 
-(1,'EMAIL_HOST','email-smtp.us-east-1.amazonaws.com'),
-(2,'EMAIL_PROTOCOLO','smtp'),
-(3,'EMAIL_USUARIO','AKIAJVAT5NPPIIAPVOKQ'),
-(4,'EMAIL_SENHA','AmC/cO/I8X9nqgq2P2e4oN+fcghN9fd0BZDa1lqeGRrr'),
-(5,'EMAIL_PORTA','465'),
-(6,'PATH_ARQUIVOS_DISTRIBUICAO_COTA','/opt/tomcat7/webapps/nds-client/distribuicao/'),
-(7,'PATH_IMAGENS_CAPA','/opt/tomcat7/webapps/nds-client/capas/'),
-(8,'PATH_IMAGENS_PDV','/images/pdv/'),
-(9,'PATH_TERMO_ADESAO','\\termo_adesao\\'),
-(10,'PATH_PROCURACAO','\\procuracao\\'),
-(11,'PATH_GERACAO_ARQUIVO_COBRANCA','/opt/parametros_nds/arquivo_cobranca/'),
-(12,'NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE','7'),
-(13,'NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_EM','7'),
-(14,'NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM','7'),
-(15,'NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE','7'),
-(16,'PATH_INTERFACE_NFE_IMPORTACAO','/opt/parametros_nds/notas'),
-(17,'PATH_INTERFACE_NFE_EXPORTACAO','/opt/parametros_nds/notas/'),
-(18,'PATH_IMPORTACAO_CONTRATO','C:\\contratos\\'),
-(19,'PATH_INTERFACE_MDC_IMPORTACAO','/opt/interface_client/mdc/NDS/importacao'),
-(20,'PATH_INTERFACE_MDC_EXPORTACAO','/opt/interface_client/mdc/NDS/exportacao'),
-(21,'PATH_INTERFACE_MDC_BACKUP','/opt/interface_client/mdc/NDS/bkp'),
-(22,'NDSI_EMS0106_IN_FILEMASK','(?i:DEAPR19.NEW)'),
-(23,'NDSI_EMS0107_IN_FILEMASK','(?i:DEAJO19.NEW)'),
-(24,'NDSI_EMS0107_OUT_FILEMASK','DEAPR19.NEW'),
-(25,'NDSI_EMS0108_IN_FILEMASK','(?i:MATRIZ.NEW)'),
-(26,'NDSI_EMS0110_IN_FILEMASK','([0-9]{8}).prd'),
-(27,'NDSI_EMS0112_IN_FILEMASK','(?i:[0-9]{8}.edi)'),
-(28,'NDSI_EMS0114_IN_FILEMASK','([0-9]{8}).rec'),
-(29,'NDSI_EMS0116_IN_FILEMASK','(?i:BANCA.NEW)'),
-(30,'NDSI_EMS0117_IN_FILEMASK','COTA.NEW'),
-(31,'NDSI_EMS0118_IN_FILEMASK','(?i:PRECO.NEW)'),
-(32,'NDSI_EMS0119_IN_FILEMASK','(?i:PRODUTO.NEW)'),
-(33,'NDSI_EMS0129_OUT_FILEMASK','PICKING1.NEW'),
-(34,'OUTBOUND_FOLDER','/opt/interface/'),
-(35,'CODIGO_DISTRIBUIDOR_DINAP','6248116'),
-(36,'CNPJ_PJ_IMPORTACAO_NRE','73.481.980/0014-8'),
-(41,'NFE_DPEC','FALSE'),(42,'EMAIL_REMETENTE','novodistrib@dgb.com.br'),
-(43,'EMAIL_AUTENTICAR','TRUE'),
-(44,'PATH_INTERFACE_PICKING_EXPORTACAO','/opt/parametros_nds/picking'),
-(45,'PATH_INTERFACE_BANCAS_EXPORTACAO','/opt/parametros_nds/bancas');
-/*!40000 ALTER TABLE `parametro_sistema` ENABLE KEYS */;
-UNLOCK TABLES;
+
+
 
 -- ######################################################################################################################################################################################
 

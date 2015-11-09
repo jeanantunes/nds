@@ -40,6 +40,8 @@ DEVOLVE_ENCALHE boolean,
 COD_COTA_DP_HVCT INT,
 COD_COTA_FC_HVCT INT,
 NUMERO_PERIODO INT,
+CODIGO_SISFIL INT,
+OUTRO VARCHAR (255),
 PARCIAL_NORMAL CHAR,
 produto_edicao_id bigint,
 DATA_LANCAMENTO DATE,
@@ -48,26 +50,30 @@ cota_id bigint
 ) ENGINE=MEMORY
 ;
 
+
+
+
 LOAD DATA INFILE '/opt/rollout/load_files/HVND_CONSIGNADO_NORMAL.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+
 
 
 update HVND set CONSIGNADO =1 ;
 
 
 -- LOAD DATA INFILE '/opt/rollout/load_files/HVND_1.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
-LOAD DATA INFILE '/opt/rollout/load_files/turma_monica.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
-LOAD DATA INFILE '/opt/rollout/load_files/natureza.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
-LOAD DATA INFILE '/opt/rollout/load_files/monica.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
-LOAD DATA INFILE '/opt/rollout/load_files/istoe.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
-LOAD DATA INFILE '/opt/rollout/load_files/epoca.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
-LOAD DATA INFILE '/opt/rollout/load_files/carros.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
-LOAD DATA INFILE '/opt/rollout/load_files/carta_capital.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
-LOAD DATA INFILE '/opt/rollout/load_files/casa_vogue.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
-LOAD DATA INFILE '/opt/rollout/load_files/auto_esporte.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/turma_monica.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/natureza.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/monica.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/istoe.txt' INTO TABLE HVND COLUMNS TERMINATED BY 'BVMF3|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/epoca.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/carros.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/carta_capital.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/casa_vogue.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/auto_esporte.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
 
 update HVND set PARCIAL_NORMAL ='N';
-update HVND set CONSIGNADO =0;
-update HVND set status ='F';
+update HVND set CONSIGNADO =0 where CONSIGNADO is null;
+update HVND set status ='F' where status is null;
 
 -- update HVND set CONSIGNADO =0 where status= 'F';
 -- update HVND set CONSIGNADO =1 where status= 'A';
@@ -87,6 +93,8 @@ DEVOLVE_ENCALHE boolean,
 COD_COTA_DP_HVCT INT,
 COD_COTA_FC_HVCT INT,
 NUMERO_PERIODO INT,
+CODIGO_SISFIL INT,
+OUTRO VARCHAR (255),
 PARCIAL_NORMAL CHAR,
 produto_edicao_id bigint,
 DATA_LANCAMENTO DATE,
@@ -111,14 +119,17 @@ LOAD DATA INFILE '/opt/rollout/load_files/parcial.txt' INTO TABLE HVND COLUMNS T
 -- LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR_2.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
 
 update HVND set PARCIAL_NORMAL ='P' where PARCIAL_NORMAL is null;
-update HVND set CONSIGNADO =0;
-update HVND set status ='F';
+update HVND set CONSIGNADO =1 where CONSIGNADO is null;
+-- update HVND set status ='F' where status is null;
 
 -- update HVND set CONSIGNADO =1 where status = 'A'; -- and PARCIAL_NORMAL ='P';
 -- update HVND set CONSIGNADO =0 where status = 'F'; -- and PARCIAL_NORMAL ='P';
 
 
 update HVND set DEVOLVE_ENCALHE =1;
+
+-- FIXME Cesar pediu para excluir essa cota
+delete from hvnd where COD_COTA_FC_HVCT in (905,4165,1096,643,3624,2830,3225,3563,1027,563,2110,1060,2089,2101,3206,2329,2079);
 
 update produto_edicao
 set DATA_DESATIVACAO = null
@@ -154,6 +165,9 @@ where p.id = pe.produto_id
 and p.codigo = h.cod_produto 
 and pe.numero_edicao = h.num_edicao;
 
+update HVND h,lancamento l
+set l.status = case when h.status='A' then 'EXPEDIDO' else 'FECHADO' end
+where h.produto_edicao_id = l.produto_edicao_id;
 
 
 select '*** HVND PRODUTOS NULOS******:';
@@ -165,11 +179,14 @@ from HVND where produto_edicao_id is null and status = 1;
 
 delete from HVND where produto_edicao_id is null;
 
-
-update HVND set cota_id = (select c.id from cota c where c.numero_cota = HVND.COD_COTA_HVCT limit 1);
+update HVND set cota_id = (select c.id from cota c where c.numero_cota = HVND.COD_COTA_FC_HVCT limit 1);
+-- update HVND set cota_id = (select c.id from cota c where c.numero_cota = HVND.COD_COTA_HVCT limit 1);
 
 select '*** HVND Cotas nulas:';
-select GROUP_CONCAT(COD_COTA_HVCT  SEPARATOR ',') from HVND where cota_id is null;
+-- select GROUP_CONCAT(COD_COTA_HVCT  SEPARATOR ',') from HVND where cota_id is null;
+select GROUP_CONCAT(a.COD_COTA_FC_HVCT  SEPARATOR ',') from (
+select distinct COD_COTA_FC_HVCT from HVND where cota_id is null
+) a;
 
 ALTER TABLE `HVND` ADD INDEX `hvnd_cota_id` (`COD_COTA_HVCT` ASC, `cod_produto` ASC, `num_edicao` ASC, `produto_edicao_id` ASC) ;
 
@@ -210,21 +227,22 @@ DROP TABLE IF EXISTS CONSIGNADO;
 DROP TABLE IF EXISTS CONSIGNADO_CONCAT; 
 DROP TABLE IF EXISTS HVND_CONCAT; 
 
+
 create table CONSIGNADO (
-COD_COTA_HVCT INT,
-nome_produto VARCHAR(255),
+-- COD_COTA_HVCT INT,
+-- nome_produto VARCHAR(255),
 cod_produto VARCHAR(8),
 num_edicao INT,
 DATA_LANCAMENTO_STR VARCHAR(10),
 PRECO FLOAT,
-F1 FLOAT,
+-- F1 FLOAT,
 QTDE_REPARTE_HVCT FLOAT,
 F2 FLOAT,
 F3 FLOAT
 ) 
 ;
 
--- LOAD DATA INFILE '/opt/rollout/load_files/CONSIGNADO.TXT' INTO TABLE CONSIGNADO COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/CONSIGNADO.TXT' INTO TABLE CONSIGNADO COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
 
 
 create table CONSIGNADO_CONCAT (
@@ -666,8 +684,8 @@ set l.periodo_lancamento_parcial_id = p.id,
     l.data_lcto_distribuidor = p.data_lancamento,
     l.data_lcto_prevista = p.data_lancamento,
     l.data_rec_distrib = p.data_recolhimento,
-    l.data_rec_prevista = p.data_recolhimento,
-    l.status = 'FECHADO'
+    l.data_rec_prevista = p.data_recolhimento -- ,
+    -- l.status = 'FECHADO'
 where l.produto_edicao_id = p.produto_edicao_id 
 and p.numero_periodo =1;
 
@@ -1695,9 +1713,11 @@ truncate table HVND_AUX;
 -- insert into HVND_AUX
 -- select distinct produto_edicao_id from HVND where status = 'F' and data_recolhimento < DATE_SUB(sysdate(),INTERVAL 12 DAY);
 
+/*
 update lancamento
 set status = 'FECHADO'
 where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
+*/
 
 update lancamento
 set DATA_REC_PREVISTA = (select adddate(DATA_LCTO_DISTRIBUIDOR, peb)
@@ -1722,8 +1742,9 @@ CREATE TABLE HVND_AUX2 (produto_edicao_id INT(6)) ENGINE=MEMORY;
 insert into HVND_AUX2
 select distinct produto_edicao_id from hvnd;
 
-truncate table HVND_AUX;
 
+truncate table HVND_AUX;
+/*
 insert into HVND_AUX
 select distinct l.produto_edicao_id
 from lancamento l
@@ -1735,9 +1756,10 @@ and l.DATA_REC_PREVISTA < DATE_SUB(sysdate(),INTERVAL 7 DAY);
 update lancamento
 set status = 'FECHADO'
 where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
-
+*/
 DROP TABLE IF EXISTS HVND_AUX;
 DROP TABLE IF EXISTS HVND_AUX2;
+
 
 update lancamento
 set DATA_REC_DISTRIB = DATA_REC_PREVISTA
@@ -2093,7 +2115,7 @@ set tipo_lancamento = 'REDISTRIBUICAO'
 where numero_lancamento > 1
 and tipo_lancamento = 'LANCAMENTO';
 
-update lancamento set status = 'FECHADO';
+-- update lancamento set status = 'FECHADO';
 
 ALTER TABLE `HVND` ENGINE=MEMORY;
 
