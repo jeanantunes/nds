@@ -89,7 +89,7 @@ public class ControleNumeracaoSlipServiceImpl implements ControleNumeracaoSlipSe
 			couchDbClient.update(jsonDoc);
 			
 			
-		} catch (NoDocumentException e) {
+		} catch (Exception e) {
 		 try {
 			jsonDoc = new JsonObject();
 			jsonDoc.addProperty("_id", docName);
