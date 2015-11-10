@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.NotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstornoNFERepository;
 
@@ -70,6 +71,7 @@ public class EstornoNFERepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" JOIN nfi.identificacaoEmitente as identEmit ")
 		.append(" JOIN nfi.identificacaoDestinatario as identDest")
 		.append(" JOIN nfi.informacaoEletronica as infElet ")
+		.append(" JOIN infElet.retornoComunicacaoEletronica as ret ")
 		.append(" JOIN ident.naturezaOperacao as natOp ")
 		.append(" LEFT JOIN natOp.processo as proc ")
 		.append(" JOIN identEmit.documento as doc ")
@@ -77,6 +79,8 @@ public class EstornoNFERepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		hql.append(" WHERE 1=1 ");
 
+		hql.append(" AND ret.statusRetornado != statusRetornado ");
+		
 		if(filtro.getDataInicial() != null) {
 			hql.append(" AND ident.dataEmissao between :dataInicial and :dataFinal ");
 		}
@@ -130,6 +134,8 @@ public class EstornoNFERepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getSituacaoNfe()!=null && !filtro.getSituacaoNfe().isEmpty()) {
 			query.setParameter("situacaoNfe", filtro.getSituacaoNfe());
 		}
+		
+		query.setParameter("statusRetornado", StatusRetornado.AUTORIZADO);
 		
 		return query;
 	}

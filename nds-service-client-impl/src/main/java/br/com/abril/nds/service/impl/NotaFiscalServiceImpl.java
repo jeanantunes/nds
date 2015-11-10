@@ -358,7 +358,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		}
 		
 		this.movimentoEstoqueService.devolucaoRecolhimentoNotaCancelada(notaFiscal);
-		// this.gerarArquivoSolicitacaoCancelamento(notaFiscal);
 
 	}
 
