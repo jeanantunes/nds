@@ -149,7 +149,7 @@ var estornoNFEController  = $.extend(true, {
 						
 						var idNota = value.cell.id;
 						
-						acao += '</a> <a href="javascript:;" onclick="estornoNFEController.excluir(' + idNota + ');""><img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
+						acao += '</a> <a href="javascript:;" onclick="estornoNFEController.estornoNotaFiscal(' + idNota + ');""><img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
 						
 					});
 					
@@ -237,7 +237,7 @@ var estornoNFEController  = $.extend(true, {
 			
 			$.each(resultado.rows, function(index, value) {
 				var idNota = value.cell.id;
-				var acao = '</a> <a href="javascript:;" onclick="estornoNFEController.excluir(' + idNota + ');""><img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
+				var acao = '</a> <a href="javascript:;" onclick="estornoNFEController.estornoNotaFiscal(' + idNota + ');""><img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
 				
 				value.cell.acao = acao;
 			});
