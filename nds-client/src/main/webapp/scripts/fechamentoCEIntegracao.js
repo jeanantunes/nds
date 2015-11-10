@@ -1478,6 +1478,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					$(".grids", fechamentoCEIntegracaoController.workspace).hide();
 					fechamentoCEIntegracaoController.esconderBotoes();
 					fechamentoCEIntegracaoController.itensCEIntegracao = [];
+					fechamentoCEIntegracaoController.buscarNumeroSemana();
 					return resultado;
 				 },
 				null,
