@@ -364,8 +364,13 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		result.include("listaFornecedores",listaFornecedoresCombo );
 	}
 	
-	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, BigDecimal venda) {
-		
+	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, String vendaStr) {
+		BigDecimal venda = BigDecimal.ZERO;
+		try {
+		 venda = 	 new BigDecimal(vendaStr.replaceAll("\\.","").replaceAll(",","."));
+		} catch (Exception e ) {
+			
+		}
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
 		filtro.setPaginacao(null);
