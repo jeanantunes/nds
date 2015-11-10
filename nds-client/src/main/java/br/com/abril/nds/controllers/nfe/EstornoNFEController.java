@@ -41,18 +41,15 @@ public class EstornoNFEController extends BaseController {
 	@Autowired
 	private EstornoNFEService estornoNFEService;
 	
-	@Autowired
-	private NFeService nfeService;
-	
 	@Path("/")
 	@Rules(Permissao.ROLE_NFE_ESTORNO_NFE)
 	public void index() {	
 		
 	}
 	
-	@Post("/excluir")
+	@Post("/estornoNotaFiscal")
 	@Rules(Permissao.ROLE_NFE_ESTORNO_NFE)
-	public void excluir(Long id) {
+	public void estornoNotaFiscal(Long id) {
 		
 		this.estornoNFEService.estornoNotaFiscal(id);
 		
