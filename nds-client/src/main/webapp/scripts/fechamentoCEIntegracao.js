@@ -462,6 +462,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	
 		
 		if ( isFinal) {
+			fechamentoCEIntegracaoController.atualizarDiferenca(campo.value, idItemCeIntegracao);
 			return;
 		}
 		
