@@ -205,7 +205,9 @@ var estornoNFEController  = $.extend(true, {
 	buscar : function() {
 		
 		if(this.isEmptyOrNull()) {
-			$(".grids", estornoNFEController.workspace).hide();
+			
+			this.bindButtons();
+			estornoNFEController.initFlexiGrids();
 			return;
 		} else {
 			estornoNFEController.initFlexiGrids();
@@ -220,12 +222,10 @@ var estornoNFEController  = $.extend(true, {
 				
 			});
 			
-			$(".estornoGrid").flexReload();
-			$(".grids", estornoNFEController.workspace).show();
 			
 		}
-		
-		
+		$(".estornoGrid").flexReload();
+		$(".grids", estornoNFEController.workspace).show();
 	},
 	
 	executarPreProcessamento : function(resultado) {

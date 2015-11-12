@@ -53,6 +53,11 @@ fieldset label {
 	});
 </script>
 
+	<style type="text/css">
+		#dialog-box{display:none;}
+		#dialog-box fieldset{width:570px!important;}
+	</style>
+
 </head>
 
 <body>
@@ -74,16 +79,16 @@ fieldset label {
          	<td width="152"><input type="text" name="estorno-dataEmissao" id="estorno-dataEmissao" class="input-date" style="width:100px;"/></td>
          
      		<td width="474"  colspan="4">
-     			<span class="bt_novos">
-      				<a isEdicao="true" name="btnPesquisar" id="btnPesquisar" onclick="estornoNFEController.buscar();">
-      					<img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" />
+     			<span class="bt_pesquisar">
+      				<a isEdicao="true" name="btnPesquisar" id="btnPesquisar" href="javascript:;"  onclick="estornoNFEController.buscar();">
             		</a>
            		</span>
            	</td>
        	</tr>
    	</table>
 </fieldset>
-   <div class="linha_separa_fields">&nbsp;</div>
+<div class="linha_separa_fields">&nbsp;</div>
+
 <div class="grids" style="display:none;">
       <fieldset class="fieldGrid">
        	  <legend>Nota Fiscal</legend>
