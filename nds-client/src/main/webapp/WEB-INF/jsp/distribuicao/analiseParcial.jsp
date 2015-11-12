@@ -279,9 +279,9 @@ table.dadosTab { margin-left: 370px;}
 			</table>
 		</fieldset>
 		<div class="linha_separa_fields">&nbsp;</div>
-		<fieldset class="classFieldset">
+		<fieldset class="classFieldset" id="fieldAnaliseEstudo">
 			<legend>Base de Estudo / Análise</legend>
-			<div class="grids" style="display: block;">
+			<div class="grids" id="gridAnaliseEstudo" style="display: block;">
 				<table class="baseEstudoGrid" id="baseEstudoGridParcial"></table>
 
 				<c:if test="${tipoExibicao == 'NORMAL'}">

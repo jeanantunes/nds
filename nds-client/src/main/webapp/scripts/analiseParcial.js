@@ -729,6 +729,8 @@ var analiseParcialController = $.extend(true, {
         	edicoesBaseDadosEdicoes = resultado.rows[0].cell.edicoesBase; 
         }    
         
+        analiseParcialController.atualizaPaginacaoGridAnaliseEstudo();
+        
         return resultado;
     },
 
@@ -745,6 +747,23 @@ var analiseParcialController = $.extend(true, {
                 }
             }
         );
+    },
+    
+    atualizaPaginacaoGridAnaliseEstudo: function() {
+    	
+    	setTimeout(function(){
+	    	
+    		if($("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").find("[value='500']").size() <= 0){
+    			$("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").append($('<option>', {
+    				value: 500,
+    				text: '500'
+    			}));
+    		}
+    		
+    		$("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").val(500)
+    		
+	    },1);
+    	
     },
 
     onSuccessReloadGrid : function() {
@@ -1143,8 +1162,12 @@ var analiseParcialController = $.extend(true, {
             colModel : modelo,
             width: estudoOrigem?1035:980,
             height: 200,
+            usepager : true,
+			useRp : true,
+			rp: 500,
+			rpOptions: [500],
+            showTableToggleBtn: false,
             colMove: false,
-            showToggleBtn: false,
             sortorder: 'desc',
             sortname: 'reparteSugerido',
             onChangeSort: analiseParcialController.sortGrid,

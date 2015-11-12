@@ -756,7 +756,11 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append("             on plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID   ");
     	sql.append("     where ");
     	sql.append("         c.id in (:listIdsCota)  ");
-    	sql.append("         and mec.PRODUTO_EDICAO_ID in (:produtoEdicaoId)  ");
+
+    	if(listProdutoEdicaoId != null && listProdutoEdicaoId.size() > 0){
+        	sql.append("         and mec.PRODUTO_EDICAO_ID in (:produtoEdicaoId)  ");
+        }
+    	
     	sql.append("         and mec.cota_id = c.id   ");
     	sql.append("         and mec.cota_id in (:listIdsCota)  ");
     	sql.append("         and l.STATUS IN (:lancamentosPosExpedicao)  ");
@@ -774,7 +778,11 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 .addScalar("venda", StandardBasicTypes.BIG_DECIMAL);
 
         query.setParameterList("listIdsCota", listCotaId);
-        query.setParameterList("produtoEdicaoId", listProdutoEdicaoId);
+        
+        if(listProdutoEdicaoId != null && listProdutoEdicaoId.size() > 0){
+        	query.setParameterList("produtoEdicaoId", listProdutoEdicaoId);
+        }
+        
         query.setParameterList("lancamentosPosExpedicao", LancamentoHelper.getStatusLancamentosPosExpedicaoString());
         query.setParameterList("statusLancFechadoRecolhido", Arrays.asList(StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name(), StatusLancamento.EM_RECOLHIMENTO.name()));
         
