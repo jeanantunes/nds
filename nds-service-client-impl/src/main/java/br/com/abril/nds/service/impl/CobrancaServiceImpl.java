@@ -132,7 +132,12 @@ public class CobrancaServiceImpl implements CobrancaService {
 	public void initCouchDbClient() {
 		
 		org.lightcouch.CouchDbProperties properties = new org.lightcouch.CouchDbProperties()
-			.setDbName(DB_NAME)
+			// .setDbName(DB_NAME)
+			.setDbName(DB_NAME+"_db_"+
+					
+					 String.format("%08d",Integer.parseInt(distribuidorService.obter().getCodigoDistribuidorDinap())<=0?
+							 Integer.parseInt(distribuidorService.obter().getCodigoDistribuidorFC())
+							 :Integer.parseInt(distribuidorService.obter().getCodigoDistribuidorDinap())))
 			.setCreateDbIfNotExist(true)
 			.setProtocol(couchDbProperties.getProtocol())
 			.setHost(couchDbProperties.getHost())
