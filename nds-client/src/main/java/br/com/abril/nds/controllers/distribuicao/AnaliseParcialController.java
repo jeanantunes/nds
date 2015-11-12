@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AnaliseParcialDTO;
@@ -36,7 +37,6 @@ import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
-import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
@@ -252,7 +252,7 @@ public class AnaliseParcialController extends BaseController {
     }
 
     @Path("/init")
-    public void init(Long id, String sortname, String sortorder, String filterSortName, Double filterSortFrom, Double filterSortTo, String elemento,
+    public void init(Long id, String sortname, String sortorder, int page, int rp, String filterSortName, Double filterSortFrom, Double filterSortTo, String elemento,
                      Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao, 
                      String numeroCotaStr,Long estudoOrigem,String dataLancamentoEdicao, Integer numeroParcial) {
 
@@ -275,12 +275,18 @@ public class AnaliseParcialController extends BaseController {
         filtroQueryDTO.setDataLancamentoEdicao(DateUtil.parseDataPTBR(dataLancamentoEdicao));
         filtroQueryDTO.setNumeroParcial(numeroParcial);
         
-
+        PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder, sortname);
+        
         List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(filtroQueryDTO);
-
+        
+        paginacao.setQtdResultadosTotal(lista.size());
+        
+        lista = PaginacaoUtil.paginarEmMemoria(lista, paginacao);
+        
         TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = monta(lista);
-        table.setPage(1);
-        table.setTotal(50);
+        table.setPage(paginacao.getPaginaAtual());
+        table.setTotal(paginacao.getQtdResultadosTotal());
+        
         validator.onErrorUse(Results.json()).withoutRoot().from(table).recursive().serialize();
         result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
     }
