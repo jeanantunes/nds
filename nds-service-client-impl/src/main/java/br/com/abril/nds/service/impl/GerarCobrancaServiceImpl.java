@@ -699,9 +699,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				
 				TipoMovimentoFinanceiro tipo = (TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento();
 
-				if (cotaAtual.equals(cotaAnterior) &&
-				   ((fornecedorAtual.equals(fornecedorAnterior)) || 
-				    (unificaCobranca))) {
+				if ((cotaAtual.getId().equals(cotaAnterior.getId()) &&
+				   fornecedorAtual.getId().equals(fornecedorAnterior.getId())) || 
+				    unificaCobranca) {
 					
 					movimentos.add(movimentoFinanceiroCota);			
 					  
@@ -715,8 +715,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					}
 					
 				} else {
-
-					this.processarConsolidadoDividaCobranca(cotaAnterior, 
+                  	this.processarConsolidadoDividaCobranca(cotaAnterior, 
 														    movimentos, 
 														    usuario, 
 														    numeroDiasNovaCobranca, 
@@ -1372,6 +1371,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 */
 	private ConsolidadoFinanceiroCota montarConsolidadoFinanceiro(Cota cota, List<MovimentoFinanceiroCota> movimentos, Date dataOperacao) {
 		
+		
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = new ConsolidadoFinanceiroCota();
 		consolidadoFinanceiroCota.setCota(cota);
 		consolidadoFinanceiroCota.setDataConsolidado(dataOperacao);
@@ -1905,7 +1905,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						
 						this.cobrancaControleConferenciaEncalheCotaRepository.excluirPorCobranca(divida.getCobranca().getId());
 					}
-					
+				
 					this.removerDividaCobrancaConsolidado(divida, consolidado, dataOperacao);
 					
 				}
@@ -1920,7 +1920,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					
 			    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(consolidado.getId());
 				}
-                
+             
 			    this.consolidadoFinanceiroRepository.remover(consolidado);
 			    
 			}

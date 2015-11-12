@@ -654,7 +654,7 @@ public class PainelProcessamentoController extends BaseController {
     	    	   String it="";
     	    	   for ( ItemEncalheBandeiraVO item:  itens)
     	    		   it +="<"+item.getCodPublicacao()+"/"+item.getNumEdicao()+">";
-    	    	   msg+="</br>ERRRO AO ENVIAR NOTA ->"+ e.getLocalizedMessage() +" " +e.getMessage()+ "  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe()+" Itens:"+it;
+    	    	   msg+="</br>ERRO AO ENVIAR NOTA ->"+ e.getLocalizedMessage() +" " +e.getMessage()+ "  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe()+" Itens:"+it;
     	    	  
     	    	   erros++;
     	    	  }
