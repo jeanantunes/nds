@@ -70,5 +70,4 @@ public class TableModel<T> implements Serializable {
 	public void setRows(List<T> rows) {
 		this.rows = rows;
 	}
-	
 }
