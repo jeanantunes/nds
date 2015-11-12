@@ -247,10 +247,12 @@ var contaCorrenteCotaController = $.extend(true, {
                 if(value.cell.statusDivida && (value.cell.statusDivida == "NEGOCIADA" || value.cell.statusDivida == "POSTERGADA")) {	
                 	
                 	value.cell.cobrado = '<img src="'+ contextPath +'/images/hammer.png" alt="Dívida Negociada"/>';
+                	value.cell.saldo = value.cell.total;
                 	
                 } else if (value.cell.inadimplente) {
 				
             	   value.cell.cobrado = '<img src="'+ contextPath +'/images/seta_sobe.gif" alt="Dívida Acumulada"/>';
+            	   value.cell.saldo = value.cell.total;
                
                } else if (value.cell.cobrado){
 					
