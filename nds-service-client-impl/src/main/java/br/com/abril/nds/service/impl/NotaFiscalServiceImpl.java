@@ -206,7 +206,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Autowired
 	private GeracaoNotaEnvioService geracaoNotaEnvioService;
 
-	@Autowired
+	@Autowired(required=true)
 	private SignatureHandler signatureHandler;
 
 	/*
