@@ -16,7 +16,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.EstornoNFEService;
-import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -47,8 +46,8 @@ public class EstornoNFEController extends BaseController {
 		
 	}
 	
-	@Post("/estornoNotaFiscal")
-	@Rules(Permissao.ROLE_NFE_ESTORNO_NFE)
+	@Post
+	@Path("/estornoNotaFiscal")
 	public void estornoNotaFiscal(Long id) {
 		
 		this.estornoNFEService.estornoNotaFiscal(id);
@@ -56,9 +55,9 @@ public class EstornoNFEController extends BaseController {
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Estorno Efetuado Com Sucesso."), "result").recursive().serialize();
 	}
 
-    @Post("pesquisar")
-    @Rules(Permissao.ROLE_NFE_ESTORNO_NFE)
-    public void pesquisar(FiltroMonitorNfeDTO filtro) {
+    @Post
+    @Path("/pesquisar")
+    public void pesquisar(final FiltroMonitorNfeDTO filtro) {
         
     	Long quantidade =  this.estornoNFEService.quantidade(filtro);
     	
