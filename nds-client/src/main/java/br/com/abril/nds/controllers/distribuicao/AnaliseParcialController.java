@@ -275,23 +275,6 @@ public class AnaliseParcialController extends BaseController {
         filtroQueryDTO.setDataLancamentoEdicao(DateUtil.parseDataPTBR(dataLancamentoEdicao));
         filtroQueryDTO.setNumeroParcial(numeroParcial);
         
-        /*
-         * filtro.getPaginacao().setQtdResultadosTotal(lista.size());
-		
-		PaginacaoVO paginacao = filtro.getPaginacao();
-		
-		retorno.put("totalFaturamentoCapa", obterFaturamentoTotalABCSegmento(lista));
-
-		lista = PaginacaoUtil.paginarEmMemoria(lista, paginacao);
-		
-		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
-		tableModel.setPage(filtro.getPaginacao() == null ? 1 : filtro.getPaginacao().getPaginaAtual());
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
-
-		retorno.put("tableModel", tableModel);
-         */
-        
-        
         PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder, sortname);
         
         List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(filtroQueryDTO);

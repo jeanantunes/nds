@@ -729,7 +729,7 @@ var analiseParcialController = $.extend(true, {
         	edicoesBaseDadosEdicoes = resultado.rows[0].cell.edicoesBase; 
         }    
         
-        analiseParcialController.atualizaPaginacaoGridAnaliseEstudo();
+        analiseParcialController.atualizaPaginacaoGridAnaliseEstudo(resultado.rows.length, resultado.total);
         
         return resultado;
     },
@@ -749,18 +749,33 @@ var analiseParcialController = $.extend(true, {
         );
     },
     
-    atualizaPaginacaoGridAnaliseEstudo: function() {
+    atualizaPaginacaoGridAnaliseEstudo: function(qtd, total) {
     	
     	setTimeout(function(){
 	    	
-    		if($("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").find("[value='500']").size() <= 0){
+    		if($("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").find("[value='"+qtd+"']").size() <= 0){
     			$("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").append($('<option>', {
-    				value: 500,
-    				text: '500'
+    				value: qtd,
+    				text: qtd
     			}));
     		}
     		
-    		$("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").val(500)
+    		if($("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").find("[value='"+total+"']").size() <= 0){
+    			$("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").append($('<option>', {
+    				value: total,
+    				text: total
+    			}));
+    		}
+    		
+    		if($("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").find("[value='500']").size() <= 0){
+    			$("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").append($('<option>', {
+    				value: 500,
+    				text: "500"
+    			}));
+    		}
+    		
+    		
+    		$("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").val(qtd)
     		
 	    },1);
     	
@@ -845,25 +860,25 @@ var analiseParcialController = $.extend(true, {
             {display: 'VDA',        name: 'venda4',             width: 40, sortable: true, align: 'right'}];
     },
 
-    sortGrid : function (sortname, sortorder) {
-        var $table, settings, sortAtribute;
-        $table = $(arguments.callee.caller.arguments).closest('.flexigrid').find('div.bDiv:first table');
-        settings = {order: sortorder};
-        sortAtribute = 'td[abbr="' + sortname + '"] div';
-
-        if (sortname === 'reparteSugerido') {
-            settings.useVal=true;
-            sortAtribute += ' input';
-        }
-
-        $table.find('tr')
-            .tsort(sortAtribute, settings)
-            .removeClass('erow').filter(':odd').addClass('erow')
-            .end().find('td').removeClass('sorted')
-            .filter('[abbr="' + sortname + '"]').addClass('sorted');
-
-        return false; //Impede que o flexgrid faça um request para repopular o grid.
-    },
+//    sortGrid : function (sortname, sortorder) {
+//        var $table, settings, sortAtribute;
+//        $table = $(arguments.callee.caller.arguments).closest('.flexigrid').find('div.bDiv:first table');
+//        settings = {order: sortorder};
+//        sortAtribute = 'td[abbr="' + sortname + '"] div';
+//
+//        if (sortname === 'reparteSugerido') {
+//            settings.useVal=true;
+//            sortAtribute += ' input';
+//        }
+//
+//        $table.find('tr')
+//            .tsort(sortAtribute, settings)
+//            .removeClass('erow').filter(':odd').addClass('erow')
+//            .end().find('td').removeClass('sorted')
+//            .filter('[abbr="' + sortname + '"]').addClass('sorted');
+//
+//        return false; //Impede que o flexgrid faça um request para repopular o grid.
+//    },
 
     salvarRepartePorPDV: function ($dialogReparte, reparteCota, numeroCota, legenda) {
         
@@ -1170,7 +1185,7 @@ var analiseParcialController = $.extend(true, {
             colMove: false,
             sortorder: 'desc',
             sortname: 'reparteSugerido',
-            onChangeSort: analiseParcialController.sortGrid,
+//            onChangeSort: analiseParcialController.sortGrid,
             onSuccess: analiseParcialController.onSuccessReloadGrid
         });
 
