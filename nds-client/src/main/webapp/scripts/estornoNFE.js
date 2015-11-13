@@ -8,11 +8,11 @@ var estornoNFEController  = $.extend(true, {
 		
 		this.initDatas();
 		this.initFlexiGrids();
-		this.bindButtons();
+		this.initButtons();
 		this.createDialog();
 		
 	},
-
+	
 	createDialog : function() {
 		$("#dialog-novo", this.workspace).dialog({
 			resizable : false,
@@ -23,12 +23,13 @@ var estornoNFEController  = $.extend(true, {
 				id:"btnDialogNovoConfirmar",
 				text:"Confirmar",
 				click: function() {
-					estornoNFEController.salvar(this);
+					certificadoNFEController.salvar(this);
+					
 				}},{
 					id:"btnDialogNovoCancelar",
 					text:"Cancelar",
 					click : function() {
-				    
+				    certificadoNFEController.limparCertificadoTemp(this);	
 					$(this).dialog("close");
 				}
 			}],
@@ -36,13 +37,6 @@ var estornoNFEController  = $.extend(true, {
 			form: $("#dialog-novo", this.workspace).parents("form")
 		});
 		$("#dialog-novo", this.workspace).dialog("close");
-	},
-	
-	showPopupEditar : function(title) {
-		$("#dialog-novo", this.workspace)
-			.dialog( "option" ,  "title", title )
-			.dialog( "open" );
-		
 	},
 	
 	initDatas : function() {
@@ -64,31 +58,50 @@ var estornoNFEController  = $.extend(true, {
 		var _this = this;
 
 		$("#estornoNFEConfirmar", this.workspace).click(function() {
-			_this.btnConfirmar();
+			_this.estornoNotaFiscal();
 		});
 	},
 	
-	btnConfirmar : function() {
+	estornoNotaFiscal : function(id) {
 		
-		if(this.isEmptyOrNull()) {
+		if(!verificarPermissaoAcesso(this.workspace)){
 			return;
 		}
 		
-		var parametros = this.param();
-
-		$.postJSON(this.path + 'confirmar', parametros, function(data) {
-			
-			var tipoMensagem = data.tipoMensagem;
-			var listaMensagens = data.listaMensagens;
-
-			if (tipoMensagem && listaMensagens) {
-				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
-			}
-			exibirMensagem("SUCCESS", ["Operação realizada com sucesso!"]);
-			
-		});		
-		
+		$("#dialog-certificado-excluir", this.workspace).dialog({
+			resizable : false,
+			height : 170,
+			width : 380,
+			modal : true,
+			buttons : [{
+				id:"btnDialogExcluirConfirmar",
+				text:"Confirmar", click : function() {
+					$(this).dialog("close");
+					$("#effect").show("highlight", {}, 1000, callback);
+					estornoNFEController.remove(id);
+				}},{
+					id:"btnDialogExcluirCancelar",
+					text:"Cancelar",click : function() {
+					$(this).dialog("close");
+				}
+			}],
+			form: $("#excluir_certificado_form", this.workspace).parents("form")
+		});
 	},
+	
+	remove : function(id) {
+		$.postJSON(this.path + 'estornoNotaFiscal', {
+			'id' : id
+		}, function(data) {
+			if( typeof data.mensagens == "object") {
+				exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+			}
+			$(".estornoGrid", this.workspace).flexReload();
+			
+		});
+	},
+	
+	
 	
 	limparTabela : function() {
 		
@@ -112,7 +125,6 @@ var estornoNFEController  = $.extend(true, {
 		
 		if(mensagens.length > 0) {
 			exibirMensagem('WARNING', mensagens);
-			return true;
 		}
 	},
 	
@@ -204,28 +216,20 @@ var estornoNFEController  = $.extend(true, {
 	
 	buscar : function() {
 		
-		if(this.isEmptyOrNull()) {
+		var parametros = null;
+		
+		parametros = this.param();
 			
-			this.bindButtons();
-			estornoNFEController.initFlexiGrids();
-			return;
-		} else {
-			estornoNFEController.initFlexiGrids();
+		$(".estornoGrid", estornoNFEController.workspace).flexOptions({
+			preProcess: estornoNFEController.executarPreProcessamento,
+			url: contextPath + "/nfe/estornoNFE/pesquisar",
+			dataType : 'json',
+			params: parametros
 			
-			var parametros = this.param();
-			
-			$(".estornoGrid", estornoNFEController.workspace).flexOptions({
-				preProcess: estornoNFEController.executarPreProcessamento,
-				url: contextPath + "/nfe/estornoNFE/pesquisar",
-				dataType : 'json',
-				params: parametros
-				
-			});
-			
-			
-		}
-		$(".estornoGrid").flexReload();
-		$(".grids", estornoNFEController.workspace).show();
+		});
+		
+		$(".estornoGrid", estornoNFEController.workspace).flexReload();	
+		$(".grids", estornoNFEController.workspace).show();	
 	},
 	
 	executarPreProcessamento : function(resultado) {
@@ -247,47 +251,5 @@ var estornoNFEController  = $.extend(true, {
 		
 	},
 	
-	bindButtons : function() {
-		
-		var _this = this;
-
-		$("#estornoNFEConfirmar", this.workspace).click(function() {
-			_this.buscar();
-		});
-	},
-	
-	showPopupEditar : function(title) {
-		$("#dialog-novo", this.workspace)
-			.dialog( "option" ,  "title", title )
-			.dialog( "open" );
-		
-	},
-	
-	salvar : function(dialog) {
-		
-		if(this.isEmptyOrNull()) {
-			return;
-		}
-		
-		var parametros = this.param();
-
-		$.postJSON(this.path + 'pesquisar', parametros, function(data) {
-			
-			var tipoMensagem = data.tipoMensagem;
-			var listaMensagens = data.listaMensagens;
-
-			if (tipoMensagem && listaMensagens) {
-				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
-				return;
-			}
-			
-			exibirMensagem("SUCCESS", ["Operação realizada com sucesso!"]);
-			$("#effect").show("highlight", {}, 1000, callback);
-			$(".grids", this.workspace).show();
-			estornoNFEController.buscar(this);
-			
-		});
-		
-	},
 }, BaseController);
 //@ sourceURL=estornoNFE.js
