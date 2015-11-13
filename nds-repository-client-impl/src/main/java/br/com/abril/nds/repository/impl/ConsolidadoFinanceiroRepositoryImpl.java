@@ -1406,7 +1406,7 @@ ConsolidadoFinanceiroRepository {
         .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
         .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
         .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-        .append(") and m.DATA = cfc.DT_CONSOLIDADO ")
+        .append(") and m.DATA <= cfc.DT_CONSOLIDADO ")
         .append("))")
         .append(" as detalharDebitoCredito, ")
         
