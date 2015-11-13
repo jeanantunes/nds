@@ -189,8 +189,10 @@ public class AnaliseParcialController extends BaseController {
         queryDTO.setEstudoId(estudo);
 
         List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
-
-        TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = monta(lista);
+        
+        TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = new TableModel<>();
+        
+        table = monta(lista, table);
         table.setPage(1);
         table.setTotal(50);
         result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
@@ -255,6 +257,26 @@ public class AnaliseParcialController extends BaseController {
     public void init(Long id, String sortname, String sortorder, int page, int rp, String filterSortName, Double filterSortFrom, Double filterSortTo, String elemento,
                      Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao, 
                      String numeroCotaStr,Long estudoOrigem,String dataLancamentoEdicao, Integer numeroParcial) {
+    	
+    	List<String> sortNameInvalid = new ArrayList<>();
+    	
+    	sortNameInvalid.add("venda1");
+    	sortNameInvalid.add("venda2");
+    	sortNameInvalid.add("venda3");
+    	sortNameInvalid.add("venda4");
+    	sortNameInvalid.add("venda5");
+    	sortNameInvalid.add("venda6");
+    	
+    	sortNameInvalid.add("reparte1");
+    	sortNameInvalid.add("reparte2");
+    	sortNameInvalid.add("reparte3");
+    	sortNameInvalid.add("reparte4");
+    	sortNameInvalid.add("reparte5");
+    	sortNameInvalid.add("reparte6");
+    	
+    	if(sortNameInvalid.contains(sortname)){
+    		sortname = "cota";
+    	}
 
         AnaliseParcialQueryDTO filtroQueryDTO = new AnaliseParcialQueryDTO();
         filtroQueryDTO.setSortName(sortname);
@@ -275,17 +297,26 @@ public class AnaliseParcialController extends BaseController {
         filtroQueryDTO.setDataLancamentoEdicao(DateUtil.parseDataPTBR(dataLancamentoEdicao));
         filtroQueryDTO.setNumeroParcial(numeroParcial);
         
-        PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder, sortname);
-        
         List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(filtroQueryDTO);
+        
+        PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder, sortname);
         
         paginacao.setQtdResultadosTotal(lista.size());
         
-        lista = PaginacaoUtil.paginarEmMemoria(lista, paginacao);
-        
-        TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = monta(lista);
-        table.setPage(paginacao.getPaginaAtual());
-        table.setTotal(paginacao.getQtdResultadosTotal());
+        TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = new TableModel<>();
+       
+        if(lista.size() > 400){
+        	lista = PaginacaoUtil.paginarEmMemoria(lista, paginacao);
+        	
+        	table = monta(lista, table);
+        	table.setPage(paginacao.getPaginaAtual());
+        	table.setTotal(paginacao.getQtdResultadosTotal());
+        	
+        }else{
+        	table = monta(lista, table);
+        	table.setPage(1);
+        	table.setTotal(lista.size());
+        }
         
         validator.onErrorUse(Results.json()).withoutRoot().from(table).recursive().serialize();
         result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
@@ -396,8 +427,7 @@ public class AnaliseParcialController extends BaseController {
     	result.nothing();
     }
 
-    private TableModel<CellModelKeyValue<AnaliseParcialDTO>> monta(List<AnaliseParcialDTO> lista) {
-        TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = new TableModel<>();
+    private TableModel<CellModelKeyValue<AnaliseParcialDTO>> monta(List<AnaliseParcialDTO> lista, TableModel<CellModelKeyValue<AnaliseParcialDTO>> table) {
         table.setRows(CellModelKeyValue.toCellModelKeyValue(new ArrayList<>(lista)));
         return table;
     }

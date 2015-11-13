@@ -289,6 +289,7 @@ var analiseParcialController = $.extend(true, {
         }
     },
     
+    /*
     alterarVisualizacaoGrid : function() {
 
         $('#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(0)').each(function () {
@@ -374,6 +375,8 @@ var analiseParcialController = $.extend(true, {
         var colSpanEdicoesBase = $('#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(1)').find('th[abbr^="venda"]:first').index() - 1;
         $('#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(0) th[colspan!="2"]').attr('colspan', colSpanEdicoesBase);
     },
+    
+    */
 
     atualizaEdicoesBaseHeader : function() {
         setTimeout(function(){
@@ -385,7 +388,13 @@ var analiseParcialController = $.extend(true, {
                 $header.find('tr').first().remove();
             }
 
-            var colSpanEdicoesBase = $header.find('tr th[abbr^="venda"]:first').index() - 1;
+            var colSpanEdicoesBase = $header.find('tr th[abbr^="venda"]:first').index();
+            
+            if(colSpanEdicoesBase <= 0){
+            	colSpanEdicoesBase = 7;
+            }else{
+            	colSpanEdicoesBase = colSpanEdicoesBase - 1;
+            }
 
             if (analiseParcialController.tipoExibicao === 'NORMAL') {
                 $header.prepend($('<tr>').append($('<th colspan="' + colSpanEdicoesBase + '" style="border-bottom: 1px solid #DDDDDD;">')
@@ -404,6 +413,7 @@ var analiseParcialController = $.extend(true, {
                 }
 
             } else {
+            	colSpanEdicoesBase = colSpanEdicoesBase+1;
                 $header.prepend(
                     $('<tr>')
                         .append($('<th colspan="' + colSpanEdicoesBase + '" style="border-bottom: 1px solid #DDDDDD;">')
@@ -731,6 +741,8 @@ var analiseParcialController = $.extend(true, {
         
         analiseParcialController.atualizaPaginacaoGridAnaliseEstudo(resultado.rows.length, resultado.total);
         
+        $("#baseEstudoGridParcial").parent().scrollTop(0);
+        
         return resultado;
     },
 
@@ -753,6 +765,24 @@ var analiseParcialController = $.extend(true, {
     	
     	setTimeout(function(){
 	    	
+    		$("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").html("")
+    		
+    		$("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").append($('<option>', {
+    			value: 100,
+    			text: "100"
+    		}));
+    		
+    		$("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").append($('<option>', {
+    			value: 200,
+    			text: "200"
+    		}));
+
+    		$("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").append($('<option>', {
+    			value: 300,
+    			text: "300"
+    		}));
+    		
+    		
     		if($("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").find("[value='"+qtd+"']").size() <= 0){
     			$("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").append($('<option>', {
     				value: qtd,
@@ -764,13 +794,6 @@ var analiseParcialController = $.extend(true, {
     			$("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").append($('<option>', {
     				value: total,
     				text: total
-    			}));
-    		}
-    		
-    		if($("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").find("[value='500']").size() <= 0){
-    			$("#gridAnaliseEstudo").find(".flexigrid", analiseParcialController.workspace).find(".pDiv").find(".pDiv2").find(".pGroup").find("[name='rp']").append($('<option>', {
-    				value: 500,
-    				text: "500"
     			}));
     		}
     		
@@ -821,18 +844,18 @@ var analiseParcialController = $.extend(true, {
         modelo = modelo.concat([
 //            {display: 'Desc Leg',   name: 'descricaoLegenda',   width: 1,  hide: true},
 //          {display: 'Média. VDA',  name: 'mediaVenda',         width: 60, sortable: true, align: 'right'},
-            {display: 'REP',        name: 'reparte1',           width: 30, sortable: true, align: 'right'},
-            {display: 'VDA',        name: 'venda1',             width: 30, sortable: true, align: 'right'},
-            {display: 'REP',        name: 'reparte2',           width: 30, sortable: true, align: 'right'},
-            {display: 'VDA',        name: 'venda2',             width: 30, sortable: true, align: 'right'},
-            {display: 'REP',        name: 'reparte3',           width: 30, sortable: true, align: 'right'},
-            {display: 'VDA',        name: 'venda3',             width: 30, sortable: true, align: 'right'},
-            {display: 'REP',        name: 'reparte4',           width: 30, sortable: true, align: 'right'},
-            {display: 'VDA',        name: 'venda4',             width: 30, sortable: true, align: 'right'},
-            {display: 'REP',        name: 'reparte5',           width: 30, sortable: true, align: 'right'},
-            {display: 'VDA',        name: 'venda5',             width: 30, sortable: true, align: 'right'},
-            {display: 'REP',        name: 'reparte6',           width: 30, sortable: true, align: 'right'},
-            {display: 'VDA',        name: 'venda6',             width: 30, sortable: true, align: 'right'}]);
+            {display: 'REP',        name: 'reparte1',           width: 30, sortable: false, align: 'right'},
+            {display: 'VDA',        name: 'venda1',             width: 30, sortable: false, align: 'right'},
+            {display: 'REP',        name: 'reparte2',           width: 30, sortable: false, align: 'right'},
+            {display: 'VDA',        name: 'venda2',             width: 30, sortable: false, align: 'right'},
+            {display: 'REP',        name: 'reparte3',           width: 30, sortable: false, align: 'right'},
+            {display: 'VDA',        name: 'venda3',             width: 30, sortable: false, align: 'right'},
+            {display: 'REP',        name: 'reparte4',           width: 30, sortable: false, align: 'right'},
+            {display: 'VDA',        name: 'venda4',             width: 30, sortable: false, align: 'right'},
+            {display: 'REP',        name: 'reparte5',           width: 30, sortable: false, align: 'right'},
+            {display: 'VDA',        name: 'venda5',             width: 30, sortable: false, align: 'right'},
+            {display: 'REP',        name: 'reparte6',           width: 30, sortable: false, align: 'right'},
+            {display: 'VDA',        name: 'venda6',             width: 30, sortable: false, align: 'right'}]);
 
         return modelo;
     },
@@ -850,14 +873,14 @@ var analiseParcialController = $.extend(true, {
 //            {display: 'Desc Leg',   name: 'descricaoLegenda',   width: 1,  sortable: false, hide: true},
             {display: 'Juram.',     name: 'juramento',          width: 40, sortable: true, align: 'right'},
 //          {display: 'Média. VDA',  name: 'mediaVenda',         width: 50, sortable: true, align: 'right'},
-            {display: 'REP',        name: 'reparte1',           width: 40, sortable: true, align: 'right'},
-            {display: 'VDA',        name: 'venda1',             width: 40, sortable: true, align: 'right'},
-            {display: 'REP',        name: 'reparte2',           width: 40, sortable: true, align: 'right'},
-            {display: 'VDA',        name: 'venda2',             width: 40, sortable: true, align: 'right'},
-            {display: 'REP',        name: 'reparte3',           width: 40, sortable: true, align: 'right'},
-            {display: 'VDA',        name: 'venda3',             width: 40, sortable: true, align: 'right'},
-            {display: 'REP',        name: 'reparte4',           width: 40, sortable: true, align: 'right'},
-            {display: 'VDA',        name: 'venda4',             width: 40, sortable: true, align: 'right'}];
+            {display: 'REP',        name: 'reparte1',           width: 40, sortable: false, align: 'right'},
+            {display: 'VDA',        name: 'venda1',             width: 40, sortable: false, align: 'right'},
+            {display: 'REP',        name: 'reparte2',           width: 40, sortable: false, align: 'right'},
+            {display: 'VDA',        name: 'venda2',             width: 40, sortable: false, align: 'right'},
+            {display: 'REP',        name: 'reparte3',           width: 40, sortable: false, align: 'right'},
+            {display: 'VDA',        name: 'venda3',             width: 40, sortable: false, align: 'right'},
+            {display: 'REP',        name: 'reparte4',           width: 40, sortable: false, align: 'right'},
+            {display: 'VDA',        name: 'venda4',             width: 40, sortable: false, align: 'right'}];
     },
 
 //    sortGrid : function (sortname, sortorder) {
@@ -1179,9 +1202,8 @@ var analiseParcialController = $.extend(true, {
             height: 200,
             usepager : true,
 			useRp : true,
-			rp: 500,
+			rp: 400,
 			rpOptions: [500],
-            showTableToggleBtn: false,
             colMove: false,
             sortorder: 'desc',
             sortname: 'reparteSugerido',

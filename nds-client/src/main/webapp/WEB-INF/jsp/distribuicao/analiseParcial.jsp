@@ -263,18 +263,20 @@ table.dadosTab { margin-left: 370px;}
 						    </a>
 					    </span>
                     </td>
+                        <%--
                     <td>
                         <span class="bt_novos">
                             <a href="javascript:;" onclick="analiseParcialController.alterarVisualizacaoGrid();">
-                                <img src="${pageContext.request.contextPath}/images/ico_change.png" title="Alterar Visualização do Grid" hspace="5" border="0" /> <%--Alterar Visualização do Grid--%>
+                                <img src="${pageContext.request.contextPath}/images/ico_change.png" title="Alterar Visualização do Grid" hspace="5" border="0" /> Alterar Visualização do Grid
                             </a>
                         </span>
-                        <%--<span class="bt_novos" title="Base Inicial">
+                        <span class="bt_novos" title="Base Inicial">
                             <a href="javascript:;" onclick="analiseParcialController.restauraBaseInicial();">
                                 <span class="ui-icon ui-icon-arrowreturnthick-1-w"></span>
                             </a>
-                        </span>--%>
+                        </span>
                     </td>
+                        --%>
 				</tr>
 			</table>
 		</fieldset>
