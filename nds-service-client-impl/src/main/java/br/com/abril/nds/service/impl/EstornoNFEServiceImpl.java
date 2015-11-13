@@ -41,6 +41,7 @@ public class EstornoNFEServiceImpl implements EstornoNFEService {
     @Autowired
     private EstornoNFERepository estornoNFERepository;
     
+    @Autowired
     private NFeService nFeService;
 	
 	@Override

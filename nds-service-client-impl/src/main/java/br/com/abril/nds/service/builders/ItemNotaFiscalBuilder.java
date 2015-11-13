@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Tributacao;
 import br.com.abril.nds.model.cadastro.Tributacao.TributacaoTipoOperacao;
 import br.com.abril.nds.model.cadastro.Tributo;
@@ -253,11 +254,11 @@ public class ItemNotaFiscalBuilder  {
 			((OrigemItemNotaFiscalMovimentoEstoqueCota) oinf).setMovimentoEstoqueCota((MovimentoEstoqueCota) movimentoEstoque);
 			origemItens.add(oinf);
 		} else if(movimentoEstoque instanceof MovimentoEstoque) {
-			if(!movimentoEstoque.getProdutoEdicao().getId().equals(produtoServico.getProdutoEdicao().getId())) {
-				OrigemItemNotaFiscal oinfME = new OrigemItemNotaFiscalMovimentoEstoque();
-				((OrigemItemNotaFiscalMovimentoEstoque) oinfME).setMovimentoEstoque((MovimentoEstoque) movimentoEstoque);
-				origemItens.add(oinfME);				
-			}
+			
+			OrigemItemNotaFiscal oinfME = new OrigemItemNotaFiscalMovimentoEstoque();
+			((OrigemItemNotaFiscalMovimentoEstoque) oinfME).setMovimentoEstoque((MovimentoEstoque) movimentoEstoque);
+			((OrigemItemNotaFiscalMovimentoEstoque) oinfME).getMovimentoEstoque().setProdutoEdicao((ProdutoEdicao) movimentoEstoque.getProdutoEdicao());
+			origemItens.add(oinfME);				
 			
 		}
 		

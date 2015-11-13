@@ -46,8 +46,7 @@ public class EstornoNFEController extends BaseController {
 		
 	}
 	
-	@Post
-	@Path("/estornoNotaFiscal")
+	@Post("/estornoNotaFiscal")
 	public void estornoNotaFiscal(Long id) {
 		
 		this.estornoNFEService.estornoNotaFiscal(id);
@@ -57,6 +56,7 @@ public class EstornoNFEController extends BaseController {
 
     @Post
     @Path("/pesquisar")
+    @Rules(Permissao.ROLE_NFE_ESTORNO_NFE)
     public void pesquisar(final FiltroMonitorNfeDTO filtro) {
         
     	Long quantidade =  this.estornoNFEService.quantidade(filtro);
