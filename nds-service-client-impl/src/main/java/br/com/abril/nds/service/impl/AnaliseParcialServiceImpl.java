@@ -122,24 +122,13 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     		
             queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudoParcial(queryDTO.getEstudoId(), queryDTO.getNumeroParcial(), parcialPossuiRedistribuicao));
             
+            List<EdicoesProdutosDTO> baseUtilizadas = getBasesUtilizadas(queryDTO);
+            
             for (AnaliseParcialDTO item : lista) {
                 
             	item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));
                 List<EdicoesProdutosDTO> temp = new ArrayList<>();
-                List<EdicoesProdutosDTO> baseUtilizadas = new ArrayList<>();
                 int contadorParciais = 1;
-                
-                Integer qtdBases = analiseParcialRepository.qtdBasesNoEstudo(queryDTO.getEstudoId(), true);
-        		
-        		if(qtdBases > 0){
-        			baseUtilizadas = analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoId());
-        		}else{
-        			baseUtilizadas = analiseParcialRepository.carregarPeriodosAnterioresParcial(queryDTO.getEstudoId(), false);
-        			
-        			if(baseUtilizadas.size() == 0){
-        				baseUtilizadas = analiseParcialRepository.carregarPeriodosAnterioresParcial(queryDTO.getEstudoId(), true);
-        			}
-        		}
                 
                 List<EdicoesProdutosDTO> edicoesProdutoPorCota = this.getEdicoesProdutoPorCota(queryDTO.getEdicoesBase(), item.getCota(), baseUtilizadas);
                 
@@ -237,6 +226,24 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
         return lista;
     }
+
+	private List<EdicoesProdutosDTO> getBasesUtilizadas(AnaliseParcialQueryDTO queryDTO) {
+		
+		List<EdicoesProdutosDTO> baseUtilizadas = new ArrayList<>();
+		
+		Integer qtdBases = analiseParcialRepository.qtdBasesNoEstudo(queryDTO.getEstudoId(), true);
+		
+		if(qtdBases > 0){
+			baseUtilizadas = analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoId());
+		}else{
+			baseUtilizadas = analiseParcialRepository.carregarPeriodosAnterioresParcial(queryDTO.getEstudoId(), false);
+			
+			if(baseUtilizadas.size() == 0){
+				baseUtilizadas = analiseParcialRepository.carregarPeriodosAnterioresParcial(queryDTO.getEstudoId(), true);
+			}
+		}
+		return baseUtilizadas;
+	}
 
     private BigInteger getUltimoReparte(List<EdicoesProdutosDTO> temp) {
 		
