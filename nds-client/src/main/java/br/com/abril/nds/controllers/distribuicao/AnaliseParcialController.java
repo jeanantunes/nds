@@ -258,26 +258,6 @@ public class AnaliseParcialController extends BaseController {
                      Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao, 
                      String numeroCotaStr,Long estudoOrigem,String dataLancamentoEdicao, Integer numeroParcial) {
     	
-    	List<String> sortNameInvalid = new ArrayList<>();
-    	
-    	sortNameInvalid.add("venda1");
-    	sortNameInvalid.add("venda2");
-    	sortNameInvalid.add("venda3");
-    	sortNameInvalid.add("venda4");
-    	sortNameInvalid.add("venda5");
-    	sortNameInvalid.add("venda6");
-    	
-    	sortNameInvalid.add("reparte1");
-    	sortNameInvalid.add("reparte2");
-    	sortNameInvalid.add("reparte3");
-    	sortNameInvalid.add("reparte4");
-    	sortNameInvalid.add("reparte5");
-    	sortNameInvalid.add("reparte6");
-    	
-    	if(sortNameInvalid.contains(sortname)){
-    		sortname = "cota";
-    	}
-
         AnaliseParcialQueryDTO filtroQueryDTO = new AnaliseParcialQueryDTO();
         filtroQueryDTO.setSortName(sortname);
         filtroQueryDTO.setSortOrder(sortorder);
