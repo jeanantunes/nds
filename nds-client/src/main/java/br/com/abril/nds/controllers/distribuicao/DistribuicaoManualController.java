@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -23,6 +24,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
@@ -226,19 +228,11 @@ public class DistribuicaoManualController extends BaseController {
 		
 		for (EstudoCotaDTO estudoCota : cotasParaDistribuicao) {
 			
-			switch (estudoCota.getCota().getSituacaoCadastro()){
-			
-			case INATIVO:
+			if(estudoCota.getSituacaoCadastroCota() == SituacaoCadastro.INATIVO 
+					|| estudoCota.getSituacaoCadastroCota() == SituacaoCadastro.PENDENTE){
 				cotasInaptas.add(estudoCota);
-			break;
-			
-			case PENDENTE:
-				cotasInaptas.add(estudoCota);
-			break;
-			
-			default:
-			break;
 			}
+
 		}
 		
 		cotasParaDistribuicao.removeAll(cotasInaptas);
@@ -249,13 +243,24 @@ public class DistribuicaoManualController extends BaseController {
 		Long sumReparteDistribuido = 0L;
 		List<EstudoCotaDTO> cotasInaptas = new ArrayList<>();
 		
+		Map<Integer, EstudoCotaDTO> cotas;
+		
+		List<Integer> listNumeroCotasEstudo = new ArrayList<>();
+		
+		for (EstudoCotaDTO estudoCotaDTO : cotasParaDistribuicao) {
+			listNumeroCotasEstudo.add(estudoCotaDTO.getNumeroCota());
+		}
+		
+		cotas = cotaService.obterPorNumeroDaCota(listNumeroCotasEstudo);
+		
 		for (EstudoCotaDTO estudoCota : cotasParaDistribuicao) {
 			
-			 Cota cota = cotaService.obterPorNumeroDaCota(estudoCota.getNumeroCota().intValue());
+			EstudoCotaDTO cotaDto = cotas.get(estudoCota.getNumeroCota());
 			
-			if(cota != null){
-				estudoCota.setIdCota(cota.getId());
-				estudoCota.setCota(cota);
+			if(cotaDto != null){
+				estudoCota.setIdCota(cotaDto.getIdCota());
+				estudoCota.setSituacaoCadastroCota(cotaDto.getSituacaoCadastroCota().toString());
+				estudoCota.getSituacaoCadastroCota();
 				
 				sumReparteDistribuido += estudoCota.getQtdeEfetiva().longValue();
 				
