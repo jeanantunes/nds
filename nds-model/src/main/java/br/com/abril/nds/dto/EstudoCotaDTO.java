@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 import br.com.abril.nds.util.upload.XlsMapper;
@@ -25,6 +26,8 @@ public class EstudoCotaDTO implements Serializable {
 	private boolean cotaContribuinteExigeNotaFiscal;
 
 	private Cota cota;
+	
+	private SituacaoCadastro situacaoCadastroCota;
 	
 	@XlsMapper(value="cota")
 	private Integer numeroCota;
@@ -115,4 +118,13 @@ public class EstudoCotaDTO implements Serializable {
 	public void setCota(Cota cota) {
 		this.cota = cota;
 	}
+
+	public SituacaoCadastro getSituacaoCadastroCota() {
+		return situacaoCadastroCota;
+	}
+
+	public void setSituacaoCadastroCota(String situacaoCadastroCota) {
+		this.situacaoCadastroCota = SituacaoCadastro.valueOf(situacaoCadastroCota.toUpperCase());
+	}
+	
 }
