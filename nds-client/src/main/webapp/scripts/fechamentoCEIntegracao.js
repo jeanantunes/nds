@@ -15,6 +15,16 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 
 	},
 	
+	temSemanaAberta:function() {
+		var tem=false;
+		$("#comboCE-fechamentoCe-integracao").each(function() {
+		    console.log($(this).text());
+		    if ($(this).text().indexOf("ABERTO") > 0 )
+		    		tem=true;
+		});
+	 
+		  return tem;
+	},
 	
 	buscarCESemana : function(){
 		
@@ -944,7 +954,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			
 		} else {
 			
-			if (!resultado.semanaFechada) {
+			if (!resultado.semanaFechada || fechamentoCEIntegracaoController.temSemanaAberta() ) 
+			 {
 
 				fechamentoCEIntegracaoController.itensCEIntegracao = [];
 				
