@@ -195,6 +195,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         .append("  from MovimentoEstoqueCota mec ")
         
+        .append("    join mec.lancamento l ")
+        
         .append("  join mec.produtoEdicao pe ")
         
         .append("  join pe.produto produto ")
@@ -213,7 +215,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         .append("  and c1.id = ").append(paramIdCota)
         
-        .append("  and mec.data <= :data")
+        .append("  and l.dataRecolhimentoDistribuidor <= :data")
         
         .append("  and mecF is null ");
         
