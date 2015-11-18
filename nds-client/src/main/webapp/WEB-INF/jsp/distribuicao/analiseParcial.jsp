@@ -263,6 +263,16 @@ table.dadosTab { margin-left: 370px;}
 						    </a>
 					    </span>
                     </td>
+                    <td align="center">
+                        <a href="javascript:;" onclick="analiseParcialController.pull('up');">
+                            <img src="${pageContext.request.contextPath}/images/sort_asc.png" title="Primeira cota da p&aacute;gina." width="19" height="15" border="0" style="margin-top: 15px;" />
+                        </a>
+                    </td>
+                    <td align="center">
+                        <a href="javascript:;" onclick="analiseParcialController.pull('down');">
+                            <img src="${pageContext.request.contextPath}/images/sort_desc.png" title="&Uacute;ltima cota da p&aacute;gina." width="19" height="15" border="0" />
+                        </a>
+                    </td>
                         <%--
                     <td>
                         <span class="bt_novos">

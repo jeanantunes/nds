@@ -267,8 +267,11 @@ var analiseParcialController = $.extend(true, {
             totalReparteEstudoOrigem += $tr.find('td[abbr="reparteEstudoOrigemCopia"] div').text() * 1;
 
             for (var i=1; i<7; i++) {
-                totais[i].reparte += $tr.find('td[abbr="reparte' + i + '"] div').text() * 1;
-                totais[i].venda += $tr.find('td[abbr="venda' + i + '"] div').text() * 1;
+//                totais[i].reparte += $tr.find('td[abbr="reparte' + i + '"] div').text() * 1;
+//                totais[i].venda += $tr.find('td[abbr="venda' + i + '"] div').text() * 1;
+            	totais[i].reparte += $tr.find('[abbr="reparte' + i + '"]').text() * 1;
+                totais[i].venda += $tr.find('[abbr="venda' + i + '"]').text() * 1;
+                
             }
 
         }).length;
@@ -614,6 +617,19 @@ var analiseParcialController = $.extend(true, {
     },
 
     preProcessGrid : function(resultado) {
+    	
+    	if(resultado.analiseEstudoNormal_E_ParcialDTO != undefined){
+    		resultado.rows = resultado.analiseEstudoNormal_E_ParcialDTO.table.rows;
+    		resultado.page = resultado.analiseEstudoNormal_E_ParcialDTO.table.page;
+    		resultado.total = resultado.analiseEstudoNormal_E_ParcialDTO.table.total;
+    	}
+    	
+    	/*
+    	 * 
+    	 * ## Falta atualizar os totais!
+    	 * 
+    	 * 
+    	 */
 
     	var disabled = $('#status_estudo').text()==='Liberado';
     	
@@ -678,6 +694,9 @@ var analiseParcialController = $.extend(true, {
                     	}
                     }
                 }
+                
+                cell['venda'+ (j + 1)] = '<span abbr="venda' + (j + 1) + '" class="vermelho">'+cell['venda'+ (j + 1)]+'</span>';
+                cell['reparte'+ (j + 1)] = '<span abbr="reparte' + (j + 1) + '">'+cell['reparte'+ (j + 1)]+'</span>';
             }
         	
         	if(somaVendasCota > 0){
@@ -1199,12 +1218,13 @@ var analiseParcialController = $.extend(true, {
             dataType : 'json',
             colModel : modelo,
             width: estudoOrigem?1035:980,
-            height: 200,
+            height: 205,
             usepager : true,
 			useRp : true,
-			rp: 400,
-			rpOptions: [500],
+			rp: 300,
+//			rpOptions: [500],
             colMove: false,
+//            resizable: false,
             sortorder: 'desc',
             sortname: 'reparteSugerido',
 //            onChangeSort: analiseParcialController.sortGrid,
@@ -1713,7 +1733,22 @@ var analiseParcialController = $.extend(true, {
 //        	setTimeout(function(){$(".tipsy").hide()},2000);
 //        });
 //    },
+    
+    pull : function(direcao) {
+    	
+    	if(direcao == undefined){
+    		return;
+    	}
 
+    	if(direcao == "up"){
+    		$("#baseEstudoGridParcial").parent().scrollTop(0);
+    	}else{
+    		if(direcao == "down"){
+    			$("#baseEstudoGridParcial").parent().scrollTop($("#baseEstudoGridParcial").parent().find('.baseEstudoGrid').height());
+    		}
+    	}
+    },
+    
     filtrarOrdenarPor : function(estudo) {
         
     	var valueFiltroOrdenarPor = $("#filtroOrdenarPor").val();

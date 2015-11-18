@@ -17,6 +17,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.AnaliseEstudoNormal_E_ParcialDTO;
 import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
@@ -42,13 +43,11 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MixCotaProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RepartePdvService;
-import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
@@ -100,16 +99,10 @@ public class AnaliseParcialController extends BaseController {
     private ProdutoService produtoService;
     
     @Autowired
-    private EstudoService estudoService;
-    
-    @Autowired
     private MixCotaProdutoService mixCotaProdutoService;
     
     @Autowired
     private RepartePdvService repartePdvService;
-    
-    @Autowired
-    private SituacaoCotaService situacaoCotaService;
     
     @Autowired
     private CotaService cotaService;
@@ -188,7 +181,9 @@ public class AnaliseParcialController extends BaseController {
         AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
         queryDTO.setEstudoId(estudo);
 
-        List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
+        AnaliseEstudoNormal_E_ParcialDTO analise = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
+        
+        List<AnaliseParcialDTO> lista = analise.getAnaliseParcialDTO();
         
         TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = new TableModel<>();
         
@@ -277,7 +272,11 @@ public class AnaliseParcialController extends BaseController {
         filtroQueryDTO.setDataLancamentoEdicao(DateUtil.parseDataPTBR(dataLancamentoEdicao));
         filtroQueryDTO.setNumeroParcial(numeroParcial);
         
-        List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(filtroQueryDTO);
+//        List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(filtroQueryDTO);
+        
+        AnaliseEstudoNormal_E_ParcialDTO analise = analiseParcialService.buscaAnaliseParcialPorEstudo(filtroQueryDTO);
+        
+        List<AnaliseParcialDTO> lista = analise.getAnaliseParcialDTO();
         
         PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder, sortname);
         
@@ -285,21 +284,34 @@ public class AnaliseParcialController extends BaseController {
         
         TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = new TableModel<>();
        
-        if(lista.size() > 400){
-        	lista = PaginacaoUtil.paginarEmMemoria(lista, paginacao);
+    	lista = PaginacaoUtil.paginarEmMemoria(lista, paginacao);
+    	
+    	table = monta(lista, table);
+    	table.setPage(paginacao.getPaginaAtual());
+    	table.setTotal(paginacao.getQtdResultadosTotal());
         	
-        	table = monta(lista, table);
-        	table.setPage(paginacao.getPaginaAtual());
-        	table.setTotal(paginacao.getQtdResultadosTotal());
+        validator.onErrorUse(Results.json()).withoutRoot().from(table).recursive().serialize();
+        
+        if(filterSortFrom != null && filterSortTo != null){
+//        	result.include("totalCotas", analise.getTotal_qtdCotas());
+//        	result.include("totalRepSugerido", analise.getTotal_somatorioReparteSugerido());
+//        	result.include("totalUltReparte", analise.getTotal_somatorioUltimoReparte());
+        	AnaliseEstudoNormal_E_ParcialDTO vo = new AnaliseEstudoNormal_E_ParcialDTO();
         	
+        	vo.setTable(table);
+        	vo.setTotal_qtdCotas(analise.getTotal_qtdCotas());
+        	vo.setTotal_somatorioReparteSugerido(analise.getTotal_somatorioReparteSugerido());
+        	vo.setTotal_somatorioUltimoReparte(analise.getTotal_somatorioUltimoReparte());
+        	
+        	result.use(Results.json()).from(vo).recursive().serialize();
         }else{
-        	table = monta(lista, table);
-        	table.setPage(1);
-        	table.setTotal(lista.size());
+        	result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
         }
         
-        validator.onErrorUse(Results.json()).withoutRoot().from(table).recursive().serialize();
-        result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
+        
+        
+//        result.include("table", table);
+        
     }
     
     @SuppressWarnings("unchecked")
@@ -423,7 +435,11 @@ public class AnaliseParcialController extends BaseController {
         	queryDTO.setNumeroParcial(numeroParcial); 
         }
 
-        List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
+//        List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
+        
+        AnaliseEstudoNormal_E_ParcialDTO analise = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
+        
+        List<AnaliseParcialDTO> lista = analise.getAnaliseParcialDTO();
  
         if (lista.isEmpty()) {
             throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
