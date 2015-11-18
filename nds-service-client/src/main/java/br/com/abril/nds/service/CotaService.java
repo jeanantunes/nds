@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
@@ -16,6 +17,7 @@ import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
@@ -450,4 +452,6 @@ public interface CotaService {
 	Boolean validarNumeroCota(Integer numeroCota, TipoDistribuicaoCota tipoDistribuicaoCota);
 
 	List<AbastecimentoBoxCotaDTO> obterCotasExpedicao(Intervalo<Date> intervaloData);
+
+	Map<Integer, EstudoCotaDTO> obterPorNumeroDaCota(List<Integer> numeroCota);
 }
