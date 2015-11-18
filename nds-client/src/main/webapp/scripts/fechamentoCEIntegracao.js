@@ -17,12 +17,16 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	
 	temSemanaAberta:function() {
 		var tem=false;
+		var itens=0;
 		$("#comboCE-fechamentoCe-integracao").each(function() {
-		    console.log($(this).text());
+		    itens++;
 		    if ($(this).text().indexOf("ABERTO") > 0 )
 		    		tem=true;
 		});
+	  if ( itens == 0 )
+		   return true; // nao tem ce, entao indicar como aberto
 	 
+	  
 		  return tem;
 	},
 	
