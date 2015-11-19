@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.AnaliseEstudoNormal_E_ParcialDTO;
 import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
@@ -111,9 +112,13 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     
     @Override
     @Transactional(readOnly=true)
-    public List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO) {
+    public AnaliseEstudoNormal_E_ParcialDTO buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO) {
     	
     	List<AnaliseParcialDTO> lista = analiseParcialRepository.buscaAnaliseParcialPorEstudo(queryDTO);
+    	
+		BigInteger total_qtdCotas = BigInteger.ZERO;
+	    BigInteger total_somatorioReparteSugerido = BigInteger.ZERO;
+	    BigInteger total_somatorioUltimoReparte = BigInteger.ZERO;
     	
     	if (queryDTO.getModoAnalise() != null && queryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL")) {
     	    
@@ -226,10 +231,28 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 }
                 
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>(edicoesProdutosDTOMap.values()));
+                
+                if(BigIntegerUtil.isMaiorQueZero(item.getUltimoReparte())){
+                	total_somatorioUltimoReparte = BigIntegerUtil.soma(total_somatorioUltimoReparte, item.getUltimoReparte());
+                }
+                
+                if(BigIntegerUtil.isMaiorQueZero(item.getReparteSugerido())){
+                	total_somatorioReparteSugerido = BigIntegerUtil.soma(total_somatorioReparteSugerido, item.getReparteSugerido());
+                }
+   
+                total_qtdCotas = BigIntegerUtil.soma(total_qtdCotas, BigInteger.ONE);
+                
             }
         }
-
-        return lista;
+    	
+    	AnaliseEstudoNormal_E_ParcialDTO dto = new AnaliseEstudoNormal_E_ParcialDTO();
+    	
+    	dto.setAnaliseParcialDTO(lista);
+    	dto.setTotal_qtdCotas(total_qtdCotas);
+    	dto.setTotal_somatorioUltimoReparte(total_somatorioUltimoReparte);
+    	dto.setTotal_somatorioReparteSugerido(total_somatorioReparteSugerido);
+    	
+        return dto;
     }
 
 	private List<EdicoesProdutosDTO> getBasesUtilizadas(AnaliseParcialQueryDTO queryDTO) {
