@@ -19,6 +19,8 @@ public class AnaliseEstudoNormal_E_ParcialDTO implements Serializable{
     private BigInteger total_somatorioReparteSugerido;
     private BigInteger total_somatorioUltimoReparte;
     private BigDecimal percentualAbrangencia;
+    private List<BigInteger> reparteTotalEdicao;
+    private List<BigInteger> vendaTotalEdicao;
     
     
     private TableModel<CellModelKeyValue<AnaliseParcialDTO>> table;
@@ -58,6 +60,18 @@ public class AnaliseEstudoNormal_E_ParcialDTO implements Serializable{
 	}
 	public void setPercentualAbrangencia(BigDecimal percentualAbrangencia) {
 		this.percentualAbrangencia = percentualAbrangencia;
+	}
+	public List<BigInteger> getReparteTotalEdicao() {
+		return reparteTotalEdicao;
+	}
+	public void setReparteTotalEdicao(List<BigInteger> reparteTotalEdicao) {
+		this.reparteTotalEdicao = reparteTotalEdicao;
+	}
+	public List<BigInteger> getVendaTotalEdicao() {
+		return vendaTotalEdicao;
+	}
+	public void setVendaTotalEdicao(List<BigInteger> vendaTotalEdicao) {
+		this.vendaTotalEdicao = vendaTotalEdicao;
 	}
 	
 }

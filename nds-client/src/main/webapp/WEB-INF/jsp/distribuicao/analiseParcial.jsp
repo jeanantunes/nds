@@ -164,7 +164,7 @@ table.dadosTab { margin-left: 370px;}
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<td>Código: <span>${estudo.produtoEdicao.produto.codigo}</span></td>
-					<td>Produto: <span>${estudo.produtoEdicao.nomeComercial}</span></td>
+					<td>Produto: <span>${fn:toUpperCase(estudo.produtoEdicao.nomeComercial)}</span></td>
 					<td>Edição: <span>${estudo.produtoEdicao.numeroEdicao}</span></td>
 					<td>Estudo: <span>${estudo.id}</span></td>
                     <c:if test="${tipoExibicao != 'NORMAL'}">
@@ -257,7 +257,7 @@ table.dadosTab { margin-left: 370px;}
                     </td>
 					<td>
                         <span class="bt_novos">
-                            <a href="javascript:;" onclick="analiseParcialController.verCapa();">
+                            <a href="javascript:;" onclick="analiseParcialController.verCapa();" style="margin-left: 10px;">
 								<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" alt="Ver Capa" hspace="5" border="0" />
                                 <span>Ver Capa</span>
 						    </a>
@@ -265,12 +265,12 @@ table.dadosTab { margin-left: 370px;}
                     </td>
                     <td align="center">
                         <a href="javascript:;" onclick="analiseParcialController.pull('up');">
-                            <img src="${pageContext.request.contextPath}/images/sort_asc.png" title="Primeira cota da p&aacute;gina." width="19" height="15" border="0" style="margin-top: 15px;" />
+                            <img src="${pageContext.request.contextPath}/images/sort_asc.png" title="Primeira cota da p&aacute;gina." width="29" height="25" border="0" style="margin-top: 12px;" />
                         </a>
                     </td>
                     <td align="center">
                         <a href="javascript:;" onclick="analiseParcialController.pull('down');">
-                            <img src="${pageContext.request.contextPath}/images/sort_desc.png" title="&Uacute;ltima cota da p&aacute;gina." width="19" height="15" border="0" />
+                            <img src="${pageContext.request.contextPath}/images/sort_desc.png" title="&Uacute;ltima cota da p&aacute;gina." width="29" height="25" border="0" style="margin-top: -10px;" />
                         </a>
                     </td>
                         <%--
