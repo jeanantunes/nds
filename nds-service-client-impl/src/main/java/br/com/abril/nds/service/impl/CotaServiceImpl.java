@@ -17,10 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
@@ -41,6 +37,7 @@ import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
+import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
@@ -162,6 +159,9 @@ import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.CPFValidator;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -315,6 +315,13 @@ public class CotaServiceImpl implements CotaService {
     @Override
     @Transactional(readOnly = true)
     public Cota obterPorNumeroDaCota(final Integer numeroCota) {
+    	
+        return cotaRepository.obterPorNumeroDaCota(numeroCota);
+    }
+    
+    @Override
+	@Transactional(readOnly = true)
+    public Map<Integer, EstudoCotaDTO> obterPorNumeroDaCota(List<Integer> numeroCota) {
     	
         return cotaRepository.obterPorNumeroDaCota(numeroCota);
     }

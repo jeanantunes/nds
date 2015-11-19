@@ -195,7 +195,13 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             	listaCotasId.add((long) cota.getCotaId());
 			}
             
-            Map<Integer, List<EdicoesProdutosDTO>> cotasComVenda = analiseParcialRepository.buscaHistoricoDeVendaTodasCotas(listaCotasId, idsProdutoEdicao);
+            Map<Integer, List<EdicoesProdutosDTO>> cotasComVenda;
+            
+            if(listaCotasId.isEmpty() || idsProdutoEdicao.isEmpty()){
+            	cotasComVenda = new HashMap<>(); 	
+            }else{
+            	cotasComVenda = analiseParcialRepository.buscaHistoricoDeVendaTodasCotas(listaCotasId, idsProdutoEdicao);
+            }
             
             for (AnaliseParcialDTO item : lista) {
                 item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));

@@ -45,6 +45,7 @@ import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MunicipioDTO;
@@ -151,6 +152,34 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         query.setParameter("numeroCota", numeroCota);
         
         return (Cota) query.uniqueResult();
+    }
+    
+    @SuppressWarnings("unchecked")
+	@Override
+	public Map<Integer, EstudoCotaDTO> obterPorNumeroDaCota(List<Integer> listNumeroCota) {
+        
+        final Query query = this.getSession()
+        		.createSQLQuery("select c.numero_cota as numeroCota, "
+        				   + "c.situacao_cadastro as situacaoCadastroCota, c.id as idCota "
+        				   + "from Cota c where c.numero_cota in (:numeroCota)")
+        		.addScalar("numeroCota", StandardBasicTypes.INTEGER)
+        		.addScalar("situacaoCadastroCota", StandardBasicTypes.STRING)
+        		.addScalar("idCota", StandardBasicTypes.LONG);
+        
+        query.setParameterList("numeroCota", listNumeroCota);
+        
+        query.setResultTransformer(new AliasToBeanResultTransformer(EstudoCotaDTO.class));
+        
+        List<EstudoCotaDTO> cotas = query.list();
+        
+        Map<Integer, EstudoCotaDTO> mapCotas = new HashMap<>();
+        
+        for (EstudoCotaDTO cota : cotas) {
+			mapCotas.put(cota.getNumeroCota(), cota);
+		}
+        
+        return mapCotas;
+        
     }
     
     @Override

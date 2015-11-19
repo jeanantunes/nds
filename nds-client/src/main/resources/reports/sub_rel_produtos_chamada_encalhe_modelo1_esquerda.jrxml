@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_relatorio_produtos_chamada_encalhe_esc" pageWidth="346" pageHeight="842" columnWidth="346" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="8c114182-af00-4c58-a66b-a3af9b62ec09">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="79"/>
-	<property name="ireport.y" value="14"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" backcolor="#C0C0C0" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" isPdfEmbedded="true">
 		<pen lineWidth="0.25"/>
@@ -365,7 +365,7 @@ Lancto]]></text>
 	</columnHeader>
 	<detail>
 		<band height="31">
-			<textField isStretchWithOverflow="true" pattern="dd/MM/yy" isBlankWhenNull="true">
+			<textField pattern="dd/MM/yy" isBlankWhenNull="true">
 				<reportElement uuid="5663c940-bd08-47df-93ea-9eceea8396fa" style="linha" mode="Opaque" x="214" y="0" width="32" height="15"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
@@ -374,11 +374,11 @@ Lancto]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="SansSerif" size="7" isBold="false" isUnderline="false" isStrikeThrough="false"/>
+					<font fontName="SansSerif" size="6" isBold="false" isUnderline="false" isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{dataLancamento}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="6d997a91-5b24-4686-ac91-21dfe714b987" style="linhaCodProduto" isPrintRepeatedValues="false" mode="Opaque" x="21" y="0" width="53" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<pen lineStyle="Double"/>
@@ -393,7 +393,7 @@ Lancto]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{codigoProduto}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement uuid="3b38c19a-b7b1-4081-8ce5-4a0b927ddc46" style="linha" mode="Opaque" x="282" y="0" width="34" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
@@ -407,7 +407,7 @@ Lancto]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{quantidadeReparte}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="aa30862e-2c1e-48fc-b355-7451d037e7b3" style="linha" mode="Opaque" x="316" y="0" width="30" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
@@ -434,7 +434,7 @@ Lancto]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="d78c8616-98c6-4acb-9fc1-ee61aa734a76" style="linha" mode="Opaque" x="0" y="0" width="21" height="16" forecolor="#000000" backcolor="#E3E3E3"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
@@ -447,7 +447,7 @@ Lancto]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sequencia}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="35009359-b9ff-4183-b4a2-33d7a145c15f" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="15" width="74" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
@@ -475,7 +475,7 @@ Lancto]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{descricaoNotaEnvio} != null && !"".equals($F{descricaoNotaEnvio}) ? $F{descricaoNotaEnvio}.toUpperCase() : $F{nomeComercial}.toUpperCase()]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="328dc61e-1d00-462e-9412-1129f8c95935" style="linha" mode="Opaque" x="170" y="0" width="30" height="15"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
@@ -489,7 +489,7 @@ Lancto]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{edicao}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="85d9be10-7c42-4343-8e59-1576b87c87a7" style="linha" mode="Opaque" x="200" y="0" width="14" height="15"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
@@ -502,7 +502,7 @@ Lancto]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA["P".equals($F{inicialTipoRecolhimento}) ? "*"+ $F{inicialTipoRecolhimento} : $F{inicialTipoRecolhimento}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement uuid="840f526c-8e1e-40ab-8792-335d8057d6c1" style="linha" mode="Opaque" x="246" y="0" width="36" height="15"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
@@ -516,7 +516,7 @@ Lancto]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{vlrPrecoComDesconto}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
 				<reportElement uuid="73deeafd-da19-4b8c-bbfa-74f3d8b4817c" style="linha" mode="Opaque" x="246" y="15" width="36" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
@@ -530,7 +530,7 @@ Lancto]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{precoVenda}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement uuid="4ed8ec35-0584-48c3-a017-caa0399443fa" style="linha" mode="Opaque" x="282" y="15" width="34" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>

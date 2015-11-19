@@ -518,7 +518,6 @@ public class ProdutoServico implements Serializable {
 		int result = 1;
 		result = prime * result + ((this.getCodigoBarras() == null) ? 0 : this.getCodigoBarras().hashCode());
 		result = prime * result + ((this.getCodigoProduto() == null) ? 0 : this.getCodigoProduto().hashCode());
-		result = prime * result + ((this.getListaMovimentoEstoqueCota() == null) ? 0 : this.getListaMovimentoEstoqueCota().hashCode());
 		result = prime * result + ((this.getOrigemItemNotaFiscal() == null) ? 0 : this.getOrigemItemNotaFiscal().hashCode());
 		result = prime * result + ((this.getProdutoEdicao() == null) ? 0 : this.getProdutoEdicao().hashCode());
 		return result;
@@ -542,12 +541,6 @@ public class ProdutoServico implements Serializable {
 			if (other.getCodigoProduto() != null)
 				return false;
 		} else if (!this.getCodigoProduto().equals(other.getCodigoProduto()))
-			return false;
-		if (this.getListaMovimentoEstoqueCota() == null) {
-			if (other.getListaMovimentoEstoqueCota() != null)
-				return false;
-		} else if (!this.getListaMovimentoEstoqueCota()
-				.equals(other.getListaMovimentoEstoqueCota()))
 			return false;
 		if (this.getOrigemItemNotaFiscal() == null) {
 			if (other.getOrigemItemNotaFiscal() != null)

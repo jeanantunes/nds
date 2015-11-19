@@ -49,7 +49,9 @@ read sn
 if [ $sn = "s" ] ; then
 echo
 rm $DIRBKP/comum/carga_estrutura.sql
-mysqldump -h$LAMBIENTE -u$LDBUSER -p$LDBPASS --single-transaction --no-data 'db_00757350' --routines --triggers   | sed -e '/^\/\*\!50013 DEFINER/d' | sed -e 's/\/\*\!50017 DEFINER\=`root`@`localhost`\*\/ //g' | sed 's/DEFINER\=`root`@`localhost`//g' | sed 's/ AUTO_INCREMENT=[0-9]*\b/ AUTO_INCREMENT=0 /' > $DIRBKP/comum/carga_estrutura.sql
+#mysqldump -h$LAMBIENTE -u$LDBUSER -p$LDBPASS --single-transaction --no-data 'db_00757350' --routines --triggers   | sed -e '/^\/\*\!50013 DEFINER/d' | sed -e 's/\/\*\!50017 DEFINER\=`root`@`localhost`\*\/ //g' | sed 's/DEFINER\=`root`@`localhost`//g' | sed 's/ AUTO_INCREMENT=[0-9]*\b/ AUTO_INCREMENT=0 /' > $DIRBKP/comum/carga_estrutura.sql
+mysqldump -h$LAMBIENTE -u$LDBUSER -p$LDBPASS --single-transaction 'telesena_arsp' --routines --triggers   | sed -e '/^\/\*\!50013 DEFINER/d' | sed -e 's/\/\*\!50017 DEFINER\=`root`@`localhost`\*\/ //g' | sed 's/DEFINER\=`root`@`localhost`//g' | sed 's/ AUTO_INCREMENT=[0-9]*\b/ AUTO_INCREMENT=0 /' > $DIRBKP/comum/carga_estrutura.sql
+
 fi
 echo
 echo '3) EXCLUI A BASE '$BASE `date +%T`
@@ -65,7 +67,7 @@ echo '6) CARREGA DADOS INICIAIS.' `date +%T`
 mysql -h$AMBIENTE -u$DBUSER -p$DBPASS $BASE < $DIR/$S1/carga_inicial.sql
 echo
 echo '7) CARREGA DADOS DE CARGA DE TIPOS.' `date +%T`
-mysql -h$AMBIENTE -u$DBUSER -p$DBPASS $BASE < $DIR/comum/carga_tipos.sql
+#mysql -h$AMBIENTE -u$DBUSER -p$DBPASS $BASE < $DIR/comum/carga_tipos.sql
 echo
 echo '8) COPIA ARQUIVOS PARA BASE.' `date +%T`
 echo "Copia os arquivos ? <s ou n>"

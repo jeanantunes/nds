@@ -96,7 +96,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 //		hql.append("			   )");
 		hql.append("			)");
 		hql.append("	end ");
-		hql.append(" - if(chmFornecedor.STATUS_CE_NDS = 'FECHADO',0, ");
+		hql.append(" - if(chmFornecedor.STATUS_CE_NDS = 'FECHADO' or ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'FINAL',0, ");
 		hql.append("    case when ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'PARCIAL' "); 
 		hql.append("    	then");
 		hql.append("			COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA, 0) ");

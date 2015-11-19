@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.client.vo.CotaVO;
@@ -16,6 +17,7 @@ import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MunicipioDTO;
@@ -446,4 +448,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	HistoricoSituacaoCota obterSituacaoCota(Long idCota);
 	
 	public List<AbastecimentoBoxCotaDTO> obterCotasExpedicao(Intervalo<Date> intervaloDataLancamento);
+
+
+	Map<Integer, EstudoCotaDTO> obterPorNumeroDaCota(List<Integer> listNumeroCota);
 }

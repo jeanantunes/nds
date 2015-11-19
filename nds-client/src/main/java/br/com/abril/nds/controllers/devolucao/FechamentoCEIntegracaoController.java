@@ -231,7 +231,9 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		if(filtro.getComboCeIntegracao().equals("COM")){ 
-			fechamentoCEIntegracaoService.salvarCE(itens);
+			if(itens != null && !itens.isEmpty()) {
+				fechamentoCEIntegracaoService.salvarCE(itens);
+				}
 			fechamentoCEIntegracaoService.fecharCE(filtro, this.obterMapItensCE(itens));
 		} else {
 			fechamentoCEIntegracaoService.fecharSemCE(itens);
@@ -364,8 +366,13 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		result.include("listaFornecedores",listaFornecedoresCombo );
 	}
 	
-	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, BigDecimal venda) {
-		
+	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, String vendaStr) {
+		BigDecimal venda = BigDecimal.ZERO;
+		try {
+		 venda = 	 new BigDecimal(vendaStr.replaceAll("\\.","").replaceAll(",","."));
+		} catch (Exception e ) {
+			
+		}
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
 		filtro.setPaginacao(null);
