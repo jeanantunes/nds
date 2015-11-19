@@ -673,15 +673,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         	}
     	}
         
-    	if(!dto.isParcial()) { // somente se nao for parcial executa validacao
+    	if(dto.isParcial()) {
         	if(!semRestricao) {
         		if(indDataLancamentoAlterada || indDataRecolhimentoAlterada || indDataLancamentoPrevistoAlterada) {
         			throw new ValidacaoException(TipoMensagem.WARNING, "Data do Lançamento Alterada não é possível alteração de Lancamentos de Parciais. Utilize a tela de Parciais.");
         		}
         	}
         }
-        
-        
     	
         if (!ModoTela.EDICAO.equals(modoTela) && produtoEdicaoRepository.isNumeroEdicaoCadastrada(produtoEdicao.getProduto().getId(),
                 dto.getNumeroEdicao(), produtoEdicao.getId())) {
