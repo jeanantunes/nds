@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -554,6 +555,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 	public void posProcess(Object tempVar) {
 		
 		atualizarLancamentosSemPeriodoFinal();
+		atualizarLancamentosComMaisdeUmPeriodoFinal();
 	}
 	
 	private void atualizarLancamentosSemPeriodoFinal() {
@@ -596,7 +598,47 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 			q.executeUpdate();
 
 		} catch (Exception e) {
+			LOGGER.error("ERRO AJUSTANDO PARCIAL/FINAL de periodos de lancamentos parciais com mais de um FINAL",e);
+			throw new RuntimeException(e);
+		}
+	}
+	
+	// Caso tenha lancamentos_parcial com mais de um periodo com tipo FINAL, ajustar  para ter PARCIAL e um FINAL
+private void atualizarLancamentosComMaisdeUmPeriodoFinal() {
+		
+		StringBuilder sql = new StringBuilder();
+		try {                                                                                                    
+			// obter todos lancamento_parcial_id  que tenha periodo com mais de um FINAL
+			sql.append(" select LANCAMENTO_PARCIAL_ID, max(numero_periodo),tipo ")
+			   .append(" from periodo_lancamento_parcial where tipo = 'FINAL' group by 1,3 having count(*) > 1");
+			SQLQuery q = getSessionIcd().createSQLQuery(sql.toString());
+			List <Object[]> lista = q.list();
+			for( Object [] rs:lista  ) {
+			BigInteger id = (BigInteger) rs[0];
 			
+			// atualizar o status de todos os periodos deste lancamento parcial para PARCIAL
+			SQLQuery q1 = getSessionIcd().createSQLQuery(
+			" update periodo_lancamento_parcial   set tipo = 'PARCIAL' where lancamento_parcial_id = :id");
+			
+			q1.setParameter("id",id);
+			q1.executeUpdate();
+    
+			Integer mx = (Integer) rs[1];
+			// atualizar o status do ultimo periodo deste lancamento parcial para FINAL
+			SQLQuery q2 = getSessionIcd().createSQLQuery(
+			" update periodo_lancamento_parcial a set a.tipo = 'FINAL' "+
+			" where a.lancamento_parcial_id = :id  and   a.numero_periodo = :mx ");
+			
+			q2.setParameter("id",id);
+			q2.setParameter("mx",mx);
+			q2.executeUpdate();
+			}
+			
+			
+			
+
+		} catch (Exception e) {
+			LOGGER.error("ERRO AJUSTANDO PARCIAL/FINAL de periodos de lancamentos parciais sem periodo FINAL",e);
 			throw new RuntimeException(e);
 		}
 	}
