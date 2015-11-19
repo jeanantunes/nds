@@ -279,19 +279,22 @@ var analiseParcialController = $.extend(true, {
         
         
         if(($("#ordenarPorAte").val() == "") && ($("#ordenarPorDe").val() == "")){
+        	
         	$('#total_ultimo_reparte').text(totalUltimoReparte);
         	$('#total_reparte_sugerido').text(totalReparteSugerido);
         	$('#total_de_cotas').text(totalCotas);
+
+        	for (var j = 1; j < 7; j++) {
+        		
+        		$('#total_reparte'+ j).text(totais[j].reparte);
+        		
+        		$('#total_venda'+ j).text(totais[j].venda);
+        		
+        		analiseParcialController.totalizarEdicoesBasesDadosEdicoes(j-1, totais[j].reparte, totais[j].venda);
+        	}
+        	
         }
 
-        for (var j = 1; j < 7; j++) {
-        	
-            $('#total_reparte'+ j).text(totais[j].reparte);
-            
-            $('#total_venda'+ j).text(totais[j].venda);
-            
-            analiseParcialController.totalizarEdicoesBasesDadosEdicoes(j-1, totais[j].reparte, totais[j].venda);
-        }
     },
     
     /*
@@ -623,6 +626,14 @@ var analiseParcialController = $.extend(true, {
     	resultado.rows = resultado.analiseEstudoNormal_E_ParcialDTO.table.rows;
     	resultado.page = resultado.analiseEstudoNormal_E_ParcialDTO.table.page;
     	resultado.total = resultado.analiseEstudoNormal_E_ParcialDTO.table.total;
+    	
+    	var repartes = resultado.analiseEstudoNormal_E_ParcialDTO.reparteTotalEdicao;
+    	var vendas = resultado.analiseEstudoNormal_E_ParcialDTO.vendaTotalEdicao;
+    	
+    	for(var i = 0; i < repartes.length; i++){
+    		$('#total_reparte'+(i+1)).text(repartes[i]);
+    		$('#total_venda'+(i+1)).text(vendas[i]);
+    	}
     	
     	$('#total_ultimo_reparte').text(resultado.analiseEstudoNormal_E_ParcialDTO.total_somatorioUltimoReparte);
     	$('#total_reparte_sugerido').text(resultado.analiseEstudoNormal_E_ParcialDTO.total_somatorioReparteSugerido);

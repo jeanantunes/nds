@@ -119,6 +119,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 		BigInteger total_qtdCotas = BigInteger.ZERO;
 	    BigInteger total_somatorioReparteSugerido = BigInteger.ZERO;
 	    BigInteger total_somatorioUltimoReparte = BigInteger.ZERO;
+	    Map<String, BigInteger> mapTotaisEd = new HashMap<>();
     	
     	if (queryDTO.getModoAnalise() != null && queryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL")) {
     	    
@@ -225,6 +226,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                                     ed.setOrdemExibicao(ordemExibicaoHelper++);
                                 }
                                 edicoesProdutosDTOMap.put(ed.getOrdemExibicao(), ed);
+                                putMapSomatorioTotaisEdicao(mapTotaisEd, ed);
                             }
                         }
                     }
@@ -252,8 +254,33 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	dto.setTotal_somatorioUltimoReparte(total_somatorioUltimoReparte);
     	dto.setTotal_somatorioReparteSugerido(total_somatorioReparteSugerido);
     	
+    	formatarTotaisReparteVendaEdicao(mapTotaisEd, dto);
+    	
         return dto;
     }
+
+	private void putMapSomatorioTotaisEdicao(Map<String, BigInteger> mapTotaisEd, EdicoesProdutosDTO ed) {
+		if(mapTotaisEd.get("reparte_"+ed.getOrdemExibicao()) == null){
+			mapTotaisEd.put("reparte_"+ed.getOrdemExibicao(), ed.getReparte());
+			mapTotaisEd.put("venda_"+ed.getOrdemExibicao(), ed.getVenda());
+		}else{
+			mapTotaisEd.put("reparte_"+ed.getOrdemExibicao(), BigIntegerUtil.soma(mapTotaisEd.get("reparte_"+ed.getOrdemExibicao()) , ed.getReparte()));
+			mapTotaisEd.put("venda_"+ed.getOrdemExibicao(), BigIntegerUtil.soma(mapTotaisEd.get("venda_"+ed.getOrdemExibicao()), ed.getVenda()));
+		}
+	}
+
+	private void formatarTotaisReparteVendaEdicao(Map<String, BigInteger> mapTotaisEd, AnaliseEstudoNormal_E_ParcialDTO dto) {
+		List<BigInteger> totalReparte = new ArrayList<>();
+    	List<BigInteger> totalVenda = new ArrayList<>();
+    	
+    	for (int i = 0; i < (mapTotaisEd.size()/2); i++) {
+			totalReparte.add(mapTotaisEd.get("reparte_"+i));
+			totalVenda.add(mapTotaisEd.get("venda_"+i));
+		}
+    	
+    	dto.setReparteTotalEdicao(totalReparte);
+    	dto.setVendaTotalEdicao(totalVenda);
+	}
 
 	private List<EdicoesProdutosDTO> getBasesUtilizadas(AnaliseParcialQueryDTO queryDTO) {
 		
