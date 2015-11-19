@@ -52,6 +52,10 @@ public class AnaliseParcialDTO implements Serializable {
     private Long mixID;
     private Long fixacaoID;
     
+    private BigInteger somatorioQtdCotas;
+    private BigInteger somatorioUltimoReparte;
+    private BigInteger somatorioReparteSugerido;
+    
     public String getDescricaoLegenda() {
         return descricaoLegenda;
     }
@@ -353,4 +357,30 @@ public class AnaliseParcialDTO implements Serializable {
 	public void setFixacaoID(Long fixacaoID) {
 		this.fixacaoID = fixacaoID;
 	}
+
+	public BigInteger getSomatorioQtdCotas() {
+		return somatorioQtdCotas;
+	}
+
+	public void setSomatorioQtdCotas(BigInteger somatorioQtdCotas) {
+		this.somatorioQtdCotas = somatorioQtdCotas;
+	}
+
+	public BigInteger getSomatorioUltimoReparte() {
+		return somatorioUltimoReparte;
+	}
+
+	public void setSomatorioUltimoReparte(BigInteger somatorioUltimoReparte) {
+		this.somatorioUltimoReparte = somatorioUltimoReparte;
+	}
+
+	public BigInteger getSomatorioReparteSugerido() {
+		return somatorioReparteSugerido;
+	}
+
+	public void setSomatorioReparteSugerido(BigInteger somatorioReparteSugerido) {
+		this.somatorioReparteSugerido = somatorioReparteSugerido;
+	}
+	
+	
 }

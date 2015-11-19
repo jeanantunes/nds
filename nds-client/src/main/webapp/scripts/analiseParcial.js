@@ -267,17 +267,22 @@ var analiseParcialController = $.extend(true, {
             totalReparteEstudoOrigem += $tr.find('td[abbr="reparteEstudoOrigemCopia"] div').text() * 1;
 
             for (var i=1; i<7; i++) {
-                totais[i].reparte += $tr.find('td[abbr="reparte' + i + '"] div').text() * 1;
-                totais[i].venda += $tr.find('td[abbr="venda' + i + '"] div').text() * 1;
+            	totais[i].reparte += $tr.find('[abbr="reparte' + i + '"]').text() * 1;
+                totais[i].venda += $tr.find('[abbr="venda' + i + '"]').text() * 1;
+                
             }
 
         }).length;
 
         $('#total_juramento').text(totalJuramento);
-        $('#total_ultimo_reparte').text(totalUltimoReparte);
-        $('#total_reparte_sugerido').text(totalReparteSugerido);
         $('#total_reparte_origem').text(totalReparteEstudoOrigem);
-        $('#total_de_cotas').text(totalCotas);
+        
+        
+        if(($("#ordenarPorAte").val() == "") && ($("#ordenarPorDe").val() == "")){
+        	$('#total_ultimo_reparte').text(totalUltimoReparte);
+        	$('#total_reparte_sugerido').text(totalReparteSugerido);
+        	$('#total_de_cotas').text(totalCotas);
+        }
 
         for (var j = 1; j < 7; j++) {
         	
@@ -614,7 +619,15 @@ var analiseParcialController = $.extend(true, {
     },
 
     preProcessGrid : function(resultado) {
-
+    	
+    	resultado.rows = resultado.analiseEstudoNormal_E_ParcialDTO.table.rows;
+    	resultado.page = resultado.analiseEstudoNormal_E_ParcialDTO.table.page;
+    	resultado.total = resultado.analiseEstudoNormal_E_ParcialDTO.table.total;
+    	
+    	$('#total_ultimo_reparte').text(resultado.analiseEstudoNormal_E_ParcialDTO.total_somatorioUltimoReparte);
+    	$('#total_reparte_sugerido').text(resultado.analiseEstudoNormal_E_ParcialDTO.total_somatorioReparteSugerido);
+    	$('#total_de_cotas').text(resultado.analiseEstudoNormal_E_ParcialDTO.total_qtdCotas);
+    	
     	var disabled = $('#status_estudo').text()==='Liberado';
     	
         if (resultado.mensagens) {
@@ -651,6 +664,8 @@ var analiseParcialController = $.extend(true, {
         	var somaReparteCota = 0;
         	var somaVendasCota = 0;
         	var porcentagemVendaCota = 0;
+        	
+        	var reparteSugerido = 0;
 
         	for (var j = 0; j < 6; j++) {
                 if (typeof cell.edicoesBase[j] === 'undefined' || typeof cell.edicoesBase[j].reparte === 'undefined') {
@@ -678,6 +693,9 @@ var analiseParcialController = $.extend(true, {
                     	}
                     }
                 }
+                
+                cell['venda'+ (j + 1)] = '<span abbr="venda' + (j + 1) + '" class="vermelho">'+cell['venda'+ (j + 1)]+'</span>';
+                cell['reparte'+ (j + 1)] = '<span abbr="reparte' + (j + 1) + '">'+cell['reparte'+ (j + 1)]+'</span>';
             }
         	
         	if(somaVendasCota > 0){
@@ -698,6 +716,9 @@ var analiseParcialController = $.extend(true, {
                             .replace(/#percVenda/g, porcentagemVendaCota)
                             .replace(/#vendaMedia/g, cell.mediaVenda)
                             .replace(/#nmCota/g, cell.nome);
+            
+            
+            reparteSugerido = cell.reparteSugerido; 
             
             cell.reparteSugerido = input;
             
@@ -729,9 +750,13 @@ var analiseParcialController = $.extend(true, {
             if (!cell.ultimoReparte || cell.ultimoReparte === 0 || cell.ultimoReparte === "0"){
             	cell.ultimoReparte = '';
             }
-            
-          
+
             totalSaldoReparte += parseInt(cell.quantidadeAjuste);
+        
+            if((cell.reparteEstudo != reparteSugerido) || cell.ajustado == true){
+               cell.leg = cell.leg+'<span class="asterisco"></span>';
+            }
+            
         }
 
         if(resultado.rows[0].cell.edicoesBase != undefined){
@@ -805,25 +830,12 @@ var analiseParcialController = $.extend(true, {
     },
 
     onSuccessReloadGrid : function() {
-        //limpa espaços da grid
+        
+    	//limpa espaços da grid
         $('table#baseEstudoGridParcial tr td div').filter(function(){return $.trim($(this).html()) === '&nbsp;';}).text('');
 
         analiseParcialController.somarTotais();
         analiseParcialController.atualizaEdicoesBaseHeader();
-        analiseParcialController.atualizaAbrangencia();
-
-        //insere asterisco para marcações de reparteSugerido != reparteEstudo
-        $('table#baseEstudoGridParcial tr td[abbr="reparteSugerido"] div input').each(function(){
-            
-        	var $this = $(this);
-            
-            if (($this.attr('reparteInicial') != $this.attr('reparteAtual'))||($this.attr('ajustado') == "true")) {
-            	
-                $this.closest('tr').find('td[abbr="leg"] div').addClass('asterisco');
-            }
-            
-//            analiseParcialController.addEventoLegenda();
-        });
        
     },
 
@@ -1199,12 +1211,13 @@ var analiseParcialController = $.extend(true, {
             dataType : 'json',
             colModel : modelo,
             width: estudoOrigem?1035:980,
-            height: 200,
+            height: 205,
             usepager : true,
 			useRp : true,
-			rp: 400,
-			rpOptions: [500],
+			rp: 300,
+//			rpOptions: [500],
             colMove: false,
+//            resizable: false,
             sortorder: 'desc',
             sortname: 'reparteSugerido',
 //            onChangeSort: analiseParcialController.sortGrid,
@@ -1713,9 +1726,31 @@ var analiseParcialController = $.extend(true, {
 //        	setTimeout(function(){$(".tipsy").hide()},2000);
 //        });
 //    },
+    
+    pull : function(direcao) {
+    	
+    	if(direcao == undefined){
+    		return;
+    	}
 
+    	if(direcao == "up"){
+    		$("#baseEstudoGridParcial").parent().scrollTop(0);
+    	}else{
+    		if(direcao == "down"){
+    			$("#baseEstudoGridParcial").parent().scrollTop($("#baseEstudoGridParcial").parent().find('.baseEstudoGrid').height());
+    		}
+    	}
+    },
+    
     filtrarOrdenarPor : function(estudo) {
         
+    	if ($("#ordenarPorDe").val() != '' || $("#ordenarPorAte").val() != '') {
+    		if($("#ordenarPorDe").val() == '' || $("#ordenarPorAte").val() == ''){
+    			$("#ordenarPorDe").val("");
+    			$("#ordenarPorAte").val("");
+    		}
+    	}
+    	
     	var valueFiltroOrdenarPor = $("#filtroOrdenarPor").val();
         var elemento = $("#elementos :selected").val();
 
