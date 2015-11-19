@@ -153,15 +153,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         return (Cota) query.uniqueResult();
     }
     
-    public Cota obterPorNumeroDaCota(List<Integer> listNumeroCota) {
-        
-        final Query query = this.getSession().createQuery("select c from Cota c join fetch c.pessoa where c.numeroCota in (:numeroCota)");
-        
-        query.setParameterList("numeroCota", listNumeroCota);
-        
-        return (Cota) query.uniqueResult();
-    }
-    
     @Override
     public Cota obterPorNumerDaCota(final Integer numeroCota) {
         

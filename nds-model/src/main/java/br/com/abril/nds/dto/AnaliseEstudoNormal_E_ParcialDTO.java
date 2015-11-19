@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -17,6 +18,8 @@ public class AnaliseEstudoNormal_E_ParcialDTO implements Serializable{
 	private BigInteger total_qtdCotas;
     private BigInteger total_somatorioReparteSugerido;
     private BigInteger total_somatorioUltimoReparte;
+    private BigDecimal percentualAbrangencia;
+    
     
     private TableModel<CellModelKeyValue<AnaliseParcialDTO>> table;
 
@@ -49,6 +52,12 @@ public class AnaliseEstudoNormal_E_ParcialDTO implements Serializable{
 	}
 	public void setTable(TableModel<CellModelKeyValue<AnaliseParcialDTO>> table) {
 		this.table = table;
+	}
+	public BigDecimal getPercentualAbrangencia() {
+		return percentualAbrangencia;
+	}
+	public void setPercentualAbrangencia(BigDecimal percentualAbrangencia) {
+		this.percentualAbrangencia = percentualAbrangencia;
 	}
 	
 }

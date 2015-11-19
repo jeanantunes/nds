@@ -292,21 +292,33 @@ public class AnaliseParcialController extends BaseController {
         	
         validator.onErrorUse(Results.json()).withoutRoot().from(table).recursive().serialize();
         
-        if(filterSortFrom != null && filterSortTo != null){
-//        	result.include("totalCotas", analise.getTotal_qtdCotas());
-//        	result.include("totalRepSugerido", analise.getTotal_somatorioReparteSugerido());
-//        	result.include("totalUltReparte", analise.getTotal_somatorioUltimoReparte());
-        	AnaliseEstudoNormal_E_ParcialDTO vo = new AnaliseEstudoNormal_E_ParcialDTO();
-        	
-        	vo.setTable(table);
-        	vo.setTotal_qtdCotas(analise.getTotal_qtdCotas());
-        	vo.setTotal_somatorioReparteSugerido(analise.getTotal_somatorioReparteSugerido());
-        	vo.setTotal_somatorioUltimoReparte(analise.getTotal_somatorioUltimoReparte());
-        	
-        	result.use(Results.json()).from(vo).recursive().serialize();
-        }else{
-        	result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
-        }
+        AnaliseEstudoNormal_E_ParcialDTO vo = new AnaliseEstudoNormal_E_ParcialDTO();
+    	
+    	vo.setTable(table);
+    	vo.setTotal_qtdCotas(analise.getTotal_qtdCotas());
+    	vo.setTotal_somatorioReparteSugerido(analise.getTotal_somatorioReparteSugerido());
+    	vo.setTotal_somatorioUltimoReparte(analise.getTotal_somatorioUltimoReparte());
+    	vo.setPercentualAbrangencia(analiseParcialService.calcularPercentualAbrangencia(id));
+    	
+    	result.use(Results.json()).from(vo).recursive().serialize();
+        
+        
+        
+//        if(filterSortFrom != null && filterSortTo != null){
+////        	result.include("totalCotas", analise.getTotal_qtdCotas());
+////        	result.include("totalRepSugerido", analise.getTotal_somatorioReparteSugerido());
+////        	result.include("totalUltReparte", analise.getTotal_somatorioUltimoReparte());
+//        	AnaliseEstudoNormal_E_ParcialDTO vo = new AnaliseEstudoNormal_E_ParcialDTO();
+//        	
+//        	vo.setTable(table);
+//        	vo.setTotal_qtdCotas(analise.getTotal_qtdCotas());
+//        	vo.setTotal_somatorioReparteSugerido(analise.getTotal_somatorioReparteSugerido());
+//        	vo.setTotal_somatorioUltimoReparte(analise.getTotal_somatorioUltimoReparte());
+//        	
+//        	result.use(Results.json()).from(vo).recursive().serialize();
+//        }else{
+//        	result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
+//        }
         
         
         

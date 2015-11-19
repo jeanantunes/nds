@@ -267,8 +267,6 @@ var analiseParcialController = $.extend(true, {
             totalReparteEstudoOrigem += $tr.find('td[abbr="reparteEstudoOrigemCopia"] div').text() * 1;
 
             for (var i=1; i<7; i++) {
-//                totais[i].reparte += $tr.find('td[abbr="reparte' + i + '"] div').text() * 1;
-//                totais[i].venda += $tr.find('td[abbr="venda' + i + '"] div').text() * 1;
             	totais[i].reparte += $tr.find('[abbr="reparte' + i + '"]').text() * 1;
                 totais[i].venda += $tr.find('[abbr="venda' + i + '"]').text() * 1;
                 
@@ -277,10 +275,14 @@ var analiseParcialController = $.extend(true, {
         }).length;
 
         $('#total_juramento').text(totalJuramento);
-        $('#total_ultimo_reparte').text(totalUltimoReparte);
-        $('#total_reparte_sugerido').text(totalReparteSugerido);
         $('#total_reparte_origem').text(totalReparteEstudoOrigem);
-        $('#total_de_cotas').text(totalCotas);
+        
+        
+        if(($("#ordenarPorAte").val() == "") && ($("#ordenarPorDe").val() == "")){
+        	$('#total_ultimo_reparte').text(totalUltimoReparte);
+        	$('#total_reparte_sugerido').text(totalReparteSugerido);
+        	$('#total_de_cotas').text(totalCotas);
+        }
 
         for (var j = 1; j < 7; j++) {
         	
@@ -618,11 +620,13 @@ var analiseParcialController = $.extend(true, {
 
     preProcessGrid : function(resultado) {
     	
-    	if(resultado.analiseEstudoNormal_E_ParcialDTO != undefined){
-    		resultado.rows = resultado.analiseEstudoNormal_E_ParcialDTO.table.rows;
-    		resultado.page = resultado.analiseEstudoNormal_E_ParcialDTO.table.page;
-    		resultado.total = resultado.analiseEstudoNormal_E_ParcialDTO.table.total;
-    	}
+    	resultado.rows = resultado.analiseEstudoNormal_E_ParcialDTO.table.rows;
+    	resultado.page = resultado.analiseEstudoNormal_E_ParcialDTO.table.page;
+    	resultado.total = resultado.analiseEstudoNormal_E_ParcialDTO.table.total;
+    	
+    	$('#total_ultimo_reparte').text(resultado.analiseEstudoNormal_E_ParcialDTO.total_somatorioUltimoReparte);
+    	$('#total_reparte_sugerido').text(resultado.analiseEstudoNormal_E_ParcialDTO.total_somatorioReparteSugerido);
+    	$('#total_de_cotas').text(resultado.analiseEstudoNormal_E_ParcialDTO.total_qtdCotas);
     	
     	/*
     	 * 
@@ -667,6 +671,8 @@ var analiseParcialController = $.extend(true, {
         	var somaReparteCota = 0;
         	var somaVendasCota = 0;
         	var porcentagemVendaCota = 0;
+        	
+        	var reparteSugerido = 0;
 
         	for (var j = 0; j < 6; j++) {
                 if (typeof cell.edicoesBase[j] === 'undefined' || typeof cell.edicoesBase[j].reparte === 'undefined') {
@@ -718,6 +724,9 @@ var analiseParcialController = $.extend(true, {
                             .replace(/#vendaMedia/g, cell.mediaVenda)
                             .replace(/#nmCota/g, cell.nome);
             
+            
+            reparteSugerido = cell.reparteSugerido; 
+            
             cell.reparteSugerido = input;
             
             cell.nome = analiseParcialController.linkNomeCota.replace('#nomeCota', cell.nome).replace('#numeroCota', cell.cota);
@@ -748,9 +757,16 @@ var analiseParcialController = $.extend(true, {
             if (!cell.ultimoReparte || cell.ultimoReparte === 0 || cell.ultimoReparte === "0"){
             	cell.ultimoReparte = '';
             }
-            
-          
+
             totalSaldoReparte += parseInt(cell.quantidadeAjuste);
+        
+            if((cell.reparteEstudo != reparteSugerido) || cell.ajustado == true){
+//         	   input.find('td[abbr="leg"] div').addClass('asterisco');
+         	   
+//         	   cell.leg.className = 'asterisco';
+               cell.leg = cell.leg+'<span class="asterisco"></span>';
+            }
+            
         }
 
         if(resultado.rows[0].cell.edicoesBase != undefined){
@@ -824,13 +840,18 @@ var analiseParcialController = $.extend(true, {
     },
 
     onSuccessReloadGrid : function() {
-        //limpa espaços da grid
+        
+    	//limpa espaços da grid
         $('table#baseEstudoGridParcial tr td div').filter(function(){return $.trim($(this).html()) === '&nbsp;';}).text('');
 
         analiseParcialController.somarTotais();
         analiseParcialController.atualizaEdicoesBaseHeader();
-        analiseParcialController.atualizaAbrangencia();
 
+        
+//        analiseParcialController.atualizaAbrangencia();
+
+        /*
+        
         //insere asterisco para marcações de reparteSugerido != reparteEstudo
         $('table#baseEstudoGridParcial tr td[abbr="reparteSugerido"] div input').each(function(){
             
@@ -843,6 +864,8 @@ var analiseParcialController = $.extend(true, {
             
 //            analiseParcialController.addEventoLegenda();
         });
+        
+        */
        
     },
 
@@ -1751,6 +1774,13 @@ var analiseParcialController = $.extend(true, {
     
     filtrarOrdenarPor : function(estudo) {
         
+    	if ($("#ordenarPorDe").val() != '' || $("#ordenarPorAte").val() != '') {
+    		if($("#ordenarPorDe").val() == '' || $("#ordenarPorAte").val() == ''){
+    			$("#ordenarPorDe").val("");
+    			$("#ordenarPorAte").val("");
+    		}
+    	}
+    	
     	var valueFiltroOrdenarPor = $("#filtroOrdenarPor").val();
         var elemento = $("#elementos :selected").val();
 
