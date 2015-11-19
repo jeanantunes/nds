@@ -628,13 +628,6 @@ var analiseParcialController = $.extend(true, {
     	$('#total_reparte_sugerido').text(resultado.analiseEstudoNormal_E_ParcialDTO.total_somatorioReparteSugerido);
     	$('#total_de_cotas').text(resultado.analiseEstudoNormal_E_ParcialDTO.total_qtdCotas);
     	
-    	/*
-    	 * 
-    	 * ## Falta atualizar os totais!
-    	 * 
-    	 * 
-    	 */
-
     	var disabled = $('#status_estudo').text()==='Liberado';
     	
         if (resultado.mensagens) {
@@ -761,9 +754,6 @@ var analiseParcialController = $.extend(true, {
             totalSaldoReparte += parseInt(cell.quantidadeAjuste);
         
             if((cell.reparteEstudo != reparteSugerido) || cell.ajustado == true){
-//         	   input.find('td[abbr="leg"] div').addClass('asterisco');
-         	   
-//         	   cell.leg.className = 'asterisco';
                cell.leg = cell.leg+'<span class="asterisco"></span>';
             }
             
@@ -846,26 +836,6 @@ var analiseParcialController = $.extend(true, {
 
         analiseParcialController.somarTotais();
         analiseParcialController.atualizaEdicoesBaseHeader();
-
-        
-//        analiseParcialController.atualizaAbrangencia();
-
-        /*
-        
-        //insere asterisco para marcações de reparteSugerido != reparteEstudo
-        $('table#baseEstudoGridParcial tr td[abbr="reparteSugerido"] div input').each(function(){
-            
-        	var $this = $(this);
-            
-            if (($this.attr('reparteInicial') != $this.attr('reparteAtual'))||($this.attr('ajustado') == "true")) {
-            	
-                $this.closest('tr').find('td[abbr="leg"] div').addClass('asterisco');
-            }
-            
-//            analiseParcialController.addEventoLegenda();
-        });
-        
-        */
        
     },
 
