@@ -246,6 +246,11 @@ var analiseParcialController = $.extend(true, {
     },
 
     somarTotais : function() {
+    	
+        if(($("#ordenarPorAte").val() == "") || ($("#ordenarPorDe").val() == "")){
+        	return;
+        }
+    	
         var totalJuramento = 0,
             totalUltimoReparte = 0,
             totalReparteSugerido = 0,
@@ -278,21 +283,17 @@ var analiseParcialController = $.extend(true, {
         $('#total_reparte_origem').text(totalReparteEstudoOrigem);
         
         
-        if(($("#ordenarPorAte").val() == "") && ($("#ordenarPorDe").val() == "")){
+        $('#total_ultimo_reparte').text(totalUltimoReparte);
+        $('#total_reparte_sugerido').text(totalReparteSugerido);
+        $('#total_de_cotas').text(totalCotas);
+        
+        for (var j = 1; j < 7; j++) {
         	
-        	$('#total_ultimo_reparte').text(totalUltimoReparte);
-        	$('#total_reparte_sugerido').text(totalReparteSugerido);
-        	$('#total_de_cotas').text(totalCotas);
-
-        	for (var j = 1; j < 7; j++) {
-        		
-        		$('#total_reparte'+ j).text(totais[j].reparte);
-        		
-        		$('#total_venda'+ j).text(totais[j].venda);
-        		
-        		analiseParcialController.totalizarEdicoesBasesDadosEdicoes(j-1, totais[j].reparte, totais[j].venda);
-        	}
+        	$('#total_reparte'+ j).text(totais[j].reparte);
         	
+        	$('#total_venda'+ j).text(totais[j].venda);
+        	
+        	analiseParcialController.totalizarEdicoesBasesDadosEdicoes(j-1, totais[j].reparte, totais[j].venda);
         }
 
     },
