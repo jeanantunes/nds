@@ -26,9 +26,9 @@
 		<property name="username" value="awsuser" />
 		<property name="password" value="dgbdistb01mgr" />
 		-->
-		<property name="url" value="jdbc:mysql://localhost:3306/nds_sjc" />
+		<property name="url" value="jdbc:mysql://10.129.28.137:3306/nds_lab3" />
 		<property name="username" value="root" />
-		<property name="password" value="phoenix" />
+		<property name="password" value="abril@123" />
     </bean> 
 
 	<bean id="sessionFactory"
@@ -38,8 +38,8 @@
 		<property name="hibernateProperties">
 			<props>
 	        	<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
-				<prop key="hibernate.show_sql">true</prop>
-				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.format_sql">false</prop>
 				
 				<!-- CONNECTION -->
 				
