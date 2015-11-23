@@ -22,5 +22,5 @@
   	<logger name="org.hibernate.cache" level="ERROR" />
   	<logger name="org.hibernate.jdbc" level="DEBUG" />
   	<logger name="org.hibernate.SQL" level="WARN" />
-  	<logger name="org.hibernate.type" level="TRACE" />
+  	<logger name="org.hibernate.type" level="ERROR" />
 </configuration>
