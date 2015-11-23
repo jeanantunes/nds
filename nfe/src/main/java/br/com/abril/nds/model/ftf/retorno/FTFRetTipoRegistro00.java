@@ -12,7 +12,6 @@ public class FTFRetTipoRegistro00 extends FTFBaseDTO {
 	private String dataGeracaoArquivo;
 	private String nomeArquivoEnviadoGeradoSistema;
 	
-	
 	public String getTipoRegistro() {
 		return tipoRegistro;
 	}
@@ -57,12 +56,7 @@ public class FTFRetTipoRegistro00 extends FTFBaseDTO {
 		return nomeArquivoEnviadoGeradoSistema;
 	}
 	
-	@FTFfield(tamanho = 50, tipo = "char", ordem = 6)
-	public void setNomeArquivoEnviadoGeradoSistema(
-			String nomeArquivoEnviadoGeradoSistema) {
+	public void setNomeArquivoEnviadoGeradoSistema(String nomeArquivoEnviadoGeradoSistema) {
 		this.nomeArquivoEnviadoGeradoSistema = nomeArquivoEnviadoGeradoSistema;
 	}
-	
-	
-	
 }

@@ -1,3 +1,5 @@
+var tipoEmissor = "";
+
 var retornoNFEController  = $.extend(true, {
 
 	path : contextPath +"/nfe/retornoNFe/",
@@ -5,7 +7,7 @@ var retornoNFEController  = $.extend(true, {
 	init : function() {
 		this.initFlexiGrids();
 		this.initFiltroDatas();
-		
+		this.obterTipoEmissor();
 	},
 
 	initFlexiGrids : function() {
@@ -43,6 +45,16 @@ var retornoNFEController  = $.extend(true, {
 		
 	},
 	
+	obterTipoEmissor : function() {
+		
+		$.postJSON(contextPath + '/nfe/retornoNFe/obterTipoEmissor', null, 
+			function(result) {
+				tipoEmissor = result;
+	        }
+		);
+		
+	},
+	
 	initFiltroDatas : function() {
 		$.postJSON(contextPath + '/cadastro/distribuidor/obterDataDistribuidor', null, 
 				function(result) {
@@ -62,7 +74,6 @@ var retornoNFEController  = $.extend(true, {
 	pesquisar : function() {
 		
 		var dataReferencia = $("#retornoNFEDataReferencia", this.workspace).val();
-		
 		var tipoRetorno = $('input[name^="tipoRetorno"]:checked').val();
 		var params = [];
 		
@@ -73,6 +84,7 @@ var retornoNFEController  = $.extend(true, {
 
 			params.push({name : "dataReferencia", value : dataReferencia});
 			params.push({name : "tipoRetorno", value : tipoRetorno});
+			params.push({name : "tipoEmissor", value : tipoEmissor});
 			
 			$("#retornoNfe-flexigrid-pesquisa", retornoNFEController.workspace).flexOptions({
 				dataType : 'json',

@@ -1,15 +1,28 @@
 package br.com.abril.ftf;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.junit.Test;
+
+import br.com.abril.nds.ftfutil.FTFBaseDTO;
+import br.com.abril.nds.ftfutil.FTFParser;
+import br.com.abril.nds.model.ftf.retorno.FTFRetTipoRegistro00;
+import br.com.abril.nds.model.ftf.retorno.FTFRetTipoRegistro01;
+import br.com.abril.nds.model.ftf.retorno.FTFRetTipoRegistro09;
+import br.com.abril.nds.model.ftf.retorno.FTFRetornoRET;
 
 public class POCRetornoFTF {
-
-	public static void main(String[] args) {/*
-		String s = "/temp/DIN84088_VD_DIFC0000000001.RET";
+	
+	@Test
+	public void retornoArquivoFTF() {
+		
+		String s = "c:/tmp/NDS0000055318019.RET";
 		
 		List<FTFBaseDTO> list = new ArrayList<FTFBaseDTO>();
 		
@@ -22,7 +35,6 @@ public class POCRetornoFTF {
 				FTFBaseDTO ftfdto = FTFParser.parseLinhaRetornoFTF(line);
 				list.add(ftfdto);
 			}
-
 			
 			FTFRetornoRET n = new FTFRetornoRET();
 			for (FTFBaseDTO dto : list) {
@@ -44,30 +56,5 @@ public class POCRetornoFTF {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
-	*/
-	
-		File f = new File("\\\\INFOA2003-PC\\txt\\");
-		
-		
-		File[] listFiles = f.listFiles(new FileFilter(){
-
-			@Override
-			public boolean accept(File f) {
-				
-				return f.getName().toLowerCase().endsWith(".ped");
-			}
-			
-		});
-		for (File s: listFiles) {
-			Calendar instance = GregorianCalendar.getInstance();
-			instance.setTimeInMillis(s.lastModified());
-			
-			System.out.println(instance.getTime());
-		}
-		
 	}
-
 }
-
