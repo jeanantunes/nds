@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_prod_espec_principal" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
 	<property name="ireport.zoom" value="1.3636363636363658"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -36,7 +36,7 @@
 	<title>
 		<band height="77">
 			<subreport isUsingCache="false">
-				<reportElement uuid="ce1de7a4-1311-48da-9d66-f19a03e0a4f3" isPrintRepeatedValues="false" x="0" y="0" width="555" height="77"/>
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="555" height="77" uuid="ce1de7a4-1311-48da-9d66-f19a03e0a4f3"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -56,60 +56,50 @@
 	<detail>
 		<band height="115" splitType="Immediate">
 			<rectangle>
-				<reportElement uuid="3f81eb7b-6948-4ce4-af7b-165796af7c50" mode="Opaque" x="0" y="0" width="555" height="75" backcolor="#D3D3D3"/>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="75" backcolor="#D3D3D3" uuid="3f81eb7b-6948-4ce4-af7b-165796af7c50"/>
 			</rectangle>
 			<staticText>
-				<reportElement uuid="dabeb1f0-cfc2-403a-83c3-26cc18b7e7c7" style="rel_stext" x="10" y="10" width="68" height="15"/>
-				<textElement/>
+				<reportElement style="rel_stext" x="10" y="10" width="68" height="15" uuid="dabeb1f0-cfc2-403a-83c3-26cc18b7e7c7"/>
 				<text><![CDATA[Produto:]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="29f44031-fb4a-4d38-a084-998b5edb7862" style="rel_stext" x="134" y="10" width="177" height="15"/>
-				<textElement/>
+				<reportElement style="rel_stext" x="134" y="10" width="177" height="15" uuid="29f44031-fb4a-4d38-a084-998b5edb7862"/>
 				<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="fa7451cd-6acc-4f14-bc3d-9a4b77a91b3e" style="rel_stext" x="10" y="30" width="68" height="15"/>
-				<textElement/>
+				<reportElement style="rel_stext" x="10" y="30" width="68" height="15" uuid="fa7451cd-6acc-4f14-bc3d-9a4b77a91b3e"/>
 				<text><![CDATA[Edição:]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="c32fa449-69a1-46ef-ad3c-c1da5bc8aa61" style="rel_ftext" x="134" y="30" width="177" height="15"/>
-				<textElement/>
+				<reportElement style="rel_ftext" x="134" y="30" width="177" height="15" uuid="c32fa449-69a1-46ef-ad3c-c1da5bc8aa61"/>
 				<textFieldExpression><![CDATA[$F{numeroEdicao}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="cd358d47-dc9f-4d9f-85a7-279cb31fbe65" style="rel_stext" x="10" y="50" width="124" height="15"/>
-				<textElement/>
+				<reportElement style="rel_stext" x="10" y="50" width="124" height="15" uuid="cd358d47-dc9f-4d9f-85a7-279cb31fbe65"/>
 				<text><![CDATA[Reparte Promocional:]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="931936c4-26e4-40b7-8152-43522102c30c" style="rel_ftext" x="134" y="50" width="177" height="15"/>
-				<textElement/>
+				<reportElement style="rel_ftext" x="134" y="50" width="177" height="15" uuid="931936c4-26e4-40b7-8152-43522102c30c"/>
 				<textFieldExpression><![CDATA[$F{repartePromocional}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="3b484895-bf8c-444f-923e-f62268635430" style="rel_stext" x="311" y="30" width="95" height="15"/>
-				<textElement/>
+				<reportElement style="rel_stext" x="311" y="30" width="95" height="15" uuid="3b484895-bf8c-444f-923e-f62268635430"/>
 				<text><![CDATA[Preço Capa:]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="52f8429e-7532-4d9c-9cc7-e257fc851b8b" style="rel_ftext" x="420" y="30" width="135" height="15"/>
-				<textElement/>
+				<reportElement style="rel_ftext" x="420" y="30" width="135" height="15" uuid="52f8429e-7532-4d9c-9cc7-e257fc851b8b"/>
 				<textFieldExpression><![CDATA[$F{precoCapa}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="3ac69924-71bb-424e-a4ab-2bb93cac7b10" style="rel_stext" x="311" y="10" width="109" height="15"/>
-				<textElement/>
+				<reportElement style="rel_stext" x="311" y="10" width="109" height="15" uuid="3ac69924-71bb-424e-a4ab-2bb93cac7b10"/>
 				<text><![CDATA[Código de Barras:]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="0ddfb55d-d12a-48b9-9d2a-3097e7bc4b43" style="rel_ftext" x="420" y="10" width="135" height="15"/>
-				<textElement/>
+				<reportElement style="rel_ftext" x="420" y="10" width="135" height="15" uuid="0ddfb55d-d12a-48b9-9d2a-3097e7bc4b43"/>
 				<textFieldExpression><![CDATA[$F{codigoDeBarras}]]></textFieldExpression>
 			</textField>
 			<subreport>
-				<reportElement uuid="89145312-2986-4fff-943f-9e4a6d3139ff" x="0" y="75" width="555" height="40"/>
+				<reportElement x="0" y="75" width="555" height="40" uuid="89145312-2986-4fff-943f-9e4a6d3139ff"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 				</subreportParameter>

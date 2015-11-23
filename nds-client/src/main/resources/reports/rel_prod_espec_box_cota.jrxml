@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box_subbox" printOrder="Horizontal" pageWidth="420" pageHeight="306" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="420" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Key" uuid="cbea841f-93cd-4abd-a1db-6f08806c45de">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_sub_espec_prod_detalhe" pageWidth="420" pageHeight="306" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="420" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Key" uuid="cbea841f-93cd-4abd-a1db-6f08806c45de">
 	<property name="ireport.zoom" value="1.9487171000000019"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -21,9 +21,9 @@
 		<fieldDescription><![CDATA[cotas]]></fieldDescription>
 	</field>
 	<detail>
-		<band height="40" splitType="Stretch">
-			<subreport>
-				<reportElement uuid="74dff69f-a346-4c93-ab90-53c33cdc3382" x="0" y="0" width="360" height="40"/>
+		<band height="40">
+			<subreport isUsingCache="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="360" height="40" isPrintWhenDetailOverflows="true" uuid="74dff69f-a346-4c93-ab90-53c33cdc3382"/>
 				<subreportParameter name="SUBREPORT_DIR"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(
 ((java.util.Map<String, Integer>)$F{rotasQtde}).entrySet()
@@ -31,7 +31,7 @@
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rel_prod_espec_box_rotas.jasper"]]></subreportExpression>
 			</subreport>
 			<textField>
-				<reportElement uuid="280def3e-53d4-44d5-a767-7ab435394a12" style="rel_ftext_centralizado" mode="Opaque" x="360" y="20" width="60" height="20" backcolor="#F5F5F5"/>
+				<reportElement style="rel_ftext_centralizado" stretchType="RelativeToTallestObject" mode="Opaque" x="360" y="20" width="60" height="20" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5" uuid="280def3e-53d4-44d5-a767-7ab435394a12"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -44,7 +44,7 @@
 				<textFieldExpression><![CDATA[$F{qtdeTotal}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="88823be3-7eec-4ca5-957a-988a86c72f42" style="rel_stext_centralizado" x="360" y="0" width="60" height="20"/>
+				<reportElement style="rel_stext_centralizado" x="360" y="0" width="60" height="20" isPrintWhenDetailOverflows="true" uuid="88823be3-7eec-4ca5-957a-988a86c72f42"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="555" pageHeight="40" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_sub_espec_prod" pageWidth="555" pageHeight="40" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
 	<property name="ireport.zoom" value="1.4641000000000006"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -13,12 +13,12 @@
 	<field name="key" class="java.lang.String"/>
 	<field name="value" class="java.lang.Object"/>
 	<detail>
-		<band height="40" splitType="Prevent">
+		<band height="40" splitType="Stretch">
 			<rectangle>
-				<reportElement uuid="80887d09-9f47-41b9-a63a-7fa7d5dc75c4" mode="Transparent" x="0" y="0" width="555" height="40"/>
+				<reportElement mode="Transparent" x="0" y="0" width="555" height="40" uuid="80887d09-9f47-41b9-a63a-7fa7d5dc75c4"/>
 			</rectangle>
 			<textField>
-				<reportElement uuid="0b269c6c-6d2f-4c1c-9bc4-b89b2547c10d" style="rel_ftext" mode="Opaque" x="0" y="0" width="135" height="40" backcolor="#F5F5F5"/>
+				<reportElement style="rel_ftext" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="135" height="40" backcolor="#F5F5F5" uuid="0b269c6c-6d2f-4c1c-9bc4-b89b2547c10d"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -31,7 +31,7 @@
 				<textFieldExpression><![CDATA[$F{key}]]></textFieldExpression>
 			</textField>
 			<subreport>
-				<reportElement uuid="b26f34a8-cfa2-4c69-a1c4-3ef101478054" x="135" y="0" width="420" height="40"/>
+				<reportElement x="135" y="0" width="420" height="40" uuid="b26f34a8-cfa2-4c69-a1c4-3ef101478054"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 				</subreportParameter>

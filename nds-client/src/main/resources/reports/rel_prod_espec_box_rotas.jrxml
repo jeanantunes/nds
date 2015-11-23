@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box_subbox" columnCount="6" printOrder="Horizontal" pageWidth="360" pageHeight="306" orientation="Landscape" columnWidth="60" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="cbea841f-93cd-4abd-a1db-6f08806c45de">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_rel_sub_espec_valores" columnCount="6" printOrder="Horizontal" pageWidth="360" pageHeight="306" orientation="Landscape" columnWidth="60" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="cbea841f-93cd-4abd-a1db-6f08806c45de">
 	<property name="ireport.zoom" value="1.4641000000000006"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -13,48 +13,48 @@
 	<background>
 		<band height="40">
 			<rectangle>
-				<reportElement uuid="11152003-30fe-4988-a495-d31726e782b5" x="60" y="0" width="60" height="20"/>
+				<reportElement x="60" y="0" width="60" height="20" isPrintWhenDetailOverflows="true" uuid="11152003-30fe-4988-a495-d31726e782b5"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="ced20b7a-3bf8-498a-8a45-9a159227f29b" x="240" y="0" width="60" height="20"/>
+				<reportElement x="240" y="0" width="60" height="20" isPrintWhenDetailOverflows="true" uuid="ced20b7a-3bf8-498a-8a45-9a159227f29b"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="36c559ff-2ad4-4ada-9a8e-f431614150d4" x="60" y="20" width="60" height="20" backcolor="#F5F5F5"/>
+				<reportElement x="60" y="20" width="60" height="20" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5" uuid="36c559ff-2ad4-4ada-9a8e-f431614150d4"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="5958872c-05f4-4b50-bcd3-1470b45b728e" x="0" y="0" width="60" height="20"/>
+				<reportElement x="0" y="0" width="60" height="20" isPrintWhenDetailOverflows="true" uuid="5958872c-05f4-4b50-bcd3-1470b45b728e"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="c688feb6-57e9-4cfd-bca3-966eee3a5b1b" x="120" y="20" width="60" height="20" backcolor="#F5F5F5"/>
+				<reportElement x="120" y="20" width="60" height="20" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5" uuid="c688feb6-57e9-4cfd-bca3-966eee3a5b1b"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="327c8036-7f1e-4dab-88a4-75aab93e2637" x="180" y="0" width="60" height="20"/>
+				<reportElement x="180" y="0" width="60" height="20" isPrintWhenDetailOverflows="true" uuid="327c8036-7f1e-4dab-88a4-75aab93e2637"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="de7f168b-f5f1-494e-a7ab-b57d0ca42650" x="180" y="20" width="60" height="20" backcolor="#F5F5F5"/>
+				<reportElement x="180" y="20" width="60" height="20" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5" uuid="de7f168b-f5f1-494e-a7ab-b57d0ca42650"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="64ae1dd1-2bec-4288-92dd-759b82849b28" x="240" y="20" width="60" height="20" backcolor="#F5F5F5"/>
+				<reportElement x="240" y="20" width="60" height="20" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5" uuid="64ae1dd1-2bec-4288-92dd-759b82849b28"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="98a3eb1a-b205-4d9d-82c0-fe841224afea" x="300" y="20" width="60" height="20" backcolor="#F5F5F5"/>
+				<reportElement x="300" y="20" width="60" height="20" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5" uuid="98a3eb1a-b205-4d9d-82c0-fe841224afea"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="3faa8bf8-8855-4f97-851b-fdd374bfe39d" x="0" y="20" width="60" height="20" backcolor="#F5F5F5"/>
+				<reportElement x="0" y="20" width="60" height="20" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5" uuid="3faa8bf8-8855-4f97-851b-fdd374bfe39d"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="657a69b8-db02-402e-9234-f5d50718851f" x="300" y="0" width="60" height="20"/>
+				<reportElement x="300" y="0" width="60" height="20" isPrintWhenDetailOverflows="true" uuid="657a69b8-db02-402e-9234-f5d50718851f"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="bf95b360-5846-43da-9e1d-76b2730dd673" x="120" y="0" width="60" height="20"/>
+				<reportElement x="120" y="0" width="60" height="20" isPrintWhenDetailOverflows="true" uuid="bf95b360-5846-43da-9e1d-76b2730dd673"/>
 			</rectangle>
 		</band>
 	</background>
 	<detail>
 		<band height="40" splitType="Stretch">
 			<textField>
-				<reportElement uuid="c3f4b6ab-7b8e-4c29-824f-93aebc04d66d" style="rel_ftext" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="20" width="60" height="20" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5">
-					<printWhenExpression><![CDATA[$F{value}.equals(0) ? Boolean.FALSE : Boolean.TRUE]]></printWhenExpression>
+				<reportElement style="rel_ftext" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="20" width="60" height="20" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5" uuid="c3f4b6ab-7b8e-4c29-824f-93aebc04d66d">
+					<printWhenExpression><![CDATA[$F{value}.equals(0) ? Boolean.TRUE : Boolean.TRUE]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0"/>
@@ -63,13 +63,13 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{value}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement uuid="7a3755b9-7da6-43b8-b6cf-d23158138b2c" style="rel_ftext_centralizado" stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="20" isPrintWhenDetailOverflows="true">
-					<printWhenExpression><![CDATA[(($F{key}.equalsIgnoreCase("|1") == false)&&
+			<textField>
+				<reportElement style="rel_ftext_centralizado" stretchType="RelativeToTallestObject" x="0" y="0" width="60" height="20" isPrintWhenDetailOverflows="true" uuid="7a3755b9-7da6-43b8-b6cf-d23158138b2c">
+					<printWhenExpression><![CDATA[((($F{key}.equalsIgnoreCase("|1") == false)&&
 ($F{key}.equalsIgnoreCase("|2") == false)&&
 ($F{key}.equalsIgnoreCase("|3") == false)&&
 ($F{key}.equalsIgnoreCase("|4") == false)&&
@@ -168,7 +168,7 @@
 ($F{key}.equalsIgnoreCase("|97") == false) &&
 ($F{key}.equalsIgnoreCase("|98") == false) &&
 ($F{key}.equalsIgnoreCase("|99") == false) &&
-($F{key}.equalsIgnoreCase("|100") == false) ? true : false)]]></printWhenExpression>
+($F{key}.equalsIgnoreCase("|100") == false) ? true : false) && ($F{value}.equals(0) ? Boolean.FALSE : Boolean.TRUE))]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0"/>
@@ -177,7 +177,7 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="9" isBold="false" isStrikeThrough="false"/>
+					<font size="8" isBold="false" isStrikeThrough="false"/>
 					<paragraph tabStopWidth="35"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{key}.replace("|", "")]]></textFieldExpression>

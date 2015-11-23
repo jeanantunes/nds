@@ -2869,13 +2869,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         final StringBuilder hql = new StringBuilder();
         
-        hql.append(" select box.CODIGO as codigoBox, ");
-        hql.append("        box.NOME as nomeBox, ");
+        hql.append(" select TRIM(box.CODIGO) as codigoBox, ");
+        hql.append("        TRIM(box.NOME) as nomeBox, ");
         hql.append(" 		TRIM(rota.DESCRICAO_ROTA) as codigoRota, ");
-        hql.append(" 		produto.CODIGO as codigoProduto, ");
+        hql.append(" 		TRIM(produto.CODIGO) as codigoProduto, ");
         hql.append(" 		TRIM(produto.NOME) as nomeProduto, ");
         hql.append(" 		produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
-        hql.append(" 		produtoEdicao.CODIGO_DE_BARRAS as codigoBarra, ");
+        hql.append(" 		TRIM(produtoEdicao.CODIGO_DE_BARRAS) as codigoBarra, ");
         hql.append(" 		sum(estudoCota.REPARTE) as reparte, ");
         hql.append(" 		sum(estudoCota.REPARTE * produtoEdicao.PRECO_VENDA) as totalBox, ");
         hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa, ");
@@ -2887,7 +2887,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         if (filtro.isProdutoEspecifico()){
             
-            hql.append(" box.ID,rota.id, produtoEdicao.ID  ");
+            hql.append(" box.ID, rota.ID, produtoEdicao.ID  ");
         } else {
             
             hql.append(" produto.CODIGO  ");
