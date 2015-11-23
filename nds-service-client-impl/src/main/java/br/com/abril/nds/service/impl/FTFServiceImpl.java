@@ -315,9 +315,6 @@ public class FTFServiceImpl implements FTFService {
 		//		String testedCpnj = "68252618000182";
 		// validar as pessoas no CRP
 		
-		if (true)
-			return true;
-		
 		PessoaDto wsResponse = pessoaCRPService.obterDadosFiscais(getCodTipoDocFrom(cpfCnpj), cpfCnpj);
 		PessoaType pessoaCRP = wsResponse.getPessoa();
 
@@ -333,7 +330,7 @@ public class FTFServiceImpl implements FTFService {
 	}
 
 	@SuppressWarnings("resource")
-	public List<FTFRetornoRET> processarArquivosRet(final File...files){
+	public List<FTFRetornoRET> processarArquivosRet(final List<File> files){
 
 		List<FTFRetornoRET> l = new ArrayList<FTFRetornoRET>();
 

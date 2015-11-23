@@ -12,7 +12,7 @@ import br.com.abril.nds.vo.NotaEncalheBandeiraVO;
 
 public interface FTFService {
 	
-	List<FTFRetornoRET> processarArquivosRet(File...files);
+	List<FTFRetornoRET> processarArquivosRet(List <File> files);
 
 	FTFReportDTO gerarFtf(List<NotaFiscal> notas);
 	
@@ -21,6 +21,7 @@ public interface FTFService {
 	public List<NotaEncalheBandeiraVO> obterNotasNaoEnviadas();
 	
 	public List<ItemEncalheBandeiraVO> obterItensNotasNaoEnviadas(Integer notaId) ;
+	
 	public void atualizaFlagInterfaceNotasEnviadas(Integer notaId,boolean flag);
 	
 }

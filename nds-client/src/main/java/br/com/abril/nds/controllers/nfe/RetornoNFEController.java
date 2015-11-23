@@ -15,15 +15,20 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.NFEImportUtil;
 import br.com.abril.nds.client.vo.SumarizacaoNotaRetornoVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
+import br.com.abril.nds.model.ftf.retorno.FTFRetTipoRegistro01;
+import br.com.abril.nds.model.ftf.retorno.FTFRetornoRET;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.FTFService;
 import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.FileImportUtil;
 import br.com.abril.nds.util.StringUtil;
@@ -59,33 +64,41 @@ public class RetornoNFEController extends BaseController {
 	@Autowired
 	private HttpSession session;
 	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private FTFService ftfService;
+	
 	private static final String LISTA_NOTAS_DE_RETORNO = "listaNotasDeRetorno";
+	
+	private static final String NFE_APLICATIVO_FTF = "EMISSAO_NFE_APLICATIVO_CONTRIBUINTE";
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_NFE_RETORNO_NFE)
-	public void index() {	
+	public void index() {
+		ParametroSistemaGeralDTO parametroSistema = parametroSistemaService.buscarParametroSistemaGeral();
+		
+		result.include("tipoEmissor", parametroSistema.getNfeInformacoesTipoEmissor());
 	}
 
+	@Post("/obterTipoEmissor")
+    public void obterTipoEmissor() {
+        ParametroSistemaGeralDTO parametroSistema = parametroSistemaService.buscarParametroSistemaGeral();
+        
+        result.use(Results.json()).from(parametroSistema.getNfeInformacoesTipoEmissor()).serialize();
+    }
+	
+	
 	@Post("/pesquisarArquivos.json")
-	public void pesquisarArquivosDeRetorno(final Date dataReferencia, final String tipoRetorno) {
-		
-		ParametroSistema pathNFEImportacao = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO);
+	public void pesquisarArquivosDeRetorno(final Date dataReferencia, final String tipoRetorno, String tipoEmissor) {
 		
 		List<File> listaNotas = null;
+		List<RetornoNFEDTO> listaNotasRetorno = null;
 		
-		try {
+		listaNotas = retornarListaNotas(dataReferencia, tipoRetorno, tipoEmissor, listaNotas);
 			
-			listaNotas = FileImportUtil.importArquivosModificadosEm(pathNFEImportacao.getValor(), dataReferencia, FileType.XML);
-		
-		} catch (FileNotFoundException e) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "O diretório parametrizado não é válido");
-		}
-		
-		if (listaNotas == null || listaNotas.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrado nenhum item para o retorno de nota");
-		}
-			
-		List<RetornoNFEDTO> listaNotasRetorno = this.notaFiscalService.processarRetornoNotaFiscal(this.gerarParseListaNotasRetorno(listaNotas, tipoRetorno));
+		listaNotasRetorno = listaNotasFiscais(tipoRetorno, listaNotas, tipoEmissor);
 		
 		this.session.setAttribute(LISTA_NOTAS_DE_RETORNO, listaNotasRetorno);
 		
@@ -94,6 +107,48 @@ public class RetornoNFEController extends BaseController {
 		sumarizacoes.add(sumarizacao);
 		this.result.use(FlexiGridJson.class).from(sumarizacoes).page(1).total(sumarizacoes.size()).serialize();
 				
+	}
+
+	private List<File> retornarListaNotas(final Date dataReferencia, String tipoRetorno, String tipoEmissor, List<File> listaNotas) {
+		
+		ParametroSistema pathNFEImportacao = null;
+		
+		if(tipoEmissor.equals(NFE_APLICATIVO_FTF)) {
+			pathNFEImportacao = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO_FTF);
+		} else {			
+			pathNFEImportacao = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO);
+		}
+		
+		try {
+			
+			if(tipoEmissor.equals(NFE_APLICATIVO_FTF)) {
+				listaNotas = FileImportUtil.importArquivosModificadosEm(pathNFEImportacao.getValor(), dataReferencia, FileType.RET);
+			} else {						
+				listaNotas = FileImportUtil.importArquivosModificadosEm(pathNFEImportacao.getValor(), dataReferencia, FileType.XML);
+			}
+			
+		
+		} catch (FileNotFoundException e) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "O diretório parametrizado não é válido");
+		}
+		
+		if (listaNotas == null || listaNotas.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrado nenhum item para o retorno de nota");
+		}
+		return listaNotas;
+	}
+
+	private List<RetornoNFEDTO> listaNotasFiscais(final String tipoRetorno, List<File> listaNotas, String tipoEmissor) {
+		
+		List<RetornoNFEDTO> listaNotasRetorno = null;
+		
+		if(tipoEmissor.equals(tipoEmissor.equals(NFE_APLICATIVO_FTF))) {
+			listaNotasRetorno = this.notaFiscalService.processarRetornoNotaFiscal(this.gerarParseListaFTFRetorno(listaNotas, tipoRetorno));
+		} else {
+			listaNotasRetorno = this.notaFiscalService.processarRetornoNotaFiscal(this.gerarParseListaNotasRetorno(listaNotas, tipoRetorno));
+		}
+		
+		return listaNotasRetorno;
 	}
 	
 	
@@ -204,6 +259,44 @@ public class RetornoNFEController extends BaseController {
 			
 			} catch (Exception e) { 
 				continue;
+			}
+		}
+		
+		listaNotas.addAll(hashNotasRetorno.values());
+		
+		return listaNotas;
+	}
+	
+	/**
+	 * Gera lista de notas de retorno
+	 * 
+	 * @param listaNotas path das notas dentro do diretório
+	 * @return lista de notas
+	 */
+	private List<RetornoNFEDTO> gerarParseListaFTFRetorno(final List<File> arquivosNotas, String tipoRetorno) {
+		
+		final HashMap<String, RetornoNFEDTO> hashNotasRetorno = new HashMap<String, RetornoNFEDTO>();
+		
+		final List<RetornoNFEDTO> listaNotas = new ArrayList<RetornoNFEDTO>();
+		
+		List<FTFRetornoRET> retornoFTF = this.ftfService.processarArquivosRet(arquivosNotas);
+		
+		for (FTFRetornoRET ftf : retornoFTF) {
+			
+			for(FTFRetTipoRegistro01 tipoRegistro : ftf.getTipo01List()){
+				final RetornoNFEDTO retornoNFEDTO = new RetornoNFEDTO();
+				
+				
+				retornoNFEDTO.setNumeroNotaFiscal(Long.valueOf(tipoRegistro.getNumeroNFe()));
+	    		retornoNFEDTO.setCpfCnpj(retornoNFEDTO.getCpfCnpj());
+	    		retornoNFEDTO.setChaveAcesso(tipoRegistro.getChaveAcessoNFe());
+	    		retornoNFEDTO.setProtocolo(retornoNFEDTO.getProtocolo());
+	    		retornoNFEDTO.setDataRecebimento(retornoNFEDTO.getDataRecebimento());
+	    		retornoNFEDTO.setMotivo(retornoNFEDTO.getMotivo() +" / " + "Retornado pelo sistema FTF");
+	    		retornoNFEDTO.setTpEvento(retornoNFEDTO.getTpEvento());
+	    		
+	    		retornoNFEDTO.setStatus(retornoNFEDTO.getStatus());
+	    		hashNotasRetorno.put(retornoNFEDTO.getChaveAcesso(), retornoNFEDTO);
 			}
 		}
 		

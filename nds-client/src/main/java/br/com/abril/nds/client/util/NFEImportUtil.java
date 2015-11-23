@@ -2,7 +2,6 @@ package br.com.abril.nds.client.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.Date;
 
 import javax.xml.XMLConstants;
@@ -81,49 +80,6 @@ public abstract class NFEImportUtil {
         }
         
         return null;
-        /*
-         
-        
-        try {
-        	
-        	if(validarSchemaXML(XSD_PROC_NFE, arquivo, schemaPath, null)) {
-	        	
-				context = JAXBContext.newInstance(TNfeProc.class);  
-				unmarshaller = context.createUnmarshaller();  
-				// TNfeProc nfeProc = unmarshaller.unmarshal(new StreamSource(arquivo), TNfeProc.class).getValue();  
-				TNfeProc nfeProc = unmarshaller.unmarshal(new StreamSource(new StringReader(arquivo.getPath())), TNfeProc.class).getValue();
-				retornoNFEDTO = NFEImportUtil.retornoNFeProcNFe(nfeProc);
-	            
-				return retornoNFEDTO;
-				
-	        } else if (validarSchemaXML(XSD_NFE, arquivo, schemaPath, null)) {
-	        	
-	        	context = JAXBContext.newInstance(TNFe.class);
-	            unmarshaller = context.createUnmarshaller();
-	            final TNFe nfe = (TNFe) unmarshaller.unmarshal(arquivo);
-	            retornoNFEDTO = NFEImportUtil.retornoNFeAssinada(nfe);
-	            
-	            return retornoNFEDTO;
-	            
-	        } else if(validarSchemaXML(XSD_PROC_CANC_NFE, arquivo, schemaPath, "1.00")) {
-	        	
-	        	context = JAXBContext.newInstance(TProcEvento.class);
-                unmarshaller = context.createUnmarshaller();
-                TProcEvento retornoCancelamentoNFe = unmarshaller.unmarshal(new StreamSource(arquivo), TProcEvento.class).getValue();
-                retornoNFEDTO = NFEImportUtil.retornoNFeEnvEvento(retornoCancelamentoNFe);
-                
-                return retornoNFEDTO;
-                
-	        } else {
-	        	 throw new ValidacaoException(TipoMensagem.ERROR, "Erro com a geração do arquivo ");
-	        }
-	        
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new ValidacaoException(TipoMensagem.ERROR, "Erro com a geração do arquivo ");
-        }
-        * 
-         */
     }
     
     /**
