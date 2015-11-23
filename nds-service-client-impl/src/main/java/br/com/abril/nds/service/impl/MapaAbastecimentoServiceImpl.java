@@ -452,11 +452,11 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 		List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorProdutoEdicao(filtro);
 		
 		ProdutoEdicaoMapaDTO peMapaDTO = new ProdutoEdicaoMapaDTO(
-				produtosBoxRota.get(0).getCodigoProduto(),
-				produtosBoxRota.get(0).getNomeProduto(),
+				produtosBoxRota.get(0).getCodigoProduto().trim(),
+				produtosBoxRota.get(0).getNomeProduto().trim(),
 				produtosBoxRota.get(0).getNumeroEdicao().longValue(),
-				produtosBoxRota.get(0).getCodigoBarra(),
-				produtosBoxRota.get(0).getPrecoCapa(),
+				produtosBoxRota.get(0).getCodigoBarra().trim(),
+				produtosBoxRota.get(0).getPrecoCapa().trim(),
 				new LinkedHashMap<String, BoxRotasDTO>(),
 				produtosBoxRota.get(0).getMaterialPromocional());
 		
@@ -468,7 +468,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 		
 		for(ProdutoAbastecimentoDTO item : produtosBoxRota) {
 	
-		    final String labelBox = item.getCodigoBox() + " - " + item.getNomeBox();
+		    final String labelBox = item.getCodigoBox() + "-" + item.getNomeBox().trim();
 		    
 			if(!peMapaDTO.getBoxes().containsKey(labelBox)){
 				
@@ -479,16 +479,16 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 			
 			if(!box.getRotasQtde().containsKey(item.getCodigoRota())){
 				
-				box.getRotasQtde().put(item.getCodigoRota(), 0);
+				box.getRotasQtde().put(item.getCodigoRota().trim(), 0);
 			}
 	
-			Integer qtdeRotaAtual = box.getRotasQtde().get(item.getCodigoRota());
-			box.getRotasQtde().put(item.getCodigoRota(), qtdeRotaAtual + item.getReparte());
+			Integer qtdeRotaAtual = box.getRotasQtde().get(item.getCodigoRota().trim());
+			box.getRotasQtde().put(item.getCodigoRota().trim(), qtdeRotaAtual + item.getReparte());
 	
 			Integer qtdeTotalAtual = box.getQtdeTotal();
 			box.setQtdeTotal(qtdeTotalAtual + item.getReparte());
 			
-			rotas.add(item.getCodigoRota());
+			rotas.add(item.getCodigoRota().trim());
 		}
 		
 		int maiorQtd = 0;
@@ -501,7 +501,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 			}
 		}
 		
-		preencheRotasNaoUtilizadasPE(maiorQtd, peMapaDTO.getBoxes());	
+		// preencheRotasNaoUtilizadasPE(maiorQtd, peMapaDTO.getBoxes());	
 	
 		return peMapaDTO;
 	}
