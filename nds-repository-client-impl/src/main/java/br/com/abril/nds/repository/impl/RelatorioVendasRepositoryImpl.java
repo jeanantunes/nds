@@ -224,7 +224,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" SELECT    ");
-		sql.append("       consolidado.idCota as idCota, ");
+		sql.append("       consolidado_cota.idCota as idCota, ");
 		
 		if(TipoPesquisaRanking.RankingCota.equals(tipoPesquisa)){
 			sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkCota, ");
@@ -232,37 +232,37 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 			sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkProduto, ");
 		}
 
-		sql.append("       @valorAcumulado\\:=@valorAcumulado + consolidado.participacao as participacaoAcumulada, ");
-		sql.append("       consolidado.numeroCota as numeroCota, ");
-		sql.append("       consolidado.nomeCota AS nomeCota, ");
-		sql.append("       consolidado.municipio AS municipio, ");
-		sql.append("       consolidado.participacao as participacao, ");
-		sql.append("       consolidado.vendaExemplares as vendaExemplares, ");
-		sql.append("       consolidado.faturamentoCapa as faturamentoCapa  ");
+		sql.append("       @valorAcumulado\\:=@valorAcumulado + consolidado_cota.participacao as participacaoAcumulada, ");
+		sql.append("       consolidado_cota.numeroCota as numeroCota, ");
+		sql.append("       consolidado_cota.nomeCota AS nomeCota, ");
+		sql.append("       consolidado_cota.municipio AS municipio, ");
+		sql.append("       consolidado_cota.participacao as participacao, ");
+		sql.append("       consolidado_cota.vendaExemplares as vendaExemplares, ");
+		sql.append("       consolidado_cota.faturamentoCapa as faturamentoCapa  ");
 		sql.append("   FROM ");
 		
 		sql.append("       (SELECT ");
-		sql.append("         temp.cotaId as idCota, ");
-		sql.append("         temp.numeroCota numeroCota, ");
-		sql.append("         COALESCE(temp.NOME_COTA, temp.RAZAO_SOCIAL_COTA) AS nomeCota, ");
-		sql.append("         temp.CIDADE_COTA AS municipio, ");
-		sql.append("         sum(temp.vendaSum * (temp.PRECO_VENDA - ((temp.PRECO_VENDA * coalesce(temp.valorDesconto,0)) / 100))) as participacao, ");
-		sql.append("         sum(temp.vendaSum) as vendaExemplares, ");
-		sql.append("         sum(temp.vendaSum * temp.PRECO_VENDA) as faturamentoCapa ");
+		sql.append("         sub02.cotaId as idCota, ");
+		sql.append("         sub02.numeroCota numeroCota, ");
+		sql.append("         COALESCE(sub02.NOME_COTA, sub02.RAZAO_SOCIAL_COTA) AS nomeCota, ");
+		sql.append("         sub02.CIDADE_COTA AS municipio, ");
+		sql.append("         sum(sub02.vendaSum * (sub02.PRECO_VENDA - ((sub02.PRECO_VENDA * coalesce(sub02.valorDesconto,0)) / 100))) as participacao, ");
+		sql.append("         sum(sub02.vendaSum) as vendaExemplares, ");
+		sql.append("         sum(sub02.vendaSum * sub02.PRECO_VENDA) as faturamentoCapa ");
 		sql.append("  ");
 		sql.append("         FROM ");
 		sql.append("         ( ");
 		sql.append("         Select  ");
-		sql.append("           T.NUMERO_COTA as numeroCota, ");
-		sql.append("           T.COTA_ID as cotaId, ");
-		sql.append("           T.NOME_COTA, ");
-		sql.append("           T.CIDADE_COTA, ");
-		sql.append("           T.RAZAO_SOCIAL_COTA, ");
-		sql.append("           SUM(T.reparte) reparteSum, ");
-		sql.append("           SUM(T.venda) vendaSum, ");
-		sql.append("           T.PRECO_VENDA, ");
-		sql.append("           T.valorDesconto, ");
-		sql.append("           T.lancId as lancId  ");
+		sql.append("           sub01.NUMERO_COTA as numeroCota, ");
+		sql.append("           sub01.COTA_ID as cotaId, ");
+		sql.append("           sub01.NOME_COTA, ");
+		sql.append("           sub01.CIDADE_COTA, ");
+		sql.append("           sub01.RAZAO_SOCIAL_COTA, ");
+		sql.append("           SUM(sub01.reparte) reparteSum, ");
+		sql.append("           SUM(sub01.venda) vendaSum, ");
+		sql.append("           sub01.PRECO_VENDA, ");
+		sql.append("           sub01.valorDesconto, ");
+		sql.append("           sub01.lancId as lancId  ");
 		sql.append("          ");
 		sql.append("         from ( ");
 		sql.append("          ");
@@ -363,10 +363,10 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("             pe.numero_edicao, pe.id, ");
 		sql.append("             mecReparte.cota_id, plp.numero_periodo  ");
 		sql.append("         ORDER BY ");
-		sql.append("             l.ID desc )T  ");
-		sql.append("                         group by numeroCota, lancId ORDER BY vendaSum desc) temp  ");
+		sql.append("             l.ID desc )sub01  ");
+		sql.append("                         group by numeroCota, lancId ORDER BY vendaSum desc) sub02  ");
 		sql.append(" 							group by numeroCota                           ");
-		sql.append(" 						        ORDER BY faturamentoCapa desc) consolidado,");
+		sql.append(" 						        ORDER BY faturamentoCapa desc) consolidado_cota,");
 		sql.append(" 						            (select");
 		sql.append(" 						                @valorAcumulado\\:=0,");
 		sql.append(" 						                @posicaoRanking\\:=0) as s  ");
