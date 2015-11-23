@@ -165,9 +165,9 @@
 	
 	<logger name="org.hibernate.typeorg.hibernate.hql.ast.AST" level="ERROR"/>
   	<logger name="org.hibernate.tool.hbm2ddl" level="ERROR" />
-  	<logger name="org.hibernate.hql" level="DEBUG" />
+  	<logger name="org.hibernate.hql" level="ERROR" />
   	<logger name="org.hibernate.cache" level="ERROR" />
-  	<logger name="org.hibernate.jdbc" level="DEBUG" />
-  	<logger name="org.hibernate.SQL" level="WARN" />
+  	<logger name="org.hibernate.jdbc" level="ERROR" />
+  	<logger name="org.hibernate.SQL" level="ERROR" />
 	
 </configuration>

@@ -26,9 +26,9 @@
 		<property name="username" value="awsuser" />
 		<property name="password" value="dgbdistb01mgr" />
 		-->
-		<property name="url" value="jdbc:mysql://10.129.28.137:3306/nds_lab3" />
+		<property name="url" value="jdbc:mysql://localhost:3306/nds_sjc" />
 		<property name="username" value="root" />
-		<property name="password" value="abril@123" />
+		<property name="password" value="phoenix" />
     </bean> 
 
 	<bean id="sessionFactory"
