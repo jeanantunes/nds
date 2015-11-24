@@ -1206,14 +1206,14 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                         estoqueProduto.setQtde(BigInteger.ZERO);
                     }
                     
-                    if(!tipoEstoqueDirecionamento.equals(TipoEstoque.RECOLHIMENTO) 
+                    if( tipoEstoqueDirecionamento != null && !tipoEstoqueDirecionamento.equals(TipoEstoque.RECOLHIMENTO) 
                     		&& !tipoEstoqueDirecionamento.equals(TipoEstoque.SUPLEMENTAR)) {
                     	
                     	novaQuantidade = estoqueProduto.getQtde().subtract(qntMovimento);
                     	estoqueProduto.setQtde(novaQuantidade);
                     }
                     
-                    if(tipoEstoqueDirecionamento.equals(TipoEstoque.RECOLHIMENTO)) {
+                    if( tipoEstoqueDirecionamento == null || tipoEstoqueDirecionamento.equals(TipoEstoque.RECOLHIMENTO)) {
                     	
                     	estoqueProduto.setQtdeDevolucaoEncalhe(estoqueProduto.getQtdeDevolucaoEncalhe().subtract(qntMovimento));
                     } else if(tipoEstoqueDirecionamento.equals(TipoEstoque.SUPLEMENTAR)) {
@@ -1253,7 +1253,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                         estoqueProduto.setQtde(BigInteger.ZERO);
                     }
                     
-                    if(!tipoEstoqueDirecionamento.equals(TipoEstoque.RECOLHIMENTO) 
+                    if(tipoEstoqueDirecionamento != null && !tipoEstoqueDirecionamento.equals(TipoEstoque.RECOLHIMENTO) 
                     		&& !tipoEstoqueDirecionamento.equals(TipoEstoque.SUPLEMENTAR)) {
                     	
                     	novaQuantidade = estoqueProduto.getQtde().add(qntMovimento);
@@ -1261,7 +1261,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                     	estoqueProduto.setQtde(novaQuantidade);
                     }
                     
-                    if(tipoEstoqueDirecionamento.equals(TipoEstoque.RECOLHIMENTO)) {
+                    if(tipoEstoqueDirecionamento == null || tipoEstoqueDirecionamento.equals(TipoEstoque.RECOLHIMENTO)) {
                     	
                     	estoqueProduto.setQtdeDevolucaoEncalhe(estoqueProduto.getQtdeDevolucaoEncalhe().add(qntMovimento));
                     } else if(tipoEstoqueDirecionamento.equals(TipoEstoque.SUPLEMENTAR)) {
