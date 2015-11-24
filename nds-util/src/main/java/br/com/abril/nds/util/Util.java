@@ -8,6 +8,9 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -804,4 +807,18 @@ public abstract class Util {
     public static String retornarExtensao(String nomeArquivo) {
 		return nomeArquivo.substring(nomeArquivo.lastIndexOf('.') + 1);
     }
+    
+    public static Date formataData(String data) throws Exception {   
+        if (data == null || data.equals(""))  
+            return null;  
+          
+        Date date = null;  
+        try {  
+            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");  
+            date = (java.util.Date)formatter.parse(data);  
+        } catch (ParseException e) {              
+            e.printStackTrace();
+        }  
+        return date;  
+    }  
 }

@@ -525,8 +525,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 */
 	private NotaFiscal atualizaRetornoNFe(RetornoNFEDTO dadosRetornoNFE) {
 
-		NotaFiscal notaFiscal = this.notaFiscalRepository.obterNotaFiscalNumeroChaveAcesso(dadosRetornoNFE);
-
+		NotaFiscal notaFiscal = null;
+		
+		if (dadosRetornoNFE.isFtf()) {
+			notaFiscal = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE.getIdNota());
+		} else {
+			notaFiscal = this.notaFiscalRepository.obterNotaFiscalNumeroChaveAcesso(dadosRetornoNFE);
+		}
+		
 		InformacaoEletronica informacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
 		
 		if (informacaoEletronica == null) {
@@ -535,13 +541,21 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		}
 
 		informacaoEletronica.setChaveAcesso(dadosRetornoNFE.getChaveAcesso());
-
+		
+		if(dadosRetornoNFE.getSerie() != null) {			
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setSerie(Long.valueOf(dadosRetornoNFE.getSerie()));
+		}
+		
+		if(dadosRetornoNFE.getIdNota() != null) {			
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setNumeroDocumentoFiscal(dadosRetornoNFE.getNumeroNotaFiscal());
+		}
+		
 		RetornoComunicacaoEletronica retornoComunicacaoEletronica = new RetornoComunicacaoEletronica();
 		retornoComunicacaoEletronica.setDataRecebimento(dadosRetornoNFE.getDataRecebimento());
 		retornoComunicacaoEletronica.setMotivo(dadosRetornoNFE.getMotivo());
 		retornoComunicacaoEletronica.setProtocolo(dadosRetornoNFE.getProtocolo());
 		retornoComunicacaoEletronica.setStatusRetornado(dadosRetornoNFE.getStatus());
-
+		
 		informacaoEletronica.setRetornoComunicacaoEletronica(retornoComunicacaoEletronica);
 		notaFiscal.getNotaFiscalInformacoes().setInformacaoEletronica(informacaoEletronica);
 		notaFiscal.getNotaFiscalInformacoes().setStatusProcessamento(StatusProcessamento.RETORNADA);

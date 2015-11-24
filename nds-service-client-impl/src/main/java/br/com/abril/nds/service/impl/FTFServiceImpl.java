@@ -20,12 +20,16 @@ import org.springframework.transaction.annotation.Transactional;
 import v1.pessoadetalhe.ebo.abril.types.PessoaDto;
 import v1.pessoadetalhe.ebo.abril.types.PessoaType;
 import br.com.abril.nds.dto.FTFReportDTO;
+import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFParser;
+import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
+import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro00;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro01;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro02;
@@ -58,7 +62,7 @@ public class FTFServiceImpl implements FTFService {
 	private FTFRepository ftfRepository;
 
 	@Autowired
-	private NotaFiscalRepository fiscalRepository;
+	private NotaFiscalRepository notaFiscalRepository;
 
 	@Autowired
 	private PessoaCRPWSService pessoaCRPService;
@@ -393,10 +397,60 @@ public class FTFServiceImpl implements FTFService {
 		
 	}
 	
-public void atualizaFlagInterfaceNotasEnviadas(Integer notaId,boolean flag) {
+	public void atualizaFlagInterfaceNotasEnviadas(Integer notaId,boolean flag) {
 		
 		 this.ftfRepository.atualizaFlagInterfaceNotasEnviadas( notaId, flag);
 		
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * br.com.abril.nds.service.NotaFiscalService#processarRetornoNotaFiscal
+	 * (br.com.abril.nds.dto.RetornoNFEDTO)
+	 */
+	@Override
+	@Transactional
+	public List<RetornoNFEDTO> processarRetornoFTF(List<RetornoNFEDTO> listaDadosRetornoNFE) {
+
+		List<RetornoNFEDTO> listaDadosRetornoNFEProcessados = new ArrayList<RetornoNFEDTO>();
+
+		for (RetornoNFEDTO dadosRetornoNFE : listaDadosRetornoNFE) {
+
+			if (dadosRetornoNFE.getNumeroNotaFiscal() != null || dadosRetornoNFE.getProtocolo() != null) {
+				NotaFiscal notaFiscal = null;
+
+				notaFiscal = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE.getIdNota());
+
+				if (notaFiscal != null) {
+					InformacaoEletronica informacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
+
+
+						if (StatusProcessamento.EM_PROCESSAMENTO.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamento())) {
+							if (StatusRetornado.AUTORIZADO.equals(dadosRetornoNFE.getStatus()) 
+									|| StatusRetornado.USO_DENEGADO.equals(dadosRetornoNFE.getStatus())
+									|| StatusRetornado.CANCELAMENTO_HOMOLOGADO.equals(dadosRetornoNFE.getStatus())) {
+								listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
+							}
+
+						} else if (StatusProcessamento.RETORNADA.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamento())) {
+
+							if (StatusRetornado.AUTORIZADO.equals(informacaoEletronica.getRetornoComunicacaoEletronica().getStatusRetornado())
+									|| StatusRetornado.CANCELAMENTO_HOMOLOGADO.equals(dadosRetornoNFE.getStatus())) {
+
+								listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
+							}
+						} else if (StatusProcessamento.SOLICITACAO_CANCELAMENTO.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamento())) {
+							listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
+						} else {
+							throw new ValidacaoException(TipoMensagem.ERROR, "A chave de acesso do arquivo não confere com a base de dados.");
+						}
+					}
+				}
+		}
+
+		return listaDadosRetornoNFEProcessados;
+	}
+	
 }

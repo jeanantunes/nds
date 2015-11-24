@@ -155,7 +155,7 @@ public class FileExporter {
 		GIF(".gif", "image/gif"),
 		BMP(".bmp", "image/vnd.wap.wbmp"),
 		JKS(".jks", "application/octet-stream"),
-		RET(".ret", "application/text"),
+		RET(".RET", "application/text"),
 		PFX(".pfx", "application/x-pkcs12");
 
 		private String extension;
