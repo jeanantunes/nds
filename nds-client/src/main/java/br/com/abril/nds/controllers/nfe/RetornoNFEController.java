@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.nfe;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.exolab.castor.xml.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -32,6 +34,7 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.FileImportUtil;
 import br.com.abril.nds.util.StringUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -96,9 +99,9 @@ public class RetornoNFEController extends BaseController {
 		List<File> listaNotas = null;
 		List<RetornoNFEDTO> listaNotasRetorno = null;
 		
-		listaNotas = retornarListaNotas(dataReferencia, tipoRetorno, tipoEmissor, listaNotas);
+		listaNotas = this.retornarListaNotas(dataReferencia, tipoRetorno, tipoEmissor, listaNotas);
 			
-		listaNotasRetorno = listaNotasFiscais(tipoRetorno, listaNotas, tipoEmissor);
+		listaNotasRetorno = this.listaNotasFiscais(tipoRetorno, listaNotas, tipoEmissor);
 		
 		this.session.setAttribute(LISTA_NOTAS_DE_RETORNO, listaNotasRetorno);
 		
@@ -142,8 +145,8 @@ public class RetornoNFEController extends BaseController {
 		
 		List<RetornoNFEDTO> listaNotasRetorno = null;
 		
-		if(tipoEmissor.equals(tipoEmissor.equals(NFE_APLICATIVO_FTF))) {
-			listaNotasRetorno = this.notaFiscalService.processarRetornoNotaFiscal(this.gerarParseListaFTFRetorno(listaNotas, tipoRetorno));
+		if(tipoEmissor.equals(NFE_APLICATIVO_FTF)) {
+			listaNotasRetorno = this.ftfService.processarRetornoFTF(this.gerarParseListaFTFRetorno(listaNotas, tipoRetorno));
 		} else {
 			listaNotasRetorno = this.notaFiscalService.processarRetornoNotaFiscal(this.gerarParseListaNotasRetorno(listaNotas, tipoRetorno));
 		}
@@ -254,7 +257,7 @@ public class RetornoNFEController extends BaseController {
 				
 					arquivoRetorno = this.processarNotaCancelamento(arquivoAux, arquivoRetorno);
 				}
-							
+				arquivoRetorno.setFtf(false);			
 				hashNotasRetorno.put(arquivoRetorno.getChaveAcesso(), arquivoRetorno);
 			
 			} catch (Exception e) { 
@@ -286,16 +289,50 @@ public class RetornoNFEController extends BaseController {
 			for(FTFRetTipoRegistro01 tipoRegistro : ftf.getTipo01List()){
 				final RetornoNFEDTO retornoNFEDTO = new RetornoNFEDTO();
 				
-				
-				retornoNFEDTO.setNumeroNotaFiscal(Long.valueOf(tipoRegistro.getNumeroNFe()));
-	    		retornoNFEDTO.setCpfCnpj(retornoNFEDTO.getCpfCnpj());
+				retornoNFEDTO.setIdNota(Long.valueOf(tipoRegistro.getNumeroDocumentoOrigem()));
+				retornoNFEDTO.setNumeroNotaFiscal(Long.valueOf(tipoRegistro.getNumeroDocumentoOrigem()));
+	    		retornoNFEDTO.setCpfCnpj(tipoRegistro.getCnpjCpfDestinatario());
 	    		retornoNFEDTO.setChaveAcesso(tipoRegistro.getChaveAcessoNFe());
-	    		retornoNFEDTO.setProtocolo(retornoNFEDTO.getProtocolo());
-	    		retornoNFEDTO.setDataRecebimento(retornoNFEDTO.getDataRecebimento());
-	    		retornoNFEDTO.setMotivo(retornoNFEDTO.getMotivo() +" / " + "Retornado pelo sistema FTF");
-	    		retornoNFEDTO.setTpEvento(retornoNFEDTO.getTpEvento());
+	    		retornoNFEDTO.setProtocolo(Long.valueOf(tipoRegistro.getNumeroProtocoloAutorizacao().trim()));
+	    		retornoNFEDTO.setSerie(tipoRegistro.getSerieNFe());
+	    		retornoNFEDTO.setNumeroNotaFiscal(Long.valueOf(tipoRegistro.getNumeroNFe()));
 	    		
-	    		retornoNFEDTO.setStatus(retornoNFEDTO.getStatus());
+	    		try {
+					retornoNFEDTO.setDataRecebimento(Util.formataData(tipoRegistro.getDataEmissaoNFe()));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+	    		
+	    		retornoNFEDTO.setMotivo("ARQUIVO " +" / " + "Retornado pelo sistema FTF");
+	    		retornoNFEDTO.setTpEvento(tipoRegistro.getTipoRegistro());
+	    		retornoNFEDTO.setFtf(true);
+	    		StatusRetornado statusRetornado = null; 
+	    		switch (tipoRegistro.getStatusNFe().trim()) {
+				
+	    		case "NF-e AUTORIZADA":
+					
+					statusRetornado = StatusRetornado.AUTORIZADO; 
+					
+					break;
+				
+				case "NF-e CANCELADA":
+					
+					statusRetornado = StatusRetornado.CANCELAMENTO_HOMOLOGADO; 
+					
+					break;	
+
+				case "NF-e DENEGADA":
+					
+					statusRetornado = StatusRetornado.USO_DENEGADO; 
+					
+					break;
+				
+				default:
+					break;
+				}
+	    		
+	    		retornoNFEDTO.setStatus(statusRetornado);
+	    		
 	    		hashNotasRetorno.put(retornoNFEDTO.getChaveAcesso(), retornoNFEDTO);
 			}
 		}

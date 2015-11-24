@@ -49,7 +49,7 @@ var retornoNFEController  = $.extend(true, {
 		
 		$.postJSON(contextPath + '/nfe/retornoNFe/obterTipoEmissor', null, 
 			function(result) {
-				tipoEmissor = result;
+				tipoEmissor = result.string;
 	        }
 		);
 		
@@ -75,6 +75,7 @@ var retornoNFEController  = $.extend(true, {
 		
 		var dataReferencia = $("#retornoNFEDataReferencia", this.workspace).val();
 		var tipoRetorno = $('input[name^="tipoRetorno"]:checked').val();
+		var tipoEmissorAux = tipoEmissor;
 		var params = [];
 		
 		if(!dataReferencia) {
@@ -84,7 +85,7 @@ var retornoNFEController  = $.extend(true, {
 
 			params.push({name : "dataReferencia", value : dataReferencia});
 			params.push({name : "tipoRetorno", value : tipoRetorno});
-			params.push({name : "tipoEmissor", value : tipoEmissor});
+			params.push({name : "tipoEmissor", value : tipoEmissorAux});
 			
 			$("#retornoNfe-flexigrid-pesquisa", retornoNFEController.workspace).flexOptions({
 				dataType : 'json',

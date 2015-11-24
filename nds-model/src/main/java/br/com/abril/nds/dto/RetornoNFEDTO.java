@@ -31,7 +31,11 @@ public class RetornoNFEDTO implements Serializable {
 	
 	private Date dataRecebimento;
 	
+	private String serie;
+	
 	private String tpEvento;
+	
+	private boolean ftf;
 	
 	public Long getIdNota() {
 		return idNota;
@@ -145,5 +149,20 @@ public class RetornoNFEDTO implements Serializable {
 	public void setTpEvento(String tpEvento) {
 		this.tpEvento = tpEvento;
 	}
-	
+
+	public String getSerie() {
+		return serie;
+	}
+
+	public void setSerie(String serie) {
+		this.serie = serie;
+	}
+
+	public boolean isFtf() {
+		return ftf;
+	}
+
+	public void setFtf(boolean ftf) {
+		this.ftf = ftf;
+	}
 }
