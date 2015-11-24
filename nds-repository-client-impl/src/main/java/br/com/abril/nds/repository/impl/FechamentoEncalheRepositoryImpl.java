@@ -1843,7 +1843,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("    cota.ID, indMFCNaoConsolidado ");
         
         sql.append(" having indMFCNaoConsolidado = true and ");
-        sql.append("		 cota.ID  in (                                ");
+        sql.append("		 cota.ID not in (                                ");
         sql.append("			select                                          ");
         sql.append("				distinct(cota.ID )                                   ");
         sql.append("			from                                            ");
