@@ -68,4 +68,6 @@ public interface EnderecoService {
 	List<ItemDTO<String, String>> buscarMunicipioAssociadasCota();
 
     List<EnderecoAssociacaoDTO> buscarEnderecosPorPessoaCotaPDVs(Long idPessoa, Set<Long> idsIgnorar);
+
+	List<Endereco> enderecosIncompletos();
 }

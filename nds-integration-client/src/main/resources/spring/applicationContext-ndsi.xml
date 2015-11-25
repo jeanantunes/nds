@@ -61,10 +61,6 @@
 	<bean id="securityHandler" class="br.com.abril.nds.service.xml.nfe.signature.impl.SimpleSecurityHandlerBean">
 		<property name="keyStore" ref="keyStore"/>
 	</bean>
-
-	<!-- <bean id="securityHandler" class="br.com.abril.nds.service.xml.nfe.signature.impl.Pkcs12SecurityHandlerBean">
-		<property name="location" value="${security.certificate.location}"/>  
-	</bean> -->
 	
 	<!-- 
 	    DOM builder factory 

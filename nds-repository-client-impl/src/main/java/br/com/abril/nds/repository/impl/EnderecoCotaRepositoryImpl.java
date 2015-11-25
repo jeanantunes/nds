@@ -14,6 +14,7 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
+import br.com.abril.nds.vo.EnderecoVO;
 
 @Repository
 public class EnderecoCotaRepositoryImpl extends AbstractRepositoryModel<EnderecoCota, Long>
@@ -97,5 +98,19 @@ public class EnderecoCotaRepositoryImpl extends AbstractRepositoryModel<Endereco
 		query.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
 		
 		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Endereco> enderecosIncompletos() {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from Endereco e ")
+		  .append(" where (e.bairro = 'NAO_INFORMADO' OR  e.bairro is null) ")
+		  .append(" and e.cep is not null");
+		  
+		  Query query = this.getSession().createQuery(hql.toString());
+		  
+		  return query.list();
 	}
 }
