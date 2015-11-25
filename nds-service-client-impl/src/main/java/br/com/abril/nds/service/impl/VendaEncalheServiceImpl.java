@@ -1487,11 +1487,14 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 						Lancamento lancAtual = lancamentoService.obterLancamentoDaEdicaoParaCota(produtoEdicao.getId(), cota.getId(), distribuidorService.obterDataOperacaoDistribuidor());
 						
 						if(lancAtual == null ){
-							
-							throw new ValidacaoException(TipoMensagem.WARNING, "A cota não recebeu reparte no lançamento. A venda não pode ser efetivada.");
-						}
+							EstoqueProduto estoqueProduto = estoqueProdutoRespository.buscarEstoquePorProduto(produtoEdicao.getId());
+							TipoVendaEncalhe tipoVendaEncalhe = this.obterTipoVenda(estoqueProduto);
+							if(TipoVendaEncalhe.SUPLEMENTAR.equals(tipoVendaEncalhe)){
+							   throw new ValidacaoException(TipoMensagem.WARNING, "A cota não recebeu reparte no lançamento. A venda não pode ser efetivada.");
+							}
+							}
 						
-						if(l.getDataLancamentoDistribuidor().compareTo(lancAtual.getDataLancamentoDistribuidor()) <= 0) {
+						if(lancAtual != null && l.getDataLancamentoDistribuidor().compareTo(lancAtual.getDataLancamentoDistribuidor()) <= 0) {
 							
 							if(!TipoLancamento.REDISTRIBUICAO.equals(l.getTipoLancamento()) && !statusLancamentos.contains(l.getStatus())) {
 								
