@@ -48,6 +48,7 @@ public class AnaliseParcialDTO implements Serializable {
     private Boolean ajustado;
     private BigInteger quantidadeAjuste;
     private Boolean contemRepartePorPDV = false;
+    private Boolean pdvAtivo = false;
     
     private Long mixID;
     private Long fixacaoID;
@@ -381,6 +382,13 @@ public class AnaliseParcialDTO implements Serializable {
 	public void setSomatorioReparteSugerido(BigInteger somatorioReparteSugerido) {
 		this.somatorioReparteSugerido = somatorioReparteSugerido;
 	}
-	
+
+	public Boolean getPdvAtivo() {
+		return pdvAtivo;
+	}
+
+	public void setPdvAtivo(Boolean pdvAtivo) {
+		this.pdvAtivo = pdvAtivo;
+	}
 	
 }
