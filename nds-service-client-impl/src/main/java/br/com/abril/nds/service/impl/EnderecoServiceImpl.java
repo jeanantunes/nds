@@ -335,6 +335,17 @@ public class EnderecoServiceImpl implements EnderecoService {
 					ret.setLogradouro(logradouro.getNome());				
 					ret.setTipoLogradouro(logradouro.getTipoLogradouro());				
 					ret.setBairro(bairroInicial.getNome());				
+				} else if (list.size() == 4) {
+						logradouro = om.treeToValue(list.get(0), Logradouro.class);
+						localidade = om.treeToValue(list.get(1), Localidade.class);
+						bairroInicial = om.treeToValue(list.get(2), Bairro.class);
+						ret.setBairro(bairroInicial.getNome());
+						ret.setUf(logradouro.getUf());
+						ret.setCep(logradouro.getCep());
+						ret.setLogradouro(logradouro.getNome());				
+						ret.setTipoLogradouro(logradouro.getTipoLogradouro());				
+						ret.setBairro(bairroInicial.getNome());				
+					 	
 				} else {
 					localidade = om.treeToValue(list.get(0), Localidade.class);
 					ret.setUf(localidade.getUnidadeFederacao().get_id().replace("uf/", ""));
@@ -473,6 +484,12 @@ public class EnderecoServiceImpl implements EnderecoService {
 	@Override
 	public List<ItemDTO<String, String>> buscarMunicipioAssociadasCota(){
 		return enderecoCotaRepository.buscarMunicipio();
+	}
+
+
+	@Override
+	public List<Endereco> enderecosIncompletos() {
+		return enderecoCotaRepository.enderecosIncompletos();
 	}
 	
 }
