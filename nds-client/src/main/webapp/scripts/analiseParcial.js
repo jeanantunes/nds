@@ -743,7 +743,13 @@ var analiseParcialController = $.extend(true, {
                 cell.cota += '<span class="asteriscoCotaNova"></span>';
             }
             if (cell.npdv > 1 && cell.contemRepartePorPDV == true) {
-                cell.npdv = '<a tabindex="-1" class="editaRepartePorPDV" numeroCota="'+ numCota +'">'+ cell.npdv +'</a>';
+                
+            	if(cell.pdvAtivo){
+            		cell.npdv = '<a tabindex="-1" class="editaRepartePorPDV" numeroCota="'+ numCota +'">'+ cell.npdv +'</a>';
+            	}else{
+            		cell.npdv = '<a tabindex="-1" numeroCota="'+ numCota +'">'+ cell.npdv +'</a>';
+            	}
+            	
             }
             if (cell.leg === 'S') {
                 cell.leg = '';
