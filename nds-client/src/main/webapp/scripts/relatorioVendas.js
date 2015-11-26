@@ -241,7 +241,7 @@ var relatorioVendasController = $.extend(true, {
 			usepager : true,
 			useRp : true,
 			rp : 15,
-			showTableToggleBtn : true,
+			showTableToggleBtn : false,
 			width : 960,
 			height : 255
 		});

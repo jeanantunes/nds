@@ -63,12 +63,14 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("	                else 0 end) > 1 then 1 else 0 end) ");
         sql.append("	else 0 end as contemRepartePorPDV, ");
         
+        sql.append("	if(pdv_default.STATUS_PDV = 'ATIVO', 1, 0) as pdvAtivo, ");
+        
         sql.append("	fx.ID as fixacaoID, mx.ID as mixID, ");        
         
         sql.append("    c.classificacao_espectativa_faturamento classificacao, ");
         
-        sql.append("    coalesce(pes.nome, pes.razao_social, pes.nome_fantasia, '') nome, ");
-        
+        sql.append("    coalesce(pes.nome_fantasia, pes.razao_social, pes.nome, '') nome, ");
+
         sql.append("    pdv_qtd.quantidade npdv, ");
         
         sql.append("    ec.qtde_efetiva reparteEstudo, ");
@@ -384,6 +386,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         ((SQLQuery) query).addScalar("mixID", StandardBasicTypes.LONG);
         ((SQLQuery) query).addScalar("fixacaoID", StandardBasicTypes.LONG);
         ((SQLQuery) query).addScalar("contemRepartePorPDV", StandardBasicTypes.BOOLEAN);
+        ((SQLQuery) query).addScalar("pdvAtivo", StandardBasicTypes.BOOLEAN);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseParcialDTO.class));
         

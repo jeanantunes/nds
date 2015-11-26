@@ -99,7 +99,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 		try {
 			session = sessionFactoryIcd.getCurrentSession();
 		} catch(Exception e) {
-            LOGGER.error("Erro ao obter sessão do Hibernate.", e);
+            LOGGER.error("Erro ao obter sessão do Hibernate.Abril sessao", e);
 		}
 
 		if(session == null) {
@@ -604,34 +604,49 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	// Caso tenha lancamentos_parcial com mais de um periodo com tipo FINAL, ajustar  para ter PARCIAL e um FINAL
-private void atualizarLancamentosComMaisdeUmPeriodoFinal() {
-		
+	private void atualizarLancamentosComMaisdeUmPeriodoFinal() {
+		LOGGER.error("ATUALIZANDO LANCAMENTOPARCIAL COM MAIS DE UM PERIODO COM TIPO FINAL");
 		StringBuilder sql = new StringBuilder();
-		try {                                                                                                    
+		Session session = this.getSessionIcd();
+		try {    
+			int i=1;
 			// obter todos lancamento_parcial_id  que tenha periodo com mais de um FINAL
-			sql.append(" select LANCAMENTO_PARCIAL_ID, max(numero_periodo),tipo ")
-			   .append(" from periodo_lancamento_parcial where tipo = 'FINAL' group by 1,3 having count(*) > 1");
-			SQLQuery q = getSessionIcd().createSQLQuery(sql.toString());
-			List <Object[]> lista = q.list();
-			for( Object [] rs:lista  ) {
-			BigInteger id = (BigInteger) rs[0];
+			sql.append(" select LANCAMENTO_PARCIAL_ID ")
+			   .append(" from periodo_lancamento_parcial where tipo = 'FINAL' group by 1 having count(*) > 1");
+			SQLQuery query = session.createSQLQuery(sql.toString());
+			List <BigInteger > lancamentoParcialIds = query.list();
+			LOGGER.error("ENCONTRADOS "+lancamentoParcialIds.size());
+			for( BigInteger lancamentoParcialId:lancamentoParcialIds  ) {
+				LOGGER.error("PROCESSANDO  "+lancamentoParcialId +"  i="+i++);
 			
 			// atualizar o status de todos os periodos deste lancamento parcial para PARCIAL
-			SQLQuery q1 = getSessionIcd().createSQLQuery(
+			SQLQuery q1 = session.createSQLQuery(
 			" update periodo_lancamento_parcial   set tipo = 'PARCIAL' where lancamento_parcial_id = :id");
 			
-			q1.setParameter("id",id);
+			q1.setParameter("id",lancamentoParcialId);
 			q1.executeUpdate();
-    
-			Integer mx = (Integer) rs[1];
-			// atualizar o status do ultimo periodo deste lancamento parcial para FINAL
-			SQLQuery q2 = getSessionIcd().createSQLQuery(
-			" update periodo_lancamento_parcial a set a.tipo = 'FINAL' "+
-			" where a.lancamento_parcial_id = :id  and   a.numero_periodo = :mx ");
+			LOGGER.error("ATUALIZANDO PARA PARCIAL  "+lancamentoParcialId);
+			// Obter maior periodo 
+			StringBuilder sqlm = new StringBuilder();
+			sqlm.append(" select  max(numero_periodo) ")
+			   .append(" from periodo_lancamento_parcial where  lancamento_parcial_id = :id");
 			
-			q2.setParameter("id",id);
-			q2.setParameter("mx",mx);
+			SQLQuery querym = session.createSQLQuery(sqlm.toString());
+			querym.setParameter("id",lancamentoParcialId);
+			
+			
+			Integer numeroPeriodo = (Integer) querym.uniqueResult();
+			
+			LOGGER.error("OBTENDO MAIOR PERIODO  PARA ATUALIZAR PARA FINAL  "+numeroPeriodo);
+			// atualizar o status do ultimo periodo deste lancamento parcial para FINAL
+			SQLQuery q2 = session.createSQLQuery(
+			" update periodo_lancamento_parcial a set a.tipo = 'FINAL' "+
+			" where a.lancamento_parcial_id = :id  and   a.numero_periodo = :numero_periodo ");
+			
+			q2.setParameter("id",lancamentoParcialId);
+			q2.setParameter("numero_periodo",numeroPeriodo);
 			q2.executeUpdate();
+			LOGGER.error("ATUALIZADO PERIODO FINAL PARA id "+lancamentoParcialId +  "  numero_periodo "+ numeroPeriodo);
 			}
 			
 			

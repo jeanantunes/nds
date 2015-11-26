@@ -528,7 +528,7 @@ public class RelatorioVendasController extends BaseController {
 		BigDecimal totalFaturamento = BigDecimal.ZERO;
 		
 		for (RegistroRankingSegmentoDTO registro : lista) {
-			  totalFaturamento = totalFaturamento.add(registro.getFaturamentoCapa());
+			  totalFaturamento = totalFaturamento.add(registro.getFaturamentoCapa() == null ? BigDecimal.ZERO : registro.getFaturamentoCapa());
 		}
 		return totalFaturamento;
 	}
