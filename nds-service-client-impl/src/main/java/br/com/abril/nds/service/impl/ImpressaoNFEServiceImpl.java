@@ -225,6 +225,27 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 								
 							}
 						}
+					} else if (dtnf.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_DEVOLUCAO_AO_FORNECEDOR)) {
+						if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)){
+							
+							if(!dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
+								
+								LOGGER.info("obter informações para imprimir DANFE ou NECA... ");				
+								
+								List<NotaFiscal> notas = null;;
+								
+								notas = notasPorCotaFornecedor(filtro, naturezaOperacao, notas);
+								
+								for (NotaFiscal notaFiscal : notas) {
+									
+									DanfeDTO danfe = montarDanfe(notaFiscal);
+									if(danfe != null) {										
+										listaDanfeWrapper.add(new DanfeWrapper(danfe));
+									}
+								}
+								
+							}
+						}
 					}
 				
 				}
