@@ -69,8 +69,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         
         sql.append("    c.classificacao_espectativa_faturamento classificacao, ");
         
-        sql.append("    coalesce(pes.nome, pes.razao_social, pes.nome_fantasia, '') nome, ");
-        
+        sql.append("    coalesce(pes.nome_fantasia, pes.razao_social, pes.nome, '') nome, ");
+
         sql.append("    pdv_qtd.quantidade npdv, ");
         
         sql.append("    ec.qtde_efetiva reparteEstudo, ");
