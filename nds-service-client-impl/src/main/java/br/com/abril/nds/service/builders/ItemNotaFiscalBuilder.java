@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -259,7 +260,10 @@ public class ItemNotaFiscalBuilder  {
 			((OrigemItemNotaFiscalMovimentoEstoque) oinfME).setMovimentoEstoque((MovimentoEstoque) movimentoEstoque);
 			((OrigemItemNotaFiscalMovimentoEstoque) oinfME).getMovimentoEstoque().setProdutoEdicao((ProdutoEdicao) movimentoEstoque.getProdutoEdicao());
 			
-			// origemItens.add(oinfME);				
+			if (!quantidade.equals(BigInteger.ZERO)){
+				
+				origemItens.add(oinfME);				
+			}
 			
 		}
 		
@@ -723,7 +727,17 @@ public class ItemNotaFiscalBuilder  {
 					throw new ValidacaoException(TipoMensagem.ERROR, "Item de nota fiscal nulo.");
 				}
 				
-				for(OrigemItemNotaFiscal oinf : dnf.getProdutoServico().getOrigemItemNotaFiscal()) {
+				List<OrigemItemNotaFiscal> listaOrigens = new ArrayList<>(); 
+				
+				for(OrigemItemNotaFiscal origemItem : dnf.getProdutoServico().getOrigemItemNotaFiscal()) {
+					OrigemItemNotaFiscal origem = new OrigemItemNotaFiscalMovimentoEstoque();
+					
+					BeanUtils.copyProperties(origemItem, origem);
+					
+					listaOrigens.add(origem);
+				}
+				
+				for(OrigemItemNotaFiscal oinf : listaOrigens) {
 					
 					MovimentoEstoque me = ((OrigemItemNotaFiscalMovimentoEstoque) oinf).getMovimentoEstoque();
 					if(me.getProdutoEdicao().getId().equals(movimentoEstoque.getProdutoEdicao().getId())) {

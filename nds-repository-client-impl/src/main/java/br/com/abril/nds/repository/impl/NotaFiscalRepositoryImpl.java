@@ -1098,7 +1098,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getDataEmissao() != null) {
 			hql.append(" ");
 		}
-
+		
+		//hql.append(" and me.produtoEdicao in (36220, 34217, 36264, 36450) ");
+		
 		if(filtro.getListIdFornecedor() != null) {
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
@@ -1163,6 +1165,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getListIdFornecedor() != null) {
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
+		
+		//hql.append(" and me.produtoEdicao in (36220, 34217, 36264, 36450) ");
 		
 		if(filtro.getIdEditor() != null && filtro.getIdEditor() > 0) {
 			hql.append(" AND editor.id = :idEditor) ");
