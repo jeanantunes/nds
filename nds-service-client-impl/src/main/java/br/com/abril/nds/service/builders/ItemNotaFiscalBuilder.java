@@ -258,7 +258,8 @@ public class ItemNotaFiscalBuilder  {
 			OrigemItemNotaFiscal oinfME = new OrigemItemNotaFiscalMovimentoEstoque();
 			((OrigemItemNotaFiscalMovimentoEstoque) oinfME).setMovimentoEstoque((MovimentoEstoque) movimentoEstoque);
 			((OrigemItemNotaFiscalMovimentoEstoque) oinfME).getMovimentoEstoque().setProdutoEdicao((ProdutoEdicao) movimentoEstoque.getProdutoEdicao());
-			origemItens.add(oinfME);				
+			
+			// origemItens.add(oinfME);				
 			
 		}
 		
