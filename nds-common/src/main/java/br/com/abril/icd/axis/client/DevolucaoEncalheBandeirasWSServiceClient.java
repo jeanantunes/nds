@@ -22,7 +22,7 @@ public class DevolucaoEncalheBandeirasWSServiceClient {
 
 
     public static String enviarNotasDevEncalheBandeiras(
-    		NotaEncalheBandeiraVO nota,List<ItemEncalheBandeiraVO> itens,boolean homolog
+    		NotaEncalheBandeiraVO nota,List<ItemEncalheBandeiraVO> itens,boolean homolog,String uf
     		) throws Exception {
       System.err.println("INICIANDO INCLUSAO DAS NOTAS DEVOLUCAO ENCALHE/BANDEIRAS.Ambiente "+(homolog ?"HOMOLOGACAO":"PRODUCAO"));
 
@@ -43,7 +43,8 @@ public class DevolucaoEncalheBandeirasWSServiceClient {
         // Time out after 1 minute
         devolucaoEncalheBandeirasWS.setTimeout(600000);
 
-		String ufDistribuidor = "RJ";
+       
+		String ufDistribuidor = uf;
 		String codDistribuidor = "001M";
 		Integer tipoNota = nota.getTipoNota();
 		Integer numNota = nota.getNumNota();
