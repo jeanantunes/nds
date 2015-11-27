@@ -603,7 +603,11 @@ public class FixacaoReparteController extends BaseController {
             
             if(fixacaoReparteDTO.getProdutoFixado().length() >= 8){ 
             	Produto produto = produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
-            	
+            	if ( produto == null ) {
+            		invalidos.add(fixacaoReparteDTO);
+            		getErrosUpload().add("Produto Fixado ["+fixacaoReparteDTO.getProdutoFixado()+"]: Código  inválido, ajuste-o no Cadastro de Produto.");
+            		continue;
+            	}
             	if(!produtoService.isIcdValido(produto.getCodigo())){
             		invalidos.add(fixacaoReparteDTO);
             		getErrosUpload().add("Produto ["+produto.getNomeComercial()+"]: Código ICD inválido, ajuste-o no Cadastro de Produto.");
