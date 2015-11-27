@@ -733,41 +733,38 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 	
 	@Override
 	@Transactional
-	public Map<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>> obterMapaDeImpressaoPorEntregadorQuebrandoPorCota(final FiltroMapaAbastecimentoDTO filtro) {
+	public Map<EntregadorDTO, Map<String, MapaProdutoCotasDTO>> obterMapaDeImpressaoPorEntregadorQuebrandoPorCota(final FiltroMapaAbastecimentoDTO filtro) {
 	
 		final List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorEntregadorQuebrandoPorCota(filtro);
-	
-		if(produtosBoxRota.size() == 0){
-			return null;
-		}
 		
-		final Map<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>> quebraPorEnt = new LinkedHashMap<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>>();
+		final Map<EntregadorDTO, Map<String, MapaProdutoCotasDTO>> quebraPorEntCotas = new LinkedHashMap<EntregadorDTO, Map<String, MapaProdutoCotasDTO>>();
 		
-		MapaProdutoCotasDTO pcMapaDTO = null;
-	
+		MapaProdutoCotasDTO pcMapaCotasDTO = null;
+		
 		Integer valorAux = 0;
-		
 		List<Integer> listaCotas = null;
+		String produto = null;
+		
 		for(ProdutoAbastecimentoDTO item : produtosBoxRota) {
 		    
-		    final EntregadorDTO entDto = new EntregadorDTO();
-		    entDto.setCodigoBox(item.getCodigoBox());
-		    entDto.setDescricaoRota(item.getDescRota());
-		    entDto.setDescricaoRoteiro(item.getDescRoteiro());
-		    entDto.setIdEntregador(item.getIdEntregador());
-		    entDto.setNomeEntregador(item.getNomeEntregador());
+		    final EntregadorDTO entCotaDto = new EntregadorDTO();
+		    entCotaDto.setCodigoBox(item.getCodigoBox());
+		    entCotaDto.setDescricaoRota(item.getDescRota());
+		    entCotaDto.setDescricaoRoteiro(item.getDescRoteiro());
+		    entCotaDto.setIdEntregador(item.getIdEntregador());
+		    entCotaDto.setNomeEntregador(item.getNomeEntregador());
 		    
-		    if (!quebraPorEnt.containsKey(entDto)){
+		    if (!quebraPorEntCotas.containsKey(entCotaDto)){
 		    					
-		        quebraPorEnt.put(entDto, new LinkedHashMap<Long, MapaProdutoCotasDTO>());
+		    	quebraPorEntCotas.put(entCotaDto, new LinkedHashMap<String, MapaProdutoCotasDTO>());
 		        listaCotas = new ArrayList<>();
 		    }
 		    
-		    final Map<Long, MapaProdutoCotasDTO> mapas = quebraPorEnt.get(entDto);
+		    final Map<String, MapaProdutoCotasDTO> mapaAux = quebraPorEntCotas.get(entCotaDto);
 		    
-			if(!mapas.containsKey(item.getIdProdutoEdicao())) {
-	
-				pcMapaDTO = new MapaProdutoCotasDTO(
+		    if(!mapaAux.containsKey(item.getIdProdutoEdicao() + " - " +item.getNomeProduto())) {
+		    	
+		    	pcMapaCotasDTO = new MapaProdutoCotasDTO(
 						item.getCodigoProduto(),
 						item.getNomeProduto(),
 						item.getNumeroEdicao().longValue(),
@@ -778,36 +775,45 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 						new LinkedHashMap<Integer, Integer>(),
 						new LinkedHashMap<String, Integer>());
 	
-				mapas.put(item.getIdProdutoEdicao(), pcMapaDTO);
+		    	mapaAux.put(item.getIdProdutoEdicao() + " - " +item.getNomeProduto(), pcMapaCotasDTO);
 			}	
 			
-			if(!pcMapaDTO.getCotasQtdes().containsKey(item.getCodigoCota())){
-				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), 0);
-			}
-			
-			final Integer qtdeAtual = pcMapaDTO.getCotasQtdes().get(item.getCodigoCota());
-						
-			if (item.getReparte() != null){
-				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
+			if(!pcMapaCotasDTO.getCotasQtdes().containsKey(item.getIdProdutoEdicao() + " - " +item.getCodigoRota())){
+				pcMapaCotasDTO.getCotasQtdes().put(item.getCodigoCota(), 0);
+				if(!listaCotas.contains(item.getCodigoCota())) {
+					listaCotas.add(item.getCodigoCota());
+				}
+				pcMapaCotasDTO.getCotasQtdes().put(item.getCodigoCota(), 0);
 				
-				valorAux = valorAux +  qtdeAtual;
 				
-				pcMapaDTO.setQtdes(item.getReparte());
+				final Integer qtdeAtual = pcMapaCotasDTO.getCotasQtdes().get(item.getCodigoCota());
+				
+				if(produto == null) {
+					produto =  item.getNomeProduto();
+					pcMapaCotasDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
+					valorAux = valorAux +  item.getReparte();
+					pcMapaCotasDTO.setQtdes(valorAux);
+				} else {
+					if(produto.equals(item.getNomeProduto())) {						
+						if (item.getReparte() != null){
+							pcMapaCotasDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
+							valorAux = valorAux +  item.getReparte();
+							pcMapaCotasDTO.setQtdes(valorAux);
+						}
+					} else {
+						valorAux = 0;
+						pcMapaCotasDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
+						valorAux = valorAux +  item.getReparte();
+						pcMapaCotasDTO.setQtdes(valorAux);
+						produto =  item.getNomeProduto();
+					}
+				}
+				pcMapaCotasDTO.setListCotas(listaCotas);
 			}
-			
-			
+		    
 		}
 		
-		final List<ProdutoAbastecimentoDTO> cotas = movimentoEstoqueCotaRepository.obterCotasEntregadorQuebrandoPorCota(filtro);
-		
-		for(ProdutoAbastecimentoDTO prodtuto : cotas)
-		if(!listaCotas.contains(prodtuto.getCodigoCota())) {
-			listaCotas.add(prodtuto.getCodigoCota());
-		}
-		
-		pcMapaDTO.setListCotas(listaCotas);
-		
-		return quebraPorEnt;
+		return quebraPorEntCotas;
 	}
 	
 	

@@ -30,7 +30,6 @@ import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
-//import br.com.abril.nds.dto.filtro.FiltroRoteirizacao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
@@ -735,12 +734,6 @@ public class RoteirizacaoController extends BaseController {
 			lista = roteirizacaoService.buscarRoteirizacao(filtroSessao);
 		}
 		
-		return lista;
-	}
-	
-	private List<ConsultaRoteirizacaoDTO> obterDetalheRoteirizacao(Object filtro) {
-		List<ConsultaRoteirizacaoDTO> lista = null;
-		// lista = roteirizacaoService.buscarRoteirizacao(filtro);
 		return lista;
 	}
 	

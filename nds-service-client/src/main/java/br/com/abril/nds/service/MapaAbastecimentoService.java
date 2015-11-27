@@ -181,7 +181,7 @@ public interface MapaAbastecimentoService {
 	 */
 	Map<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>> obterMapaDeImpressaoPorEntregador(FiltroMapaAbastecimentoDTO filtro);
 	
-	Map<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>> obterMapaDeImpressaoPorEntregadorQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro);
+	Map<EntregadorDTO, Map<String, MapaProdutoCotasDTO>> obterMapaDeImpressaoPorEntregadorQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro);
 	
 	Map<Integer, Map<String, Map<String, Map<ProdutoEdicaoVO, Map<String, Integer>>>>> obterMapaDeImpressaoPorBoxRotaQuebraCota(FiltroMapaAbastecimentoDTO filtro);
 

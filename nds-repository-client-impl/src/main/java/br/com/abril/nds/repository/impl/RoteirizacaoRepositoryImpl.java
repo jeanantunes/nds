@@ -508,7 +508,6 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	}
 
 	@SuppressWarnings("unchecked")
-	//@Override
 	public List<RoteiroRoteirizacaoDTO> obterRoteirosPorNomeEBoxesode(String nome,
 			List<Long> idsBoxes) {
 		
