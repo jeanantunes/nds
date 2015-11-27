@@ -622,6 +622,10 @@ public class PainelProcessamentoController extends BaseController {
     	 
     	
         String msg=homolog ?"AMBIENTE HOMOLOGACAO":"AMBIENTE PRODUCAO";
+        
+       
+        int codigoFC = Integer.parseInt(this.distribuidorService.codigoDistribuidorFC());
+        String uf= ( codigoFC == 0 ?"RJ":"SP");
         int erros=0;
          List<NotaEncalheBandeiraVO> notas = ftfService.obterNotasNaoEnviadas();
          ftfService.atualizaFlagInterfaceNotasEnviadas(1,true);
@@ -637,7 +641,7 @@ public class PainelProcessamentoController extends BaseController {
     		  else
     			  LOGGER.warn("NAO ENCONTRADO DESTINO ENCALHE PARA PRODUTO/EDICAO "+item0.getCodPublicacao() +"/"
     					  															+item0.getNumEdicao());
-    	          DevolucaoEncalheBandeirasWSServiceClient.enviarNotasDevEncalheBandeiras(nota,itens,homolog);
+    	          DevolucaoEncalheBandeirasWSServiceClient.enviarNotasDevEncalheBandeiras(nota,itens,homolog,uf);
     	   
     	      
     	       }catch (Exception e )
