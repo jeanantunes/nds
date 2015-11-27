@@ -45,5 +45,34 @@ public class OrigemItemNotaFiscalMovimentoEstoque extends OrigemItemNotaFiscal {
 
 	public String obterOrigemItemNotaFiscal() {
 		return this.getClass().getName();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime
+				* result
+				+ ((movimentoEstoque == null) ? 0 : movimentoEstoque.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		OrigemItemNotaFiscalMovimentoEstoque other = (OrigemItemNotaFiscalMovimentoEstoque) obj;
+		if (movimentoEstoque == null) {
+			if (other.movimentoEstoque != null)
+				return false;
+		} else if (!movimentoEstoque.equals(other.movimentoEstoque))
+			return false;
+		return true;
 	};
+	
+	
 }

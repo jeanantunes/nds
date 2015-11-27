@@ -30,6 +30,7 @@ import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroRoteirizacao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
@@ -736,7 +737,12 @@ public class RoteirizacaoController extends BaseController {
 		
 		return lista;
 	}
-
+	
+	private List<ConsultaRoteirizacaoDTO> obterDetalheRoteirizacao(FiltroRoteirizacao filtro) {
+		List<ConsultaRoteirizacaoDTO> lista = null;
+		// lista = roteirizacaoService.buscarRoteirizacao(filtro);
+		return lista;
+	}
 	
 	private boolean isPesquisaSumarizadaPorCota(FiltroConsultaRoteirizacaoDTO filtroSessao) {
 		
@@ -1604,5 +1610,19 @@ public class RoteirizacaoController extends BaseController {
 		}
 
 		return listaRotas;
+	}
+	
+	@Path("/imprimir")
+	public void imprimir(FiltroConsultaRoteirizacaoDTO filtro) {
+		
+		filtro.setOrdenacaoColuna((Util.getEnumByStringValue(FiltroConsultaRoteirizacaoDTO.OrdenacaoColunaConsulta.values(), "nomeBox")));
+		
+		List<ConsultaRoteirizacaoDTO> lista = this.roteirizacaoService.obterDetalheRoteirizacao(filtro);
+		
+		
+		if(lista == null || lista.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
 	}
 }

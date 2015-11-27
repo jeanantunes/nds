@@ -1347,9 +1347,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		Rota rota = this.buscarRotaPorId(rotaId);
 		
 		if (rota.getAssociacoesVeiculoMotoristaRota() != null && !rota.getAssociacoesVeiculoMotoristaRota().isEmpty() ) {
-			throw new ValidacaoException(
-new ValidacaoVO(TipoMensagem.WARNING,
-                    "Não é possível modificar esta rota, pois ele esta associada a um transportador."));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não é possível modificar esta rota, pois ele esta associada a um transportador."));
 		}
 
 	}
@@ -1369,9 +1367,7 @@ new ValidacaoVO(TipoMensagem.WARNING,
 				this.validarAssociacaoRotaTransportador(rota.getId(), roteiroId);
 			
 			}catch(ValidacaoException ve) {
-				throw new ValidacaoException(
-new ValidacaoVO(TipoMensagem.WARNING,
-                        "Não é possível modificar este roteiro, pois ele esta associado a um transportador. "));
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não é possível modificar este roteiro, pois ele esta associado a um transportador. "));
 			}
 		}
 		
@@ -1623,6 +1619,13 @@ new ValidacaoVO(TipoMensagem.WARNING,
 		
 		return roteiroRepository.buscarRoteiroCodigoBox(codigoBoxDe, codigoBoxAte);
 		
+	}
+
+	@Override
+	@Transactional
+	public List<ConsultaRoteirizacaoDTO> obterDetalheRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro) {
+		
+		return roteirizacaoRepository.obterDetalheRoteiricao(filtro);
 	}
 
 }

@@ -792,15 +792,20 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 				
 				valorAux = valorAux +  qtdeAtual;
 				
-				if(!listaCotas.contains(item.getCodigoCota())) {
-					listaCotas.add(item.getCodigoCota());
-				}
-				
 				pcMapaDTO.setQtdes(item.getReparte());
 			}
 			
-			pcMapaDTO.setListCotas(listaCotas);
+			
 		}
+		
+		final List<ProdutoAbastecimentoDTO> cotas = movimentoEstoqueCotaRepository.obterCotasEntregadorQuebrandoPorCota(filtro);
+		
+		for(ProdutoAbastecimentoDTO prodtuto : cotas)
+		if(!listaCotas.contains(prodtuto.getCodigoCota())) {
+			listaCotas.add(prodtuto.getCodigoCota());
+		}
+		
+		pcMapaDTO.setListCotas(listaCotas);
 		
 		return quebraPorEnt;
 	}

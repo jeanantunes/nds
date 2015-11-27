@@ -639,4 +639,37 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		
 		return (Util.nvl(quantidade, BigInteger.ZERO).longValue() > 0);
 	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ConsultaRoteirizacaoDTO> obterDetalheRoteiricao(FiltroConsultaRoteirizacaoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select case when box is null then 'Especial' else (box.codigo ||' - '|| box.nome) end as nomeBox ," )
+			.append(" rota.descricaoRota as descricaoRota , ")
+			.append(" roteiro.descricaoRoteiro as descricaoRoteiro , ")
+			.append(" box.id as idBox, 			")
+			.append(" box.tipoBox as tipobox,   ")
+			.append(" rota.id as idRota, 		")
+			.append(" roteiro.id as idRoteiro, 	")
+			.append(" cota.id as idCota,		")			
+			.append(" case pessoa.class when 'F' then pessoa.nome when 'J' then pessoa.razaoSocial end as nome , ")
+			.append(" cota.numeroCota as numeroCota, ")
+		    .append(" roteirizacao.id as idRoteirizacao ");
+		
+		hql.append(getHqlWhere(filtro));
+		
+		hql.append(" group by box.codigo, box.id, rota.descricaoRota, rota.id, roteiro.descricaoRoteiro, roteiro.id ");
+	
+		hql.append(getOrdenacaoConsulta(filtro));
+		
+		Query query  = getSession().createQuery(hql.toString());
+		
+		getParameterConsulta(filtro, query);
+		
+		query.setResultTransformer(Transformers.aliasToBean(ConsultaRoteirizacaoDTO.class));
+		
+		return query.list();  
+	}
 }

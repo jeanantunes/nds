@@ -4412,5 +4412,76 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         statusLancamento.add(StatusLancamento.BALANCEADO.name());
         statusLancamento.add(StatusLancamento.EXPEDIDO.name());
         
-    }	
+    }
+	
+	 @SuppressWarnings("unchecked")
+	    @Override
+	    public List<ProdutoAbastecimentoDTO> obterCotasEntregadorQuebrandoPorCota(final FiltroMapaAbastecimentoDTO filtro) {
+	        
+	        final Map<String, Object> param = new HashMap<String, Object>();
+	        
+	        final List<String> statusLancamento = new ArrayList<String>();
+	        
+	        final StringBuilder hql = new StringBuilder();
+	        
+	        hql.append(" select cota.NUMERO_COTA as codigoCota, ");
+	        hql.append(" 		pessoa.NOME as nomeCota,");
+	        hql.append(" 		produto.CODIGO as codigoProduto, ");
+	        hql.append(" 		produtoEdicao.NOME_COMERCIAL as nomeProduto, ");
+	        hql.append(" 		produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
+	        hql.append(" 		produtoEdicao.CODIGO_DE_BARRAS as codigoBarra, ");
+	        hql.append(" 		produtoEdicao.ID as idProdutoEdicao, ");
+	        hql.append(" 		produtoEdicao.PACOTE_PADRAO as pacotePadrao, ");
+	        hql.append(" 		sum(estudoCota.REPARTE) as reparte, ");
+	        hql.append(" 		sum(estudoCota.REPARTE * produtoEdicao.PRECO_VENDA) as totalBox, ");
+	        hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa, ");
+	        hql.append("        entregador.ID as idEntregador, ");
+	        hql.append("        coalesce(pessoaEnt.NOME, pessoaEnt.RAZAO_SOCIAL, '') as nomeEntregador, ");
+	        hql.append("        rotaEnt.DESCRICAO_ROTA as descRota, ");
+	        hql.append("        roteiroEnt.DESCRICAO_ROTEIRO as descRoteiro, ");
+	        hql.append(" 		lancamento.SEQUENCIA_MATRIZ as sequenciaMatriz, ");
+	        hql.append("        boxEnt.CODIGO as codigoBox ");
+	        
+	        gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
+	        
+	        hql.append(" group by cota.id, boxEnt.CODIGO, entregador.ID, produtoEdicao.ID ");
+	        
+	        gerarOrdenacaoDadosAbastecimento(filtro, hql);
+	        
+	        final SQLQuery query =  getSession().createSQLQuery(hql.toString());
+	        
+	        setParameters(query, param);
+	        
+	        query.setParameterList("status", statusLancamento);
+	        
+	        query.addScalar("codigoCota", StandardBasicTypes.INTEGER);
+	        query.addScalar("nomeCota", StandardBasicTypes.STRING);
+	        query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+	        query.addScalar("nomeProduto", StandardBasicTypes.STRING);
+	        query.addScalar("numeroEdicao", StandardBasicTypes.LONG);
+	        query.addScalar("codigoBarra", StandardBasicTypes.STRING);
+	        query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
+	        query.addScalar("pacotePadrao", StandardBasicTypes.INTEGER);
+	        query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
+	        query.addScalar("totalBox", StandardBasicTypes.BIG_DECIMAL);
+	        query.addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
+	        query.addScalar("idEntregador", StandardBasicTypes.LONG);
+	        query.addScalar("nomeEntregador", StandardBasicTypes.STRING);
+	        query.addScalar("descRota", StandardBasicTypes.STRING);
+	        query.addScalar("descRoteiro", StandardBasicTypes.STRING);
+	        query.addScalar("codigoBox", StandardBasicTypes.INTEGER);
+	        query.addScalar("sequenciaMatriz", StandardBasicTypes.INTEGER);
+	        
+	        query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
+	        
+	        if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null){
+	            query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+	        }
+	        
+	        if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null){
+	            query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+	        }
+	        
+	        return query.list();
+	    }
 }
