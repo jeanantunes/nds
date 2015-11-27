@@ -2,9 +2,6 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;

@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroRoteirizacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
@@ -94,8 +95,7 @@ public interface RoteirizacaoService {
 
 	Integer buscarQuantidadeRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro);
 	
-	List<ConsultaRoteirizacaoDTO> obterCotasParaBoxRotaRoteiro(Long idBox, Long idRota, Long idRoteiro, 
-			String sortname, String sortorder);
+	List<ConsultaRoteirizacaoDTO> obterCotasParaBoxRotaRoteiro(Long idBox, Long idRota, Long idRoteiro, String sortname, String sortorder);
 	
 	
 	
@@ -330,4 +330,6 @@ public interface RoteirizacaoService {
 	 */
 	List<ItemDTO<Long, String>> getComboRoteiroPorBox(Integer codigoBoxDe,
 			Integer codigoBoxAte);
+
+	List<ConsultaRoteirizacaoDTO> obterDetalheRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro);
 }

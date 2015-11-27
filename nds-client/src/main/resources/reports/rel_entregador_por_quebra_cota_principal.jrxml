@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="343"/>
+	<property name="ireport.x" value="188"/>
 	<property name="ireport.y" value="0"/>
 	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
 		<paragraph leftIndent="3"/>
@@ -124,16 +124,18 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$P{DATA}]]></textFieldExpression>
 				</textField>
-				<subreport>
-					<reportElement isPrintRepeatedValues="false" x="0" y="15" width="555" height="40" uuid="30d6a793-d7f5-4150-b401-f33f2559fb77"/>
-					<subreportParameter name="SUBREPORT_DIR">
-						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
-					</subreportParameter>
-					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(
+				<elementGroup>
+					<subreport>
+						<reportElement isPrintRepeatedValues="false" x="0" y="15" width="555" height="40" uuid="30d6a793-d7f5-4150-b401-f33f2559fb77"/>
+						<subreportParameter name="SUBREPORT_DIR">
+							<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+						</subreportParameter>
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(
 ((java.util.Map<Long, br.com.abril.nds.dto.MapaProdutoCotasDTO>)$F{value}).values()
 )]]></dataSourceExpression>
-					<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_entregador_quebra_cota.jasper"]]></subreportExpression>
-				</subreport>
+						<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_entregador_quebra_cota.jasper"]]></subreportExpression>
+					</subreport>
+				</elementGroup>
 			</elementGroup>
 		</band>
 	</detail>

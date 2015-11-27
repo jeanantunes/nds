@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="555" pageHeight="850" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="174"/>
 	<property name="ireport.y" value="0"/>
 	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
 		<paragraph leftIndent="3"/>
@@ -150,7 +150,7 @@
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
-				<text><![CDATA[Unidade]]></text>
+				<text><![CDATA[Uni.]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -245,7 +245,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[new Integer ($F{qtdes}.intValue() % 100 / $F{pacotePadrao})]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{pacotePadrao} <= 0 ? 0 : new Integer($F{qtdes}.intValue() / $F{pacotePadrao})]]></textFieldExpression>
 				</textField>
 				<textField pattern="###0">
 					<reportElement x="504" y="0" width="51" height="15" uuid="83c42358-54f4-479a-a789-d1c81d802a96"/>
@@ -256,7 +256,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[new Integer ($F{qtdes}.intValue() % $F{pacotePadrao})]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{pacotePadrao} <= 0 ? $F{qtdes}.intValue() : new Integer($F{qtdes}.intValue() % $F{pacotePadrao})]]></textFieldExpression>
 				</textField>
 			</elementGroup>
 		</band>
