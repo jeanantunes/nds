@@ -508,8 +508,8 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
-	public List<RoteiroRoteirizacaoDTO> obterRoteirosPorNomeEBoxes(String nome,
+	//@Override
+	public List<RoteiroRoteirizacaoDTO> obterRoteirosPorNomeEBoxesode(String nome,
 			List<Long> idsBoxes) {
 		
 		Criteria criteria  = getSession().createCriteria(Roteiro.class, "roteiro");
@@ -531,9 +531,10 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		return criteria.list();
 	}
 
+	
 	@SuppressWarnings("unchecked")
-	@Override
-	public List<RotaRoteirizacaoDTO> obterRotasPorNomeERoteiros(String nome,
+	//@Override
+	public List<RotaRoteirizacaoDTO> obterRotasPorNomeERoteirosode(String nome,
 			List<Long> idsRoteiros) {
 		
 		Criteria criteria  = getSession().createCriteria(Rota.class, "rota");
@@ -671,5 +672,19 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		query.setResultTransformer(Transformers.aliasToBean(ConsultaRoteirizacaoDTO.class));
 		
 		return query.list();  
+	}
+
+	@Override
+	public List<RoteiroRoteirizacaoDTO> obterRoteirosPorNomeEBoxes(String nome,
+			List<Long> idsBoxes) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<RotaRoteirizacaoDTO> obterRotasPorNomeERoteiros(String nome,
+			List<Long> idsRoteiros) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
