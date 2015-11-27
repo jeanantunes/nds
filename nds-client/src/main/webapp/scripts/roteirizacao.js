@@ -2304,7 +2304,8 @@ var roteirizacao = $.extend(true, {
 
         $(".rotaRoteirosGrid", roteirizacao.workspace).flexReload();
     },
-
+    
+    
     carregarNomeCotas : function (campoExibicao, numeroCota, callBack) {
         $('#'+campoExibicao).html('');
         var result = false;
@@ -3120,7 +3121,52 @@ var roteirizacao = $.extend(true, {
         return rotaCopia;
 
     },
-
+    
+    imprimir : function () {
+    	
+    	var path = contextPath + "/cadastro/roteirizacao/imprimir";
+    	
+    	var data = this.getFiltro();
+    	
+    	$.fileDownload(path, {
+			httpMethod : "POST",
+			data : data,
+			successCallback: function(result) {
+				if (result.mensagens) {
+					exibirMensagem(
+						result.mensagens.tipoMensagem, 
+						result.mensagens.listaMensagens
+					);
+				}			
+			},
+            failCallback: function(result) {
+	
+        		res = $.parseJSON($(result).text());
+        		if ((typeof res != "undefined") && (typeof res.mensagens != "undefined")) {
+        			
+					exibirMensagem(
+							res.mensagens.tipoMensagem, 
+							res.mensagens.listaMensagens
+					);
+				}	
+			}
+		});
+    	
+    },
+    
+    getFiltro : function() {
+		
+    	var params = [];
+    	
+    	params.push({name:'filtro.idBox',	value: $('#boxPesquisa', roteirizacao.workspace).val()});
+    	params.push({name:'filtro.idRoteiro',	value: $('#roteiroPesquisa', roteirizacao.workspace).val()});
+    	params.push({name:'filtro.idRota',	value: $('#rotaPesquisa', roteirizacao.workspace).val()});
+    	params.push({name:'filtro.numeroCota',	value: $('#cotaPesquisa', roteirizacao.workspace).val()});
+		
+		return params;
+	},
+    
+    
     selecaoCota : function () {
 
         roteirizacao.tipoExclusao = TipoExclusao.COTA;
