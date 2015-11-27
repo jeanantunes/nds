@@ -2453,7 +2453,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	        	}
 	        
 	        case SEQUENCIA_MATRIZ:
-	            nome = " descRota, sequenciaMatriz, nomeProduto, codigoBox, roteiro.ordem, rota.ordem, rotaPDV.ORDEM, codigoCota ";
+	            nome = " codigoBox, roteiro.ordem, rota.ordem, rotaPDV.ORDEM, sequenciaMatriz, nomeProduto ";
 	            break;  
 	            
 	        default:
