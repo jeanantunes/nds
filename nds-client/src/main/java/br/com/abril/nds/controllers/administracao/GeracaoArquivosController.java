@@ -526,112 +526,7 @@ public class GeracaoArquivosController extends BaseController {
 	
 	
 
-	@Post
-	@Rules(Permissao.ROLE_ADMINISTRACAO_GERACAO_ARQUIVO_ALTERACAO)
-	public void unificaror() {	
-		  String crlf = System.getProperty("line.separator");
-	      String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
-	  
-	      String dirFc = dirBanca+"/fc";
-	     
-	      String dirDinap = dirBanca+"/dinap";
-	      String dirOut = dirBanca+"/dinap_fc";
-	      String dirConflito = dirBanca+"/dinap_fc_conflito";
-	      int conflitos=0;
-	   try {   
-		   
-		 
-	      // copiar dinap para saida
-	      File source = new File(dirDinap);
-	      File dest = new File(dirOut);
-	      try {
-	          FileUtils.copyDirectory(source, dest);
-	      } catch (IOException e) {
-	          e.printStackTrace();
-	          result.use(Results.json()).from("</br>Erro copiando arquivos de .."+dirDinap+"  Para "+dirOut+" erro:"+e.getMessage() , "result").serialize();
-    		  return;
-	      }
-
-	     // processar
-	      
-	      StringBuffer ret=new StringBuffer();
-	      File dir = new File(dirFc);
-		  String[] extensions = new String[] { "LCT", "RCL" };
-			
-			List<File> files = (List<File>) FileUtils.listFiles(dir, extensions, true);
-			List <File> files_semdepara = new <File> ArrayList();
-			for (File file : files) {
-				String fc=file.getName();
-				String boxfc = fc.split("[.]")[1];
-				String boxdinap = deparaService.obterBoxDinap(boxfc);	
-				 if ( boxdinap == null || boxdinap.trim().length() == 0 ) {
-				 //  ret.append( "Box fc="+boxfc+" nao tem box  dinap correspondente.Incluir box dinap para box fc="+boxfc +"na tabela depara</br>");
-				   files_semdepara.add(file);
-				   continue;
-				 } 
-				 // trocar box no arquivo fc para dinap
-				  // e trocar filial fc para filial dinap
-				  String filialFc = "0757350";
-				  String filialDinap ="5318019";
-				   String pathOut = dirOut +"/"+fc.replace(boxfc,boxdinap).replace(filialFc,filialDinap);
-				   File arqOut = new File(pathOut);
-				  
-				   if  (arqOut.exists()) { // concatenar
-					   String filestr_fc = FileUtils.readFileToString(file);
-					   String filestr_dinap = FileUtils.readFileToString(arqOut);
-					   
-					   FileUtils.write(arqOut, filestr_dinap+filestr_fc); 
-				   }
-				   else {
-					 FileUtils.copyFile(file, arqOut);
-				     
-				   }
-			   }
-			
-			// processar arquivos fcs sem box dinap
-			
-			for (File file : files_semdepara) {
-				String fc=file.getName();
-				String boxfc = fc.split("[.]")[1];
-				
-				ret.append("Atencao:Box fc="+boxfc+" nao tem box dinap correspondente na tabela depara</br>");
-				  
-				
-				   String pathOut = dirOut +"/"+fc;
-				   File arqOut = new File(pathOut);
-				  
-				   if  (!arqOut.exists()) { // nao existe,cpiar para unificado
-					   FileUtils.copyFile(file, arqOut);
-				   } else {  //copiar para conflito
-					   conflitos++;
-					   ret.append("Conflito:Arquivo fc "+file.getAbsolutePath()+"  existe no dinap mas nao tem o box correspondente.Copiado para "+dirConflito+"/"+fc +"</br>" );
-					 FileUtils.copyFile(file, new File(dirConflito+"/"+fc));
-				   } 
-				  
-			   }
-			
-			ret.append("Quantidade de arquivos fc unificados com dinap :"+files.size()+"</br>");
-			ret.append("Sem box dinap="+files_semdepara.size()+ " Conflitos="+conflitos+"</br>");
-	     
-			
-		     result.use(Results.json()).from(ret.toString() , "result").serialize();
-		    }
-		    catch (Exception err) {
-		      err.printStackTrace();
-		      String erro="";
-		      if ( !new File( dirBanca+"/fc").exists())
-		    	  erro+=dirBanca+"/fc  Nao existe";
-		      if ( !new File( dirBanca+"/dinap").exists())
-		    	  erro+=dirBanca+"/dinap Nao existe";
-		     if ( !new File( dirBanca+"/dinap_fc").exists())
-		    	erro+=dirBanca+"/dinap_fc  Nao existe";
-			 if ( !new File( dirBanca+"/dinap_fc_conflito").exists())
-		    	erro+=dirBanca+"/dinap_fc_conflito Nao existe";
-
-		      result.use(Results.json()).from("Erro executando Unificacao</br>"+err.getMessage() +"</br>"+erro, "result").serialize();
-		    }
 	
-	}
 
 	public void limparDir(String dir) {
 		Iterator it= FileUtils.iterateFiles(new File(dir) , new String[] {"LCT","RCL"},false);
@@ -754,6 +649,14 @@ public class GeracaoArquivosController extends BaseController {
 
 	     // processar
 	      
+	      
+	      // identificar codigos do FC e DINAP
+	       
+		  String filialFc = "0757350"; // defaults para arj - abaixo, sera identificado pela primeira parte do nome dos arquivos
+		  String filialDinap ="5318019";
+		 
+	     
+		 
 	     
 	      File dir = new File(dirFc);
 		  String[] extensions = new String[] { "LCT", "RCL" };
@@ -769,10 +672,13 @@ public class GeracaoArquivosController extends BaseController {
 				   files_semdepara.add(file);
 				   continue;
 				 } 
-				 // trocar box no arquivo fc para dinap
-				  // e trocar filial fc para filial dinap
-				  String filialFc = "0757350";
-				  String filialDinap ="5318019";
+				
+				  // obter filial fc do arquivo
+				   filialFc =  fc.split("[.]")[0];
+				  // obter filial dinap do arquivo zip  
+				   filialDinap = dinapName.split("[.]")[0];
+				 
+				 
 				   String pathOut = dirOut +"/"+fc.replace(boxfc,boxdinap).replace(filialFc,filialDinap);
 				   File arqOut = new File(pathOut);
 				  
