@@ -190,7 +190,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
     	sql.append(" SUM(T.REPARTE) as reparte,                                           ");
     	sql.append(" SUM(T.venda) as venda                                                ");
 		
-    	sql.append(" FROM (SELECT straight_join  ");
+    	sql.append(" FROM (SELECT   ");
 		sql.append("     pe.id, ");
 		sql.append("     l.id lancId, ");
 		sql.append("     pe.numero_edicao numeroEdicao, ");
@@ -232,9 +232,9 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("     LEFT JOIN tipo_classificacao_produto tcp ON tcp.id = pe.tipo_classificacao_produto_id ");
 		sql.append("     LEFT JOIN movimento_estoque_cota mecReparte on mecReparte.LANCAMENTO_ID = l.id ");
 		sql.append("     LEFT JOIN tipo_movimento tipo ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
-		
+		sql.append(" 		and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
 		sql.append(" where l.status in (:statusLancamento) ");
-		sql.append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
+		
         sql.append(" and mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
    		
    		if (filtro.getEdicao() != null) {
