@@ -53,13 +53,13 @@ public class DevolucaoEncalheBandeirasWSServiceLocator extends org.apache.axis.c
        java.net.URL endpoint;
         try {
         	if ( homolog) {
-        		LOGGER.error("AMBIENTE HOMOLOGACAO "+DevolucaoEncalheBandeirasWS_address);
+        		LOGGER.warn("AMBIENTE HOMOLOGACAO "+DevolucaoEncalheBandeirasWS_address);
            
             endpoint = new java.net.URL(DevolucaoEncalheBandeirasWS_address);
         	}
         	else
         	{
-            LOGGER.error("AMBIENTE PRODUCAO "+DevolucaoEncalheBandeirasWS_address_prod);
+            LOGGER.warn("AMBIENTE PRODUCAO "+DevolucaoEncalheBandeirasWS_address_prod);
             endpoint = new java.net.URL(DevolucaoEncalheBandeirasWS_address_prod);
         	}
            
