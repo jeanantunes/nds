@@ -1409,13 +1409,13 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		InputStream inputStream = null;
 		
 		try {
-			LOGGER.warn("obtendo logo do distribuidor");
+			LOGGER.info("obtendo logo do distribuidor");
 			if ( bytesLogo == null || bytesLogo.length == 0 ) {
 			    inputStream = couchDbClient.find(TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name()+ "/" + ATTACHMENT_LOGOTIPO);
 				LOGGER.warn("obtido logo do distribuidor via couch");
 				bytesLogo = IOUtils.toByteArray(inputStream);
 			} else {
-				LOGGER.warn("obtido logo do distribuidor via cach");
+				LOGGER.info("obtido logo do distribuidor via cach");
 				
 			}
 			inputStream = new ByteArrayInputStream(bytesLogo);
