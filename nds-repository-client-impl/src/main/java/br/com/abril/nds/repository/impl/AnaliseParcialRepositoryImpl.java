@@ -242,6 +242,16 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
                 sql.append(" and (((epc.qtde_recebida - epc.qtde_devolvida)*100)/epc.qtde_recebida) between :filterSortFrom and :filterSortTo ");
             }
+            
+            if (queryDTO.possuiOrdenacaoCota()) {
+
+                sql.append(" AND c.numero_cota between :filterSortFrom and :filterSortTo ");
+            }
+            
+            if (queryDTO.possuiReducaoReparte()) {
+
+                sql.append(" and CAST((((coalesce(ec.reparte_inicial, 0) - coalesce(ec.reparte, 0))/ec.qtde_efetiva)*10000)/100 as SIGNED INT) between :filterSortFrom and :filterSortTo ");
+            }
         }    
   
         if (queryDTO.possuiElemento()) {
@@ -302,7 +312,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
         	
-            if (queryDTO.possuiOrdenacaoReparte() || queryDTO.possuiOrdenacaoRanking() || queryDTO.possuiPercentualDeVenda()) {
+            if (queryDTO.possuiOrdenacaoReparte() || queryDTO.possuiOrdenacaoRanking() || queryDTO.possuiPercentualDeVenda() || 
+            		queryDTO.possuiOrdenacaoCota() || queryDTO.possuiReducaoReparte()) {
             	
             	query.setParameter("filterSortFrom", queryDTO.getFilterSortFrom());
             	

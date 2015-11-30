@@ -1772,10 +1772,11 @@ var analiseParcialController = $.extend(true, {
     	var valueFiltroOrdenarPor = $("#filtroOrdenarPor").val();
         var elemento = $("#elementos :selected").val();
 
+        /*
         switch (valueFiltroOrdenarPor) {
-            case 'numero_cota':
+             * case 'numero_cota':
                 analiseParcialController.filtrarCotas(estudo, valueFiltroOrdenarPor, elemento);
-                break;
+                break; 
             case 'percentual_de_venda':
                 analiseParcialController.filtrarOrdenarPercentualVenda(estudo, valueFiltroOrdenarPor, elemento);
                 break;
@@ -1788,7 +1789,9 @@ var analiseParcialController = $.extend(true, {
         if (event) {
             event.preventDefault();
         }
-        return false;
+         */
+        
+        analiseParcialController.filtroDefault(estudo, valueFiltroOrdenarPor, elemento);
     },
     
     filtrarOrdenarPorElemento : function(estudo) {
@@ -1821,7 +1824,7 @@ var analiseParcialController = $.extend(true, {
 
     },
 
-    filtrarCotas: function (estudo, valueFiltroOrdenarPor, elemento) {
+    /*filtrarCotas: function (estudo, valueFiltroOrdenarPor, elemento) {
         if ($("#ordenarPorDe").val() === '' && $("#ordenarPorAte").val() === '') {
 
         	$('#baseEstudoGridParcial tr').show().filter(':odd').addClass('erow')
@@ -1859,9 +1862,10 @@ var analiseParcialController = $.extend(true, {
                 .end().find('td').removeClass('sorted');
         }
         analiseParcialController.somarTotais();
-    },
+    }, */
 
-    filtrarTipoDistribuicaoCota: function (tipo) {
+    /*
+     * filtrarTipoDistribuicaoCota : function (tipo) {
         $.post(contextPath + '/distribuicao/analise/parcial/tipoDistribuicaoCotaFiltro', {tipo:tipo.toUpperCase()},
             function(resp) {
                 var sortAtribute = 'td[abbr="cota"]';
@@ -1881,9 +1885,9 @@ var analiseParcialController = $.extend(true, {
                     .end().find('td').removeClass('sorted');
                 analiseParcialController.somarTotais();
             });
-    },
+    }, */
 
-    filtrarOrdenarPercentualVenda : function(estudo, valueFiltroOrdenarPor, elemento) {
+    /*filtrarOrdenarPercentualVenda : function(estudo, valueFiltroOrdenarPor, elemento) {
         if ($("#ordenarPorDe").val() === '' || $("#ordenarPorAte").val() === '') {
             
         	$('#baseEstudoGridParcial tr').show().filter(':odd').addClass('erow')
@@ -1922,7 +1926,7 @@ var analiseParcialController = $.extend(true, {
                 .end().find('td').removeClass('sorted');
         }
         analiseParcialController.somarTotais();
-    },
+    }, */
 
     filtrarOrdenarReducaoReparte : function(estudo, valueFiltroOrdenarPor, elemento) {
         if ($("#ordenarPorDe").val() === '' || $("#ordenarPorAte").val() === '') {
