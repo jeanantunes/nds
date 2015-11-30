@@ -196,7 +196,7 @@ DEVOLUCAO TREELOG]]></text>
 			<componentElement>
 				<reportElement uuid="677a7264-76e9-4d7c-b306-9f3b308a597d" x="313" y="542" width="247" height="75"/>
 				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barHeight="80">
-					<jr:codeExpression><![CDATA["RJ001M"+
+					<jr:codeExpression><![CDATA[("RIO DE JANEIRO".equalsIgnoreCase($F{praca}) ?"RJ001M":"SP001M")+
 String.format("%06d",Integer.parseInt($F{numeroNota})) +
 "109"+
 String.format("%02d",Integer.parseInt($F{volumes}.split("/")[0].trim()))+
