@@ -161,6 +161,10 @@ public class AnaliseParcialQueryDTO {
 	public boolean possuiReducaoReparte() {
 		return possuiOrdenacaoPlusFiltro() && filterSortName.equals("reducao_de_reparte");
 	}
+	
+	public boolean possuiOrdenacaoCota() {
+		return possuiOrdenacaoPlusFiltro() && filterSortName.equalsIgnoreCase("numero_cota");
+	}
 
 	public boolean elementoIsTipoPontoVenda() {
 		return getTipoElemento().equals("tipo_ponto_venda");
