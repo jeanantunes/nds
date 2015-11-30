@@ -40,7 +40,7 @@ public class LongConverter implements Converter<Long> {
 		if ("undefined".equalsIgnoreCase(value)) {
 			return null;
 		}
-		return Long.parseLong(value);
+		return Long.parseLong(value.trim());
     } catch (Exception e ) {
     	e.printStackTrace();
     	LOGGER.error("ERRO CONVERSAO LONG='"+value+"'");

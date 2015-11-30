@@ -37,7 +37,7 @@ public class IntegerConverter implements Converter<Integer> {
 		if ("undefined".equalsIgnoreCase(value)) {
 			return null;
 		}
-		return Integer.parseInt(value);
+		return Integer.parseInt(value.trim());
 	 } catch (Exception e ) {
 	    	e.printStackTrace();
 	    	LOGGER.error("ERRO CONVERSAO INTEGER='"+value+"'");
