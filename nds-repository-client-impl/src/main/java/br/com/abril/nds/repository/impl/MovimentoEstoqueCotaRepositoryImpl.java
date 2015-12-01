@@ -2453,7 +2453,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	        	}
 	        
 	        case SEQUENCIA_MATRIZ:
-	            nome = " codigoBox, roteiro.ordem, rota.ordem, rotaPDV.ORDEM, sequenciaMatriz, nomeProduto ";
+	            nome = " sequenciaMatriz, nomeProduto, codigoBox, roteiro.ordem, rota.ordem, rotaPDV.ORDEM, codigoCota,  descRota ";
 	            break;  
 	            
 	        default:
@@ -3605,7 +3605,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
         
-        hql.append(" group by cota.id, entregador.ID, produto.CODIGO ");
+        hql.append(" group by entregador.ID, produto.CODIGO, cota.id ");
         
         gerarOrdenacaoDadosAbastecimento(filtro, hql);
         

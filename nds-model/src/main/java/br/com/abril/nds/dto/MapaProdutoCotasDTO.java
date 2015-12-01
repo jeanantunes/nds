@@ -2,8 +2,8 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class MapaProdutoCotasDTO implements Serializable{
 	
@@ -17,7 +17,8 @@ public class MapaProdutoCotasDTO implements Serializable{
 	private Integer qtdes;
 	private Integer sequenciaMatriz;
 	private Integer pacotePadrao;
-	private List<Integer> listCotas;
+	private Integer codigoCota;
+	private Set<Integer> listCotas;
 	private Map<Integer, Integer> cotasQtdes;
 	private Map<String, Integer> boxQtdes;
 	
@@ -43,6 +44,7 @@ public class MapaProdutoCotasDTO implements Serializable{
 			Long numeroEdicao, String codigoDeBarras, String precoCapa,
 			Integer sequenciaMatriz,
 			Integer pacotePadrao,
+			Integer codigoCota,
 			LinkedHashMap<Integer, Integer> cotasQtdes,
 			LinkedHashMap<String, Integer> boxQtdes) {
 		super();
@@ -52,6 +54,7 @@ public class MapaProdutoCotasDTO implements Serializable{
 		this.numeroEdicao = numeroEdicao;
 		this.codigoDeBarras = codigoDeBarras;
 		this.precoCapa = precoCapa;
+		this.codigoCota = codigoCota;
 		this.setCotasQtdes(cotasQtdes);
 		this.sequenciaMatriz = sequenciaMatriz;
 		this.pacotePadrao = pacotePadrao;
@@ -170,11 +173,19 @@ public class MapaProdutoCotasDTO implements Serializable{
 		this.pacotePadrao = pacotePadrao;
 	}
 
-	public List<Integer> getListCotas() {
+	public Set<Integer> getListCotas() {
 		return listCotas;
 	}
 
-	public void setListCotas(List<Integer> listCotas) {
+	public void setListCotas(Set<Integer> listCotas) {
 		this.listCotas = listCotas;
+	}
+
+	public Integer getCodigoCota() {
+		return codigoCota;
+	}
+
+	public void setCodigoCota(Integer codigoCota) {
+		this.codigoCota = codigoCota;
 	}
 }
