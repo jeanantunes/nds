@@ -798,12 +798,8 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 		    	mapaAux.put(item.getIdProdutoEdicao() + " - " +item.getNomeProduto(), pcMapaCotasDTO);
 		    	produto = null;
 			}
-		    
-		    if(!listaCotas.contains(item.getCodigoCota())) { 
-		    	listaCotas.add(item.getCodigoCota());
-		    }
-		    
-			if(!pcMapaCotasDTO.getCotasQtdes().containsKey(item.getIdProdutoEdicao() + " - " +item.getNomeProduto())){
+
+		    if(!pcMapaCotasDTO.getCotasQtdes().containsKey(item.getIdProdutoEdicao() + " - " +item.getNomeProduto())){
 				
 				pcMapaCotasDTO.getCotasQtdes().put(item.getCodigoCota(), 0);
 				
