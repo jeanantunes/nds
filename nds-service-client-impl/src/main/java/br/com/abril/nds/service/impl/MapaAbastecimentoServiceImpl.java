@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -737,32 +738,49 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 	
 		final List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorEntregadorQuebrandoPorCota(filtro);
 		
-		final Map<EntregadorDTO, Map<String, MapaProdutoCotasDTO>> quebraPorEntCotas = new LinkedHashMap<EntregadorDTO, Map<String, MapaProdutoCotasDTO>>();
+		Map<Long, Set<Integer>> mapaEntregadorCota = new HashMap<Long, Set<Integer>>();
+		
+		Map<EntregadorDTO, Map<String, MapaProdutoCotasDTO>> quebraPorEntCotas = new LinkedHashMap<EntregadorDTO, Map<String, MapaProdutoCotasDTO>>();
 		
 		MapaProdutoCotasDTO pcMapaCotasDTO = null;
 		
 		Integer valorAux = 0;
-		List<Integer> listaCotas = null;
+		
 		String produto = null;
 		
+		String nomeEntregadorAux = null; 
+		
+		Set<Integer> listaCotas = null;
+		
+		EntregadorDTO entCotaDto = null;
 		for(ProdutoAbastecimentoDTO item : produtosBoxRota) {
+			
+			if(!mapaEntregadorCota.containsKey(item.getIdEntregador())) {
+				listaCotas = new TreeSet<Integer>();
+				listaCotas.add(item.getCodigoCota());
+				mapaEntregadorCota.put(item.getIdEntregador(), listaCotas);
+			} else {
+				mapaEntregadorCota.get(item.getIdEntregador()).add(item.getCodigoCota());
+			}
+					
+			if(nomeEntregadorAux == null || !nomeEntregadorAux.equals(item.getNomeEntregador())) {	
+				entCotaDto= new EntregadorDTO();
+				entCotaDto.setCodigoBox(item.getCodigoBox());
+				entCotaDto.setDescricaoRota(item.getDescRota());
+				entCotaDto.setDescricaoRoteiro(item.getDescRoteiro());
+				entCotaDto.setIdEntregador(item.getIdEntregador());
+				entCotaDto.setNomeEntregador(item.getNomeEntregador());
+				
+	    		nomeEntregadorAux = item.getNomeEntregador();
+	    		
+	    		if (!quebraPorEntCotas.containsKey(entCotaDto)){	
+	    			quebraPorEntCotas.put(entCotaDto, new LinkedHashMap<String, MapaProdutoCotasDTO>());
+	    		}
+			}
+			
+		    Map<String, MapaProdutoCotasDTO> mapaAux = quebraPorEntCotas.get(entCotaDto);
 		    
-		    final EntregadorDTO entCotaDto = new EntregadorDTO();
-		    entCotaDto.setCodigoBox(item.getCodigoBox());
-		    entCotaDto.setDescricaoRota(item.getDescRota());
-		    entCotaDto.setDescricaoRoteiro(item.getDescRoteiro());
-		    entCotaDto.setIdEntregador(item.getIdEntregador());
-		    entCotaDto.setNomeEntregador(item.getNomeEntregador());
-		    
-		    if (!quebraPorEntCotas.containsKey(entCotaDto)){
-		    					
-		    	quebraPorEntCotas.put(entCotaDto, new LinkedHashMap<String, MapaProdutoCotasDTO>());
-		        listaCotas = new ArrayList<>();
-		    }
-		    
-		    final Map<String, MapaProdutoCotasDTO> mapaAux = quebraPorEntCotas.get(entCotaDto);
-		    
-		    if(!mapaAux.containsKey(item.getIdProdutoEdicao() + " - " +item.getNomeProduto())) {
+		    if(!mapaAux.containsKey(item.getIdProdutoEdicao() + " - " + item.getNomeProduto())) {
 		    	
 		    	pcMapaCotasDTO = new MapaProdutoCotasDTO(
 						item.getCodigoProduto(),
@@ -772,45 +790,45 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 						item.getPrecoCapa(),
 						item.getSequenciaMatriz(),
 						item.getPacotePadrao(),
+						item.getCodigoCota(),
 						new LinkedHashMap<Integer, Integer>(),
 						new LinkedHashMap<String, Integer>());
-	
+		    	
+		    	
 		    	mapaAux.put(item.getIdProdutoEdicao() + " - " +item.getNomeProduto(), pcMapaCotasDTO);
-			}	
-			
-			if(!pcMapaCotasDTO.getCotasQtdes().containsKey(item.getIdProdutoEdicao() + " - " +item.getCodigoRota())){
-				pcMapaCotasDTO.getCotasQtdes().put(item.getCodigoCota(), 0);
-				if(!listaCotas.contains(item.getCodigoCota())) {
-					listaCotas.add(item.getCodigoCota());
-				}
-				pcMapaCotasDTO.getCotasQtdes().put(item.getCodigoCota(), 0);
+		    	produto = null;
+			}
+
+		    if(!pcMapaCotasDTO.getCotasQtdes().containsKey(item.getIdProdutoEdicao() + " - " +item.getNomeProduto())){
 				
+				pcMapaCotasDTO.getCotasQtdes().put(item.getCodigoCota(), 0);
 				
 				final Integer qtdeAtual = pcMapaCotasDTO.getCotasQtdes().get(item.getCodigoCota());
 				
+				pcMapaCotasDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
 				if(produto == null) {
 					produto =  item.getNomeProduto();
-					pcMapaCotasDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
-					valorAux = valorAux +  item.getReparte();
+					valorAux = item.getReparte();
 					pcMapaCotasDTO.setQtdes(valorAux);
+					
+					
 				} else {
 					if(produto.equals(item.getNomeProduto())) {						
 						if (item.getReparte() != null){
-							pcMapaCotasDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
 							valorAux = valorAux +  item.getReparte();
 							pcMapaCotasDTO.setQtdes(valorAux);
 						}
+						
 					} else {
 						valorAux = 0;
-						pcMapaCotasDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
 						valorAux = valorAux +  item.getReparte();
 						pcMapaCotasDTO.setQtdes(valorAux);
 						produto =  item.getNomeProduto();
 					}
+			
 				}
-				pcMapaCotasDTO.setListCotas(listaCotas);
+				pcMapaCotasDTO.setListCotas(mapaEntregadorCota.get(entCotaDto.getIdEntregador()));
 			}
-		    
 		}
 		
 		return quebraPorEntCotas;
