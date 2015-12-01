@@ -792,7 +792,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		StringBuilder sql = new StringBuilder();
 			
 		sql.append(" UPDATE cobranca SET NOSSO_NUMERO_CONSOLIDADO = :nossoNumero ");
-		sql.append(" WHERE DT_EMISSAO = :dtOperacao and COTA_ID = (select c.id from cota c where c.NUMERO_COTA = :numCota) ");
+		sql.append(" WHERE DT_EMISSAO = :dtOperacao and COTA_ID = (select c.id from cota c where c.NUMERO_COTA = :numCota) and ORIUNDA_NEGOCIACAO_AVULSA = false ");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
