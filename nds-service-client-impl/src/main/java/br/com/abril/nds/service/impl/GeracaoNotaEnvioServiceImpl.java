@@ -273,7 +273,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             itemNotaEnvio.setProdutoEdicao(produtoEdicao);
             itemNotaEnvio.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
             itemNotaEnvio.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
-            itemNotaEnvio.setPublicacao(produtoEdicao.getProduto().getNome());
+            itemNotaEnvio.setPublicacao(produtoEdicao.getProduto().getNomeComercial());
             
             DescontoDTO descontoDTO = null;
             try {
