@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
+import br.com.abril.nds.dto.MapaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
@@ -463,6 +464,41 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		return query.list(); 
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MapaRoteirizacaoDTO> sumarizadoRelPorCota(FiltroConsultaRoteirizacaoDTO filtro){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select case when box is null then 'Especial' else (box.codigo ||' - '|| box.nome) end as nomeBox ," )
+			.append(" rota.descricaoRota as descricaoRota, ")
+			.append(" roteiro.descricaoRoteiro as descricaoRoteiro , ")
+			.append(" box.id as idBox, 			")
+			.append(" rota.id as idRota, 		")
+			.append(" roteiro.id as idRoteiro, 	")
+			.append(" count (cota.numeroCota) as qntCotas ");
+			
+		hql.append( getHqlWhere(filtro));
+	
+		hql.append(" group by box.codigo, box.id, rota.descricaoRota, rota.id, roteiro.descricaoRoteiro, roteiro.id ");
+		
+		hql.append(getOrdenacaoConsulta(filtro));
+		
+		Query query  = getSession().createQuery(hql.toString());
+		
+		getParameterConsulta(filtro, query);
+		
+		query.setResultTransformer(Transformers.aliasToBean(MapaRoteirizacaoDTO.class));
+		
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null) 
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		
+		return query.list(); 
+	}
+	
 	@Override
 	public Integer buscarQuantidadeRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro) {
 		
@@ -646,10 +682,11 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select case when box is null then 'Especial' else (box.codigo ||' - '|| box.nome) end as nomeBox ," )
+		hql.append(" select  ")
+			.append(" DISTINCT box.id as idBox, 			")
+			.append("case when box is null then 'Especial' else (box.codigo ||' - '|| box.nome) end as nomeBox , ")
 			.append(" rota.descricaoRota as descricaoRota , ")
 			.append(" roteiro.descricaoRoteiro as descricaoRoteiro , ")
-			.append(" box.id as idBox, 			")
 			.append(" box.tipoBox as tipobox,   ")
 			.append(" rota.id as idRota, 		")
 			.append(" roteiro.id as idRoteiro, 	")
@@ -660,7 +697,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		
 		hql.append(getHqlWhere(filtro));
 		
-		hql.append(" group by box.codigo, box.id, rota.descricaoRota, rota.id, roteiro.descricaoRoteiro, roteiro.id ");
+		hql.append(" group by cota.id, box.codigo, box.id, rota.descricaoRota, rota.id, roteiro.descricaoRoteiro, roteiro.id ");
 	
 		hql.append(getOrdenacaoConsulta(filtro));
 		

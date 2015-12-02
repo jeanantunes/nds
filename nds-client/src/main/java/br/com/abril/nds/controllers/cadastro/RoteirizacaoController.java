@@ -25,6 +25,7 @@ import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.MapaRoteirizacaoDTO;
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
@@ -1610,12 +1611,14 @@ public class RoteirizacaoController extends BaseController {
 		
 		filtro.setOrdenacaoColuna((Util.getEnumByStringValue(FiltroConsultaRoteirizacaoDTO.OrdenacaoColunaConsulta.values(), "nomeBox")));
 		
-		List<ConsultaRoteirizacaoDTO> lista = this.roteirizacaoService.obterDetalheRoteirizacao(filtro);
-		
+		List<MapaRoteirizacaoDTO> lista = this.roteirizacaoService.obterDetalheRoteirizacao(filtro);
 		
 		if(lista == null || lista.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
+		
+		
+		
 		
 	}
 }
