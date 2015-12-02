@@ -369,7 +369,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		criteria.createAlias("enderecos", "enderecos") ;
 		criteria.createAlias("enderecos.endereco", "endereco");
 				
-		if(boxID != idBoxPrincipal) {
+		if(!boxID.equals(idBoxPrincipal)) {
 			DetachedCriteria subquery = 
 					DetachedCriteria.forClass(RotaPDV.class, "rotaPdv")
 									.createAlias("rota", "rota")
