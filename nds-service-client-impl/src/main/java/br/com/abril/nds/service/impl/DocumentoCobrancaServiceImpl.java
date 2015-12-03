@@ -305,45 +305,47 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	private void geracaoSlip(final List<byte[]> arquivos, final Image logo,
 			final String razaoSocialDistrib, final Slip slip) {
 		if (slip != null){
-		
-		    final Map<String, Object> parametersSlip = new HashMap<String, Object>();
-		    slip.setParametersSlip(parametersSlip);
-		    
-		    parametersSlip.put("NUMERO_COTA", slip.getNumeroCota());
-		    parametersSlip.put("NOME_COTA", slip.getNomeCota());
-		    parametersSlip.put("NUM_SLIP", slip.getNumSlip().toString());
-		    parametersSlip.put("CODIGO_BOX", slip.getCodigoBox());
-		    parametersSlip.put("CODIGO_ROTEIRO", slip.getDescricaoRoteiro());
-		    parametersSlip.put("CODIGO_ROTA", slip.getDescricaoRota());
-		    parametersSlip.put("DATA_CONFERENCIA", slip.getDataConferencia());
-		    parametersSlip.put("CE_JORNALEIRO", slip.getCeJornaleiro());
-		    parametersSlip.put("TOTAL_PRODUTOS", slip.getTotalProdutos());
-		    parametersSlip.put("VALOR_TOTAL_ENCA", slip.getValorTotalEncalhe() );
-		    parametersSlip.put("VALOR_PAGAMENTO_POSTERGADO", slip.getValorTotalPagar());
-		    parametersSlip.put("VALOR_PAGAMENTO_PENDENTE", slip.getPagamentoPendente());
-		    parametersSlip.put("VALOR_MULTA_MORA", slip.getValorTotalPagar());
-		    parametersSlip.put("VALOR_CREDITO_DIF", slip.getValorCreditoDif());
-		    parametersSlip.put("LOGOTIPO", logo);
-
-		    
-		    List<DebitoCreditoCota> debCre = this.slipRepository.obterComposicaoSlip(slip.getId(), true);
-		    slip.setListaComposicaoCobranca(debCre);
-		    parametersSlip.put("LISTA_COMPOSICAO_COBRANCA", debCre);
-		    
-		    debCre = this.slipRepository.obterComposicaoSlip(slip.getId(), false);
-		    slip.setListaResumoCobranca(debCre);
-		    parametersSlip.put("LISTA_RESUMO_COBRANCA", debCre);
-		    
-		    parametersSlip.put("VALOR_LIQUIDO_DEVIDO", slip.getValorLiquidoDevido());
-		    parametersSlip.put("VALOR_DEVIDO", slip.getValorTotalReparte());
-		    parametersSlip.put("VALOR_SLIP", slip.getValorSlip());
-		    parametersSlip.put("VALOR_TOTAL_SEM_DESCONTO", slip.getValorTotalSemDesconto());
-		    parametersSlip.put("VALOR_TOTAL_DESCONTO", slip.getValorTotalDesconto());
-		    parametersSlip.put("VALOR_TOTAL_PAGAR", CurrencyUtil.formatarValor(slip.getValorTotalPagar().setScale(2,java.math.RoundingMode.HALF_UP)));
-		    parametersSlip.put("RAZAO_SOCIAL_DISTRIBUIDOR", razaoSocialDistrib);
-		    
+		    popularSlip(logo, razaoSocialDistrib, slip);
 		    arquivos.add(this.gerarSlipPDF(slip));
 		}
+	}
+
+	private void popularSlip(final Image logo, final String razaoSocialDistrib, final Slip slip) {
+		final Map<String, Object> parametersSlip = new HashMap<String, Object>();
+		slip.setParametersSlip(parametersSlip);
+		
+		parametersSlip.put("NUMERO_COTA", slip.getNumeroCota());
+		parametersSlip.put("NOME_COTA", slip.getNomeCota());
+		parametersSlip.put("NUM_SLIP", slip.getNumSlip().toString());
+		parametersSlip.put("CODIGO_BOX", slip.getCodigoBox());
+		parametersSlip.put("CODIGO_ROTEIRO", slip.getDescricaoRoteiro());
+		parametersSlip.put("CODIGO_ROTA", slip.getDescricaoRota());
+		parametersSlip.put("DATA_CONFERENCIA", slip.getDataConferencia());
+		parametersSlip.put("CE_JORNALEIRO", slip.getCeJornaleiro());
+		parametersSlip.put("TOTAL_PRODUTOS", slip.getTotalProdutos());
+		parametersSlip.put("VALOR_TOTAL_ENCA", slip.getValorTotalEncalhe() );
+		parametersSlip.put("VALOR_PAGAMENTO_POSTERGADO", slip.getValorTotalPagar());
+		parametersSlip.put("VALOR_PAGAMENTO_PENDENTE", slip.getPagamentoPendente());
+		parametersSlip.put("VALOR_MULTA_MORA", slip.getValorTotalPagar());
+		parametersSlip.put("VALOR_CREDITO_DIF", slip.getValorCreditoDif());
+		parametersSlip.put("LOGOTIPO", logo);
+
+		
+		List<DebitoCreditoCota> debCre = this.slipRepository.obterComposicaoSlip(slip.getId(), true);
+		slip.setListaComposicaoCobranca(debCre);
+		parametersSlip.put("LISTA_COMPOSICAO_COBRANCA", debCre);
+		
+		debCre = this.slipRepository.obterComposicaoSlip(slip.getId(), false);
+		slip.setListaResumoCobranca(debCre);
+		parametersSlip.put("LISTA_RESUMO_COBRANCA", debCre);
+		
+		parametersSlip.put("VALOR_LIQUIDO_DEVIDO", slip.getValorLiquidoDevido());
+		parametersSlip.put("VALOR_DEVIDO", slip.getValorTotalReparte());
+		parametersSlip.put("VALOR_SLIP", slip.getValorSlip());
+		parametersSlip.put("VALOR_TOTAL_SEM_DESCONTO", slip.getValorTotalSemDesconto());
+		parametersSlip.put("VALOR_TOTAL_DESCONTO", slip.getValorTotalDesconto());
+		parametersSlip.put("VALOR_TOTAL_PAGAR", CurrencyUtil.formatarValor(slip.getValorTotalPagar().setScale(2,java.math.RoundingMode.HALF_UP)));
+		parametersSlip.put("RAZAO_SOCIAL_DISTRIBUIDOR", razaoSocialDistrib);
 	}
     
 	                                        /**
@@ -1486,14 +1488,33 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         
         final Slip slipDTO = this.gerarSlipDTOCobranca(idControleConferenciaEncalheCota, incluirNumeroSlip);
         
-        switch (tpArquivo) {
+        if(tpArquivo == TipoArquivo.PDF){
+        	return gerarSlipPDF(slipDTO);
+        }else{
+        	return null;
+        }
         
-        case PDF:
-            
-            return gerarSlipPDF(slipDTO);
-        default:
-            
-            return null;
+    }
+    
+    @Override
+	@Transactional
+    public void gerarSlipCobranca(List<byte[]> arquivos, List<Integer> listaCotas, List<Date> datas, boolean incluirNumeroSlip, TipoArquivo tpArquivo) {
+        
+        if(tpArquivo == TipoArquivo.PDF){
+        	final Image logo = JasperUtil.getImagemRelatorio(getLogoDistribuidor());
+        	final String razaoSocialDistrib = this.distribuidorService.obterRazaoSocialDistribuidor();
+        	
+        		List<Slip> slips = this.slipRepository.obterSlipsPorCotasData(listaCotas, datas.get(0));
+				
+        		for (Slip slip : slips) {
+        			this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
+        		}
+        		
+        		
+//        		for (Date data : datas) {
+//        		}
+        	
+        	
         }
     }
     

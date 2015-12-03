@@ -189,6 +189,93 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		return namedParameterJdbcTemplate.queryForList(sql.toString(), parameters, Long.class);
 		
 	}
+	
+	@Override
+	public List<Integer> obterListaNumCotaConferenciaEncalheCota(FiltroConsultaEncalheDTO filtro) {
+		
+		StringBuffer sql = new StringBuffer();
+
+		sql.append("	select	");
+
+		sql.append("	DISTINCT(COTA.NUMERO_COTA)	as numCota ");
+		
+		sql.append("	from	");
+
+		sql.append("	CHAMADA_ENCALHE  ");
+		
+		sql.append("	inner join CHAMADA_ENCALHE_COTA on ");
+		sql.append("	( CHAMADA_ENCALHE.ID = CHAMADA_ENCALHE_COTA.CHAMADA_ENCALHE_ID ) ");
+ 		
+		sql.append("	inner join PRODUTO_EDICAO on ");
+		sql.append("	( PRODUTO_EDICAO.ID = CHAMADA_ENCALHE.PRODUTO_EDICAO_ID ) ");
+		
+		sql.append("	inner join PRODUTO on ");
+		sql.append("	( PRODUTO_EDICAO.PRODUTO_ID = PRODUTO.ID ) ");
+		
+		sql.append("	inner join PRODUTO_FORNECEDOR on ");
+		sql.append("	( PRODUTO_FORNECEDOR.PRODUTO_ID = PRODUTO.ID ) ");
+		
+		sql.append("	inner join FORNECEDOR on ");
+		sql.append("	( PRODUTO_FORNECEDOR.FORNECEDORES_ID = FORNECEDOR.ID ) ");
+		
+		sql.append("	inner join PESSOA on                   	");
+		sql.append("	( PESSOA.ID = FORNECEDOR.JURIDICA_ID )	");
+		
+		sql.append("	inner join CONTROLE_CONFERENCIA_ENCALHE_COTA CONTROLE_CONF_ENC_COTA on ");
+		sql.append("	( CONTROLE_CONF_ENC_COTA.DATA_OPERACAO = CHAMADA_ENCALHE.DATA_RECOLHIMENTO 	");
+		sql.append("	AND  CONTROLE_CONF_ENC_COTA.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID ) ");
+		
+		sql.append("	inner join COTA on ");
+		sql.append("	( COTA.ID = CHAMADA_ENCALHE_COTA.COTA_ID) ");
+		
+
+		sql.append("	inner join PDV on (PDV.COTA_ID = COTA.ID and PDV.PONTO_PRINCIPAL = true) ");
+		
+		sql.append("	inner join ROTA_PDV on (ROTA_PDV.PDV_ID = PDV.ID) ");
+		
+		sql.append("	inner join ROTA on (ROTA.ID = ROTA_PDV.ROTA_ID) ");
+		
+		sql.append("	inner join ROTEIRO on (ROTEIRO.ID = ROTA.ROTEIRO_ID) ");
+		
+		sql.append("	inner join ROTEIRIZACAO on (ROTEIRIZACAO.ID = ROTEIRO.ROTEIRIZACAO_ID) ");
+		
+		sql.append("	inner join BOX on (BOX.ID = ROTEIRIZACAO.BOX_ID) ");
+		
+
+		sql.append("	where	");
+		
+		sql.append("	(CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal) ");
+		
+		sql.append("	AND CHAMADA_ENCALHE_COTA.POSTERGADO = :isPostergado ");
+		
+		if(filtro.getIdCota()!=null) {
+			sql.append(" and CHAMADA_ENCALHE_COTA.COTA_ID = :idCota  ");
+		}
+		
+		if(filtro.getIdFornecedor() != null) {
+			sql.append(" and FORNECEDOR.ID =  :idFornecedor ");
+		}
+
+		sql.append("	ORDER BY BOX.CODIGO,ROTEIRO.ORDEM , ROTA.ORDEM, ROTA_PDV.ORDEM  ");
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+
+		if(filtro.getIdCota()!=null) {
+			parameters.put("idCota", filtro.getIdCota());
+		}
+
+		if(filtro.getIdFornecedor() != null) {
+			parameters.put("idFornecedor", filtro.getIdFornecedor());
+		}
+		
+		parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
+		parameters.put("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
+		parameters.put("isPostergado", false);
+		
+		return namedParameterJdbcTemplate.queryForList(sql.toString(), parameters, Integer.class);
+		
+	}
 
 	
 	@SuppressWarnings("unchecked")
