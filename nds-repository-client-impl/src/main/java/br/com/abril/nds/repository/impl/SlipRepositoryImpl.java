@@ -51,18 +51,20 @@ public class SlipRepositoryImpl extends AbstractRepositoryModel<Slip, Long> impl
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select s from Roteirizacao r ") 
-		.append(" join r.box b ")
-		.append(" join r.roteiros roteiro ")
-		.append(" join roteiro.rotas rota ")
-		.append(" join rota.rotaPDVs rotaPdv ")
-		.append(" join rotaPdv.pdv pdv ")
-		.append(" join pdv.cota cota, ")
-		.append(" Slip s ")
-		.append(" where s.numeroCota not in(:cotas) ")
-		.append(" and s.numeroCota = cota.numeroCota ")
-	    .append(" and date(s.dataConferencia) = :dataConferencia ")
-		.append(" order by b.codigo, roteiro.ordem, rota.ordem, rotaPdv.ordem, cota.numeroCota ");
+		hql.append("select s from Slip s where s.numeroCota in (:cotas) and date(s.dataConferencia) = :dataConferencia");
+		
+//		hql.append(" select s from Roteirizacao r ") 
+//		.append(" join r.box b ")
+//		.append(" join r.roteiros roteiro ")
+//		.append(" join roteiro.rotas rota ")
+//		.append(" join rota.rotaPDVs rotaPdv ")
+//		.append(" join rotaPdv.pdv pdv ")
+//		.append(" join pdv.cota cota, ")
+//		.append(" Slip s ")
+//		.append(" where s.numeroCota not in(:cotas) ")
+//		.append(" and s.numeroCota = cota.numeroCota ")
+//	    .append(" and date(s.dataConferencia) = :dataConferencia ")
+//		.append(" order by b.codigo, roteiro.ordem, rota.ordem, rotaPdv.ordem, cota.numeroCota ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 	        
