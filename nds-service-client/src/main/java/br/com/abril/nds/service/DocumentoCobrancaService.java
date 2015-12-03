@@ -117,5 +117,7 @@ public interface DocumentoCobrancaService {
      * @return List<byte[]>
      */
 	List<byte[]> gerarListaSlipCobranca(List<Slip> listaSlipDTO, TipoArquivo tpArquivo);
+
+	void gerarSlipCobranca(List<byte[]> arquivos, List<Integer> listaCotas, List<Date> datas, boolean incluirNumeroSlip, TipoArquivo tpArquivo);
 	
 }

@@ -1,7 +1,11 @@
 package br.com.abril.nds.repository;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
@@ -84,4 +88,6 @@ public interface ControleConferenciaEncalheCotaRepository  extends Repository<Co
      * @return ControleConferenciaEncalheCota
      */
 	ControleConferenciaEncalheCota obterControleConferenciaEncalheCotaPorIdCobranca(Long idCobranca);
+
+	List<Integer> obterListaNumCotaConferenciaEncalheCota(FiltroConsultaEncalheDTO filtro);
 }
