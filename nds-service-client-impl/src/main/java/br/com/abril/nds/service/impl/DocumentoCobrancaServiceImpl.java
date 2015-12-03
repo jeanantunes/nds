@@ -18,11 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.apache.commons.collections.comparators.NullComparator;
@@ -72,7 +67,6 @@ import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
-import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.SlipRepository;
 import br.com.abril.nds.service.BoletoService;
@@ -82,9 +76,7 @@ import br.com.abril.nds.service.DebitoCreditoCotaService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
-import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
-import br.com.abril.nds.service.RoteiroService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -97,6 +89,10 @@ import br.com.abril.nds.util.ImpressaoMatricialUtil;
 import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.StringUtil;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
 public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
@@ -106,9 +102,6 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     
     @Autowired
     private CobrancaRepository cobrancaRepository;
-    
-    @Autowired
-    private RotaRepository rotaRepository;
     
     @Autowired
     private BoletoService boletoService;
@@ -142,12 +135,6 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     
     @Autowired
     private UsuarioService usuarioService;
-    
-    @Autowired
-    private RotaService rotaService;
-    
-    @Autowired
-    private RoteiroService roteiroService;
     
     @Autowired
     private RoteirizacaoRepository roteirizacaoRepository;
@@ -1504,17 +1491,11 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         	final Image logo = JasperUtil.getImagemRelatorio(getLogoDistribuidor());
         	final String razaoSocialDistrib = this.distribuidorService.obterRazaoSocialDistribuidor();
         	
-        		List<Slip> slips = this.slipRepository.obterSlipsPorCotasData(listaCotas, datas.get(0));
+    		List<Slip> slips = this.slipRepository.obterSlipsPorCotasData(listaCotas, datas.get(0));
 				
-        		for (Slip slip : slips) {
-        			this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
-        		}
-        		
-        		
-//        		for (Date data : datas) {
-//        		}
-        	
-        	
+    		for (Slip slip : slips) {
+    			this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
+    		}
         }
     }
     
