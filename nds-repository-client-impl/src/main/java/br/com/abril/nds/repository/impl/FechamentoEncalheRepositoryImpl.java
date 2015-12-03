@@ -1863,7 +1863,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     private boolean isChamadaEncalheFechada(Date dataEncalhe ) {
     
     	 final StringBuilder sql = new StringBuilder("select count(*) ");
-         sql.append(" from fechamento_encalhe fe ")
+         sql.append(" from controle_fechamento_encalhe fe ")
          .append(" where data_encalhe = :dataEncalhe ");
          
          final Query query = this.getSession().createSQLQuery(sql.toString());
