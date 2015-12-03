@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
+import br.com.abril.nds.dto.MapaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteiroRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
@@ -103,5 +104,6 @@ public interface RoteirizacaoRepository extends Repository<Roteirizacao, Long> {
 
 	List<ConsultaRoteirizacaoDTO> obterDetalheRoteiricao(FiltroConsultaRoteirizacaoDTO filtro);
 	
+	 List<MapaRoteirizacaoDTO> sumarizadoRelPorCota(FiltroConsultaRoteirizacaoDTO filtro);
 }
 

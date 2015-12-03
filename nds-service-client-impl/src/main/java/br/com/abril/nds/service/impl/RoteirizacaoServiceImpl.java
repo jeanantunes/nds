@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.MapaRoteirizacaoDTO;
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO.OrigemEndereco;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
@@ -1623,9 +1624,20 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 
 	@Override
 	@Transactional
-	public List<ConsultaRoteirizacaoDTO> obterDetalheRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro) {
+	public List<MapaRoteirizacaoDTO> obterDetalheRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro) {
 		
-		return roteirizacaoRepository.obterDetalheRoteiricao(filtro);
+		List<MapaRoteirizacaoDTO> roteirizacoes = roteirizacaoRepository.sumarizadoRelPorCota(filtro);
+		
+		for (MapaRoteirizacaoDTO mapa : roteirizacoes) {
+			filtro.setIdBox(mapa.getIdBox());
+			filtro.setIdRota(mapa.getIdRota());
+			filtro.setIdRoteirizacao(mapa.getIdRoteirizacao());
+			
+			mapa.setItens(roteirizacaoRepository.obterDetalheRoteiricao(filtro));
+		}
+		
+		
+		return roteirizacoes;
 	}
 
 }

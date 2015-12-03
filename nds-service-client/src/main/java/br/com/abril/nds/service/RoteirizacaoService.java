@@ -8,6 +8,7 @@ import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.MapaRoteirizacaoDTO;
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
@@ -330,5 +331,5 @@ public interface RoteirizacaoService {
 	List<ItemDTO<Long, String>> getComboRoteiroPorBox(Integer codigoBoxDe,
 			Integer codigoBoxAte);
 
-	List<ConsultaRoteirizacaoDTO> obterDetalheRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro);
+	List<MapaRoteirizacaoDTO> obterDetalheRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro);
 }

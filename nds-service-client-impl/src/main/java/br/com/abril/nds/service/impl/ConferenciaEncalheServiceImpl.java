@@ -825,9 +825,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		final Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		ChamadaEncalheCota chamadaEncalheCota = null;
 		
+		Date dataEncalhe = null;
+		
 		if(produtoEdicao.isParcial()) {
 			
-			Date dataEncalhe =
+			 dataEncalhe =
 					chamadaEncalheCotaRepository.obterDataChamadaEncalheCotaProximaDataOperacao(cota, 
 																		produtoEdicao.getId(), 
 																		postergado,
@@ -862,16 +864,24 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		} 
 		
-		this.validarLancamentoFechado(produtoEdicao, chamadaEncalheCota);
+		this.validarLancamentoFechado(produtoEdicao, chamadaEncalheCota, dataEncalhe);
 		
 		return chamadaEncalheCota;
 	}
 
-	private void validarLancamentoFechado(final ProdutoEdicao produtoEdicao, final ChamadaEncalheCota chamadaEncalheCota) {
+	private void validarLancamentoFechado(final ProdutoEdicao produtoEdicao, final ChamadaEncalheCota chamadaEncalheCota, Date dataEncalhe) {
         
         Iterator<Lancamento> it = chamadaEncalheCota.getChamadaEncalhe().getLancamentos().iterator();
         
-        Lancamento lancamento = it.next();
+        Lancamento lancamento = null;
+        
+        // pegar o lancamento diferente de FECHADO.. se tiver..
+        while ( it.hasNext()) {
+        	lancamento = it.next();
+        	if (lancamento.getDataRecolhimentoDistribuidor().equals(dataEncalhe)) {
+        		break;
+        	}
+        }
         
         if (lancamento.getStatus().equals(StatusLancamento.FECHADO)) {
             
