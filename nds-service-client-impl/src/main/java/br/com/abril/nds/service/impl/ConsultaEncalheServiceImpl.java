@@ -184,24 +184,12 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		byte[] retorno = null; 
 
-		List<Long> listaConferenciaEncalheCotas = controleConferenciaEncalheCotaRepository.obterListaIdControleConferenciaEncalheCota(filtro);
-		
 		List<Integer> listaCotas = controleConferenciaEncalheCotaRepository.obterListaNumCotaConferenciaEncalheCota(filtro);
 		
 		if (listaCotas != null) {
 
 			List<byte[]> arquivos = new ArrayList<byte[]>();
 			
-//			byte[] arquivo;
-			
-//			for (Long idControleConferenciaEncalheCota: listaConferenciaEncalheCotas){
-				
-//				arquivo = this.documentoCobrancaService.gerarSlipCobranca(idControleConferenciaEncalheCota, false, TipoArquivo.PDF);
-//				
-//				arquivos.add(arquivo);
-//			}
-				
-				
 			List<Date> datas = new ArrayList<>();
 			
 			datas.add(filtro.getDataRecolhimentoInicial());
