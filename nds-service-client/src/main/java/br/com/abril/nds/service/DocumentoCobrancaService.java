@@ -118,6 +118,6 @@ public interface DocumentoCobrancaService {
      */
 	List<byte[]> gerarListaSlipCobranca(List<Slip> listaSlipDTO, TipoArquivo tpArquivo);
 
-	void gerarSlipCobranca(List<byte[]> arquivos, List<Integer> listaCotas, List<Date> datas, boolean incluirNumeroSlip, TipoArquivo tpArquivo);
+	void gerarSlipCobranca(List<byte[]> arquivos, List<Integer> listaCotas, Date dataDe, Date dataAte, boolean incluirNumeroSlip, TipoArquivo tpArquivo);
 	
 }

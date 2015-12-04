@@ -275,7 +275,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
             }
             
             
-            List<Slip> slips = this.slipRepository.obterSlipsPorCotasData(listaCotas, data);
+            List<Slip> slips = this.slipRepository.obterSlipsPorCotasData(listaCotas, data, null);
             
             for (Slip slip : slips) {
 				this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
@@ -1485,13 +1485,13 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     
     @Override
 	@Transactional
-    public void gerarSlipCobranca(List<byte[]> arquivos, List<Integer> listaCotas, List<Date> datas, boolean incluirNumeroSlip, TipoArquivo tpArquivo) {
+    public void gerarSlipCobranca(List<byte[]> arquivos, List<Integer> listaCotas, Date dataDe, Date dataAte, boolean incluirNumeroSlip, TipoArquivo tpArquivo) {
         
         if(tpArquivo == TipoArquivo.PDF){
         	final Image logo = JasperUtil.getImagemRelatorio(getLogoDistribuidor());
         	final String razaoSocialDistrib = this.distribuidorService.obterRazaoSocialDistribuidor();
         	
-    		List<Slip> slips = this.slipRepository.obterSlipsPorCotasData(listaCotas, datas.get(0));
+        	List<Slip> slips = this.slipRepository.obterSlipsPorCotasData(listaCotas, dataDe, dataAte);
 				
     		for (Slip slip : slips) {
     			this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
