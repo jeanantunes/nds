@@ -50,7 +50,7 @@ public class SlipRepositoryImpl extends AbstractRepositoryModel<Slip, Long> impl
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Slip> obterSlipsPorCotasData(List<Integer> listaCotas, Date data) {
+	public List<Slip> obterSlipsPorCotasData(List<Integer> listaCotas, Date dataDe, Date dataAte) {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -95,14 +95,24 @@ public class SlipRepositoryImpl extends AbstractRepositoryModel<Slip, Long> impl
 		sql.append("     ON c.BOX_ID = box.ID ");
 		sql.append(" where  ");
 		sql.append("   s.NUMERO_COTA in (:cotas) and  ");
-		sql.append("   date(s.DATA_CONFERENCIA) = :dataConferencia ");
+		
+		if(dataAte != null){
+			sql.append("   date(s.DATA_CONFERENCIA) BETWEEN :dataConferenciaDe AND :dataConferenciaAte ");
+		}else{
+			sql.append("   date(s.DATA_CONFERENCIA) = :dataConferenciaDe ");
+		}
+		
 		sql.append("   group by s.ID ");
 		sql.append("   order by BOX.CODIGO, ROTEIRO.ORDEM, ROTA.ORDEM, rPdv.ORDEM ");
 		
 		Query query = this.getSession().createSQLQuery(sql.toString());
 	        
         query.setParameterList("cotas", listaCotas);
-        query.setParameter("dataConferencia", data);
+        query.setParameter("dataConferenciaDe", dataDe);
+        
+        if(dataAte != null){
+        	query.setParameter("dataConferenciaAte", dataAte);
+        }
         
         ((SQLQuery) query).addScalar("id", StandardBasicTypes.LONG);
         ((SQLQuery) query).addScalar("ceJornaleiro", StandardBasicTypes.LONG);

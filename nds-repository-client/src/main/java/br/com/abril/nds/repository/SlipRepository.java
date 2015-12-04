@@ -13,5 +13,5 @@ public interface SlipRepository extends Repository<Slip, Long>{
 
     List<DebitoCreditoCota> obterComposicaoSlip(Long idSlip, boolean composicao);
 
-	List<Slip> obterSlipsPorCotasData(List<Integer> listaCotas, Date data);
+	List<Slip> obterSlipsPorCotasData(List<Integer> listaCotas, Date dataDe, Date dataAte);
 }

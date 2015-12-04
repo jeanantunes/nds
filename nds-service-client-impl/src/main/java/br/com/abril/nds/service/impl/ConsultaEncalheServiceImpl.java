@@ -194,7 +194,7 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 			
 			datas.add(filtro.getDataRecolhimentoInicial());
 			
-			this.documentoCobrancaService.gerarSlipCobranca(arquivos, listaCotas, datas, false, TipoArquivo.PDF);
+			this.documentoCobrancaService.gerarSlipCobranca(arquivos, listaCotas, filtro.getDataRecolhimentoInicial(), filtro.getDataRecolhimentoFinal(), false, TipoArquivo.PDF);
 				
 
 			if (arquivos.size() == 1) {
