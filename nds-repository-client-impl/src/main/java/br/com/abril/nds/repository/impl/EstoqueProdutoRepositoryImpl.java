@@ -158,7 +158,7 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		StringBuilder hql = new StringBuilder("select (estoqueProduto.id) ");
 		this.getQueryBuscarEstoqueProdutoRecolhimento(hql);
 		
-		hql.append(" group by produtoEdicao.id ");
+		hql.append(" group by chamadaEncalhe.produtoEdicao.id ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
@@ -205,7 +205,7 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		
 		PaginacaoVO paginacaoVO = filtro.getPaginacaoVO();
 		
-		hql.append(" group by produtoEdicao.id ");
+		hql.append(" group by chamadaEncalhe.produtoEdicao.id ");
 		
 		if (paginacaoVO != null){
 			
