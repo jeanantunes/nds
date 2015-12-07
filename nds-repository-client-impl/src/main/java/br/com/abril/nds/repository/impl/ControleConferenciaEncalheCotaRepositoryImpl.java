@@ -255,8 +255,12 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		if(filtro.getIdFornecedor() != null) {
 			sql.append(" and FORNECEDOR.ID =  :idFornecedor ");
 		}
+		
+		if(filtro.getIdBox() != null) {
+			sql.append(" and BOX.CODIGO =  :idBox ");
+		}
 
-		sql.append("	ORDER BY BOX.CODIGO,ROTEIRO.ORDEM , ROTA.ORDEM, ROTA_PDV.ORDEM  ");
+		sql.append("	ORDER BY BOX.CODIGO, ROTEIRO.ORDEM, ROTA.ORDEM, ROTA_PDV.ORDEM  ");
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
@@ -267,6 +271,10 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 
 		if(filtro.getIdFornecedor() != null) {
 			parameters.put("idFornecedor", filtro.getIdFornecedor());
+		}
+		
+		if(filtro.getIdBox() != null) {
+			parameters.put("idBox", filtro.getIdBox());
 		}
 		
 		parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
