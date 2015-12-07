@@ -275,9 +275,14 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
             }
             
             
-            List<Slip> slips = this.slipRepository.obterSlipsPorCotasData(listaCotas, data, null);
+            Map<Long, Slip> mapSlip = this.slipRepository.obterSlipsPorCotasData(listaCotas, data, null);
             
-            for (Slip slip : slips) {
+            List<Long> slips = this.slipRepository.obterIdsSlipsPorCotasDataOrdenados(listaCotas, data, null);
+            
+            for (Long idSlip : slips) {
+            	
+            	Slip slip = mapSlip.get(idSlip);
+            	
 				this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
 			}
             
@@ -1491,9 +1496,14 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         	final Image logo = JasperUtil.getImagemRelatorio(getLogoDistribuidor());
         	final String razaoSocialDistrib = this.distribuidorService.obterRazaoSocialDistribuidor();
         	
-        	List<Slip> slips = this.slipRepository.obterSlipsPorCotasData(listaCotas, dataDe, dataAte);
+        	Map<Long, Slip> mapSlip = this.slipRepository.obterSlipsPorCotasData(listaCotas, dataDe, dataAte);
+        	
+        	List<Long> slips = this.slipRepository.obterIdsSlipsPorCotasDataOrdenados(listaCotas, dataDe, dataAte);
 				
-    		for (Slip slip : slips) {
+    		for (Long idSlip : slips){
+    			
+    			Slip slip = mapSlip.get(idSlip);
+    			
     			this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
     		}
         }
