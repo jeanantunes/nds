@@ -1,11 +1,12 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
@@ -50,34 +51,48 @@ public class SlipRepositoryImpl extends AbstractRepositoryModel<Slip, Long> impl
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Slip> obterSlipsPorCotasData(List<Integer> listaCotas, Date dataDe, Date dataAte) {
+	public Map<Long, Slip> obterSlipsPorCotasData(List<Integer> listaCotas, Date dataDe, Date dataAte) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select s from Slip s where s.numeroCota in (:cotas)");
+		
+		if(dataAte != null){
+			hql.append("  and date(s.dataConferencia) BETWEEN :dataConferenciaDe AND :dataConferenciaAte ");
+		}else{
+			hql.append("  and date(s.dataConferencia) = :dataConferenciaDe ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+	        
+        query.setParameterList("cotas", listaCotas);
+        query.setParameter("dataConferenciaDe", dataDe);
+        
+        if(dataAte != null){
+        	query.setParameter("dataConferenciaAte", dataAte);
+        }
+        
+       List<Slip> listaSlips = query.list();
+       
+       Map<Long, Slip> mapComSlips = new HashMap<>();
+       
+       for (Slip slip : listaSlips) {
+    	   mapComSlips.put(slip.getId(), slip);
+       }
+       
+       return mapComSlips;
+
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Long> obterIdsSlipsPorCotasDataOrdenados(List<Integer> listaCotas, Date dataDe, Date dataAte) {
 		
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" select  ");
 		
-		sql.append("  s.id as id,  ");
-		sql.append("  s.ce_jornaleiro ceJornaleiro,  ");
-		sql.append("  s.codigo_box codigoBox,  ");
-		sql.append("  s.data_conferencia dataConferencia,  ");
-		sql.append("  s.descricao_rota descricaoRota,  ");
-		sql.append("  s.descricao_roteiro descricaoRoteiro,  ");
-		sql.append("  s.nome_cota nomeCota,  ");
-		sql.append("  s.num_slip numSlip,  ");
-		sql.append("  s.numero_cota numeroCota,  ");
-		sql.append("  s.pagamento_pendente pagamentoPendente,  ");
-		sql.append("  s.total_produto_dia totalProdutoDia,  ");
-		sql.append("  s.total_produtos totalProdutos,  ");
-		sql.append("  s.valor_credito_dif valorCreditoDif,  ");
-		sql.append("  s.valor_devido valorDevido,  ");
-		sql.append("  s.valor_encalhe_dia valorEncalheDia,  ");
-		sql.append("  s.valor_liquido_devido valorLiquidoDevido,  ");
-		sql.append("  s.valor_slip valorSlip,  ");
-		sql.append("  s.valor_total_desconto valorTotalDesconto,  ");
-		sql.append("  s.valor_total_encalhe valorTotalEncalhe,  ");
-		sql.append("  s.valor_total_pagar valorTotalPagar,  ");
-		sql.append("  s.valor_total_reparte valorTotalReparte,  ");
-		sql.append("  s.valor_total_sem_desconto valorTotalSemDesconto ");
+		sql.append("  s.id as id  ");
 		
 		sql.append(" from Slip s  ");
 		
@@ -115,30 +130,7 @@ public class SlipRepositoryImpl extends AbstractRepositoryModel<Slip, Long> impl
         }
         
         ((SQLQuery) query).addScalar("id", StandardBasicTypes.LONG);
-        ((SQLQuery) query).addScalar("ceJornaleiro", StandardBasicTypes.LONG);
-        ((SQLQuery) query).addScalar("codigoBox", StandardBasicTypes.STRING);
-        ((SQLQuery) query).addScalar("dataConferencia", StandardBasicTypes.DATE);
-        ((SQLQuery) query).addScalar("descricaoRota", StandardBasicTypes.STRING);
-        ((SQLQuery) query).addScalar("descricaoRoteiro", StandardBasicTypes.STRING);
-        ((SQLQuery) query).addScalar("nomeCota", StandardBasicTypes.STRING);
-        ((SQLQuery) query).addScalar("numSlip", StandardBasicTypes.LONG);
-        ((SQLQuery) query).addScalar("numeroCota", StandardBasicTypes.INTEGER);
-        ((SQLQuery) query).addScalar("pagamentoPendente", StandardBasicTypes.BIG_DECIMAL);
-        ((SQLQuery) query).addScalar("totalProdutoDia", StandardBasicTypes.BIG_INTEGER);
-        ((SQLQuery) query).addScalar("totalProdutos", StandardBasicTypes.BIG_INTEGER);
-        ((SQLQuery) query).addScalar("valorCreditoDif", StandardBasicTypes.BIG_DECIMAL);
-        ((SQLQuery) query).addScalar("valorDevido", StandardBasicTypes.BIG_DECIMAL);
-        ((SQLQuery) query).addScalar("valorEncalheDia", StandardBasicTypes.BIG_DECIMAL);
-        ((SQLQuery) query).addScalar("valorLiquidoDevido", StandardBasicTypes.BIG_DECIMAL);
-        ((SQLQuery) query).addScalar("valorSlip", StandardBasicTypes.BIG_DECIMAL);
-        ((SQLQuery) query).addScalar("valorTotalDesconto", StandardBasicTypes.BIG_DECIMAL);
-        ((SQLQuery) query).addScalar("valorTotalEncalhe", StandardBasicTypes.BIG_DECIMAL);
-        ((SQLQuery) query).addScalar("valorTotalPagar", StandardBasicTypes.BIG_DECIMAL);
-        ((SQLQuery) query).addScalar("valorTotalReparte", StandardBasicTypes.BIG_DECIMAL);
-        ((SQLQuery) query).addScalar("valorTotalSemDesconto", StandardBasicTypes.BIG_DECIMAL);
 		
-        query.setResultTransformer(new AliasToBeanResultTransformer(Slip.class));
-        
-        return query.list();
+        return (List<Long>)query.list();
 	}
 }
