@@ -101,12 +101,14 @@ var ConsultaEncalhe = $.extend(true, {
 			var dataRecolhimentoFinal 	= $("#dataRecolhimentoFinal", ConsultaEncalhe.workspace).val();
 			var idFornecedor			= $("#idFornecedor", ConsultaEncalhe.workspace).val();
 			var numeroCota				= $("#consulta-encalhe-cota", ConsultaEncalhe.workspace).val();
+			var boxId	  				= $("#consulta-encalhe-box", ConsultaEncalhe.workspace).val();
 			
 			var link = contextPath + '/devolucao/consultaEncalhe/gerarSlip' +
 									'?dataRecolhimentoInicial=' + dataRecolhimentoInicial +
 									'&dataRecolhimentoFinal=' + dataRecolhimentoFinal +
 									'&idFornecedor=' + idFornecedor +
-									'&numeroCota=' + numeroCota;
+									'&numeroCota=' + numeroCota +
+									'&idBox=' + boxId;
 
 			$("#download-iframe", ConsultaEncalhe.workspace).attr('src', link);
 			
