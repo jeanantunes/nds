@@ -150,13 +150,13 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		    return new ArrayList<>();
 		}
 		
-		for(int i = 0; i < listaChamadaEncalhe.size(); i++) {
-			
-			if(listaChamadaEncalhe.get(i).getQtdeExemplares() <= 0) {
-				
-				listaChamadaEncalhe.remove(i);
-			}
-		}
+//		for(int i = 0; i < listaChamadaEncalhe.size(); i++) {
+//			
+//			if(listaChamadaEncalhe.get(i).getQtdeExemplares() <= 0) {
+//				
+//				listaChamadaEncalhe.remove(i);
+//			}
+//		}
 		
 		return listaChamadaEncalhe;
 		
