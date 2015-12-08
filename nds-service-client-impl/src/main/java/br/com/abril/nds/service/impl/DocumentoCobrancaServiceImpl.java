@@ -274,16 +274,14 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
                 }
             }
             
+            Map<Integer, Slip> mapSlip = this.slipRepository.obterSlipsPorCotasData(listaCotas, data, null);
             
-            Map<Long, Slip> mapSlip = this.slipRepository.obterSlipsPorCotasData(listaCotas, data, null);
-            
-            List<Long> slips = this.slipRepository.obterIdsSlipsPorCotasDataOrdenados(listaCotas, data, null);
-            
-            for (Long idSlip : slips) {
+            for (Integer cotaSlip : listaCotas) {
+            	Slip slip = mapSlip.get(cotaSlip);
             	
-            	Slip slip = mapSlip.get(idSlip);
-            	
-				this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
+            	if(slip != null){
+            		this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
+            	}
 			}
             
         } catch (Exception e) {
@@ -315,7 +313,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		parametersSlip.put("DATA_CONFERENCIA", slip.getDataConferencia());
 		parametersSlip.put("CE_JORNALEIRO", slip.getCeJornaleiro());
 		parametersSlip.put("TOTAL_PRODUTOS", slip.getTotalProdutos());
-		parametersSlip.put("VALOR_TOTAL_ENCA", slip.getValorTotalEncalhe() );
+		parametersSlip.put("VALOR_TOTAL_ENCA", slip.getValorTotalEncalhe());
 		parametersSlip.put("VALOR_PAGAMENTO_POSTERGADO", slip.getValorTotalPagar());
 		parametersSlip.put("VALOR_PAGAMENTO_PENDENTE", slip.getPagamentoPendente());
 		parametersSlip.put("VALOR_MULTA_MORA", slip.getValorTotalPagar());
@@ -327,9 +325,12 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		slip.setListaComposicaoCobranca(debCre);
 		parametersSlip.put("LISTA_COMPOSICAO_COBRANCA", debCre);
 		
-		debCre = this.slipRepository.obterComposicaoSlip(slip.getId(), false);
-		slip.setListaResumoCobranca(debCre);
-		parametersSlip.put("LISTA_RESUMO_COBRANCA", debCre);
+		List<DebitoCreditoCota> debCreResumo = this.slipRepository.obterComposicaoSlip(slip.getId(), false);
+		
+		popularLegendaTotalAPagar(slip, debCre, debCreResumo);
+		
+		slip.setListaResumoCobranca(debCreResumo);
+		parametersSlip.put("LISTA_RESUMO_COBRANCA", debCreResumo);
 		
 		parametersSlip.put("VALOR_LIQUIDO_DEVIDO", slip.getValorLiquidoDevido());
 		parametersSlip.put("VALOR_DEVIDO", slip.getValorTotalReparte());
@@ -338,6 +339,61 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		parametersSlip.put("VALOR_TOTAL_DESCONTO", slip.getValorTotalDesconto());
 		parametersSlip.put("VALOR_TOTAL_PAGAR", CurrencyUtil.formatarValor(slip.getValorTotalPagar().setScale(2,java.math.RoundingMode.HALF_UP)));
 		parametersSlip.put("RAZAO_SOCIAL_DISTRIBUIDOR", razaoSocialDistrib);
+	}
+
+	private void popularLegendaTotalAPagar(final Slip slip, List<DebitoCreditoCota> debCre,
+			List<DebitoCreditoCota> debCreResumo) {
+		for (DebitoCreditoCota resumo : debCreResumo) {
+			
+			if(resumo.getTipoLancamento() == null){
+
+				BigDecimal sumCredito = BigDecimal.ZERO;
+				BigDecimal sumDebito = BigDecimal.ZERO;
+				
+				boolean isSemComposicao = false; 
+				
+				for (DebitoCreditoCota debitoCreditoCota : debCre){
+					
+					if(debitoCreditoCota.getTipoLancamento() == null){
+						isSemComposicao = true;
+					}else{
+						isSemComposicao = false;
+
+						if(debitoCreditoCota.getTipoLancamento() == OperacaoFinaceira.CREDITO){
+							sumCredito = BigDecimalUtil.soma(sumCredito, debitoCreditoCota.getValor()!=null ? debitoCreditoCota.getValor() : BigDecimal.ZERO); 
+						}else{
+							if(debitoCreditoCota.getTipoLancamento() == OperacaoFinaceira.DEBITO){
+								sumDebito = BigDecimalUtil.soma(sumDebito, debitoCreditoCota.getValor()!=null ? debitoCreditoCota.getValor() : BigDecimal.ZERO);	
+							}
+						}
+					}
+				}
+				
+				if(isSemComposicao){
+					if(slip.getValorTotalEncalhe().compareTo(slip.getValorLiquidoDevido())>0){
+						resumo.setTipoLancamento(OperacaoFinaceira.CREDITO);
+					}else{
+						resumo.setTipoLancamento(OperacaoFinaceira.DEBITO);
+					}
+				}else{
+					
+					BigDecimal sumSaldo = BigDecimal.ZERO;
+					
+					sumSaldo = sumSaldo.add((slip.getValorTotalEncalhe().subtract(slip.getValorLiquidoDevido())));
+					
+					sumSaldo = sumSaldo.add(sumDebito);
+
+					sumSaldo = sumSaldo.subtract(sumCredito);
+					
+					if(sumSaldo.compareTo(BigDecimal.ZERO)>0){
+						resumo.setTipoLancamento(OperacaoFinaceira.DEBITO);
+					}else{
+						resumo.setTipoLancamento(OperacaoFinaceira.CREDITO);
+					}
+				}
+				
+			}
+		}
 	}
     
 	                                        /**
@@ -1496,15 +1552,16 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         	final Image logo = JasperUtil.getImagemRelatorio(getLogoDistribuidor());
         	final String razaoSocialDistrib = this.distribuidorService.obterRazaoSocialDistribuidor();
         	
-        	Map<Long, Slip> mapSlip = this.slipRepository.obterSlipsPorCotasData(listaCotas, dataDe, dataAte);
+        	Map<Integer, Slip> mapSlip = this.slipRepository.obterSlipsPorCotasData(listaCotas, dataDe, dataAte);
         	
-        	List<Long> slips = this.slipRepository.obterIdsSlipsPorCotasDataOrdenados(listaCotas, dataDe, dataAte);
-				
-    		for (Long idSlip : slips){
+    		for (Integer numCotaSlip : listaCotas){
     			
-    			Slip slip = mapSlip.get(idSlip);
+    			Slip slip = mapSlip.get(numCotaSlip);
     			
-    			this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
+    			if(slip != null){
+    				this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
+    			}
+    			
     		}
         }
     }

@@ -51,7 +51,7 @@ public class SlipRepositoryImpl extends AbstractRepositoryModel<Slip, Long> impl
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Map<Long, Slip> obterSlipsPorCotasData(List<Integer> listaCotas, Date dataDe, Date dataAte) {
+	public Map<Integer, Slip> obterSlipsPorCotasData(List<Integer> listaCotas, Date dataDe, Date dataAte) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -74,10 +74,10 @@ public class SlipRepositoryImpl extends AbstractRepositoryModel<Slip, Long> impl
         
        List<Slip> listaSlips = query.list();
        
-       Map<Long, Slip> mapComSlips = new HashMap<>();
+       Map<Integer, Slip> mapComSlips = new HashMap<>();
        
        for (Slip slip : listaSlips) {
-    	   mapComSlips.put(slip.getId(), slip);
+    	   mapComSlips.put(slip.getNumeroCota(), slip);
        }
        
        return mapComSlips;
