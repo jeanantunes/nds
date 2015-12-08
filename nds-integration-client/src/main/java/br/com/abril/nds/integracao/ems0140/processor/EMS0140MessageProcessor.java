@@ -42,6 +42,7 @@ import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.TipoProdutoRepository;
 import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.service.RecolhimentoService;
 
 import com.google.common.base.Strings;
 
@@ -59,6 +60,9 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
     
     @Autowired
     private LancamentoService lancamentoService;
+    
+    @Autowired
+   	private RecolhimentoService recolhimentoService;
     
     @Override
     public void preProcess(AtomicReference<Object> tempVar) {
@@ -306,9 +310,11 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
                 lancamento.setNumeroLancamento(numeroLancamentoNovo);
                 lancamento.setDataCriacao(dataAtual);
                 lancamento.setDataLancamentoPrevista(dataLancamento);
-                //lancamento.setDataLancamentoDistribuidor(dataLancamento);
+              
+                Date dataRecolhimentoValido = recolhimentoService.obterDataRecolhimentoValido(dataRecolhimento, produtoEdicao.getProduto().getFornecedor().getId());
+                
                 lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
-                lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+                lancamento.setDataRecolhimentoDistribuidor(dataRecolhimentoValido);
                 
                 Fornecedor fornecedor = produtoEdicao.getProduto().getFornecedor();
                 

@@ -374,9 +374,9 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 Lancamento lancamento = new Lancamento();
                 lancamento.setDataCriacao(dataAtual);
                 lancamento.setNumeroLancamento(numeroLancamentoNovo);
-                lancamento.setDataLancamentoPrevista(dataLancamento);
+                lancamento.setDataLancamentoPrevista(dataOriginal);
                 lancamento.setDataLancamentoDistribuidor(dataLancamento);
-                lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
+                lancamento.setDataRecolhimentoPrevista(dataOriginal);
                 lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
                 
                 lancamento.setProdutoEdicao(produtoEdicao);
@@ -428,10 +428,14 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 lancamento = new Lancamento();
                 lancamento.setDataCriacao(dataAtual);
                 lancamento.setNumeroLancamento(numeroLancamentoNovo);
-                lancamento.setDataLancamentoPrevista(dataLancamentoAux);
+                lancamento.setDataLancamentoPrevista(dataLancamento);
                 lancamento.setDataLancamentoDistribuidor(dataLancamentoAux);
+                
+              
+                Date dataRecolhimento = recolhimentoService.obterDataRecolhimentoValido(dataRecolhimentoAux, produtoEdicao.getProduto().getFornecedor().getId());
+                
                 lancamento.setDataRecolhimentoPrevista(dataRecolhimentoAux);
-                lancamento.setDataRecolhimentoDistribuidor(dataRecolhimentoAux);
+                lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
                 
                 lancamento.setProdutoEdicao(produtoEdicao);
                 lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);

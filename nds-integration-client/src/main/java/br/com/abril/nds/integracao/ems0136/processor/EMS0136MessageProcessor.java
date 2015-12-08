@@ -575,7 +575,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 				.append(" 	inner join periodo_lancamento_parcial plp on plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID      ")
 				.append(" 	inner join lancamento_parcial lp on lp.ID = plp.LANCAMENTO_PARCIAL_ID                      ")
 				.append(" 	where 1 = 1                                                                                ")
-				.append(" 	and l.status not in (:statusLancamento)                                                    ")
+			//	.append(" 	and l.status not in (:statusLancamento)                                                    ")
 				.append(" 	and plp.TIPO = :parcial                                                                    ")
 				.append(" 	and l.produto_edicao_id not in (                                                           ")
 				.append(" 		select distinct l.PRODUTO_EDICAO_ID                                                    ")
@@ -583,7 +583,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 				.append("		inner join periodo_lancamento_parcial plp on plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID  ")
 				.append("		inner join lancamento_parcial lp on lp.ID = plp.LANCAMENTO_PARCIAL_ID                  ")
 				.append("		where 1 = 1                                                                            ")
-				.append("		and l.status not in (:statusLancamento)                                                ")
+			//	.append("		and l.status not in (:statusLancamento)                                                ")
 				.append("		and plp.TIPO = :final                                                                  ")
 				.append(" 	)                                                                                          ")
 				.append(" 	group by l.PRODUTO_EDICAO_ID                                                               ")
@@ -591,7 +591,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 				.append(" set plp.tipo = :final                                                                        ");
 			
 			SQLQuery q = getSessionIcd().createSQLQuery(sql.toString());
-			q.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.FECHADO.name()));
+		//	q.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.FECHADO.name()));
 			q.setParameter("parcial", "PARCIAL");
 			q.setParameter("final", "FINAL");
 			

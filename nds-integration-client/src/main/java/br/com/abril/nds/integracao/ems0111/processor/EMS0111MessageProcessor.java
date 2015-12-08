@@ -31,8 +31,10 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ParciaisService;
+import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 
@@ -63,6 +65,12 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 	private DistribuidorRepository distribuidorRepository;
 	
 	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	
+	@Autowired
+	private RecolhimentoService recolhimentoService;
+	
+	@Autowired
+	private DistribuicaoFornecedorService distribuicaoFornecedorService;
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -180,20 +188,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 			
 			lancamento.setDataCriacao(new Date());// confirmado
 			
-			final boolean produtoContaFirme = (FormaComercializacao.CONTA_FIRME.equals(produtoEdicao.getProduto().getFormaComercializacao()));
 			
-			if(produtoContaFirme) {
-				
-				lancamento.setDataRecolhimentoDistribuidor(input.getDataLancamento());// confirmado
-				
-				lancamento.setDataRecolhimentoPrevista(input.getDataLancamento());// confirmado 
-			} else {
-				
-				lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);// confirmado
-				
-				lancamento.setDataRecolhimentoPrevista(dataRecolhimento);// confirmado 
-			}
-
 			try {
 
 				Date dataOriginal = input.getDataLancamento();
@@ -213,6 +208,22 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 				}
 
 				lancamento.setDataLancamentoDistribuidor(dataSugerida);
+				final boolean produtoContaFirme = (FormaComercializacao.CONTA_FIRME.equals(produtoEdicao.getProduto().getFormaComercializacao()));
+				
+				if(produtoContaFirme) {
+					
+					lancamento.setDataRecolhimentoDistribuidor(dataSugerida);// confirmado
+					
+					lancamento.setDataRecolhimentoPrevista(dataOriginal);// confirmado 
+				} else {
+					
+					Date dataRecolhimentoSugerida = recolhimentoService.obterDataRecolhimentoValido(this.getProximaDataUtil(dataRecolhimento, produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO),produtoEdicao.getProduto().getFornecedor().getId());
+
+					lancamento.setDataRecolhimentoDistribuidor(dataRecolhimentoSugerida);// confirmado
+					
+					lancamento.setDataRecolhimentoPrevista(dataRecolhimento);// confirmado 
+				}
+
 
 			} catch (Exception e) {
 				
@@ -520,6 +531,23 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 		};
 		
 		return calRecolhimento.getTime();
+	}
+	
+private Date getProximaDataUtil(Date data, Long idFornecedor, OperacaoDistribuidor operacaoDistribuidor) {
+		
+		Date novaData = this.parciaisService.obterDataUtilMaisProxima(data);
+
+		boolean hasMatrizConfirmada = this.lancamentoService.existeMatrizRecolhimentoConfirmado(data);
+		boolean fornecedorOpera = this.distribuicaoFornecedorService.obterCodigosDiaDistribuicaoFornecedor(idFornecedor, operacaoDistribuidor)
+				.contains(DateUtil.toCalendar(novaData).get(Calendar.DAY_OF_WEEK));
+
+		if (!hasMatrizConfirmada && fornecedorOpera) {
+
+			return novaData;
+		}
+		
+		return this.getProximaDataUtil(DateUtil.adicionarDias(novaData, 1), idFornecedor, operacaoDistribuidor);
+
 	}
 	
 }
