@@ -17,4 +17,6 @@ public interface SlipRepository extends Repository<Slip, Long>{
 	Map<Integer, Slip> obterSlipsPorCotasData(List<Integer> listaCotas, Date dataDe, Date dataAte);
 
 	List<Long> obterIdsSlipsPorCotasDataOrdenados(List<Integer> listaCotas, Date dataDe, Date dataAte);
+
+	List<Integer> obterCotasRoteirizadas(List<Integer> listaCotas);
 }

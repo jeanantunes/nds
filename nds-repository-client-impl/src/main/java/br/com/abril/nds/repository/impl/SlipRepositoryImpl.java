@@ -133,4 +133,44 @@ public class SlipRepositoryImpl extends AbstractRepositoryModel<Slip, Long> impl
 		
         return (List<Long>)query.list();
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Integer> obterCotasRoteirizadas(List<Integer> listaCotas) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select  ");
+		
+		sql.append(" 	c.numero_cota numCota ");
+		
+		sql.append(" from cota c ");
+		sql.append("   join pdv  ");
+		sql.append("     on pdv.COTA_ID = c.ID ");
+		sql.append("     and PDV.PONTO_PRINCIPAL = true ");
+		sql.append("   join rota_pdv ");
+		sql.append("     on rota_pdv.PDV_ID = pdv.ID ");
+		sql.append("   join rota  ");
+		sql.append("     on rota_pdv.ROTA_ID = rota.ID ");
+		sql.append("   join roteiro  ");
+		sql.append("     ON rota.ROTEIRO_ID = roteiro.ID   ");
+		sql.append("   join roteirizacao  ");
+		sql.append("     ON roteiro.ROTEIRIZACAO_ID = roteirizacao.ID ");
+		sql.append("   join box  ");
+		sql.append("     ON roteirizacao.BOX_ID = box.ID ");
+
+		sql.append(" where c.NUMERO_COTA in (:cotas) ");
+
+		sql.append(" group by c.NUMERO_COTA ");
+		sql.append(" order by BOX.CODIGO, ROTEIRO.ORDEM, ROTA.ORDEM, rota_pdv.ORDEM ");
+		
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
+	        
+        query.setParameterList("cotas", listaCotas);
+        
+        ((SQLQuery) query).addScalar("numCota", StandardBasicTypes.INTEGER);
+		
+        return (List<Integer>)query.list();
+	}
 }
