@@ -260,7 +260,9 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 			sql.append(" and BOX.CODIGO =  :idBox ");
 		}
 
-		sql.append("	ORDER BY BOX.CODIGO, ROTEIRO.ORDEM, ROTA.ORDEM, ROTA_PDV.ORDEM  ");
+		sql.append(" ORDER BY BOX.CODIGO, ROTEIRO.ordem, ROTA.ordem, ROTA_PDV.ORDEM, COTA.NUMERO_COTA,  ROTA.DESCRICAO_ROTA ");
+		
+		//sql.append("	ORDER BY BOX.CODIGO, ROTEIRO.ORDEM, ROTA.ORDEM, ROTA_PDV.ORDEM  ");
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);

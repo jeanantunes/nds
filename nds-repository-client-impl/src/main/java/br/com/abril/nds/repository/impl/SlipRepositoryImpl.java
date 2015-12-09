@@ -161,7 +161,7 @@ public class SlipRepositoryImpl extends AbstractRepositoryModel<Slip, Long> impl
 
 		sql.append(" where c.NUMERO_COTA in (:cotas) ");
 
-		sql.append(" group by c.NUMERO_COTA ");
+		sql.append(" group by BOX.CODIGO, c.NUMERO_COTA ");
 		sql.append(" order by BOX.CODIGO, ROTEIRO.ORDEM, ROTA.ORDEM, rota_pdv.ORDEM ");
 		
 		
