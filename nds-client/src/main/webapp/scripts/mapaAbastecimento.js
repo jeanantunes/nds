@@ -190,6 +190,23 @@
 			);
 
 			break;
+			
+		case 'ROTEIRO':
+
+			var quebraPorCota = T.get('quebraPorCota');
+			
+			var flexiGrid = quebraPorCota ? ".mapaAbastecimentoRotaGridQuebraCota" : ".mapaAbastecimentoRotaGrid";
+			var grid = quebraPorCota ? "#gridRotaQuebraCota" : "#gridRota";
+
+			T.preencherGrid(
+				flexiGrid, 
+				pathTela + "/mapaAbastecimento/pesquisar", 
+				T.processarRetornoPesquisaPorRota,
+				grid,
+				params
+			);
+
+			break;	
 		case 'PRODUTO':
 			
 			T.preencherGrid(
@@ -501,6 +518,15 @@
 			T.desbloquearLinkProdutos();
 			T.limparProdutosSelecionados();
 			break;
+		case 'ROTEIRO':
+			T.atualizarBoxRota();
+			T.bloquearCampos('codigoProduto','nomeProduto','codigoCota','nomeCota');
+			T.desbloquearCampos('box','rota','roteiro');
+			T.displayEntregador(false);
+			$('#quebraPorCota').attr("checked", false);
+			T.desbloquearLinkProdutos();
+			T.limparProdutosSelecionados();
+			break;	
 		case 'COTA':
 			T.bloquearCampos('box','rota','roteiro', 'codigoProduto','nomeProduto','quebraPorCota');
 			T.desbloquearCampos('codigoCota','nomeCota');
