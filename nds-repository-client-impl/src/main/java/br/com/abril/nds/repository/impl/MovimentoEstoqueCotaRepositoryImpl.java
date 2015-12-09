@@ -2747,6 +2747,65 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         return query.list();
     }
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorProdutoBoxRoteiro(final FiltroMapaAbastecimentoDTO filtro) {
+        
+        final Map<String, Object> param = new HashMap<String, Object>();
+        
+        final List<String> statusLancamento = new ArrayList<String>();
+        
+        final StringBuilder hql = new StringBuilder();
+        
+        hql.append(" select box.CODIGO as codigoBox, ");
+        hql.append("        box.NOME as nomeBox, ");
+        hql.append(" 		roteiro.DESCRICAO_ROTEIRO as codigoRota, ");
+        hql.append(" 		produtoEdicao.ID as idProdutoEdicao, ");
+        hql.append(" 		produto.CODIGO as codigoProduto, ");
+        hql.append(" 		produtoEdicao.NOME_COMERCIAL as nomeProduto, ");
+        hql.append(" 		produtoEdicao.CODIGO_DE_BARRAS as codigoBarra, ");
+        hql.append(" 		produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
+        hql.append(" 		sum(estudoCota.REPARTE) as reparte, ");
+        hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa, ");
+        hql.append(" 		pessoa.NOME as nomeCota, ");
+        hql.append(" 		cota.NUMERO_COTA as codigoCota, ");
+        hql.append("        roteiro.DESCRICAO_ROTEIRO as descRoteiro ");
+        
+        gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
+        
+        hql.append(" group by produtoEdicao.ID, box.ID, rota.ID ");
+        
+        if (filtro.getQuebraPorCota()) {
+            hql.append(" , cota.ID ");
+        }
+        
+        gerarOrdenacaoDadosAbastecimento(filtro, hql);
+        
+        final SQLQuery query =  getSession().createSQLQuery(hql.toString());
+        
+        setParameters(query, param);
+        
+        query.setParameterList("status", statusLancamento);
+        
+        query.addScalar("codigoBox", StandardBasicTypes.INTEGER);
+        query.addScalar("nomeBox", StandardBasicTypes.STRING);
+        query.addScalar("codigoRota", StandardBasicTypes.STRING);
+        query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
+        query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+        query.addScalar("nomeProduto", StandardBasicTypes.STRING);
+        query.addScalar("codigoBarra", StandardBasicTypes.STRING);
+        query.addScalar("numeroEdicao", StandardBasicTypes.LONG);
+        query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
+        query.addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
+        query.addScalar("nomeCota", StandardBasicTypes.STRING);
+        query.addScalar("codigoCota", StandardBasicTypes.INTEGER);
+        query.addScalar("descRoteiro", StandardBasicTypes.STRING);
+        
+        query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
+        
+        return query.list();
+    }
+    
     
     @SuppressWarnings("unchecked")
     @Override

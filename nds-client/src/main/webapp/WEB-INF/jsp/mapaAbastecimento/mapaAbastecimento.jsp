@@ -104,6 +104,7 @@
       <option value="" selected="selected">Selecione...</option>
       <option value="BOX">Box</option>
       <option value="ROTA">Rota</option>
+       <option value="ROTEIRO">Roteiro</option>
       <option value="PRODUTO_ESPECIFICO">Produto Específico</option>
       <option value="COTA">Cota</option>
       <option value="PRODUTO_X_COTA">Produto X Cota</option>

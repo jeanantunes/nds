@@ -61,7 +61,7 @@ public interface MapaAbastecimentoService {
 	 */
 	Map<String, Map<String, ProdutoMapaRotaDTO>> obterMapaDeImpressaoPorBoxRota(
 			FiltroMapaAbastecimentoDTO filtro);
-
+	
 	/**
 	 * Obtém dados do Mapa de Abastecimento por Produto Edição
 	 * 
@@ -195,4 +195,6 @@ public interface MapaAbastecimentoService {
 	List<AbastecimentoBoxCotaDTO> obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro, final Map<String, Object> parameters);
 	
 	List<BoxRoterioRotaDTO> obterMapaDeImpressaoPorBoxRotaQuebraCota2(FiltroMapaAbastecimentoDTO filtro);
+	
+	Map<String, Map<String, ProdutoMapaRotaDTO>> obterMapaDeImpressaoPorBoxRoteiro(FiltroMapaAbastecimentoDTO filtro);
 }
