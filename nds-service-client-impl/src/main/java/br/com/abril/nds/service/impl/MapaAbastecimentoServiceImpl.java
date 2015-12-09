@@ -211,12 +211,82 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 	}
 	
 	@Transactional
-	public Map<String, Map<String, ProdutoMapaRotaDTO>> obterMapaDeImpressaoPorBoxRota(
-			FiltroMapaAbastecimentoDTO filtro) {
+	public Map<String, Map<String, ProdutoMapaRotaDTO>> obterMapaDeImpressaoPorBoxRota(FiltroMapaAbastecimentoDTO filtro) {
 	
 		Map<String, Map<String, ProdutoMapaRotaDTO>> boxes = new LinkedHashMap<String, Map<String, ProdutoMapaRotaDTO>> ();
 	
 		List<ProdutoAbastecimentoDTO> boxProdutoRota = this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorProdutoBoxRota(filtro);
+	
+		for(ProdutoAbastecimentoDTO item : boxProdutoRota ) {
+	
+			if(item.getCodigoBox() == null) {
+				return null;
+			}
+	
+			String keyBox = item.getCodigoBox() + " - " + item.getNomeBox();
+	
+			if(!boxes.containsKey(keyBox)){
+				boxes.put(keyBox, new LinkedHashMap<String, ProdutoMapaRotaDTO>());
+			}
+	
+			Map<String, ProdutoMapaRotaDTO> box = boxes.get(keyBox);
+	
+			
+			if(!box.containsKey(item.getCodigoProduto()+"-"+item.getNumeroEdicao())){
+				
+				box.put(item.getCodigoProduto()+"-"+item.getNumeroEdicao(),
+						new ProdutoMapaRotaDTO(item.getCodigoProduto(),
+								item.getNomeProduto(),
+								item.getNumeroEdicao(),
+								item.getCodigoBarra(),
+								item.getPrecoCapa(),
+								0,
+								new LinkedHashMap<String, Integer>()));
+			}
+	
+			ProdutoMapaRotaDTO produto = box.get(item.getCodigoProduto()+"-"+item.getNumeroEdicao());
+	
+	
+			if(!produto.getRotasQtde().containsKey(item.getCodigoRota())){
+				
+				produto.getRotasQtde().put(item.getCodigoRota(),0);
+			}
+	
+			Integer qtdeAtual = produto.getRotasQtde().get(item.getCodigoRota());
+	
+			produto.getRotasQtde().put(item.getCodigoRota(), qtdeAtual + item.getReparte());
+	
+			produto.setTotalReparte(produto.getTotalReparte() + item.getReparte());
+		}
+		
+		
+		int maiorQtdRotas = 0;
+		for(Entry<String, Map<String, ProdutoMapaRotaDTO>> entry : boxes.entrySet()) {
+			
+			for (Entry<String, ProdutoMapaRotaDTO> ent : entry.getValue().entrySet()){
+				
+				int size = ent.getValue().getRotasQtde().size();
+				
+				if (size > maiorQtdRotas){
+					maiorQtdRotas = size;
+				}
+			}
+		}
+	
+		for(Entry<String, Map<String, ProdutoMapaRotaDTO>> entry : boxes.entrySet()) {
+	
+			preencheRotasNaoUtilizadas(maiorQtdRotas, entry.getValue());	
+		}
+	
+		return boxes;
+	}
+	
+	@Transactional
+	public Map<String, Map<String, ProdutoMapaRotaDTO>> obterMapaDeImpressaoPorBoxRoteiro(FiltroMapaAbastecimentoDTO filtro) {
+	
+		Map<String, Map<String, ProdutoMapaRotaDTO>> boxes = new LinkedHashMap<String, Map<String, ProdutoMapaRotaDTO>> ();
+	
+		List<ProdutoAbastecimentoDTO> boxProdutoRota = this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorProdutoBoxRoteiro(filtro);
 	
 		for(ProdutoAbastecimentoDTO item : boxProdutoRota ) {
 	

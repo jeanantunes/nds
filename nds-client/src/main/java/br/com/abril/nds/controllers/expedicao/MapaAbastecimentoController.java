@@ -249,6 +249,9 @@ public class MapaAbastecimentoController extends BaseController {
 		case ROTA:
 			this.popularGridPorRota(filtro);
 			break;
+		case ROTEIRO:
+		    this.popularGridPorRota(filtro);
+            break;		
 		case PRODUTO:
 			this.popularGridPorProduto(filtro);
 			break;
@@ -358,6 +361,10 @@ public class MapaAbastecimentoController extends BaseController {
 		case ROTA:
 
 			break;
+			
+		case ROTEIRO:
+
+			break;	
 		case ENTREGADOR:
 			
 			break;
@@ -500,6 +507,22 @@ public class MapaAbastecimentoController extends BaseController {
 			    }
 				
 			break;
+			case ROTEIRO:
+		    	filtro.getPaginacao().setSortColumn("produtoCota");
+		        Map<String, Map<String, ProdutoMapaRotaDTO>> mapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRoteiro(filtro);
+                
+		        for (String key : mapa.keySet()) {
+		            completaTabelaMapaRota(mapa.get(key), key);
+		        }
+		        
+		        dados = mapa.entrySet();
+		        
+                nomeRelatorio = "Mapa de Abastecimento por Roteiro";
+                
+                path += "rel_box_por_rota_principal.jasper";
+                
+			break;
+			
 			case COTA:
 			    paginacao.setSortColumn("nomeEdicao");
 			    dados = Arrays.asList(
