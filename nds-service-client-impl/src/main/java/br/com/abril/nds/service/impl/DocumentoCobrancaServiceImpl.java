@@ -276,7 +276,10 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
             
             Map<Integer, Slip> mapSlip = this.slipRepository.obterSlipsPorCotasData(listaCotas, data, null);
             
-            for (Integer cotaSlip : listaCotas) {
+            List<Integer> cotasRoteirizadas = this.slipRepository.obterCotasRoteirizadas(listaCotas);
+        	
+        	for (Integer cotaSlip : cotasRoteirizadas){
+        		
             	Slip slip = mapSlip.get(cotaSlip);
             	
             	if(slip != null){
@@ -1554,9 +1557,11 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         	
         	Map<Integer, Slip> mapSlip = this.slipRepository.obterSlipsPorCotasData(listaCotas, dataDe, dataAte);
         	
-    		for (Integer numCotaSlip : listaCotas){
+    		List<Integer> cotasRoteirizadas = this.slipRepository.obterCotasRoteirizadas(listaCotas);
+        	
+        	for (Integer numCotaSlip : cotasRoteirizadas){
     			
-    			Slip slip = mapSlip.get(numCotaSlip);
+    			Slip slip = mapSlip.get(numCotaSlip.intValue());
     			
     			if(slip != null){
     				this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
