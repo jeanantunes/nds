@@ -48,8 +48,10 @@ public class EnderecoAjustesTest {
             	.append(enderecoRetornado.getCep())
             	.append(" \r\n");
             	
+            	endereco.setBairro(enderecoRetornado.getBairro());
+            	
+            	this.enderecoService.salvarEndereco(endereco);
             }
-            
 		}
 		this.salvaCollection(sb, "C://tmp/endereco.csv");
 	}
