@@ -330,7 +330,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		
 		List<DebitoCreditoCota> debCreResumo = this.slipRepository.obterComposicaoSlip(slip.getId(), false);
 		
-		popularLegendaTotalAPagar(slip, debCre, debCreResumo);
+		popularLegendaTotalAPagar(slip, debCre, debCreResumo, parametersSlip);
 		
 		slip.setListaResumoCobranca(debCreResumo);
 		parametersSlip.put("LISTA_RESUMO_COBRANCA", debCreResumo);
@@ -345,56 +345,51 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	}
 
 	private void popularLegendaTotalAPagar(final Slip slip, List<DebitoCreditoCota> debCre,
-			List<DebitoCreditoCota> debCreResumo) {
-		for (DebitoCreditoCota resumo : debCreResumo) {
+			List<DebitoCreditoCota> debCreResumo, Map<String, Object> parametersSlip) {
+		
+		BigDecimal sumCredito = BigDecimal.ZERO;
+		BigDecimal sumDebito = BigDecimal.ZERO;
+		
+		boolean isSemComposicao = false; 
+		
+		for (DebitoCreditoCota debitoCreditoCota : debCre){
 			
-			if(resumo.getTipoLancamento() == null){
+			if(debitoCreditoCota.getTipoLancamento() == null){
+				isSemComposicao = true;
+			}else{
+				isSemComposicao = false;
 
-				BigDecimal sumCredito = BigDecimal.ZERO;
-				BigDecimal sumDebito = BigDecimal.ZERO;
-				
-				boolean isSemComposicao = false; 
-				
-				for (DebitoCreditoCota debitoCreditoCota : debCre){
-					
-					if(debitoCreditoCota.getTipoLancamento() == null){
-						isSemComposicao = true;
-					}else{
-						isSemComposicao = false;
-
-						if(debitoCreditoCota.getTipoLancamento() == OperacaoFinaceira.CREDITO){
-							sumCredito = BigDecimalUtil.soma(sumCredito, debitoCreditoCota.getValor()!=null ? debitoCreditoCota.getValor() : BigDecimal.ZERO); 
-						}else{
-							if(debitoCreditoCota.getTipoLancamento() == OperacaoFinaceira.DEBITO){
-								sumDebito = BigDecimalUtil.soma(sumDebito, debitoCreditoCota.getValor()!=null ? debitoCreditoCota.getValor() : BigDecimal.ZERO);	
-							}
-						}
-					}
-				}
-				
-				if(isSemComposicao){
-					if(slip.getValorTotalEncalhe().compareTo(slip.getValorLiquidoDevido())>0){
-						resumo.setTipoLancamento(OperacaoFinaceira.CREDITO);
-					}else{
-						resumo.setTipoLancamento(OperacaoFinaceira.DEBITO);
-					}
+				if(debitoCreditoCota.getTipoLancamento() == OperacaoFinaceira.CREDITO){
+					sumCredito = BigDecimalUtil.soma(sumCredito, debitoCreditoCota.getValor()!=null ? debitoCreditoCota.getValor() : BigDecimal.ZERO); 
 				}else{
-					
-					BigDecimal sumSaldo = BigDecimal.ZERO;
-					
-					sumSaldo = sumSaldo.add((slip.getValorTotalEncalhe().subtract(slip.getValorLiquidoDevido())));
-					
-					sumSaldo = sumSaldo.add(sumDebito);
-
-					sumSaldo = sumSaldo.subtract(sumCredito);
-					
-					if(sumSaldo.compareTo(BigDecimal.ZERO)>0){
-						resumo.setTipoLancamento(OperacaoFinaceira.DEBITO);
-					}else{
-						resumo.setTipoLancamento(OperacaoFinaceira.CREDITO);
+					if(debitoCreditoCota.getTipoLancamento() == OperacaoFinaceira.DEBITO){
+						sumDebito = BigDecimalUtil.soma(sumDebito, debitoCreditoCota.getValor()!=null ? debitoCreditoCota.getValor() : BigDecimal.ZERO);	
 					}
 				}
-				
+			}
+		}
+		
+		if(isSemComposicao){
+			if(slip.getValorTotalEncalhe().compareTo(slip.getValorLiquidoDevido())>0){
+				parametersSlip.put("CD","C");
+			}else{
+				parametersSlip.put("CD","D");
+			}
+			
+		}else{
+			
+			BigDecimal sumSaldo = BigDecimal.ZERO;
+			
+			sumSaldo = sumSaldo.add((slip.getValorTotalEncalhe().subtract(slip.getValorLiquidoDevido())));
+			
+			sumSaldo = sumSaldo.add(sumDebito);
+
+			sumSaldo = sumSaldo.subtract(sumCredito);
+			
+			if(sumSaldo.compareTo(BigDecimal.ZERO)>0){
+				parametersSlip.put("CD","D");
+			}else{
+				parametersSlip.put("CD","C");
 			}
 		}
 	}
