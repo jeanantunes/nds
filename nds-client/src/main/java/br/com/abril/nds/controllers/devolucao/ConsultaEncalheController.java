@@ -404,8 +404,11 @@ public class ConsultaEncalheController extends BaseController {
 	@Path("/gerarSlip")
 	public void gerarSlip(String dataRecolhimentoInicial, String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota, Integer codigoProduto, Integer idBox) throws IOException {
 		
+		
 		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial,
 				dataRecolhimentoFinal, idFornecedor, numeroCota, codigoProduto, idBox, null);
+
+		
 		
 		byte[] slip =  consultaEncalheService.gerarDocumentosConferenciaEncalhe(filtro);
 		
@@ -435,6 +438,7 @@ public class ConsultaEncalheController extends BaseController {
 		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
 		
 		filtro.setDataRecolhimentoInicial(dataRecDistribuidorInicial);
+		
 		filtro.setDataRecolhimentoFinal(dataRecDistribuidorFinal);
 		
 		filtro.setIdFornecedor(idFornecedor);
