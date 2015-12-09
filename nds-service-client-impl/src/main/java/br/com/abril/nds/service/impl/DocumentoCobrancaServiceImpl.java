@@ -1561,7 +1561,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         	
         	for (Integer numCotaSlip : cotasRoteirizadas){
     			
-    			Slip slip = mapSlip.get(numCotaSlip.intValue());
+    			Slip slip = mapSlip.get(numCotaSlip);
     			
     			if(slip != null){
     				this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
