@@ -636,7 +636,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	        		this.ndsiLoggerFactory.getLogger().logInfo(message,
 	                    EventoExecucaoEnum.INF_DADO_ALTERADO,
 	                    "Alteração do Tipo de Segmento"
-	                    +" de " + produto.getTipoSegmentoProduto().getDescricao()
+	                    +" de " + (produto.getTipoSegmentoProduto() != null ? produto.getTipoSegmentoProduto().getDescricao():"null")
 	                    +" para " + getTipoSegmento(new Long(input.getSegmento())).getDescricao()
 	                    +" Produto "+ input.getCodProd()
 						+" Edição "+ input.getEdicaoProd());
