@@ -69,9 +69,9 @@ public class EMS0125MessageProcessor extends AbstractRepository implements
 
 		produtoEdicao = (ProdutoEdicao) query.uniqueResult();
 
-		if (null != produtoEdicao) {
+		if ( produtoEdicao != null ) {
 
-			if(input.getChamadaCapa()!=null && !produtoEdicao.getChamadaCapa().equals(input.getChamadaCapa())){
+			if(input.getChamadaCapa()!=null && !input.getChamadaCapa().equals(produtoEdicao.getChamadaCapa())){
 				 ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteração da Chamada de Capa"
@@ -82,16 +82,17 @@ public class EMS0125MessageProcessor extends AbstractRepository implements
 				
 				 produtoEdicao.setChamadaCapa(input.getChamadaCapa());
 				 this.getSession().merge(produtoEdicao);
-			} else {
-			
+			} 
+		} else
+			 {
+				
 				// Não encontrou o Produto / ProdutoEdicao Realizar Log
 				ndsiLoggerFactory.getLogger().logWarning(
 					message,
 					EventoExecucaoEnum.SEM_DOMINIO,
 					"Produto " + input.getCodProd() + " Edição "
-							+ input.getEdicao() + " não encontrado.");
+							+ input.getEdicao() + " não encontrado .");
 			}
-		}
 
 	}
 	
