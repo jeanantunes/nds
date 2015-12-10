@@ -158,9 +158,9 @@ public class SlipRepositoryImpl extends AbstractRepositoryModel<Slip, Long> impl
 		sql.append("     ON roteiro.ROTEIRIZACAO_ID = roteirizacao.ID ");
 		sql.append("   join box  ");
 		sql.append("     ON roteirizacao.BOX_ID = box.ID ");
-
+		
 		sql.append(" where c.NUMERO_COTA in (:cotas) ");
-
+		sql.append(" and box.tipo_box <> 'ESPECIAL' ");
 		sql.append(" group by BOX.CODIGO, c.NUMERO_COTA ");
 		sql.append(" order by BOX.CODIGO, ROTEIRO.ORDEM, ROTA.ORDEM, rota_pdv.ORDEM ");
 		
