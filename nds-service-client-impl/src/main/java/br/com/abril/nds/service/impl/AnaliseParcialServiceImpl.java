@@ -147,6 +147,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                             break;
                         }
                     }
+                    
                 }
                 
                 this.completarParciaisBase(temp, QTDE_PARCIAIS_BASE);
@@ -161,7 +162,21 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 item.setEdicoesBase(temp);
                 
                 item.setUltimoReparte(this.getUltimoReparte(temp));
+                
+                for (int i = 0; i<temp.size(); i++) {
+                	temp.get(i).setOrdemExibicao(i);
+                	
+                	putMapSomatorioTotaisEdicao(mapTotaisEd, temp.get(i));
+        		}
+                
+                total_somatorioUltimoReparte = somatorioUltimoReparte(total_somatorioUltimoReparte, item);
+                
+                total_somatorioReparteSugerido = somatorioReparteSugerido(total_somatorioReparteSugerido, item);
+   
+                total_qtdCotas = BigIntegerUtil.soma(total_qtdCotas, BigInteger.ONE);
+                
             }
+            
         } else {
             if (queryDTO.getEdicoesBase() == null) {
             	List<EdicoesProdutosDTO> edicoesBaseList = analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoId());
@@ -234,13 +249,9 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>(edicoesProdutosDTOMap.values()));
                 
-                if(BigIntegerUtil.isMaiorQueZero(item.getUltimoReparte())){
-                	total_somatorioUltimoReparte = BigIntegerUtil.soma(total_somatorioUltimoReparte, item.getUltimoReparte());
-                }
+                total_somatorioUltimoReparte = somatorioUltimoReparte(total_somatorioUltimoReparte, item);
                 
-                if(BigIntegerUtil.isMaiorQueZero(item.getReparteSugerido())){
-                	total_somatorioReparteSugerido = BigIntegerUtil.soma(total_somatorioReparteSugerido, item.getReparteSugerido());
-                }
+                total_somatorioReparteSugerido = somatorioReparteSugerido(total_somatorioReparteSugerido, item);
    
                 total_qtdCotas = BigIntegerUtil.soma(total_qtdCotas, BigInteger.ONE);
                 
@@ -258,6 +269,20 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	
         return dto;
     }
+
+	private BigInteger somatorioReparteSugerido(BigInteger total_somatorioReparteSugerido, AnaliseParcialDTO item) {
+		if(BigIntegerUtil.isMaiorQueZero(item.getReparteSugerido())){
+			total_somatorioReparteSugerido = BigIntegerUtil.soma(total_somatorioReparteSugerido, item.getReparteSugerido());
+		}
+		return total_somatorioReparteSugerido;
+	}
+
+	private BigInteger somatorioUltimoReparte(BigInteger total_somatorioUltimoReparte, AnaliseParcialDTO item) {
+		if(BigIntegerUtil.isMaiorQueZero(item.getUltimoReparte())){
+			total_somatorioUltimoReparte = BigIntegerUtil.soma(total_somatorioUltimoReparte, item.getUltimoReparte());
+		}
+		return total_somatorioUltimoReparte;
+	}
 
 	private void putMapSomatorioTotaisEdicao(Map<String, BigInteger> mapTotaisEd, EdicoesProdutosDTO ed) {
 		if(mapTotaisEd.get("reparte_"+ed.getOrdemExibicao()) == null){
@@ -297,6 +322,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 				baseUtilizadas = analiseParcialRepository.carregarPeriodosAnterioresParcial(queryDTO.getEstudoId(), true);
 			}
 		}
+		
 		return baseUtilizadas;
 	}
 
@@ -387,6 +413,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         			fake.setReparte(BigDecimal.ZERO);
         			fake.setVenda(BigDecimal.ZERO);
         			fake.setPeriodo(bases.get(i).getPeriodo());
+        			fake.setParcial(true);
         			
         			edicoesProdutoPorCota.add(fake);
         		}

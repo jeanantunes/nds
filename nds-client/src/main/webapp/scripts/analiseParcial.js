@@ -1814,12 +1814,15 @@ var analiseParcialController = $.extend(true, {
     
     filtroDefault: function (estudo, valueFiltroOrdenarPor, elemento) {
 
+    	var numParcial = $("#numeroPeriodo").val();
+    	
         $("#baseEstudoGridParcial").flexOptions({
             params: [{name:'filterSortName', value: valueFiltroOrdenarPor},
                 {name:'filterSortFrom', value: $("#ordenarPorDe").val()},
                 {name:'filterSortTo',   value: $("#ordenarPorAte").val()},
                 {name:'id',             value: estudo},
-                {name:'elemento',       value: elemento}]
+                {name:'elemento',       value: elemento},
+                {name:'numeroParcial',  value: numParcial}]
         }).flexReload();
 
     },
