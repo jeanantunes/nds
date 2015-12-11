@@ -266,9 +266,9 @@ public class HistogramaPosEstudoController extends BaseController{
 			String loginUsuarioBloqueio = mapaAnaliseEstudo.get(idProdutoEdicao);
 			
 			if (loginUsuarioBloqueio != null
-					&& !loginUsuarioBloqueio.equals(loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"))) {
-				LOGGER.error("ESTE ESTUDO ja ESTA SENDO ANALISADO PELO USUARIO "+this.usuarioService.obterNomeUsuarioPorLogin(loginUsuarioBloqueio)+
-						"  BLOQUEADO COM="+session.getAttribute("WINDOWNAME_ESTUDO"));
+					&& !loginUsuarioBloqueio.equals(loginUsuario+";"+windowname)) {
+				LOGGER.error("ESTE ESTUDO ja ESTA SENDO ANALISADO PELO USUARIO "+(loginUsuarioBloqueio)+
+						"  BLOQUEANDO COM="+loginUsuario+";"+windowname);
 				LOGGER.error("MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE=" +mapaAnaliseEstudo.toString());
 				
 				throw new ValidacaoException(
