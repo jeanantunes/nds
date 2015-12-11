@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AnaliseEstudoNormal_E_ParcialDTO;
 import br.com.abril.nds.dto.AnaliseParcialDTO;
+import br.com.abril.nds.dto.AnaliseParcialExportXLSDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
@@ -55,6 +56,7 @@ import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.RepartePdvService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.BigIntegerUtil;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 
 @Service
 public class AnaliseParcialServiceImpl implements AnaliseParcialService {
@@ -115,6 +117,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     public AnaliseEstudoNormal_E_ParcialDTO buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO) {
     	
     	List<AnaliseParcialDTO> lista = analiseParcialRepository.buscaAnaliseParcialPorEstudo(queryDTO);
+    	
+    	List<AnaliseParcialExportXLSDTO> listaXLS = new ArrayList<>();
     	
 		BigInteger total_qtdCotas = BigInteger.ZERO;
 	    BigInteger total_somatorioReparteSugerido = BigInteger.ZERO;
@@ -258,9 +262,42 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             }
         }
     	
+    	if(queryDTO.getFile() != null && queryDTO.getFile() == FileType.XLS){
+    		
+    		Map<Integer, AnaliseParcialExportXLSDTO> dadosCotasPdv = analiseParcialRepository.buscarDadosPdvParaXLS(queryDTO);
+    		
+    		for (AnaliseParcialDTO cota : lista) {
+				AnaliseParcialExportXLSDTO dadosPDV = dadosCotasPdv.get(cota.getCotaId());
+				
+				if(dadosPDV == null){
+					continue;
+				}
+				
+		    	dadosPDV.setCota(cota.getCota());
+		    	dadosPDV.setClassificacao(cota.getClassificacao());
+		    	dadosPDV.setNome(cota.getNome());
+		    	dadosPDV.setNpdv(cota.getNpdv());
+		    	dadosPDV.setReparteSugerido(cota.getReparteSugerido());
+		    	dadosPDV.setLeg(cota.getLeg());
+		    	dadosPDV.setJuramento(cota.getJuramento());
+		    	dadosPDV.setMediaVenda(cota.getMediaVenda());
+		    	dadosPDV.setUltimoReparte(cota.getUltimoReparte());
+		    	dadosPDV.setEdicoesBase(cota.getEdicoesBase());
+				
+				listaXLS.add(dadosPDV);
+				
+			}
+    		
+    	}
+    	
     	AnaliseEstudoNormal_E_ParcialDTO dto = new AnaliseEstudoNormal_E_ParcialDTO();
     	
     	dto.setAnaliseParcialDTO(lista);
+    	
+    	if(queryDTO.getFile() != null && queryDTO.getFile() == FileType.XLS){
+    		dto.setAnaliseParcialXLSDTO(listaXLS);
+    	}
+    	
     	dto.setTotal_qtdCotas(total_qtdCotas);
     	dto.setTotal_somatorioUltimoReparte(total_somatorioUltimoReparte);
     	dto.setTotal_somatorioReparteSugerido(total_somatorioReparteSugerido);

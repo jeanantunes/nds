@@ -19,6 +19,7 @@ import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AnaliseEstudoNormal_E_ParcialDTO;
 import br.com.abril.nds.dto.AnaliseParcialDTO;
+import br.com.abril.nds.dto.AnaliseParcialExportXLSDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
@@ -421,6 +422,7 @@ public class AnaliseParcialController extends BaseController {
         AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
         queryDTO.setEstudoId(id);
         queryDTO.setModoAnalise(tipoExibicao);
+        queryDTO.setFile(fileType);
         
         if(tipoExibicao.equalsIgnoreCase("PARCIAL")){
         	queryDTO.setNumeroParcial(numeroParcial); 
@@ -430,15 +432,33 @@ public class AnaliseParcialController extends BaseController {
         
         AnaliseEstudoNormal_E_ParcialDTO analise = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
         
-        List<AnaliseParcialDTO> lista = analise.getAnaliseParcialDTO();
- 
-        if (lista.isEmpty()) {
-            throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
-        }
+        
+        if(fileType != null && fileType == FileType.XLS){
+        	List<AnaliseParcialExportXLSDTO> listaXls = new ArrayList<>();
 
-        FileExporter.to(
-                "Analise do Estudo", fileType).inHTTPResponse(
-                        this.getNDSFileHeader(), null, lista, AnaliseParcialDTO.class, this.httpResponse);
+        	listaXls = analise.getAnaliseParcialXLSDTO();
+        	
+        	 if (listaXls.isEmpty()) {
+                 throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
+             }
+
+             FileExporter.to(
+                     "Analise do Estudo", fileType).inHTTPResponse(
+                             this.getNDSFileHeader(), null, listaXls, AnaliseParcialExportXLSDTO.class, this.httpResponse);
+        	
+        }else{
+        	List<AnaliseParcialDTO> lista = new ArrayList<>();
+
+        	lista = analise.getAnaliseParcialDTO();
+        	
+        	 if (lista.isEmpty()) {
+                 throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
+             }
+
+             FileExporter.to(
+                     "Analise do Estudo", fileType).inHTTPResponse(
+                             this.getNDSFileHeader(), null, lista, AnaliseParcialDTO.class, this.httpResponse);
+        }
 
         result.nothing();
     }
