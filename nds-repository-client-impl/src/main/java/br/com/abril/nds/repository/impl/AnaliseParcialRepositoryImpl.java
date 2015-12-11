@@ -207,7 +207,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 
                 sql.append(" join endereco_pdv on endereco_pdv.pdv_id = pdv.id");
                 
-                sql.append(" join endereco on (endereco.id = endereco_pdv.endereco_id and endereco.bairro = :bairro ");
+                sql.append(" join endereco on (endereco.id = endereco_pdv.endereco_id and endereco.bairro = :bairro) ");
             }
             if (queryDTO.elementoIsRegiao()) {
             	
@@ -223,7 +223,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 
                 sql.append(" join endereco_pdv on endereco_pdv.pdv_id = pdv.id ");
                 
-                sql.append(" join endereco on (endereco.id = endereco_pdv.endereco_id and endereco.uf = :distrito ");
+                sql.append(" join endereco on (endereco.id = endereco_pdv.endereco_id and endereco.uf = :distrito) ");
             }
         }   
 
