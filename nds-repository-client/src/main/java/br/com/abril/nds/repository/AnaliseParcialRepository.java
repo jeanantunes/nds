@@ -11,6 +11,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 
 import br.com.abril.nds.dto.AnaliseParcialDTO;
+import br.com.abril.nds.dto.AnaliseParcialExportXLSDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
 import br.com.abril.nds.dto.DataLancamentoPeriodoEdicoesBasesDTO;
@@ -45,5 +46,6 @@ public interface AnaliseParcialRepository {
 	public abstract Integer qtdBasesNoEstudo(Long idEstudo, boolean isBaseParcial);
 	public abstract List<EdicoesProdutosDTO> carregarPeriodosAnterioresParcial(Long estudoId, Boolean isTrazerEdicoesAbertas);
 	Map<Integer, List<EdicoesProdutosDTO>> buscaHistoricoDeVendaTodasCotas(List<Long> listCotaId, List<Long> listProdutoEdicaoId);
+	Map<Integer, AnaliseParcialExportXLSDTO> buscarDadosPdvParaXLS(AnaliseParcialQueryDTO queryDTO);
     
 }

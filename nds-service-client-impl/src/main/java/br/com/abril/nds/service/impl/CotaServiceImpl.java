@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
 import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
+import br.com.abril.nds.dto.AnaliseHistoricoXLSDTO;
 import br.com.abril.nds.dto.CotaBaseDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
@@ -3336,5 +3337,11 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional
 	public List<AbastecimentoBoxCotaDTO> obterCotasExpedicao(Intervalo<Date> intervaloData) {
 		return cotaRepository.obterCotasExpedicao(intervaloData);
+	}
+	
+	@Transactional
+	@Override
+	public Map<Integer, AnaliseHistoricoXLSDTO> dadosPDVhistoricoXLS(List<Integer> cotas){
+		return cotaRepository.buscarDadosPdvParaXLS(cotas);
 	}
 }

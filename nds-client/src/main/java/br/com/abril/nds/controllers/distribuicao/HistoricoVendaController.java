@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.distribuicao;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -13,6 +14,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
+import br.com.abril.nds.dto.AnaliseHistoricoXLSDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.HistoricoVendaPopUpDTO;
@@ -414,16 +416,95 @@ public class HistoricoVendaController extends BaseController {
 		List<ProdutoEdicaoDTO> listProdutoEdicaoDTO = (List<ProdutoEdicaoDTO>) session.getAttribute("listProdutoEdicao");
 		List<Integer> listCota = (List<Integer>) session.getAttribute("listCotas");
 		
-		List<AnaliseHistoricoDTO> dto = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota, null, null);
+		List<AnaliseHistoricoDTO> listDto = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota, null, null);
 		
-		try {
-			FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, dto,
-					AnaliseHistoricoDTO.class, this.httpResponse);
-		} catch (Exception e) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Não foi possível gerar o arquivo ." + fileType.toString()));
+		if(fileType == FileType.XLS){
+			
+			Map<Integer, AnaliseHistoricoXLSDTO> cotaComdadosPdvDTO = cotaService.dadosPDVhistoricoXLS(listCota);
+			
+			List<AnaliseHistoricoXLSDTO> listCotasComPDV = new ArrayList<>();
+			
+			parseListaRetorno(listDto, cotaComdadosPdvDTO, listCotasComPDV);
+			
+			try {
+				FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, listCotasComPDV,
+						AnaliseHistoricoXLSDTO.class, this.httpResponse);
+			} catch (Exception e) {
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Não foi possível gerar o arquivo ." + fileType.toString()));
+			}
+		}else{
+			try {
+				FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, listDto,
+						AnaliseHistoricoDTO.class, this.httpResponse);
+			} catch (Exception e) {
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Não foi possível gerar o arquivo ." + fileType.toString()));
+			}
 		}
 		
 		result.nothing();
+	}
+
+	private void parseListaRetorno(List<AnaliseHistoricoDTO> listDto,
+			Map<Integer, AnaliseHistoricoXLSDTO> cotaComdadosPdvDTO, List<AnaliseHistoricoXLSDTO> listCotasComPDV) {
+		for (AnaliseHistoricoDTO dto : listDto) {
+			AnaliseHistoricoXLSDTO pdvComDados = cotaComdadosPdvDTO.get(dto.getNumeroCota());
+			
+			pdvComDados.setStatusCota(dto.getStatusCota());
+			pdvComDados.setNomePessoa(dto.getNomePessoa());
+			pdvComDados.setQtdPdv(dto.getQtdPdv());
+			pdvComDados.setReparteMedioFormat(dto.getReparteMedioFormat());
+			pdvComDados.setVendaMediaFormat(dto.getVendaMediaFormat());
+			
+			if(dto.getEd1Reparte() != null){
+				pdvComDados.setEd1Reparte(dto.getEd1Reparte());
+			}
+			
+			if(dto.getEd2Reparte() != null){
+				pdvComDados.setEd2Reparte(dto.getEd2Reparte());
+			}
+			
+			if(dto.getEd3Reparte() != null){
+				pdvComDados.setEd3Reparte(dto.getEd3Reparte());
+			}
+			
+			if(dto.getEd4Reparte() != null){
+				pdvComDados.setEd4Reparte(dto.getEd4Reparte());
+			}
+			
+			if(dto.getEd5Reparte() != null){
+				pdvComDados.setEd5Reparte(dto.getEd5Reparte());
+			}
+			
+			if(dto.getEd6Reparte() != null){
+				pdvComDados.setEd6Reparte(dto.getEd6Reparte());
+			}
+			
+			if(dto.getEd1Venda() != null){
+				pdvComDados.setEd1Venda(dto.getEd1Venda());
+			}
+			
+			if(dto.getEd2Venda() != null){
+				pdvComDados.setEd2Venda(dto.getEd2Venda());
+			}
+			
+			if(dto.getEd3Venda() != null){
+				pdvComDados.setEd3Venda(dto.getEd3Venda());
+			}
+
+			if(dto.getEd4Venda() != null){
+				pdvComDados.setEd4Venda(dto.getEd4Venda());
+			}
+			
+			if(dto.getEd5Venda() != null){
+				pdvComDados.setEd5Venda(dto.getEd5Venda());
+			}
+			
+			if(dto.getEd6Venda() != null){
+				pdvComDados.setEd6Venda(dto.getEd6Venda());
+			}
+			
+			listCotasComPDV.add(pdvComDados);
+		}
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })

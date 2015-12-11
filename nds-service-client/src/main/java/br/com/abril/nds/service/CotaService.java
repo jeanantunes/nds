@@ -12,6 +12,7 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
+import br.com.abril.nds.dto.AnaliseHistoricoXLSDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
@@ -454,4 +455,6 @@ public interface CotaService {
 	List<AbastecimentoBoxCotaDTO> obterCotasExpedicao(Intervalo<Date> intervaloData);
 
 	Map<Integer, EstudoCotaDTO> obterPorNumeroDaCota(List<Integer> numeroCota);
+
+	Map<Integer, AnaliseHistoricoXLSDTO> dadosPDVhistoricoXLS(List<Integer> cotas);
 }

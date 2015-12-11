@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 
 public class AnaliseParcialQueryDTO {
 
@@ -24,6 +25,7 @@ public class AnaliseParcialQueryDTO {
 	private String numeroCotaStr;
 	private Date dataLancamentoEdicao;
 	private Integer numeroParcial;
+	private FileType file;
 	
 	/**
 	 * Id do estudo que foi copiado na tela de copia proporcional de estudo
@@ -268,6 +270,12 @@ public class AnaliseParcialQueryDTO {
         this.numeroParcial = numeroParcial;
     }
 
-	
-	
+	public FileType getFile() {
+		return file;
+	}
+
+	public void setFile(FileType file) {
+		this.file = file;
+	}
+
 }

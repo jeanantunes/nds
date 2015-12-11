@@ -16,6 +16,7 @@ import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.AnaliseParcialDTO;
+import br.com.abril.nds.dto.AnaliseParcialExportXLSDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
 import br.com.abril.nds.dto.DataLancamentoPeriodoEdicoesBasesDTO;
@@ -1233,5 +1234,66 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	
     	return (Integer) query.uniqueResult();
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Map<Integer, AnaliseParcialExportXLSDTO> buscarDadosPdvParaXLS(AnaliseParcialQueryDTO queryDTO) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT  ");
+		
+		sql.append("   ec.COTA_ID cotaId, ");
+		sql.append("   endereco.TIPO_LOGRADOURO tipoLogradouro, ");
+		sql.append("   endereco.LOGRADOURO logradouro, ");
+		sql.append("   endereco.NUMERO numeroEndereco, ");
+		sql.append("   endereco.COMPLEMENTO complemento, ");
+		sql.append("   endereco.BAIRRO bairro, ");
+		sql.append("   endereco.CIDADE cidade, ");
+		sql.append("   endereco.CEP cep, ");
+		sql.append("   coalesce((select  tel.NUMERO from telefone_pdv telPdv join telefone tel  on telPdv.TELEFONE_ID = tel.ID  ");
+		sql.append("         where telPdv.PRINCIPAL = true and telPdv.PDV_ID = pdv.ID and tel.NUMERO > 1 limit 1), 0) as telefone ");
+
+		sql.append(" FROM estudo_cota_gerado ec ");
+
+		sql.append(" JOIN pdv  ");
+		sql.append("   ON pdv.COTA_ID = ec.COTA_ID  ");
+		sql.append("      and pdv.PONTO_PRINCIPAL = true ");
+		sql.append(" JOIN endereco_pdv endPdv  ");
+		sql.append("   ON endPdv.PDV_ID = pdv.ID ");
+		sql.append(" JOIN endereco  ");
+		sql.append("   ON endPdv.ENDERECO_ID = endereco.ID ");
+
+		sql.append(" WHERE ec.ESTUDO_ID = :estudoID  ");
+		sql.append("  AND ec.reparte IS NOT NULL  ");
+		sql.append("  AND ec.reparte >= 0; ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+
+		query.addScalar("cotaId", StandardBasicTypes.INTEGER);
+		query.addScalar("tipoLogradouro", StandardBasicTypes.STRING);
+		query.addScalar("logradouro", StandardBasicTypes.STRING);
+		query.addScalar("numeroEndereco", StandardBasicTypes.STRING);
+		query.addScalar("complemento", StandardBasicTypes.STRING);
+		query.addScalar("bairro", StandardBasicTypes.STRING);
+		query.addScalar("cidade", StandardBasicTypes.STRING);
+		query.addScalar("cep", StandardBasicTypes.STRING);
+		query.addScalar("telefone", StandardBasicTypes.STRING);
+		
+		query.setParameter("estudoID", queryDTO.getEstudoId());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseParcialExportXLSDTO.class));
+        
+		List<AnaliseParcialExportXLSDTO> listaCotas = query.list();
+        
+		Map<Integer, AnaliseParcialExportXLSDTO> mapCotas = new HashMap<>(); 
+		
+		for (AnaliseParcialExportXLSDTO cota : listaCotas) {
+			
+			mapCotas.put(cota.getCotaId(), cota);
+		}
+		
+		return mapCotas;
+    }
 	
 }
