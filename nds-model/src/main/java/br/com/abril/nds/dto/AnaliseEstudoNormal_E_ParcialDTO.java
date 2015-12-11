@@ -15,6 +15,8 @@ public class AnaliseEstudoNormal_E_ParcialDTO implements Serializable{
 	
 	private List<AnaliseParcialDTO> analiseParcialDTO;
 	
+	private List<AnaliseParcialExportXLSDTO> analiseParcialXLSDTO;
+	
 	private BigInteger total_qtdCotas;
     private BigInteger total_somatorioReparteSugerido;
     private BigInteger total_somatorioUltimoReparte;
@@ -72,6 +74,12 @@ public class AnaliseEstudoNormal_E_ParcialDTO implements Serializable{
 	}
 	public void setVendaTotalEdicao(List<BigInteger> vendaTotalEdicao) {
 		this.vendaTotalEdicao = vendaTotalEdicao;
+	}
+	public List<AnaliseParcialExportXLSDTO> getAnaliseParcialXLSDTO() {
+		return analiseParcialXLSDTO;
+	}
+	public void setAnaliseParcialXLSDTO(List<AnaliseParcialExportXLSDTO> analiseParcialXLSDTO) {
+		this.analiseParcialXLSDTO = analiseParcialXLSDTO;
 	}
 	
 }
