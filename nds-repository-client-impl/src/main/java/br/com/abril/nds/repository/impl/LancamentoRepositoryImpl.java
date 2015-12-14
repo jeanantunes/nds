@@ -3190,6 +3190,7 @@ public class LancamentoRepositoryImpl extends
 
     	StringBuilder hql = new StringBuilder();
     	
+    	/*
     	hql.append(" select dtd                                                                         ");
 	    hql.append(" from                                                                               ");
 	    hql.append("     (  select distinct l.data_rec_distrib dtd,                                     ");
@@ -3201,18 +3202,22 @@ public class LancamentoRepositoryImpl extends
 	    hql.append("             from lancamento l                                                      ");
 	    hql.append("             inner join                                                             ");
 	    hql.append("                 (                                                                  ");
+	    */
 	    hql.append("                     select distinct data_rec_distrib dtd                           ");
 	    hql.append("                     from lancamento                                                ");
-	    hql.append("                     where status in (:produtosEmRecolhimento)                      ");
+	    hql.append("                     where status = :produtosEmRecolhimento                      ");
+	    /*
 	    hql.append("                 ) rs1 on rs1.dtd = l.data_rec_distrib                              ");
 	    hql.append("             ) rs2 on rs2.data_rec_distrib = l.data_rec_distrib                     ");
 	    hql.append("             where (                                                                ");
 	    hql.append("               case when status in (:produtosEmRecolhimento) then 1 else 0 end) = 1 ");
 	    hql.append("             ) rs1                                                                  ");
+    	*/
+    	
     	
         Query query = getSession().createSQLQuery(hql.toString());
         
-        query.setParameterList("produtosEmRecolhimento", Arrays.asList(StatusLancamento.EM_RECOLHIMENTO.name()));
+        query.setParameter("produtosEmRecolhimento", StatusLancamento.EM_RECOLHIMENTO.name());
 
     	return query.list();
     }
