@@ -558,7 +558,11 @@ var analiseParcialController = $.extend(true, {
     			}
 	    		
     			var saldoReparteAtualizado = parseInt(saldoReparte.text(), 10) - reparteSubtraido;
-		          
+    			
+    			var reparteTotalDistribuido = parseInt($("#total_reparte_sugerido").text(), 10) + reparteSubtraido;
+		        
+    			$("#total_reparte_sugerido").text(reparteTotalDistribuido);
+    			
 		        saldoReparte.text(saldoReparteAtualizado);
 		      	
 		      	input_reparte_element.attr('reparteAtual', reparteDigitado);
