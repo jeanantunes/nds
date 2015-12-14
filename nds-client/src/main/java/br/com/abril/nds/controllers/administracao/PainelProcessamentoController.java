@@ -654,7 +654,7 @@ public class PainelProcessamentoController extends BaseController {
     	    	  else
     	    	  if ( !e.getLocalizedMessage().contains("BANDEIRA GRAVADA COM SUCESSO")) {
     	    		 
-    	    	   LOGGER.error("ERRO AO GRAVAR BANDEIRA ",e);
+    	    	   LOGGER.warn("ERRO AO GRAVAR BANDEIRA ",e);
     	    	   String it="";
     	    	   for ( ItemEncalheBandeiraVO item:  itens)
     	    		   it +="<"+item.getCodPublicacao()+"/"+item.getNumEdicao()+">";
@@ -678,7 +678,7 @@ public class PainelProcessamentoController extends BaseController {
                 "</br>Qtde Notas Processada:"+notas.size()+
                 "</br>Qtde Notas com Erros :"+erros+
                 "</br>Mensagens            :"+msg;
-         LOGGER.error(msg);
+         LOGGER.warn(msg);
     	result.use(Results.json()).from(
             new ValidacaoVO(TipoMensagem.WARNING,
                 msg), "result").recursive().serialize();
