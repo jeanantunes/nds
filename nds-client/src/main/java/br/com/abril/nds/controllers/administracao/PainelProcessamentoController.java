@@ -678,7 +678,7 @@ public class PainelProcessamentoController extends BaseController {
                 "</br>Qtde Notas Processada:"+notas.size()+
                 "</br>Qtde Notas com Erros :"+erros+
                 "</br>Mensagens            :"+msg;
-         LOGGER.warn(msg);
+         LOGGER.error(msg); 
     	result.use(Results.json()).from(
             new ValidacaoVO(TipoMensagem.WARNING,
                 msg), "result").recursive().serialize();
