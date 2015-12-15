@@ -151,7 +151,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 //		sql.append("   ELSE 0				 		  ");
 //		sql.append("   END AS qtdReparteDistribuidor, ");
 		
-		sql.append("   eg.reparte_distribuir AS qtdReparteDistribuidor, ");
+		sql.append("   eg.QTDE_REPARTE AS qtdReparteDistribuidor, ");
 		
 
 		sql.append("   est.ABRANGENCIA AS abrangenciaSugerida, ");

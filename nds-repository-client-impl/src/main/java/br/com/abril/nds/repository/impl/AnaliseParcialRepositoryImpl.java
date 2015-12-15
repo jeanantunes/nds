@@ -241,7 +241,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             
             if (queryDTO.possuiPercentualDeVenda()) {
 
-                sql.append(" and (((epc.qtde_recebida - epc.qtde_devolvida)*100)/epc.qtde_recebida) between :filterSortFrom and :filterSortTo ");
+                sql.append(" AND ec.venda_media between :filterSortFrom and :filterSortTo ");
             }
             
             if (queryDTO.possuiOrdenacaoCota()) {

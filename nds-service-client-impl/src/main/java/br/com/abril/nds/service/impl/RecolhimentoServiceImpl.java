@@ -1692,6 +1692,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 		for(Lancamento lancamento: lancamentos) {
 			
+			
             if (!lancamento.getStatus().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO)) {
 				
             	recolhimento = true;
@@ -1700,7 +1701,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
             if (this.lancamentoRepository.existeConferenciaEncalheParaLancamento(lancamento.getId(),TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO)) {
         		
             	reimpressao = true;
-			}
+            	
+            	lancamento.setStatus(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
+            	
+            	this.lancamentoRepository.alterar(lancamento);
+			} else {
 			
 			//lancamento.setStatus(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
             lancamento.setStatus(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
@@ -1718,6 +1723,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			}
 
 			this.lancamentoRepository.alterar(lancamento);
+			}
 		}
         
         this.removerChamadaEncalheCotaEChamadaEncalhe(listaIdChamadaEncalheRemover);
