@@ -319,6 +319,9 @@ public class FTFServiceImpl implements FTFService {
 		//		String testedCpnj = "68252618000182";
 		// validar as pessoas no CRP
 		
+		if(true)
+			return true;
+		
 		PessoaDto wsResponse = pessoaCRPService.obterDadosFiscais(getCodTipoDocFrom(cpfCnpj), cpfCnpj);
 		PessoaType pessoaCRP = wsResponse.getPessoa();
 
