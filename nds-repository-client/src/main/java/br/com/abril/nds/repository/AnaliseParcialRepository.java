@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 
@@ -47,5 +48,6 @@ public interface AnaliseParcialRepository {
 	public abstract List<EdicoesProdutosDTO> carregarPeriodosAnterioresParcial(Long estudoId, Boolean isTrazerEdicoesAbertas);
 	Map<Integer, List<EdicoesProdutosDTO>> buscaHistoricoDeVendaTodasCotas(List<Long> listCotaId, List<Long> listProdutoEdicaoId);
 	Map<Integer, AnaliseParcialExportXLSDTO> buscarDadosPdvParaXLS(AnaliseParcialQueryDTO queryDTO);
+	List<Long> obterCotasDentroDoPercentualReparteFiltro(List<Long> listCotaId, List<Long> listProdutoEdicaoId, AnaliseParcialQueryDTO queryDTO);
     
 }
