@@ -210,10 +210,25 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             }
 
             List<Long> listaCotasId = new ArrayList<>();
-            
+
             for (AnaliseParcialDTO cota : lista) {
             	listaCotasId.add((long) cota.getCotaId());
-			}
+            }
+            
+            // Tratamento para Filtro por Percentual de Venda. Necessário após paginação do GRID
+            if(queryDTO.possuiOrdenacaoPlusFiltro() && queryDTO.possuiPercentualDeVenda()){
+            	listaCotasId = analiseParcialRepository.obterCotasDentroDoPercentualReparteFiltro(listaCotasId, idsProdutoEdicao, queryDTO);
+            	
+            	List<AnaliseParcialDTO> cotasForaDoFiltro = new ArrayList<>();
+            	
+            	for (AnaliseParcialDTO cota : lista) {
+					if(!listaCotasId.contains(new Long(cota.getCotaId()))){
+						cotasForaDoFiltro.add(cota);
+					}
+				}
+            	lista.removeAll(cotasForaDoFiltro);
+            }
+            // ---- 
             
             Map<Integer, List<EdicoesProdutosDTO>> cotasComVenda;
             

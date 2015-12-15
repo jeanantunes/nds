@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -16,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.controllers.HomeController;
 import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
 import br.com.abril.nds.dto.HistogramaPosEstudoAnaliseFaixaReparteDTO;
 import br.com.abril.nds.dto.HistogramaPosEstudoDadoInicioDTO;
@@ -33,8 +30,6 @@ import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.PeriodoLancamentoParcialService;
 import br.com.abril.nds.service.ProdutoBaseSugeridaService;
-import br.com.abril.nds.service.ProdutoEdicaoService;
-import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
@@ -63,13 +58,7 @@ public class HistogramaPosEstudoController extends BaseController{
 	private EstudoProdutoEdicaoBaseService estudoProdutoEdicaoBaseService; 
 	
 	@Autowired
-	private ProdutoService produtoService;
-	
-	@Autowired
 	private EstudoService estudoService;
-	
-	@Autowired
-	private ProdutoEdicaoService produtoEdicaoService;
 	
 	@Autowired
 	private HistogramaPosEstudoFaixaReparteService histogramaPosEstudoFaixaReparteService;
@@ -91,9 +80,6 @@ public class HistogramaPosEstudoController extends BaseController{
     @Autowired
     private LancamentoService lancamentoService;
     
-	@Autowired
-	private HttpServletRequest request ;
-
     @Path("/index")
 	public void histogramaPosEstudo(Long idLancamento) {
 	    
