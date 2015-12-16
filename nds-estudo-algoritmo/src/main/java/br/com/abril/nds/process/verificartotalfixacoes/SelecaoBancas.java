@@ -173,14 +173,18 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	} // fim da remocao
 
 	if (idsCotas.size() > 0) {
-	    List<Long> numerosEdicao = new ArrayList<>();
-	    if (estudo.getProdutoEdicaoEstudo().getNumeroEdicao() > 1) {
+	    
+		List<Long> numerosEdicao = new ArrayList<>();
+	    
+		if (estudo.getProdutoEdicaoEstudo().getNumeroEdicao() > 1) {
 	    	numerosEdicao.add(estudo.getProdutoEdicaoEstudo().getNumeroEdicao() - 1);
 	    }
-	    if (estudo.getProdutoEdicaoEstudo().getNumeroEdicao() > 2) {
+	    
+		if (estudo.getProdutoEdicaoEstudo().getNumeroEdicao() > 2) {
 	    	numerosEdicao.add(estudo.getProdutoEdicaoEstudo().getNumeroEdicao() - 2);
 	    }
-	    if (numerosEdicao.size() > 0) {
+	    
+		if (numerosEdicao.size() > 0) {
 	    	List<Long> cotasQueReceberam = cotaDAO.buscarCotasQueReceberamUltimaEdicaoAberta(estudo.getProdutoEdicaoEstudo().getProduto().getCodigo(), idsCotas, numerosEdicao);
 			
 	    	for (CotaEstudo cota : estudo.getCotasExcluidas()) {
@@ -199,10 +203,13 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	// selecao de componente/elemento
 	if (estudo.getDistribuicaoVendaMediaDTO().getComponente() != null && estudo.getDistribuicaoVendaMediaDTO().getElemento() != null) {
 	    estudo.setComplementarAutomatico(false);
+	    
 	    for (CotaEstudo cota : cotas) {
-			String [] vetor = {estudo.getDistribuicaoVendaMediaDTO().getElemento(),
-					estudo.getDistribuicaoVendaMediaDTO().getElemento2(),estudo.getDistribuicaoVendaMediaDTO().getElemento3()};
-			if (!estudoAlgoritmoService.isCotaDentroDoComponenteElemento(estudo.getDistribuicaoVendaMediaDTO().getComponente(), vetor, cota)) {
+			
+	    	String [] vetor = {estudo.getDistribuicaoVendaMediaDTO().getElemento(),
+					estudo.getDistribuicaoVendaMediaDTO().getElemento2(), estudo.getDistribuicaoVendaMediaDTO().getElemento3()};
+	    				
+	    	if (!estudoAlgoritmoService.isCotaDentroDoComponenteElemento(estudo.getDistribuicaoVendaMediaDTO().getComponente(), vetor, cota)) {
 			    cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
 			    cota.setReparteCalculado(BigInteger.ZERO, estudo);
 			}
