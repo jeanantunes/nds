@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="188"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
 		<paragraph leftIndent="3"/>
@@ -66,61 +66,61 @@
 		<band height="55" splitType="Immediate">
 			<elementGroup>
 				<rectangle>
-					<reportElement x="0" y="0" width="555" height="15" backcolor="#E4E4E4" uuid="c780f357-5df9-45c4-9b10-7c954c294203"/>
+					<reportElement x="0" y="0" width="555" height="15" isPrintWhenDetailOverflows="true" backcolor="#E4E4E4" uuid="c780f357-5df9-45c4-9b10-7c954c294203"/>
 				</rectangle>
 				<staticText>
-					<reportElement x="1" y="0" width="24" height="15" uuid="d5a30688-b094-4596-9df9-f057e4d54d72"/>
+					<reportElement x="1" y="0" width="24" height="15" isPrintWhenDetailOverflows="true" uuid="d5a30688-b094-4596-9df9-f057e4d54d72"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="8" isBold="true"/>
+						<font fontName="Arial" size="10" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Box:]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="24" y="0" width="25" height="15" uuid="fcc533b5-8f2b-44a6-98a1-93ea85faf1a2"/>
+					<reportElement x="24" y="0" width="25" height="15" isPrintWhenDetailOverflows="true" uuid="fcc533b5-8f2b-44a6-98a1-93ea85faf1a2"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="8"/>
+						<font fontName="Arial" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[((br.com.abril.nds.dto.EntregadorDTO)$F{key}).getCodigoBox()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="51" y="0" width="48" height="15" uuid="77bfddaa-72df-4617-9e30-fc373398d037"/>
+					<reportElement x="51" y="0" width="48" height="15" isPrintWhenDetailOverflows="true" uuid="77bfddaa-72df-4617-9e30-fc373398d037"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="8" isBold="true"/>
+						<font fontName="Arial" size="10" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Roteiro:]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="97" y="0" width="140" height="15" uuid="ae0addf5-5df5-47c0-8196-a8d66e84bcdf"/>
+					<reportElement x="97" y="0" width="140" height="15" isPrintWhenDetailOverflows="true" uuid="ae0addf5-5df5-47c0-8196-a8d66e84bcdf"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="8"/>
+						<font fontName="Arial" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[((br.com.abril.nds.dto.EntregadorDTO)$F{key}).getDescricaoRoteiro()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="237" y="0" width="28" height="15" uuid="2ba246e9-8d4a-48c8-b260-ae83caa9d8c2"/>
+					<reportElement x="237" y="0" width="28" height="15" isPrintWhenDetailOverflows="true" uuid="2ba246e9-8d4a-48c8-b260-ae83caa9d8c2"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="8" isBold="true"/>
+						<font fontName="Arial" size="10" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Rota:]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="265" y="0" width="173" height="15" uuid="049587f7-3810-4fd2-85b5-30e3f211e1a9"/>
+					<reportElement x="265" y="0" width="173" height="15" isPrintWhenDetailOverflows="true" uuid="049587f7-3810-4fd2-85b5-30e3f211e1a9"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="8"/>
+						<font fontName="Arial" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[((br.com.abril.nds.dto.EntregadorDTO)$F{key}).getDescricaoRota()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="444" y="0" width="25" height="15" uuid="c7ba4828-5849-4dc6-9146-9bb5a6e7ad78"/>
+					<reportElement x="444" y="0" width="25" height="15" isPrintWhenDetailOverflows="true" uuid="c7ba4828-5849-4dc6-9146-9bb5a6e7ad78"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="8" isBold="true"/>
+						<font fontName="Arial" size="10" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Data:]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="469" y="0" width="85" height="15" uuid="eb5a3c75-b79a-4d2e-901c-3c444125d342"/>
+					<reportElement x="469" y="0" width="85" height="15" isPrintWhenDetailOverflows="true" uuid="eb5a3c75-b79a-4d2e-901c-3c444125d342"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Arial" size="8"/>
+						<font fontName="Arial" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{DATA}]]></textFieldExpression>
 				</textField>
