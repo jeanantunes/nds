@@ -13,9 +13,6 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 @DiscriminatorValue(value="FORNECEDOR")
 public class MovimentoFechamentoFiscalFornecedor extends MovimentoFechamentoFiscal {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	@OneToOne

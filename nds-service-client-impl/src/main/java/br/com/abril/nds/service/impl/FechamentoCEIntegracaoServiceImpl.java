@@ -44,6 +44,7 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -51,7 +52,10 @@ import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscal;
+import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscalDevolucaoFornecedor;
 import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscalFechamentoCEI;
+import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscalMEC;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -65,8 +69,10 @@ import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.FechamentoCEIntegracaoRepository;
 import br.com.abril.nds.repository.ItemChamadaEncalheFornecedorRepository;
+import br.com.abril.nds.repository.MovimentoFechamentoFiscalRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
+import br.com.abril.nds.repository.TipoMovimentoFiscalRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EstoqueProdutoService;
@@ -152,6 +158,11 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	@Autowired
 	private LancamentoService lancamentoService;
 
+	@Autowired
+	private MovimentoFechamentoFiscalRepository movimentoFechamentoFiscalRepository;
+	
+	@Autowired
+	private TipoMovimentoFiscalRepository tipoMovimentoFiscalRepository;
 	
 	@Transactional(readOnly=true)
 	public List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
@@ -375,14 +386,28 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				totalVendaApurada = totalVendaApurada.add(BigDecimal.valueOf(Util.nvl(itemFo.getQtdeDevolucaoApurada(), 0L)));
 				totalVendaInformada = totalVendaInformada.add(BigDecimal.valueOf(Util.nvl(itemFo.getQtdeVendaApurada(), 0L)));	
 				
-				//TODO: Ajustar os movimentos fiscais ao fechar a CE Integracao				
-				List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
-				listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalFechamentoCEI());
-
-				MovimentoFechamentoFiscal mff = new MovimentoFechamentoFiscalFornecedor();
-				mff.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
-        		mff.setQtde(BigInteger.valueOf(itemFo.getQtdeEnviada() - itemFo.getQtdeDevolucaoApurada()));
-				
+				if(estoqueProduto != null) {
+					OrigemItemMovFechamentoFiscalFechamentoCEI oimffdf = new OrigemItemMovFechamentoFiscalFechamentoCEI();
+					
+					oimffdf.setMovimento(estoqueProduto.getMovimentos().get(0));
+					
+					//TODO: Ajustar os movimentos fiscais ao fechar a CE Integracao				
+					List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
+					listaOrigemMovsFiscais.add(oimffdf);
+	
+					MovimentoFechamentoFiscal mff = new MovimentoFechamentoFiscalFornecedor();
+					listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalFechamentoCEI());
+					mff.setProdutoEdicao(estoqueProduto.getProdutoEdicao());
+					mff.setTipoDestinatario(TipoDestinatario.FORNECEDOR);
+					mff.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.SAIDA));
+	        		mff.setQtde(BigInteger.valueOf(itemFo.getQtdeEnviada() - itemFo.getQtdeDevolucaoApurada()).subtract(estoqueProduto.getQtdeDevolucaoFornecedor()));
+					mff.setNotaFiscalLiberadaEmissao(true);
+					
+					((MovimentoFechamentoFiscalFornecedor) mff).setFornecedor(fornecedorService.obterFornecedorPorId(16L));
+					oimffdf.setMovimentoFechamentoFiscal(mff);
+	        		movimentoFechamentoFiscalRepository.adicionar(mff);
+				} 
+        		
 			}
 			
 			cef.setTotalCreditoApurado(totalCreditoApurado);
