@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +52,7 @@ public class SlipRepositoryImpl extends AbstractRepositoryModel<Slip, Long> impl
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Map<Integer, Slip> obterSlipsPorCotasData(List<Integer> listaCotas, Date dataDe, Date dataAte) {
+	public Map<Integer, List<Slip>> obterSlipsPorCotasData(List<Integer> listaCotas, Date dataDe, Date dataAte) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -74,10 +75,21 @@ public class SlipRepositoryImpl extends AbstractRepositoryModel<Slip, Long> impl
         
        List<Slip> listaSlips = query.list();
        
-       Map<Integer, Slip> mapComSlips = new HashMap<>();
+       Map<Integer, List<Slip>> mapComSlips = new HashMap<>();
        
        for (Slip slip : listaSlips) {
-    	   mapComSlips.put(slip.getNumeroCota(), slip);
+    	   
+    	   if(mapComSlips.get(slip.getNumeroCota()) == null){
+    		   
+    		   List<Slip> slips = new ArrayList<>();
+    		   slips.add(slip);
+    		   
+    		   mapComSlips.put(slip.getNumeroCota(), slips);
+    	   }else{
+    		   List<Slip> slips = mapComSlips.get(slip.getNumeroCota());
+    		   slips.add(slip);
+    		   mapComSlips.put(slip.getNumeroCota(), slips);
+    	   }
        }
        
        return mapComSlips;

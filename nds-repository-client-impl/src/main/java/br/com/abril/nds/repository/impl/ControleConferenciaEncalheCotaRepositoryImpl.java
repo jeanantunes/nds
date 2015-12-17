@@ -168,6 +168,10 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		if(filtro.getIdFornecedor() != null) {
 			sql.append(" and FORNECEDOR.ID =  :idFornecedor ");
 		}
+		
+		if(filtro.getNumCota() != null){
+			sql.append(" AND COTA.NUMERO_COTA =  :numCota ");
+		}
 
 		sql.append("	ORDER BY BOX.CODIGO,ROTEIRO.ORDEM , ROTA.ORDEM, ROTA_PDV.ORDEM  ");
 		
@@ -180,6 +184,10 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 
 		if(filtro.getIdFornecedor() != null) {
 			parameters.put("idFornecedor", filtro.getIdFornecedor());
+		}
+		
+		if(filtro.getNumCota() != null) {
+			parameters.put("numCota", filtro.getNumCota());
 		}
 		
 		parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
