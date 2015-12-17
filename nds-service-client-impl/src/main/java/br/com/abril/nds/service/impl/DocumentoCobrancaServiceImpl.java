@@ -1563,28 +1563,38 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         		List<Slip> slips = mapSlip.get(numCotaSlip);
     			
     			if(slips != null){
-    				for (Slip slipsCota : slips) {
-    					this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slipsCota);
-					}
+    				if(dataAte != dataDe && slips.size() < 2){
+    					buscarSlipCotaAusente(arquivos, dataDe, dataAte, incluirNumeroSlip, numCotaSlip);
+    				}else{
+    					for (Slip slipsCota : slips) {
+    						this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slipsCota);
+    					}
+    				}
+    				
     			}else{
     				
-    				FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
-    				
-    				filtro.setDataRecolhimentoInicial(dataDe);
-    				filtro.setDataRecolhimentoFinal(dataAte);
-    				filtro.setNumCota(numCotaSlip);
-    				
-    				List<Long> listaCotasAusente = controleConferenciaEncalheCotaRepository.obterListaIdControleConferenciaEncalheCota(filtro);
-    				
-    				for (Long idEncalhecota: listaCotasAusente) {
-    					final Slip slipDTO = this.gerarSlipDTOCobranca(idEncalhecota, incluirNumeroSlip);
-    					arquivos.add(this.gerarSlipPDF(slipDTO));
-					}
+    				buscarSlipCotaAusente(arquivos, dataDe, dataAte, incluirNumeroSlip, numCotaSlip);
     				
     			}
     		}
         }
     }
+
+	private void buscarSlipCotaAusente(List<byte[]> arquivos, Date dataDe, Date dataAte, boolean incluirNumeroSlip,
+			Integer numCotaSlip) {
+		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+		
+		filtro.setDataRecolhimentoInicial(dataDe);
+		filtro.setDataRecolhimentoFinal(dataAte);
+		filtro.setNumCota(numCotaSlip);
+		
+		List<Long> listaCotasAusente = controleConferenciaEncalheCotaRepository.obterListaIdControleConferenciaEncalheCota(filtro);
+		
+		for (Long idEncalhecota: listaCotasAusente) {
+			final Slip slipDTO = this.gerarSlipDTOCobranca(idEncalhecota, incluirNumeroSlip);
+			arquivos.add(this.gerarSlipPDF(slipDTO));
+		}
+	}
     
 	/**
      * SLIP
