@@ -31,6 +31,7 @@ import br.com.abril.nds.dto.CobrancaImpressaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.ItemSlipVendaEncalheDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -274,16 +275,18 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
                 }
             }
             
-            Map<Integer, Slip> mapSlip = this.slipRepository.obterSlipsPorCotasData(listaCotas, data, null);
+            Map<Integer, List<Slip>> mapSlip = this.slipRepository.obterSlipsPorCotasData(listaCotas, data, null);
             
             List<Integer> cotasRoteirizadas = this.slipRepository.obterCotasRoteirizadas(listaCotas);
         	
         	for (Integer cotaSlip : cotasRoteirizadas){
         		
-            	Slip slip = mapSlip.get(cotaSlip);
+        		List<Slip> slip = mapSlip.get(cotaSlip);
             	
             	if(slip != null){
-            		this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
+            		for (Slip slipCotas : slip) {
+            			this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slipCotas);
+					}
             	}
 			}
             
@@ -295,12 +298,13 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         return PDFUtil.mergePDFs(arquivos);
     }
 
-	private void geracaoSlip(final List<byte[]> arquivos, final Image logo,
-			final String razaoSocialDistrib, final Slip slip) {
+	private void geracaoSlip(final List<byte[]> arquivos, final Image logo, final String razaoSocialDistrib, final Slip slip) {
+		
 		if (slip != null){
 		    popularSlip(logo, razaoSocialDistrib, slip);
-		    arquivos.add(this.gerarSlipPDF(slip));
 		}
+		arquivos.add(this.gerarSlipPDF(slip));
+		
 	}
 
 	private void popularSlip(final Image logo, final String razaoSocialDistrib, final Slip slip) {
@@ -1550,18 +1554,34 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         	final Image logo = JasperUtil.getImagemRelatorio(getLogoDistribuidor());
         	final String razaoSocialDistrib = this.distribuidorService.obterRazaoSocialDistribuidor();
         	
-        	Map<Integer, Slip> mapSlip = this.slipRepository.obterSlipsPorCotasData(listaCotas, dataDe, dataAte);
+        	Map<Integer, List<Slip>> mapSlip = this.slipRepository.obterSlipsPorCotasData(listaCotas, dataDe, dataAte);
         	
     		List<Integer> cotasRoteirizadas = this.slipRepository.obterCotasRoteirizadas(listaCotas);
-        	
+    		
         	for (Integer numCotaSlip : cotasRoteirizadas){
     			
-    			Slip slip = mapSlip.get(numCotaSlip);
+        		List<Slip> slips = mapSlip.get(numCotaSlip);
     			
-    			if(slip != null){
-    				this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
+    			if(slips != null){
+    				for (Slip slipsCota : slips) {
+    					this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slipsCota);
+					}
+    			}else{
+    				
+    				FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
+    				
+    				filtro.setDataRecolhimentoInicial(dataDe);
+    				filtro.setDataRecolhimentoFinal(dataAte);
+    				filtro.setNumCota(numCotaSlip);
+    				
+    				List<Long> listaCotasAusente = controleConferenciaEncalheCotaRepository.obterListaIdControleConferenciaEncalheCota(filtro);
+    				
+    				for (Long idEncalhecota: listaCotasAusente) {
+    					final Slip slipDTO = this.gerarSlipDTOCobranca(idEncalhecota, incluirNumeroSlip);
+    					arquivos.add(this.gerarSlipPDF(slipDTO));
+					}
+    				
     			}
-    			
     		}
         }
     }
