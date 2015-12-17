@@ -3664,7 +3664,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
         
-        hql.append(" group by entregador.ID, produto.CODIGO, cota.id ");
+        hql.append(" group by entregador.ID, produtoEdicao.ID, produto.CODIGO, cota.id ");
         
         gerarOrdenacaoDadosAbastecimento(filtro, hql);
         
