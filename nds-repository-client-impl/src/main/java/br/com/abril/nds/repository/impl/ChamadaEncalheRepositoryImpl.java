@@ -751,10 +751,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		gerarFromWhereProdutosCE(filtro, hql, param);
 		
 		hql.append(" group by chamadaenc1_.ID , cota4_.ID ");
-		hql.append(" having reparte > 0 "); 
 		
-		// Odemir codigo conferencia de encalhe
-		//hql.append(" having reparte > if (periodolan11_.TIPO = 'FINAL',-1,0) "); 
+		hql.append(" having reparte > if (periodolan11_.TIPO = 'FINAL',-1,0) "); 
 		hql.append(" order by chamadaenc1_.DATA_RECOLHIMENTO, sequencia ");
 		
 		SQLQuery query =  getSession().createSQLQuery(hql.toString());
