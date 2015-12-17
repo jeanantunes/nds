@@ -492,8 +492,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         
         String nomePublicacao = 
         		TipoEstudoCota.JURAMENTADO.equals(estudoCota.getTipoEstudo()) ?
-        				produtoEdicao.getProduto().getNome() + " Juramentado" : 
-    					produtoEdicao.getProduto().getNome();
+        				produtoEdicao.getProduto().getNomeComercial() + " Juramentado" : 
+        				produtoEdicao.getProduto().getNomeComercial();
         
         itemNotaEnvio.setProdutoEdicao(produtoEdicao);
         itemNotaEnvio.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
@@ -1357,7 +1357,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			itemNotaEnvio.setProdutoEdicao(item.getProdutoServico().getProdutoEdicao());
 			itemNotaEnvio.setCodigoProduto(item.getProdutoServico().getProdutoEdicao().getProduto().getCodigo());
 			itemNotaEnvio.setNumeroEdicao(item.getProdutoServico().getProdutoEdicao().getNumeroEdicao());
-			itemNotaEnvio.setPublicacao(item.getProdutoServico().getProdutoEdicao().getProduto().getNome());
+			itemNotaEnvio.setPublicacao(item.getProdutoServico().getProdutoEdicao().getProduto().getNomeComercial());
 			itemNotaEnvio.setDesconto(item.getProdutoServico().getProdutoEdicao().getDesconto());
 			itemNotaEnvio.setReparte(item.getProdutoServico().getQuantidade());
 			itemNotaEnvio.setPrecoCapa(item.getProdutoServico().getProdutoEdicao().getPrecoVenda());
