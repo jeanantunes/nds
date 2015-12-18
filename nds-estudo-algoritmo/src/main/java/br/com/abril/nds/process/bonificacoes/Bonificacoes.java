@@ -115,7 +115,7 @@ public class Bonificacoes extends ProcessoAbstrato {
 		    
 			if (bonificacao.getComponente() != null && bonificacao.getElemento() != null && cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO) && estudoAlgoritmoService.isCotaDentroDoComponenteElemento(bonificacao.getComponente(), vetor, cota)) {
 				
-				if(cota.getClassificacao().equals(ClassificacaoCota.BancaMixSemDeterminadaPublicacao)){
+				if(cota.getClassificacao().in(ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico)){
 					continue;
 				}
 				
