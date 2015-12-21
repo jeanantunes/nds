@@ -1003,7 +1003,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     public List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
         StringBuilder sql = new StringBuilder();
         sql.append("select cota.numero_cota numeroCota, ");
-        sql.append("       coalesce(pe.nome, pe.razao_social, pe.nome_fantasia, '') nomeCota, ");
+        sql.append("       coalesce(pe.nome_fantasia, pe.razao_social, pe.nome, '') nomeCota, ");
         sql.append("       ec.reparte quantidade, ");
         sql.append("       ec.venda_media vendaMedia, ");
         sql.append("       cast(cota.situacao_cadastro as char) as situacaoCota, ");
