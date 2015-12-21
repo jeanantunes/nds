@@ -155,6 +155,8 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
         estudo1.setDataCadastro(new Date());
         estudo1.setUsuario(this.usuarioService.getUsuarioLogado());
         estudo1.setTipoGeracaoEstudo(TipoGeracaoEstudo.DIVISAO);
+        estudo1.setDataLancamento(estudoComplementarVO.getDataDeLancamento());
+        estudo1.setLancamentoID(estudoComplementarVO.getIdLancamento());
 
         // Gera Novo Estudo
         Long idEstudo = estudoGeradoRepository.adicionar(estudo1);
