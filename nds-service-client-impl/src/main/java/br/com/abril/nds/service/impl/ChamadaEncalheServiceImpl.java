@@ -150,7 +150,8 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		    return new ArrayList<>();
 		}
 		
-		/*
+		/*TODO parcias removidas com encalhe zero*/
+		
 		for(int i = 0; i < listaChamadaEncalhe.size(); i++) {
 			
 			if(listaChamadaEncalhe.get(i).getQtdeExemplares() <= 0) {
@@ -158,7 +159,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				listaChamadaEncalhe.remove(i);
 			}
 		}
-		 */
+		
 		
 		return listaChamadaEncalhe;
 	}

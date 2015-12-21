@@ -27,6 +27,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import com.sun.xml.internal.bind.v2.TODO;
+
 import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
@@ -751,8 +753,11 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		gerarFromWhereProdutosCE(filtro, hql, param);
 		
 		hql.append(" group by chamadaenc1_.ID , cota4_.ID ");
+		hql.append(" having reparte > 0 "); 
 		
-		hql.append(" having reparte > if (periodolan11_.TIPO = 'FINAL',-1,0) "); 
+		
+		/*TODO parciais final apresentar na ce */
+		// hql.append(" having reparte > if (periodolan11_.TIPO = 'FINAL',-1,0) "); 
 		hql.append(" order by chamadaenc1_.DATA_RECOLHIMENTO, sequencia ");
 		
 		SQLQuery query =  getSession().createSQLQuery(hql.toString());
