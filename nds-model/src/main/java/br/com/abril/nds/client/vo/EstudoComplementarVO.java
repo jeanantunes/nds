@@ -1,5 +1,7 @@
 package br.com.abril.nds.client.vo;
 
+import java.util.Date;
+
 public class EstudoComplementarVO {
 
     int  reparteCota;
@@ -13,6 +15,8 @@ public class EstudoComplementarVO {
     long idProdutoEdicao;
     boolean multiplo;
     Long idCopia;
+    
+    private Date dataDeLancamento;
     
     private String dataLancamento;
     
@@ -88,6 +92,11 @@ public class EstudoComplementarVO {
 	public void setDataLancamento(String dataLancamento) {
 		this.dataLancamento = dataLancamento;
 	}
-	
+	public Date getDataDeLancamento() {
+		return dataDeLancamento;
+	}
+	public void setDataDeLancamento(Date dataDeLancamento) {
+		this.dataDeLancamento = dataDeLancamento;
+	}
 	
 }

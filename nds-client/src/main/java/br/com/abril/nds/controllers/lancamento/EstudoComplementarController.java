@@ -24,10 +24,12 @@ import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EstudoComplementarService;
 import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -47,11 +49,8 @@ public class EstudoComplementarController extends BaseController {
     private HttpSession session;
 
     @Autowired
-    private HttpServletResponse httpResponse;
-
-    @Autowired
-    private CalendarioService calendarioService;
-
+    private LancamentoService lancamentoService;
+    
     @Autowired
     private EstudoComplementarService estudoComplementarService;
 
@@ -110,12 +109,18 @@ public class EstudoComplementarController extends BaseController {
     	Long qtdEstudoParaLancamento = 0L;
     	Date dataLanctoFormatada;
     	
+    	Lancamento lancamento = lancamentoService.obterPorId(parametros.getIdLancamento());
+    	
+    	parametros.setDataLancamento(DateUtil.formatarDataPTBR(lancamento.getDataLancamentoDistribuidor()));
+
     	try {
     		dataLanctoFormatada = new SimpleDateFormat("dd/MM/yyyy").parse(parametros.getDataLancamento());
 		} catch (ParseException e) {
 			 throw new Exception("Data de lançamento em formato incorreto.");
 		}
 
+    	parametros.setDataDeLancamento(dataLanctoFormatada);
+    	
     	qtdEstudoParaLancamento = estudoService.countEstudosPorLancamento(parametros.getIdLancamento(), dataLanctoFormatada);
     	
     	if(qtdEstudoParaLancamento >= 3){
