@@ -246,24 +246,24 @@
 				<reportElement x="0" y="0" width="555" height="15" uuid="2eb435bc-cced-4c21-9d36-0c9bc024a1c0"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="70" y="0" width="38" height="15" uuid="14b43fde-85af-411c-b856-d086e50b9fc0"/>
+				<reportElement x="67" y="0" width="34" height="15" uuid="14b43fde-85af-411c-b856-d086e50b9fc0"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="Arial" size="10" isBold="true"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="107" y="0" width="93" height="15" uuid="0fee85c9-ab2e-4409-9d82-658938eaa9ed"/>
+				<reportElement x="101" y="0" width="93" height="15" uuid="0fee85c9-ab2e-4409-9d82-658938eaa9ed"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="8"/>
+					<font fontName="Arial" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["" + $V{REPORT_COUNT} + " Produto(s)"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="30" y="0" width="40" height="15" uuid="e67774b9-9e4b-4077-9cc7-93fa5a13f26a"/>
+				<reportElement x="26" y="0" width="40" height="15" uuid="e67774b9-9e4b-4077-9cc7-93fa5a13f26a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="Arial" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{somaReparte}]]></textFieldExpression>
 			</textField>
