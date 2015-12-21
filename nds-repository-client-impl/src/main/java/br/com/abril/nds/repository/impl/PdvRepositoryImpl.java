@@ -478,8 +478,8 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 			.append("LEFT JOIN enderecoPdv.endereco endereco ")
 			.append("LEFT JOIN pdv.telefones telefonePdv ")
 			.append("LEFT JOIN telefonePdv.telefone telefone ")
+			.append(" with telefonePdv.principal = true ")
 			.append(" WHERE pdv.cota.id = :idCota ");
-			//.append(" and enderecoPdv.principal = true"); -- Retirado no merge com a Fase2
 	        	
 		Query q = getSession().createQuery(hql.toString());
         q.setParameter("idCota", idCota);

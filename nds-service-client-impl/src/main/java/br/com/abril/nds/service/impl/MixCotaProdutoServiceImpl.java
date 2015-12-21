@@ -195,6 +195,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(id);
 		FiltroPdvDTO filtroPdvDTO = new FiltroPdvDTO();
 		filtroPdvDTO.setIdCota(mixCotaProduto.getCota().getId());
+		
 		List <PdvDTO> listPDVs = pdvRepository.obterPdvPorCotaComEndereco(filtroPdvDTO.getIdCota());
 		return listPDVs; 
 	}
