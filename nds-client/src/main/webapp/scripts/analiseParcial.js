@@ -1495,6 +1495,10 @@ var analiseParcialController = $.extend(true, {
     
     cotasQueNaoEntraramNoEstudo : function() {
 
+    	if($("#cotasQueNaoEntraramNoEstudo_motivo").val() == "SELECIONE"){
+    		$("#cotasQueNaoEntraramNoEstudo_motivo").val("TODOS");
+    	}
+    	
 		var cota = $("#cotasQueNaoEntraramNoEstudo_cota").val();
         var nome = $("#cotasQueNaoEntraramNoEstudo_nome").val();
         var motivo = $("#cotasQueNaoEntraramNoEstudo_motivo").val();
