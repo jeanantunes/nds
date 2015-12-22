@@ -360,7 +360,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	}
 	if (cota.getClassificacao().notIn(ClassificacaoCota.CotaNova, ClassificacaoCota.CotaMix, ClassificacaoCota.ReparteFixado,
 		ClassificacaoCota.BancaForaDaRegiaoDistribuicao, ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.BancaSuspensa, 
-		ClassificacaoCota.CotaNaoRecebeEsseSegmento) &&
+		ClassificacaoCota.CotaNaoRecebeEsseSegmento, ClassificacaoCota.BancaSemClassificacaoDaPublicacao) &&
 		!(estudo.getDistribuicaoVendaMediaDTO() != null && estudo.getDistribuicaoVendaMediaDTO().getAbrangencia() != null &&
 		estudo.getReparteMinimo() != null)) {
 	    
