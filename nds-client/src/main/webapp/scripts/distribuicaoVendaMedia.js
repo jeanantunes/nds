@@ -45,6 +45,9 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 				pesquisaProduto.pesquisarPorNomeProduto('#codigoPesquisaBases', '#nomeProdutoEdicaoBase', '#edicaoPesquisaBases', true);
 			}
 		});
+	    
+	    T.produtoEdicaoBases = [];
+        T.bonificacaoSelecionados = [];
 	};
 	
 	this.verificarICD = function(){
@@ -789,8 +792,8 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
             		matrizDistribuicao.carregarGrid();
             }
             
-            T.produtoEdicaoBases = [];
-            T.bonificacaoSelecionados = [];
+            //T.produtoEdicaoBases = [];
+            //T.bonificacaoSelecionados = [];
 
 			exibirMensagemDialog("SUCCESS", ["Operação realizada com sucesso!"], "");
 		

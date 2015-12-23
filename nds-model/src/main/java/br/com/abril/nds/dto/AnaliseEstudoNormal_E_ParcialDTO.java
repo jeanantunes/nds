@@ -23,6 +23,7 @@ public class AnaliseEstudoNormal_E_ParcialDTO implements Serializable{
     private BigDecimal percentualAbrangencia;
     private List<BigInteger> reparteTotalEdicao;
     private List<BigInteger> vendaTotalEdicao;
+    private BigInteger saldo;
     
     
     private TableModel<CellModelKeyValue<AnaliseParcialDTO>> table;
@@ -80,6 +81,12 @@ public class AnaliseEstudoNormal_E_ParcialDTO implements Serializable{
 	}
 	public void setAnaliseParcialXLSDTO(List<AnaliseParcialExportXLSDTO> analiseParcialXLSDTO) {
 		this.analiseParcialXLSDTO = analiseParcialXLSDTO;
+	}
+	public BigInteger getSaldo() {
+		return saldo;
+	}
+	public void setSaldo(BigInteger saldo) {
+		this.saldo = saldo;
 	}
 	
 }

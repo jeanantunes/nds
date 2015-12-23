@@ -29,6 +29,7 @@ import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.dto.ReparteFixacaoMixWrapper;
+import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -44,6 +45,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MixCotaProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
@@ -108,6 +110,10 @@ public class AnaliseParcialController extends BaseController {
     @Autowired
     private CotaService cotaService;
     
+    @Autowired
+    private EstudoService estudoService;
+    
+    @Autowired
     private static final String EDICOES_BASE_SESSION_ATTRIBUTE = "";
 
     @Path("/")
@@ -158,7 +164,14 @@ public class AnaliseParcialController extends BaseController {
         result.include("lancamentoComEstudoLiberado", (lancamento.getEstudo() != null));
         result.include("lancamento", lancamento);
         result.include("estudoCota", estudoCota);
-        result.include("estudo", estudoCota.getEstudo());
+        
+        ResumoEstudoHistogramaPosAnaliseDTO resumo = estudoService.obterResumoEstudo(id, null, null);
+        
+        if(resumo.getSaldo() != null){
+        	estudoCota.getEstudo().setSobra(resumo.getSaldo().toBigInteger());
+        }
+        
+    	result.include("estudo", estudoCota.getEstudo());
         result.include("faixaDe", faixaDe);
         result.include("faixaAte", faixaAte);
         result.include("reparteCopiado", reparteCopiado);
@@ -294,6 +307,8 @@ public class AnaliseParcialController extends BaseController {
         validator.onErrorUse(Results.json()).withoutRoot().from(table).recursive().serialize();
         
         AnaliseEstudoNormal_E_ParcialDTO vo = new AnaliseEstudoNormal_E_ParcialDTO();
+        
+        ResumoEstudoHistogramaPosAnaliseDTO resumo = estudoService.obterResumoEstudo(id, null, null);
     	
     	vo.setTable(table);
     	vo.setTotal_qtdCotas(analise.getTotal_qtdCotas());
@@ -302,6 +317,10 @@ public class AnaliseParcialController extends BaseController {
     	vo.setPercentualAbrangencia(analiseParcialService.calcularPercentualAbrangencia(id));
     	vo.setReparteTotalEdicao(analise.getReparteTotalEdicao());
     	vo.setVendaTotalEdicao(analise.getVendaTotalEdicao());
+    	
+    	if (resumo.getSaldo() != null) {
+    		vo.setSaldo(resumo.getSaldo().toBigInteger());
+		}
     	
     	result.use(Results.json()).from(vo).recursive().serialize();
     }
