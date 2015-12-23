@@ -27,6 +27,7 @@ import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ReparteFixacaoMixWrapper;
 import br.com.abril.nds.dto.RepartePDVDTO;
+import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -827,6 +828,19 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
     	if((reparteFisicoOuPrevisto != null)&&(estudoGerado.getQtdeReparte().compareTo(reparteFisicoOuPrevisto.toBigInteger()) > 0)) {
     		validacao =  new ValidacaoException(TipoMensagem.WARNING,"O reparte distribuido é maior que estoque disponível!");
+    		return validacao;
+    	}
+    	
+    	if((estudoGerado.getSobra() != null) && estudoGerado.getSobra().compareTo(BigInteger.ZERO) != 0){
+    		validacao =  new ValidacaoException(TipoMensagem.WARNING,"Não é possível liberar estudo com saldo de reparte.");
+    		return validacao;
+    	}
+    	
+    	ResumoEstudoHistogramaPosAnaliseDTO resumo = estudoGeradoRepository.obterResumoEstudo(estudoId, false);
+    	
+    	if((resumo.getSaldo() != null) && resumo.getSaldo().compareTo(BigDecimal.ZERO) != 0){
+    		validacao =  new ValidacaoException(TipoMensagem.WARNING,"Não é possível liberar estudo com saldo de reparte.");
+    		return validacao;
     	}
     	
     	if(validacao == null) {

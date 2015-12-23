@@ -635,6 +635,13 @@ var analiseParcialController = $.extend(true, {
     	var repartes = resultado.analiseEstudoNormal_E_ParcialDTO.reparteTotalEdicao;
     	var vendas = resultado.analiseEstudoNormal_E_ParcialDTO.vendaTotalEdicao;
     	
+    	if(resultado.analiseEstudoNormal_E_ParcialDTO.saldo){
+    		var saldo = resultado.analiseEstudoNormal_E_ParcialDTO.saldo;
+    		
+    		$("#saldo_reparte").text(saldo);
+    		
+    	}
+    	
     	for(var i = 0; i < repartes.length; i++){
     		$('#total_reparte'+(i+1)).text(repartes[i]);
     		$('#total_venda'+(i+1)).text(vendas[i]);
@@ -1333,8 +1340,13 @@ var analiseParcialController = $.extend(true, {
 						
 						if (result.mensagens) {
 			        		
-			        		analiseParcialController.exibirMsg(
-			        			result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+			        		analiseParcialController.exibirMsg(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+			        		
+			        		var estudo = $('#estudoId').val();
+		                	
+			            	$("#ordenarPorDe").val('');
+			            	$("#ordenarPorAte").val('');
+			            	analiseParcialController.filtroDefault(estudo, "reparte", "");
 			        		
 			        		return;
 			        	}
@@ -1494,10 +1506,6 @@ var analiseParcialController = $.extend(true, {
     
     
     cotasQueNaoEntraramNoEstudo : function() {
-
-    	if($("#cotasQueNaoEntraramNoEstudo_motivo").val() == "SELECIONE"){
-    		$("#cotasQueNaoEntraramNoEstudo_motivo").val("TODOS");
-    	}
     	
 		var cota = $("#cotasQueNaoEntraramNoEstudo_cota").val();
         var nome = $("#cotasQueNaoEntraramNoEstudo_nome").val();
@@ -1505,7 +1513,7 @@ var analiseParcialController = $.extend(true, {
         var elemento = $("#cotasQueNaoEntraramNoEstudo_elementos").val();
         var estudo = $("#estudoId").val();
         var tipoSegmentoProduto = $("#tipoSegmentoProduto").val();
-
+        
         $("#cotasNaoSelec").flexOptions({
             params:[{name: 'queryDTO.cota',     value: cota}, 
                     {name: 'queryDTO.nome',     value: nome}, 
@@ -1518,7 +1526,12 @@ var analiseParcialController = $.extend(true, {
         setTimeout(function(){
     		if($('#status_estudo').text()==='Liberado'){
     			analiseParcialController.bloquearInputCotasQueNaoEntraramNoEstudo();
-			}},2000);
+			}
+    		
+    		if($("#cotasQueNaoEntraramNoEstudo_motivo").val() == "SELECIONE"){
+	        	$("#cotasQueNaoEntraramNoEstudo_motivo").val("TODOS");
+	        }
+        },2000);
     },
     
     verCapa : function() {
