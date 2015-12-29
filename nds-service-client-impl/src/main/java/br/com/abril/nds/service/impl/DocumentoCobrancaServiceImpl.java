@@ -1576,7 +1576,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     				buscarSlipCotaAusente(arquivos, dataDe, dataAte, incluirNumeroSlip, numCotaSlip);
     				
     			}
-    			LOGGER.error("gerado slip "+(cont)+" de "+cotasRoteirizadas.size());
+    			
     		}
         }
     }
