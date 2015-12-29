@@ -1559,7 +1559,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     		List<Integer> cotasRoteirizadas = this.slipRepository.obterCotasRoteirizadas(listaCotas);
     		int cont=0;
         	for (Integer numCotaSlip : cotasRoteirizadas){
-    			LOGGER.error("gerando slip "+(++cont)+" de "+cotasRoteirizadas.size());
+    			LOGGER.warn("gerando slip "+(++cont)+" de "+cotasRoteirizadas.size());
         		List<Slip> slips = mapSlip.get(numCotaSlip);
     			
     			if(slips != null){
@@ -1583,7 +1583,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 
 	private void buscarSlipCotaAusente(List<byte[]> arquivos, Date dataDe, Date dataAte, boolean incluirNumeroSlip,
 			Integer numCotaSlip) {
-		LOGGER.error("ausente@ inicio "+numCotaSlip);
+		LOGGER.warn("ausente@ inicio "+numCotaSlip);
 		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
 		
 		filtro.setDataRecolhimentoInicial(dataDe);
@@ -1597,7 +1597,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 			arquivos.add(this.gerarSlipPDF(slipDTO));
 		}
 		
-		LOGGER.error("ausente@ fim");
+		LOGGER.warn("ausente@ fim");
 	}
     
 	/**
