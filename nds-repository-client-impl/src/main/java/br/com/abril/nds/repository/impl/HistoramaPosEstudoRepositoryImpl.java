@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.hibernate.SQLQuery;
@@ -93,6 +94,7 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
         if (isEdicoesBaseEspecificas){
 		    
         	tuplaSqlEdicoesBase = " AND EPE.PRODUTO_EDICAO_ID IN (:EDICOES_BASES) ";
+        	
 		}
         
 		StringBuilder sql = new StringBuilder();
@@ -160,28 +162,82 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		
 		sql.append("              EC.REPARTE, ");
 		
-		
-		sql.append("              (SELECT SUM(EPE.QTDE_RECEBIDA) "); 
-		
-		sql.append("               FROM estoque_produto_cota EPE use index (NDX_COTA_PRODUTO)  "); 
-		
-		sql.append("               WHERE EPE.COTA_ID = C.ID ");
-		
-        sql.append(                tuplaSqlEdicoesBase);
-		
-		sql.append("              ) RECEBIDO,  ");
-		
+		if (isEdicoesBaseEspecificas){
+			sql.append(" (");
+			boolean primeiro=true;
+			for (Object pid:listaIdEdicaoBase) {
+			if (!primeiro)
+				 sql.append(" + ");
+			primeiro=false;
+			sql.append("              coalesce((SELECT SUM(EPE.QTDE_RECEBIDA) "); 
 			
-	    sql.append("              (SELECT AVG(EPE.QTDE_RECEBIDA - EPE.QTDE_DEVOLVIDA) "); 
+			sql.append("               FROM estoque_produto_cota EPE   "); 
 			
-		sql.append("               FROM estoque_produto_cota EPE  use index (NDX_COTA_PRODUTO)"); 
+			sql.append("               WHERE EPE.COTA_ID = C.ID ");
 			
-		sql.append("               WHERE EPE.COTA_ID = C.ID ");
+			sql.append(" AND EPE.PRODUTO_EDICAO_ID = "+((BigInteger)pid).intValue()+"),0) ");
 			
-	    sql.append(                tuplaSqlEdicoesBase);
+			}
 			
-		sql.append("              ) VENDA_MEDIA  ");
-		
+			sql.append("              ) RECEBIDO,  ");
+			
+				
+		    sql.append("         (( "    );
+		    
+		     primeiro=true;
+			for (Object pid:listaIdEdicaoBase) {
+			if (!primeiro)
+				 sql.append(" + ");
+			primeiro=false;
+			sql.append("              coalesce((SELECT SUM(EPE.QTDE_RECEBIDA - EPE.QTDE_DEVOLVIDA) "); 
+			
+			sql.append("               FROM estoque_produto_cota EPE  "); 
+			
+			sql.append("               WHERE EPE.COTA_ID = C.ID ");
+			
+			sql.append(" AND EPE.PRODUTO_EDICAO_ID = "+((BigInteger)pid).intValue()+"),0) ");
+			
+			}
+			sql.append(" ) / (");
+			 primeiro=true;
+				for (Object pid:listaIdEdicaoBase) {
+				if (!primeiro)
+					 sql.append(" + ");
+				primeiro=false;
+				sql.append("    (      select    count(*) "); 
+				
+				sql.append("               FROM estoque_produto_cota EPE   "); 
+				
+				sql.append("               WHERE EPE.COTA_ID = C.ID ");
+				
+				sql.append(" AND EPE.PRODUTO_EDICAO_ID = "+((BigInteger)pid).intValue()+") ");
+				
+				}
+		    
+		    
+			sql.append("             ) ) VENDA_MEDIA  ");
+			
+			
+		} else {
+			sql.append("              (SELECT SUM(EPE.QTDE_RECEBIDA) "); 
+			
+			sql.append("               FROM estoque_produto_cota EPE   "); 
+			
+			sql.append("               WHERE EPE.COTA_ID = C.ID ");
+			
+			
+			sql.append("              ) RECEBIDO,  ");
+			
+				
+		    sql.append("              (SELECT AVG(EPE.QTDE_RECEBIDA - EPE.QTDE_DEVOLVIDA) "); 
+				
+			sql.append("               FROM estoque_produto_cota EPE  "); 
+				
+			sql.append("               WHERE EPE.COTA_ID = C.ID ");
+				
+				
+			sql.append("              ) VENDA_MEDIA  ");
+		}
 		
 		sql.append("              FROM estudo_cota_gerado EC ");
 		
@@ -206,10 +262,10 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		
 		query.setParameter("ESTUDO_ID", estudoId);
 		
-		if (isEdicoesBaseEspecificas){
+	//	if (isEdicoesBaseEspecificas){
 			
-		    query.setParameterList("EDICOES_BASES", listaIdEdicaoBase);
-		}
+	//	    query.setParameterList("EDICOES_BASES", listaIdEdicaoBase);
+	//	}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(HistogramaPosEstudoAnaliseFaixaReparteDTO.class));
 
