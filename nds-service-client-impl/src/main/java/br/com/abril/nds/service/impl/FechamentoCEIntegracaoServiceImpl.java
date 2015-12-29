@@ -52,9 +52,7 @@ import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscal;
-import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscalDevolucaoFornecedor;
 import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscalFechamentoCEI;
-import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscalMEC;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -400,7 +398,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 					mff.setProdutoEdicao(estoqueProduto.getProdutoEdicao());
 					mff.setTipoDestinatario(TipoDestinatario.FORNECEDOR);
 					mff.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.SAIDA));
-	        		mff.setQtde(BigInteger.valueOf(itemFo.getQtdeEnviada() - itemFo.getQtdeDevolucaoApurada()).subtract(estoqueProduto.getQtdeDevolucaoFornecedor()));
+					
+	        		mff.setQtde(BigInteger.valueOf(itemFo.getQtdeEnviada() - itemFo.getQtdeDevolucaoApurada()).subtract(estoqueProduto.getQtdeDevolucaoFornecedor() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoFornecedor() ));
 					mff.setNotaFiscalLiberadaEmissao(true);
 					
 					((MovimentoFechamentoFiscalFornecedor) mff).setFornecedor(fornecedorService.obterFornecedorPorId(16L));
