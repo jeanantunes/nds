@@ -4,11 +4,13 @@ var semaforoController = $.extend(true, {
 	andamento:0,
 	erro:0,
 	finalizado:0,
-	stopRefresh:false,
+	stopRefresh:true,
+	varTimeout:null,
 	path : contextPath + '/devolucao/semaforo',
 	
 	init : function() {
 
+		
 		$(".statusProcessosEncalheGrid", this.workspace).flexigrid({
 			url : semaforoController.path + "/statusProcessosEncalhe",
 			preProcess: semaforoController.preProcessarGrid,
@@ -52,15 +54,19 @@ var semaforoController = $.extend(true, {
 	},
 	
 	pollStatusProcessosEncalhe : function() {
-		if (!semaforoController.stopRefresh )
-		setTimeout(function() {
+		if (!semaforoController.stopRefresh ) {
+		varTimeout=setTimeout(function() {
 			semaforoController.obterStatusProcessosEncalhe();
-		}, 10000);
+		}, 30000);
+		}
+		else
+			if (semaforoController.varTimeout != null  )
+			clearTimeout(semaforoController.varTimeout)
 	},
 	
 	obterStatusProcessosEncalhe : function() {
-		
-		$(".statusProcessosEncalheGrid", this.workspace).flexReload();
+		if (!semaforoController.stopRefresh )
+		  $(".statusProcessosEncalheGrid", this.workspace).flexReload();
 	},
 	
 	preProcessarGrid : function(resultado) {

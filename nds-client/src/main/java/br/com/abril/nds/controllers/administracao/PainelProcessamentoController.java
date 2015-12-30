@@ -624,13 +624,16 @@ public class PainelProcessamentoController extends BaseController {
         String msg=homolog ?"AMBIENTE HOMOLOGACAO":"AMBIENTE PRODUCAO";
         
        
-        int codigoFC = Integer.parseInt(this.distribuidorService.codigoDistribuidorFC());
-        String uf= ( codigoFC == 0 ?"RJ":"SP");
+       // int codigoFC = Integer.parseInt(this.distribuidorService.codigoDistribuidorFC());
+       // String uf= ( codigoFC == 0 ?"RJ":"SP");
+        String uf = this.distribuidorService.obter().getEnderecoDistribuidor().getEndereco().getUf();
+        LOGGER.warn("INTERFACE BANDEIRA USANDO UF="+uf);
         int erros=0;
          List<NotaEncalheBandeiraVO> notas = ftfService.obterNotasNaoEnviadas();
          ftfService.atualizaFlagInterfaceNotasEnviadas(1,true);
-	      
+	     int cont=0;
         for (NotaEncalheBandeiraVO nota: notas ) {
+        LOGGER.warn("ENVIADO NOTA "+(++cont)+" de "+notas.size());
     	List<ItemEncalheBandeiraVO> itens= ftfService.obterItensNotasNaoEnviadas(nota.getNotaId()) ;
     	 try {
     		 
