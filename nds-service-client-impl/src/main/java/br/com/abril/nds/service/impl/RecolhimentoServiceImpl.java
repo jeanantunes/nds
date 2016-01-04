@@ -50,6 +50,7 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
@@ -579,7 +580,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			Integer sequencia = this.chamadaEncalheRepository.obterMaiorSequenciaPorDia(dataRecolhimento);
 			
 			List<CotaReparteDTO> cotasReparte =	this.movimentoEstoqueCotaRepository.obterReparte(idsLancamento, null);
-
+			
+	
 			List<ChamadaEncalhe> listaChamadaEncalhe = this.chamadaEncalheRepository.obterChamadasEncalheLancamentos(idsLancamento, false);
 
 			for (Long idLancamento : idsLancamento) {
@@ -590,6 +592,26 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				List<CotaReparteDTO> cotasReparteLancamento = this.processaListaCotaReparteDTOLancamento(cotasReparte, idLancamento);
 
+				// odemir CE parciais para cota com reparte zero no periodo final
+				// ver se 'e produto parcial, se periodo do lancamento 'e final
+				// entao buscar cotas que nao teve reparte neste lancamento mas teve nos anteriores
+				
+				 if (produtoEdicao.isParcial() && lancamento.getPeriodoLancamentoParcial() != null && 
+					 TipoLancamentoParcial.FINAL.equals(lancamento.getPeriodoLancamentoParcial().getTipo())) {
+					 LOGGER.warn("Produto parcial com lancamento FINAL");
+					// buscar cotas que nao teve reparte neste lancamento mas teve nos anteriores
+					List <CotaReparteDTO> cotasRepartePeriodosAnteriores= this.movimentoEstoqueCotaRepository.obterRepartePeriodosAnteriores(lancamento);
+					 
+					 // incluir em cotasReparteLancamento
+					for (CotaReparteDTO cotaRepartePeriodosAnteriores :cotasRepartePeriodosAnteriores ) {
+						if (!cotasReparteLancamento.contains(cotaRepartePeriodosAnteriores)) {
+							    LOGGER.error("INSERINDO COTA "+cotaRepartePeriodosAnteriores.getCota().getId());
+								cotasReparteLancamento.add(cotaRepartePeriodosAnteriores);
+						}
+					}
+				 }
+				
+				// odemir
 				Set<ChamadaEncalhe> chamadasEncalheProdutoEdicao = new HashSet<>(this.processaListaChamadaEncaleProdutoEdicao(listaChamadaEncalhe, produtoEdicao.getId()));
 
 				for (CotaReparteDTO cotaReparte : cotasReparteLancamento) {

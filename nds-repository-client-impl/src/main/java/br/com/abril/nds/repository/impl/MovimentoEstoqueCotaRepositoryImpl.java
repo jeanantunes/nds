@@ -3939,6 +3939,39 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
     }
     
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<CotaReparteDTO> obterRepartePeriodosAnteriores(Lancamento lancamento) {
+        
+        final StringBuilder sql = new StringBuilder();
+        
+        sql.append(" select cota as cota, ");
+        sql.append(" mec.cotaContribuinteExigeNF as cotaContribuinteExigeNF, ");
+        sql.append("(0 ) as reparte, ");
+        sql.append(" lancamento.id as idLancamento ");
+		sql.append("  from movimento_estoque_cota mec ");
+		sql.append("	inner join lancamento l on mec.lancamento_id = l.id ");
+		sql.append(" join  periodo_lancamento_parcial plp ON plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID and plp.tipo = 'PARCIAL' ");
+		sql.append(" where  mec.tipo_movimento_id in (21 , 26) ");
+		sql.append("        and mec.produto_edicao_id = :produtoEdicaoId ");
+		sql.append(" group by cotaid ");
+		sql.append("      having sum(if(tipo_movimento_id = 21, qtde, - qtde))  > 0 ");
+        
+        final Query query = this.getSession().createQuery(sql.toString());
+        
+      
+        
+        query.setParameter("produtoEdicaoId", lancamento.getProdutoEdicao().getId());
+        
+       
+        
+        query.setResultTransformer(Transformers.aliasToBean(CotaReparteDTO.class));
+        
+        return query.list();
+    }
+    
+    
     @SuppressWarnings("unchecked")
     @Override
     public List<CotaReparteDTO> obterReparte(final Set<Long> idsLancamento, Long cotaId) {
