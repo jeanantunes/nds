@@ -108,7 +108,9 @@ public class HomeController {
         final Set<Permissao> permissoes = new TreeSet<Permissao>();
         for (final GrantedAuthority grantedAuthority : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
             try {
-                permissoes.add(Permissao.valueOf(grantedAuthority.getAuthority()));
+            	
+            	if ( grantedAuthority != null && grantedAuthority.getAuthority() != null )
+                   permissoes.add(Permissao.valueOf(grantedAuthority.getAuthority()));
             } catch (final IllegalArgumentException e) {
                 LOGGER.warn("Não foi encontrado a seguinte permissao: " + grantedAuthority.getAuthority(), e);
                 continue;
