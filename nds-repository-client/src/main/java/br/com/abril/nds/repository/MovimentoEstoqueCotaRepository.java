@@ -541,5 +541,8 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	List<AbastecimentoBoxCotaDTO> obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro);
 
 	List<ProdutoAbastecimentoDTO> obterCotasEntregadorQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro);
+
+
+	List<CotaReparteDTO> obterRepartePeriodosAnteriores(Lancamento lancamento);
 	
 }
