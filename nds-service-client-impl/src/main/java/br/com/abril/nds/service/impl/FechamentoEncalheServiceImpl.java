@@ -1041,12 +1041,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		if(cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica()
 				|| cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()) {
 			
-			mffc.setDesobrigaNotaFiscalDevolucaoSimbolica(true); 
 			mffc.setNotaFiscalDevolucaoSimbolicaEmitida(true);
+			mffc.setDesobrigaNotaFiscalDevolucaoSimbolica(false); 
 		} else {
 			
-			mffc.setDesobrigaNotaFiscalDevolucaoSimbolica(false);
 			mffc.setNotaFiscalDevolucaoSimbolicaEmitida(false);
+			mffc.setDesobrigaNotaFiscalDevolucaoSimbolica(false);
 		}
 			
 		movimentoFechamentoFiscalRepository.adicionar(mffc);
