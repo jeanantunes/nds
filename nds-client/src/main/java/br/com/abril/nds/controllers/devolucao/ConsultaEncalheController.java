@@ -1,8 +1,11 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -12,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -28,6 +33,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -42,6 +48,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -71,6 +78,9 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_RECOLHIMENTO_CONSULTA_ENCALHE_COTA)
 public class ConsultaEncalheController extends BaseController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsultaEncalheController.class);
+
+	   
 	@Autowired
 	private FornecedorService fornecedorService;
 	
@@ -94,6 +104,9 @@ public class ConsultaEncalheController extends BaseController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private ParametroSistemaService parametroSistemaService;
 	
 	@Autowired
 	private BoxService boxService;
@@ -754,6 +767,42 @@ public class ConsultaEncalheController extends BaseController {
 		session.setAttribute(FILTRO_DETALHE_SESSION_ATTRIBUTE, filtro);
 	}
 	
+	
+	 /**
+     * Delete older files in a directory until only those matching the given
+     * constraints remain.
+     *
+     * @param minCount Always keep at least this many files.
+     * @param minAge Always keep files younger than this age.
+     * @return if any files were deleted.
+     */
+    public  boolean deleteOlderFiles(File dir,  long minAge) {
+       
+        final File[] files = dir.listFiles();
+        if (files == null) return false;
+        // Sort with newest files first
+        Arrays.sort(files, new Comparator<File>() {
+            @Override
+            public int compare(File lhs, File rhs) {
+                return (int) (rhs.lastModified() - lhs.lastModified());
+            }
+        });
+        // Keep at least minCount files
+        boolean deleted = false;
+        for (int i = 0; i < files.length; i++) {
+            final File file = files[i];
+            // Keep files newer than minAge
+            final long age = System.currentTimeMillis() - file.lastModified();
+            if (age > minAge) {
+                if (file.delete()) {
+                    LOGGER.warn( "Deleted old file " + file);
+                    deleted = true;
+                }
+            }
+        }
+        return deleted;
+    }
+	
 	/**
 	 * Disponibiliza o arquivo para a realização do download.
 	 * 
@@ -762,6 +811,29 @@ public class ConsultaEncalheController extends BaseController {
 	 * @throws IOException
 	 */
 	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) throws IOException {
+		
+		
+		// gravar arquivo no diretorio do web ftp
+	try {	
+		String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
+		
+		String path  = dirBanca+"/../slip/slip"+DateUtil.formatarData(new Date(),"ddMMyyyyHHmmss")+".pdf";
+		File fslip = new File(dirBanca+"/../slip") ;
+		if ( !fslip.exists() )
+			fslip.mkdir();
+   	 
+		FileOutputStream arq = new FileOutputStream(path);
+   	   
+		arq.write(arquivo);
+		
+		arq.close();
+		
+		// remover arquivos com mais de 7 dias 
+		
+		deleteOlderFiles(fslip,7*24*60*60*1000);
+	} catch (Exception e) {
+		LOGGER.error("Erro gravando arquivo slip no diretorio /opt/ambiente1/parametros_nds/slip ");
+	}
 		
 		this.httpResponse.setContentType("application/pdf");
 		
