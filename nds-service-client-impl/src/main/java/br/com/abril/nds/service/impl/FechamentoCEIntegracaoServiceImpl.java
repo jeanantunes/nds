@@ -48,6 +48,7 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalFornecedor;
@@ -400,7 +401,16 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 					mff.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.SAIDA));
 					
 	        		mff.setQtde(BigInteger.valueOf(itemFo.getQtdeEnviada() - itemFo.getQtdeDevolucaoApurada()).subtract(estoqueProduto.getQtdeDevolucaoFornecedor() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoFornecedor() ));
-					mff.setNotaFiscalLiberadaEmissao(true);
+					mff.setNotaFiscalLiberadaEmissao(false);
+					mff.setDesobrigaNotaFiscalDevolucaoSimbolica(true);
+					
+					ValoresAplicados valoresAplicados = new ValoresAplicados();
+					
+					valoresAplicados.setValorDesconto(estoqueProduto.getProdutoEdicao().getDesconto());
+					valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract((estoqueProduto.getProdutoEdicao().getDesconto())).setScale(4,BigDecimal.ROUND_HALF_EVEN));
+					valoresAplicados.setPrecoVenda(estoqueProduto.getProdutoEdicao().getPrecoVenda());
+					
+					mff.setValoresAplicados(valoresAplicados);
 					
 					((MovimentoFechamentoFiscalFornecedor) mff).setFornecedor(fornecedorService.obterFornecedorPorId(16L));
 					oimffdf.setMovimentoFechamentoFiscal(mff);
