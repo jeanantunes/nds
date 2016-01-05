@@ -598,14 +598,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				 if (produtoEdicao.isParcial() && lancamento.getPeriodoLancamentoParcial() != null && 
 					 TipoLancamentoParcial.FINAL.equals(lancamento.getPeriodoLancamentoParcial().getTipo())) {
-					 LOGGER.warn("Produto parcial com lancamento FINAL");
+					 LOGGER.error("Produto parcial com lancamento FINAL" +produtoEdicao.getId());
 					// buscar cotas que nao teve reparte neste lancamento mas teve nos anteriores
 					List <CotaReparteDTO> cotasRepartePeriodosAnteriores= this.movimentoEstoqueCotaRepository.obterRepartePeriodosAnteriores(lancamento);
 					 
 					 // incluir em cotasReparteLancamento
 					for (CotaReparteDTO cotaRepartePeriodosAnteriores :cotasRepartePeriodosAnteriores ) {
-						if (!cotasReparteLancamento.contains(cotaRepartePeriodosAnteriores)) {
-							    LOGGER.error("INSERINDO COTA "+cotaRepartePeriodosAnteriores.getCota().getId());
+						if (!cotasReparteLancamento.contains(cotaRepartePeriodosAnteriores) && cotaRepartePeriodosAnteriores.getReparte().intValue() > 0 ) {
+							    LOGGER.error("INSERINDO COTA="+cotaRepartePeriodosAnteriores.getCota().getId()+ "PRODUTOEDICAo=" +produtoEdicao.getId() );
+							    cotaRepartePeriodosAnteriores.setReparte(BigInteger.ZERO);
 								cotasReparteLancamento.add(cotaRepartePeriodosAnteriores);
 						}
 					}
@@ -709,10 +710,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 										 boolean cotaContribuinteExigeNF,
 										 Usuario usuario) {
 		
-		//if(BigInteger.ZERO.compareTo(qtdPrevista) >= 0) {
+		if(BigInteger.ZERO.compareTo(qtdPrevista) >= 0) {
 			
-			//return;
-		//}
+			LOGGER.error("CRIANDO CHAMADA ENCALHE COM ZERO PARA COTA="+cota.getId() +"  chamada encalhe="+chamadaEncalhe.getId());
+		}
 		
 		boolean criarCahamadaEncalheCota = this.isDevolveEncalhe(cota.getTipoCota(), cota.isDevolveEncalhe());
 		
