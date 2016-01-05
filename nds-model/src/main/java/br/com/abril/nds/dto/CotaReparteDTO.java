@@ -40,6 +40,7 @@ public class CotaReparteDTO implements Serializable{
 		this.cotaContribuinteExigeNF = cotaContribuinteExigeNF;
 	}
 	
+	
 	/**
 	 * @return the reparte
 	 */
@@ -64,4 +65,28 @@ public class CotaReparteDTO implements Serializable{
 	public void setIdLancamento(Long idLancamento) {
 		this.idLancamento = idLancamento;
 	}	
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((cota == null) ? 0 : cota.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CotaReparteDTO other = (CotaReparteDTO) obj;
+		if (cota == null) {
+			if (other.cota != null)
+				return false;
+		} else if (!cota.equals(other.cota))
+			return false;
+		return true;
+	}
 }
