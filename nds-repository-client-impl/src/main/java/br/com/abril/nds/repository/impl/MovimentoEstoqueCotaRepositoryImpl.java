@@ -75,6 +75,7 @@ import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoEstudoCota;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.util.Intervalo;
@@ -3945,25 +3946,26 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     public List<CotaReparteDTO> obterRepartePeriodosAnteriores(Lancamento lancamento) {
         
         final StringBuilder sql = new StringBuilder();
-        
-        sql.append(" select cota as cota, ");
+       
+        sql.append(" select mec.cota as cota, ");
         sql.append(" mec.cotaContribuinteExigeNF as cotaContribuinteExigeNF, ");
-        sql.append("(0 ) as reparte, ");
+        sql.append(" sum(mec.qtde) as reparte, ");
         sql.append(" lancamento.id as idLancamento ");
-		sql.append("  from movimento_estoque_cota mec ");
-		sql.append("	inner join lancamento l on mec.lancamento_id = l.id ");
-		sql.append(" join  periodo_lancamento_parcial plp ON plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID and plp.tipo = 'PARCIAL' ");
-		sql.append(" where  mec.tipo_movimento_id in (21 , 26) ");
-		sql.append("        and mec.produto_edicao_id = :produtoEdicaoId ");
-		sql.append(" group by cotaid ");
-		sql.append("      having sum(if(tipo_movimento_id = 21, qtde, - qtde))  > 0 ");
+		sql.append("  from MovimentoEstoqueCota mec ");
+		sql.append("	join mec.tipoMovimento tipo ");
+		sql.append("	join mec.lancamento lancamento ");
+		sql.append("    join  lancamento.periodoLancamentoParcial periodoLancamentoParcial  ");
+		sql.append(" where  mec.tipoMovimento.id in (21,26) and periodoLancamentoParcial.tipo = :parcial ");
+		sql.append("        and mec.produtoEdicao.id = :produtoEdicaoId ");
+		sql.append(" group by mec.cota.id ");
+		// sql.append("      having reparte  > 0 ");
         
         final Query query = this.getSession().createQuery(sql.toString());
         
       
         
         query.setParameter("produtoEdicaoId", lancamento.getProdutoEdicao().getId());
-        
+        query.setParameter("parcial", TipoLancamentoParcial.PARCIAL);   
        
         
         query.setResultTransformer(Transformers.aliasToBean(CotaReparteDTO.class));

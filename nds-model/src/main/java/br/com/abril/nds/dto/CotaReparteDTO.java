@@ -85,7 +85,7 @@ public class CotaReparteDTO implements Serializable{
 		if (cota == null) {
 			if (other.cota != null)
 				return false;
-		} else if (!cota.equals(other.cota))
+		} else if (!cota.getId().equals(other.cota.getId()))
 			return false;
 		return true;
 	}
