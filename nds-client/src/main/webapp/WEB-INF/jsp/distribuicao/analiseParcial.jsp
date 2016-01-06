@@ -216,6 +216,7 @@ table.dadosTab { margin-left: 370px;}
 							<option value="area_influencia">Área de Influência</option>
 							<option value="distrito">Distrito</option>
                             <option value="tipo_distribuicao_cota">Tipo de Distribuição Cota</option>
+                            <option value="legenda_cota">Legenda cota estudo</option>
 						</select>
 					</td>
 					<td>Elemento:</td>
@@ -390,7 +391,7 @@ table.dadosTab { margin-left: 370px;}
 				</span>
             </c:if>
                 <%--<br/>--%>
-				<span style="font-weight: bold; font-size: 10px;" onclick="dataTableInit()">Saldo à Distribuir:</span>
+				<span style="font-weight: bold; font-size: 10px;" onclick="dataTableInit()">Saldo a distribuir:</span>
 				<span id="saldo_reparte" style="font-weight: bold; font-size: 10px;">${estudo.sobra == null ? 0 : estudo.sobra}</span>
 			</div>
 		</fieldset>

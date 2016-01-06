@@ -28,6 +28,7 @@ public class ComponenteElementoServiceImpl implements ComponenteElementoService 
             case "area_influencia": return componenteElementoRepository.buscaAreaDeInfluencia(estudo);
             case "distrito": return componenteElementoRepository.buscaDistritos(estudo);
             case "tipo_distribuicao_cota": return componenteElementoRepository.buscaTipoDistribuicaoCotas();
+            case "legenda_cota": return componenteElementoRepository.buscaLegendaCotas();
             default: return new ArrayList<>();
         }
     }

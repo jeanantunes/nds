@@ -117,6 +117,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Transactional(readOnly=true)
     public AnaliseEstudoNormal_E_ParcialDTO buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO) {
     	
+    	queryDTO.setIdUltimoLancamento(lancamentoRepository.getIdUltimoLancamentoFechado(queryDTO.getCodigoProduto()));
+    	
     	List<AnaliseParcialDTO> lista = analiseParcialRepository.buscaAnaliseParcialPorEstudo(queryDTO);
     	
     	List<AnaliseParcialExportXLSDTO> listaXLS = new ArrayList<>();

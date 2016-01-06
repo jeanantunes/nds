@@ -286,11 +286,15 @@ public class AnaliseParcialController extends BaseController {
         filtroQueryDTO.setDataLancamentoEdicao(DateUtil.parseDataPTBR(dataLancamentoEdicao));
         filtroQueryDTO.setNumeroParcial(numeroParcial);
         
-//        List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(filtroQueryDTO);
-        
         AnaliseEstudoNormal_E_ParcialDTO analise = analiseParcialService.buscaAnaliseParcialPorEstudo(filtroQueryDTO);
         
         List<AnaliseParcialDTO> lista = analise.getAnaliseParcialDTO();
+        
+        page = verificarPaginacaoComFiltro(page, filterSortName, filterSortFrom, filterSortTo);
+        
+        session.setAttribute("filtrarPor", filterSortName);
+        session.setAttribute("de", filterSortFrom);
+        session.setAttribute("ate", filterSortTo);
         
         PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder, sortname);
         
@@ -324,6 +328,23 @@ public class AnaliseParcialController extends BaseController {
     	
     	result.use(Results.json()).from(vo).recursive().serialize();
     }
+
+	private int verificarPaginacaoComFiltro(int page, String filterSortName, Double filterSortFrom, Double filterSortTo) {
+		if(session.getAttribute("filtrarPor") != null){
+        	if(!session.getAttribute("filtrarPor").equals(filterSortName)){
+        		page = 1;
+        	}else{
+        		if((session.getAttribute("de") != null) && (!session.getAttribute("de").equals(filterSortFrom))){
+        			page = 1;
+        		}else{
+        			if((session.getAttribute("ate") != null) && (!session.getAttribute("ate").equals(filterSortTo))){
+        				page = 1;
+        			}
+        		}
+        	}
+        }
+		return page;
+	}
     
     @SuppressWarnings("unchecked")
 	private List<EdicoesProdutosDTO> getEdicoesBase(List<EdicoesProdutosDTO> edicoesBase) {
