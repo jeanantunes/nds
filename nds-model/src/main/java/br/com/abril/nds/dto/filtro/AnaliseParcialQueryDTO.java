@@ -27,6 +27,8 @@ public class AnaliseParcialQueryDTO {
 	private Integer numeroParcial;
 	private FileType file;
 	
+	private List<Long> idUltimoLancamento;
+	
 	/**
 	 * Id do estudo que foi copiado na tela de copia proporcional de estudo
 	 */
@@ -203,6 +205,10 @@ public class AnaliseParcialQueryDTO {
 	public boolean elementoTipoDistribuicaoCota() {
 		return getTipoElemento().equals("tipo_distribuicao_cota");
 	}
+	
+	public boolean elementoIsLegendaCota() {
+		return getTipoElemento().equals("legenda_cota");
+	}
 
 	public Long getFaixaDe() {
 	    return faixaDe;
@@ -278,4 +284,12 @@ public class AnaliseParcialQueryDTO {
 		this.file = file;
 	}
 
+	public List<Long> getIdUltimoLancamento() {
+		return idUltimoLancamento;
+	}
+
+	public void setIdUltimoLancamento(List<Long> idUltimoLancamento) {
+		this.idUltimoLancamento = idUltimoLancamento;
+	}
+	
 }

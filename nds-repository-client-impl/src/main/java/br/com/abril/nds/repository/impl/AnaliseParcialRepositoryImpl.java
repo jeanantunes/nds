@@ -130,15 +130,23 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("           tipo_movimento tipo ");
         sql.append("               ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
         sql.append("       WHERE ");
-        sql.append("           l.id = (select lct.id ");
-        sql.append("                         from lancamento lct  ");
-        sql.append("                             join produto_edicao pe ON lct.PRODUTO_EDICAO_ID = pe.ID  ");
-        sql.append("                             join produto pd ON pe.PRODUTO_ID = pd.ID  ");
-        sql.append("                           where pd.codigo = p.codigo  ");
-        sql.append("                           and lct.STATUS in (:statusLancamento) ");
-        sql.append("                           order by lct.DATA_LCTO_DISTRIBUIDOR desc  ");
-        sql.append("                           limit 1) ");
-        sql.append("           and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
+        
+    	sql.append("           tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
+    	
+    	if(queryDTO.getIdUltimoLancamento() != null && queryDTO.getIdUltimoLancamento().size() > 0){
+    		sql.append("           and l.id in (:idsLanc) ");
+    	}else{
+    		sql.append("           and l.id = (select lct.id ");
+    		sql.append("                         from lancamento lct  ");
+    		sql.append("                             join produto_edicao pe ON lct.PRODUTO_EDICAO_ID = pe.ID  ");
+    		sql.append("                             join produto pd ON pe.PRODUTO_ID = pd.ID  ");
+    		sql.append("                           where pd.codigo = p.codigo  ");
+    		sql.append("                           and lct.STATUS in (:statusLancamento) ");
+    		sql.append("                		   and lct.TIPO_LANCAMENTO = 'LANCAMENTO' ");
+    		sql.append("                           order by lct.DATA_LCTO_DISTRIBUIDOR desc  ");
+    		sql.append("                           limit 1) ");
+    	}
+
         sql.append("           and mecReparte.cota_id = c.id) ultimoReparte,  ");
         
         sql.append("     (coalesce(ec.reparte_inicial,0) <> coalesce(ec.reparte,0)) ajustado, ");
@@ -271,6 +279,16 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             	
                 sql.append(" and c.tipo_cota = upper(:cotasAVista) ");
             }
+            
+            if(queryDTO.elementoIsLegendaCota()){
+            	
+            	if(queryDTO.getValorElemento().toUpperCase().equals("TD")){
+            		sql.append(" and ec.CLASSIFICACAO <> '' ");
+            	}else{
+            		sql.append(" and ec.CLASSIFICACAO = upper(:legCota)");
+            	}
+            	
+            }
         }
 
         if (StringUtils.isNotEmpty(queryDTO.getNumeroCotaStr())) {
@@ -309,7 +327,12 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         
         query.setParameter("estudoId", queryDTO.getEstudoId());
         
-        query.setParameterList("statusLancamento", statusLancamento);
+        
+        if(queryDTO.getIdUltimoLancamento() != null && queryDTO.getIdUltimoLancamento().size() > 0){
+        	query.setParameterList("idsLanc", queryDTO.getIdUltimoLancamento());
+        }else{
+        	query.setParameterList("statusLancamento", statusLancamento);
+        }
         
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
         	
@@ -362,6 +385,12 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             if (queryDTO.elementoTipoDistribuicaoCota()) {
             	
              	query.setParameter("tipoDistribuicaoCota", queryDTO.getValorElemento().toUpperCase());
+            }
+            
+            if(queryDTO.elementoIsLegendaCota()){
+            	if(!queryDTO.getValorElemento().toUpperCase().equals("TD")){
+            		query.setParameter("legCota", queryDTO.getValorElemento().toUpperCase());
+            	}
             }
         }
         

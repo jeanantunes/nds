@@ -1218,18 +1218,20 @@ var analiseParcialController = $.extend(true, {
         analiseParcialController.tipoExibicao = _tipoExibicao;
 
         var estudoOrigem = $('#estudoOrigem').val();
-        var parameters = [];
-        parameters.push({name: 'id', value: _id});
-        parameters.push({name: 'faixaDe', value: _faixaDe});
-        parameters.push({name: 'faixaAte', value: _faixaAte});
-        parameters.push({name: 'codigoProduto', value: $('#codigoProduto').val()});
-        parameters.push({name: 'numeroEdicao', value: $('#numeroEdicao').val()});
-        parameters.push({name: 'estudoOrigem', value: estudoOrigem});
-        parameters.push({name: 'dataLancamentoEdicao', value: $('#dataLancamentoEdicao').val()});
-        parameters.push({name: 'numeroParcial', value: $('#numeroPeriodo').val()});
+
+    	var parameters = [];
+        
+    	parameters.push({name: 'id', 					value: _id});
+        parameters.push({name: 'faixaDe', 				value: _faixaDe});
+        parameters.push({name: 'faixaAte', 				value: _faixaAte});
+        parameters.push({name: 'codigoProduto', 		value: $('#codigoProduto').val()});
+        parameters.push({name: 'numeroEdicao', 			value: $('#numeroEdicao').val()});
+        parameters.push({name: 'estudoOrigem', 			value: estudoOrigem});
+        parameters.push({name: 'dataLancamentoEdicao',  value: $('#dataLancamentoEdicao').val()});
+        parameters.push({name: 'numeroParcial', 		value: $('#numeroPeriodo').val()});
         
         if(typeof(histogramaPosEstudo_cotasRepMenorVenda)!="undefined"){
-        	parameters.push({name: "numeroCotaStr", value: histogramaPosEstudo_cotasRepMenorVenda});
+        	parameters.push({name: "numeroCotaStr", 	value: histogramaPosEstudo_cotasRepMenorVenda});
         }
 
         var modelo = _tipoExibicao == 'NORMAL' ? analiseParcialController.modeloNormal(estudoOrigem) : analiseParcialController.modeloParcial();
@@ -1749,6 +1751,7 @@ var analiseParcialController = $.extend(true, {
             $("#labelAte_"+ opcao).show();
             $("#opcoesOrdenarPor").show();
         }
+        
     },
 
     limparCamposDeAte: function () {
@@ -1838,12 +1841,12 @@ var analiseParcialController = $.extend(true, {
     	var numParcial = $("#numeroPeriodo").val();
     	
         $("#baseEstudoGridParcial").flexOptions({
-            params: [{name:'filterSortName', value: valueFiltroOrdenarPor},
-                {name:'filterSortFrom', value: $("#ordenarPorDe").val()},
-                {name:'filterSortTo',   value: $("#ordenarPorAte").val()},
-                {name:'id',             value: estudo},
-                {name:'elemento',       value: elemento},
-                {name:'numeroParcial',  value: numParcial}]
+            params: [{name:'filterSortName', 	value: valueFiltroOrdenarPor},
+                 	 {name:'filterSortFrom', 	value: $("#ordenarPorDe").val()},
+                 	 {name:'filterSortTo',   	value: $("#ordenarPorAte").val()},
+                 	 {name:'id',             	value: estudo},
+                 	 {name:'elemento',       	value: elemento},
+                 	 {name:'numeroParcial',  	value: numParcial}]
         }).flexReload();
 
     },

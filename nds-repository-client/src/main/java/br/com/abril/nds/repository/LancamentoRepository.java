@@ -2,12 +2,15 @@ package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
+
+import org.hibernate.Query;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
@@ -446,5 +449,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	boolean isRedistribuicao(String codigoProduto, Long numeroEdicao);
 	
 	List<Date> obterDatasRecolhimentoValidasAux();
+
+	List<Long> getIdUltimoLancamentoFechado(String codigoProduto);
 	
 }

@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.abril.nds.dto.ComponenteElementoDTO;
@@ -23,4 +24,6 @@ public interface ComponenteElementoRepository {
 	List<ComponenteElementoDTO> buscaDistritos(Long estudo);
 
     List<ComponenteElementoDTO> buscaTipoDistribuicaoCotas();
+
+	List<ComponenteElementoDTO> buscaLegendaCotas();
 }

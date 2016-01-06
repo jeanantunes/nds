@@ -41,7 +41,6 @@ import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
-import br.com.abril.nds.helper.LancamentoHelper;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -3221,5 +3220,46 @@ public class LancamentoRepositoryImpl extends
 
     	return query.list();
     }
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> getIdUltimoLancamentoFechado(String codigoProduto){
+		
+		List<String> statusLancamento = Arrays.asList(StatusLancamento.EXPEDIDO.name(), 
+    			StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(),
+    			StatusLancamento.EM_RECOLHIMENTO.name(),
+    			StatusLancamento.RECOLHIDO.name(),
+    			StatusLancamento.BALANCEADO_RECOLHIMENTO.name(),
+    			StatusLancamento.FECHADO.name());
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select lct.id as lancamentoId ");
+        sql.append("     from lancamento lct   ");
+        sql.append("         join produto_edicao pe ON lct.PRODUTO_EDICAO_ID = pe.ID   ");
+        sql.append("         join produto pd ON pe.PRODUTO_ID = pd.ID   ");
+        sql.append("       where pd.codigo = :codProduto ");
+        sql.append("       and lct.STATUS in (:statusLancamento)  ");
+        sql.append("       and pe.NUMERO_EDICAO =                        ");
+        sql.append("          (select pe.NUMERO_EDICAO ");
+        sql.append("              from lancamento lct   ");
+        sql.append("                  join produto_edicao pe ON lct.PRODUTO_EDICAO_ID = pe.ID   ");
+        sql.append("                  join produto pd ON pe.PRODUTO_ID = pd.ID   ");
+        sql.append("                where pd.codigo = :codProduto ");
+        sql.append("                and lct.STATUS in (:statusLancamento)  ");
+        sql.append("                and lct.TIPO_LANCAMENTO = 'LANCAMENTO' ");
+        sql.append("                order by lct.DATA_LCTO_DISTRIBUIDOR desc   ");
+        sql.append("                limit 1)  ");
+        
+        SQLQuery query = getSession().createSQLQuery(sql.toString());
+        
+        query.setParameter("codProduto", codigoProduto);
+        query.setParameterList("statusLancamento", statusLancamento);
+        
+        query.addScalar("lancamentoId", StandardBasicTypes.LONG);
+        
+        return (List<Long>)query.list();
+    	
+	}
 	
 }
