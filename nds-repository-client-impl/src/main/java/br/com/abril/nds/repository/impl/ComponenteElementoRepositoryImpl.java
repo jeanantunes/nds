@@ -137,6 +137,21 @@ public class ComponenteElementoRepositoryImpl implements ComponenteElementoRepos
         //retorno.add(new ComponenteElementoDTO("cotas_novas", 0, "Não")); removido a pedido do cliente.
         return retorno;
     }
+    
+    @Override
+	public List<ComponenteElementoDTO> buscaLegendaCotas() {
+        List<ComponenteElementoDTO> retorno = new ArrayList<>();
+        
+        retorno.add(new ComponenteElementoDTO("legenda_cota", "MX", "MX - MIX"));
+        retorno.add(new ComponenteElementoDTO("legenda_cota", "AJ", "AJ - AJUSTE"));
+        retorno.add(new ComponenteElementoDTO("legenda_cota", "CP", "CP - COMPLEMENTAR"));
+        retorno.add(new ComponenteElementoDTO("legenda_cota", "SG", "SG - SEGMENTO EXCEÇÃO"));
+        retorno.add(new ComponenteElementoDTO("legenda_cota", "RD", "RD - REDUTOR"));
+        retorno.add(new ComponenteElementoDTO("legenda_cota", "IN", "IN - INCLUSÃO"));
+        retorno.add(new ComponenteElementoDTO("legenda_cota", "TD", "TODAS"));
+        
+        return retorno;
+    }
 
     @Override
     public List<ComponenteElementoDTO> buscaTipoDistribuicaoCotas() {
