@@ -949,7 +949,8 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 	@Override
 	public void removerChamadaEncalheCotaZerada(Date dataConfirmada) {
 		
-		String hql  = "delete from chamada_encalhe_cota where CHAMADA_ENCALHE_ID in (SELECT id from chamada_encalhe where DATA_RECOLHIMENTO = :dataConfirmada) and QTDE_PREVISTA <= 0";
+		// remover os negativos
+		String hql  = "delete from chamada_encalhe_cota where CHAMADA_ENCALHE_ID in (SELECT id from chamada_encalhe where DATA_RECOLHIMENTO = :dataConfirmada) and QTDE_PREVISTA < 0";
 		
 		Query query = getSession().createSQLQuery(hql.toString());
 		
@@ -958,6 +959,8 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		query.executeUpdate();
 		
 		getSession().flush();
+		
+		
 		
 	}
 }

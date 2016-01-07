@@ -304,7 +304,7 @@ public class MatrizRecolhimentoController extends BaseController {
                 .confirmarBalanceamentoRecolhimento(matrizRecolhimento, filtro.getAnoNumeroSemana(), datasConfirmadas,
                         usuario, balanceamentoRecolhimento.getProdutosRecolhimentoAgrupados());
         
-      //  recolhimentoService.removerChamadaEncalheCotaZerada(datasConfirmadas);
+        recolhimentoService.removerChamadaEncalheCotaZerada(datasConfirmadas);
         
         matrizRecolhimento = this.atualizarMatizComProdutosConfirmados(matrizRecolhimento, matrizConfirmada);
         
