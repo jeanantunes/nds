@@ -820,12 +820,23 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	
     	BigDecimal reparteFisicoOuPrevisto = reparteFisicoOuPrevistoLancamento(estudoId);
     	
+    	BigInteger sumReparteCotas = new BigInteger("0");
+    	BigInteger sumQtdEfetivaCotas = new BigInteger("0");
     	
     	for (EstudoCotaGerado estudoCota : estudoGerado.getEstudoCotas()) {
     		if(BigIntegerUtil.isMenorQueZero(estudoCota.getReparte())){
     			validacao = new ValidacaoException(TipoMensagem.WARNING,"Há cota(s) com reparte(s) negativo(s), por favor ajustá-la(s)!");
     			break;
     		}
+    		
+    		if(BigIntegerUtil.isMaiorQueZero(estudoCota.getReparte())){
+    			sumReparteCotas = sumReparteCotas.add(estudoCota.getReparte());
+    		}
+    		
+    		if(BigIntegerUtil.isMaiorQueZero(estudoCota.getQtdeEfetiva())){
+    			sumQtdEfetivaCotas = sumQtdEfetivaCotas.add(estudoCota.getQtdeEfetiva());
+    		}
+    		
     	} 
 
     	if((reparteFisicoOuPrevisto != null)&&(estudoGerado.getQtdeReparte().compareTo(reparteFisicoOuPrevisto.toBigInteger()) > 0)) {
@@ -834,6 +845,11 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	}
     	
     	if((estudoGerado.getSobra() != null) && estudoGerado.getSobra().compareTo(BigInteger.ZERO) != 0){
+    		validacao =  new ValidacaoException(TipoMensagem.WARNING,"Não é possível liberar estudo com saldo de reparte.");
+    		return validacao;
+    	}
+    	
+    	if((estudoGerado.getQtdeReparte().compareTo(sumReparteCotas) != 0) || (estudoGerado.getQtdeReparte().compareTo(sumQtdEfetivaCotas) != 0)){
     		validacao =  new ValidacaoException(TipoMensagem.WARNING,"Não é possível liberar estudo com saldo de reparte.");
     		return validacao;
     	}
