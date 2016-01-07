@@ -13,6 +13,8 @@ public class CotaReparteDTO implements Serializable{
 	private boolean cotaContribuinteExigeNF;
 	private BigInteger reparte;
 	private Long idLancamento;
+	private boolean parcialFinal=false;
+	
 	
 	/**
 	 * @return the cota
@@ -66,11 +68,18 @@ public class CotaReparteDTO implements Serializable{
 		this.idLancamento = idLancamento;
 	}	
 	
+	public boolean isParcialFinal() {
+		return parcialFinal;
+	}
+	public void setParcialFinal(boolean parcialFinal) {
+		this.parcialFinal = parcialFinal;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((cota == null) ? 0 : cota.hashCode());
+		result = prime * result + ((cota == null) ? 0 : cota.getId().hashCode());
 		return result;
 	}
 	@Override

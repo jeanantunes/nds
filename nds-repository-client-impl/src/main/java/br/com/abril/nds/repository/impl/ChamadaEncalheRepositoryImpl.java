@@ -709,16 +709,24 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
         .append(" coalesce(produtoedi5_.NOME_COMERCIAL, produto6_.NOME_COMERCIAL) as nomeComercial,             ")
         .append(" produtoedi5_.ID as idProdutoEdicao,                                                           ")
         .append(" produtoedi5_.NUMERO_EDICAO as edicao,                                                         ")
-        .append(" movimentoe16_.VALOR_DESCONTO as desconto,                                                     ")
+        .append(" coalesce(movimentoe16_.VALOR_DESCONTO,")
+		.append("      (select VALOR_DESCONTO from MOVIMENTO_ESTOQUE_COTA mec FORCE INDEX (NDX_PRODUTO_EDICAO) where ")
+        .append("  mec.PRODUTO_EDICAO_ID = produtoedi5_.ID														")
+        .append(" and mec.COTA_ID = chamadaenc0_.COTA_ID and mec.tipo_movimento_id = 21 order by mec.data desc limit 1 ), 0   ")
+		.append(" ) as desconto,       								                                            ")
         .append(" produtoedi5_.PRECO_VENDA as precoVenda,                                                       ")
         .append(" periodolan11_.TIPO as tipoRecolhimento,                                                       ")
         .append(" lancamento10_.DATA_LCTO_DISTRIBUIDOR as dataLancamento,                                       ")
         .append(" chamadaenc1_.DATA_RECOLHIMENTO as dataRecolhimento,                                           ")
-        
-        .append(" coalesce(movimentoe16_.PRECO_COM_DESCONTO, movimentoe16_.PRECO_VENDA, 0) as precoComDesconto, ")
+        .append("  chamadaenc0_.qtde_prevista as encalhe_previsto,                                              ")
+        .append(" coalesce(movimentoe16_.PRECO_COM_DESCONTO, movimentoe16_.PRECO_VENDA, ")
+        .append("      (select PRECO_COM_DESCONTO from MOVIMENTO_ESTOQUE_COTA mec FORCE INDEX (NDX_PRODUTO_EDICAO) where ")
+        .append("  mec.PRODUTO_EDICAO_ID = produtoedi5_.ID														")
+        .append(" and mec.COTA_ID = chamadaenc0_.COTA_ID and mec.tipo_movimento_id = 21 order by mec.data desc limit 1 )   ")
+        .append(" ,0) as precoComDesconto, ")
         
         //.append(" (select sum(cec.qtde_prevista) ")
-        .append(" (select sum(case when tm.OPERACAO_ESTOQUE = 'ENTRADA' then mec.qtde else -mec.qtde end)       ")
+        .append(" coalesce((select sum(case when tm.OPERACAO_ESTOQUE = 'ENTRADA' then mec.qtde else -mec.qtde end)       ")
         .append(" from movimento_estoque_cota mec  FORCE INDEX (NDX_PRODUTO_EDICAO)			                                                             ")
         .append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID                                 ")
         .append(" inner join produto_edicao pe on pe.id = mec.PRODUTO_EDICAO_ID                                 ")
@@ -742,7 +750,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			hql.append(" and ce.DATA_RECOLHIMENTO <=:dataAte ");
 		}
 
-		hql.append(" ) as reparte,                                                                              ")
+		hql.append(" ),0) as reparte,                                                                              ")
         .append(" coalesce(conferenci2_.QTDE, 0 ) as quantidadeDevolvida,                                       ")
         .append(" case when count(conferenci2_.id) > 0 then 1 else 0 end as confereciaRealizada,                  ")
         .append(" chamadaenc1_.SEQUENCIA as sequencia,                                                          ")
@@ -753,7 +761,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" group by chamadaenc1_.ID , cota4_.ID ");
 		// hql.append(" having reparte > 0 "); 
 		
-		hql.append(" having reparte > if (periodolan11_.TIPO = 'FINAL',-1,0) "); 
+		hql.append(" having (reparte > if (periodolan11_.TIPO = 'FINAL',-1,0)) or encalhe_previsto = 0 "); 
 		hql.append(" order by chamadaenc1_.DATA_RECOLHIMENTO, sequencia ");
 		
 		SQLQuery query =  getSession().createSQLQuery(hql.toString());
@@ -833,10 +841,10 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	    hql.append("    	        on chamadaenc0_.ID=conferenci2_.CHAMADA_ENCALHE_COTA_ID "); 
 	    hql.append("    	left outer join CONTROLE_CONFERENCIA_ENCALHE_COTA controleco3_  ");
 	    hql.append("    	        on conferenci2_.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID=controleco3_.ID "); 
-	    hql.append("    	inner join MOVIMENTO_ESTOQUE_COTA movimentoe16_  FORCE INDEX (NDX_PRODUTO_EDICAO)			 ");
+	    hql.append("    	left join MOVIMENTO_ESTOQUE_COTA movimentoe16_  FORCE INDEX (NDX_PRODUTO_EDICAO)			 ");
 	    hql.append("    	        on movimentoe16_.PRODUTO_EDICAO_ID = produtoedi5_.ID and movimentoe16_.COTA_ID = chamadaenc0_.COTA_ID ");
 	    hql.append("    	        and case when (conferenci2_.DATA is not null) then movimentoe16_.data = conferenci2_.DATA else lancamento10_.ID=movimentoe16_.LANCAMENTO_ID end ");
-	    hql.append("    	inner join TIPO_MOVIMENTO tipomovime17_                                 ");
+	    hql.append("    	left join TIPO_MOVIMENTO tipomovime17_                                 ");
 	    hql.append("    	        on movimentoe16_.TIPO_MOVIMENTO_ID=tipomovime17_.ID             ");
 	    hql.append("    	inner join COTA cota4_                                                  ");
 	    hql.append("    	        on chamadaenc0_.COTA_ID=cota4_.ID                               "); 

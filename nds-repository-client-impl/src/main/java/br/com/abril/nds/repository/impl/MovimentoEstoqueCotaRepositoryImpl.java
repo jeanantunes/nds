@@ -3958,7 +3958,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append(" where  mec.tipoMovimento.id in (21,26) and periodoLancamentoParcial.tipo = :parcial ");
 		sql.append("        and mec.produtoEdicao.id = :produtoEdicaoId ");
 		sql.append(" group by mec.cota.id ");
-		// sql.append("      having reparte  > 0 ");
+		 sql.append("      having sum(mec.qtde)  > 0 ");
         
         final Query query = this.getSession().createQuery(sql.toString());
         
