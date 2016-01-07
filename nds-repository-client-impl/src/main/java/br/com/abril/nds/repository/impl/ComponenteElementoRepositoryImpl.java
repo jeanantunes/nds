@@ -142,13 +142,15 @@ public class ComponenteElementoRepositoryImpl implements ComponenteElementoRepos
 	public List<ComponenteElementoDTO> buscaLegendaCotas() {
         List<ComponenteElementoDTO> retorno = new ArrayList<>();
         
-        retorno.add(new ComponenteElementoDTO("legenda_cota", "MX", "MX - MIX"));
         retorno.add(new ComponenteElementoDTO("legenda_cota", "AJ", "AJ - AJUSTE"));
         retorno.add(new ComponenteElementoDTO("legenda_cota", "CP", "CP - COMPLEMENTAR"));
-        retorno.add(new ComponenteElementoDTO("legenda_cota", "SG", "SG - SEGMENTO EXCEÇÃO"));
-        retorno.add(new ComponenteElementoDTO("legenda_cota", "RD", "RD - REDUTOR"));
         retorno.add(new ComponenteElementoDTO("legenda_cota", "IN", "IN - INCLUSÃO"));
-        retorno.add(new ComponenteElementoDTO("legenda_cota", "TD", "TODAS"));
+        retorno.add(new ComponenteElementoDTO("legenda_cota", "MX", "MX - MIX"));
+        retorno.add(new ComponenteElementoDTO("legenda_cota", "PR", "PR - PROPORCIONAL"));
+        retorno.add(new ComponenteElementoDTO("legenda_cota", "RD", "RD - REDUTOR"));
+        retorno.add(new ComponenteElementoDTO("legenda_cota", "SN", "SN - SEGMENTO EXCEÇÃO"));
+        retorno.add(new ComponenteElementoDTO("legenda_cota", "TR", "TR - AJUSTE DE REPARTE"));
+        retorno.add(new ComponenteElementoDTO("legenda_cota", "TD", "TODAS LEGENDAS "));
         
         return retorno;
     }
