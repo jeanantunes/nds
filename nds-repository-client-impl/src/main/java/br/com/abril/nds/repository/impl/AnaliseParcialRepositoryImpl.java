@@ -284,6 +284,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             	
             	if(queryDTO.getValorElemento().toUpperCase().equals("TD")){
             		sql.append(" and ec.CLASSIFICACAO <> '' ");
+            		sql.append(" and ec.CLASSIFICACAO <> 'S' ");
             	}else{
             		sql.append(" and ec.CLASSIFICACAO = upper(:legCota)");
             	}
