@@ -313,9 +313,11 @@ public class BoletoServiceImpl implements BoletoService {
         
         final Banco banco = bancoRepository.obterBanco(arquivoPagamento.getCodigoBanco(), arquivoPagamento.getNumeroAgencia(), arquivoPagamento.getNumeroConta());
         
+        
         if (banco == null) {
             
-            throw new ValidacaoException(TipoMensagem.WARNING, "Banco não encontrado!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Banco/Conta (Banco="+arquivoPagamento.getCodigoBanco()+" Agencia="+arquivoPagamento.getNumeroAgencia()+
+            		" Conta="+arquivoPagamento.getNumeroConta()+") não encontrado no cadastro de Bancos!");
         }
         
         final ControleBaixaBancaria controleBaixa = controleBaixaRepository.obterControleBaixaBancaria(dataPagamento, banco);
@@ -327,7 +329,7 @@ public class BoletoServiceImpl implements BoletoService {
         }
         
         if (valorFinanceiro == null || arquivoPagamento.getSomaPagamentos() == null || valorFinanceiro.compareTo(arquivoPagamento.getSomaPagamentos()) != 0) {
-            
+            LOGGER.warn("Valor financeiro inválido! A soma dos valores dos boletos pagos deve ser igual ao valor informado! valor="+valorFinanceiro+" soma="+arquivoPagamento.getSomaPagamentos());
             throw new ValidacaoException(TipoMensagem.WARNING, "Valor financeiro inválido! A soma dos valores dos boletos pagos deve ser igual ao valor informado!");
         }
         
