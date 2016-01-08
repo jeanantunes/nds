@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,8 +21,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
@@ -46,16 +45,14 @@ public class Rota implements Serializable {
     @Column(name = "DESCRICAO_ROTA")
     private String descricaoRota;
 
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "ROTEIRO_ID")
     private Roteiro roteiro;
     
     @OneToOne(mappedBy = "rota")
     private Entregador entregador;
 
-    @OneToMany(mappedBy = "rota", orphanRemoval = true)
-    @Cascade(value = { CascadeType.MERGE, CascadeType.PERSIST,
-            CascadeType.SAVE_UPDATE, CascadeType.DELETE })
+    @OneToMany(mappedBy = "rota", cascade=CascadeType.ALL)
     @OrderBy("ordem ASC")
     private List<RotaPDV> rotaPDVs = new ArrayList<RotaPDV>();
 

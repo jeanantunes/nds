@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -21,8 +22,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
 @Entity
 @Table(name = "ROTEIRO")
@@ -43,14 +42,13 @@ public class Roteiro implements Serializable {
 	@Column(name="DESCRICAO_ROTEIRO")
 	private String descricaoRoteiro;
 	
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name = "ROTEIRIZACAO_ID")
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	private Roteirizacao roteirizacao;
 	
-	@OneToMany(orphanRemoval = true)
+	@OneToMany(cascade=CascadeType.ALL)
 	@JoinColumn( name="ROTEIRO_ID")
-	@Cascade(value = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE, CascadeType.DELETE})
 	@OrderBy("ordem ASC")
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	private List<Rota> rotas = new ArrayList<Rota>();
@@ -172,12 +170,11 @@ public class Roteiro implements Serializable {
 	}
 
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder("Id: ");
-        builder.append(id).append(" - Ordem: ").append(ordem)
-                .append(" - Descrição: ").append(descricaoRoteiro);
-        return builder.toString();
-    }
+	public String toString() {
+		return "Roteiro [id=" + id + ", descricaoRoteiro=" + descricaoRoteiro
+				+ ", roteirizacao=" + roteirizacao + ", rotas=" + rotas
+				+ ", ordem=" + ordem + ", tipoRoteiro=" + tipoRoteiro + "]";
+	}
 
 	@Override
 	public int hashCode() {
@@ -215,4 +212,6 @@ public class Roteiro implements Serializable {
 			return false;
 		return true;
 	}
+	
+	
 }
