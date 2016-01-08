@@ -145,6 +145,7 @@ public class ComponenteElementoRepositoryImpl implements ComponenteElementoRepos
         retorno.add(new ComponenteElementoDTO("legenda_cota", "AJ", "AJ - AJUSTE"));
         retorno.add(new ComponenteElementoDTO("legenda_cota", "CP", "CP - COMPLEMENTAR"));
         retorno.add(new ComponenteElementoDTO("legenda_cota", "IN", "IN - INCLUSÃO"));
+        retorno.add(new ComponenteElementoDTO("legenda_cota", "FX", "FX - FIXAÇÃO"));
         retorno.add(new ComponenteElementoDTO("legenda_cota", "MX", "MX - MIX"));
         retorno.add(new ComponenteElementoDTO("legenda_cota", "PR", "PR - PROPORCIONAL"));
         retorno.add(new ComponenteElementoDTO("legenda_cota", "RD", "RD - REDUTOR"));
