@@ -332,4 +332,6 @@ public interface RoteirizacaoService {
 			Integer codigoBoxAte);
 
 	List<MapaRoteirizacaoDTO> obterDetalheRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro);
+
+	void roteiroTest();
 }

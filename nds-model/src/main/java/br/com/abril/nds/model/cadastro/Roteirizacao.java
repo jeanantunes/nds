@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,8 +21,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
+
 
 @Entity
 @Table(name = "ROTEIRIZACAO")
@@ -43,9 +43,8 @@ public class Roteirizacao implements Serializable{
 	@JoinColumn(name = "BOX_ID", unique = true)
 	private Box box;
 	
-	@OneToMany(orphanRemoval = true, fetch=FetchType.LAZY)
+	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn( name="ROTEIRIZACAO_ID")
-	@Cascade(value = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	@OrderBy("ordem ASC")
 	private List<Roteiro> roteiros = new ArrayList<Roteiro>();
 	

@@ -2,6 +2,7 @@ package br.com.abril.nds.model.cadastro.pdv;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,9 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
@@ -39,9 +37,8 @@ public class RotaPDV implements Serializable {
     @JoinColumn(name = "ROTA_ID")
     private Rota rota;
     
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "PDV_ID")
-    @Cascade(value = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE})
     private PDV pdv;
     
     @Column(name="ORDEM")

@@ -1616,9 +1616,12 @@ public class RoteirizacaoController extends BaseController {
 		if(lista == null || lista.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
+	}
+	
+	@Path("/test")
+	public void roteiroTest() {
+		this.roteirizacaoService.roteiroTest();
 		
-		
-		
-		
+		result.use(Results.json()).from("sucess").recursive().serialize();
 	}
 }
