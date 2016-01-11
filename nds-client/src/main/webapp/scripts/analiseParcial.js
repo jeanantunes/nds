@@ -634,12 +634,19 @@ var analiseParcialController = $.extend(true, {
     	
     	var repartes = resultado.analiseEstudoNormal_E_ParcialDTO.reparteTotalEdicao;
     	var vendas = resultado.analiseEstudoNormal_E_ParcialDTO.vendaTotalEdicao;
+    	var abrangencia = resultado.analiseEstudoNormal_E_ParcialDTO.percentualAbrangencia;
     	
     	if(resultado.analiseEstudoNormal_E_ParcialDTO.saldo){
     		var saldo = resultado.analiseEstudoNormal_E_ParcialDTO.saldo;
     		
     		$("#saldo_reparte").text(saldo);
     		
+    	}
+    	
+    	if(abrangencia){
+    		$('#abrangencia').text(abrangencia).formatNumber({format:'#.00 %', locale:'br'});
+        } else {
+        	$('#abrangencia').text('');
     	}
     	
     	for(var i = 0; i < repartes.length; i++){
