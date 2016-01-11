@@ -195,9 +195,9 @@ public class ItemNotaFiscalBuilder  {
 			
 			quantidade = produtoServico.getQuantidade().abs();
 			
-			LOGGER.error("Produto: "+produtoServico.getCodigoProduto());
+			LOGGER.warn("Produto: "+produtoServico.getCodigoProduto());
 			
-			LOGGER.error("quantidade: "+quantidade);
+			LOGGER.warn("quantidade: "+quantidade);
 			
 			if(produtoServico.getQuantidade().intValue() > 0) {
 				

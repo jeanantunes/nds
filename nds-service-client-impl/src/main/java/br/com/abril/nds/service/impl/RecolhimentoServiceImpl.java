@@ -50,6 +50,7 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
@@ -579,7 +580,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			Integer sequencia = this.chamadaEncalheRepository.obterMaiorSequenciaPorDia(dataRecolhimento);
 			
 			List<CotaReparteDTO> cotasReparte =	this.movimentoEstoqueCotaRepository.obterReparte(idsLancamento, null);
-
+			
+	
 			List<ChamadaEncalhe> listaChamadaEncalhe = this.chamadaEncalheRepository.obterChamadasEncalheLancamentos(idsLancamento, false);
 
 			for (Long idLancamento : idsLancamento) {
@@ -590,6 +592,43 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				List<CotaReparteDTO> cotasReparteLancamento = this.processaListaCotaReparteDTOLancamento(cotasReparte, idLancamento);
 
+				// odemir CE parciais para cota com reparte zero no periodo final
+				// ver se 'e produto parcial, se periodo do lancamento 'e final
+				// entao buscar cotas que nao teve reparte neste lancamento mas teve nos anteriores
+				
+				 if (produtoEdicao.isParcial() && lancamento.getPeriodoLancamentoParcial() != null && 
+					 TipoLancamentoParcial.FINAL.equals(lancamento.getPeriodoLancamentoParcial().getTipo())) {
+					 LOGGER.error("Produto parcial com lancamento FINAL pe=" +produtoEdicao.getId());
+					// buscar cotas que nao teve reparte neste lancamento mas teve nos anteriores
+					List <CotaReparteDTO> cotasRepartePeriodosAnteriores= this.movimentoEstoqueCotaRepository.obterRepartePeriodosAnteriores(lancamento);
+					 LOGGER.error("QTDE DE COTAS SEM REPARTE NA FINAL MAS COM REPARTES ANTERIORES=" +cotasRepartePeriodosAnteriores.size());
+					 /*
+					 Cota c = cotaRepository.buscarCotaPorID(1L);
+					 CotaReparteDTO cr = new CotaReparteDTO();
+					 cr.setCota(c);
+					 cr.setReparte(new BigInteger("1000"));
+					 cr.setParcialFinal(true);
+					 cotasRepartePeriodosAnteriores.add(cr);
+					 */
+					 // incluir em cotasReparteLancamento
+					for (CotaReparteDTO cotaRepartePeriodosAnteriores :cotasRepartePeriodosAnteriores ) {
+						CotaReparteDTO cr1=null;
+						int i =cotasReparteLancamento.indexOf(cotaRepartePeriodosAnteriores);
+                       if ( i > 0 )
+						 cr1 = cotasReparteLancamento.get(i);
+						if ( cr1 != null )
+							LOGGER.error("COTA "+cotaRepartePeriodosAnteriores.getCota().getId() +" ja tem em reparte na chamada final com qtd="+cr1.getReparte());
+						if (!cotasReparteLancamento.contains(cotaRepartePeriodosAnteriores) && cotaRepartePeriodosAnteriores.getReparte().intValue() > 0 ) {
+							    LOGGER.error("INSERINDO COTA="+cotaRepartePeriodosAnteriores.getCota().getId()+ "PRODUTOEDICAo=" +produtoEdicao.getId()+" qtde="+
+							    		cotaRepartePeriodosAnteriores.getReparte().intValue());
+							    cotaRepartePeriodosAnteriores.setReparte(BigInteger.ZERO);
+							    cotaRepartePeriodosAnteriores.setParcialFinal(true);
+								cotasReparteLancamento.add(cotaRepartePeriodosAnteriores);
+						}
+					}
+				 }
+				
+				// odemir
 				Set<ChamadaEncalhe> chamadasEncalheProdutoEdicao = new HashSet<>(this.processaListaChamadaEncaleProdutoEdicao(listaChamadaEncalhe, produtoEdicao.getId()));
 
 				for (CotaReparteDTO cotaReparte : cotasReparteLancamento) {
@@ -628,7 +667,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 						
 					}
 					
-					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor(), cotaReparte.isCotaContribuinteExigeNF(), usuario);
+					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor(), cotaReparte.isCotaContribuinteExigeNF(), 
+							usuario,cotaReparte.isParcialFinal());
 				
 					this.chamadaEncalheRepository.merge(chamadaEncalhe);
 				}
@@ -685,12 +725,17 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 										 Cota cota, ChamadaEncalhe chamadaEncalhe,
 										 Date dataLctoDistribuidor,
 										 boolean cotaContribuinteExigeNF,
-										 Usuario usuario) {
+										 Usuario usuario,boolean isParcialFinal) {
 		
-		//if(BigInteger.ZERO.compareTo(qtdPrevista) >= 0) {
-			
-			//return;
-		//}
+		if(BigInteger.ZERO.compareTo(qtdPrevista) >= 0) {
+          if ( isParcialFinal) { // se for pacialFinal, criar chamada com zero..
+			LOGGER.error("CRIANDO CHAMADA ENCALHE COM ZERO PARA COTA="+cota.getId() +"  chamada encalhe="+chamadaEncalhe.getId());
+			// return;
+          }
+          else {
+        	 return;  
+          }
+		}
 		
 		boolean criarCahamadaEncalheCota = this.isDevolveEncalhe(cota.getTipoCota(), cota.isDevolveEncalhe());
 		

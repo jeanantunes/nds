@@ -13,6 +13,8 @@ public class CotaReparteDTO implements Serializable{
 	private boolean cotaContribuinteExigeNF;
 	private BigInteger reparte;
 	private Long idLancamento;
+	private boolean parcialFinal=false;
+	
 	
 	/**
 	 * @return the cota
@@ -40,6 +42,7 @@ public class CotaReparteDTO implements Serializable{
 		this.cotaContribuinteExigeNF = cotaContribuinteExigeNF;
 	}
 	
+	
 	/**
 	 * @return the reparte
 	 */
@@ -64,4 +67,35 @@ public class CotaReparteDTO implements Serializable{
 	public void setIdLancamento(Long idLancamento) {
 		this.idLancamento = idLancamento;
 	}	
+	
+	public boolean isParcialFinal() {
+		return parcialFinal;
+	}
+	public void setParcialFinal(boolean parcialFinal) {
+		this.parcialFinal = parcialFinal;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((cota == null) ? 0 : cota.getId().hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CotaReparteDTO other = (CotaReparteDTO) obj;
+		if (cota == null) {
+			if (other.cota != null)
+				return false;
+		} else if (!cota.getId().equals(other.cota.getId()))
+			return false;
+		return true;
+	}
 }

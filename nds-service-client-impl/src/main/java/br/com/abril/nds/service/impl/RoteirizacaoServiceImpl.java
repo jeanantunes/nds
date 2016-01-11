@@ -55,6 +55,7 @@ import br.com.abril.nds.util.OrdenacaoUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.vraptor.view.Results;
 
 @Service
 public class RoteirizacaoServiceImpl implements RoteirizacaoService {
@@ -883,7 +884,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
     	}
     }
     
-	    /**
+	/**
      * Salva as informações de uma nova roteirização
      * 
      * @param roteirizacaoDTO dto com as informações da nova roteirização
@@ -1085,10 +1086,10 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		
 		roteirizacaoRepository.alterar(roteirizacaoExistente);
 		
-		if(roteirizacaoDTO.getRoteiros() == null || roteirizacaoDTO.getRoteiros().isEmpty()) {
+		//if(roteirizacaoDTO.getRoteiros() == null || roteirizacaoDTO.getRoteiros().isEmpty()) {
 			
-			roteirizacaoRepository.removerPorId(roteirizacaoDTO.getId());
-		}
+			//roteirizacaoRepository.removerPorId(roteirizacaoDTO.getId());
+		//}
 		
 		return roteirizacaoExistente;
     }
@@ -1639,5 +1640,49 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		
 		return roteirizacoes;
 	}
+	
+	@Transactional
+	public void roteiroTest() {
+		
+		Roteiro roteiro = this.roteiroRepository.buscarPorId(16L);
+		Roteiro roteiroEspecial = popularRoteiroEspecial(roteiro);
+		System.out.println(roteiroEspecial.toString());
+	}
 
+	private Roteiro popularRoteiroEspecial(Roteiro roteiro) {
+		
+		Box box = boxService.buscarPorId(179L);
+		
+		List<Rota> rotasEpeciais = new ArrayList<Rota>();
+		
+		Roteiro roteiroEspecial = this.roteiroRepository.buscarPorId(50L);
+		
+		for (Rota rota :  roteiro.getRotas()) {
+			
+			Rota rotaEspecial = new Rota();
+			
+			rotaEspecial.setDescricaoRota(rota.getDescricaoRota());
+			rotaEspecial.setOrdem(rota.getOrdem());
+			rotaEspecial.setEntregador(rota.getEntregador());
+			rotaEspecial.setRoteiro(roteiroEspecial);
+			rotasEpeciais.add(rotaEspecial);
+			
+			for(RotaPDV rotaPdv : rota.getRotaPDVs()) {
+				novoPDVRotaEspecial(rotaEspecial, rota, rotaPdv, box);
+			}
+			
+			rotaRepository.adicionar(rotaEspecial);
+			
+		}
+		
+		roteiroEspecial.setRotas(rotasEpeciais);
+		
+		return roteiroEspecial;
+	}
+
+	private void novoPDVRotaEspecial(Rota rotaEspecial, Rota rota, RotaPDV rotaPdv, Box box) {
+      
+		rotaEspecial.addPDV(rotaPdv.getPdv(), rotaPdv.getOrdem(), box);
+    }
+	
 }

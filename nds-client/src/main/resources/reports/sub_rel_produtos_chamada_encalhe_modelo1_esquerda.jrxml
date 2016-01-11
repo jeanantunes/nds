@@ -405,7 +405,7 @@ Lancto]]></text>
 					<font fontName="SansSerif" size="8" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{quantidadeReparte}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{quantidadeReparte}.intValue() > 0 ? $F{quantidadeReparte}:""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="aa30862e-2c1e-48fc-b355-7451d037e7b3" style="linha" mode="Opaque" x="316" y="0" width="30" height="16"/>

@@ -75,6 +75,7 @@ import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoEstudoCota;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.util.Intervalo;
@@ -3938,6 +3939,40 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameter("idEstudo", idEstudo);
         
     }
+    
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<CotaReparteDTO> obterRepartePeriodosAnteriores(Lancamento lancamento) {
+        
+        final StringBuilder sql = new StringBuilder();
+       
+        sql.append(" select mec.cota as cota, ");
+        sql.append(" mec.cotaContribuinteExigeNF as cotaContribuinteExigeNF, ");
+        sql.append(" sum(mec.qtde) as reparte, ");
+        sql.append(" lancamento.id as idLancamento ");
+		sql.append("  from MovimentoEstoqueCota mec ");
+		sql.append("	join mec.tipoMovimento tipo ");
+		sql.append("	join mec.lancamento lancamento ");
+		sql.append("    join  lancamento.periodoLancamentoParcial periodoLancamentoParcial  ");
+		sql.append(" where  mec.tipoMovimento.id in (21,26) and periodoLancamentoParcial.tipo = :parcial ");
+		sql.append("        and mec.produtoEdicao.id = :produtoEdicaoId ");
+		sql.append(" group by mec.cota.id ");
+		 sql.append("      having sum(mec.qtde)  > 0 ");
+        
+        final Query query = this.getSession().createQuery(sql.toString());
+        
+      
+        
+        query.setParameter("produtoEdicaoId", lancamento.getProdutoEdicao().getId());
+        query.setParameter("parcial", TipoLancamentoParcial.PARCIAL);   
+       
+        
+        query.setResultTransformer(Transformers.aliasToBean(CotaReparteDTO.class));
+        
+        return query.list();
+    }
+    
     
     @SuppressWarnings("unchecked")
     @Override

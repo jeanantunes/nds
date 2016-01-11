@@ -94,9 +94,9 @@ var ConsultaEncalhe = $.extend(true, {
 			$("#gridConsultaEncalhe", ConsultaEncalhe.workspace).flexReload();
 			
 		},
-	
+	    
 		gerarSlip: function() {
-			
+			if ( confirm("Confirmar Geracao do Slip ?") ) {  
 			var dataRecolhimentoInicial = $("#dataRecolhimentoInicial", ConsultaEncalhe.workspace).val();
 			var dataRecolhimentoFinal 	= $("#dataRecolhimentoFinal", ConsultaEncalhe.workspace).val();
 			var idFornecedor			= $("#idFornecedor", ConsultaEncalhe.workspace).val();
@@ -112,6 +112,7 @@ var ConsultaEncalhe = $.extend(true, {
 
 			$("#download-iframe", ConsultaEncalhe.workspace).attr('src', link);
 			
+			}
 		},
 
 		popupOutrosValores: function() {

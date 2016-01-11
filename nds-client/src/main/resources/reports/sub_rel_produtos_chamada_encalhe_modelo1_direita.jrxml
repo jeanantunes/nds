@@ -385,7 +385,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{quantidadeReparte}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{quantidadeReparte}.intValue() > 0 ? $F{quantidadeReparte}:""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement uuid="f29f1711-924d-4ec4-9eed-dff26fcfa35f" style="linha" mode="Opaque" x="170" y="15" width="68" height="16"/>

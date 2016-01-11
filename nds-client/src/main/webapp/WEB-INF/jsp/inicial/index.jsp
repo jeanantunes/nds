@@ -81,7 +81,7 @@ $(function() {
 		
 		<div class="box_home feriados">
 	    	
-		    <h2>Feriados do Mês: Setembro/2012</h2>
+		    <h2>Feriados do Mês: Setembro/2016</h2>
 		    <br clear="all" />
 		    
 		    <div class="feriados_home separar">

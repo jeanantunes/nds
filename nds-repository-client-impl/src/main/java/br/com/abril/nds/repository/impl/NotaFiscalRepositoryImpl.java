@@ -925,6 +925,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	
 	private StringBuilder queryConsultaFornecedorMFFNfe(FiltroNFeDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup) {
 
+		filtro.getPaginacaoVO().setSortColumn(null);
+		
 		hql.append(" FROM MovimentoFechamentoFiscalFornecedor mfff ")
 		.append(" JOIN mfff.tipoMovimento tipoMovimento ")
 		.append(" JOIN mfff.fornecedor fornecedor ")
