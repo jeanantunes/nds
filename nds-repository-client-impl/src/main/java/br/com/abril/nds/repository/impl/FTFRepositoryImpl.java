@@ -443,6 +443,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		return tipoRegistro06;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public FTFEnvTipoRegistro06 obterRegistroTipo06(final Long idNF) {
 
@@ -452,27 +453,31 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" left join nfr.pk ")
 		.append(" left join nfr.pk.notaFiscal nf ")
 		.append(" where nf.id = :idNF ");
-
-
+		
 		Query query = getSession().createQuery(sb.toString());
 		query.setParameter("idNF", idNF);
 
-		NotaFiscalReferenciada nota = (NotaFiscalReferenciada) query.uniqueResult();
+		List<NotaFiscalReferenciada> notas = query.list();
 
 		FTFEnvTipoRegistro06 tipoRegistro06 = null;
-		if(nota!=null){
+		
+		if(notas != null && !notas.isEmpty()){
 
-			NotaFiscal notaFiscal = nota.getPk().getNotaFiscal();
-
-			if (notaFiscal != null) {
-				tipoRegistro06 = new FTFEnvTipoRegistro06();
-
-				tipoRegistro06.setTipoRegistro("6");
-				setCommonsParameters(tipoRegistro06);
-				tipoRegistro06.setTipoPedido("2");
-				tipoRegistro06.setNumeroDocOrigem(notaFiscal.getId().toString());
-				tipoRegistro06.setNumDocumentoOrigemAssociado("");//TODO
+			for (NotaFiscalReferenciada nota : notas) {
+				
+				NotaFiscal notaFiscal = nota.getPk().getNotaFiscal();
+				
+				if (notaFiscal != null) {
+					tipoRegistro06 = new FTFEnvTipoRegistro06();
+					
+					tipoRegistro06.setTipoRegistro("6");
+					setCommonsParameters(tipoRegistro06);
+					tipoRegistro06.setTipoPedido("2");
+					tipoRegistro06.setNumeroDocOrigem(notaFiscal.getId().toString());
+					tipoRegistro06.setNumDocumentoOrigemAssociado("");
+				}
 			}
+			
 		}
 		return tipoRegistro06;
 	}

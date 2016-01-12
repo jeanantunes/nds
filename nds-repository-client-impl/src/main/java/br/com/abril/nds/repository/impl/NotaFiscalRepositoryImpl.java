@@ -883,11 +883,17 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		// OBTER COTA EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("SELECT ");
-		hql.append(" mfff.fornecedor.id as idFornecedor, ");
-		hql.append(" mfff.fornecedor.id as numeroFornecedor, ");
-		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, '') as nomeFornecedor,");
-		hql.append(" SUM(mfff.qtde) as exemplares ");
 
+		hql.append(" mfff.fornecedor.id as idFornecedor, ");
+		hql.append(" mfff.id as numeroFornecedor, ");
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, '') as nomeFornecedor,");
+		hql.append(" SUM(mfff.qtde) as exemplares, ");
+		hql.append(" SUM(coalesce(produtoEdicao.precoVenda, 0) * mfff.qtde) as total, "); 
+		hql.append(" SUM((produtoEdicao.precoVenda - (produtoEdicao.precoVenda * (coalesce(produto.desconto, 0)  / 100))) * mfff.qtde) as totalDesconto, "); 
+		hql.append(" produto.codigo as codigo, ");
+		hql.append(" produto.nomeComercial as nome, ");
+		hql.append(" produtoEdicao.numeroEdicao as edicao ");
+		
 		Query query = queryConsultaFornecedorMFFNfeParameters(queryConsultaFornecedorMFFNfe(filtro, hql, false, false, false), filtro);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(FornecedorExemplaresDTO.class));

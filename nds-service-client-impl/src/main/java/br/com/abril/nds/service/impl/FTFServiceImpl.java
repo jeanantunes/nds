@@ -189,7 +189,7 @@ public class FTFServiceImpl implements FTFService {
 	}
 
 	private void carregarRegistroTipo06(List<String> validacaoBeans, FTFEnvTipoRegistro01 ftfEnvTipoRegistro01, long idNF) {
-
+		LOGGER.debug("nota"+idNF);
 		FTFEnvTipoRegistro06 regTipo06 = ftfRepository.obterRegistroTipo06(idNF);
 		if(regTipo06 != null) {
 			ftfEnvTipoRegistro01.setRegTipo06(regTipo06);
