@@ -475,6 +475,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 					tipoRegistro06.setTipoPedido("2");
 					tipoRegistro06.setNumeroDocOrigem(notaFiscal.getId().toString());
 					tipoRegistro06.setNumDocumentoOrigemAssociado("");
+					break;
 				}
 			}
 			
