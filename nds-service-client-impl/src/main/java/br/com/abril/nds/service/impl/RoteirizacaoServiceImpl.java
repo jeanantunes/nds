@@ -1063,6 +1063,10 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 							if(!rota.getRoteiro().getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
 								desassociarBoxCota(rotaDTO.getPdvsExclusao());
 							}
+							for (Long pdv : rotaDTO.getPdvsExclusao()) {
+								this.rotaRepository.removerPDV(pdv, rotaDTO.getId());
+								this.rotaRepository.flush();
+							}
 						}
 					}
                 }
@@ -1076,6 +1080,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
                 	if (rotaPDVExistente == null) {
                         novoPDVRota(rota, pdvDTO, box);
                     } else {
+                    	
                         rota.alterarOrdemPdv(pdvDTO.getId(), pdvDTO.getOrdem());
                     }
                 	

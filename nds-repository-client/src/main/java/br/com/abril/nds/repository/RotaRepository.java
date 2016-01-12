@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.criterion.MatchMode;
 
@@ -86,4 +87,6 @@ public interface RotaRepository extends Repository<Rota, Long> {
 	 * @return List<RotaPDV>
 	 */
 	List<RotaPDV> buscarRotaPDVPorRota(Long rotaId);
+
+	void removerPDV(Long pdvsExclusao, Long rotaId);
 }

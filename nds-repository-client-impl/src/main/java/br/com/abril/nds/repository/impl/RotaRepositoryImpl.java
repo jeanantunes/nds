@@ -242,5 +242,17 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 		
 		return query.list();
 	}
+
+	@Override
+	public void removerPDV(Long pdvsExclusao, Long rotaId) {
+		String hql = " DELETE FROM ROTA_PDV where pdv_id = :rotaPdvId and ROTA_ID = :rotaId ";
+			
+		Query query = getSession().createSQLQuery(hql.toString());
+		
+		query.setParameter("rotaPdvId", pdvsExclusao);
+		query.setParameter("rotaId", rotaId);
+		query.executeUpdate();
+		
+	}
 	
 }
