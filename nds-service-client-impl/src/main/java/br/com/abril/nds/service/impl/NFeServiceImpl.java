@@ -513,6 +513,9 @@ public class NFeServiceImpl implements NFeService {
 			throw e;
 		}
 		
+		notaFiscalRepository.flush();
+		notaFiscalRepository.clear();
+		
 		ParametroSistema ps = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR);
 		
 		if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(ProcessoEmissao.valueOf(ps.getValor())) && TipoAtividade.PRESTADOR_FILIAL.equals(distribuidor.getTipoAtividade())) {
