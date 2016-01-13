@@ -59,7 +59,7 @@
 						<tr>
 							<td width="20">
 								<span class="bt_novos">
-									<a href="javascript:;" onclick="ConferenciaEncalhe.irParaContigencia()" rel="tipsy" title="Contingência">
+									<a href="javascript:;" style="display:${permissaoContingencia?'':'none'};" onclick="ConferenciaEncalhe.irParaContigencia()" rel="tipsy" title="Contingência">
 										<img border="0" src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" />
 									</a>
 								</span>

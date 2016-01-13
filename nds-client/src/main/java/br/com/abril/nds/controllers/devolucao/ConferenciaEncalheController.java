@@ -222,6 +222,10 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(this.session, null);
 		
+		boolean permissaoContingencia = usuarioPossuiRule(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_CONTINGENCIA);
+		result.include("permissaoContingencia", permissaoContingencia);
+	
+		
 		this.result.include("dataOperacao", DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
 		
 		final TipoContabilizacaoCE tipoContabilizacaoCE = conferenciaEncalheService.obterTipoContabilizacaoCE();
