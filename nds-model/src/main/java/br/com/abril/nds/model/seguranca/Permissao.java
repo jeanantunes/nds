@@ -239,6 +239,10 @@ public enum Permissao {
 	ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_CONF_CEGA("Fechamento Encalhe (Conferência Cega)", 				Permissao.ROLE_RECOLHIMENTO, null, false,
 		"As colunas 'Exemplar Devolução', 'Total R$', 'Diferença' e os botões 'Confirmar' e 'Cotas Ausentes' não estarão visíveis.", RestricoesAcesso.CONF_CEGA_FECHAMENTO_ENCALHE),
 	
+
+	ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_CONTINGENCIA("Fechamento Encalhe (Contingencia)",					Permissao.ROLE_RECOLHIMENTO, ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE, false, null),
+
+		
 	ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO("Fechamento CE - Integração",							Permissao.ROLE_RECOLHIMENTO, true),
 	ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO("Fechamento CE - Integração",								   	Permissao.ROLE_RECOLHIMENTO, ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO, true, null),
 	
