@@ -1867,8 +1867,8 @@ public class BoletoServiceImpl implements BoletoService {
         final List<PoliticaCobranca> politicasCobranca = 
                 politicaCobrancaRepository.obterPoliticasCobranca(
                         Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO));
-        
-        return this.gerarImpressaoBoleto(boletoRepository.obterPorNossoNumero(nossoNumero,null,false), politicasCobranca);
+        Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null,false);
+        return this.gerarImpressaoBoleto(boleto, politicasCobranca);
     }
     
     @Override
@@ -1904,7 +1904,7 @@ public class BoletoServiceImpl implements BoletoService {
         }
         catch(Exception e){
             
-            throw new ValidacaoException(TipoMensagem.ERROR, e.getCause().getMessage()+". Para o banco ["+boleto.getBanco().getNome()+"]");
+            throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage()+". Para o banco ["+boleto.getBanco().getNome()+"]");
         }
         
     //    cobrancaRepository.atualizarVias(boleto);

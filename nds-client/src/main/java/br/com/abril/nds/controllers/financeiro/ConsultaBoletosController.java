@@ -304,7 +304,7 @@ public class ConsultaBoletosController extends BaseController {
 	public void verificaBoleto(String nossoNumero) throws Exception{
 		
 		if(validarBoletoPago(nossoNumero)){
-			
+			byte[] b = this.obterImpressaoBoleto(nossoNumero);
 			result.use(Results.json()).from(nossoNumero,"result").recursive().serialize();
 			
 	    }else{

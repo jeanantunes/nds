@@ -53,7 +53,14 @@ public class GeradorBoleto {
         Cedente cedente = new Cedente(corpoBoleto.getCedenteNome(), corpoBoleto.getCedenteDocumento());
         
         //SACADO
-        Sacado sacado = new Sacado(corpoBoleto.getSacadoNome(), corpoBoleto.getSacadoDocumento());
+        Sacado sacado = null;
+        
+        try {
+         sacado= new Sacado(corpoBoleto.getSacadoNome(), corpoBoleto.getSacadoDocumento());
+	} catch (Exception e ) {
+		  	throw new ValidationException("Sacado= "+corpoBoleto.getSacadoNome() +"-"+ corpoBoleto.getSacadoDocumento()+". "+e.getLocalizedMessage());
+		      
+	}
         //ENDERECO DO SACADO
         
         Endereco enderecoSac = new Endereco();
