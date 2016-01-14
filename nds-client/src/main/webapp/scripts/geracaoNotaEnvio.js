@@ -334,9 +334,9 @@ var geracaoNotaEnvioController = $.extend({
 			});
 			
 		},
-		
+	
 		getArquivoNotaEnvio : function(data) {
-			
+			if ( confirm('Confirmar Impressao NE/NECA ?')) {
 			var path = geracaoNotaEnvioController.path + 'getArquivoNotaEnvio';
 
             $.fileDownload(path, {
@@ -362,6 +362,7 @@ var geracaoNotaEnvioController = $.extend({
                     _this.pesquisar();
                 }
             });
+			}
 		},
 		
 		/**
