@@ -1904,7 +1904,7 @@ public class BoletoServiceImpl implements BoletoService {
         }
         catch(Exception e){
             
-            throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage()+". Para o banco ["+boleto.getBanco().getNome()+"]");
+            throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
         }
         
     //    cobrancaRepository.atualizarVias(boleto);
