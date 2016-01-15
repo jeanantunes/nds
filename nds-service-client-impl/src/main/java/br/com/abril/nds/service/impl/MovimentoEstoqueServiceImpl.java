@@ -882,11 +882,11 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		parametroMovimentoEstoque.isIntegradoCE                     = integradoCE; 
         
         MovimentoEstoque movimentoEstoque = criarNovoObjetoMovimentoEstoque(parametroMovimentoEstoque);
-        
+        LOGGER.warn("DIFERENCA_ESTOQUE CRIAR MOVIMENTO DE ESTOQUE ");
         if (tipoMovimentoEstoque != null && (tipoMovimentoEstoque.isAprovacaoAutomatica() || isMovimentoDiferencaAutomatica)) {
-                
+        	  LOGGER.warn("DIFERENCA_ESTOQUE CRIAR MOVIMENTO DE ESTOQUE - enfileirar ");
             if(enfileiraAlteracaoEstoqueProduto) {
-            	
+            	  LOGGER.warn("DIFERENCA_ESTOQUE CRIAR MOVIMENTO DE ESTOQUE ENFILEIRANDO");
             	enfileirarAlteracaoEncalheEstoqueProduto(
             			cota, 
             			movimentoEstoque.getProdutoEdicao(), 
@@ -952,14 +952,14 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     		BigInteger qtde) {
     	
     	final EstoqueProdutoFila epf = new EstoqueProdutoFila();
-    	
     	epf.setProdutoEdicao(produtoEdicao);
     	epf.setCota(cota);
     	epf.setQtde(qtde);
     	epf.setOperacaoEstoque(operacaoEstoque);
     	epf.setTipoEstoque(grupoMovimentoEstoque.getTipoEstoque());
-		
+    	
     	estoqueProdutoFilaRepository.adicionar(epf);
+    	LOGGER.warn("DIFERENCA_ESTOQUE - ENFILEIRANDO ADICIONANDO PRODUTO NA FILA "+epf);
     }
     
 	/**
@@ -994,8 +994,13 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		}
 		
 		diferencaQtdItens = diferencaQtdItens.abs();
-		
-		estoqueProdutoFilaRepository.insert(cota.getId(), idProdutoEdicao, movimentoEstoqueDTO.getGrupoMovimentoEstoque().getTipoEstoque(), operacaoEstoque, diferencaQtdItens);
+		LOGGER.warn("DIFERENCA ESTOQUE inserindo ESTOQUE PRODUTO FILA");
+		enfileirarAlteracaoEncalheEstoqueProduto(
+	    		cota,
+	    		produtoEdicaoRepository.buscarPorId(idProdutoEdicao), 
+	    		movimentoEstoqueDTO.getGrupoMovimentoEstoque(),
+	    		operacaoEstoque,
+	    		diferencaQtdItens);
 	}
     
     @SuppressWarnings("unused")
