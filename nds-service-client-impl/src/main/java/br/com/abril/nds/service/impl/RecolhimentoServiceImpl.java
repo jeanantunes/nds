@@ -598,10 +598,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				 if (produtoEdicao.isParcial() && lancamento.getPeriodoLancamentoParcial() != null && 
 					 TipoLancamentoParcial.FINAL.equals(lancamento.getPeriodoLancamentoParcial().getTipo())) {
-					 LOGGER.error("Produto parcial com lancamento FINAL pe=" +produtoEdicao.getId());
+					 LOGGER.warn("Produto parcial com lancamento FINAL pe=" +produtoEdicao.getId());
 					// buscar cotas que nao teve reparte neste lancamento mas teve nos anteriores
 					List <CotaReparteDTO> cotasRepartePeriodosAnteriores= this.movimentoEstoqueCotaRepository.obterRepartePeriodosAnteriores(lancamento);
-					 LOGGER.error("QTDE DE COTAS SEM REPARTE NA FINAL MAS COM REPARTES ANTERIORES=" +cotasRepartePeriodosAnteriores.size());
+					 LOGGER.warn("QTDE DE COTAS SEM REPARTE NA FINAL MAS COM REPARTES ANTERIORES=" +cotasRepartePeriodosAnteriores.size());
 					 /*
 					 Cota c = cotaRepository.buscarCotaPorID(1L);
 					 CotaReparteDTO cr = new CotaReparteDTO();
@@ -617,9 +617,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
                        if ( i > 0 )
 						 cr1 = cotasReparteLancamento.get(i);
 						if ( cr1 != null )
-							LOGGER.error("COTA "+cotaRepartePeriodosAnteriores.getCota().getId() +" ja tem em reparte na chamada final com qtd="+cr1.getReparte());
+							LOGGER.warn("COTA "+cotaRepartePeriodosAnteriores.getCota().getId() +" ja tem em reparte na chamada final com qtd="+cr1.getReparte());
 						if (!cotasReparteLancamento.contains(cotaRepartePeriodosAnteriores) && cotaRepartePeriodosAnteriores.getReparte().intValue() > 0 ) {
-							    LOGGER.error("INSERINDO COTA="+cotaRepartePeriodosAnteriores.getCota().getId()+ "PRODUTOEDICAo=" +produtoEdicao.getId()+" qtde="+
+							    LOGGER.error("PARCIAL FINAL COM REPARTE 0.. INSERINDO COTA="+cotaRepartePeriodosAnteriores.getCota().getId()+ "PRODUTOEDICAo=" +produtoEdicao.getId()+" qtde="+
 							    		cotaRepartePeriodosAnteriores.getReparte().intValue());
 							    cotaRepartePeriodosAnteriores.setReparte(BigInteger.ZERO);
 							    cotaRepartePeriodosAnteriores.setParcialFinal(true);
@@ -729,7 +729,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		if(BigInteger.ZERO.compareTo(qtdPrevista) >= 0) {
           if ( isParcialFinal) { // se for pacialFinal, criar chamada com zero..
-			LOGGER.error("CRIANDO CHAMADA ENCALHE COM ZERO PARA COTA="+cota.getId() +"  chamada encalhe="+chamadaEncalhe.getId());
+			LOGGER.warn("CRIANDO CHAMADA ENCALHE COM ZERO PARA COTA="+cota.getId() +"  chamada encalhe="+chamadaEncalhe.getId());
 			// return;
           }
           else {
