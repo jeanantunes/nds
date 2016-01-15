@@ -58,7 +58,10 @@ public class GeradorBoleto {
         try {
          sacado= new Sacado(corpoBoleto.getSacadoNome(), corpoBoleto.getSacadoDocumento());
 	} catch (Exception e ) {
-		  	throw new ValidationException("Sacado= "+corpoBoleto.getSacadoNome() +"-"+ corpoBoleto.getSacadoDocumento()+". "+e.getLocalizedMessage());
+		  	throw new ValidationException("Sacado= "+corpoBoleto.getSacadoNome() +"-"+ corpoBoleto.getSacadoDocumento()+". "+
+	e.getLocalizedMessage()!= null ? e.getLocalizedMessage().replaceAll("O código de cadastro", "O CPF/CNPJ")
+			   .replaceAll("não está em um formato válido !"," não é válido.")
+			   :"");
 		      
 	}
         //ENDERECO DO SACADO
