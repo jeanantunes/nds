@@ -282,11 +282,11 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	 @Override
 	 @Transactional
 	 public synchronized void atualizarEstoqueProdutoCota() {
-	     
+	     LOGGER.warn("DIFERENCA_ESTOQUE executando atualizarEstoqueProdutoCota");
 	     final List<EstoqueProdutoFilaDTO> epfs = this.estoqueProdutoFilaRepository.buscarTodosEstoqueProdutoFila();
-	     
+	     LOGGER.warn("DIFERENCA_ESTOQUE executando atualizarEstoqueProdutoCota size="+(epfs!= null ? epfs.size():0));
 	     for (EstoqueProdutoFilaDTO epf : epfs) {
-	         
+	         LOGGER.warn("DIFERENCA_ESTOQUE atualizando estoque_produto_fila id"+epf.getId()+" pe="+ epf.getIdProdutoEdicao()+" cota="+epf.getIdCota()+ " qtde="+epf.getQtde()+ " operacao"+epf.getOperacaoEstoque().name());
 	         boolean atualizaReg = true;
 	         
 	         if (OperacaoEstoque.SAIDA.equals(epf.getOperacaoEstoque())) {
@@ -304,7 +304,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	         
 	         switch(epf.getTipoEstoque()) {
 	             case DEVOLUCAO_ENCALHE:
-	                 
+	                 LOGGER.warn("DIFERENCA_ESTOQUE ATUALIZANDO ESTOQUE PRODUTO.DEVOLUCAO_ENCALHE "+ep.getProdutoEdicao().getProduto().getCodigo() +" anterior="+ep.getQtdeDevolucaoEncalhe()+"atual="+epf.getQtde());
 	                 if (ep.getQtdeDevolucaoEncalhe() == null) {
 	                     
 	                     ep.setQtdeDevolucaoEncalhe(epf.getQtde());
@@ -337,6 +337,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
                      
                  break;
                  default:
+                	 LOGGER.warn("DIFERENCA_ESTOQUE NAO ATUALIZANDO");
                      //os demais tipos de estoque não são alterados na conf. de encalhe,
                      //ao menos não até a data em que estas linhas foram escritas
                      atualizaReg = false;
@@ -349,7 +350,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	         }
 	         
 	         try {
-	        	 
+	        	 LOGGER.warn("DIFERENCA_ESTOQUE RETIRANDO DA FILA="+epf.getId());
 	        	 this.estoqueProdutoFilaRepository.removerPorId(epf.getId());
 	         } catch(Exception e) {
 	        	 

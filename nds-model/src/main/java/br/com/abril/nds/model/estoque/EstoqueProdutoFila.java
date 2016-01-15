@@ -95,6 +95,14 @@ public class EstoqueProdutoFila implements Serializable {
 	public void setOperacaoEstoque(OperacaoEstoque operacaoEstoque) {
 		this.operacaoEstoque = operacaoEstoque;
 	}
+
+	@Override
+	public String toString() {
+		return "EstoqueProdutoFila [id=" + id + ", produtoEdicao="
+				+ (produtoEdicao != null ? produtoEdicao.getId():"null") + ", cota=" + (cota!= null ? cota.getId():"null" )+ ", qtde=" + qtde
+				+ ", tipoEstoque=" +(tipoEstoque != null ? tipoEstoque.getDescricao():"null") + ", operacaoEstoque="
+				+ (operacaoEstoque!= null ? operacaoEstoque.toString():"null") + "]";
+	}
 	
 }
 
