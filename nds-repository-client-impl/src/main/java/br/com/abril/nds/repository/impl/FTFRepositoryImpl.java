@@ -309,8 +309,9 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" 			ELSE ")
 		.append(" 				(paramFtf.CNPJ_DESTINATARIO IS NOT NULL AND LENGTH(paramFtf.CNPJ_DESTINATARIO) > 1) ")
 		.append(" 			END) ")
-		.append(" where nfps.NOTA_FISCAL_ID = :idNF ");
-
+		.append(" where nfps.NOTA_FISCAL_ID = :idNF ")
+		.append(" GROUP BY nfn.id ");
+		
 		SQLQuery query = getSession().createSQLQuery(sqlBuilder.toString());
 		query.setParameter("idNF", idNF);
 

@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.ftf.envio;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFfield;
 import br.com.abril.nds.model.ftf.FTFCommons;
@@ -199,7 +201,7 @@ public class FTFEnvTipoRegistro06 extends FTFBaseDTO implements FTFCommons {
 	
 	@Override
 	public void setCnpjEmpresaEmissora(String cnpjEmpresaEmissora) {
-		this.cnpjEmpresaEmissora = cnpjEmpresaEmissora;
+		this.cnpjEmpresaEmissora = cnpjEmpresaEmissora.replace(".", "").replace("/", "").replace("-", "");
 	}
 
 	@Override
@@ -209,12 +211,12 @@ public class FTFEnvTipoRegistro06 extends FTFBaseDTO implements FTFCommons {
 
 	@Override
 	public void setTipoPedido(String tipoPedido) {
-		this.tipoPedido = tipoPedido;
+		this.tipoPedido = tipoPedido != null ? StringUtils.leftPad(tipoPedido, 2, '0') : StringUtils.leftPad(tipoPedido, ' ', '0');
 	}
 
 	@Override
 	public void setNumeroDocOrigem(String numeroDocOrigem) {
-		this.numeroDocOrigem = numeroDocOrigem;
+		this.numeroDocOrigem = numeroDocOrigem != null ? StringUtils.leftPad(numeroDocOrigem, 8, '0') : StringUtils.leftPad(numeroDocOrigem, ' ', '0');;
 	}
 
 	public String getCnpjEmpresaEmissora() {
