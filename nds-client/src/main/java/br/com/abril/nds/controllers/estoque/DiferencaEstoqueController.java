@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.client.annotation.Public;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.DiferencaVO;
@@ -684,8 +683,8 @@ public class DiferencaEstoqueController extends BaseController {
             
             DiferencaVO diferencaVO = obterDiferencaVO(tipoDiferenca, codigoProduto, edicaoProduto, diferenca, reparteAtual, tipoEstoque, pacotePadrao);
             diferencaVO.setTipoDirecionamento(TipoDirecionamentoDiferenca.COTA);
-           
-			final Long idDiferenca = incluirDiferencaEstoque(diferencaVO, tipoDiferenca);
+            
+            final Long idDiferenca = incluirDiferencaEstoque(diferencaVO, tipoDiferenca);
             
 			final Set<DiferencaVO> listaNovasDiferencasVO = (HashSet<DiferencaVO>) httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
             
@@ -914,7 +913,7 @@ public class DiferencaEstoqueController extends BaseController {
         diferencaVO.setTipoDiferenca(this.obterTipoDiferenca(tipoDiferenca, tipoEstoque));
         
         diferencaVO.setTipoEstoque(tipoEstoque);
-        diferencaVO.setCadastrado(true);
+        diferencaVO.setCadastrado(false);
         diferencaVO.setPacotePadrao(pacotePadrao);
         
         diferencaVO.setDataLancamento(DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
@@ -2494,7 +2493,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
         
         if (!linhasComErro.isEmpty()) {
             
-            throw new ValidacaoException(TipoMensagem.WARNING, "Existem produtos duplicados para o lançamento!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de diferença já cadastrada para este produto! Edite ao invés de inserir um novo registro.");
         }
     }
     
