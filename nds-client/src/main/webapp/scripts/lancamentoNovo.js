@@ -9,7 +9,11 @@ var lancamentoNovoController = $.extend(true, {
 
 	init : function () {
 
-		$("#linkIncluirNovaDiferenca",lancamentoNovoController.workspace).click(function(e){
+		$("#addNovaLinha").click(function(e){
+			lancamentoNovoController.adicionarLinhaCota($('#grid_1 tr',this.workspace).size());
+		});
+		
+		$("#linkIncluirNovaDiferenca", lancamentoNovoController.workspace).click(function(e){
 			e.preventDefault();
 			lancamentoNovoController.incluirNovo();
 		});
@@ -168,6 +172,7 @@ var lancamentoNovoController = $.extend(true, {
 		$("#incluirNovosProduto", lancamentoNovoController.workspace).show();
 		$("#divDataNotaEnvio",lancamentoNovoController.workspace).find("img").show();
 		$("#viewIncluirNovaDiferenca", lancamentoNovoController.workspace).show();
+		$("#divAddlinha", lancamentoNovoController.workspace).hide();
 		
 	},
 	
@@ -279,6 +284,7 @@ var lancamentoNovoController = $.extend(true, {
 		$("#nomeProdutoInput", lancamentoNovoController.workspace).attr("disabled", "disabled");
 		$("#edicaoProdutoInput", lancamentoNovoController.workspace).attr("disabled", "disabled");
 		$("#viewIncluirNovaDiferenca", lancamentoNovoController.workspace).hide();
+		$("#divAddlinha", lancamentoNovoController.workspace).show();
 		$(".viewNotaEnvio", lancamentoNovoController.workspace).attr("disabled","disabled");
 		
 	},
@@ -570,6 +576,7 @@ var lancamentoNovoController = $.extend(true, {
 				}
 			},
 			beforeClose: function() {
+				$("#divAddlinha").hide();
 				clearMessageDialogTimeout();
 			},
 			
