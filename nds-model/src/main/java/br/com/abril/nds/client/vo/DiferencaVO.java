@@ -527,4 +527,5 @@ public class DiferencaVO implements Serializable {
 		this.existemRateios = existemRateios;
 	}
 
+
 }

@@ -690,8 +690,9 @@ public class DiferencaEstoqueController extends BaseController {
             
             diferencaVO = diferencaEstoqueService.verificarDiferencaComListaSessao(listaNovasDiferencasVO, diferencaVO, idDiferenca);
             
+            this.validarRateiosExistentes(rateioCotas, diferencaVO);
+            
             try {
-                
                 cadastrarRateioCotas(rateioCotas, diferencaVO);
                 
             } catch(final ValidacaoException e) {
@@ -913,7 +914,7 @@ public class DiferencaEstoqueController extends BaseController {
         diferencaVO.setTipoDiferenca(this.obterTipoDiferenca(tipoDiferenca, tipoEstoque));
         
         diferencaVO.setTipoEstoque(tipoEstoque);
-        diferencaVO.setCadastrado(false);
+        diferencaVO.setCadastrado(true);
         diferencaVO.setPacotePadrao(pacotePadrao);
         
         diferencaVO.setDataLancamento(DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
@@ -1211,7 +1212,71 @@ TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
         this.validarCotasDuplicadasRateio(listaNovosRateios);
         
         this.validarSomaQuantidadeRateio(listaNovosRateios, diferencaVO);
+        
     }
+
+	private void validarRateiosExistentes(final List<RateioCotaVO> listaNovosRateios, final DiferencaVO diferencaVO) {
+		Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados = (Map<Long, List<RateioCotaVO>>) httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
+        
+        if (mapaRateiosCadastrados != null) {
+        	
+        	List<RateioCotaVO> listaRateiosCadastrados = mapaRateiosCadastrados.get(diferencaVO.getId()) == null ? new ArrayList<RateioCotaVO>() : mapaRateiosCadastrados.get(diferencaVO.getId());
+            
+        	List<Integer> numCotasValidacao = new ArrayList<>(); 
+        	
+        	BigInteger totalCotas = BigInteger.ZERO;
+        	
+        	for (RateioCotaVO rateioCadastrado : listaRateiosCadastrados) {
+        		for (RateioCotaVO rateioParaCadastro : listaNovosRateios) {
+					if(rateioCadastrado.getNumeroCota().equals(rateioParaCadastro.getNumeroCota())){
+						numCotasValidacao.add(rateioParaCadastro.getNumeroCota());
+					}
+				}
+        		
+        		totalCotas = totalCotas.add(rateioCadastrado.getQuantidade());
+			}
+        	
+        	if (!numCotasValidacao.isEmpty()) {
+        		
+        		atualizarValoresDiferenca(diferencaVO, totalCotas);
+        		
+        		ValidacaoVO validacao;
+        		
+        		if(numCotasValidacao.size()>1){
+        			validacao = new ValidacaoVO(TipoMensagem.WARNING, "As cotas: "+numCotasValidacao+" possuem faltas/sobras para este tipo de diferença.");
+        		}else{
+        			validacao = new ValidacaoVO(TipoMensagem.WARNING, "A cota: "+numCotasValidacao+" possui faltas/sobras para este tipo de diferença.");
+        		}
+                
+                throw new ValidacaoException(validacao);
+            }
+            
+        }
+	}
+
+	private void atualizarValoresDiferenca(final DiferencaVO diferencaVO, BigInteger totalCotas) {
+		Set<Diferenca> listaDiferencas = (Set<Diferenca>) httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
+		
+		if (listaDiferencas == null) {
+		    
+		    listaDiferencas = new HashSet<Diferenca>();
+		}
+
+		for (Diferenca diferenca : listaDiferencas) {
+			if(diferenca.getId().equals(diferencaVO.getId())){
+				
+				final BigDecimal valorTotalDiferenca = calcularValorTotalDiferenca(totalCotas, diferenca.getProdutoEdicao());
+				
+				diferenca.setQtde(totalCotas);
+				diferenca.setValorTotalDiferenca(valorTotalDiferenca);
+				
+			}
+		}
+		
+		listaDiferencas.removeAll(Collections.singleton(null));
+		
+		httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE, listaDiferencas);
+	}
     
     @Post
     @Path("/lancamento/limparSessao")
@@ -2254,7 +2319,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
             somaQtdeRateio = somaQtdeRateio.add(rateioCotaVO.getQuantidade());
         }
         
-        if (somaQtdeRateio.compareTo(diferencaVO.getQuantidade()) > 0) {
+        if (somaQtdeRateio.compareTo(diferencaVO.getQuantidade()) != 0) {
             
             throw new ValidacaoException(
                     TipoMensagem.WARNING,

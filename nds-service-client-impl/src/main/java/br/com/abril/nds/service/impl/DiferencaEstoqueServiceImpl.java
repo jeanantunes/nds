@@ -150,10 +150,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
     @Autowired
     private DistribuidorService distribuidorService;
 
-    
-    @Autowired
-    private MovimentoEstoqueRepository movimentoEstoqueRepository;
-    
     @Autowired
     private ParametrosDistribuidorService parametrosDistribuidorService;
     
@@ -168,11 +164,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
     
     @Autowired
     private TipoMovimentoFinanceiroService tipoMovimentoFinanceiroService;
-    
-    
-    @Autowired
-    private LancamentoRepository lancamentoRepository;
-  
     
     @Override
     @Transactional(readOnly = true)
