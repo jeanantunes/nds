@@ -271,7 +271,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
                     
                     listaCotas.add(boletos.get(index).getCota().getNumeroCota());
                     
-                    geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
+                  //  geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
                 }
             }
             
