@@ -265,6 +265,14 @@
 				</div>
 			</fieldset>
 			
+			<div id="divAddlinha" style="float: right; display:none;">
+				<span class="bt_novos">
+      				<a href="javascript:;" rel="tipsy" id="addNovaLinha" original-title="Adicionar nova linha">
+        				<img src="images/ico_editar.gif" alt="add nova linha" hspace="5" border="0">  add nova linha
+   					</a>
+				</span>
+			</div>
+			
 			<div class="linha_separa_fields" style="width:650px!important;">&nbsp;</div>
 			
 		</div>
