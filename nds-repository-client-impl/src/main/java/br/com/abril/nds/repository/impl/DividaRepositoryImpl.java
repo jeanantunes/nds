@@ -1263,9 +1263,10 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         hql.append(" inner join MOVIMENTO_FINANCEIRO_COTA movimentof7_  on movimentos6_.MVTO_FINANCEIRO_COTA_ID=movimentof7_.ID             ");
         hql.append(" inner join DIVIDA_CONSOLIDADO dc on dc.CONSOLIDADO_ID = consolidad5_.ID                                                ");
         hql.append(" where                                                                                                                  ");
-        hql.append(" divida1_.STATUS = :status                                                                               ");
-        hql.append(" and cota3_.ID = :cotaId                                                                                                 ");
+        hql.append(" divida1_.STATUS = :status                                                                                              ");
+        hql.append(" and cota3_.ID = :cotaId                                                                                                ");
         hql.append(" and consolidad5_.ID = :consolidadoId                                                                                   ");
+        hql.append(" order by divida1_.DATA desc                                                                                            ");
         hql.append(" group by divida1_.id                                                                                                   ");
         
         final Query query = this.getSession().createQuery(hql.toString());
@@ -1273,6 +1274,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         query.setParameter("status", StatusDivida.PENDENTE_INADIMPLENCIA);
         query.setParameter("cotaId", consolidado.getCota().getId());
         query.setParameter("consolidadoId", consolidado.getId());
+        
+        query.setMaxResults(1);
         
         return (Long) query.uniqueResult();
     }
