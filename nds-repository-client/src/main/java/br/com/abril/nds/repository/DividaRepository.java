@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -174,4 +175,6 @@ public interface DividaRepository extends Repository<Divida, Long>{
     long contarDividasVencerApos(Date data);
     
     Long verificarEnvioDeEmail(GeraDividaDTO dividaGerada);
+
+    Long obterIdDividaPendente(ConsolidadoFinanceiroCota consolidado);
 }

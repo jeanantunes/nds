@@ -1617,6 +1617,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			     (valorConsolidado.abs().compareTo(valorMinino) > 0 && cobrarHoje) || 
 				 (valorConsolidado.abs().compareTo(valorMinino) > 0 && cotaSuspensa)){
 				
+				Long idDividaPendente = dividaRepository.obterIdDividaPendente(consolidado);
+				
 				novaDivida = new Divida();
 				novaDivida.setValor(valorConsolidado.abs());
 				novaDivida.setData(dataConsolidado);
@@ -1624,6 +1626,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				novaDivida.setCota(cota);
 				novaDivida.setStatus(StatusDivida.EM_ABERTO);
 				novaDivida.setResponsavel(usuario);
+				
+				if(idDividaPendente != null && idDividaPendente > 0) {
+					novaDivida.setDividaRaiz(dividaRepository.buscarPorId(idDividaPendente));					
+				}
 				novaDivida.setOrigemNegociacao(false);
 									
                 Cobranca cobranca = this.salvarDividaCobranca(formaCobrancaPrincipal, 
