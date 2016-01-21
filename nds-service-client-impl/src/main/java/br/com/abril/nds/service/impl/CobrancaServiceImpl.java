@@ -740,7 +740,9 @@ public class CobrancaServiceImpl implements CobrancaService {
 		    	itemCobranca.setTipoBaixa(TipoBaixaCobranca.MANUAL);
 		    	itemCobranca.setStatusCobranca(StatusCobranca.PAGO);
 		    	itemCobranca.getDivida().setStatus(StatusDivida.QUITADA);
-		    	// itemCobranca.getDivida().setDividaRaiz(itemCobranca.getDivida());
+		    	if(itemCobranca.getDivida().getDividaRaiz() != null) {
+		    		itemCobranca.getDivida().setDividaRaiz(itemCobranca.getDivida().getDividaRaiz());		    		
+		    	}
 		    	itemCobranca.setBanco( (pagamento.getBanco()==null)?itemCobranca.getBanco() :  pagamento.getBanco() );
 		    	
 		    	this.dividaRepository.merge(itemCobranca.getDivida());

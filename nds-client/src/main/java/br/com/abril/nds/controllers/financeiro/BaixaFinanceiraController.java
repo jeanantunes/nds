@@ -659,11 +659,9 @@ public class BaixaFinanceiraController extends BaseController {
         BigDecimal multaConvertida = CurrencyUtil.converterValor(multa);
         BigDecimal descontoConvertido = CurrencyUtil.converterValor(desconto);
 
-        if (descontoConvertido.compareTo(
-        		valorConvertido.add(jurosConvertido).add(multaConvertida)) == 1) {
+        if (descontoConvertido.compareTo(valorConvertido.add(jurosConvertido).add(multaConvertida)) == 1) {
         	
-        	throw new ValidacaoException(TipoMensagem.WARNING,
- "O desconto não deve ser maior do que o valor a pagar.");
+        	throw new ValidacaoException(TipoMensagem.WARNING, "O desconto não deve ser maior do que o valor a pagar.");
         }
 
         PagamentoDTO pagamento = new PagamentoDTO();
@@ -1110,8 +1108,7 @@ public class BaixaFinanceiraController extends BaseController {
 		
 		if (idCobrancas == null || idCobrancas.isEmpty()) {
 
-			throw new ValidacaoException(
-TipoMensagem.WARNING, "É necessário marcar ao menos uma dívida.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "É necessário marcar ao menos uma dívida.");
 		}
 		
 		BigDecimal encargos = null;
