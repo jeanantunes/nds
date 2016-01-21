@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.administracao;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -33,6 +34,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -558,6 +560,12 @@ public class GeracaoArquivosController extends BaseController {
 		   StringBuffer ret=new StringBuffer();
 		   
 		   String dinapName = nomeArquivo;
+		   String codigoDinap=null;
+		   try {
+		    codigoDinap = nomeArquivo.split("\\.")[0];
+		   } catch ( Exception e ) {
+			   throw new ValidacaoException(TipoMensagem.ERROR, "Arquivo de unificacao deve estar no formato 999999.999999.yyyymmdd.zip");
+		   }
 		   File zipDinap = new File(dirDinap+"/"+nomeArquivo);
 		 
 		   ret.append("Unificando arquivo dinap "+zipDinap.getPath()+"</br>");
@@ -662,14 +670,14 @@ public class GeracaoArquivosController extends BaseController {
 		  String[] extensions = new String[] { "LCT", "RCL" };
 			
 			List<File> files = (List<File>) FileUtils.listFiles(dir, extensions, true);
-			List <File> files_semdepara = new <File> ArrayList();
+			List <File> fileSemDePara = new <File> ArrayList();
 			for (File file : files) {
 				String fc=file.getName();
-				String boxfc = fc.split("[.]")[1];
-				String boxdinap = deparaService.obterBoxDinap(boxfc);	
-				 if ( boxdinap == null || boxdinap.trim().length() == 0 ) {
+				String boxFc = fc.split("[.]")[1];
+				String boxDinap = deparaService.obterBoxDinap(boxFc);	
+				 if ( boxDinap == null || boxDinap.trim().length() == 0 ) {
 				 //  ret.append( "Box fc="+boxfc+" nao tem box  dinap correspondente.Incluir box dinap para box fc="+boxfc +"na tabela depara</br>");
-				   files_semdepara.add(file);
+				   fileSemDePara.add(file);
 				   continue;
 				 } 
 				
@@ -678,46 +686,62 @@ public class GeracaoArquivosController extends BaseController {
 				  // obter filial dinap do arquivo zip  
 				   filialDinap = dinapName.split("[.]")[0];
 				 
-				 
-				   String pathOut = dirOut +"/"+fc.replace(boxfc,boxdinap).replace(filialFc,filialDinap);
-				   File arqOut = new File(pathOut);
-				  
-				   if  (arqOut.exists()) { // concatenar
-					   String filestr_fc = FileUtils.readFileToString(file);
-					   String filestr_dinap = FileUtils.readFileToString(arqOut);
-					   
-					   FileUtils.write(arqOut, filestr_dinap+filestr_fc); 
+				   File arqOut = null;
+				   File dirx = new File(dirOut);
+				   FileFilter fileFilterx = new WildcardFileFilter(fc.replace(boxFc,boxDinap).replace(filialFc,"*"));
+				   File[] filesx = dirx.listFiles(fileFilterx);
+				   if ( filesx.length == 0 ) {
+					   String pathOut = dirOut +"/"+fc.replace(boxFc,boxDinap).replace(filialFc,filialDinap);
+						arqOut = new File(pathOut);
 				   }
 				   else {
-					 FileUtils.copyFile(file, arqOut);
+					   arqOut = filesx[0];
+					   if ( filesx.length > 1  ) {
+						   ret.append("Atencao:Box fc="+boxFc+" esta em mais de um arquivo dinap "+fc.replace(boxFc,boxDinap).replace(filialFc,filialDinap)+"</br>");
+					   
+					   }
+				   }
+				  
+				   String fileStrFc = FileUtils.readFileToString(file);
+				   if  (arqOut.exists()) { // concatenar
+					  
+					   String fileStrDinap = FileUtils.readFileToString(arqOut);
+					   
+					   FileUtils.writeStringToFile(arqOut, fileStrDinap+fileStrFc,"UTF-8"); 
+				   }
+				   else {
+					   FileUtils.writeStringToFile(arqOut, fileStrFc,"UTF-8"); 
 				     
 				   }
 			   }
 			
 			// processar arquivos fcs sem box dinap
 			
-			for (File file : files_semdepara) {
+			for (File file : fileSemDePara) {
 				String fc=file.getName();
-				String boxfc = fc.split("[.]")[1];
+				String boxFc = fc.split("[.]")[1];
 				
-				ret.append("Atencao:Box fc="+boxfc+" nao tem box dinap correspondente na tabela depara</br>");
+				ret.append("Atencao:Box fc="+boxFc+" nao tem box dinap correspondente na tabela depara</br>");
 				  
 				
 				   String pathOut = dirOut +"/"+fc;
 				   File arqOut = new File(pathOut);
-				  
+				   String fileStr = FileUtils.readFileToString(file);
 				   if  (!arqOut.exists()) { // nao existe,cpiar para unificado
+					  
 					   FileUtils.copyFile(file, arqOut);
+					   FileUtils.writeStringToFile(arqOut, fileStr,"UTF-8"); 
 				   } else {  //copiar para conflito
 					   conflitos++;
 					   ret.append("Conflito:Arquivo fc "+file.getAbsolutePath()+"  existe no dinap mas nao tem o box correspondente.Copiado para "+dirConflito+"/"+fc +"</br>" );
 					 FileUtils.copyFile(file, new File(dirConflito+"/"+fc));
+					 FileUtils.writeStringToFile(new File(dirConflito+"/"+fc), fileStr,"UTF-8"); 
 				   } 
 				  
 			   }
 			
 			ret.append("Quantidade de arquivos fc unificados com dinap :"+files.size()+"</br>");
-			ret.append("Sem box dinap="+files_semdepara.size()+ " Conflitos="+conflitos+"</br>");
+			ret.append("Sem box dinap="+fileSemDePara.size()+ " Conflitos="+conflitos+"</br>");
 			String arqDinapFc="unificado_"+dinapName;
 			compactarArquivos(dirOut,arqDinapFc);
 			 //llimpar RCL E LCT de diretorios
