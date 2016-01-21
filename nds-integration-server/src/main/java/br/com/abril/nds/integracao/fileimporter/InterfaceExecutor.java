@@ -614,7 +614,7 @@ public class InterfaceExecutor {
 			throw new Exception("Parâmetro necessário está nulo.");
 		}
 		
-		Scanner scanner = new Scanner(arquivo, Files.probeContentType(arquivo.toPath()).equals("text/plain") ? "iso-8859-1" : "utf-8");
+		Scanner scanner = new Scanner(arquivo, ("text/plain").equals(Files.probeContentType(arquivo.toPath())) ? "iso-8859-1" : "utf-8");
 		
 		int linhaArquivo = 0;
 		IntegracaoDocumentMaster<?> docM = null;
