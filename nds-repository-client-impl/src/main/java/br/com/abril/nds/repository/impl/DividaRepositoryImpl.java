@@ -30,6 +30,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -407,9 +408,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         sql.append(" inner join ");
         sql.append(" PRODUTO_EDICAO produtoedi4_ ");
         sql.append(" on movimentoe0_.PRODUTO_EDICAO_ID=produtoedi4_.ID ");
-        sql.append(" left outer join ");
+        sql.append(" RIGHT join ");
         sql.append(" MOVIMENTO_ESTOQUE_COTA movimentoe11_ ");
-        sql.append(" on movimentoe0_.MOVIMENTO_ESTOQUE_COTA_FURO_ID=movimentoe11_.ID ");
+        sql.append(" on movimentoe0_.MOVIMENTO_ESTOQUE_COTA_FURO_ID=movimentoe11_.ID and COTA2_.ID = movimentoe11_.COTA_ID");
         sql.append(" where ");
         sql.append(" (tipomovime3_.GRUPO_MOVIMENTO_ESTOQUE in (:gruposMovimentoEstoque)) ");
         sql.append(" and (movimentoe0_.STATUS_ESTOQUE_FINANCEIRO is null ");
@@ -1178,9 +1179,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         sql.append(" inner join ");
         sql.append(" PRODUTO_EDICAO produtoedi4_ ");
         sql.append(" on movimentoe0_.PRODUTO_EDICAO_ID=produtoedi4_.ID ");
-        sql.append(" left outer join ");
+        sql.append(" RIGHT join ");
         sql.append(" MOVIMENTO_ESTOQUE_COTA movimentoe11_ ");
-        sql.append(" on movimentoe0_.MOVIMENTO_ESTOQUE_COTA_FURO_ID=movimentoe11_.ID ");
+        sql.append(" on movimentoe0_.MOVIMENTO_ESTOQUE_COTA_FURO_ID=movimentoe11_.ID and COTA2_.ID = movimentoe11_.COTA_ID");
         sql.append(" where ");
         sql.append(" (tipomovime3_.GRUPO_MOVIMENTO_ESTOQUE in (:gruposMovimentoEstoque)) ");
         sql.append(" and (movimentoe0_.STATUS_ESTOQUE_FINANCEIRO is null ");
@@ -1241,6 +1242,37 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         final Query query = this.getSession().createQuery(hql.toString());
         query.setParameter("numeroCota", dividaGerada.getNumeroCota());
         query.setParameter("cobrancaId", dividaGerada.getCobrancaId());
+        
+        return (Long) query.uniqueResult();
+    }
+    
+    
+    @Override
+    public Long obterIdDividaPendente(final ConsolidadoFinanceiroCota consolidado) {
+        
+        final StringBuilder hql = new StringBuilder();
+        
+        hql.append(" select divida1_.id                                                                                                     ");
+        hql.append(" from ACUMULO_DIVIDA acumulodiv0_                                                                                       ");
+        hql.append(" inner join DIVIDA divida1_ on acumulodiv0_.DIVIDA_ID=divida1_.ID                                                       ");
+        hql.append(" inner join COBRANCA cobranca2_ on divida1_.ID=cobranca2_.DIVIDA_ID                                                     ");
+        hql.append(" inner join COTA cota3_ on cobranca2_.COTA_ID=cota3_.ID                                                                 ");
+        hql.append(" inner join DIVIDA_CONSOLIDADO consolidad4_  on divida1_.ID=consolidad4_.DIVIDA_ID                                      ");
+        hql.append(" inner join CONSOLIDADO_FINANCEIRO_COTA consolidad5_ on consolidad4_.CONSOLIDADO_ID=consolidad5_.ID                     ");
+        hql.append(" inner join CONSOLIDADO_MVTO_FINANCEIRO_COTA movimentos6_ on consolidad5_.ID=movimentos6_.CONSOLIDADO_FINANCEIRO_ID     ");
+        hql.append(" inner join MOVIMENTO_FINANCEIRO_COTA movimentof7_  on movimentos6_.MVTO_FINANCEIRO_COTA_ID=movimentof7_.ID             ");
+        hql.append(" inner join DIVIDA_CONSOLIDADO dc on dc.CONSOLIDADO_ID = consolidad5_.ID                                                ");
+        hql.append(" where                                                                                                                  ");
+        hql.append(" divida1_.STATUS = :status                                                                               ");
+        hql.append(" and cota3_.ID = :cotaId                                                                                                 ");
+        hql.append(" and consolidad5_.ID = :consolidadoId                                                                                   ");
+        hql.append(" group by divida1_.id                                                                                                   ");
+        
+        final Query query = this.getSession().createQuery(hql.toString());
+        
+        query.setParameter("status", StatusDivida.PENDENTE_INADIMPLENCIA);
+        query.setParameter("cotaId", consolidado.getCota().getId());
+        query.setParameter("consolidadoId", consolidado.getId());
         
         return (Long) query.uniqueResult();
     }

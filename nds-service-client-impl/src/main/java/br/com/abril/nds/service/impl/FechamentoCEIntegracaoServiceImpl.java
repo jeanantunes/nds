@@ -407,7 +407,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 					ValoresAplicados valoresAplicados = new ValoresAplicados();
 					
 					valoresAplicados.setValorDesconto(estoqueProduto.getProdutoEdicao().getDesconto());
-					valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract((estoqueProduto.getProdutoEdicao().getDesconto())).setScale(4,BigDecimal.ROUND_HALF_EVEN));
+					valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract((estoqueProduto.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto())).setScale(4,BigDecimal.ROUND_HALF_EVEN));
 					valoresAplicados.setPrecoVenda(estoqueProduto.getProdutoEdicao().getPrecoVenda());
 					
 					mff.setValoresAplicados(valoresAplicados);

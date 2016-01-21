@@ -610,7 +610,7 @@ public class BoletoServiceImpl implements BoletoService {
         acumuloDivida.setCota(divida.getCota());
         
         divida.setAcumulada(true);
-        
+        divida.setDividaRaiz(divida);
         dividaRepository.alterar(divida);
         
         return acumuloDividasService.atualizarAcumuloDivida(acumuloDivida);
