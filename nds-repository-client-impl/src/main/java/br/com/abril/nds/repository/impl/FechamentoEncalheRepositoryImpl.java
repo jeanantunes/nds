@@ -269,7 +269,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 			sql.append(" PLP.tipo as recolhimento ");
 		}
 		
-		sql.append(" FROM CHAMADA_ENCALHE_COTA CEC                                      ");
+		sql.append(" FROM CHAMADA_ENCALHE_COTA CEC     ignore index(NDX_POSTERGADO)                                 ");
 		sql.append(" INNER JOIN CHAMADA_ENCALHE CE ON (CE.ID = CEC.CHAMADA_ENCALHE_ID)  ");
 		sql.append(" INNER JOIN CHAMADA_ENCALHE_LANCAMENTO CEL ON (CEL.CHAMADA_ENCALHE_ID = CE.ID) ");
 		sql.append(" INNER JOIN LANCAMENTO L ON (CEL.LANCAMENTO_ID = L.ID     AND (L.DATA_REC_DISTRIB = CE.DATA_RECOLHIMENTO or CE.TIPO_CHAMADA_ENCALHE = 'CHAMADAO' )) ");
