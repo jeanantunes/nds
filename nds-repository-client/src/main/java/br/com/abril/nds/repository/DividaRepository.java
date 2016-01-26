@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -176,5 +177,5 @@ public interface DividaRepository extends Repository<Divida, Long>{
     
     Long verificarEnvioDeEmail(GeraDividaDTO dividaGerada);
 
-    Long obterIdDividaPendente(ConsolidadoFinanceiroCota consolidado);
+    BigInteger obterIdDividaPendente(ConsolidadoFinanceiroCota consolidado, Date dataOperaçao);
 }
