@@ -37,9 +37,11 @@ public class JornaleirosNovos {
 
 	if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(Long.valueOf(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
 	    HashMap<Long, CotaEstudo> mapCotas = new HashMap<>();
+	    
 	    for (CotaEstudo cota : estudo.getCotas()) {
-		mapCotas.put(cota.getId(), cota);
+	    	mapCotas.put(cota.getId(), cota);
 	    }
+	    
 	    for (CotaEstudo cota : estudo.getCotas()) {
 		if (cota.getClassificacao().equals(ClassificacaoCota.CotaNova) && cota.getEdicoesRecebidas() != null
 			&& cota.getEdicoesRecebidas().size() <= 3) {
