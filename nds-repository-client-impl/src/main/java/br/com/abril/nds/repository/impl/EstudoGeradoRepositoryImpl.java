@@ -324,7 +324,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 			this.getSession().createQuery(
 				" select eg from EstudoGerado eg where eg.id = :id ");
 		
-		query.setLockOptions(LockOptions.UPGRADE);
+		query.setLockOptions(LockOptions.UPGRADE.setTimeOut(60000));
 		
 		query.setParameter("id", id);
 		

@@ -12,6 +12,8 @@ import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
@@ -27,6 +29,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 @Repository
 public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<EstoqueProduto, Long> implements EstoqueProdutoRespository {
 
+	 private static final Logger LOGGER = LoggerFactory.getLogger(EstoqueProdutoRepositoryImpl.class);
 	public EstoqueProdutoRepositoryImpl() {
 		super(EstoqueProduto.class);
 		
@@ -79,8 +82,9 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 			this.getSession().createQuery(
 				" select ep from EstoqueProduto ep where ep.produtoEdicao.id = :idProdutoEdicao ");
 		
-		query.setLockOptions(LockOptions.UPGRADE);
+		query.setLockOptions(LockOptions.UPGRADE.setTimeOut(60000)); // timeout de 60s para evitar dead lock
 		
+
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
 		return (EstoqueProduto) query.uniqueResult();
@@ -112,6 +116,7 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 			.createSQLQuery(sql)
 				.setParameter("qtde", qtde)
 				.setParameter("idProdutoEdicao", idProdutoEdicao)
+				.setTimeout(60000)  // timeout de 60s para evitar dead lock
 				.executeUpdate();
 	}
 
