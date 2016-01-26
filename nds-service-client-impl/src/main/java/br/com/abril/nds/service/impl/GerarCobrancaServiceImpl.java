@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1617,7 +1618,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			     (valorConsolidado.abs().compareTo(valorMinino) > 0 && cobrarHoje) || 
 				 (valorConsolidado.abs().compareTo(valorMinino) > 0 && cotaSuspensa)){
 				
-				Long idDividaPendente = dividaRepository.obterIdDividaPendente(consolidado);
+				BigInteger idDividaPendente = dividaRepository.obterIdDividaPendente(consolidado, distribuidorRepository.obterDataOperacaoDistribuidor());
 				
 				novaDivida = new Divida();
 				novaDivida.setValor(valorConsolidado.abs());
@@ -1627,8 +1628,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				novaDivida.setStatus(StatusDivida.EM_ABERTO);
 				novaDivida.setResponsavel(usuario);
 				
-				if(idDividaPendente != null && idDividaPendente > 0) {
-					novaDivida.setDividaRaiz(dividaRepository.buscarPorId(idDividaPendente));					
+				if(idDividaPendente != null) {
+					Divida divida= dividaRepository.buscarPorId(Long.valueOf(idDividaPendente.intValue()));
+					
+					novaDivida.setDividaRaiz(divida);					
 				}
 				novaDivida.setOrigemNegociacao(false);
 									
