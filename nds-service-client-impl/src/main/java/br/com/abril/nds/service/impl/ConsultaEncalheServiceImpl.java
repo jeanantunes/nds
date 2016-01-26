@@ -186,7 +186,7 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 
 		List<Integer> listaCotas = controleConferenciaEncalheCotaRepository.obterListaNumCotaConferenciaEncalheCota(filtro);
 		
-		if (listaCotas != null) {
+		if (listaCotas != null && !listaCotas.isEmpty() ) {
 
 			List<byte[]> arquivos = new ArrayList<byte[]>();
 			
