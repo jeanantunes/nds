@@ -3093,7 +3093,7 @@ public class LancamentoRepositoryImpl extends
 		Query query = 
 			this.getSession().createQuery("from Lancamento where id = :id ");
 		
-		query.setLockOptions(LockOptions.UPGRADE);
+		query.setLockOptions(LockOptions.UPGRADE.setTimeOut(60000));// timeou de 30s para evitar dead lock
 		
 		query.setParameter("id", id);
 		
