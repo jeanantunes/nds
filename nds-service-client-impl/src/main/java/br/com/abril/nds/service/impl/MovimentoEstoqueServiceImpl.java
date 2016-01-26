@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -884,7 +885,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         MovimentoEstoque movimentoEstoque = criarNovoObjetoMovimentoEstoque(parametroMovimentoEstoque);
         LOGGER.warn("DIFERENCA_ESTOQUE CRIAR MOVIMENTO DE ESTOQUE ");
         if (tipoMovimentoEstoque != null && (tipoMovimentoEstoque.isAprovacaoAutomatica() || isMovimentoDiferencaAutomatica)) {
-        	  LOGGER.warn("DIFERENCA_ESTOQUE CRIAR MOVIMENTO DE ESTOQUE - enfileirar ");
+        	  LOGGER.warn("DIFERENCA_ESTOQUE CRIAR MOVIMENTO DE ESTOQUE - enfileirar="+enfileiraAlteracaoEstoqueProduto);
             if(enfileiraAlteracaoEstoqueProduto) {
             	  LOGGER.warn("DIFERENCA_ESTOQUE CRIAR MOVIMENTO DE ESTOQUE ENFILEIRANDO");
             	enfileirarAlteracaoEncalheEstoqueProduto(
@@ -895,7 +896,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             			quantidade);
             	
             } else {
-                
+            	  LOGGER.warn("DIFERENCA_ESTOQUE ATUALIZANDO ESTOQUE DIRETAMENTE ");
             	final Long idEstoque = atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque, isImportacao, validarTransfEstoqueDiferenca, tipoEstoque);
                 
             	movimentoEstoque.setEstoqueProduto(new EstoqueProduto(idEstoque));
@@ -957,7 +958,13 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     	epf.setQtde(qtde);
     	epf.setOperacaoEstoque(operacaoEstoque);
     	epf.setTipoEstoque(grupoMovimentoEstoque.getTipoEstoque());
-    	
+    	String servidor="0.0.0.0";
+		try {
+			servidor=InetAddress.getLocalHost().getHostAddress();
+		} catch ( Exception ie) {
+			servidor="0.0.0.0";
+		}
+		epf.setServidor(servidor); // artificio para evitar problema de consumo de fila por outros servidors tomcat/quartz que nao o que inseriu na fila
     	estoqueProdutoFilaRepository.adicionar(epf);
     	LOGGER.warn("DIFERENCA_ESTOQUE - ENFILEIRANDO ADICIONANDO PRODUTO NA FILA "+epf);
     }
@@ -1024,9 +1031,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 
                 estoqueProduto.setQtde(BigInteger.ZERO);
             }
-            
+           
             estoqueProduto.setQtde(estoqueProduto.getQtde() != null ? estoqueProduto.getQtde() : BigInteger.ZERO);
             
+            LOGGER.warn("DIFERENCA_ESTOQUE atualizada direta anterior="+estoqueProduto.getQtde());
             final TipoEstoque tipoEstoque = tipoMovimentoEstoque.getGrupoMovimentoEstoque().getTipoEstoque();
             
             if (TipoEstoque.COTA.equals(tipoEstoque)) {
@@ -1295,9 +1303,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                         validarTransfEstoqueDiferenca);
             }
             
+            LOGGER.warn("DIFERENCA_ESTOQUE atualizada direta pe="+estoqueProduto.getProdutoEdicao().getId()+ 
+        			" qtde="+estoqueProduto.getQtde());
             if (estoqueProduto.getId() == null) {
                 return estoqueProdutoRespository.adicionar(estoqueProduto);
             } else {
+            	
                 estoqueProdutoRespository.merge(estoqueProduto);
                 return estoqueProduto.getId();
             }

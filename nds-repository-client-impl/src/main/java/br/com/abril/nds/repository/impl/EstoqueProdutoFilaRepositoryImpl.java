@@ -1,6 +1,9 @@
 package br.com.abril.nds.repository.impl;
 
+
+
 import java.math.BigInteger;
+import java.net.InetAddress;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -46,21 +49,27 @@ public class EstoqueProdutoFilaRepositoryImpl extends AbstractRepositoryModel<Es
 		hql.append(" select ");
 
 		hql.append(" estoqueProdutoFila.id as id,  					");
-		hql.append(" produtoEdicao.id as idProdutoEdicao, 			");
-		hql.append(" cota.id as idCota, 							");
+		hql.append(" estoqueProdutoFila.produtoEdicao.id as idProdutoEdicao, 			");
+		hql.append(" estoqueProdutoFila.cota.id as idCota, 							");
 		hql.append(" estoqueProdutoFila.qtde as qtde, 				");
 		hql.append(" estoqueProdutoFila.tipoEstoque as tipoEstoque, ");
 		hql.append(" estoqueProdutoFila.operacaoEstoque as operacaoEstoque ");
 		
+		
 		hql.append(" from EstoqueProdutoFila estoqueProdutoFila ");
 		
-		hql.append(" join estoqueProdutoFila.cota cota			");
-		hql.append(" join estoqueProdutoFila.produtoEdicao produtoEdicao ");
+		hql.append(" where servidor is null or servidor = :servidor		");
 		
-		hql.append(" group by estoqueProdutoFila.id ");
 		
+	
 		Query query = this.getSession().createQuery(hql.toString());
-		
+		String servidor="0.0.0.0";
+		try {
+			servidor=InetAddress.getLocalHost().getHostAddress();
+		} catch ( Exception ie) {
+			servidor="0.0.0.0";
+		}
+		query.setParameter("servidor",servidor );
 		query.setResultTransformer(new AliasToBeanResultTransformer(EstoqueProdutoFilaDTO.class));
 		
 		return query.list();
