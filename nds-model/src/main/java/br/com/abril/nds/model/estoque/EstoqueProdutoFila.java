@@ -48,6 +48,13 @@ public class EstoqueProdutoFila implements Serializable {
 	@Column(name = "OPERACAO_ESTOQUE", nullable = false)
 	private OperacaoEstoque operacaoEstoque;
 
+
+	@Column(name = "SERVIDOR", nullable = true)
+	private String servidor;
+
+	
+	
+
 	public Long getId() {
 		return id;
 	}
@@ -95,13 +102,21 @@ public class EstoqueProdutoFila implements Serializable {
 	public void setOperacaoEstoque(OperacaoEstoque operacaoEstoque) {
 		this.operacaoEstoque = operacaoEstoque;
 	}
+	
+	public String getServidor() {
+		return servidor;
+	}
+
+	public void setServidor(String servidor) {
+		this.servidor = servidor;
+	}
 
 	@Override
 	public String toString() {
 		return "EstoqueProdutoFila [id=" + id + ", produtoEdicao="
 				+ (produtoEdicao != null ? produtoEdicao.getId():"null") + ", cota=" + (cota!= null ? cota.getId():"null" )+ ", qtde=" + qtde
 				+ ", tipoEstoque=" +(tipoEstoque != null ? tipoEstoque.getDescricao():"null") + ", operacaoEstoque="
-				+ (operacaoEstoque!= null ? operacaoEstoque.toString():"null") + "]";
+				+ (operacaoEstoque!= null ? operacaoEstoque.toString():"null") + " servidor="+ servidor+"]";
 	}
 	
 }

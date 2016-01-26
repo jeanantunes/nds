@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
+import br.com.abril.nds.model.estoque.EstoqueProdutoFila;
 import br.com.abril.nds.model.estoque.EstoqueProdutoRecolimentoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
@@ -282,6 +283,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	 @Override
 	 @Transactional
 	 public synchronized void atualizarEstoqueProdutoCota() {
+		 try {
 	     LOGGER.warn("DIFERENCA_ESTOQUE executando atualizarEstoqueProdutoCota");
 	     final List<EstoqueProdutoFilaDTO> epfs = this.estoqueProdutoFilaRepository.buscarTodosEstoqueProdutoFila();
 	     LOGGER.warn("DIFERENCA_ESTOQUE executando atualizarEstoqueProdutoCota size="+(epfs!= null ? epfs.size():0));
@@ -351,12 +353,19 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	         
 	         try {
 	        	 LOGGER.warn("DIFERENCA_ESTOQUE RETIRANDO DA FILA="+epf.getId());
+	        	EstoqueProdutoFila epft= this.estoqueProdutoFilaRepository.buscarPorId(epf.getId());
+	        	if ( epft == null ) {
+	        		LOGGER.error("DIFERENCA_ESTOQUE ATENCAO REGISTRO DA FILA JA NAO EXISTE ? PROCESSADO POR OUTRO SERVIDOR ? "+epf.getId());
+	        	}
 	        	 this.estoqueProdutoFilaRepository.removerPorId(epf.getId());
 	         } catch(Exception e) {
 	        	 
 	        	 LOGGER.error("Erro ao remover o Estoque Produto Fila", e);
 	         }
 	     }
+		 } catch (Exception ee ) {
+			 LOGGER.error("ERRO PROCESSANDO FILA DE ESTOQUE DE PRODUTO ", ee);
+		 }
 	}
 	 
 	@Override
