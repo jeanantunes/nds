@@ -404,10 +404,20 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 					mff.setNotaFiscalLiberadaEmissao(false);
 					mff.setDesobrigaNotaFiscalDevolucaoSimbolica(true);
 					
+					ProdutoEdicao produtoEdicao = itemFo.getProdutoEdicao();
+					
 					ValoresAplicados valoresAplicados = new ValoresAplicados();
 					
 					valoresAplicados.setValorDesconto(estoqueProduto.getProdutoEdicao().getDesconto());
-					valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract((estoqueProduto.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto())).setScale(4,BigDecimal.ROUND_HALF_EVEN));
+					
+					if(produtoEdicao.getOrigem().equals(Origem.INTERFACE)) {
+						valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract((itemFo.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto())).setScale(4,BigDecimal.ROUND_HALF_EVEN));
+					} else if(produtoEdicao.getOrigem().equals(Origem.PRODUTO_SEM_CADASTRO)) {
+						valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract((itemFo.getProdutoEdicao().getDesconto())).setScale(4,BigDecimal.ROUND_HALF_EVEN));
+					} else {
+						valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract((itemFo.getProdutoEdicao().getDesconto())).setScale(4,BigDecimal.ROUND_HALF_EVEN));
+					}
+					
 					valoresAplicados.setPrecoVenda(estoqueProduto.getProdutoEdicao().getPrecoVenda());
 					
 					mff.setValoresAplicados(valoresAplicados);
