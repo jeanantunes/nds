@@ -1484,6 +1484,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 						
 						Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 						
+						/*
 						Lancamento lancAtual = lancamentoService.obterLancamentoDaEdicaoParaCota(produtoEdicao.getId(), cota.getId(), distribuidorService.obterDataOperacaoDistribuidor());
 						
 						if(lancAtual == null ){
@@ -1502,6 +1503,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 								throw new ValidacaoException(TipoMensagem.WARNING, "Esse produto encontra-se com o status {"+ l.getStatus() +"}. A venda não pode ser efetivada.");
 							}
 						}
+						*/
 						
 					}
 				}
