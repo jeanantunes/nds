@@ -556,7 +556,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		sql.append("                             if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, - mecReparte.QTDE, 0) ");
 		sql.append("                       END) ");
         
-        sql.append("                    - (select sum(mecEncalhe.qtde) ");
+        sql.append("                    - IF(mecReparte.TIPO_MOVIMENTO_ID = 9, 0,(select sum(mecEncalhe.qtde) ");
         sql.append("                        from lancamento lanc ");
         sql.append("                        LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID ");
         sql.append("                        LEFT JOIN chamada_encalhe ce on ce.id = cel.CHAMADA_ENCALHE_ID ");
@@ -564,7 +564,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("                        LEFT JOIN cota cota on cota.id = cec.COTA_ID ");
         sql.append("                        LEFT JOIN conferencia_encalhe confEnc on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID ");
         sql.append("                        LEFT JOIN movimento_estoque_cota mecEncalhe on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
-        sql.append("                        WHERE lanc.id = l.id and cota.id = c.id) AS UNSIGNED INT) ");
+        sql.append("                        WHERE lanc.id = l.id and cota.id = c.id)) AS UNSIGNED INT) ");
         sql.append("            else ");
         sql.append("                null ");
         sql.append("        end) as venda, ");
@@ -758,7 +758,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append("                  cast(sum( CASE ");
     	sql.append("                 WHEN tm.OPERACAO_ESTOQUE = 'ENTRADA' THEN ");
     	sql.append("                 mec.QTDE ELSE -mec.QTDE ");
-    	sql.append("             END) - (select ");
+    	sql.append("             END) - IF(mec.TIPO_MOVIMENTO_ID = 9, 0, (select ");
     	sql.append("                 sum(mecEncalhe.qtde) ");
     	sql.append("             from ");
     	sql.append("                 lancamento lanc ");
@@ -782,7 +782,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append("                     on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
     	sql.append("             WHERE ");
     	sql.append("                 lanc.id = l.id  ");
-    	sql.append("                 and cota.id = c.id) AS UNSIGNED INT) ");
+    	sql.append("                 and cota.id = c.id)) AS UNSIGNED INT) ");
     	sql.append("             else null ");
     	sql.append("         end) as venda ");
     	sql.append("     from ");
