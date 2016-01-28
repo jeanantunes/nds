@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,13 +21,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.ConsultaEncalheDetalheReparteVO;
 import br.com.abril.nds.client.vo.ConsultaEncalheDetalheVO;
 import br.com.abril.nds.client.vo.ConsultaEncalheVO;
+import br.com.abril.nds.client.vo.ResultadoConsultaEncalheDetalheReparteVO;
 import br.com.abril.nds.client.vo.ResultadoConsultaEncalheDetalheVO;
 import br.com.abril.nds.client.vo.ResultadoConsultaEncalheVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
+import br.com.abril.nds.dto.CotaReparteProdutoDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -43,6 +47,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BoxService;
+import br.com.abril.nds.service.ChamadaEncalheService;
 import br.com.abril.nds.service.ConsultaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
@@ -98,6 +103,10 @@ public class ConsultaEncalheController extends BaseController {
 	
 	@Autowired
 	private ConsultaEncalheService consultaEncalheService;
+	
+	
+	@Autowired
+	private ChamadaEncalheService chamadaEncalheService;
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
@@ -319,6 +328,28 @@ public class ConsultaEncalheController extends BaseController {
 		efetuarPesquisa(filtro);
 	}
 	
+	@Post
+	@Path("/pesquisarDetalheReparte")
+	public void pesquisarDetalheReparte(Long idProdutoEdicao, Long idFornecedor, Integer numeroCota, 
+			String dataRecolhimento, String dataMovimento, String sortorder, String sortname, int page, int rp) {
+		
+		FiltroConsultaEncalheDTO filtro = (FiltroConsultaEncalheDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		
+		
+		filtro.setIdProdutoEdicao(idProdutoEdicao);
+		
+		
+		
+		efetuarPesquisaReparte(filtro);
+	
+		
+		
+		
+	}
+	
+	
+
 	/**
 	 * Executa a pesquisa de consulta encalhe.
 	 *  
@@ -525,6 +556,63 @@ public class ConsultaEncalheController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(resultadoPesquisa).recursive().serialize();
 	}
 	
+	
+	private void efetuarPesquisaReparte(FiltroConsultaEncalheDTO filtro) {
+		
+		
+		InfoConsultaEncalheDTO infoConsultaEncalhe = consultaEncalheService.pesquisarReparte(filtro);
+		
+		List<ConsultaEncalheDTO> listaResultado1 = infoConsultaEncalhe.getListaConsultaEncalhe();
+		
+		if (listaResultado1 == null || listaResultado1.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
+		 List <CotaReparteProdutoDTO> listaResultado = new  ArrayList();
+		for (ConsultaEncalheDTO ce: listaResultado1 ) {
+			CotaReparteProdutoDTO lista = new CotaReparteProdutoDTO();
+			lista.setReparte(ce.getReparte().longValue());
+			lista.setEncalhe(ce.getEncalhe()!= null ? ce.getEncalhe().longValue():0L);
+			lista.setIdBox(ce.getIdBox());
+			lista.setNumeroCota(ce.getIdCota().intValue());
+			lista.setNomeBox(ce.getNomeBox());
+			lista.setNomeCota(ce.getNomeCota());
+			listaResultado.add(lista);
+		}
+		
+		// detalhe reparte / consignado 
+		/*
+		List <Date> l = new ArrayList();
+		List <CotaReparteProdutoDTO> listaResultado =  chamadaEncalheService.obterReparteDaChamaEncalheProduto(
+				1L, 
+				l,
+				false, false );
+				*/
+		if (listaResultado == null || listaResultado.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
+		Integer quantidadeRegistros = listaResultado.size();
+		
+		List<ConsultaEncalheDetalheReparteVO> listaResultadosVO = getListaConsultaEncalheDetalheReparteVO(listaResultado);
+		
+		TableModel<CellModelKeyValue<ConsultaEncalheDetalheReparteVO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEncalheDetalheReparteVO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaResultadosVO));
+		
+		tableModel.setTotal( (quantidadeRegistros!= null) ? quantidadeRegistros : 0);
+		
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		
+		ResultadoConsultaEncalheDetalheReparteVO resultadoPesquisa = new ResultadoConsultaEncalheDetalheReparteVO();
+		
+		resultadoPesquisa.setTableModel(tableModel);
+		
+		
+		
+		result.use(Results.json()).withoutRoot().from(resultadoPesquisa).recursive().serialize();
+	}
+	
 	/**
 	 * Carrega os dados de cabeçalho da pesquisa no objeto ResultadoConsultaEncalheDetalheVO.
 	 * 
@@ -656,7 +744,36 @@ public class ConsultaEncalheController extends BaseController {
 		return listaResultadosVO;
 	}
 	
-	private List<ConsultaEncalheDetalheVO> getListaConsultaEncalheDetalheVO(List<ConsultaEncalheDetalheDTO> listaConsultaEncalheDetalheDTO ) {
+	private List<ConsultaEncalheDetalheReparteVO> getListaConsultaEncalheDetalheReparteVO(List<CotaReparteProdutoDTO> listaConsultaEncalheDetalheDTO ) {
+		
+		List<ConsultaEncalheDetalheReparteVO> listaResultadosVO = new ArrayList<ConsultaEncalheDetalheReparteVO>();
+		
+		ConsultaEncalheDetalheReparteVO consultaEncalheDetalheReparteVO = null;
+		
+		String numeroCota = null;
+		String nomeCota = null;
+		
+		
+		for(CotaReparteProdutoDTO consultaEncalheDetalheDTO: listaConsultaEncalheDetalheDTO) {
+			
+			
+			
+			consultaEncalheDetalheReparteVO = new ConsultaEncalheDetalheReparteVO(); 
+			
+			consultaEncalheDetalheReparteVO.setNumeroCota(consultaEncalheDetalheDTO.getNumeroCota().toString());
+			consultaEncalheDetalheReparteVO.setNomeCota(consultaEncalheDetalheDTO.getNomeCota());
+			consultaEncalheDetalheReparteVO.setReparte(consultaEncalheDetalheDTO.getReparte().longValue());
+			consultaEncalheDetalheReparteVO.setEncalhe(consultaEncalheDetalheDTO.getEncalhe().longValue());
+			consultaEncalheDetalheReparteVO.setIdBox(consultaEncalheDetalheDTO.getIdBox());
+			consultaEncalheDetalheReparteVO.setNomeBox(consultaEncalheDetalheDTO.getNomeBox());
+			listaResultadosVO.add(consultaEncalheDetalheReparteVO);
+		}
+		
+		return listaResultadosVO;
+	}
+	
+	
+private List<ConsultaEncalheDetalheVO> getListaConsultaEncalheDetalheVO(List<ConsultaEncalheDetalheDTO> listaConsultaEncalheDetalheDTO ) {
 		
 		List<ConsultaEncalheDetalheVO> listaResultadosVO = new ArrayList<ConsultaEncalheDetalheVO>();
 		

@@ -197,6 +197,36 @@ $(function(){
 					</fieldset>
 				</div>
 			</form> 
+			
+				<form name="form_detalhes_reparte" id="form_detalhes_reparte">
+				<div id="dialog-detalhes-reparte" title="Detalhes Reparte" style="display:none;width:700px;">
+					<fieldset class="fieldGrid" style="width:700px;">
+						
+						<table width="623" cellspacing="2" cellpadding="2" border="0">
+							<tbody>
+								
+								<tr>
+								     <td><strong>Codigo:</strong></td>
+									<td id="codigoProdutoreparte"></td>
+									<td><strong>Produto:</strong></td>
+									<td id="nomeProdutoreparte"></td>
+									<td><strong>Edi&ccedil;&atilde;o:</strong></td>
+									<td id="edicaoProdutoreparte"></td>
+									<td><strong>Reparte:</strong></td>
+									<td id="repartereparte"></td>
+									<td><strong>Encalhe:</strong></td>
+									<td id="encalhereparte"></td>
+								</tr>
+							</tbody>
+						</table>
+					</fieldset>
+	
+				    <div class="linha_separa_fields" style="width:650px!important;">&nbsp;</div>
+					<fieldset  class="fieldGrid" style="width:650px;">
+						<table id="dadosDetalheReparteGrid"></table>
+					</fieldset>
+				</div>
+			</form>
 
 			<form id="form-outros-valores" name="form-outros-valores">
 				<div id="dialog-outros-valores" title="Outros Valores" style="display:none;">

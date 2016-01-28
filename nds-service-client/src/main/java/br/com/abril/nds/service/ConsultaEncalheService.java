@@ -27,4 +27,6 @@ public interface ConsultaEncalheService {
 	 */
 	public byte[] gerarDocumentosConferenciaEncalhe(FiltroConsultaEncalheDTO filtro);
 	
+	InfoConsultaEncalheDTO pesquisarReparte(FiltroConsultaEncalheDTO filtro);
+	
 }

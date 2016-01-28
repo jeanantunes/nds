@@ -11,10 +11,17 @@ public class ConsultaEncalheDTO {
 	
 	private Long idProdutoEdicao;
 	
+	
+	private Long idBox;
+	
 	private String codigoProduto;
 	
 	private String nomeProduto;
 	
+	private String nomeCota;
+	
+	private String nomeBox;
+
 	private Long numeroEdicao;
 	
 	private BigDecimal precoVenda;
@@ -295,6 +302,33 @@ public class ConsultaEncalheDTO {
 		return idCota;
 	}
 
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
+	
+
+	public String getNomeBox() {
+		return nomeBox;
+	}
+
+	public void setNomeBox(String nomeBox) {
+		this.nomeBox = nomeBox;
+	}
+	
+
+	public Long getIdBox() {
+		return idBox;
+	}
+
+	public void setIdBox(Long idBox) {
+		this.idBox = idBox;
+	}
+
+	
 	/**
 	 * @param idCota the idCota to set
 	 */

@@ -25,6 +25,7 @@ import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.service.ChamadaEncalheService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ConsultaEncalheService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
@@ -47,6 +48,9 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 	
 	@Autowired
 	private ConferenciaEncalheService conferenciaEncalheService;
+	
+	@Autowired
+	private ChamadaEncalheService chamadaEncalheService;
 	
 	@Autowired
 	private DocumentoCobrancaService documentoCobrancaService;
@@ -149,6 +153,24 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		return info;
 	}
 	
+	
+	@Transactional(readOnly = true)
+	public InfoConsultaEncalheDTO pesquisarReparte(FiltroConsultaEncalheDTO filtro) {
+		
+		InfoConsultaEncalheDTO info = new InfoConsultaEncalheDTO();
+		
+		
+		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaReparte(filtro);
+		
+		
+		info.setListaConsultaEncalhe(listaConsultaEncalhe);
+		
+		
+		
+		return info;
+	}
+	
+	
 	@Transactional
 	public ConsultaEncalheRodapeDTO obterResultadosConsultaEncalhe(FiltroConsultaEncalheDTO filtro) {
 		
@@ -241,5 +263,7 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		return listaDebitoCreditoCotaVO;
 	}
+
+
 	
 }
