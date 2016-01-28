@@ -1,5 +1,6 @@
 package br.com.abril.nds.dao;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -113,6 +114,7 @@ public class DefinicaoBasesDAO {
 		produtoEdicao.getProduto().setCodigo(rs.getString("CODIGO"));
 		produtoEdicao.getProduto().setCodigoICD(rs.getString("CODIGO_ICD"));
         produtoEdicao.setTipoClassificacaoProduto(getTipoClassificacaoProduto(rs.getLong("TIPO_CLASSIFICACAO_PRODUTO_ID")));
+        produtoEdicao.setReparte(new BigDecimal(rs.getInt("REPARTE")));
 
 		return produtoEdicao;
 	}
