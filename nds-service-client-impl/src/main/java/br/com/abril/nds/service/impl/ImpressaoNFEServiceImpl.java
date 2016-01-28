@@ -294,6 +294,8 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 								}
 								
 							}
+							
+							break;
 						}
 					} else if(dtnf.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_DEVOLUCAO_AO_FORNECEDOR)) {
 						if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)){
@@ -312,6 +314,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 									}
 								}
 								
+								break;
 							}
 						} else {
 							
