@@ -200,6 +200,17 @@ $(function(){
 			
 				<form name="form_detalhes_reparte" id="form_detalhes_reparte">
 				<div id="dialog-detalhes-reparte" title="Detalhes Reparte" style="display:none;width:700px;">
+				<span class="bt_arq">
+				<a href="${pageContext.request.contextPath}/devolucao/consultaEncalhe/exportarDetalhe?fileType=XLS" rel="tipsy"  title="Gerar Arquivo">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+				</a> 
+			</span> 
+			
+			<span class="bt_arq"> 
+				<a href="${pageContext.request.contextPath}/devolucao/consultaEncalhe/exportarDetalhe?fileType=PDF" rel="tipsy" title="Imprimir">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /> 
+				</a>
+			</span>
 					<fieldset class="fieldGrid" style="width:700px;">
 						
 						<table width="623" cellspacing="2" cellpadding="2" border="0">
