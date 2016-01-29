@@ -2010,7 +2010,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         sql.append(" INNER JOIN  ESTUDO_COTA ec_ ON cota_.ID=ec_.COTA_ID ");
         sql.append(" INNER JOIN  ESTUDO e_ ON ec_.ESTUDO_ID=e_.ID ");
         sql.append(" INNER JOIN  LANCAMENTO lancamento_ ON e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID AND e_.ID=lancamento_.ESTUDO_ID ");
-        sql.append(" LEFT  JOIN  MOVIMENTO_ESTOQUE_COTA mec ignore index (FKBEB397FC4E3C0541459444c3) ON mec.LANCAMENTO_ID=lancamento_.id AND mec.COTA_ID=cota_.ID ");
+        sql.append(" LEFT  JOIN  MOVIMENTO_ESTOQUE_COTA mec ignore index (FKBEB397FC4E3C0541459444c3,FK459444C3714FA744) ON mec.LANCAMENTO_ID=lancamento_.id AND mec.COTA_ID=cota_.ID ");
         sql.append(" LEFT  JOIN  TIPO_MOVIMENTO tipo_mov ON tipo_mov.ID=mec.TIPO_MOVIMENTO_ID ");
         sql.append(" INNER JOIN  PRODUTO_EDICAO pe_ ON e_.PRODUTO_EDICAO_ID=pe_.ID ");
         sql.append(" INNER JOIN  PRODUTO p_ ON pe_.PRODUTO_ID=p_.ID ");
@@ -3823,7 +3823,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         sql.append(" INNER JOIN  ESTUDO_COTA ec_ ON cota_.ID=ec_.COTA_ID ");
         sql.append(" INNER JOIN  ESTUDO e_ ON ec_.ESTUDO_ID=e_.ID ");
         sql.append(" INNER JOIN  LANCAMENTO lancamento_ ON e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID AND e_.ID=lancamento_.ESTUDO_ID ");
-        sql.append(" LEFT  JOIN  MOVIMENTO_ESTOQUE_COTA mec ignore index (FKBEB397FC4E3C0541459444c3) ON mec.LANCAMENTO_ID=lancamento_.id AND mec.COTA_ID=cota_.ID ");
+        sql.append(" LEFT  JOIN  MOVIMENTO_ESTOQUE_COTA mec ignore index (FKBEB397FC4E3C0541459444c3,FK459444C3714FA744) ON mec.LANCAMENTO_ID=lancamento_.id AND mec.COTA_ID=cota_.ID ");
         sql.append(" LEFT  JOIN  TIPO_MOVIMENTO tipo_mov ON tipo_mov.ID=mec.TIPO_MOVIMENTO_ID ");
         sql.append(" INNER JOIN  PRODUTO_EDICAO pe_ ON e_.PRODUTO_EDICAO_ID=pe_.ID ");
         sql.append(" INNER JOIN  PRODUTO p_ ON pe_.PRODUTO_ID=p_.ID ");
