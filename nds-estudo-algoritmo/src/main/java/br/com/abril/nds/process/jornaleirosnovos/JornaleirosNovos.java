@@ -29,14 +29,11 @@ public class JornaleirosNovos {
     @Autowired
     private CotaDAO cotaDAO;
 
-    @Autowired
-    private ProdutoEdicaoDAO produtoEdicaoDAO;
-
-
     public void executar(EstudoTransient estudo) throws Exception {
-
-	if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(Long.valueOf(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
-	    HashMap<Long, CotaEstudo> mapCotas = new HashMap<>();
+    	
+	//TipoClassificacaoProduto 31 == CAPA/FICH/BOX
+	if (((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(Long.valueOf(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) && (estudo.getProdutoEdicaoEstudo().getTipoClassificacaoProduto().getId() != 31L)) {
+	    HashMap<Long, CotaEstudo> mapCotas = new HashMap<>(); 
 	    
 	    for (CotaEstudo cota : estudo.getCotas()) {
 	    	mapCotas.put(cota.getId(), cota);
