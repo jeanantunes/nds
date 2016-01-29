@@ -1,14 +1,33 @@
 package br.com.abril.nds.client.vo;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+
+
+
+
+
+@Exportable
 public class ConsultaEncalheDetalheReparteVO {
 
+
+	@Export(label="Cota")
 	private String numeroCota;
 	
+	@Export(label="Nome Cota")
 	private String nomeCota;
 	
+	@Export(label="Reparte")
 	private Long  reparte;
 	
+	@Export(label="Encalhe")
 	private Long encalhe;
+	
+	@Export(label="Box")
+	private Long idBox;
+	
+	@Export(label="Nome Box")
+	private String nomeBox;
 	
 	
 	public Long getReparte() {
@@ -19,9 +38,7 @@ public class ConsultaEncalheDetalheReparteVO {
 		this.reparte = reparte;
 	}
 
-	private Long idBox;
 	
-	private String nomeBox;
 
 
 	
