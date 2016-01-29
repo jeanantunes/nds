@@ -1477,7 +1477,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		sql.append("                       movimento_estoque_cota mecEncalhe  ");
 		sql.append("                           on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID  ");
 		sql.append("                   WHERE  ");
-		sql.append("                       lanc.id = lancamento.id)  ");
+		sql.append("                       lanc.id = lancamento.id and ce.DATA_RECOLHIMENTO = lanc.DATA_REC_DISTRIB)  ");
 		sql.append("                   else null end,0),0) as qtdeVendas  ");
 		sql.append("     FROM  ");
 		sql.append("         lancamento lancamento  ");
