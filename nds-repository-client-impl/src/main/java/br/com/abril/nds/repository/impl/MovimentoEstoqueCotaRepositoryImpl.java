@@ -4643,7 +4643,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    	
 			StringBuilder sql = new StringBuilder();
 
-			sql.append(" 			SELECT  PESSOA.nome as nomeCota ,BOX.ID as idBox,BOX.NOME as nomeBox,");
+			sql.append(" 			SELECT  PESSOA.nome as nomeCota ,boxid as idBox,boxnome as nomeBox,");
 			sql.append(" 		       mec.cota_id as idCota,");
 			sql.append(" 		        MEC.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID,");
 			sql.append(" 		            SUM(COALESCE(if(tm.OPERACAO_ESTOQUE = 'SAIDA', MEC.qtde * - 1, MEC.qtde), 0)) AS REPARTE,");
@@ -4651,7 +4651,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" 		    FROM");
 			sql.append(" 		        MOVIMENTO_ESTOQUE_COTA MEC");
 			sql.append(" 		    INNER JOIN (SELECT ");
-			sql.append(" 		        distinct PRODUTO_EDICAO.ID AS ID");
+			sql.append(" 		        distinct PRODUTO_EDICAO.ID AS ID, b.id as boxid, b.nome as boxnome ");
 			sql.append(" 		    FROM");
 			sql.append(" 		        CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC");
 			sql.append(" 		    INNER JOIN CONFERENCIA_ENCALHE ON (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = CCEC.ID)");
@@ -4659,6 +4659,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" 		    INNER JOIN PRODUTO ON (PRODUTO_EDICAO.PRODUTO_ID = PRODUTO.ID)");
 			sql.append(" 		    INNER JOIN PRODUTO_FORNECEDOR ON (PRODUTO_FORNECEDOR.PRODUTO_ID = PRODUTO.ID)");
 			sql.append(" 		    INNER JOIN FORNECEDOR ON (PRODUTO_FORNECEDOR.FORNECEDORES_ID = FORNECEDOR.ID)");
+			sql.append(" 		    INNER JOIN BOX B ON (B.id  = ccec.box_id )");
 			sql.append(" 		    INNER JOIN COTA c ON (c.id = CCEC.cota_id )");
 			sql.append(" 		    INNER JOIN PESSOA ON (PESSOA.ID = FORNECEDOR.JURIDICA_ID)");
 			sql.append(" 		    WHERE");

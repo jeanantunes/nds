@@ -32,9 +32,13 @@ public class FiltroConsultaEncalheDTO {
 	
 	private Integer idBox;
 	
+	
+	@Export(label="Produto")
+	private Integer codigoProduto;
+	
+	@Export(label="Edicao")
 	private Integer numeroEdicao;
 
-	private Integer codigoProduto;
 	
 	private Long idProduto;
 	

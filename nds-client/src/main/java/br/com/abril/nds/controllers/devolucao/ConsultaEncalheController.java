@@ -122,8 +122,15 @@ public class ConsultaEncalheController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaConsultaEncalhe";
 	
+	
+	private static final String FILTRO_SESSION_ATTRIBUTE_REPARTE = "filtroPesquisaConsultaDetalheReparte";
+	
+	private static final String CONSULTA_ENCALHE_DETALHE_REPARTE_LISTA = "filtroPesquisaConsultaDetalheReparte_lista";
+	
+	
 	private static final String FILTRO_DETALHE_SESSION_ATTRIBUTE = "filtroPesquisaConsultaEncalheDetalhe";
 	
+
 	private static final String SUFIXO_DIA = "º Dia";
 	
 	@Path("/")
@@ -147,6 +154,9 @@ public class ConsultaEncalheController extends BaseController {
 
 		FiltroConsultaEncalheDTO filtroConsultaEncalhe = obterFiltroExportacao();
 		
+		filtroConsultaEncalhe.setCodigoProduto(null);
+		filtroConsultaEncalhe.setNumeroEdicao(null);
+		filtroConsultaEncalhe.setIdProdutoEdicao(null);
 		InfoConsultaEncalheDTO infoConsultaEncalhe = consultaEncalheService.pesquisarEncalhe(filtroConsultaEncalhe);
 
 		List<ConsultaEncalheVO> listaConsultaEncalheVO =  getListaConsultaEncalheVO(infoConsultaEncalhe.getListaConsultaEncalhe(), filtroConsultaEncalhe);
@@ -164,7 +174,8 @@ public class ConsultaEncalheController extends BaseController {
 		
 	}
 	
-
+	
+	
 	/**
 	 * Método responsável por carregar o combo de fornecedores.
 	 */
@@ -559,6 +570,7 @@ public class ConsultaEncalheController extends BaseController {
 	
 	private void efetuarPesquisaReparte(FiltroConsultaEncalheDTO filtro) {
 		
+		 this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE_REPARTE,filtro);
 		
 		InfoConsultaEncalheDTO infoConsultaEncalhe = consultaEncalheService.pesquisarReparte(filtro);
 		
@@ -580,14 +592,7 @@ public class ConsultaEncalheController extends BaseController {
 			listaResultado.add(lista);
 		}
 		
-		// detalhe reparte / consignado 
-		/*
-		List <Date> l = new ArrayList();
-		List <CotaReparteProdutoDTO> listaResultado =  chamadaEncalheService.obterReparteDaChamaEncalheProduto(
-				1L, 
-				l,
-				false, false );
-				*/
+	
 		if (listaResultado == null || listaResultado.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
@@ -602,13 +607,14 @@ public class ConsultaEncalheController extends BaseController {
 		
 		tableModel.setTotal( (quantidadeRegistros!= null) ? quantidadeRegistros : 0);
 		
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual()!= null ? filtro.getPaginacao().getPaginaAtual():1);
 		
 		ResultadoConsultaEncalheDetalheReparteVO resultadoPesquisa = new ResultadoConsultaEncalheDetalheReparteVO();
 		
 		resultadoPesquisa.setTableModel(tableModel);
 		
-		
+		 this.session.setAttribute(CONSULTA_ENCALHE_DETALHE_REPARTE_LISTA,listaResultadosVO);
+	
 		
 		result.use(Results.json()).withoutRoot().from(resultadoPesquisa).recursive().serialize();
 	}
@@ -1010,6 +1016,33 @@ private List<ConsultaEncalheDetalheVO> getListaConsultaEncalheDetalheVO(List<Con
 				return box1.getCodigo().compareTo(box2.getCodigo());
 			}
 		});
+	}
+	
+	
+	
+		
+		
+	@Get
+	public void exportarDetalhe(FileType fileType) throws IOException {
+
+		FiltroConsultaEncalheDTO filtro = (FiltroConsultaEncalheDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE_REPARTE);
+		
+		ProdutoEdicao pe = produtoEdicaoService.buscarPorID(filtro.getIdProdutoEdicao());
+		if ( pe != null ) {
+			filtro.setCodigoProduto(Integer.parseInt(pe.getProduto().getCodigo()));
+			filtro.setNumeroEdicao(pe.getNumeroEdicao().intValue());
+		}
+		
+		List <ConsultaEncalheDetalheReparteVO> listaConsultaEncalheVO = (List <ConsultaEncalheDetalheReparteVO>) this.session.getAttribute(CONSULTA_ENCALHE_DETALHE_REPARTE_LISTA);
+		
+		 
+		FileExporter.to("consulta-encalhe-detalhe", fileType).inHTTPResponse(
+				this.getNDSFileHeader(), 
+				filtro, 
+				null,
+				listaConsultaEncalheVO,
+				ConsultaEncalheDetalheReparteVO.class, this.httpResponse);
+		
 	}
 
 }
