@@ -123,7 +123,7 @@ public class ConsultaEncalheController extends BaseController {
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaConsultaEncalhe";
 	
 	
-	private static final String FILTRO_SESSION_ATTRIBUTE_REPARTE = "filtroPesquisaConsultaDetalheReparte";
+	private static final String FILTRO_DETALHE_REPARTE_SESSION_ATTRIBUTE= "filtroPesquisaConsultaDetalheReparte";
 	
 	private static final String CONSULTA_ENCALHE_DETALHE_REPARTE_LISTA = "filtroPesquisaConsultaDetalheReparte_lista";
 	
@@ -292,6 +292,21 @@ public class ConsultaEncalheController extends BaseController {
 		}
 	}
 	
+	
+	private void configurarPaginacaoPesquisaReparte(FiltroConsultaEncalheDTO filtro, 
+			String sortorder, String sortname,
+			int page, int rp) {
+
+	if (filtro != null) {
+	
+	PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+	
+	filtro.setPaginacao(paginacao);
+	
+	filtro.setOrdenacaoColuna((Util.getEnumByStringValue(FiltroConsultaEncalheDTO.OrdenacaoColuna.values(),sortname)));
+	}
+	}
+	
 	/**
 	 * Configura paginação da lista de resultados
 	 * 
@@ -344,15 +359,27 @@ public class ConsultaEncalheController extends BaseController {
 	public void pesquisarDetalheReparte(Long idProdutoEdicao, Long idFornecedor, Integer numeroCota, 
 			String dataRecolhimento, String dataMovimento, String sortorder, String sortname, int page, int rp) {
 		
-		FiltroConsultaEncalheDTO filtro = (FiltroConsultaEncalheDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroConsultaEncalheDTO filtro = ((FiltroConsultaEncalheDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE));
+		
+		FiltroConsultaEncalheDTO filtro1 = new FiltroConsultaEncalheDTO();
+		
+		filtro1.setCodigoProduto(filtro.getCodigoProduto());
+		filtro1.setDataRecolhimentoFinal(filtro.getDataRecolhimentoFinal());
+		filtro1.setDataRecolhimentoInicial(filtro.getDataRecolhimentoInicial());
+		filtro1.setIdBox(filtro.getIdBox());
+		filtro1.setIdCota(filtro.getIdCota());
+		filtro1.setIdFornecedor(filtro.getIdFornecedor());
+	
 		
 		
+		filtro1.setIdProdutoEdicao(idProdutoEdicao);
 		
-		filtro.setIdProdutoEdicao(idProdutoEdicao);
+		configurarPaginacaoPesquisaReparte(filtro1, sortorder, sortname, page, rp);
+		
+		tratarFiltroReparte(filtro1);
 		
 		
-		
-		efetuarPesquisaReparte(filtro);
+		efetuarPesquisaReparte(filtro1);
 	
 		
 		
@@ -570,7 +597,7 @@ public class ConsultaEncalheController extends BaseController {
 	
 	private void efetuarPesquisaReparte(FiltroConsultaEncalheDTO filtro) {
 		
-		 this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE_REPARTE,filtro);
+		 this.session.setAttribute(FILTRO_DETALHE_REPARTE_SESSION_ATTRIBUTE,filtro);
 		
 		InfoConsultaEncalheDTO infoConsultaEncalhe = consultaEncalheService.pesquisarReparte(filtro);
 		
@@ -607,7 +634,7 @@ public class ConsultaEncalheController extends BaseController {
 		
 		tableModel.setTotal( (quantidadeRegistros!= null) ? quantidadeRegistros : 0);
 		
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual()!= null ? filtro.getPaginacao().getPaginaAtual():1);
+		tableModel.setPage( filtro.getPaginacao().getPaginaAtual());
 		
 		ResultadoConsultaEncalheDetalheReparteVO resultadoPesquisa = new ResultadoConsultaEncalheDetalheReparteVO();
 		
@@ -756,8 +783,7 @@ public class ConsultaEncalheController extends BaseController {
 		
 		ConsultaEncalheDetalheReparteVO consultaEncalheDetalheReparteVO = null;
 		
-		String numeroCota = null;
-		String nomeCota = null;
+	
 		
 		
 		for(CotaReparteProdutoDTO consultaEncalheDetalheDTO: listaConsultaEncalheDetalheDTO) {
@@ -873,6 +899,20 @@ private List<ConsultaEncalheDetalheVO> getListaConsultaEncalheDetalheVO(List<Con
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 	}
 	
+	
+	private void tratarFiltroReparte(FiltroConsultaEncalheDTO filtro) {
+
+		FiltroConsultaEncalheDTO filtroSession = (FiltroConsultaEncalheDTO) session.getAttribute(FILTRO_DETALHE_REPARTE_SESSION_ATTRIBUTE);
+		
+		if (filtroSession != null && !filtroSession.equals(filtro) && filtroSession.getPaginacao() != null) {
+
+			filtroSession.getPaginacao().setPaginaAtual(1);
+		}
+		
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
+	}
+	
+	
 	/**
 	 * Executa tratamento de paginação em função de alteração do filtro de pesquisa.
 	 * 
@@ -889,6 +929,10 @@ private List<ConsultaEncalheDetalheVO> getListaConsultaEncalheDetalheVO(List<Con
 		
 		session.setAttribute(FILTRO_DETALHE_SESSION_ATTRIBUTE, filtro);
 	}
+	
+	
+	
+	
 	
 	
 	 /**
@@ -1025,7 +1069,7 @@ private List<ConsultaEncalheDetalheVO> getListaConsultaEncalheDetalheVO(List<Con
 	@Get
 	public void exportarDetalhe(FileType fileType) throws IOException {
 
-		FiltroConsultaEncalheDTO filtro = (FiltroConsultaEncalheDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE_REPARTE);
+		FiltroConsultaEncalheDTO filtro = (FiltroConsultaEncalheDTO) this.session.getAttribute(FILTRO_DETALHE_REPARTE_SESSION_ATTRIBUTE);
 		
 		ProdutoEdicao pe = produtoEdicaoService.buscarPorID(filtro.getIdProdutoEdicao());
 		if ( pe != null ) {
