@@ -653,7 +653,7 @@ public List<ProdutoEdicaoEstudo> obterEdicoesPenultimoVeraneio(EstudoTransient e
 		cal.setTime(dataLancamento.toDate());
 		cal.set(Calendar.YEAR, anoDesejado);
 		
-		DateTime dataLancamentoProdutoEdicao = new DateTime(cal.getTime());										
+		DateTime dataLancamentoProdutoEdicao = new DateTime(cal.getTime());	 									
 		DateTime dataMaisProximaAnterior = new DateTime(new TreeSet<Date>(datas).lower(cal.getTime()));
 		DateTime dataMaisProximaPosterior = new DateTime(new TreeSet<Date>(datas).higher(cal.getTime()));
 		

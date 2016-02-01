@@ -745,6 +745,9 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         
     	StringBuilder sql = new StringBuilder();
                                                                                                                                         
+    	
+    	sql.append(" select T.numeroCota as numeroCota, T.idCota as idCota, T.produtoEdicaoId produtoEdicaoId, ");
+    	sql.append(" sum(T.reparte) as reparte, sum(T.venda) as venda from ( ");
     	sql.append(" select ");
     	sql.append("         c.NUMERO_COTA as numeroCota, ");
     	sql.append("         c.id as idCota, ");
@@ -812,7 +815,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append("         and tm.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
     	sql.append("         and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null   ");
     	sql.append("     group by ");
-    	sql.append("         mec.PRODUTO_EDICAO_ID, mec.cota_id ");
+    	sql.append("         mec.PRODUTO_EDICAO_ID, mec.cota_id, plp.NUMERO_PERIODO");
+    	sql.append("         ) T group by T.numeroCota, T.produtoEdicaoId ");
     	
     	
         Query query = getSession().createSQLQuery(sql.toString())
