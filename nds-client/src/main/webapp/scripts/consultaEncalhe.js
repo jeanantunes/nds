@@ -672,12 +672,6 @@ var ConsultaEncalhe = $
 							align : 'left'
 						},  {
 							display : 'Box',
-							name : 'idBox',
-							width : 40,
-							sortable : true,
-							align : 'left'
-						},{
-							display : 'Nome Box',
 							name : 'nomeBox',
 							width : 150,
 							sortable : true,
