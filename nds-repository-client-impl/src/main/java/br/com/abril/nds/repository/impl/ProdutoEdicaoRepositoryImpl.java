@@ -1662,7 +1662,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
         sql.append("          LEFT JOIN cota cota on cota.id = cec.COTA_ID  ");
         sql.append("          LEFT JOIN conferencia_encalhe confEnc on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID  ");
         sql.append("          LEFT JOIN movimento_estoque_cota mecEncalhe on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID  ");
-	    sql.append("          WHERE lanc.id = l.id and cota.id = c.id)) AS SIGNED INT)  ");
+	    sql.append("          WHERE lanc.id = l.id and cota.id = c.id and ce.DATA_RECOLHIMENTO = lanc.data_rec_distrib)) AS SIGNED INT)  ");
 	    sql.append("    else  ");
         sql.append("    null  ");
         sql.append("    end) as qtdeVendas,");
