@@ -4643,15 +4643,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    	
 			StringBuilder sql = new StringBuilder();
 
-			sql.append(" 			SELECT  PESSOA.nome as nomeCota ,boxid as idBox,boxnome as nomeBox,");
-			sql.append(" 		       mec.cota_id as idCota,");
-			sql.append(" 		        MEC.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID,");
+			sql.append(" 			SELECT  coalesce(pessoa.nome_fantasia, pessoa.razao_social, pessoa.nome, '') as nomeCota ,");
+			sql.append(" 		boxid as idBox,boxnome as nomeBox,");
+			sql.append(" 		       c.numero_cota as idCota,");
+			sql.append(" 		        MEC.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID,MEC.cota_id ,");
 			sql.append(" 		            SUM(COALESCE(if(tm.OPERACAO_ESTOQUE = 'SAIDA', MEC.qtde * - 1, MEC.qtde), 0)) AS REPARTE,");
-            sql.append("    sum(conf.qtde) AS ENCALHE   ");
+            sql.append("   				 sum(conf.qtde) AS ENCALHE   ");
 			sql.append(" 		    FROM");
 			sql.append(" 		        MOVIMENTO_ESTOQUE_COTA MEC");
 			sql.append(" 		    INNER JOIN (SELECT ");
-			sql.append(" 		        distinct PRODUTO_EDICAO.ID AS ID, b.id as boxid, b.nome as boxnome ");
+			sql.append(" 		        distinct PRODUTO_EDICAO.ID AS ID, b.id as boxid, b.nome as boxnome,CCEC.COTA_ID as COTA_ID");
 			sql.append(" 		    FROM");
 			sql.append(" 		        CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC");
 			sql.append(" 		    INNER JOIN CONFERENCIA_ENCALHE ON (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = CCEC.ID)");
@@ -4663,7 +4664,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" 		    INNER JOIN COTA c ON (c.id = CCEC.cota_id )");
 			sql.append(" 		    INNER JOIN PESSOA ON (PESSOA.ID = FORNECEDOR.JURIDICA_ID)");
 			sql.append(" 		    WHERE");
-			sql.append(" 		        CCEC.DATA_OPERACAO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
+			sql.append(" 		      CCEC.DATA_OPERACAO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
+
 			if(filtro.getIdCota() != null) {
 	           sql.append(" 		AND CCEC.COTA_ID = :idCota" );
 	        }
@@ -4671,7 +4673,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	        	sql.append("  and c.box_id = :idBox" );
 	        }
 			sql.append(" 		    AND PRODUTO_EDICAO.ID = :idProdutoEdicao ");
-			sql.append(" 		    GROUP BY  CCEC.COTA_ID) AS EDICAO_ENCALHADA ON (MEC.PRODUTO_EDICAO_ID = EDICAO_ENCALHADA.ID)");
+			sql.append(" 		    GROUP BY  CCEC.COTA_ID) AS EDICAO_ENCALHADA ON (MEC.PRODUTO_EDICAO_ID = EDICAO_ENCALHADA.ID AND MEC.COTA_ID = EDICAO_ENCALHADA.COTA_ID)");
 			sql.append(" 		    INNER JOIN cota c ON c.id = MEC.COTA_ID");
 			sql.append(" 		    INNER JOIN PESSOA ON (PESSOA.ID = c.PESSOA_ID)");
 			sql.append(" 		    INNER JOIN BOX ON (BOX.ID = c.BOX_ID)");
