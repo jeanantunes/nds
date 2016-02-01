@@ -174,7 +174,20 @@ if($("#tipoArquivo", this.workspace).val() == "VENDA") {
 				$("#qtdArquivosGerados", this.workspace).html(data.int);
             },
 			failCallback : function(arg) {
-				exibirMensagem("WARNING", ["Erro ao gerar Arquivo!"]);
+				result = $.parseJSON($(arg).text());
+
+				if((typeof result != "undefined") && result.mensagens) {
+					result = result.mensagens;
+					var tipoMensagem = result.tipoMensagem;
+					var listaMensagens = result.listaMensagens;
+					
+					if (tipoMensagem && listaMensagens) {
+						exibirMensagem("WARNING", ["Erro ao gerar Arquivo! "+listaMensagens]);
+						}
+				}
+				else
+					exibirMensagem("WARNING", ["Erro ao gerar Arquivo!"+arg]);
+					
 			}
 		});
 	}
