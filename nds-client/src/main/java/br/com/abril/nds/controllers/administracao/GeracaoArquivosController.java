@@ -75,7 +75,9 @@ import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.VendaEncalheService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -786,6 +788,7 @@ public class GeracaoArquivosController extends BaseController {
 	@Post
 	@Rules(Permissao.ROLE_ADMINISTRACAO_GERACAO_ARQUIVO_ALTERACAO)
 	public void gerar(Date dataLctoPrevisto, String operacao,String nomeArquivo) {
+	 try {
 		session.removeAttribute("PATH_VENDA");
 		validarDataDeGeracao(dataLctoPrevisto);
 
@@ -805,7 +808,13 @@ public class GeracaoArquivosController extends BaseController {
 			
 		} else if (operacao.equals("REPARTE")) {
 			
+			try {
 			qtdArquivosGerados = route197.execute(getUsuarioLogado().getLogin(), dataLctoPrevisto, null);
+			} catch ( Exception ee ) {
+				LOGGER.error("ERRO GERANDO arquivo de reparte",ee);
+				throw new ValidacaoException(TipoMensagem.ERROR, ee.getMessage());
+				
+			}
 			if(qtdArquivosGerados > 0) {
 				
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -832,11 +841,21 @@ public class GeracaoArquivosController extends BaseController {
 					LOGGER.error("Erro ao gerar arquivo de reparte",e);
  					throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar o arquivo REPARTE.Tente outra ");
 				}    
+			} else
+			{
+				
+				throw new ValidacaoException(TipoMensagem.ERROR, "Nenhum registro encontrado!");
+				
 			}
 			
 		} else {
-			
+			try {
 			qtdArquivosGerados = route198.execute(getUsuarioLogado().getLogin(), dataLctoPrevisto, null);
+			} catch ( Exception ee ) {
+				LOGGER.error("ERRO GERANDO arquivo de encalhe",ee);
+				throw new ValidacaoException(TipoMensagem.ERROR, ee.getMessage());
+				
+			}
 			if(qtdArquivosGerados > 0) {
 				
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -861,10 +880,20 @@ public class GeracaoArquivosController extends BaseController {
 					LOGGER.error("Erro ao gerar arquivo de encalhe",e);
 					throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar o arquivo ENCALHE."+e);
 				}    
-			}
+			} 
+			 else
+				{
+					
+					throw new ValidacaoException(TipoMensagem.ERROR, "Nenhum registro encontrado!");
+					
+				}
 		}
 		
 		result.use(Results.json()).from(Integer.valueOf(qtdArquivosGerados), "result").serialize();
+	} catch ( Exception fe ) {
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, fe.getMessage()),Constantes.PARAM_MSGS).recursive().serialize();
+		
+	}
 	}
 
 	private void validarDataDeGeracao(Date dataLctoPrevisto) {
