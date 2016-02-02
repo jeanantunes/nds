@@ -690,10 +690,10 @@ public class GeracaoArquivosController extends BaseController {
 				 
 				   File arqOut = null;
 				   File dirx = new File(dirOut);
-				   FileFilter fileFilterx = new WildcardFileFilter(fc.replace(boxFc,boxDinap).replace(filialFc,"*"));
+				   FileFilter fileFilterx = new WildcardFileFilter(fc.replace("."+boxFc+".","."+boxDinap+".").replace(filialFc,"*"));
 				   File[] filesx = dirx.listFiles(fileFilterx);
 				   if ( filesx.length == 0 ) {
-					   String pathOut = dirOut +"/"+fc.replace(boxFc,boxDinap).replace(filialFc,filialDinap);
+					   String pathOut = dirOut +"/"+fc.replace("."+boxFc+".","."+boxDinap+".").replace(filialFc,filialDinap);
 						arqOut = new File(pathOut);
 				   }
 				   else {
