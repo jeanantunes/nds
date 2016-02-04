@@ -39,6 +39,7 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	private BigDecimal precoPrevisto;	
 	private Long repartePromocional;	
 	private String condDistribuicaoFases;
+	private Date dataRecolhimento;
 	
 		
 	@Field(offset = 1, length = 7)
@@ -249,5 +250,16 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	public void setCondDistribuicaoFases(String condDistribuicaoFases) {
 		this.condDistribuicaoFases = condDistribuicaoFases;
 	}
+	
+	
+	@Field(offset = 166, length = 8)
+	@FixedFormatPattern("yyyyMMdd")
+	public Date getDataRecolhimento() {
+		return dataRecolhimento;
+	}
+	public void setDataRecolhimento(Date dataRecolhimento) {
+		this.dataRecolhimento = dataRecolhimento;
+	}
+	
 	
 }
