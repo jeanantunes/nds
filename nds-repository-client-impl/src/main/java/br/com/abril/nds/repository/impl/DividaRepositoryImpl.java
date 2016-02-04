@@ -1135,8 +1135,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         sql.append(" SELECT ");
         sql.append(" CASE WHEN DIVIDA_.DIVIDA_RAIZ_ID is null ");
         sql.append(" THEN DIVIDA_.VALOR ");
-        sql.append(" ELSE DIVIDA_.VALOR ");
-        sql.append(" + (SELECT ");
+        sql.append(" ELSE  ");
+        sql.append("  (SELECT ");
         sql.append(" SUM(ACUMULADAS_.VALOR) ");
         sql.append(" FROM ");
         sql.append(" DIVIDA ACUMULADAS_ ");
