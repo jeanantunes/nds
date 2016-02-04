@@ -257,7 +257,7 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	public Date getDataRecolhimento() {
 		return dataRecolhimento;
 	}
-	public void DataRecolhimento(Date dataRecolhimento) {
+	public void setDataRecolhimento(Date dataRecolhimento) {
 		this.dataRecolhimento = dataRecolhimento;
 	}
 	
