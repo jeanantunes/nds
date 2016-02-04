@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
@@ -161,6 +162,13 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 
 		}
 	    
+		//Atualiza a PEB
+		if (input.getDataRecolhimento() !=null && input.getDataRecolhimento().after(input.getDataLancamento())){
+			produtoEdicao.setPeb(
+			 new Long(TimeUnit.DAYS.convert(input.getDataRecolhimento().getTime()- input.getDataLancamento().getTime(),TimeUnit.MILLISECONDS)).intValue()	
+			);
+		}
+		
 		if (lancamento == null) {
 		    
 			// Cadastrar novo lançamento
@@ -219,7 +227,8 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 					
 					Date dataRecolhimentoSugerida = recolhimentoService.obterDataRecolhimentoValido(this.getProximaDataUtil(dataRecolhimento, produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO),produtoEdicao.getProduto().getFornecedor().getId());
 
-					lancamento.setDataRecolhimentoDistribuidor(dataRecolhimentoSugerida);// confirmado
+					//lancamento.setDataRecolhimentoDistribuidor(dataRecolhimentoSugerida);// confirmado
+					lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);// confirmado
 					
 					lancamento.setDataRecolhimentoPrevista(dataRecolhimento);// confirmado 
 				}
