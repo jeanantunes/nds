@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
@@ -110,7 +111,14 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 					+ " e Edição " + edicao
 					+ " não encontrado.");
 			return;
-		}
+		} else {
+			//Atualiza a PEB
+			if (input.getDataRecolhimento() !=null && input.getDataRecolhimento().after(input.getDataLancamento())){
+				produtoEdicao.setPeb(
+				 new Long(TimeUnit.DAYS.convert(input.getDataRecolhimento().getTime()- input.getDataLancamento().getTime(),TimeUnit.MILLISECONDS)).intValue()	
+				);
+			}
+		
 		
 		
 		// Verificação de alteração do Preço Previsto para o ProdutoEdiçao:
@@ -120,8 +128,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 		precoPrevistoAtual = precoPrevistoAtual.setScale(4,RoundingMode.HALF_UP);
 		precoPrevistoCorrente = precoPrevistoCorrente.setScale(4,RoundingMode.HALF_UP);
 		
-		if (precoPrevistoAtual.compareTo(precoPrevistoCorrente)!=0 && precoPrevistoCorrente.doubleValue()>0) {
-			this.ndsiLoggerFactory.getLogger().logInfo(message,
+		
+			if (precoPrevistoAtual.compareTo(precoPrevistoCorrente)!=0 && precoPrevistoCorrente.doubleValue()>0) {
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteração do Preço Previsto/Venda"
 							+ " de " + precoPrevistoAtual
@@ -129,12 +138,14 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 							+ " Produto "+codigoProduto
 							+ " Edição " + edicao);
 			
-			produtoEdicao.setPrecoPrevisto(precoPrevistoCorrente);
-			produtoEdicao.setPrecoCusto(precoPrevistoCorrente);
-			produtoEdicao.setPrecoVenda(precoPrevistoCorrente);
-			this.getSession().merge(produtoEdicao);
+				produtoEdicao.setPrecoPrevisto(precoPrevistoCorrente);
+				produtoEdicao.setPrecoCusto(precoPrevistoCorrente);
+				produtoEdicao.setPrecoVenda(precoPrevistoCorrente);
+				
+			}
 		}
 
+		this.getSession().merge(produtoEdicao);
 		/**
 		 * Modificado devido ser incoerente a realizar busca por um campo e persistir outro junto com a o Eduardo "PunkRock" Castro em 05/12
 		 */
@@ -157,10 +168,34 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 								+ " Produto "+codigoProduto
 								+ " Edição " + edicao);
 				lancamento.setRepartePromocional(repartePromocional);
+				
+				
+				
+			}
+			
+			Date dataOriginal = input.getDataLancamento();
+			Date dataSugerida = lancamentoService.obterDataLancamentoValido(dataOriginal, produtoEdicao.getProduto().getFornecedor().getId());
+			final Date dataRecolhimento = this.atualizaPeb(input.getDataLancamento(), produtoEdicao);
+			
+			final boolean produtoContaFirme = (FormaComercializacao.CONTA_FIRME.equals(produtoEdicao.getProduto().getFormaComercializacao()));
+			
+			if(produtoContaFirme) {
+				
+				lancamento.setDataRecolhimentoDistribuidor(dataSugerida);// confirmado
+				
+				lancamento.setDataRecolhimentoPrevista(dataOriginal);// confirmado 
+			} else {
+				
+				Date dataRecolhimentoSugerida = recolhimentoService.obterDataRecolhimentoValido(this.getProximaDataUtil(dataRecolhimento, produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO),produtoEdicao.getProduto().getFornecedor().getId());
+
+				//lancamento.setDataRecolhimentoDistribuidor(dataRecolhimentoSugerida);// confirmado
+				lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);// confirmado
+				
+				lancamento.setDataRecolhimentoPrevista(dataRecolhimento);// confirmado 
 			}
 
 		}
-	    
+		
 		if (lancamento == null) {
 		    
 			// Cadastrar novo lançamento
@@ -219,7 +254,8 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 					
 					Date dataRecolhimentoSugerida = recolhimentoService.obterDataRecolhimentoValido(this.getProximaDataUtil(dataRecolhimento, produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO),produtoEdicao.getProduto().getFornecedor().getId());
 
-					lancamento.setDataRecolhimentoDistribuidor(dataRecolhimentoSugerida);// confirmado
+					//lancamento.setDataRecolhimentoDistribuidor(dataRecolhimentoSugerida);// confirmado
+					lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);// confirmado
 					
 					lancamento.setDataRecolhimentoPrevista(dataRecolhimento);// confirmado 
 				}
@@ -323,31 +359,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
     			Date dtLancamentoNovo = lancamentoService.obterDataLancamentoValido(this.normalizarDataSemHora(dataLancamento), new Long(produtoEdicao.getProduto().getFornecedor().getId()));
     			if (null != dtLancamentoAtual && !dtLancamentoAtual.equals(dtLancamentoNovo)) {
     				
-    				Date dataRecolhimento = this.atualizaPeb(input.getDataLancamento(), produtoEdicao);
     				
-    				if(lancamento.getDataRecolhimentoDistribuidor() != null) {
-    					
-    					this.ndsiLoggerFactory.getLogger().logInfo(message,
-    						EventoExecucaoEnum.INF_DADO_ALTERADO,
-    						"Alteração da DATA RECOLHIMENTO PREVISTO/DISTRIBUIDOR"
-    								+ " de " + DateUtil.formatarDataPTBR(lancamento.getDataRecolhimentoDistribuidor())
-    								+ " para " + DateUtil.formatarDataPTBR(dataRecolhimento)
-    								+ " Produto "+codigoProduto
-    								+ " Edição " + edicao);
-    				} else {
-    					
-        				this.ndsiLoggerFactory.getLogger().logInfo(message,
-        						EventoExecucaoEnum.INF_DADO_ALTERADO,
-        						"Alteração da DATA RECOLHIMENTO PREVISTO/DISTRIBUIDOR"
-        								+ " de Nulo"
-        								+ " para " + DateUtil.formatarDataPTBR(dataRecolhimento)
-        								+ " Produto "+codigoProduto
-        								+ " Edição " + edicao);
-    				}
-    				
-    				lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);// confirmado
-    				
-    				lancamento.setDataRecolhimentoPrevista(dataRecolhimento);// confirmado 
     				
     				boolean erroRetornoParciais = this.tratarParciais(lancamento, message, codigoProduto, edicao);
     				
@@ -358,6 +370,8 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
     				
     			}
     			
+				
+				
     			// Atualizar lançamento Distribuidor:
     			final StatusLancamento status = (lancamento.getReparte().compareTo(BigInteger.ZERO) == 0) ? StatusLancamento.CANCELADO : lancamento.getStatus();
     			
@@ -397,6 +411,32 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
     			}
 			}
 		}
+		Date dataRecolhimento = this.atualizaPeb(input.getDataLancamento(), produtoEdicao);
+		
+		if(lancamento.getDataRecolhimentoDistribuidor() != null) {
+			
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+				EventoExecucaoEnum.INF_DADO_ALTERADO,
+				"Alteração da DATA RECOLHIMENTO PREVISTO/DISTRIBUIDOR"
+						+ " de " + DateUtil.formatarDataPTBR(lancamento.getDataRecolhimentoDistribuidor())
+						+ " para " + DateUtil.formatarDataPTBR(dataRecolhimento)
+						+ " Produto "+codigoProduto
+						+ " Edição " + edicao);
+		// } else {
+			
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Alteração da DATA RECOLHIMENTO PREVISTO/DISTRIBUIDOR"
+							+ " de Nulo"
+							+ " para " + DateUtil.formatarDataPTBR(dataRecolhimento)
+							+ " Produto "+codigoProduto
+							+ " Edição " + edicao);
+		}
+		
+		lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);// confirmado
+		
+		lancamento.setDataRecolhimentoPrevista(dataRecolhimento);// confirmado 
+		this.getSession().merge(lancamento);
 	}
 	
 	private boolean tratarParciais(Lancamento lancamento, Message message, String codigoProduto, Long edicao) {
