@@ -2,7 +2,6 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Date;
 
@@ -59,7 +58,11 @@ public class ContaCorrenteVO implements Serializable {
 	@Export(label = "Total R$", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA)
 	private BigDecimal total;
 	
-
+	@Export(label = "Situação")
+	private String situacaoCadastro;
+	
+	@Export(label = "Legenda")
+	private String legenda;
 	
 	/**
 	 * Construtor padrão.
@@ -93,9 +96,7 @@ public class ContaCorrenteVO implements Serializable {
 	 * @param valorPostergado the valorPostergado to set
 	 */
 	public void setValorPostergado(BigDecimal valorPostergado) {
-		this.valorPostergado = 
-				valorPostergado != null ? 
-						valorPostergado.setScale(4, RoundingMode.HALF_UP) : valorPostergado;
+		this.valorPostergado =  valorPostergado != null ? valorPostergado.setScale(4, RoundingMode.HALF_UP) : valorPostergado;
 	}
 
 		/**
@@ -109,9 +110,7 @@ public class ContaCorrenteVO implements Serializable {
 	 * @param consignado the consignado to set
 	 */
 	public void setConsignado(BigDecimal consignado) {
-		this.consignado = 
-				consignado != null ?
-						consignado.setScale(4, RoundingMode.HALF_UP) : consignado;
+		this.consignado =  consignado != null ? consignado.setScale(4, RoundingMode.HALF_UP) : consignado;
 	}
 
 	/**
@@ -125,9 +124,7 @@ public class ContaCorrenteVO implements Serializable {
 	 * @param encalhe the encalhe to set
 	 */
 	public void setEncalhe(BigDecimal encalhe) {
-		this.encalhe = 
-				encalhe != null ? 
-						encalhe.setScale(4, RoundingMode.HALF_UP) : encalhe;
+		this.encalhe = encalhe != null ? encalhe.setScale(4, RoundingMode.HALF_UP) : encalhe;
 	}
 
 	/**
@@ -141,9 +138,7 @@ public class ContaCorrenteVO implements Serializable {
 	 * @param vendaEncalhe the vendaEncalhe to set
 	 */
 	public void setVendaEncalhe(BigDecimal vendaEncalhe) {
-		this.vendaEncalhe = 
-				vendaEncalhe != null ? 
-						vendaEncalhe.setScale(4, RoundingMode.HALF_UP) : vendaEncalhe;
+		this.vendaEncalhe = vendaEncalhe != null ? vendaEncalhe.setScale(4, RoundingMode.HALF_UP) : vendaEncalhe;
 	}
 
 	/**
@@ -157,9 +152,7 @@ public class ContaCorrenteVO implements Serializable {
 	 * @param debitoCredito the debitoCredito to set
 	 */
 	public void setDebitoCredito(BigDecimal debitoCredito) {
-		this.debitoCredito = 
-				debitoCredito != null ? 
-						debitoCredito.setScale(4, RoundingMode.HALF_UP) : debitoCredito;
+		this.debitoCredito = debitoCredito != null ? debitoCredito.setScale(4, RoundingMode.HALF_UP) : debitoCredito;
 	}
 
 	/**
@@ -173,9 +166,7 @@ public class ContaCorrenteVO implements Serializable {
 	 * @param encargos the encargos to set
 	 */
 	public void setEncargos(BigDecimal encargos) {
-		this.encargos = 
-				encargos != null ? 
-						encargos.setScale(4, RoundingMode.HALF_UP) : encargos;
+		this.encargos = encargos != null ? encargos.setScale(4, RoundingMode.HALF_UP) : encargos;
 	}
 
 	/**
@@ -189,9 +180,7 @@ public class ContaCorrenteVO implements Serializable {
 	 * @param pendente the pendente to set
 	 */
 	public void setPendente(BigDecimal pendente) {
-		this.pendente = 
-				pendente != null ? 
-						pendente.setScale(2, RoundingMode.HALF_UP) : pendente;
+		this.pendente = pendente != null ? pendente.setScale(2, RoundingMode.HALF_UP) : pendente;
 	}
 
 	/**
@@ -205,15 +194,9 @@ public class ContaCorrenteVO implements Serializable {
 	 * @param total the total to set
 	 */
 	public void setTotal(BigDecimal total) {
-		this.total = 
-				total != null ? 
-						total.setScale(2, RoundingMode.HALF_UP) : total;
+		this.total = total != null ? total.setScale(2, RoundingMode.HALF_UP) : total;
 	}
-
 	
-
-	
-
 	public Integer getNumeroCota() {
 		return numeroCota;
 	}
@@ -221,29 +204,28 @@ public class ContaCorrenteVO implements Serializable {
 	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
-
 	
-
-	
-
-	
-
-	
-
-	
-
 	public BigDecimal getValorVendaDia() {
 		return valorVendaDia;
 	}
 
 	public void setValorVendaDia(BigDecimal valorVendaDia) {
-		this.valorVendaDia = 
-				valorVendaDia != null ? 
-						valorVendaDia.setScale(4, RoundingMode.HALF_UP) : valorVendaDia;
+		this.valorVendaDia = valorVendaDia != null ? valorVendaDia.setScale(4, RoundingMode.HALF_UP) : valorVendaDia;
 	}
 
-	
-	
+	public String getSituacaoCadastro() {
+		return situacaoCadastro;
+	}
 
+	public void setSituacaoCadastro(String situacaoCadastro) {
+		this.situacaoCadastro = situacaoCadastro;
+	}
 
+	public String getLegenda() {
+		return legenda;
+	}
+
+	public void setLegenda(String legenda) {
+		this.legenda = legenda;
+	}
 }
