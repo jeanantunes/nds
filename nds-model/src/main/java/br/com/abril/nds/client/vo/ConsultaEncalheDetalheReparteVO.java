@@ -17,17 +17,19 @@ public class ConsultaEncalheDetalheReparteVO {
 	@Export(label="Nome Cota")
 	private String nomeCota;
 	
+	@Export(label="Box")
+	private String nomeBox;
+	
 	@Export(label="Reparte")
 	private Long  reparte;
 	
 	@Export(label="Encalhe")
 	private Long encalhe;
 	
-	@Export(label="Box")
+	
 	private Long idBox;
 	
-	@Export(label="Nome Box")
-	private String nomeBox;
+	
 	
 	
 	public Long getReparte() {
