@@ -3,7 +3,7 @@
 
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>%d{HH:mm:ss} [%thread] %-5level %logger - %msg%n
+			<pattern>%10(%d{yyyy-MM-dd;HH:mm:ss}) [%thread] %-5level %logger - %msg%n
 			</pattern>
 		</encoder>
 	</appender>
@@ -51,20 +51,21 @@
     </filter>
 
 		<encoder>
-			<pattern>%d{HH:mm:ss} [%thread] %-5level %logger - %msg%n
+			<pattern>%10(%d{yyyy-MM-dd;HH:mm:ss}) [%thread] %-5level %logger - %msg%n
 			</pattern>
+			
 		</encoder>
 		
 	</appender>
 	
-	 <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
-      <smtpHost>smtp.uol.com.br</smtpHost>
-       <smtpPort>587</smtpPort>
-      <from>odemir.olivatti@uol.com.br</from>
-      <to>odemir.olivatti@gmail.com</to>
-      <username>odemir.olivatti@uol.com.br</username>
-    <password>sophie@08</password>
-      <subject>ERRO NDS SERVIDOR=%property{HOSTNAME}</subject>
+	  <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
+      <smtpHost>smtp3.treelog.com.br</smtpHost>
+       <smtpPort>25</smtpPort>
+      <from>novodistrib@dgb.com.br</from>
+      <to>odemir.olivatti_INFO@abril.com.br</to>
+      <username>teste</username>
+    <password>rTZ0PAtThz</password>
+      <subject>ERRO NDS SERVIDOR=%property{HOSTNAME} INTEGRACAO CLIENT </subject>
       <layout class="ch.qos.logback.classic.PatternLayout">
       <pattern>%date %-5level %logger - %message%n</pattern>
     </layout> 
