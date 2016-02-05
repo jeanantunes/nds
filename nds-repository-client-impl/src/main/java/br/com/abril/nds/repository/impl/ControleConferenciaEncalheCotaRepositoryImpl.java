@@ -108,7 +108,7 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		
 		StringBuffer sql = new StringBuffer();
 
-		sql.append("	select	");
+		sql.append("	select	straight_join ");
 
 		sql.append("	DISTINCT(CONTROLE_CONF_ENC_COTA.ID)	as idControle ");
 		

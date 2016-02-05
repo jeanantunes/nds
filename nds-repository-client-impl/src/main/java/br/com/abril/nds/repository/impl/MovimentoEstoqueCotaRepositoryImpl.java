@@ -1371,7 +1371,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final PaginacaoVO paginacao = filtro.getPaginacao();
         
         
-          //  sql.append(" order by cota_id ");
+           sql.append(" order by cota_id ");
         
        
         final Map<String, Object> parameters = new HashMap<String, Object>();
@@ -1396,7 +1396,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         }
          parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
         parameters.put("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
-       
+        parameters.put("tipoVendaProduto",TipoVendaEncalhe.ENCALHE.name());
         
         @SuppressWarnings("rawtypes")
         final RowMapper cotaRowMapper = new RowMapper() {
@@ -4642,13 +4642,33 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    private StringBuilder obterQueryListaConsultaReparte(final FiltroConsultaEncalheDTO filtro, final boolean counting) {
 	    	
 			StringBuilder sql = new StringBuilder();
-
+			
+			final StringBuilder subSqlVendaProduto = new StringBuilder();
+	        
+			subSqlVendaProduto.append(" select COALESCE(sum( vp.QNT_PRODUTO ),0) ");
+	        subSqlVendaProduto.append(" from venda_produto vp ");
+	        subSqlVendaProduto.append(" where vp.ID_PRODUTO_EDICAO =  :idProdutoEdicao ");
+	        subSqlVendaProduto.append(" and vp.DATA_OPERACAO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
+	        subSqlVendaProduto.append(" and vp.TIPO_VENDA_ENCALHE = :tipoVendaProduto");
+	        subSqlVendaProduto.append(" and vp.TIPO_COMERCIALIZACAO_VENDA <> 'CONTA_FIRME' ");
+	        subSqlVendaProduto.append(" and vp.ID_COTA = mec.cota_id ");
+	           
+			 final StringBuilder qtdeInformadaEncalhe = new StringBuilder("select coalesce(sum(COALESCE(conf1.QTDE, 0)), 0) ");
+			 
+			 qtdeInformadaEncalhe.append(" from conferencia_encalhe conf1 ");
+			 qtdeInformadaEncalhe.append("  inner join chamada_encalhe_cota   cec on cec.id = conf1.chamada_encalhe_cota_id ");
+			 qtdeInformadaEncalhe.append(" inner join chamada_encalhe ce on ce.id = cec.CHAMADA_ENCALHE_ID ");
+			 qtdeInformadaEncalhe.append(" 		            where conf1.DATA BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
+			 qtdeInformadaEncalhe.append(" and ce.PRODUTO_EDICAO_ID = mec.produto_edicao_id ");  		
+			 qtdeInformadaEncalhe.append(" and cec.cota_id = mec.cota_id ");
+		      
 			sql.append(" 			SELECT  coalesce(pessoa.nome_fantasia, pessoa.razao_social, pessoa.nome, '') as nomeCota ,");
 			sql.append(" 		boxid as idBox,boxnome as nomeBox,");
 			sql.append(" 		       c.numero_cota as idCota,");
 			sql.append(" 		        MEC.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID,MEC.cota_id ,");
 			sql.append(" 		            SUM(COALESCE(if(tm.OPERACAO_ESTOQUE = 'SAIDA', MEC.qtde * - 1, MEC.qtde), 0)) AS REPARTE,");
-            sql.append("   				 sum(conf.qtde) AS ENCALHE   ");
+			sql.append("( ( ").append(qtdeInformadaEncalhe).append(" ) - ( ").append(subSqlVendaProduto).append(") ) as encalhe ");
+		       
 			sql.append(" 		    FROM");
 			sql.append(" 		        MOVIMENTO_ESTOQUE_COTA MEC");
 			sql.append(" 		    INNER JOIN (SELECT ");
@@ -4663,7 +4683,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" 		    INNER JOIN BOX B ON (B.id  = ccec.box_id )");
 			sql.append(" 		    INNER JOIN COTA c ON (c.id = CCEC.cota_id )");
 			sql.append(" 		    INNER JOIN PESSOA ON (PESSOA.ID = FORNECEDOR.JURIDICA_ID)");
-			sql.append(" 		    WHERE");
+			sql.append(" 		    WHERE ");
 			sql.append(" 		      CCEC.DATA_OPERACAO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
 
 			if(filtro.getIdCota() != null) {
@@ -4673,7 +4693,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	        	sql.append("  and c.box_id = :idBox" );
 	        }
 			sql.append(" 		    AND PRODUTO_EDICAO.ID = :idProdutoEdicao ");
-			sql.append(" 		    GROUP BY  CCEC.COTA_ID) AS EDICAO_ENCALHADA ON (MEC.PRODUTO_EDICAO_ID = EDICAO_ENCALHADA.ID AND MEC.COTA_ID = EDICAO_ENCALHADA.COTA_ID)");
+			sql.append(" 		    GROUP BY  CCEC.COTA_ID) AS EDICAO_ENCALHADA ON (MEC.PRODUTO_EDICAO_ID = EDICAO_ENCALHADA.ID AND MEC.COTA_ID = EDICAO_ENCALHADA.COTA_ID and MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null)");
 			sql.append(" 		    INNER JOIN cota c ON c.id = MEC.COTA_ID");
 			sql.append(" 		    INNER JOIN PESSOA ON (PESSOA.ID = c.PESSOA_ID)");
 			sql.append(" 		    INNER JOIN BOX ON (BOX.ID = c.BOX_ID)");
