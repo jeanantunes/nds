@@ -65,7 +65,7 @@
       <to>odemir.olivatti_INFO@abril.com.br</to>
       <username>teste</username>
     <password>rTZ0PAtThz</password>
-      <subject>ERRO NDS SERVIDOR=%property{HOSTNAME} INTEGRACAO CLIENT </subject>
+      <subject>ERRO NDS SERVIDOR=%property{HOSTNAME} APLICACAO </subject>
       <layout class="ch.qos.logback.classic.PatternLayout">
       <pattern>%date %-5level %logger - %message%n</pattern>
     </layout> 
