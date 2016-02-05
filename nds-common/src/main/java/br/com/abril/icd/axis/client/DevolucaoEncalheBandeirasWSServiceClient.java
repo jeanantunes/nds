@@ -47,7 +47,7 @@ public class DevolucaoEncalheBandeirasWSServiceClient {
 		String ufDistribuidor = uf;
 		String codDistribuidor = "001M";
 		Integer tipoNota = nota.getTipoNota();
-		if ( !"RJ".equals(uf) )
+		if ( "RJ".equals(uf) )
 			  tipoNota = 108;
 		Integer numNota = nota.getNumNota();
 		Integer codVolume = nota.getCodVolume();
