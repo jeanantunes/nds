@@ -618,20 +618,16 @@ public class ContaCorrenteCotaController extends BaseController {
     }
     
     
-    public void extracaoCC( Date dataExtracaoDe, Date dataExtracaoAte)
-            throws IOException {
+    public void extracaoCC( Date dataExtracaoDe, Date dataExtracaoAte) throws IOException {
        
     
     	FiltroViewContaCorrenteDTO filtro = new FiltroViewContaCorrenteDTO();
         filtro.setInicioPeriodo(dataExtracaoDe);
         filtro.setFimPeriodo(dataExtracaoAte);
         
-        
-        
         List<ContaCorrenteVO> listacc =  this.consolidadoFinanceiroService.obterContaCorrenteExtracao(filtro);
        
-        FileExporter.to("contacorrente", FileType.XLS).inHTTPResponse(this.getNDSFileHeader(),
-                filtro, listacc, ContaCorrenteVO.class, this.httpServletResponse);
+        FileExporter.to("contacorrente", FileType.XLS).inHTTPResponse(this.getNDSFileHeader(), filtro, listacc, ContaCorrenteVO.class, this.httpServletResponse);
         
         result.use(Results.nothing());
     }

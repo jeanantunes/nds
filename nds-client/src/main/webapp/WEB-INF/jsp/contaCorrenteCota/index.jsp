@@ -284,7 +284,7 @@
 		<form id="formPesquisaContaCorrente">
       <fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
    	    <legend> Pesquisar Conta-Corrente</legend>
-        <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+        <table width="980" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="33">Cota:</td>
               <td width="92">
@@ -296,8 +296,11 @@
               	<input type="text" name="cc-nomeCota" id="cc-nomeCota" onkeyup="pesquisaCotaContaCorrentCota.autoCompletarPorNome('#cc-nomeCota');" onblur="pesquisaCotaContaCorrentCota.pesquisarPorNomeCota('#cc-cota', '#cc-nomeCota');" style="width:230px;"/>
               	<input type="hidden" name="nomeCotaHidden" id="nomeCotaHidden"/>
               </td>
-              
-			   <td width="10"></td>
+			  
+			  <td width="41">Situa&ccedil;&atilde;o:</td>
+              <td width="50">
+              	<input type="text" name="situacaoCadastro" id="situacaoCadastro" disabled="disabled"/>
+              </td>
 			  
               <td width="53">Período:</td>
               
@@ -311,7 +314,7 @@
               		<input type="text" name="cc-periodoContaAte" id="cc-periodoContaAte" style="width:80px;" value="${dataAte}" />
               </td>
               
-              <td width="518">
+              <td>
               		<span class="bt_novos">
               				<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarItemContaCorrenteCota();">
               					<img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" />

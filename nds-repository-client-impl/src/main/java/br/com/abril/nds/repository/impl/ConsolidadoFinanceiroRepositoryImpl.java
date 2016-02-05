@@ -1319,34 +1319,33 @@ ConsolidadoFinanceiroRepository {
     @SuppressWarnings("unchecked")
     @Override
     public List<ContaCorrenteVO> obterContaCorrenteExtracao(final FiltroViewContaCorrenteDTO filtro) {
-    	 final StringBuilder sql = new StringBuilder("select ");      
-		 sql.append(" DT_CONSOLIDADO as dataConsolidado,");
-		 sql.append(" 	numero_cota as numeroCota, ");
-		 sql.append(" 		sum(consignado) as consignado,");
-		 sql.append(" sum(encalhe) as encalhe, ");
-		 sql.append(" 	sum((consignado - encalhe)) as valorVendaDia,");
-		 sql.append(" 	sum(valor_postergado *-1) as valorPostergado, ");
+    	final StringBuilder sql = new StringBuilder("select ");      
+		sql.append(" DT_CONSOLIDADO as dataConsolidado,");
+		sql.append(" 	numero_cota as numeroCota, ");
+		sql.append(" 		sum(consignado) as consignado,");
+		sql.append(" sum(encalhe) as encalhe, ");
+		sql.append(" 	sum((consignado - encalhe)) as valorVendaDia,");
+		sql.append(" 	sum(valor_postergado *-1) as valorPostergado, ");
 		sql.append(" 	sum(venda_encalhe) as vendaEncalhe,");
 		sql.append(" 	sum(debito_credito*-1) as debitoCredito,");
 		sql.append(" 	sum(encargos) as encargos,");
 		sql.append(" 	sum(pendente) as pendente, ");
-		sql.append(" 	sum(total *-1) total");
-		sql.append(" 	from consolidado_financeiro_cota a, cota b ");
+		sql.append(" 	sum(total *-1) total, ");
+		sql.append(" 	b.situacao_cadastro as situacaoCadastro, ");
+		sql.append(" 	d.status as legenda ");
+		sql.append(" 	from consolidado_financeiro_cota a, cota b, divida d ");
 		sql.append(" 	where DT_CONSOLIDADO between :inicioPeriodo and :fimPeriodo");
-		sql.append(" 	and cota_id = b.id ");
+		sql.append(" 	and a.cota_id = b.id ");
+		sql.append(" 	 and d.cota_id = b.id ");
 		sql.append(" 	group by 1,2");
 	    sql.append(" 	order by 1,2");
          
-        
-         
-         final Query query = this.getSession().createSQLQuery(sql.toString());
-
-             
-          query.setParameter("inicioPeriodo", filtro.getInicioPeriodo());
-          query.setParameter("fimPeriodo", filtro.getFimPeriodo());
+        final Query query = this.getSession().createSQLQuery(sql.toString());
+        query.setParameter("inicioPeriodo", filtro.getInicioPeriodo());
+        query.setParameter("fimPeriodo", filtro.getFimPeriodo());
       
-          query.setResultTransformer(new AliasToBeanResultTransformer(ContaCorrenteVO.class));
-         return  query.list();
+        query.setResultTransformer(new AliasToBeanResultTransformer(ContaCorrenteVO.class));
+        return  query.list();
     }
   
     
