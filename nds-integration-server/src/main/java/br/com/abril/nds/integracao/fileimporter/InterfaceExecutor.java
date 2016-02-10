@@ -713,7 +713,7 @@ public class InterfaceExecutor {
 			LOGGER.warn("PARAMETRO DO DISTRIBUIDOR: Parâmetro do distribuidor não foi encontrado para o código [ " + Long.parseLong(distribuidor) +"]" );
 		}
 		
-		LOGGER.error("TIPO DISTRIBUIDOR  para codigo "+Long.parseLong(distribuidor)+"  ="+parametroDistribuidor.getTipoDistribuidor());
+		LOGGER.error("TIPO DISTRIBUIDOR  para codigo "+Long.parseLong(distribuidor));
 		boolean isDistribuidorFilial = ((parametroDistribuidor != null 
 				&& TipoDistribuidor.FILIAL.equals(parametroDistribuidor.getTipoDistribuidor())));
 		
