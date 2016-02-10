@@ -47,8 +47,8 @@ a{color:#000;}
 .follow p{line-height:20px; margin-left:5px; border-bottom:1px solid #f2f2f2;}
 .follow p:hover{background:#f5f5f5; border-bottom:1px solid #ccc;}
 .follow p a{color:#000; text-decoration:underline; font-weight:bold;}
-.saudacao{width:420px!important; margin-left:80px;margin-top:100px;height:350px;}
-.suporte{width:420px!important;min-height: 177px;height:350px;text-align:center;}
+.saudacao{width:420px!important; margin-left:20px; text-align:center;height:350px;}
+.suporte{width:420px!important;min-height: 177px;height:350px; margin-left:60px}
 .feriados{width:466px;margin-left:20px;margin-top:20px;  }
 .feriados_home{float:left; width:225px;}
 .feriados_home .dia_feriado{
