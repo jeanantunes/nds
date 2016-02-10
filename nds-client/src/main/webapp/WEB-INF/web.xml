@@ -5,7 +5,7 @@
 	xmlns:jsp="http://java.sun.com/xml/ns/javaee/jsp" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
 
-	<display-name>STG-Sistema Treelog de GestÃ£o</display-name>
+	<display-name>NDS-Sistema Treelog de GestÃ£o</display-name>
 	<context-param>
 		<param-name>br.com.caelum.vraptor.encoding</param-name>
 		<param-value>UTF-8</param-value>
