@@ -1,5 +1,5 @@
 <head>
-<title>STG - Sistema Treelog de Gestão</title>
+<title>NDS - Treelog</title>
 
 <script type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/endereco.js"></script>
