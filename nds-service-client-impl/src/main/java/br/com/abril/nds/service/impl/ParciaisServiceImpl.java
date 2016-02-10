@@ -121,6 +121,9 @@ public class ParciaisServiceImpl implements ParciaisService{
 
 		PeriodoLancamentoParcial periodoPosterior = this.obterPeriodoPosterior(dataRecolhimento, idProdutoEdicao);
 		
+		if ( periodoPosterior == null || periodoPosterior.getUltimoLancamento() == null  ) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não encontrado periodo de lançamento acima da data de operacão.");
+		}
 		Date dataRecolhimentoProximoPeriodo = 
 				(Date) SerializationUtils.clone(periodoPosterior.getUltimoLancamento().getDataRecolhimentoDistribuidor());
 		
