@@ -1846,7 +1846,7 @@ public class MatrizLancamentoNovaServiceImpl implements MatrizLancamentoNovaServ
                     datasDistribuicaoDoFornecedor.add(data);
                     
                 } catch (final ValidacaoException e) {
-                    LOGGER.error(e.getMessage(), e);
+                    LOGGER.warn(e.getMessage(), e);
                     continue;
                 }
             }
