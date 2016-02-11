@@ -1321,24 +1321,24 @@ ConsolidadoFinanceiroRepository {
     @Override
     public List<ContaCorrenteVO> obterContaCorrenteExtracao(final FiltroViewContaCorrenteDTO filtro) {
     	final StringBuilder sql = new StringBuilder("select ");      
-		sql.append(" DT_CONSOLIDADO as dataConsolidado,");
-		sql.append(" 	numero_cota as numeroCota, ");
-		sql.append(" 		sum(consignado) as consignado,");
-		sql.append(" sum(encalhe) as encalhe, ");
-		sql.append(" 	sum((consignado - encalhe)) as valorVendaDia,");
-		sql.append(" 	sum(valor_postergado *-1) as valorPostergado, ");
-		sql.append(" 	sum(venda_encalhe) as vendaEncalhe,");
-		sql.append(" 	sum(debito_credito*-1) as debitoCredito,");
-		sql.append(" 	sum(encargos) as encargos,");
-		sql.append(" 	sum(pendente) as pendente, ");
-		sql.append(" 	sum(total *-1) total, ");
+    	sql.append(" DT_CONSOLIDADO as dataConsolidado,");
+    	sql.append(" numero_cota as numeroCota, ");
+		sql.append(" consignado as consignado,");
+		sql.append(" encalhe as encalhe, ");
+		sql.append(" 	(consignado - encalhe) as valorVendaDia,");
+		sql.append(" valor_postergado *-1 as valorPostergado, ");
+		sql.append(" venda_encalhe as vendaEncalhe,");
+		sql.append(" debito_credito*-1 as debitoCredito,");
+		sql.append(" encargos as encargos,");
+		sql.append(" pendente as pendente, ");
+		sql.append(" (total *-1) total, ");
 		sql.append(" 	b.situacao_cadastro as situacaoCadastro, ");
 		sql.append(" 	d.status as legenda ");
 		sql.append(" 	from consolidado_financeiro_cota a, cota b, divida d ");
 		sql.append(" 	where DT_CONSOLIDADO between :inicioPeriodo and :fimPeriodo");
 		sql.append(" 	and a.cota_id = b.id ");
-		sql.append(" 	 and d.cota_id = b.id ");
-		sql.append(" 	group by 1,2");
+		sql.append(" 	and d.cota_id = b.id ");
+		sql.append(" 	group by dataConsolidado, numeroCota ");
 	    sql.append(" 	order by 1,2");
          
         final Query query = this.getSession().createSQLQuery(sql.toString());
