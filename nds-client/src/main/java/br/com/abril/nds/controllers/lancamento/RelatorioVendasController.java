@@ -26,6 +26,8 @@ import br.com.abril.nds.client.vo.RegistroHistoricoEditorVO;
 import br.com.abril.nds.client.vo.ResultadoCurvaABCDistribuidor;
 import br.com.abril.nds.client.vo.ResultadoCurvaABCEditor;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.RegiaoDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.RegistroRankingSegmentoDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
@@ -42,6 +44,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.EditorService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.service.RelatorioVendasService;
 import br.com.abril.nds.service.TipoSegmentoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -93,6 +96,9 @@ public class RelatorioVendasController extends BaseController {
 	
 	@Autowired
 	private TipoSegmentoProdutoService tipoSegmentoProdutoService;
+	
+	@Autowired
+	private RegiaoService regiaoService;
 
 	private static final String FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE = "filtroPesquisaCurvaABCDistribuidor";
 	private static final String FILTRO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE = "filtroPesquisaCurvaABCEditor";
@@ -120,12 +126,14 @@ public class RelatorioVendasController extends BaseController {
 		result.include("editores", editorService.obterEditoresDesc());
 		result.include("municipios", enderecoService.obterMunicipiosCotas());
 		result.include("segmentacoes", tipoSegmentoProdutoService.obterTipoSegmentoProdutoOrdenados(Ordenacao.ASC));
+		this.carregarComboRegiao();
+		
 	}
 	
 	public RelatorioVendasController(Result result) {
 		this.result = result;
 	}
-
+	
 	/**
 	 * Exporta para o tipo de arquivo passado em fileType 
 	 * @param fileType
@@ -473,7 +481,7 @@ public class RelatorioVendasController extends BaseController {
 			String sortorder, String sortname, int page, int rp)
 			throws Exception {
 		pesquisarCurvaABCDistribuidor(dataDe, dataAte, 0L, "", "", null, 0L, null,
-				"", "", sortorder, sortname, page, rp);
+				"", "", null, sortorder, sortname, page, rp);
 	}
 
 	@Post
@@ -481,12 +489,29 @@ public class RelatorioVendasController extends BaseController {
 	public void pesquisarRankingSegmentacao(Long idSegmentacao, String descricaoSegmento, Date dataDe, Date dataAte, 
 			String sortorder, String sortname, int page, int rp) {
 		
-		if (idSegmentacao == null) {			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um tipo de segmento.");
-		}
-		
 		FiltroRankingSegmentoDTO filtro = new FiltroRankingSegmentoDTO(dataDe, dataAte, idSegmentacao, page, rp, sortorder, sortname);
 		
+		pesquisarPorSegmento(descricaoSegmento, filtro);
+	}
+	
+	@Post
+	@Path("/pesquisarRankingSegmentacaoAvancada")
+	public void pesquisarRankingSegmentacao(Long idSegmentacao, String descricaoSegmento, String dataDe, String dataAte,
+											Long codigoFornecedor, String codigoProduto, String nomeProduto,
+											List<Long> edicaoProduto, Long codigoEditor, Integer codigoCota,
+											String nomeCota, String municipio, Long regiaoID,
+											String sortorder, String sortname, int page, int rp) throws ParseException {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
+		
+		FiltroRankingSegmentoDTO filtro = new FiltroRankingSegmentoDTO(sdf.parse(dataDe), sdf.parse(dataAte), idSegmentacao, codigoFornecedor, codigoProduto,
+																	   nomeProduto, edicaoProduto, codigoEditor, codigoCota, nomeCota,
+																	   municipio, regiaoID, page, rp, sortorder, sortname);
+		
+		pesquisarPorSegmento(descricaoSegmento, filtro);
+	}
+
+	private void pesquisarPorSegmento(String descricaoSegmento, FiltroRankingSegmentoDTO filtro) {
 		filtro.setDescricaoTipoSegmento(descricaoSegmento);
 		
 		this.session.setAttribute(FILTRO_PESQUISA_RANKING_SEGMENTO, filtro);
@@ -556,19 +581,19 @@ public class RelatorioVendasController extends BaseController {
 	public void pesquisarCurvaABCDistribuidor(String dataDe, String dataAte,
 			Long codigoFornecedor, String codigoProduto, String nomeProduto,
 			List<Long> edicaoProduto, Long codigoEditor, Integer codigoCota,
-			String nomeCota, String municipio, String sortorder,
+			String nomeCota, String municipio, Long regiaoID, String sortorder,
 			String sortname, int page, int rp) throws Exception {
 
 		consultarCurvaABCDistribuidorProduto(dataDe, dataAte, codigoFornecedor,
 				codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
-				codigoCota, nomeCota, municipio, sortorder, sortname, page, rp,TipoConsultaCurvaABC.DISTRIBUIDOR);
+				codigoCota, nomeCota, municipio, regiaoID, sortorder, sortname, page, rp,TipoConsultaCurvaABC.DISTRIBUIDOR);
 
 	}
 
 	private void consultarCurvaABCDistribuidorProduto(String dataDe, String dataAte,
 			Long codigoFornecedor, String codigoProduto, String nomeProduto,
 			List<Long> edicaoProduto, Long codigoEditor, Integer codigoCota,
-			String nomeCota, String municipio, String sortorder,
+			String nomeCota, String municipio, Long regiaoID, String sortorder,
 			String sortname, int page, int rp, TipoConsultaCurvaABC tipoConsulta) throws ParseException, Exception {
 		
 		this.validarDadosEntradaPesquisa(dataDe, dataAte);
@@ -578,7 +603,7 @@ public class RelatorioVendasController extends BaseController {
 		FiltroCurvaABCDistribuidorDTO filtro =
 			this.carregarFiltroPesquisaDistribuidor(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor,
 											   	 	codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
-											   	 	codigoCota, nomeCota, municipio, sortorder, sortname, page, rp);
+											   	 	codigoCota, nomeCota, municipio, regiaoID, sortorder, sortname, page, rp);
 		
 		filtro.setTipoConsultaCurvaABC(tipoConsulta);
 
@@ -657,7 +682,7 @@ public class RelatorioVendasController extends BaseController {
 			String sortname, int page, int rp)
 			throws Exception {
 		pesquisarCurvaABCEditor(dataDe, dataAte, 0L, "", "", null, 0L, null,
-				"", "", sortorder, sortname, page, rp);
+				"", "", null, sortorder, sortname, page, rp);
 	}
 
 	/**
@@ -683,7 +708,7 @@ public class RelatorioVendasController extends BaseController {
 	public void pesquisarCurvaABCEditor(String dataDe, String dataAte,
 			Long codigoFornecedor, String codigoProduto, String nomeProduto,
 			List<Long> edicaoProduto, Long codigoEditor, Integer codigoCota,
-			String nomeCota, String municipio, String sortorder,
+			String nomeCota, String municipio, Long regiaoID, String sortorder,
 			String sortname, int page, int rp) throws Exception {
 
 		this.validarDadosEntradaPesquisa(dataDe, dataAte);
@@ -692,7 +717,7 @@ public class RelatorioVendasController extends BaseController {
 
 		FiltroCurvaABCEditorDTO filtroCurvaABCEditorDTO = carregarFiltroPesquisaEditor(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor,
 				codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
-				codigoCota, nomeCota, municipio, sortorder, sortname.replaceAll("Formatado", ""), page, rp);
+				codigoCota, nomeCota, municipio, regiaoID, sortorder, sortname.replaceAll("Formatado", ""), page, rp);
 
 		List<RegistroCurvaABCEditorVO> resultadoCurvaABCEditor = null;
 		
@@ -762,7 +787,7 @@ public class RelatorioVendasController extends BaseController {
 	public void pesquisarCurvaABCProduto(String dataDe, String dataAte,
 			String codigoProduto, String nomeProduto, String sortorder,
 			String sortname, int page, int rp) throws Exception {
-		pesquisarCurvaABCProduto(dataDe, dataAte, 0L, codigoProduto, nomeProduto, null, 0L, null, "", "", sortorder, sortname, page, rp);
+		pesquisarCurvaABCProduto(dataDe, dataAte, 0L, codigoProduto, nomeProduto, null, 0L, null, "", "", null, sortorder, sortname, page, rp);
 	}
 	
 	/**
@@ -788,13 +813,13 @@ public class RelatorioVendasController extends BaseController {
 	public void pesquisarCurvaABCProduto(String dataDe, String dataAte,
 			Long codigoFornecedor, String codigoProduto, String nomeProduto,
 			List<Long> edicaoProduto, Long codigoEditor, Integer codigoCota,
-			String nomeCota, String municipio, String sortorder,
+			String nomeCota, String municipio, Long regiaoID, String sortorder,
 			String sortname, int page, int rp) throws Exception {
 			validarDadosEntradaPesquisaProduto(dataDe, dataAte, codigoProduto, nomeProduto);
 			
 			consultarCurvaABCDistribuidorProduto(dataDe, dataAte, codigoFornecedor,
 					codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
-					codigoCota, nomeCota, municipio, sortorder, sortname, page, rp,TipoConsultaCurvaABC.PRODUTO);
+					codigoCota, nomeCota, municipio, regiaoID, sortorder, sortname, page, rp,TipoConsultaCurvaABC.PRODUTO);
 	}
 
 	/**
@@ -929,12 +954,12 @@ public class RelatorioVendasController extends BaseController {
 	 */
 	private FiltroCurvaABCEditorDTO carregarFiltroPesquisaEditor(Date dataDe, Date dataAte, Long codigoFornecedor, 
 			String codigoProduto, String nomeProduto, List<Long> edicaoProduto, Long codigoEditor,
-			Integer codigoCota, String nomeCota, String municipio,
+			Integer codigoCota, String nomeCota, String municipio, Long regiaoID,
 			String sortorder, String sortname, int page, int rp) {
 
 		FiltroCurvaABCEditorDTO filtro = new FiltroCurvaABCEditorDTO(dataDe, dataAte, (codigoFornecedor == null ? "" : codigoFornecedor.toString()),
 				codigoProduto, nomeProduto, edicaoProduto, (codigoEditor == null ? "" : codigoEditor.toString()),
-				codigoCota, nomeCota, municipio);
+				codigoCota, nomeCota, municipio, regiaoID);
 		
 		this.configurarPaginacaoEditorPesquisa(filtro, sortorder, sortname, page, rp);
 
@@ -970,12 +995,12 @@ public class RelatorioVendasController extends BaseController {
 	 */
 	private FiltroCurvaABCDistribuidorDTO carregarFiltroPesquisaDistribuidor(Date dataDe, Date dataAte, Long codigoFornecedor, 
 			String codigoProduto, String nomeProduto, List<Long> edicaoProduto, Long codigoEditor,
-			Integer codigoCota, String nomeCota, String municipio,
+			Integer codigoCota, String nomeCota, String municipio, Long regiaoID,
 			String sortorder, String sortname, int page, int rp) {
 
 		FiltroCurvaABCDistribuidorDTO filtro = new FiltroCurvaABCDistribuidorDTO(dataDe, dataAte, (codigoFornecedor == null ? "" : codigoFornecedor.toString()),
 				codigoProduto, nomeProduto, edicaoProduto, (codigoEditor == null ? "" : codigoEditor.toString()),
-				codigoCota, nomeCota, municipio);
+				codigoCota, nomeCota, municipio, regiaoID);
 		
 		this.configurarPaginacaoDistribuidorPesquisa(filtro, sortorder, sortname, page, rp);
 
@@ -1129,5 +1154,17 @@ public class RelatorioVendasController extends BaseController {
 			filtro.setPaginacao(paginacao);
 			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroPesquisarHistoricoEditorDTO.ColunaOrdenacaoPesquisarHistoricoEditorDTO.values(), sortname));
 		}
+	}
+	
+	public void carregarComboRegiao() {
+
+		List<ItemDTO<Long,String>> comboRegiao =  new ArrayList<ItemDTO<Long,String>>();
+		List<RegiaoDTO> regioes = regiaoService.buscarRegiao();
+
+		for (RegiaoDTO itemRegiao : regioes) {
+			comboRegiao.add(new ItemDTO<Long,String>(itemRegiao.getIdRegiao() , itemRegiao.getNomeRegiao()));
+		}
+
+		result.include("listaRegiao",comboRegiao);
 	}
 }

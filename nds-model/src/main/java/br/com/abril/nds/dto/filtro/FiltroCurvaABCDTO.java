@@ -35,6 +35,10 @@ public abstract class FiltroCurvaABCDTO extends FiltroDTO {
 	private String nomeCota;
 	
 	private String municipio;
+	
+	private Long regiaoID;
+	
+	private List<Integer> numCotasDentroDaRegiao;
 
 	private PaginacaoVO paginacao;
 	
@@ -126,4 +130,20 @@ public abstract class FiltroCurvaABCDTO extends FiltroDTO {
 		this.codigoEditor = codigoEditor;
 	}
 
+	public Long getRegiaoID() {
+		return regiaoID;
+	}
+
+	public void setRegiaoID(Long regiaoID) {
+		this.regiaoID = regiaoID;
+	}
+
+	public List<Integer> getNumCotasDentroDaRegiao() {
+		return numCotasDentroDaRegiao;
+	}
+
+	public void setNumCotasDentroDaRegiao(List<Integer> numCotasDentroDaRegiao) {
+		this.numCotasDentroDaRegiao = numCotasDentroDaRegiao;
+	}
+	
 }

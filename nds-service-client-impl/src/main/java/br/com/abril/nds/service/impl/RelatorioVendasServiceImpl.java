@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCDTO;
 import br.com.abril.nds.dto.RegistroRankingSegmentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO.TipoConsultaCurvaABC;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
@@ -30,6 +31,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.RankingRepository;
+import br.com.abril.nds.repository.RegistroCotaRegiaoRepository;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
 import br.com.abril.nds.repository.RelatorioVendasRepository.TipoPesquisaRanking;
 import br.com.abril.nds.service.RelatorioVendasService;
@@ -50,26 +52,31 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
+	@Autowired
+	private RegistroCotaRegiaoRepository registroCotaRegiaoRepository;
+	
 	private static final BigDecimal CEM = new BigDecimal(100);
 	
 	@Override
 	@Transactional
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO) {
 		
-		validarProdutoEdicao(filtroCurvaABCDistribuidorDTO);	
+		validarProdutoEdicao(filtroCurvaABCDistribuidorDTO);
+		
+		this.validarFiltroRegiao(filtroCurvaABCDistribuidorDTO);
 		
 		List<RegistroCurvaABCDistribuidorVO> lista = this.relatorioVendasRepository.obterCurvaABCDistribuidor(filtroCurvaABCDistribuidorDTO, TipoPesquisaRanking.RankingCota);
 		
+		if(lista == null || lista.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro foi encontrado"));
+		}
+		
 		BigDecimal participacaoTotal = BigDecimal.ZERO;
 		
-		if(!lista.isEmpty()){
-			
-			for(RegistroCurvaABCDistribuidorVO r : lista) {
-				if(r.getParticipacao()!=null) {
-					participacaoTotal = participacaoTotal.add(r.getParticipacao());
-				}
+		for(RegistroCurvaABCDistribuidorVO r : lista) {
+			if(r.getParticipacao()!=null) {
+				participacaoTotal = participacaoTotal.add(r.getParticipacao());
 			}
-
 		}
 	
 		this.carregarParticipacaoCurvaABCDistribuidor(lista, participacaoTotal);
@@ -95,6 +102,8 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 	@Transactional
 	public List<RegistroCurvaABCEditorVO> obterCurvaABCEditor(FiltroCurvaABCEditorDTO filtroCurvaABCEditorDTO) {
 		
+		this.validarFiltroRegiao(filtroCurvaABCEditorDTO);
+
 		List<RegistroCurvaABCEditorVO> lista = this.relatorioVendasRepository.obterCurvaABCEditor(filtroCurvaABCEditorDTO);
 		
 		BigDecimal participacaoTotal = BigDecimal.ZERO;
@@ -134,36 +143,37 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		
 		validarProdutoEdicao(filtroCurvaABCDistribuidorDTO);
 		
+		this.validarFiltroRegiao(filtroCurvaABCDistribuidorDTO);
+		
 		List<RegistroCurvaABCDistribuidorVO> lista = this.relatorioVendasRepository.obterCurvaABCDistribuidor(filtroCurvaABCDistribuidorDTO, TipoPesquisaRanking.RankingProduto);
 		
 		BigDecimal participacaoTotal = BigDecimal.ZERO;
 		
-		if(!lista.isEmpty()){
-			
-			// Merging - Merge_Fase2 - Produto produto = this.produtoRepository.obterProdutoPorCodigoProdinLike(filtroCurvaABCDistribuidorDTO.getCodigoProduto());
-			
-			FiltroCurvaABCDistribuidorDTO filtroDistribuidor = new FiltroCurvaABCDistribuidorDTO();
-
-			filtroDistribuidor.setDataDe(filtroCurvaABCDistribuidorDTO.getDataDe());
-			filtroDistribuidor.setDataAte(filtroCurvaABCDistribuidorDTO.getDataAte());
+		if(lista==null || lista.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro foi encontrado"));
+		}
 		
-			Map<Long, RankingDTO> mapRankingCota = this.rankingRepository.obterRankingCotaSomenteFaturamento(filtroDistribuidor);
+		FiltroCurvaABCDistribuidorDTO filtroDistribuidor = new FiltroCurvaABCDistribuidorDTO();
+		
+		filtroDistribuidor.setDataDe(filtroCurvaABCDistribuidorDTO.getDataDe());
+		filtroDistribuidor.setDataAte(filtroCurvaABCDistribuidorDTO.getDataAte());
+		
+		Map<Long, RankingDTO> mapRankingCota = this.rankingRepository.obterRankingCotaSomenteFaturamento(filtroDistribuidor);
+		
+		for(RegistroCurvaABCDistribuidorVO dto : lista){
 			
-			for(RegistroCurvaABCDistribuidorVO dto : lista){
-				
-				if(dto.getParticipacao()!=null) {
-					participacaoTotal = participacaoTotal.add(dto.getParticipacao());
-				}
-				
-				//buscarQuantidadeDePdvs(dto);
-				
-				if( mapRankingCota.get(dto.getIdCota()) != null ) {
-					dto.setRkCota(mapRankingCota.get(dto.getIdCota()).getRanking());
-				} else {
-					dto.setRkCota(0L);
-				}
-				
+			if(dto.getParticipacao()!=null) {
+				participacaoTotal = participacaoTotal.add(dto.getParticipacao());
 			}
+			
+			//buscarQuantidadeDePdvs(dto);
+			
+			if( mapRankingCota.get(dto.getIdCota()) != null ) {
+				dto.setRkCota(mapRankingCota.get(dto.getIdCota()).getRanking());
+			} else {
+				dto.setRkCota(0L);
+			}
+			
 		}
 	
 		carregarParticipacaoCurvaABCDistribuidor(lista, participacaoTotal);
@@ -229,6 +239,8 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, "O período deve ser especificado corretamente.");
 		}
+		
+		this.validarFiltroRegiao(filtro);
 
 		return this.relatorioVendasRepository.obterRankingSegmento(filtro);
 	}
@@ -353,6 +365,18 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 			}
 		}
 
+	}
+	
+	public void validarFiltroRegiao(FiltroCurvaABCDTO filtro){
+		
+		if(filtro.getRegiaoID() != null){
+			filtro.setNumCotasDentroDaRegiao(registroCotaRegiaoRepository.buscarNumeroCotasPorIdRegiao(filtro.getRegiaoID()));
+			
+			if(filtro.getNumCotasDentroDaRegiao().isEmpty()){
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro foi encontrado"));
+			}
+			
+		}
 	}
 	
 }
