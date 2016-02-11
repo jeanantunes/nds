@@ -152,20 +152,23 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
                    			</c:forEach> 
 						</select>
 					</td>
-					<td width="47" colspan="-1">Código:</td>
-					<td width="108">
+					
+					<td width="47" colspan="-1" class="camposProduto">Código:</td>
+					<td width="108" class="camposProduto">
 						<input type="text" style="width: 80px;" name="rel-vendas-codigoProduto" id="rel-vendas-codigoProduto"
 							   onchange="produtoEdicaoController.pesquisarPorCodigoProduto('#rel-vendas-codigoProduto', '#rel-vendas-nomeProduto', false,
 											undefined,
 											undefined);" />
 					</td>
-					<td width="52">Produto:</td>
-					<td width="213">
+					<td width="52" class="camposProduto">Produto:</td>
+					<td width="213" class="camposProduto">
 						<input type="text" style="width: 200px;" name="rel-vendas-nomeProduto" id="rel-vendas-nomeProduto" />
 					</td>
-					<td width="41">Edição:</td>
+					
+					
+					<td width="41">Edi&ccedil;&otilde;es:</td> 
 					<td>
-						<input type="text" style="width: 100px;" name="edicaoProduto" id="edicaoProduto" />
+						<input type="text" style="width: 100px;" name="edicaoProduto" id="edicaoProduto" placeholder="Separe com ;" />
 					</td>
 					<td>
 						<a href="javascript:;" onclick="relatorioVendasController.esconde_pesq_avancada();">
@@ -181,13 +184,15 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 								<option value="${editor.id}">${editor.pessoaJuridica.razaoSocial}</option>
                    			</c:forEach> 
 					</select></td>
-					<td colspan="-1">Cota:</td>
-					<td>
-						<input type="text" name="rel-vandas-numeroCota" id="rel-vandas-numeroCota" style="width: 80px;"
+					
+					<td colspan="-1" class="camposCota">Cota:</td>
+					<td class="camposCota">
+						<input type="text" name="rel-vendas-numeroCota" id="rel-vendas-numeroCota" style="width: 80px;"
 							   onchange="pesquisaCotaFiltroConsulta.pesquisarPorNumeroCota('#rel-vendas-numeroCota', '#rel-vendas-nomeCota',false,null,null);" />
 					</td>
-					<td>Nome:</td>
-					<td><input type="text" style="width: 200px;" id="rel-vendas-nomeCota" name="rel-vendas-nomeCota" /></td>
+					<td class="camposCota">Nome:</td>
+					<td class="camposCota"><input type="text" style="width: 200px;" id="rel-vendas-nomeCota" name="rel-vendas-nomeCota" /></td>
+					
 					<td>&nbsp;</td>
 					<td width="104">&nbsp;</td>
 					<td width="15">&nbsp;</td>
@@ -208,6 +213,17 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 					<td>&nbsp;</td>
 					<td><span class="bt_pesquisar"><a href="javascript:;" onclick="relatorioVendasController.pesquisarAvancada();">Pesquisar</a></span></td>
 					<td>&nbsp;</td>
+				</tr>
+				<tr class="trRegiao">
+					<td width="69">Regi&atilde;o:</td>
+						<td width="255">
+							<select name="select" id="selectRegiao" style="width: 240px;">
+								<option>Todos</option>
+	                    		<c:forEach items="${listaRegiao}" var="regiao">
+									<option value="${regiao.key}">${regiao.value}</option>
+	                   			</c:forEach> 
+							</select>
+						</td>
 				</tr>
 			</table>
 		</fieldset>

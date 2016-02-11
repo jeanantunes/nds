@@ -499,6 +499,11 @@ var relatorioVendasController = $.extend(true, {
 
 		var dataDe = $("#datepickerDe", relatorioVendasController.workspace).val();
 		var dataAte = $("#datepickerAte", relatorioVendasController.workspace).val();
+		
+		if(dataDe == '' || dataAte == ''){
+			exibirMensagem("WARNING", ['Insira um período válido!']);
+			return;
+		}
 
 		if ($('#filtro_distrib', relatorioVendasController.workspace).attr("checked") == "checked") {
 			$(".abcDistribuidorGrid", relatorioVendasController.workspace).flexOptions({
@@ -590,37 +595,51 @@ var relatorioVendasController = $.extend(true, {
 	
 	pesquisarAvancada : function() {
 		
-		if (!relatorioVendasController.validarPesquisaEdicaoAvancada()){
-			
-			exibirMensagem("WARNING", 
-						  ['Formato do campo Edição inválido! O campo Edição aceita números separados por ";". Exemplo: 99;00;11']);
-			return;
-		}
+//		if (!relatorioVendasController.validarPesquisaEdicaoAvancada()){
+//			
+//			exibirMensagem("WARNING", 
+//						  ['Formato do campo Edição inválido! O campo Edição aceita números separados por ";". Exemplo: 99;00;11']);
+//			return;
+//		}
 		
 		var dataDe = $("#datepickerDe", relatorioVendasController.workspace).val();
 		var dataAte = $("#datepickerAte", relatorioVendasController.workspace).val();
+		
+		if(dataDe == '' || dataAte == ''){
+			exibirMensagem("WARNING", ['Insira um período válido!']);
+			return;
+		}
 
 		var selectFornecedor = $("select#selectFornecedor", relatorioVendasController.workspace).val();
 		var codigoProduto    = $("#rel-vendas-codigoProduto", relatorioVendasController.workspace).val();
 		var nomeProduto      = $("#rel-vendas-nomeProduto", relatorioVendasController.workspace).val();
-		var selectEditor     = $("select#selectEditor", relatorioVendasController.workspace).val();
 		var numerocota       = $("#rel-vendas-numeroCota", relatorioVendasController.workspace).val();
 		var nomeCota         = $("#rel-vendas-nomeCota", relatorioVendasController.workspace).val();
+		var selectEditor     = $("select#selectEditor", relatorioVendasController.workspace).val();
 		var selectMunicipio  = $("select#selectMunicipio", relatorioVendasController.workspace).val();
-
+		var selectRegiao  = $("select#selectRegiao", relatorioVendasController.workspace).val();
+		
+		selectFornecedor = this.tratarSelect(selectFornecedor);
+		selectEditor = this.tratarSelect(selectEditor);
+		selectRegiao = this.tratarSelect(selectRegiao);
+		
 		var params = [
 		         {name:'dataDe', value: dataDe},
 		         {name:'dataAte', value: dataAte},
 		         {name:'codigoFornecedor', value: selectFornecedor},
 		         {name:'codigoEditor', value: selectEditor},
-		         {name:'codigoCota', value: numerocota},
-		         {name:'nomeCota', value: nomeCota},
-		         {name:'municipio', value: selectMunicipio}
+		         {name:'municipio', value: selectMunicipio},
+		         {name:'regiaoID', value: selectRegiao}
 		    ];
 		
 		params = (relatorioVendasController.atribuirNumerosEdicaoPesquisaAvancada(params));
 		
 		if ($('#filtro_distrib', relatorioVendasController.workspace).attr("checked") == "checked") {
+			
+			params.push({name:'codigoProduto', value: codigoProduto},
+						{name:'nomeProduto', value: nomeProduto},
+						{name:'codigoCota', value: numerocota},
+				        {name:'nomeCota', value: nomeCota});	
 			
 			$(".abcDistribuidorGrid", relatorioVendasController.workspace).flexOptions({
 				url: contextPath + "/lancamento/relatorioVendas/pesquisarCurvaABCDistribuidorAvancada",
@@ -634,6 +653,11 @@ var relatorioVendasController = $.extend(true, {
 			
 		} else if ($('#filtro_editor', relatorioVendasController.workspace).attr("checked") == "checked") {
 			
+			params.push({name:'codigoProduto', value: codigoProduto},
+						{name:'nomeProduto', value: nomeProduto},
+						{name:'codigoCota', value: numerocota},
+						{name:'nomeCota', value: nomeCota});
+			
 			$(".abcEditorGrid", relatorioVendasController.workspace).flexOptions({
 				url: contextPath + "/lancamento/relatorioVendas/pesquisarCurvaABCEditorAvancada",
 				params: params,
@@ -646,19 +670,18 @@ var relatorioVendasController = $.extend(true, {
 			
 		} else if ($('#filtro_produto', relatorioVendasController.workspace).attr("checked") == "checked") {
 			
-			if ($('#codigoProdutoListaProduto', relatorioVendasController.workspace).val() != "") {
-				$("#rel-vendas-codigoProduto", relatorioVendasController.workspace).val('');
-				codigoProduto=$('#codigoProdutoListaProduto', relatorioVendasController.workspace).val();
+			var codigoProdutoFiltro = $('#codigoProdutoListaProduto', relatorioVendasController.workspace).val();
+			var nomeProdutoFiltro = $('#nomeProdutoListaProduto', relatorioVendasController.workspace).val();
+			
+			if(codigoProdutoFiltro == '' && nomeProdutoFiltro == ''){
+				exibirMensagem("WARNING", ['Insira informações do produto Código ou Produto!']);
+				return;
 			}
 			
-			if ($('#nomeProdutoListaProduto', relatorioVendasController.workspace).val() != "") {
-				$("#rel-vendas-nomeProduto", relatorioVendasController.workspace).val('');
-				nomeProduto=$('#nomeProdutoListaProduto', relatorioVendasController.workspace).val();
-			}
-			
-	        params.push({name:'codigoProduto', value: codigoProduto});
-	        
-	        params.push({name:'nomeProduto', value: nomeProduto});
+	        params.push({name:'codigoProduto', value: codigoProdutoFiltro},
+	        			{name:'nomeProduto', value: nomeProdutoFiltro},
+	        			{name:'codigoCota', value: numerocota},
+			        	{name:'nomeCota', value: nomeCota});
 
 			
 			$(".abcProdutoGrid", relatorioVendasController.workspace).flexOptions({
@@ -673,12 +696,18 @@ var relatorioVendasController = $.extend(true, {
 			
 		} else if ($('#filtro_cota', relatorioVendasController.workspace).attr("checked") == "checked") {
 			
+			
 			if ($('#numeroCotaListaCota', relatorioVendasController.workspace).val() != "") {
-				numerocota=$('#numeroCotaListaCota', relatorioVendasController.workspace).val();
+				var numerocotaFiltro = $('#numeroCotaListaCota', relatorioVendasController.workspace).val();
 			}
 			if ($('#nomeCotaListaCota', relatorioVendasController.workspace).val() != "") {
-				nomeCota=$('#nomeCotaListaCota', relatorioVendasController.workspace).val();
+				var nomeCotaFiltro = $('#nomeCotaListaCota', relatorioVendasController.workspace).val();
 			}
+			
+			params.push({name:'codigoProduto', value: codigoProduto},
+						{name:'nomeProduto', value: nomeProduto},
+						{name:'codigoCota', value: numerocotaFiltro},
+						{name:'nomeCota', value: nomeCotaFiltro});
 			
 			$(".abcCotaGrid", relatorioVendasController.workspace).flexOptions({
 				url: contextPath + "/lancamento/relatorioVendas/pesquisarCurvaABCCotaAvancada",
@@ -690,8 +719,44 @@ var relatorioVendasController = $.extend(true, {
 			$(".areaBts", relatorioVendasController.workspace).show();
 			relatorioVendasController.mostra_cota();			
 			
+		}else if ($('#filtro_segmentacao', relatorioVendasController.workspace).attr("checked") == "checked") {
+		
+			var idSegmentacao = $('#selectSegmentacao', relatorioVendasController.workspace).val();
+			var descricaoSegmento = $('#selectSegmentacao option:selected', relatorioVendasController.workspace).text();
+			
+			if(idSegmentacao == '' && descricaoSegmento == ''){
+				exibirMensagem("WARNING", ['Selecione um segmento válido!']);
+				return;
+			}
+			
+			params.push({name:'codigoProduto', value: codigoProduto},
+						{name:'nomeProduto', value: nomeProduto},
+						{name:'codigoCota', value: numerocota},
+						{name:'nomeCota', value: nomeCota},
+						{name:'idSegmentacao', value: idSegmentacao},
+				        {name:'descricaoSegmento', value: descricaoSegmento});
+		
+		$(".segmentacaoGrid", relatorioVendasController.workspace).flexOptions({
+			url: contextPath + "/lancamento/relatorioVendas/pesquisarRankingSegmentacaoAvancada",
+			params: params,
+		    newp: 1,
+		});
+		
+		
+		$(".segmentacaoGrid", relatorioVendasController.workspace).flexReload();
+		$(".areaBts", relatorioVendasController.workspace).show();
+		relatorioVendasController.mostra_segmentacao();
+			
 		}
 		
+	},
+	
+	tratarSelect : function(comboBox) {
+		if(comboBox === 'Todos'){
+			return null;
+		}else{
+			return comboBox;
+		}
 	},
 	
 	abrirPopUpHistoricoEditor : function(dataDe, dataAte, codigoEditora) {
@@ -732,6 +797,10 @@ var relatorioVendasController = $.extend(true, {
 		$('.linhaProduto', relatorioVendasController.workspace).hide();
 		$('#relatorioSegmentacao', relatorioVendasController.workspace).hide();
 		$('.linhaSegmentacao', relatorioVendasController.workspace).hide();
+		$('.camposProduto', relatorioVendasController.workspace).show();
+		$('.camposCota', relatorioVendasController.workspace).show();
+		$('.trRegiao', relatorioVendasController.workspace).show();
+		
 		
 		var pathExportacaoRelatorioPDF = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=PDF&tipoRelatorio=1';
 		var pathExportacaoRelatorioXLS = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=XLS&tipoRelatorio=1';
@@ -750,6 +819,9 @@ var relatorioVendasController = $.extend(true, {
 		$('.linhaProduto', relatorioVendasController.workspace).hide();
 		$('#relatorioSegmentacao', relatorioVendasController.workspace).hide();
 		$('.linhaSegmentacao', relatorioVendasController.workspace).hide();
+		$('.camposProduto', relatorioVendasController.workspace).show();
+		$('.camposCota', relatorioVendasController.workspace).show();
+		$('.trRegiao', relatorioVendasController.workspace).show();
 		
 		var pathExportacaoRelatorioPDF = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=PDF&tipoRelatorio=2';
 		var pathExportacaoRelatorioXLS = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=XLS&tipoRelatorio=2';
@@ -765,9 +837,12 @@ var relatorioVendasController = $.extend(true, {
 		$('#relatorioProduto', relatorioVendasController.workspace).show();
 		$('#relatorioCota', relatorioVendasController.workspace).hide();
 		$('#relatorioSegmentacao', relatorioVendasController.workspace).hide();
+		$('.camposProduto', relatorioVendasController.workspace).hide();
 		$('.linhaCota', relatorioVendasController.workspace).hide();
 		$('.linhaProduto', relatorioVendasController.workspace).show();
 		$('.linhaSegmentacao', relatorioVendasController.workspace).hide();
+		$('.camposCota', relatorioVendasController.workspace).show();
+		$('.trRegiao', relatorioVendasController.workspace).show();
 
 		var pathExportacaoRelatorioPDF = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=PDF&tipoRelatorio=3';
 		var pathExportacaoRelatorioXLS = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=XLS&tipoRelatorio=3';
@@ -786,6 +861,9 @@ var relatorioVendasController = $.extend(true, {
 		$('.linhaCota', relatorioVendasController.workspace).show();
 		$('.linhaProduto', relatorioVendasController.workspace).hide();
 		$('.linhaSegmentacao', relatorioVendasController.workspace).hide();
+		$('.camposProduto', relatorioVendasController.workspace).show();
+		$('.camposCota', relatorioVendasController.workspace).hide();
+		$('.trRegiao', relatorioVendasController.workspace).hide();
 		
 		var pathExportacaoRelatorioPDF = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=PDF&tipoRelatorio=4';
 		var pathExportacaoRelatorioXLS = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=XLS&tipoRelatorio=4';
@@ -803,6 +881,9 @@ var relatorioVendasController = $.extend(true, {
 		$('#relatorioCota', relatorioVendasController.workspace).hide();
 		$('.linhaCota', relatorioVendasController.workspace).hide();
 		$('.linhaProduto', relatorioVendasController.workspace).hide();
+		$('.camposProduto', relatorioVendasController.workspace).show();
+		$('.camposCota', relatorioVendasController.workspace).show();
+		$('.trRegiao', relatorioVendasController.workspace).show();
 		
 		$('#relatorioSegmentacao', relatorioVendasController.workspace).show();
 		$('.linhaSegmentacao', relatorioVendasController.workspace).show();
