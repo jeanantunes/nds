@@ -208,9 +208,9 @@ public class DividaServiceImpl implements DividaService {
 		
 		if (dividaRaiz != null) {
 			
-			dividas.add(dividaRaiz);
+			// dividas.add(dividaRaiz);
 			
-			this.adicionarDividasRaiz(dividas, dividaRaiz);
+			// this.adicionarDividasRaiz(dividas, dividaRaiz);
 		}
 	}
 

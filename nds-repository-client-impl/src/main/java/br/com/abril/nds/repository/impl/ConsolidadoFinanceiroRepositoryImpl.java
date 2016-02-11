@@ -144,13 +144,13 @@ ConsolidadoFinanceiroRepository {
         .append("        TIPO_MOVIMENTO tipomovime5_  ")
         .append("                on movimentof3_.TIPO_MOVIMENTO_ID=tipomovime5_.ID  ")
         .append("inner join ")
-        .append("        CHAMADA_ENCALHE_COTA chamadaEncalheCota ")
-        .append("                on cota1_.ID = chamadaEncalheCota.COTA_ID ")
-        .append("inner join conferencia_encalhe conf on conf.chamada_encalhe_cota_id = chamadaEncalheCota.ID and conf.DATA = movimentos4_.data ")
-        .append("inner join ")
         .append("        CHAMADA_ENCALHE chamadaEncalhe ")
         .append("                on (produtoedi7_.ID = chamadaEncalhe.PRODUTO_EDICAO_ID ")
-        .append("                and chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID) ")
+        .append("                ) ")
+        .append("inner join ")
+        .append("        CHAMADA_ENCALHE_COTA chamadaEncalheCota ")
+        .append("                on cota1_.ID = chamadaEncalheCota.COTA_ID and chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID  ")
+        .append("inner join conferencia_encalhe conf on conf.chamada_encalhe_cota_id = chamadaEncalheCota.ID and conf.DATA = movimentos4_.data ")
         .append("where ")
         .append("        cota1_.NUMERO_COTA = :numeroCota ")
         .append("        and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
@@ -212,13 +212,14 @@ ConsolidadoFinanceiroRepository {
         .append("left outer join ")
         .append("        TIPO_MOVIMENTO tipomovime3_  ")
         .append("                on movimentof0_.TIPO_MOVIMENTO_ID=tipomovime3_.ID  ")
-        .append("inner join ")
-        .append("        CHAMADA_ENCALHE_COTA chamadaEncalheCota ")
-        .append("                on cota1_.ID = chamadaEncalheCota.COTA_ID ")
+      
         .append("inner join ")
         .append("        CHAMADA_ENCALHE chamadaEncalhe ")
         .append("                on (produtoedi5_.ID = chamadaEncalhe.PRODUTO_EDICAO_ID ")
-        .append("                and chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID) ")
+        .append("                ) ")
+         .append(" inner join ")
+        .append("        CHAMADA_ENCALHE_COTA chamadaEncalheCota ")
+        .append("                on cota1_.ID = chamadaEncalheCota.COTA_ID  and chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID   ")
         .append("inner join conferencia_encalhe conf on conf.chamada_encalhe_cota_id = chamadaEncalheCota.ID and conf.DATA = movimentos2_.data ")
         .append("where ")
         .append("        cota1_.NUMERO_COTA = :numeroCota ")
@@ -1319,34 +1320,33 @@ ConsolidadoFinanceiroRepository {
     @SuppressWarnings("unchecked")
     @Override
     public List<ContaCorrenteVO> obterContaCorrenteExtracao(final FiltroViewContaCorrenteDTO filtro) {
-    	 final StringBuilder sql = new StringBuilder("select ");      
-		 sql.append(" DT_CONSOLIDADO as dataConsolidado,");
-		 sql.append(" 	numero_cota as numeroCota, ");
-		 sql.append(" 		sum(consignado) as consignado,");
-		 sql.append(" sum(encalhe) as encalhe, ");
-		 sql.append(" 	sum((consignado - encalhe)) as valorVendaDia,");
-		 sql.append(" 	sum(valor_postergado *-1) as valorPostergado, ");
+    	final StringBuilder sql = new StringBuilder("select ");      
+		sql.append(" DT_CONSOLIDADO as dataConsolidado,");
+		sql.append(" 	numero_cota as numeroCota, ");
+		sql.append(" 		sum(consignado) as consignado,");
+		sql.append(" sum(encalhe) as encalhe, ");
+		sql.append(" 	sum((consignado - encalhe)) as valorVendaDia,");
+		sql.append(" 	sum(valor_postergado *-1) as valorPostergado, ");
 		sql.append(" 	sum(venda_encalhe) as vendaEncalhe,");
 		sql.append(" 	sum(debito_credito*-1) as debitoCredito,");
 		sql.append(" 	sum(encargos) as encargos,");
 		sql.append(" 	sum(pendente) as pendente, ");
-		sql.append(" 	sum(total *-1) total");
-		sql.append(" 	from consolidado_financeiro_cota a, cota b ");
+		sql.append(" 	sum(total *-1) total, ");
+		sql.append(" 	b.situacao_cadastro as situacaoCadastro, ");
+		sql.append(" 	d.status as legenda ");
+		sql.append(" 	from consolidado_financeiro_cota a, cota b, divida d ");
 		sql.append(" 	where DT_CONSOLIDADO between :inicioPeriodo and :fimPeriodo");
-		sql.append(" 	and cota_id = b.id ");
+		sql.append(" 	and a.cota_id = b.id ");
+		sql.append(" 	 and d.cota_id = b.id ");
 		sql.append(" 	group by 1,2");
 	    sql.append(" 	order by 1,2");
          
-        
-         
-         final Query query = this.getSession().createSQLQuery(sql.toString());
-
-             
-          query.setParameter("inicioPeriodo", filtro.getInicioPeriodo());
-          query.setParameter("fimPeriodo", filtro.getFimPeriodo());
+        final Query query = this.getSession().createSQLQuery(sql.toString());
+        query.setParameter("inicioPeriodo", filtro.getInicioPeriodo());
+        query.setParameter("fimPeriodo", filtro.getFimPeriodo());
       
-          query.setResultTransformer(new AliasToBeanResultTransformer(ContaCorrenteVO.class));
-         return  query.list();
+        query.setResultTransformer(new AliasToBeanResultTransformer(ContaCorrenteVO.class));
+        return  query.list();
     }
   
     

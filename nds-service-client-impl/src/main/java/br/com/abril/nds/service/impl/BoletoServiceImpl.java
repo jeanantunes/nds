@@ -1243,22 +1243,18 @@ public class BoletoServiceImpl implements BoletoService {
         
         Divida dividaRaiz = null;
         
-        if (divida != null) {
+        dividaRaiz = divida.getDividaRaiz();
+    	
+        if (dividaRaiz != null) {
+    		dividaRaiz.setStatus(StatusDivida.QUITADA);
+    		
+    		dividaRaiz.getCobranca().setStatusCobranca(StatusCobranca.PAGO);
+    		dividaRaiz.getCobranca().setDataPagamento(dataOperacao);
+    		
+    		dividaRepository.alterar(dividaRaiz);
+    	}
+
             
-            dividaRaiz = divida.getDividaRaiz();
-        }
-        
-        while (dividaRaiz != null) {
-            
-            dividaRaiz.setStatus(StatusDivida.QUITADA);
-            
-            dividaRaiz.getCobranca().setStatusCobranca(StatusCobranca.PAGO);
-            dividaRaiz.getCobranca().setDataPagamento(dataOperacao);
-            
-            dividaRepository.alterar(dividaRaiz);
-            
-            dividaRaiz = dividaRaiz.getDividaRaiz();
-        }
     }
     
     private MovimentoFinanceiroCotaDTO getMovimentoFinanceiroCotaDTO(final Cota cota,

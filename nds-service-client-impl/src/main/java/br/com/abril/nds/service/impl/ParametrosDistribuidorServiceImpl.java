@@ -190,7 +190,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	@PreDestroy
 	public void cleanUp() throws Exception {
 		if  ( this.couchDbClient != null ) {
-			LOGGER.error("shutdownd couchdbclient no cleanup");
+			LOGGER.warn("shutdownd couchdbclient no cleanup");
 			this.couchDbClient.shutdown();
 		}
 	}
@@ -201,7 +201,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		String codigoDistribuidor = distribuidorService.obter().getCodigoDistribuidorDinap();
 		try {
 			if  ( this.couchDbClient != null ) {
-				LOGGER.error("shutdownd couchdbclient no initcouchdbclient");
+				LOGGER.warn("shutdownd couchdbclient no initcouchdbclient");
 				this.couchDbClient.shutdown();
 			}
 			Long codigoDistribuidorNumerico = Long.parseLong(codigoDistribuidor);

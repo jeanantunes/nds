@@ -54,8 +54,8 @@ public class BooleanConverter implements Converter<Boolean> {
 		}
 		return false;
 	} catch (Exception e ) {
-    	e.printStackTrace();
-    	LOGGER.error("ERRO CONVERSAO Boolean='"+value+"'");
+ 
+    	LOGGER.warn("ERRO CONVERSAO Boolean='"+value+"'",e);
     	throw new ConversionError(MessageFormat.format(bundle.getString("is_not_a_valid_boolean"), value));    
     }	
 		

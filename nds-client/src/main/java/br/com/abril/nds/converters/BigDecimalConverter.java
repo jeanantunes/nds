@@ -55,7 +55,7 @@ public class BigDecimalConverter implements Converter<BigDecimal>{
 			return new BigDecimal(value.replaceAll("\\.","").replaceAll(",","."));
 		}   catch (Exception e ) {
 	    	e.printStackTrace();
-	    	LOGGER.error("ERRO DE CONVERSAO BIGDECIMAL='"+value+"' "+value.replaceAll(".","").replaceAll(",","."));
+	    	LOGGER.warn("ERRO DE CONVERSAO BIGDECIMAL='"+value+"' "+value.replaceAll(".","").replaceAll(",","."));
 	    	throw new ConversionError(MessageFormat.format(bundle.getString("is_not_a_valid_number"), value));    
 	    }
 	}

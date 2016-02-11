@@ -619,7 +619,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 						if ( cr1 != null )
 							LOGGER.warn("COTA "+cotaRepartePeriodosAnteriores.getCota().getId() +" ja tem em reparte na chamada final com qtd="+cr1.getReparte());
 						if (!cotasReparteLancamento.contains(cotaRepartePeriodosAnteriores) && cotaRepartePeriodosAnteriores.getReparte().intValue() > 0 ) {
-							    LOGGER.error("PARCIAL FINAL COM REPARTE 0.. INSERINDO COTA="+cotaRepartePeriodosAnteriores.getCota().getId()+ "PRODUTOEDICAo=" +produtoEdicao.getId()+" qtde="+
+							    LOGGER.warn("PARCIAL FINAL COM REPARTE 0.. INSERINDO COTA="+cotaRepartePeriodosAnteriores.getCota().getId()+ "PRODUTOEDICAo=" +produtoEdicao.getId()+" qtde="+
 							    		cotaRepartePeriodosAnteriores.getReparte().intValue());
 							    cotaRepartePeriodosAnteriores.setReparte(BigInteger.ZERO);
 							    cotaRepartePeriodosAnteriores.setParcialFinal(true);

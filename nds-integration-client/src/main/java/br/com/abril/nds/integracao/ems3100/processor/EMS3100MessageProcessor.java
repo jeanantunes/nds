@@ -65,9 +65,10 @@ public class EMS3100MessageProcessor extends AbstractRepository implements Messa
 			for(ExtratificacaoItem item : itens) {
 				
 				item.setTipoDocumento("EMS3100");
-				item.setDataOperacao(dataOperacao);
+				item.setDataOperacao(new Date(dataOperacao.getTime()));
 				item.setCodigoDistribuidor(codigoDistribuidor);
 				item.setDataCriacao(dataCriacao);
+				item.setDataRecolhimento(new Date(item.getDataRecolhimento().getTime()));
 			}
 			
 			cdbc.bulk(itens, true);
@@ -104,7 +105,8 @@ public class EMS3100MessageProcessor extends AbstractRepository implements Messa
 		.append(", (sum(case when tm.OPERACAO_ESTOQUE = 'ENTRADA' then mec.qtde else 0 end)  ")
 		.append("	- sum(case when (tm.OPERACAO_ESTOQUE = 'SAIDA' AND tm.GRUPO_MOVIMENTO_ESTOQUE <> 'ENVIO_ENCALHE') then mec.qtde else 0 end) ") 
 		.append("		- sum(case when (tm.OPERACAO_ESTOQUE = 'SAIDA' AND tm.GRUPO_MOVIMENTO_ESTOQUE = 'ENVIO_ENCALHE') then mec.qtde else 0 end)) as qtdVenda ")
-		.append(", (select count(0) from pdv pdv where pdv.cota_id = mec.cota_id) as qtdPDV ")
+		.append(", (select count(0) from pdv pdv where pdv.cota_id = mec.cota_id) as qtdPDV, ")
+		.append(" l.DATA_REC_DISTRIB as dataRecolhimento ")
 		.append(" from movimento_estoque_cota mec ")
 		.append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID ")
 		.append(" inner join lancamento l on l.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID ")
@@ -113,9 +115,12 @@ public class EMS3100MessageProcessor extends AbstractRepository implements Messa
 		.append(" inner join produto p on p.id = pe.PRODUTO_ID ")
 		.append(" where 1 = 1 ")
 		.append(" and (select cod_distribuidor_dinap from distribuidor) = :codigoDistribuidor ")
+		.append(" and l.DATA_REC_DISTRIB between '2015-01-01' and '2015-01-31' ")
+		/*
 		.append(" and l.DATA_REC_DISTRIB = (select max(data_fechamento) data_fechamento ")
 		.append(" 		from fechamento_diario fd ")
 		.append(" 		where fd.data_fechamento < (select data_operacao from distribuidor)) ")
+		*/
 		.append(" and l.status = :statusFechado ")
 		.append(" group by c.id, p.codigo, pe.NUMERO_EDICAO")
 		.append(" order by c.NUMERO_COTA, p.codigo, pe.NUMERO_EDICAO ");

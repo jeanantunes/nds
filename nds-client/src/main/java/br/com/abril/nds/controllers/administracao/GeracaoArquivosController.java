@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -690,10 +691,10 @@ public class GeracaoArquivosController extends BaseController {
 				 
 				   File arqOut = null;
 				   File dirx = new File(dirOut);
-				   FileFilter fileFilterx = new WildcardFileFilter(fc.replace(boxFc,boxDinap).replace(filialFc,"*"));
+				   FileFilter fileFilterx = new WildcardFileFilter(fc.replace("."+boxFc+".","."+boxDinap+".").replace(filialFc,"*"));
 				   File[] filesx = dirx.listFiles(fileFilterx);
 				   if ( filesx.length == 0 ) {
-					   String pathOut = dirOut +"/"+fc.replace(boxFc,boxDinap).replace(filialFc,filialDinap);
+					   String pathOut = dirOut +"/"+fc.replace("."+boxFc+".","."+boxDinap+".").replace(filialFc,filialDinap);
 						arqOut = new File(pathOut);
 				   }
 				   else {
@@ -704,15 +705,16 @@ public class GeracaoArquivosController extends BaseController {
 					   }
 				   }
 				  
+				  String charset= ("text/plain").equals(Files.probeContentType(file.toPath())) ? "iso-8859-1" : "utf-8";
 				   String fileStrFc = FileUtils.readFileToString(file);
 				   if  (arqOut.exists()) { // concatenar
 					  
 					   String fileStrDinap = FileUtils.readFileToString(arqOut);
 					   
-					   FileUtils.writeStringToFile(arqOut, fileStrDinap+fileStrFc,"UTF-8"); 
+					   FileUtils.writeStringToFile(arqOut, fileStrDinap+fileStrFc,charset); 
 				   }
 				   else {
-					   FileUtils.writeStringToFile(arqOut, fileStrFc,"UTF-8"); 
+					   FileUtils.writeStringToFile(arqOut, fileStrFc,charset); 
 				     
 				   }
 			   }

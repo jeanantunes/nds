@@ -75,7 +75,7 @@ function PesquisaCota(workspace) {
 		pesquisaCota.pesquisaRealizada = true;
 		
 		$(idCampoNomeCota, pesquisaCota.workspace).val(result.nome);
-		
+		$(situacaoCadastro, pesquisaCota.workspace).val(result.situacaoCadastro);
 		if (successCallBack) {
 			
 			successCallBack(result);
@@ -241,7 +241,7 @@ function PesquisaCota(workspace) {
 			
 			$(idCampoNumeroCota, pesquisaCota.workspace).val(result.numero);
 			$(idCampoNomeCota, pesquisaCota.workspace).val(result.nome);
-			
+			$(situacaoCadastro, pesquisaCota.workspace).val(result.situacaoCadastro);
 			if (successCallBack) {
 				successCallBack(result);
 			}

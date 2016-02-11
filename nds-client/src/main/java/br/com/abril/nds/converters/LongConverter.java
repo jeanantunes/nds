@@ -42,8 +42,7 @@ public class LongConverter implements Converter<Long> {
 		}
 		return Long.parseLong(value.trim());
     } catch (Exception e ) {
-    	e.printStackTrace();
-    	LOGGER.error("ERRO CONVERSAO LONG='"+value+"'");
+    	LOGGER.warn("ERRO CONVERSAO LONG='"+value+"'",e);
     	throw new ConversionError(MessageFormat.format(bundle.getString("is_not_a_valid_integer"), value));    
     }
 	

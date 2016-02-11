@@ -73,7 +73,7 @@ public class EnumConverter<T extends Enum<T>> implements Converter<T> {
         try {
             return Enum.valueOf(enumType, value);
         } catch (IllegalArgumentException e) {
-        	LOGGER.error("ERRO CONVERSAO ENUM'"+value+"' ");
+        	LOGGER.warn("ERRO CONVERSAO ENUM'"+value+"' ");
 			throw new ConversionError(MessageFormat.format(bundle.getString("is_not_a_valid_enum_value"), value));
         }
     }
