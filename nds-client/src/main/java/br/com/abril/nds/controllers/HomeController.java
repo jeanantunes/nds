@@ -1,7 +1,14 @@
 package br.com.abril.nds.controllers;
 
+import java.math.BigInteger;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,11 +26,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.listener.ControleSessionListener;
 import br.com.abril.nds.dto.MenuDTO;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.util.Intervalo;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
@@ -31,8 +43,6 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.http.route.Route;
 import br.com.caelum.vraptor.http.route.Router;
 import br.com.caelum.vraptor.resource.ResourceMethod;
-
-import br.com.abril.nds.client.listener.ControleSessionListener;
 
 @Resource
 @Path("/")
@@ -43,6 +53,9 @@ public class HomeController {
     
     @Value("#{properties.version}")
     protected String version;
+    
+    @Value("#{properties.changelog}")
+    protected String changeLog;
     
     @Autowired
     private final Router router;
@@ -56,6 +69,7 @@ public class HomeController {
     
     @Autowired
 	private HttpSession session;
+    
     
     /**
      * @param router
@@ -77,22 +91,69 @@ public class HomeController {
         
         final Map mapaMenus = geraMenus(getPermissoesUsuario());
         
-       
         
+        // guardar informacao do usuario que esta logando 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication != null) {
+        	
+        	session.setAttribute(ControleSessionListener.USUARIO_LOGADO,authentication.getName());
             
-            if (authentication != null) {
-            	
-            	session.setAttribute(ControleSessionListener.USUARIO_LOGADO,authentication.getName());
-                
-            }
+        }
             
-          
+        String remoteAddress = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest().getRemoteAddr();
+        
+        List l = ControleSessionListener.usuariosLogado.get(authentication.getName());
+        if ( l == null ) {
+          l = new LinkedList();
+          l.add(remoteAddress+"->"+new Date());
+          ControleSessionListener.usuariosLogado.put(authentication.getName(), l );
+        }
+        else {
+	        l.add(remoteAddress+"->"+new Date());
+	        ControleSessionListener.usuariosLogado.put(authentication.getName(), l);
+        }
        
-		
+       
         result.include("menus", mapaMenus);
         result.include("nomeUsuario", usuarioService.getNomeUsuarioLogado());
         result.include("versao", version);
+        if ( "admin".equals(authentication.getName()))
+           result.include("changes", obterInformacoesDoSistema());
+        		
+        		 
+        		 
+         		
+    }
+    
+    public String obterInformacoesDoSistema() {
+    try {
+    				
+		URL urlClass = this.getClass().getProtectionDomain().getCodeSource().getLocation();
+		 
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+	     
+    
+     	java.nio.file.Path path = java.nio.file.Paths.get(urlClass.toURI());
+     	
+     	BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
+        
+     	Date dts = new Date(attr.lastModifiedTime().toMillis());
+        
+        String  dt = format.format(dts);
+
+        return "Build:"+dt+" Versao:"+version+"</br>Usuarios Logado ("+ControleSessionListener.usuariosLogado.size()+"):</br>"+
+		    ControleSessionListener.usuariosLogado.toString()
+		   .replaceAll("],","</br> ")
+		   .replaceAll("\\{","")
+		    .replaceAll("\\}","")+
+		    "</br>Alteracoes:</br>"+changeLog;
+         
+         
+    	} catch ( Exception ee ) {
+    		LOGGER.error("Erro obtendo informacoes do sistema",ee);
+    	}
+    	return "Erro obtendo informacoes do sistema";
     }
     
     /**

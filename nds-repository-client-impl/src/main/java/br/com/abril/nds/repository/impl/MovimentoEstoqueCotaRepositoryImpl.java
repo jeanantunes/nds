@@ -2121,10 +2121,20 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
        
         final StringBuilder hql = new StringBuilder();
         
+        hql.append(" select sum(rs.quantidade) as quantidade, ");
+        
+        hql.append(" rs.produtoEdicao as produtoEdicao  ");
+        
+        hql.append(" from ( ");
+        
         hql.append(" SELECT "); 
-        hql.append("	SUM(CASE WHEN tipoMovimento.OPERACAO_ESTOQUE=:operacaoEntrada "); 
+        
+        hql.append("	SUM(CASE WHEN tipoMovimento.OPERACAO_ESTOQUE=:operacaoEntrada ");
+        
         hql.append("		THEN movimentoEstoque.QTDE "); 
+        
         hql.append("		ELSE -movimentoEstoque.QTDE END) AS quantidade, "); 
+        
         hql.append("	produtoEdicao.ID AS produtoEdicao ");
 
         hql.append(" FROM MOVIMENTO_ESTOQUE_COTA movimentoEstoque ");
@@ -2137,11 +2147,45 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
         hql.append(" WHERE  movimentoEstoque.COTA_ID= :idCota ");
 	    
-        hql.append(" AND (movimentoEstoque.DATA BETWEEN :inicio  AND :fim OR lancamento.DATA_LCTO_DISTRIBUIDOR BETWEEN :inicio  AND :fim ) "); 
+        hql.append(" AND (movimentoEstoque.DATA BETWEEN :inicio  AND :fim  ) "); 
 	    
         hql.append(" AND tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposMovimento) ");
         
-        hql.append(" GROUP BY produtoEdicao.ID, movimentoEstoque.QTDE ");
+        hql.append(" GROUP BY produtoEdicao.ID ");
+        
+        hql.append("  union ");
+        
+        hql.append(" SELECT "); 
+        
+        hql.append("  (case when (movimentoEstoque.DATA BETWEEN :inicio AND :fim ) then ");
+        
+        hql.append("	0 else SUM(CASE WHEN tipoMovimento.OPERACAO_ESTOQUE=:operacaoEntrada "); 
+        
+        hql.append("		THEN movimentoEstoque.QTDE "); 
+        
+        hql.append("		ELSE -movimentoEstoque.QTDE END)  end) AS quantidade, "); 
+        
+        hql.append("	produtoEdicao.ID AS produtoEdicao ");
+
+        hql.append(" FROM MOVIMENTO_ESTOQUE_COTA movimentoEstoque ");
+	
+        hql.append(" INNER JOIN TIPO_MOVIMENTO tipoMovimento ON movimentoEstoque.TIPO_MOVIMENTO_ID=tipoMovimento.ID "); 
+	
+        hql.append(" INNER JOIN PRODUTO_EDICAO produtoEdicao ON movimentoEstoque.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
+	
+        hql.append(" LEFT OUTER JOIN LANCAMENTO lancamento ON movimentoEstoque.LANCAMENTO_ID=lancamento.ID ");
+
+        hql.append(" WHERE  movimentoEstoque.COTA_ID= :idCota ");
+	    
+        hql.append(" AND ( lancamento.DATA_LCTO_DISTRIBUIDOR BETWEEN :inicio  AND :fim ) "); 
+	    
+        hql.append(" AND tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposMovimento) ");
+        
+        hql.append(" GROUP BY produtoEdicao.ID ");
+ 
+        hql.append("  )rs ");
+		
+        hql.append(" GROUP BY rs.produtoEdicao  ");
  
         final Query query = getSession().createSQLQuery(hql.toString());
         

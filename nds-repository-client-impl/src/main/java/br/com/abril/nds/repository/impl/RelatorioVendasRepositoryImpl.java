@@ -896,9 +896,11 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                    ");
 		sql.append("                 WHERE ");
 		sql.append("                     l.status in ('EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO')               ");
-		sql.append("                     and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE'     ");
-		sql.append("                     AND l.DATA_REC_DISTRIB BETWEEN DATE_FORMAT(:dataDe,'%Y-%m-%d') AND DATE_FORMAT(:dataAte,'%Y-%m-%d')           ");
+		sql.append("                     AND tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE'     ");
 		sql.append("                     AND tsp.ID = :tipoSegmentoID ");
+					
+		sql.append(this.getWhereFiltroCurvaABC(filtro, null));
+		
 		sql.append("                 group by ");
 		sql.append("                     pe.numero_edicao, ");
 		sql.append("                     pe.id, ");
@@ -921,42 +923,18 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("             ORDER BY ");
 		sql.append("                 ranking ");
 		
-//		sql.append(" SELECT ");
-//		sql.append("     consolidado.ranking as ranking, ");
-//		sql.append("     consolidado.participacaoAcumulada as participacaoAcumulada, ");
-//		sql.append("     consolidado.numeroCota as numeroCota, ");
-//		sql.append("     consolidado.nomeCota as nomeCota, ");
-//		sql.append("     consolidado.faturamentoCapa as faturamentoCapa, ");
-//		sql.append("     consolidado.participacao as participacao ");
-//		sql.append("   FROM ");
-//		sql.append("   ( ");
-//		
-//		sql.append(" SELECT  ");
-//		
-//		sql.append("         @ranking\\:=@ranking+1 as ranking, ");
-//		sql.append("         @partAcum\\:=@partAcum+((temp.faturamentoCapa*100)/:totalFaturamento) as participacaoAcumulada, ");
-//		sql.append("         temp.NUMERO_COTA as numeroCota, ");
-//		sql.append("         temp.nomeCota as nomeCota, ");
-//		sql.append("         temp.faturamentoCapa as faturamentoCapa, ");
-//		sql.append("         (temp.faturamentoCapa*100)/:totalFaturamento as participacao ");
-//		
-//		sql.append(this.obterFromWhereRankingSegmento(filtro));
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
-		Query query = this.getSession().createSQLQuery(sql.toString());
-
 		query.setParameter("tipoSegmentoID", filtro.getIdTipoSegmento());
+		
+		this.getWhereFiltroCurvaABC(filtro, query);
 
-		if (filtro.getDe() != null && filtro.getAte() != null) {
-			query.setParameter("dataDe", filtro.getDe());
-			query.setParameter("dataAte", filtro.getAte());
-		}
-
-		((SQLQuery) query).addScalar("ranking", StandardBasicTypes.LONG);
-		((SQLQuery) query).addScalar("participacaoAcumulada", StandardBasicTypes.BIG_DECIMAL);
-		((SQLQuery) query).addScalar("numeroCota", StandardBasicTypes.INTEGER);
-		((SQLQuery) query).addScalar("nomeCota");
-		((SQLQuery) query).addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
-		((SQLQuery) query).addScalar("participacao", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("ranking", StandardBasicTypes.LONG);
+		query.addScalar("participacaoAcumulada", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		query.addScalar("nomeCota");
+		query.addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("participacao", StandardBasicTypes.BIG_DECIMAL);
 
 		query.setResultTransformer(Transformers.aliasToBean(RegistroRankingSegmentoDTO.class));
 		
@@ -1042,6 +1020,15 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 			} else {
 				
 				query.setParameter("municipio", filtro.getMunicipio());
+			}
+		}
+		
+		if(filtro.getRegiaoID() != null && !filtro.getNumCotasDentroDaRegiao().isEmpty()){
+			
+			if (query == null){
+				sql.append(" AND c.NUMERO_COTA in (:listCota) ");
+			} else {
+				query.setParameterList("listCota", filtro.getNumCotasDentroDaRegiao());
 			}
 		}
 		

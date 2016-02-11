@@ -42,8 +42,7 @@ public class BigIntegerConverter implements Converter<BigInteger> {
 		}
 		return new BigInteger(value.replaceAll(",","."));
 	 } catch (Exception e ) {
-	    	e.printStackTrace();
-	    	LOGGER.error("ERRO CONVERSAO BIGINTEGER='"+value+"'");
+	    	LOGGER.warn("ERRO CONVERSAO BIGINTEGER='"+value+"'",e);
 	    	throw new ConversionError(MessageFormat.format(bundle.getString("is_not_a_valid_integer"), value));    
 	    }	
 	}

@@ -28,7 +28,7 @@ $(function() {
 		<div class="box_home saudacao">
 		   	<img src="${pageContext.request.contextPath}/images/logo_sistema.png" alt="Novo Distrib" class="logoHome" />
 		
-		    <h1>Seja bem-vindo ao STG</h1>
+		    <h1>Seja bem-vindo ao NDS</h1>
 		    
 			<div class="linha_separa_fields">&nbsp;</div>
 			<br clear="all">
@@ -37,7 +37,7 @@ $(function() {
 		</div>
 	
 
-		<div class="box_home follow">
+		<div  style="display:none;">
 		    <h2>Follow Up do Sistema</h2>
 		    <br clear="all" />
 		    <p>
@@ -79,7 +79,7 @@ $(function() {
 		</div>
 		
 		
-		<div class="box_home feriados">
+		<div class="box_home feriados" style="display:none;">
 	    	
 		    <h2>Feriados do Mês: Setembro/2016</h2>
 		    <br clear="all" />

@@ -39,8 +39,7 @@ public class IntegerConverter implements Converter<Integer> {
 		}
 		return Integer.parseInt(value.trim());
 	 } catch (Exception e ) {
-	    	e.printStackTrace();
-	    	LOGGER.error("ERRO CONVERSAO INTEGER='"+value+"'");
+	    	LOGGER.warn("ERRO CONVERSAO INTEGER='"+value+"'",e);
 	    	throw new ConversionError(MessageFormat.format(bundle.getString("is_not_a_valid_integer"), value));    
 	    }	
 	}

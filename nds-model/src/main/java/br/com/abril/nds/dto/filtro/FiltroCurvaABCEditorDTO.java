@@ -25,7 +25,7 @@ public class  FiltroCurvaABCEditorDTO extends FiltroCurvaABCDTO implements Seria
 	public FiltroCurvaABCEditorDTO(Date dataDe, Date dataAte,
 			String codigoFornecedor, String codigoProduto, String nomeProduto,
 			List<Long> edicaoProduto, String codigoEditor, Integer codigoCota,
-			String nomeCota, String municipio) {
+			String nomeCota, String municipio, Long regiaoID) {
 		this.setDataDe(dataDe);
 		this.setDataAte(dataAte);
 		this.setCodigoFornecedor(codigoFornecedor);
@@ -36,6 +36,7 @@ public class  FiltroCurvaABCEditorDTO extends FiltroCurvaABCDTO implements Seria
 		this.setCodigoCota(codigoCota);
 		this.setNomeCota(nomeCota);
 		this.setMunicipio(municipio);
+		this.setRegiaoID(regiaoID);
 	}
 	
 	private List<ColunaOrdenacaoCurvaABCEditor> listaColunaOrdenacao;

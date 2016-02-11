@@ -1,5 +1,5 @@
 <head>
-<title>STG - Sistema Treelog de Gestão</title>
+<title>NDS - Treelog</title>
 
 <script type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/endereco.js"></script>
@@ -98,10 +98,13 @@
                		<input name="descricaoPessoa" id="descricaoPessoa" type="text" class="nome_jornaleiro" maxlength="255"
 				      		 style="width:200px;" onkeyup="pesquisaCotaCadastroCota.autoCompletarPorNome('#descricaoPessoa');" />
                </td>
+              
+                
                <td width="83">CPF / CNPJ:</td>
                <td width="200">
                		<input type="text" name="txtCPF_CNPJ" id="txtCPF_CNPJ" style="width:180px;" maxlength="18"/>
                </td>
+              
                <td width="170">Status:	&nbsp;
                                <select name="selectStatus" id="selectStatus" style="width:120px;">
 									<option value="PENDENTE">Pendente </option>
@@ -110,7 +113,12 @@
                 					<option value="INATIVO">Inativo  </option>
                 					<option value="TODOS" selected="selected">Todos</option>
               						</select>
+              			  	<input type="text" style="display:none;" name="situacaoCadastro" id="situacaoCadastro" disabled="disabled"/>
+            
                </td>
+                
+              
+              
            </tr>
            </table>
            <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
