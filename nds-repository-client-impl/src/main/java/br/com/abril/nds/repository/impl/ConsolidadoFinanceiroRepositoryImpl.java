@@ -1320,27 +1320,29 @@ ConsolidadoFinanceiroRepository {
     @SuppressWarnings("unchecked")
     @Override
     public List<ContaCorrenteVO> obterContaCorrenteExtracao(final FiltroViewContaCorrenteDTO filtro) {
-    	final StringBuilder sql = new StringBuilder("select ");      
+    	final StringBuilder sql = new StringBuilder();
+    	sql.append("select ");
     	sql.append(" DT_CONSOLIDADO as dataConsolidado,");
     	sql.append(" numero_cota as numeroCota, ");
 		sql.append(" consignado as consignado,");
 		sql.append(" encalhe as encalhe, ");
-		sql.append(" 	(consignado - encalhe) as valorVendaDia,");
+		sql.append(" (consignado - encalhe) as valorVendaDia,");
 		sql.append(" valor_postergado *-1 as valorPostergado, ");
 		sql.append(" venda_encalhe as vendaEncalhe,");
 		sql.append(" debito_credito*-1 as debitoCredito,");
 		sql.append(" encargos as encargos,");
 		sql.append(" pendente as pendente, ");
 		sql.append(" (total *-1) total, ");
-		sql.append(" 	b.situacao_cadastro as situacaoCadastro, ");
-		sql.append(" 	d.status as legenda ");
-		sql.append(" 	from consolidado_financeiro_cota a, cota b, divida d ");
-		sql.append(" 	where DT_CONSOLIDADO between :inicioPeriodo and :fimPeriodo");
-		sql.append(" 	and a.cota_id = b.id ");
-		sql.append(" 	and d.cota_id = b.id ");
-		sql.append(" 	group by dataConsolidado, numeroCota ");
-	    sql.append(" 	order by 1,2");
-         
+		sql.append(" b.situacao_cadastro as situacaoCadastro, ");
+		sql.append(" IFNULL(d.status, 'POSTEGADO') as legenda ");
+		sql.append(" from consolidado_financeiro_cota a ");
+		sql.append(" left join divida_consolidado dc on dc.consolidado_id = a.id ");
+		sql.append(" left join divida d on d.id = dc.divida_id ");
+		sql.append(" inner join cota b on a.cota_id = b.id");
+		sql.append(" where DT_CONSOLIDADO between :inicioPeriodo and :fimPeriodo ");
+		sql.append(" group by a.id, dataConsolidado, numeroCota ");
+	    sql.append(" order by dataConsolidado, numeroCota ");
+	    
         final Query query = this.getSession().createSQLQuery(sql.toString());
         query.setParameter("inicioPeriodo", filtro.getInicioPeriodo());
         query.setParameter("fimPeriodo", filtro.getFimPeriodo());
