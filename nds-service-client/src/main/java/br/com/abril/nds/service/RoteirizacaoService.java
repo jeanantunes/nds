@@ -334,4 +334,6 @@ public interface RoteirizacaoService {
 	List<MapaRoteirizacaoDTO> obterDetalheRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro);
 
 	void roteiroTest();
+	
+	byte[] gerarRelatorio(List<MapaRoteirizacaoDTO> list, String tipo);
 }

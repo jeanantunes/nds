@@ -28,6 +28,7 @@ public class MapaRoteirizacaoDTO  implements Serializable{
 	@Export(label = "Nome", alignment = Alignment.LEFT, exhibitionOrder = 5)
 	private String nome;
 	
+	@Export(label = "Quantidade", alignment = Alignment.LEFT, exhibitionOrder = 5)
 	private Long qntCotas;
 
 	private Long idBox;

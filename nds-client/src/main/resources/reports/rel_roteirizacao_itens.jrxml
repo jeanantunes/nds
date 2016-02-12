@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="555" pageHeight="850" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
+		<paragraph leftIndent="1" tabStopWidth="30"/>
+	</style>
+	<style name="rel_ftext" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false">
+		<paragraph leftIndent="3"/>
+	</style>
+	<style name="rel_stext_centralizado" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold"/>
+	<style name="rel_ftext_centralizado" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="Estilo Zebrado" backcolor="#CCCCCC" fontName="Arial" fontSize="8">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($V{REPORT_COUNT}.intValue()%2)==0)]]></conditionExpression>
+			<style mode="Opaque" backcolor="#CCCCCC"/>
+		</conditionalStyle>
+	</style>
+	<style name="Estilo Zebrado_centralizado" backcolor="#CCCCCC" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="8">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($V{REPORT_COUNT}.intValue()%2)==0)]]></conditionExpression>
+			<style mode="Opaque" backcolor="#CCCCCC"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="itensCotas" class="java.util.Collection"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[nome]]></fieldDescription>
+	</field>
+	<field name="numeroCota" class="java.lang.Integer">
+		<fieldDescription><![CDATA[numeroCota]]></fieldDescription>
+	</field>
+	<variable name="V_QTDE_EXMS" class="java.lang.Integer" resetType="None" calculation="System">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<group name="PRODUTO">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<elementGroup>
+				<rectangle>
+					<reportElement x="0" y="0" width="550" height="20" isPrintWhenDetailOverflows="true" backcolor="#F4F4F4" uuid="72b2d1f4-200e-44d2-95f4-beb314dc91d5"/>
+				</rectangle>
+				<staticText>
+					<reportElement style="rel_ftext" x="0" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="aa76ffa3-7fab-499c-9b9d-1eec9cb4cf38"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Cota:]]></text>
+				</staticText>
+				<textField>
+					<reportElement style="rel_stext" x="26" y="0" width="49" height="20" isPrintWhenDetailOverflows="true" backcolor="#F4F4F4" uuid="c459a7e1-73b4-465b-a9e8-82292c56a977"/>
+					<textElement>
+						<font fontName="Arial Black" size="8" isBold="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{numeroCota}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="rel_ftext" x="75" y="0" width="39" height="20" isPrintWhenDetailOverflows="true" backcolor="#F4F4F4" uuid="b9929995-bf80-478e-9f1c-9b92bd513d0b"/>
+					<textElement>
+						<font fontName="Arial"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Nome:]]></text>
+				</staticText>
+				<textField>
+					<reportElement style="rel_stext" mode="Transparent" x="114" y="0" width="436" height="20" isPrintWhenDetailOverflows="true" backcolor="#F4F4F4" uuid="efb2c31b-d78c-4083-a052-6ba0333a2273"/>
+					<textElement>
+						<font fontName="Arial Black" size="9" isBold="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+				</textField>
+			</elementGroup>
+		</band>
+	</detail>
+</jasperReport>
