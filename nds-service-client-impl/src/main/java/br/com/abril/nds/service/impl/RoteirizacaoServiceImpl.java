@@ -1,8 +1,13 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -49,13 +54,21 @@ import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.RoteiroRepository;
 import br.com.abril.nds.service.BoxService;
+import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.OrdenacaoUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
-import br.com.caelum.vraptor.view.Results;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
 
 @Service
 public class RoteirizacaoServiceImpl implements RoteirizacaoService {
@@ -86,6 +99,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	
 	@Autowired
 	private RotaService rotaService;
+	
+	@Autowired
+	private ParametrosDistribuidorService parametrosDistribuidorService;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -1690,4 +1706,79 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		rotaEspecial.addPDV(rotaPdv.getPdv(), rotaPdv.getOrdem(), box);
     }
 	
+	public byte[] gerarRelatorio(List<MapaRoteirizacaoDTO> lista, String tipo) {
+		
+		InputStream logoDistribuidor = this.parametrosDistribuidorService.getLogotipoDistribuidor();
+		
+		if(tipo.equals("PDF")) {
+			return this.gerarDocumentoIreport(lista, obterDiretorioReports(), logoDistribuidor);			
+		} else { 
+			return this.exportReportToRtf(lista, obterDiretorioReports(), logoDistribuidor);
+		}	
+		
+	}
+	
+	public byte[] gerarDocumentoIreport(List<MapaRoteirizacaoDTO> list, URL diretorioReports, InputStream logoTipoDistribuidor) {
+
+		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
+		
+		String path;
+		try {
+			path = diretorioReports.toURI().getPath() + "/rel_roteirizacao_principal.jasper";
+			
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			
+			parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
+			parameters.put("LOGO_DISTRIBUIDOR", logoTipoDistribuidor);
+			
+			return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+		} catch (JRException jre) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao enviar o arquivo..."+ jre.getMessage());
+		} catch (URISyntaxException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao enviar o arquivo..."+ e.getMessage());
+		}
+	}
+	
+	public byte[] exportReportToRtf(List<MapaRoteirizacaoDTO> list, URL diretorioReports, InputStream logoTipoDistribuidor) {
+		
+		String path;
+		
+		
+		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
+		try {			
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			
+			parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
+			
+			parameters.put("LOGO_DISTRIBUIDOR", logoTipoDistribuidor);
+			
+			path = diretorioReports.toURI().getPath() + "/rel_roteirizacao_principal.jasper";			
+
+			JasperPrint jasperPrint = JasperFillManager.fillReport(path, parameters, jrDataSource);
+			
+			JRXlsExporter exporter = new JRXlsExporter();
+			
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			
+			exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+			
+			exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
+			
+			exporter.exportReport(); 
+			
+			return baos.toByteArray();
+			
+		} catch (JRException jre) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao enviar o arquivo..."+ jre.getMessage());	
+		} catch (URISyntaxException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao enviar o arquivo..."+ e.getMessage());
+		}		
+	}
+	
+	protected URL obterDiretorioReports() {
+		
+		URL urlRoteirizacao = Thread.currentThread().getContextClassLoader().getResource("reports");
+		
+		return urlRoteirizacao;
+	}	
 }

@@ -3154,6 +3154,38 @@ var roteirizacao = $.extend(true, {
     	
     },
     
+    imprimirXLS : function () {
+    	
+    	var path = contextPath + "/cadastro/roteirizacao/imprimirXLS";
+    	
+    	var data = this.getFiltro();
+    	
+    	$.fileDownload(path, {
+			httpMethod : "POST",
+			data : data,
+			successCallback: function(result) {
+				if (result.mensagens) {
+					exibirMensagem(
+						result.mensagens.tipoMensagem, 
+						result.mensagens.listaMensagens
+					);
+				}			
+			},
+            failCallback: function(result) {
+	
+        		res = $.parseJSON($(result).text());
+        		if ((typeof res != "undefined") && (typeof res.mensagens != "undefined")) {
+        			
+					exibirMensagem(
+							res.mensagens.tipoMensagem, 
+							res.mensagens.listaMensagens
+					);
+				}	
+			}
+		});
+    	
+    },
+    
     getFiltro : function() {
 		
     	var params = [];

@@ -1,6 +1,10 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -63,6 +67,13 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.export.JRRtfExporter;
+import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
+import net.sf.jasperreports.engine.util.JRLoader;
 
 @Resource
 @Path("cadastro/roteirizacao")
@@ -90,6 +101,9 @@ public class RoteirizacaoController extends BaseController {
 	@Autowired
 	private HttpSession session;
 
+	@Autowired
+	private HttpServletResponse httpResponse;
+	
 	private static final String FILTRO_PESQUISA_ROTEIRIZACAO_SESSION_ATTRIBUTE="filtroPesquisa";
 		
 	/**
@@ -1616,6 +1630,64 @@ public class RoteirizacaoController extends BaseController {
 		if(lista == null || lista.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
+		
+		byte[] arquivo = this.roteirizacaoService.gerarRelatorio(lista, "PDF");
+		
+		this.escreverArquivoParaResponse(arquivo, "extracao-roteirizacao", "PDF");
+	}
+	
+	@Path("/imprimirXLS")
+	public void imprimirXLS(FiltroConsultaRoteirizacaoDTO filtro) {
+		
+		filtro.setOrdenacaoColuna((Util.getEnumByStringValue(FiltroConsultaRoteirizacaoDTO.OrdenacaoColunaConsulta.values(), "nomeBox")));
+		
+		List<MapaRoteirizacaoDTO> lista = this.roteirizacaoService.obterDetalheRoteirizacao(filtro);
+		
+		if(lista == null || lista.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
+		byte[] arquivo = this.roteirizacaoService.gerarRelatorio(lista, "XLS");
+		
+		this.escreverArquivoParaResponse(arquivo, "extracao-roteirizacao-xls", "XLS");
+	}
+	
+	/**
+	 * Metodo utilitario para escrever arquivo em pdf
+	 */
+	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo, String tipo) {
+		
+		if(tipo.equals("PDF")) {
+			
+			this.httpResponse.setContentType("application/pdf");
+			
+			this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+ nomeArquivo +".pdf");
+		} else if (tipo.equals("XLS")) {
+			this.httpResponse.setContentType("application/vnd.ms-excel");
+			
+			this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+ nomeArquivo +".xls");
+		}
+
+		OutputStream output;
+		try {
+			
+			output = this.httpResponse.getOutputStream();
+			
+			output.write(arquivo);
+
+			this.httpResponse.getOutputStream().flush();
+			
+			this.httpResponse.getOutputStream().close();
+			
+			result.use(Results.nothing());
+			
+			if(!this.httpResponse.isCommitted()) {
+				System.out.println("olá");
+			}
+			
+		} catch (IOException e) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"Erro ao gerar relatorio");
+		}
 	}
 	
 	@Path("/test")
@@ -1624,4 +1696,4 @@ public class RoteirizacaoController extends BaseController {
 		
 		result.use(Results.json()).from("sucess").recursive().serialize();
 	}
-}
+}	

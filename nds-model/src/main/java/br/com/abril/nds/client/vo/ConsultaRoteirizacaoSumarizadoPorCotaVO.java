@@ -1,13 +1,15 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
+import java.util.List;
 
+import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class ConsultaRoteirizacaoSumarizadoPorCotaVO  implements Serializable{
+public class ConsultaRoteirizacaoSumarizadoPorCotaVO  implements Serializable {
 
 	private static final long serialVersionUID = 1126569312876362107L;
 
@@ -22,7 +24,10 @@ public class ConsultaRoteirizacaoSumarizadoPorCotaVO  implements Serializable{
 	
 	@Export(label = "Qtd. Cotas", alignment = Alignment.LEFT, exhibitionOrder = 4)
 	private Long qntCotas;
-
+	
+	
+	private List<ConsultaRoteirizacaoDTO> itens;
+	
 	/**
 	 * Obtém nomeBox
 	 *
@@ -89,6 +94,13 @@ public class ConsultaRoteirizacaoSumarizadoPorCotaVO  implements Serializable{
 	 */
 	public void setQntCotas(Long qntCotas) {
 		this.qntCotas = qntCotas;
+	}
+
+	public List<ConsultaRoteirizacaoDTO> getItens() {
+		return itens;
+	}
+
+	public void setItens(List<ConsultaRoteirizacaoDTO> itens) {
+		this.itens = itens;
 	}	
-	
 }
