@@ -6,6 +6,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.justInput.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/roteirizacao.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <style>
 label{ vertical-align:super;}
 .linha_separa_fields{width:880px!important;}
@@ -33,6 +34,8 @@ $("#cotaPesquisa",roteirizacao.workspace).justInput(/[0-9]/);
 			<div id="botoesExportacao" style="display:none;">
 				<span class="bt_arq"><a href="javascript:;" onclick="roteirizacao.exportar('XLS');" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
 	    		<span class="bt_arq"><a href="javascript:;" onclick="roteirizacao.exportar('PDF');" rel="tipsy" title="Imprimir"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" /></a></span>
+	    		<span class="bt_arq"><a href="javascript:;" onclick="roteirizacao.imprimir();" rel="tipsy" title="Imprimir"><img src="${pageContext.request.contextPath}/images/bt_expedicao.png" alt="Imprimir PDF" hspace="5" border="0" /></a></span>
+	    		<span class="bt_arq"><a href="javascript:;" onclick="roteirizacao.imprimirXLS();" rel="tipsy" title="Imprimir XLS"><img src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" alt="Extração Excel" hspace="5" border="0" /></a></span>
     		</div>
 		</div>
 	</div>
