@@ -274,7 +274,7 @@ public class CotaDAO {
 			if ((cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) && (cota.getClassificacao().getCodigo().equalsIgnoreCase(""))) {
 			    cota.setClassificacao(ClassificacaoCota.BancaSuspensa);
 			}else{
-				if (rs.getBoolean("COTA_EXCECAO_SEGMENTO")) {
+				if (rs.getBoolean("COTA_EXCECAO_SEGMENTO") && !cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
 				    cota.setClassificacao(ClassificacaoCota.CotaExcecaoSegmento);
 				}
 			}
