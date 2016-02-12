@@ -57,6 +57,7 @@ import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.OrdenacaoUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -102,6 +103,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	
 	@Autowired
 	private ParametrosDistribuidorService parametrosDistribuidorService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -1710,15 +1714,17 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		
 		InputStream logoDistribuidor = this.parametrosDistribuidorService.getLogotipoDistribuidor();
 		
+		String razaoSocial = this.distribuidorService.obterRazaoSocialDistribuidor();
+		
 		if(tipo.equals("PDF")) {
-			return this.gerarDocumentoIreport(lista, obterDiretorioReports(), logoDistribuidor);			
+			return this.gerarDocumentoIreport(lista, obterDiretorioReports(), logoDistribuidor, razaoSocial);			
 		} else { 
-			return this.exportReportToRtf(lista, obterDiretorioReports(), logoDistribuidor);
+			return this.exportReportToRtf(lista, obterDiretorioReports(), logoDistribuidor, razaoSocial);
 		}	
 		
 	}
 	
-	public byte[] gerarDocumentoIreport(List<MapaRoteirizacaoDTO> list, URL diretorioReports, InputStream logoTipoDistribuidor) {
+	public byte[] gerarDocumentoIreport(List<MapaRoteirizacaoDTO> list, URL diretorioReports, InputStream logoTipoDistribuidor, String razaoSocial) {
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 		
@@ -1729,7 +1735,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			
 			parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
-			parameters.put("LOGO_DISTRIBUIDOR", logoTipoDistribuidor);
+			parameters.put("IMAGEM", logoTipoDistribuidor);
+			parameters.put("NOME_RELATORIO", "Extração das Roteirizações!");
+			parameters.put("NOME_DISTRIBUIDOR", razaoSocial);
 			
 			return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 		} catch (JRException jre) {
@@ -1739,7 +1747,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		}
 	}
 	
-	public byte[] exportReportToRtf(List<MapaRoteirizacaoDTO> list, URL diretorioReports, InputStream logoTipoDistribuidor) {
+	public byte[] exportReportToRtf(List<MapaRoteirizacaoDTO> list, URL diretorioReports, InputStream logoTipoDistribuidor, String razaoSocial) {
 		
 		String path;
 		
@@ -1750,7 +1758,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			
 			parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
 			
-			parameters.put("LOGO_DISTRIBUIDOR", logoTipoDistribuidor);
+			parameters.put("IMAGEM", logoTipoDistribuidor);
+			parameters.put("NOME_RELATORIO", "Extração das Roteirizações!");
+			parameters.put("NOME_DISTRIBUIDOR", razaoSocial);
 			
 			path = diretorioReports.toURI().getPath() + "/rel_roteirizacao_principal.jasper";			
 
