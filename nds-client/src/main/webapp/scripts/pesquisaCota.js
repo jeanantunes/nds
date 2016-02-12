@@ -75,7 +75,9 @@ function PesquisaCota(workspace) {
 		pesquisaCota.pesquisaRealizada = true;
 		
 		$(idCampoNomeCota, pesquisaCota.workspace).val(result.nome);
-		$(situacaoCadastro, pesquisaCota.workspace).val(result.situacaoCadastro);
+		try {
+			$(situacaoCadastro, pesquisaCota.workspace).val(result.situacaoCadastro);
+		    } catch (ee ) {};
 		if (successCallBack) {
 			
 			successCallBack(result);
@@ -241,7 +243,9 @@ function PesquisaCota(workspace) {
 			
 			$(idCampoNumeroCota, pesquisaCota.workspace).val(result.numero);
 			$(idCampoNomeCota, pesquisaCota.workspace).val(result.nome);
-			$(situacaoCadastro, pesquisaCota.workspace).val(result.situacaoCadastro);
+			try {
+		   	   $(situacaoCadastro, pesquisaCota.workspace).val(result.situacaoCadastro);
+				} catch ( ee ) {};
 			if (successCallBack) {
 				successCallBack(result);
 			}
