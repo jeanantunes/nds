@@ -175,9 +175,21 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
         sql.append("  left join pdv pdv_default on pdv_default.COTA_ID=c.ID ");
 
-        sql.append("  left join (select cota_id cota_id, count(*) quantidade ");
-        sql.append("             from pdv as pdvs ");
-        sql.append("             group by cota_id) pdv_qtd on pdv_qtd.cota_id = c.id ");
+        //sql.append("  left join (select cota_id cota_id, count(*) quantidade ");
+        //sql.append("             from pdv as pdvs ");
+        //sql.append("             group by cota_id) pdv_qtd on pdv_qtd.cota_id = c.id ");
+        
+        sql.append(" LEFT JOIN (select count(pdv.id) as quantidade, pdv.COTA_ID as cota_id from pdv  ");
+        sql.append("                   join endereco_pdv epdv ");
+        sql.append("                   on epdv.PDV_ID = pdv.ID ");
+        sql.append("                   WHERE (epdv.PRINCIPAL = 1 ");
+        sql.append("                   OR epdv.PRINCIPAL = 0  ");
+        sql.append("                     AND epdv.ID =  ");
+        sql.append("                       (SELECT max(enderecopd7_.ID) ");
+        sql.append("                         FROM ENDERECO_PDV enderecopd7_ ");
+        sql.append("                       WHERE enderecopd7_.PDV_ID = pdv.ID)) ");
+        sql.append("                       GROUP BY cota_id) pdv_qtd       ");
+        sql.append("           ON pdv_qtd.cota_id = c.id ");
         
         sql.append(" left join estudo_cota_gerado ecg_origem on ecg_origem.estudo_id = e.estudo_origem_copia and ecg_origem.COTA_ID = ec.cota_id ");
         
