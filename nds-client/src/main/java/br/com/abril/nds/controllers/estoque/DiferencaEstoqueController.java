@@ -1227,6 +1227,7 @@ TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
         	BigInteger totalCotas = BigInteger.ZERO;
         	
         	for (RateioCotaVO rateioCadastrado : listaRateiosCadastrados) {
+        	  if ( listaNovosRateios != null )
         		for (RateioCotaVO rateioParaCadastro : listaNovosRateios) {
 					if(rateioCadastrado.getNumeroCota().equals(rateioParaCadastro.getNumeroCota())){
 						numCotasValidacao.add(rateioParaCadastro.getNumeroCota());
