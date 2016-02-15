@@ -107,6 +107,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			message.getHeader().put(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue(), "Erro ao processar registro. "+ e.getMessage());
+		    getSession().clear();
 		} finally {
 			
 			if (connection != null) {
