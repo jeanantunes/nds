@@ -507,6 +507,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append("         	on cb.DIVIDA_ID = dv.ID ")
            .append("         where ")
            .append("         dv.STATUS in ('EM_ABERTO', 'PENDENTE_INADIMPLENCIA') ")
+           .append("         	and cb.STATUS_COBRANCA = :statusCobrancaNaoPago ")
            .append("         	and cb.DT_VENCIMENTO < :dataOperacao ")
            .append("         group by dv.id) ")
            
