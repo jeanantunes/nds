@@ -1623,7 +1623,7 @@ public class RoteirizacaoController extends BaseController {
 	@Path("/imprimir")
 	public void imprimir(FiltroConsultaRoteirizacaoDTO filtro) {
 		
-		filtro.setOrdenacaoColuna((Util.getEnumByStringValue(FiltroConsultaRoteirizacaoDTO.OrdenacaoColunaConsulta.values(), "nomeBox")));
+		filtro.setOrdenacaoColuna((Util.getEnumByStringValue(FiltroConsultaRoteirizacaoDTO.OrdenacaoColunaConsulta.values(), "roteirizacao")));
 		
 		List<MapaRoteirizacaoDTO> lista = this.roteirizacaoService.obterDetalheRoteirizacao(filtro);
 		
@@ -1639,7 +1639,7 @@ public class RoteirizacaoController extends BaseController {
 	@Path("/imprimirXLS")
 	public void imprimirXLS(FiltroConsultaRoteirizacaoDTO filtro) {
 		
-		filtro.setOrdenacaoColuna((Util.getEnumByStringValue(FiltroConsultaRoteirizacaoDTO.OrdenacaoColunaConsulta.values(), "nomeBox")));
+		filtro.setOrdenacaoColuna((Util.getEnumByStringValue(FiltroConsultaRoteirizacaoDTO.OrdenacaoColunaConsulta.values(), "roteirizacao")));
 		
 		List<MapaRoteirizacaoDTO> lista = this.roteirizacaoService.obterDetalheRoteirizacao(filtro);
 		

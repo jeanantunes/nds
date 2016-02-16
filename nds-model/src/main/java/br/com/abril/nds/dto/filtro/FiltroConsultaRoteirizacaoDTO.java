@@ -42,7 +42,8 @@ public class FiltroConsultaRoteirizacaoDTO extends FiltroDTO implements Serializ
 		ROTEIRO("descricaoRoteiro"),
 		NUMERO_COTA("numeroCota"),
 		NOME_COTA("nome"),
-		QNT_COTA("qntCotas");
+		QNT_COTA("qntCotas"),
+		ROTEIRIZACAO("roteirizacao");
 		
 		private String nomeColuna;
 		
