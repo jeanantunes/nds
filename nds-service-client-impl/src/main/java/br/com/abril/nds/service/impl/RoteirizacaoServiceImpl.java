@@ -70,6 +70,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 @Service
 public class RoteirizacaoServiceImpl implements RoteirizacaoService {
@@ -1762,7 +1763,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			parameters.put("NOME_RELATORIO", "Extração das Roteirizações!");
 			parameters.put("NOME_DISTRIBUIDOR", razaoSocial);
 			
-			path = diretorioReports.toURI().getPath() + "/rel_roteirizacao_principal.jasper";			
+			path = diretorioReports.toURI().getPath() + "/rel_roteirizacao_principal_xls.jasper";			
 
 			JasperPrint jasperPrint = JasperFillManager.fillReport(path, parameters, jrDataSource);
 			
@@ -1770,9 +1771,20 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			
-			exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+			exporter.setParameter(JRXlsExporterParameter.JASPER_PRINT, jasperPrint);
 			
 			exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
+			
+			exporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE,
+	Boolean.TRUE);
+			exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS,Boolean.TRUE);
+	exporter.setParameter(JRXlsExporterParameter.MAXIMUM_ROWS_PER_SHEET,Integer.decode("65000"));
+	exporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE,
+	Boolean.TRUE);
+	exporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND,
+	Boolean.FALSE);
+	exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS,Boolean.TRUE);
+			
 			
 			exporter.exportReport(); 
 			

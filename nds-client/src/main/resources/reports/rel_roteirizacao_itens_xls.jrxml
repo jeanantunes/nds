@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="555" pageHeight="850" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_roteirizacao_itens_xls" pageWidth="555" pageHeight="850" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -46,32 +46,32 @@
 				<reportElement x="0" y="0" width="550" height="20" backcolor="#F4F4F4" uuid="0b66de15-02d6-4764-873c-0db07b28053c"/>
 			</rectangle>
 			<staticText>
-				<reportElement style="rel_ftext" x="0" y="0" width="40" height="20" uuid="aa76ffa3-7fab-499c-9b9d-1eec9cb4cf38"/>
+				<reportElement style="rel_ftext" mode="Opaque" x="0" y="0" width="40" height="20" forecolor="#FFFFFF" backcolor="#0099CC" uuid="aa76ffa3-7fab-499c-9b9d-1eec9cb4cf38"/>
 				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement>
-					<font fontName="Arial" isBold="true"/>
+					<font fontName="Arial" isBold="false"/>
 					<paragraph leftIndent="2"/>
 				</textElement>
-				<text><![CDATA[Cota:]]></text>
+				<text><![CDATA[Cota]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="rel_ftext" x="40" y="0" width="510" height="20" backcolor="#F4F4F4" uuid="b9929995-bf80-478e-9f1c-9b92bd513d0b"/>
+				<reportElement style="rel_ftext" mode="Opaque" x="40" y="0" width="510" height="20" forecolor="#FFFFFF" backcolor="#0099CC" uuid="b9929995-bf80-478e-9f1c-9b92bd513d0b"/>
 				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement>
-					<font fontName="Arial"/>
+					<font fontName="Arial" isBold="false"/>
 					<paragraph leftIndent="2"/>
 				</textElement>
-				<text><![CDATA[Nome:]]></text>
+				<text><![CDATA[Nome]]></text>
 			</staticText>
 		</band>
 	</pageHeader>
@@ -84,13 +84,13 @@
 				<textField>
 					<reportElement style="rel_stext" x="0" y="0" width="40" height="20" isPrintWhenDetailOverflows="true" backcolor="#F4F4F4" uuid="c459a7e1-73b4-465b-a9e8-82292c56a977"/>
 					<box>
-						<topPen lineWidth="1.0"/>
-						<leftPen lineWidth="1.0"/>
-						<bottomPen lineWidth="1.0"/>
-						<rightPen lineWidth="1.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement>
-						<font fontName="Arial Black" size="8" isBold="true"/>
+						<font fontName="Arial" size="8" isBold="false"/>
 						<paragraph leftIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{numeroCota}]]></textFieldExpression>
@@ -98,13 +98,13 @@
 				<textField>
 					<reportElement style="rel_stext" mode="Transparent" x="40" y="0" width="510" height="20" isPrintWhenDetailOverflows="true" backcolor="#F4F4F4" uuid="efb2c31b-d78c-4083-a052-6ba0333a2273"/>
 					<box>
-						<topPen lineWidth="1.0"/>
-						<leftPen lineWidth="1.0"/>
-						<bottomPen lineWidth="1.0"/>
-						<rightPen lineWidth="1.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement>
-						<font fontName="Arial Black" size="9" isBold="true"/>
+						<font fontName="Arial" size="9" isBold="false"/>
 						<paragraph leftIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>

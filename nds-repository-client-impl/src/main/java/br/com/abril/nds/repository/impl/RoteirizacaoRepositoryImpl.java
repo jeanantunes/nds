@@ -262,7 +262,11 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 				
 			case QNT_COTA:
 				hql.append(" order by qntCotas ");
-				break;		
+				break;
+				
+			case ROTEIRIZACAO:
+				hql.append(" order by box.codigo, roteiro.ordem, rota.ordem, rotaPdv.ordem, cota.numeroCota ");
+				break;	
 				
 			default:
 				hql.append(" order by nomeBox ");
@@ -480,7 +484,9 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 			
 		hql.append( getHqlWhere(filtro));
 	
-		hql.append(" group by box.codigo, box.id, rota.descricaoRota, rota.id, roteiro.descricaoRoteiro, roteiro.id ");
+		hql.append(" group by box.codigo, box.id, roteiro.ordem, rota.ordem ");
+		
+		//hql.append(" group by box.codigo, roteiro.ordem, rota.ordem, rotaPdv.ordem, cota.numeroCota ");
 		
 		hql.append(getOrdenacaoConsulta(filtro));
 		
