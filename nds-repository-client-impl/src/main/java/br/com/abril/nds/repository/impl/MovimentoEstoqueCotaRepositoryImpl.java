@@ -4707,7 +4707,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			 qtdeInformadaEncalhe.append(" and cec.cota_id = mec.cota_id ");
 		      
 			sql.append(" 			SELECT  coalesce(pessoa.nome_fantasia, pessoa.razao_social, pessoa.nome, '') as nomeCota ,");
-			sql.append(" 		boxid as idBox,boxnome as nomeBox,");
+			sql.append(" 			boxid as idBox,boxnome as nomeBox,tipobox as tipobox,");
 			sql.append(" 		       c.numero_cota as idCota,");
 			sql.append(" 		        MEC.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID,MEC.cota_id ,");
 			sql.append(" 		            SUM(COALESCE(if(tm.OPERACAO_ESTOQUE = 'SAIDA', MEC.qtde * - 1, MEC.qtde), 0)) AS REPARTE,");
@@ -4716,7 +4716,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" 		    FROM");
 			sql.append(" 		        MOVIMENTO_ESTOQUE_COTA MEC");
 			sql.append(" 		    INNER JOIN (SELECT ");
-			sql.append(" 		        distinct PRODUTO_EDICAO.ID AS ID, b.id as boxid, b.nome as boxnome,CCEC.COTA_ID as COTA_ID");
+			sql.append(" 		        distinct PRODUTO_EDICAO.ID AS ID, b.id as boxid,b.tipo_box as tipobox, b.nome as boxnome,CCEC.COTA_ID as COTA_ID");
 			sql.append(" 		    FROM");
 			sql.append(" 		        CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC");
 			sql.append(" 		    INNER JOIN CONFERENCIA_ENCALHE ON (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = CCEC.ID)");
@@ -4763,6 +4763,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			if(filtro.getIdBox() != null) {
 	        	sql.append("  and c.box_id = :idBox" );
 	        }
+			sql.append("  and tipobox = 'ENCALHE' " );  // FILTRO PARA NAO PEGAR COTA AUSENTE
 			sql.append(" 		            AND MEC.LANCAMENTO_ID is not null");
 			sql.append(" 		            AND MEC.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME'");
 			sql.append(" 		    GROUP BY MEC.COTA_ID");
