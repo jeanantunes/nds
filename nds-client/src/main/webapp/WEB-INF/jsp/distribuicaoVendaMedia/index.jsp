@@ -519,11 +519,14 @@ function limparLstExcecao1(){
                 <fieldset style="width:600px!important; margin-bottom:10px;">
     <legend>Bonificação</legend>
     <table width="594" border="0" cellspacing="2" cellpadding="2">
+        
+        <!-- 
         <tr class="header_table">
             <td>Componentes</td>
             <td style="width:10px;">&nbsp;</td>
             <td>Elementos</td>
-            </tr>
+        </tr>
+         -->
     	<tr>
             <td width="281" valign="top">
                 <table class="lstComponentesGrid">
@@ -852,7 +855,7 @@ $(".elemento1Grid").flexigrid({
 	colModel : [ {
 		display : 'Componentes',
 		name : 'componenteDesc',
-		width : 120,
+		width : 102,
 		sortable : true,
 		align : 'left'
 	}, {
@@ -874,9 +877,9 @@ $(".elemento1Grid").flexigrid({
 		sortable : true,
 		align : 'center'
 	}, {
-		display : 'Todas<br/> as Cotas',
+		display : 'Todas Cotas',
 		name : 'sel',
-		width : 45,
+		width : 63,
 		sortable : true,
 		align : 'center'
 	}, {
@@ -887,7 +890,7 @@ $(".elemento1Grid").flexigrid({
 		align : 'center'
 	}],
 	width : 580,
-	height : 130
+	height : 110
 });
 
 
@@ -908,7 +911,7 @@ $(".bonificacoesGrid").flexigrid({
 		align : 'center'
 	}],
 	width : 280,
-	height : 110
+	height : 175
 });
 
 
@@ -970,7 +973,7 @@ $(".lstComponentesGrid").flexigrid({
 		align : 'center'
 	}],
 	width : 280,
-	height : 110
+	height : 175
 });
 $(".dadosBasesGrid").flexigrid({
 	//url : '../xml/dadosDistribB-xml.xml',

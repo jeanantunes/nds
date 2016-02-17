@@ -126,7 +126,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 		while (estudo.getReparteComplementar().compareTo(reparteGeral) >= 0) {
 		    
 			for (CotaEstudo cota : estudo.getCotas()) {
-			
+				
 				if (estudo.getReparteComplementar().compareTo(reparteGeral) < 0) {
 					break;
 				}

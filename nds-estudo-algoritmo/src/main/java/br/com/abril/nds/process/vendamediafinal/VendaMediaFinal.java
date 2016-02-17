@@ -26,6 +26,7 @@ public class VendaMediaFinal {
 
 	for (CotaEstudo cota : estudo.getCotas()) {
 	    if (cota.getVendaMedia() != null) {
+	    	
 			if (cota.getIndiceAjusteCota() != null) {
 			    cota.setVendaMedia(cota.getVendaMedia().multiply(cota.getIndiceAjusteCota()));
 			}
