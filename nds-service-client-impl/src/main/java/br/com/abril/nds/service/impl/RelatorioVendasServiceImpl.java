@@ -302,7 +302,11 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 			// Verifica o percentual dos valores em relação ao total de participacao
 			for (RegistroCurvaABCEditorVO registro : lista) {
 				
-				participacaoRegistro = registro.getParticipacao().multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN);
+				if(registro.getParticipacao() != null){
+					participacaoRegistro = registro.getParticipacao().multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN);
+				}else{
+					participacaoRegistro = BigDecimal.ZERO;
+				}
 				
 				registro.setParticipacao(participacaoRegistro);
 				

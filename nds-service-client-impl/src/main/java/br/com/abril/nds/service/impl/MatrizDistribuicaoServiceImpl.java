@@ -512,10 +512,13 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		if (vo.getIdEstudo() == null || vo.getIdEstudo().intValue() <= 0) {
 		    throw new ValidacaoException(TipoMensagem.WARNING, "Pesquise um estudo valido.");
 		}
+		
 		if (vo.getReparteDistribuido() == null || vo.getReparteDistribuido().intValue() <= 0) {
 		    throw new ValidacaoException(TipoMensagem.WARNING, "Produto sem valor de distribuição de reparte.");
 		}
+		
 		EstudoGerado estudo = estudoGeradoRepository.obterEstudoECotasPorIdEstudo(vo.getIdEstudo());
+		
 		if ((estudo == null) || (estudo.getEstudoCotas() == null)) {
 		    throw new ValidacaoException(TipoMensagem.WARNING, "Não foi possível efetuar a cópia. Estudo inexistente ou não há cotas que receberam reparte.");
 		}
@@ -596,40 +599,42 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		// validacoes de mix e classificacoes e segmentos nao recebidos
 		LinkedList<EstudoCotaGerado> cotas = new LinkedList<>();
 		for (EstudoCotaGerado cota : cotasSelecionadas) {
-		    CotaEstudo cotaEstudo = mapCotas.get(cota.getCota().getId());
-		    if (cotaEstudo != null) {
-			if (cotaEstudo.getStatus() != null && cotaEstudo.getStatus().equals("SUSPENSO")) {
-			    cota.setClassificacao(ClassificacaoCota.BancaSuspensa.getCodigo());
-			    cota.setReparte(null);
-			    continue;
-			}
-			if (cotaEstudo.isCotaNaoRecebeClassificacao()) {
-			    cota.setClassificacao(ClassificacaoCota.BancaSemClassificacaoDaPublicacao.getCodigo());
-			    cota.setReparte(null);
-			    continue;
-			}
-			if (cotaEstudo.isCotaNaoRecebeSegmento() && !cotaEstudo.isCotaExcecaoSegmento()) {
-			    cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeEsseSegmento.getCodigo());
-			    cota.setReparte(null);
-			    continue;
-			} else if (cotaEstudo.isCotaExcecaoSegmento()) {
-			    cota.setClassificacao(ClassificacaoCota.CotaExcecaoSegmento.getCodigo());
-			}
-			if (cotaEstudo.getTipoDistribuicao() != null && 
-					cotaEstudo.getTipoDistribuicao().equals(TipoDistribuicaoCota.ALTERNATIVO.name()) && 
-					!cotaEstudo.isMix()) {
-			    cota.setClassificacao(ClassificacaoCota.BancaMixSemDeterminadaPublicacao.getCodigo());
-			    cota.setReparte(null);
-			    continue;
-			}
-	            if (cotaEstudo.getClassificacao().equals(ClassificacaoCota.CotaNaoRecebeDesseFornecedor)) {
-	                cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeDesseFornecedor.getCodigo());
-	                cota.setReparte(null);
-	                continue;
-	            }
-	            cotas.add(cota);
-		    }
+		    	CotaEstudo cotaEstudo = mapCotas.get(cota.getCota().getId());
+			    
+		    	if (cotaEstudo != null) {
+					if (cotaEstudo.getStatus() != null && cotaEstudo.getStatus().equals("SUSPENSO")) {
+					    cota.setClassificacao(ClassificacaoCota.BancaSuspensa.getCodigo());
+					    cota.setReparte(null);
+					    continue;
+					}
+					if (cotaEstudo.isCotaNaoRecebeClassificacao()) {
+					    cota.setClassificacao(ClassificacaoCota.BancaSemClassificacaoDaPublicacao.getCodigo());
+					    cota.setReparte(null);
+					    continue;
+					}
+					if (cotaEstudo.isCotaNaoRecebeSegmento() && !cotaEstudo.isCotaExcecaoSegmento()) {
+					    cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeEsseSegmento.getCodigo());
+					    cota.setReparte(null);
+					    continue;
+					} else if (cotaEstudo.isCotaExcecaoSegmento()) {
+					    cota.setClassificacao(ClassificacaoCota.CotaExcecaoSegmento.getCodigo());
+					}
+					if (cotaEstudo.getTipoDistribuicao() != null && 
+							cotaEstudo.getTipoDistribuicao().equals(TipoDistribuicaoCota.ALTERNATIVO.name()) && 
+							!cotaEstudo.isMix()) {
+					    cota.setClassificacao(ClassificacaoCota.BancaMixSemDeterminadaPublicacao.getCodigo());
+					    cota.setReparte(null);
+					    continue;
+					}
+		            if (cotaEstudo.getClassificacao().equals(ClassificacaoCota.CotaNaoRecebeDesseFornecedor)) {
+		                cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeDesseFornecedor.getCodigo());
+		                cota.setReparte(null);
+		                continue;
+		            }
+		            cotas.add(cota);
+			    }
 		}
+		
 		// separando as cotas que passaram na validacao acima das cotas que por algum motivo nao entraram no estudo
 		for (EstudoCotaGerado cota : cotas) {
 		    cotasSelecionadas.remove(cota);
@@ -647,13 +652,12 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			if (vo.isFixacao()) {
 				CotaEstudo cotaEstudo = mapCotas.get(cota.getCota().getId());
 				if (cotaEstudo != null && cotaEstudo.getClassificacao() != null) {
-					if (cotaEstudo.getClassificacao().equals(
-							ClassificacaoCota.ReparteFixado)) {
+					if (cotaEstudo.getClassificacao().equals(ClassificacaoCota.ReparteFixado)) {
+						
 						cota.setReparte(cotaEstudo.getReparteFixado());
-						cota.setClassificacao(ClassificacaoCota.ReparteFixado
-								.getCodigo());
-						totalFixacao = totalFixacao.add(cotaEstudo
-								.getReparteFixado());
+						cota.setClassificacao(ClassificacaoCota.ReparteFixado.getCodigo());
+						totalFixacao = totalFixacao.add(cotaEstudo.getReparteFixado());
+						
 					} else if (cotaEstudo.getClassificacao().equals(
 							ClassificacaoCota.CotaMix)) {
 						totalMix = totalMix
@@ -836,7 +840,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 					cota.setClassificacao(ClassificacaoCota.BancaSemHistorico.getCodigo());
 				}
 				
-			} else if (cota.getReparte().compareTo(BigInteger.ZERO) == 0) {
+			} else if ((cota.getReparte().compareTo(BigInteger.ZERO) == 0) && (!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado.getCodigo()))) {
 				cota.setQtdePrevista(null);
 				cota.setQtdeEfetiva(null);
 				cota.setReparte(null);
@@ -885,7 +889,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		Map<Long, CotaEstudo> mapCotas = new HashMap<>();
 		for (CotaEstudo cotaEstudo : cotasEstudo) {
 			if (cotaEstudo.getReparteFixado() != null
-					&& cotaEstudo.getReparteFixado().compareTo(BigInteger.ZERO) > 0) {
+					&& cotaEstudo.getReparteFixado().compareTo(BigInteger.ZERO) >= 0) {
 				cotaEstudo.setClassificacao(ClassificacaoCota.ReparteFixado);
 			}
 			if (cotaEstudo.isMix()) {

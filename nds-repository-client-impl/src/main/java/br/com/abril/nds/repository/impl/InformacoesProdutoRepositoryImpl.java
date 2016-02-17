@@ -39,13 +39,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		sql.append("         pd.codigo_icd as codigoICD, ");
 		sql.append("         pe.numero_edicao as numeroEdicao, ");
 		sql.append("         pe.id as idProdutoEdicao, ");
-		
-		sql.append("         coalesce(cast(sum(case ");
-		sql.append("             when tipo.OPERACAO_ESTOQUE = 'ENTRADA'  ");
-		sql.append("                  THEN if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0) ");
-		sql.append("                  ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, - mecReparte.QTDE, 0) ");
-		sql.append("             	 end) as unsigned int), 0) AS qtdeReparteEstudo, ");
-		
+		sql.append("         eg.QTDE_REPARTE AS qtdeReparteEstudo, ");
 		sql.append("         pd.NOME as nomeProduto, ");
 		sql.append("         plp.NUMERO_PERIODO as periodo, ");
 		sql.append("         pe.PRECO_VENDA as preco, ");

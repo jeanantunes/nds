@@ -49,6 +49,7 @@ import br.com.abril.nds.service.RelatorioVendasService;
 import br.com.abril.nds.service.TipoSegmentoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
@@ -537,7 +538,7 @@ public class RelatorioVendasController extends BaseController {
 		
 		PaginacaoVO paginacao = filtro.getPaginacao();
 		
-		retorno.put("totalFaturamentoCapa", obterFaturamentoTotalABCSegmento(lista));
+		retorno.put("totalFaturamentoCapa", CurrencyUtil.formatarValor(obterFaturamentoTotalABCSegmento(lista)));
 
 		lista = PaginacaoUtil.paginarEmMemoria(lista, paginacao);
 		
@@ -758,6 +759,10 @@ public class RelatorioVendasController extends BaseController {
 		BigDecimal totalFaturamento = BigDecimal.ZERO;
 
 		for (RegistroCurvaABCEditorVO registroCurvaABCDistribuidor : listaCurvaABCDistribuidor) {
+			
+			if(registroCurvaABCDistribuidor.getVendaExemplares() == null || registroCurvaABCDistribuidor.getFaturamentoCapa() == null){
+				continue;
+			}
 
 			totalVendaExemplares = totalVendaExemplares.add(registroCurvaABCDistribuidor.getVendaExemplares());
 			totalFaturamento = totalFaturamento.add(registroCurvaABCDistribuidor.getFaturamentoCapa());
