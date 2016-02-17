@@ -523,7 +523,8 @@ var ConsultaEncalhe = $
 							numeroCota = $("#consulta-encalhe-cota",
 									ConsultaEncalhe.workspace).val();
 						}
-
+						
+						$("#dadosDetalheReparteGrid", ConsultaEncalhe.workspace).clear();
 						$("#dadosDetalheReparteGrid", ConsultaEncalhe.workspace)
 								.flexOptions(
 										{
