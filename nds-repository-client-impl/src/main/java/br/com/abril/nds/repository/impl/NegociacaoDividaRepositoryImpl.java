@@ -95,11 +95,14 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		hql.append(" JOIN cobranca.divida divida ");
 		hql.append(" WHERE cobranca.cota.numeroCota = :numCota ");
 		hql.append(" AND cobranca.statusCobranca = :status ");
-		hql.append(" AND divida.status not in (:statusDividas) ");
+		hql.append(" AND cobranca.dataPagamento is null ");
 		
 		if(!filtro.isLancamento()){
-			hql.append(" AND divida.data < :dataOperacao");
-			hql.append(" AND cobranca.dataVencimento <= :dataOperacao ");
+			hql.append(" AND divida.status in (:statusDividas) ");
+			hql.append(" AND cobranca.dataVencimento < :dataOperacao ");
+		} else {
+			hql.append(" AND divida.status in (:statusDividasFutura) ");
+			hql.append(" AND cobranca.dataVencimento >= :dataOperacao ");
 		}
 	}
 	
@@ -107,9 +110,12 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		
 		query.setParameter("numCota", filtro.getNumeroCota());
 		query.setParameter("status", StatusCobranca.NAO_PAGO);
-		query.setParameterList("statusDividas", Arrays.asList(StatusDivida.PENDENTE_INADIMPLENCIA, StatusDivida.POSTERGADA));
 		
-		if(!filtro.isLancamento() ||  !filtro.isCount()) {
+		if(!filtro.isLancamento()) {
+			query.setParameter("dataOperacao", filtro.getDataOperacao());
+			query.setParameterList("statusDividas", Arrays.asList(StatusDivida.PENDENTE_INADIMPLENCIA, StatusDivida.POSTERGADA));
+		} else {
+			query.setParameterList("statusDividasFutura", Arrays.asList(StatusDivida.EM_ABERTO));
 			query.setParameter("dataOperacao", filtro.getDataOperacao());
 		}
 	}
