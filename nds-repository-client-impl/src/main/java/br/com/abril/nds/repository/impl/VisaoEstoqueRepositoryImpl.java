@@ -362,7 +362,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 		
 		String coluna = this.getColunaQtde(filtro.getTipoEstoque());
 
-		StringBuilder hql = new StringBuilder(" SELECT count(pe.id) ");
+		StringBuilder hql = new StringBuilder(" SELECT count(distinct pe.id) ");
 		
 		Query query = queryObterVisaoEstoqueDetalheHistorico(true, coluna,hql,filtro);
 		
