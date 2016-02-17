@@ -31,6 +31,8 @@ public class FiltroRankingSegmentoDTO extends FiltroCurvaABCDTO {
 	public FiltroRankingSegmentoDTO(Date de, Date ate, Long idTipoSegmento, Integer page, Integer rp, String sortOrder, String sortColumn) {
 		this.de=de;
 		this.ate=ate;
+		this.setDataDe(de);
+		this.setDataAte(ate);
 		this.idTipoSegmento=idTipoSegmento;
 		this.setPaginacao(new PaginacaoVO(page, rp, sortOrder, sortColumn)); 
 	}
