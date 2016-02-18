@@ -637,7 +637,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					
 					BigInteger qtdPrevista = cotaReparte.getReparte();
 
-					this.removerChamadaEncalheCotaAntecipadaChamadao(cota, new ArrayList<>(chamadasEncalheProdutoEdicao));
+				//	this.removerChamadaEncalheCotaAntecipadaChamadao(cota, new ArrayList<>(chamadasEncalheProdutoEdicao));
 					
 					ChamadaEncalhe chamadaEncalhe = this.getChamadaEncalheMatrizRecolhimento(new ArrayList<>(chamadasEncalheProdutoEdicao), dataRecolhimento);
 
@@ -727,6 +727,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 										 boolean cotaContribuinteExigeNF,
 										 Usuario usuario,boolean isParcialFinal) {
 		
+		if (!chamadaEncalhe.getTipoChamadaEncalhe().equals(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO)) {
+			
+		    return;
+		}
+		
 		if(BigInteger.ZERO.compareTo(qtdPrevista) >= 0) {
           if ( isParcialFinal) { // se for pacialFinal, criar chamada com zero..
 			LOGGER.warn("CRIANDO CHAMADA ENCALHE COM ZERO PARA COTA="+cota.getId() +"  chamada encalhe="+chamadaEncalhe.getId());
@@ -743,6 +748,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		    return;
 		}
+		
+		
 		
 		ChamadaEncalheCota chamadaEncalheCota = this.getChamadaEncalheCota(chamadaEncalhe, cota.getId());
 		
