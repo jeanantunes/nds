@@ -513,6 +513,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append("         	and cb.STATUS_COBRANCA = :statusCobrancaNaoPago ")
            .append("         	and (cota.SUGERE_SUSPENSAO = true or dist.SUGERE_SUSPENSAO = true )")
            .append("         	and cb.DT_VENCIMENTO < :dataOperacao ")
+           .append("         	and cb.DT_PAGAMENTO is null  ")
            .append("         group by dv.id) ")
            
            .append(" ) ")
