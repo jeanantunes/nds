@@ -1631,7 +1631,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				if(idDividaPendente != null) {
 					Divida divida= dividaRepository.buscarPorId(Long.valueOf(idDividaPendente.intValue()));
 					
-					novaDivida.setDividaRaiz(divida);					
+					if(divida.getDividaRaiz() != null) {
+						novaDivida.setDividaRaiz(divida.getDividaRaiz());					
+					}
 				}
 				novaDivida.setOrigemNegociacao(false);
 									
