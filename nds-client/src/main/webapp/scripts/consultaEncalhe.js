@@ -88,6 +88,105 @@ var ConsultaEncalhe = $
 
 						$('.datePicker', ConsultaEncalhe.workspace).mask(
 								"99/99/9999");
+						
+						
+						
+						$('#linkConsultaEncalhePDF', ConsultaEncalhe.workspace).click(function() {
+							var params = {"fileType": 'PDF'};
+							
+							$.fileDownload(contextPath + '/devolucao/consultaEncalhe/exportar', {
+								httpMethod : "GET",
+								data : params,
+								failCallback: function (result) {
+									
+									result = $.parseJSON($(result).text());
+
+									if((typeof result != "undefined") && result.mensagens) {
+										
+										result = result.mensagens;
+										var tipoMensagem = result.tipoMensagem;
+										var listaMensagens = result.listaMensagens;
+										
+										if (tipoMensagem && listaMensagens) {
+											exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+										}
+									}
+							    }
+							});
+						});
+						
+						$('#linkConsultaEncalheXLS', ConsultaEncalhe.workspace).click(function() {
+							var params = {"fileType": 'XLS'};
+							
+							$.fileDownload(contextPath + '/devolucao/consultaEncalhe/exportar', {
+								httpMethod : "GET",
+								data : params,
+								failCallback: function (result) {
+									
+									result = $.parseJSON($(result).text());
+
+									if((typeof result != "undefined") && result.mensagens) {
+										
+										result = result.mensagens;
+										var tipoMensagem = result.tipoMensagem;
+										var listaMensagens = result.listaMensagens;
+										
+										if (tipoMensagem && listaMensagens) {
+											exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+										}
+									}
+							    }
+							});
+						});
+						
+						
+						$('#linkConsultaEncalheDetalheXLS', ConsultaEncalhe.workspace).click(function() {
+							var params = {"fileType": 'XLS'};
+							
+							$.fileDownload(contextPath + '/devolucao/consultaEncalhe/exportarDetalhe', {
+								httpMethod : "GET",
+								data : params,
+								failCallback: function (result) {
+									
+									result = $.parseJSON($(result).text());
+
+									if((typeof result != "undefined") && result.mensagens) {
+										
+										result = result.mensagens;
+										var tipoMensagem = result.tipoMensagem;
+										var listaMensagens = result.listaMensagens;
+										
+										if (tipoMensagem && listaMensagens) {
+											exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+										}
+									}
+							    }
+							});
+						});
+						
+						$('#linkConsultaEncalheDetalhePDF', ConsultaEncalhe.workspace).click(function() {
+							var params = {"fileType": 'PDF'};
+							
+							$.fileDownload(contextPath + '/devolucao/consultaEncalhe/exportarDetalhe', {
+								httpMethod : "GET",
+								data : params,
+								failCallback: function (result) {
+									
+									result = $.parseJSON($(result).text());
+
+									if((typeof result != "undefined") && result.mensagens) {
+										
+										result = result.mensagens;
+										var tipoMensagem = result.tipoMensagem;
+										var listaMensagens = result.listaMensagens;
+										
+										if (tipoMensagem && listaMensagens) {
+											exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+										}
+									}
+							    }
+							});
+						});
 
 					},
 

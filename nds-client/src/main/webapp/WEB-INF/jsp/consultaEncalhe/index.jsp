@@ -8,6 +8,8 @@
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
+
 <script language="javascript" type="text/javascript">
 
 var pesquisaCotaConsultaEncalhe = new PesquisaCota(ConsultaEncalhe.workspace);
@@ -24,13 +26,13 @@ $(function(){
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_arq">
-				<a href="${pageContext.request.contextPath}/devolucao/consultaEncalhe/exportar?fileType=XLS" rel="tipsy"  title="Gerar Arquivo">
+				<a  id="linkConsultaEncalheXLS"  href="javascript:void(0);" rel="tipsy"  title="Gerar Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 				</a> 
 			</span> 
 			
 			<span class="bt_arq"> 
-				<a href="${pageContext.request.contextPath}/devolucao/consultaEncalhe/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+				<a id="linkConsultaEncalhePDF"  href="javascript:void(0);"  rel="tipsy" title="Imprimir">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /> 
 				</a>
 			</span>
@@ -201,13 +203,13 @@ $(function(){
 				<form name="form_detalhes_reparte" id="form_detalhes_reparte">
 				<div id="dialog-detalhes-reparte" title="Detalhes Reparte" style="display:none;width:700px;">
 				<span class="bt_arq">
-				<a href="${pageContext.request.contextPath}/devolucao/consultaEncalhe/exportarDetalhe?fileType=XLS" rel="tipsy"  title="Gerar Arquivo">
+				<a id="linkConsultaEncalheDetalheXLS"  href="javascript:void(0);"  rel="tipsy"  title="Gerar Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 				</a> 
 			</span> 
 			
 			<span class="bt_arq"> 
-				<a href="${pageContext.request.contextPath}/devolucao/consultaEncalhe/exportarDetalhe?fileType=PDF" rel="tipsy" title="Imprimir">
+				<a id="linkConsultaEncalheDetalhePDF"  href="javascript:void(0);"  rel="tipsy" title="Imprimir">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /> 
 				</a>
 			</span>
