@@ -55,6 +55,7 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -154,6 +155,10 @@ public class ConsultaEncalheController extends BaseController {
 
 		FiltroConsultaEncalheDTO filtroConsultaEncalhe = obterFiltroExportacao();
 		
+		if(filtroConsultaEncalhe == null) {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Efetuar pesquisa."),Constantes.PARAM_MSGS).recursive().serialize();
+			throw new ValidacaoException(TipoMensagem.WARNING, "Efetuar Pesquisa.");
+		}
 		filtroConsultaEncalhe.setCodigoProduto(null);
 		filtroConsultaEncalhe.setNumeroEdicao(null);
 		filtroConsultaEncalhe.setIdProdutoEdicao(null);
@@ -345,6 +350,7 @@ public class ConsultaEncalheController extends BaseController {
 	@Path("/pesquisar")
 	public void pesquisar(String dataRecolhimentoInicial, String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota, Integer codigoProduto, Integer idBox, Integer numeroEdicao, String sortorder, String sortname, int page, int rp){
 		
+	  
 		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial, dataRecolhimentoFinal, idFornecedor, numeroCota, codigoProduto, idBox, numeroEdicao);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
@@ -400,6 +406,8 @@ public class ConsultaEncalheController extends BaseController {
 		List<ConsultaEncalheDTO> listaResultado = infoConsultaEncalhe.getListaConsultaEncalhe();
 		
 		if (listaResultado == null || listaResultado.isEmpty()) {
+			  this.session.removeAttribute(FILTRO_DETALHE_SESSION_ATTRIBUTE);
+				this.session.removeAttribute(FILTRO_SESSION_ATTRIBUTE);
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
@@ -1071,6 +1079,12 @@ private List<ConsultaEncalheDetalheVO> getListaConsultaEncalheDetalheVO(List<Con
 
 		FiltroConsultaEncalheDTO filtro = (FiltroConsultaEncalheDTO) this.session.getAttribute(FILTRO_DETALHE_REPARTE_SESSION_ATTRIBUTE);
 		
+		if(filtro == null) {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro encontrado"),Constantes.PARAM_MSGS).recursive().serialize();
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado");
+		}
+		
+		
 		ProdutoEdicao pe = produtoEdicaoService.buscarPorID(filtro.getIdProdutoEdicao());
 		if ( pe != null ) {
 			filtro.setCodigoProduto(Integer.parseInt(pe.getProduto().getCodigo()));
@@ -1079,7 +1093,11 @@ private List<ConsultaEncalheDetalheVO> getListaConsultaEncalheDetalheVO(List<Con
 		
 		List <ConsultaEncalheDetalheReparteVO> listaConsultaEncalheVO = (List <ConsultaEncalheDetalheReparteVO>) this.session.getAttribute(CONSULTA_ENCALHE_DETALHE_REPARTE_LISTA);
 		
-		 
+		if(listaConsultaEncalheVO == null|| listaConsultaEncalheVO.size() == 0) {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro encontrado"),Constantes.PARAM_MSGS).recursive().serialize();
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado");
+		}
+		
 		FileExporter.to("consulta-encalhe-detalhe", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), 
 				filtro, 
