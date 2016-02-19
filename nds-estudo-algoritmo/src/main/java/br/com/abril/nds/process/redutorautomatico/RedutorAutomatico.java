@@ -53,7 +53,12 @@ public class RedutorAutomatico extends ProcessoAbstrato {
     				}
     				
     				cota.setReparteCalculado(BigInteger.ZERO, estudo);
-				    cota.setClassificacao(ClassificacaoCota.RedutorAutomatico);
+				    
+    				if(cota.getClassificacao() != null && cota.getClassificacao().equals(ClassificacaoCota.CotaNova)){
+    					cota.setClassificacao(ClassificacaoCota.BancaComVendaZero);
+    				}else{
+    					cota.setClassificacao(ClassificacaoCota.RedutorAutomatico);
+    				}
 				    
 				    cotasForRemove.add(cota);
 				    
