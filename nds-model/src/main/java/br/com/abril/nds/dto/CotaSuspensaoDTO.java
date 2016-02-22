@@ -6,7 +6,6 @@ import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -36,7 +35,7 @@ public class CotaSuspensaoDTO implements Serializable{
 	
 	@Export(label = "Divida Acumulada R$", alignment=Alignment.RIGHT, columnType=ColumnType.MOEDA)
 	@Footer(label = "Total R$", type=FooterType.SUM, columnType=ColumnType.MOEDA)
-	private BigDecimal dividaAcumulada;
+	private String dividaAcumulada;
 	
 	@Export(label = "Dias em Aberto", alignment=Alignment.CENTER, widthPercent=5f)
 	private Integer diasAberto;
@@ -117,12 +116,12 @@ public class CotaSuspensaoDTO implements Serializable{
 		this.vlrReparte = CurrencyUtil.formatarValor(vlrReparte == null ? BigDecimal.ZERO : vlrReparte);
 	}
 
-	public BigDecimal getDividaAcumulada() {
+	public String getDividaAcumulada() {
 		return dividaAcumulada;
 	}
 
 	public void setDividaAcumulada(BigDecimal dividaAcumulada) {
-		this.dividaAcumulada = dividaAcumulada == null ? dividaAcumulada : MathUtil.round(dividaAcumulada, 2);
+		this.dividaAcumulada = CurrencyUtil.formatarValor(dividaAcumulada == null ? BigDecimal.ZERO : dividaAcumulada); 
 	}
 
 	public Integer getDiasAberto() {

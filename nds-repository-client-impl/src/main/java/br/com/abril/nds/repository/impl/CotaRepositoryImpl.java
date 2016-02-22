@@ -316,7 +316,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
                           .append("	WHERE D.COTA_ID = COTA_.ID ")
                           .append(" AND c.DT_PAGAMENTO is null ")
                           .append("	AND D.STATUS in (:statusDividaEmAbertoPendente) ")
-                          .append("	AND C.DT_VENCIMENTO < :dataOperacao ");
+                          .append("	AND C.DT_VENCIMENTO < :dataOperacao ")
+        				  .append(" AND D.DIVIDA_RAIZ_ID is not null ");
         
         final StringBuilder sql = new StringBuilder();
         sql.append(" SELECT geral.IDCOTA, ")
