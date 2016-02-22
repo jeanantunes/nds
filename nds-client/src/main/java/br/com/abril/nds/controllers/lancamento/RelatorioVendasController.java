@@ -530,15 +530,11 @@ public class RelatorioVendasController extends BaseController {
 		
 		List<RegistroRankingSegmentoDTO> lista = this.relatorioVendasService.obterRankingSegmento(filtro);
 		
-		if (lista == null || lista.size() <= 0) {			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-		}
-		
 		filtro.getPaginacao().setQtdResultadosTotal(lista.size());
 		
 		PaginacaoVO paginacao = filtro.getPaginacao();
 		
-		retorno.put("totalFaturamentoCapa", CurrencyUtil.formatarValor(obterFaturamentoTotalABCSegmento(lista)));
+		retorno.put("totalFaturamentoCapa", CurrencyUtil.formatarValor(filtro.getTotalFaturamento()));
 
 		lista = PaginacaoUtil.paginarEmMemoria(lista, paginacao);
 		
@@ -550,14 +546,6 @@ public class RelatorioVendasController extends BaseController {
 		
 	}
 
-	private BigDecimal obterFaturamentoTotalABCSegmento(List<RegistroRankingSegmentoDTO> lista) {
-		BigDecimal totalFaturamento = BigDecimal.ZERO;
-		
-		for (RegistroRankingSegmentoDTO registro : lista) {
-			  totalFaturamento = totalFaturamento.add(registro.getFaturamentoCapa() == null ? BigDecimal.ZERO : registro.getFaturamentoCapa());
-		}
-		return totalFaturamento;
-	}
 	
 	/**
 	 * Realiza a pesquisa da curva ABC do distribuidor com os parametros da busca avançada
