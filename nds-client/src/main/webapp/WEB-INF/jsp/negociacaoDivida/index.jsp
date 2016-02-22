@@ -41,20 +41,30 @@
 				class="filtro">
 				<tr>
 					<td width="28">Cota:</td>
-					<td colspan="3"><input type="text" name="filtro.numeroCota"
-						id="negociacaoDivida_numCota"
-						onchange="negociacaoDividaController.pesquisarCota(this.value);"
-						style="width: 60px; float: left; margin-right: 5px;" /></td>
+					<td width="60">
+						<input type="text" name="filtro.numeroCota" id="negociacaoDivida_numCota" onchange="negociacaoDividaController.pesquisarCota(this.value);" style="width: 60px; float: left; margin-right: 5px;" />
+					</td>
 					<td width="39">Nome:</td>
-					<td width="230"><span id="negociacaoDivida_nomeCota"></span></td>
+					<td width="230">
+						<span id="negociacaoDivida_nomeCota"></span>
+					</td>
 					<td width="41">Status:</td>
-					<td width="157"><span id="negociacaoDivida_statusCota"></span></td>
-					<td width="33" align="right"><input type="checkbox"
-						name="filtro.lancamento" id="checkLancamentos" /></td>
-					<td width="201">Lan&ccedil;amentos Futuros</td>
-					<td width="104"><span class="bt_pesquisar"><a
-							href="javascript:;"
-							onclick="negociacaoDividaController.pesquisar();"></a></span></td>
+					<td width="100">
+						<span id="negociacaoDivida_statusCota"></span>
+					</td>
+					
+					<!-- 
+					<td width="33" align="right">
+						<input type="checkbox" name="filtro.lancamento" id="checkLancamentos" />
+					</td>
+					<td width="201">Lan&ccedil;amentos Futuros</td>					
+					-->
+					
+					<td width="60">
+						<span class="bt_pesquisar">
+							<a href="javascript:;" onclick="negociacaoDividaController.pesquisar();"></a>
+						</span>
+					</td>
 				</tr>
 			</table>
 		</fieldset>
