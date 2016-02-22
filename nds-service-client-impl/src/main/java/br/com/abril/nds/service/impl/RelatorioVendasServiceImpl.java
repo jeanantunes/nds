@@ -242,7 +242,28 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		
 		this.validarFiltroRegiao(filtro);
 
-		return this.relatorioVendasRepository.obterRankingSegmento(filtro);
+		
+		List<RegistroRankingSegmentoDTO> registros = this.relatorioVendasRepository.obterRankingSegmento(filtro);
+		
+		
+		if (registros == null || registros.size() <= 0) {			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
+		filtro.setTotalFaturamento(this.obterFaturamentoTotalABCSegmento(registros));
+		
+		this.carregarParticipacoesCurvaABCSegmento(registros, filtro.getTotalFaturamento());
+		
+		return registros;
+	}
+	
+	private BigDecimal obterFaturamentoTotalABCSegmento(List<RegistroRankingSegmentoDTO> lista) {
+		BigDecimal totalFaturamento = BigDecimal.ZERO;
+		
+		for (RegistroRankingSegmentoDTO registro : lista) {
+			  totalFaturamento = totalFaturamento.add(registro.getFaturamentoCapa() == null ? BigDecimal.ZERO : registro.getFaturamentoCapa());
+		}
+		return totalFaturamento;
 	}
 
 	/**
@@ -275,6 +296,36 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 				}
 
 				
+			}
+		}
+
+	}
+	
+	private void carregarParticipacoesCurvaABCSegmento(List<RegistroRankingSegmentoDTO> lista, BigDecimal participacaoTotal) {
+		
+		if (lista==null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro foi encontrado"));
+		}
+		
+		BigDecimal participacaoRegistro = BigDecimal.ZERO;
+		
+		// Partipacao do registro em relacao a participacao total no periodo
+		if (participacaoTotal.compareTo(BigDecimal.ZERO) != 0) {
+		
+			//Verifica o percentual dos valores em relação ao total de participacao
+			for (RegistroCurvaABCDTO registro : lista) {
+				
+				if(registro.getParticipacao() != null){
+					participacaoRegistro = registro.getParticipacao().multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN);
+					registro.setParticipacao(participacaoRegistro);
+				}else{
+					registro.setParticipacao(BigDecimal.ZERO);
+				}
+				
+				if(registro.getParticipacaoAcumulada()!=null) {
+					BigDecimal participacaoAcumulada = registro.getParticipacaoAcumulada();
+					registro.setParticipacaoAcumulada(participacaoAcumulada.multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN));
+				}
 			}
 		}
 

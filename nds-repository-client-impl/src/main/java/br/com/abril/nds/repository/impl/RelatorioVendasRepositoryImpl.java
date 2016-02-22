@@ -914,7 +914,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                 ORDER BY ");
 		sql.append("                     vendaSum desc) temp           ");
 		sql.append("             group by ");
-		sql.append("                 numeroCota                                           ");
+		sql.append("                 numeroCota ");
 		sql.append("             ORDER BY ");
 		sql.append("                 faturamentoCapa desc) consolidado, ");
 		sql.append("                 (select ");
