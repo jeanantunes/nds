@@ -74,6 +74,7 @@ import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
@@ -1491,8 +1492,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         hql.append(" where chamadaEncalheCota.cota.id not in ( ");
         hql.append(" select cota.id from ControleConferenciaEncalheCota controleConferenciaEncalheCota ");
         hql.append(" join controleConferenciaEncalheCota.cota cota ");
+        hql.append(" join controleConferenciaEncalheCota.box b ");
         hql.append(" where controleConferenciaEncalheCota.dataOperacao = :dataRecolhimentoEncalhe ");
-        hql.append(" and controleConferenciaEncalheCota.status = :statusControleConferenciaEncalhe) ");
+        hql.append(" and controleConferenciaEncalheCota.status = :statusControleConferenciaEncalhe ");
+        hql.append(" and b.tipoBox = :tipoBox ) "); 
         hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento = :dataRecolhimentoEncalhe ");
         hql.append(" group by chamadaEncalheCota.cota.id ");
         hql.append(" order by cota.numeroCota");
@@ -1501,6 +1504,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         
         query.setParameter("dataRecolhimentoEncalhe", dataRecolhimentoEncalhe);
         query.setParameter("statusControleConferenciaEncalhe", StatusOperacao.CONCLUIDO);
+        query.setParameter("tipoBox", TipoBox.ENCALHE);
         
         query.setResultTransformer(Transformers.aliasToBean(CotaResumoDTO.class));
         
@@ -1518,14 +1522,17 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         hql.append(" where chamadaEncalheCota.cota.id not in ( ");
         hql.append(" select cota.id from ControleConferenciaEncalheCota controleConferenciaEncalheCota ");
         hql.append(" join controleConferenciaEncalheCota.cota cota ");
+        hql.append(" join controleConferenciaEncalheCota.box b ");
         hql.append(" where controleConferenciaEncalheCota.dataOperacao = :dataRecolhimentoEncalhe ");
-        hql.append(" and controleConferenciaEncalheCota.status = :statusControleConferenciaEncalhe) ");
+        hql.append(" and controleConferenciaEncalheCota.status = :statusControleConferenciaEncalhe ");
+        hql.append(" and b.tipoBox = :tipoBox ) "); 
         hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento = :dataRecolhimentoEncalhe ");
         
         final Query query = this.getSession().createQuery(hql.toString());
         
         query.setParameter("dataRecolhimentoEncalhe", dataRecolhimentoEncalhe);
         query.setParameter("statusControleConferenciaEncalhe", StatusOperacao.CONCLUIDO);
+        query.setParameter("tipoBox", TipoBox.ENCALHE);
         
         return (Long) query.uniqueResult();
     }

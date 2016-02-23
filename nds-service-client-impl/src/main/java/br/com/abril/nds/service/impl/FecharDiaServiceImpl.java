@@ -683,6 +683,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado,
 			ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado) {
 		
+		ParametroSistema parametroSistema = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_ALTERACAO_REPARTE_LANCAMENTO);
+
+		Integer mes = this.calcularParametroSistema(parametroSistema);
+		
 		resumoConsignado.setSaldoAnterior(Util.nvl(
 				fechamentoDiarioResumoConsignadoRepository.obterSaldoConsignadoFechamentoDiarioAnterior(dataFechamento), BigDecimal.ZERO));
 		
@@ -694,7 +698,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         		this.movimentoEstoqueCotaRepository.obterSaldoEntradaNoConsignado(dataFechamento, TipoCota.A_VISTA), BigDecimal.ZERO);
         
         BigDecimal valorDiferencasEntrada = Util.nvl(
-        		diferencaRepository.obterSaldoDaDiferencaDeEntradaDoConsignadoDoDistribuidor(dataFechamento), BigDecimal.ZERO);
+        		diferencaRepository.obterSaldoDaDiferencaDeEntradaDoConsignadoDoDistribuidor(dataFechamento, mes), BigDecimal.ZERO);
         
         BigDecimal valorCotaAusenteEntrada = Util.nvl(
         		cotaAusenteRepository.obterSaldoDeEntradaDoConsignadoDasCotasAusenteNoDistribuidor(dataFechamento), BigDecimal.ZERO);
@@ -748,6 +752,18 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
 	}
 	
+	private Integer calcularParametroSistema(ParametroSistema parametroSistema) {
+		
+		Integer mes = 0;
+		
+		Integer dias = Integer.parseInt(parametroSistema.getValor());
+		
+		mes = (dias.intValue() / 30);
+		
+		return mes;
+		
+	}
+
 	private BigDecimal obterValorSaidaOutros(final Date dataFechamento){
 		
 		BigDecimal valorDiferencasSaida =  Util.nvl(

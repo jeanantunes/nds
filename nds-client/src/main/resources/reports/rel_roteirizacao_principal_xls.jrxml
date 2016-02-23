@@ -80,7 +80,7 @@
 		<band height="20" splitType="Stretch">
 			<elementGroup/>
 			<rectangle>
-				<reportElement x="0" y="0" width="550" height="20" backcolor="#F4F4F4" uuid="9bc756bc-f6b8-49f8-8243-70f7efce9407"/>
+				<reportElement x="0" y="0" width="550" height="20" backcolor="#0099CC" uuid="9bc756bc-f6b8-49f8-8243-70f7efce9407"/>
 			</rectangle>
 			<staticText>
 				<reportElement style="rel_ftext" mode="Opaque" x="0" y="0" width="26" height="20" forecolor="#FFFFFF" backcolor="#0099CC" uuid="0b19d2d6-55b7-43c3-8e3a-bdb266cb2c8e"/>
@@ -146,13 +146,12 @@
 				</textElement>
 				<text><![CDATA[Rota]]></text>
 			</staticText>
-			<textField pattern="">
-				<reportElement style="rel_stext" mode="Opaque" x="515" y="0" width="35" height="20" forecolor="#FFFFFF" backcolor="#0099CC" uuid="d2bdd182-7b0d-425c-9255-65e84cda52ca"/>
+			<textField isBlankWhenNull="true">
+				<reportElement style="rel_stext" mode="Opaque" x="333" y="0" width="152" height="20" forecolor="#FFFFFF" backcolor="#0099CC" uuid="b5fb6dc1-e39c-48c2-bb9d-42dfa10e4c5a"/>
 				<textElement>
 					<font fontName="Arial Black" size="9" isBold="false"/>
-					<paragraph leftIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{qntCotas}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{descricaoRota}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement style="rel_ftext" mode="Opaque" x="485" y="0" width="30" height="20" forecolor="#FFFFFF" backcolor="#0099CC" uuid="43db4694-a438-42c7-ba72-c38dfe3dc580"/>
@@ -162,12 +161,13 @@
 				</textElement>
 				<text><![CDATA[Qtde]]></text>
 			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement style="rel_stext" mode="Opaque" x="333" y="0" width="152" height="20" forecolor="#FFFFFF" backcolor="#0099CC" uuid="b5fb6dc1-e39c-48c2-bb9d-42dfa10e4c5a"/>
+			<textField pattern="">
+				<reportElement style="rel_stext" mode="Transparent" x="515" y="0" width="35" height="20" forecolor="#FFFFFF" backcolor="#0099CC" uuid="d2bdd182-7b0d-425c-9255-65e84cda52ca"/>
 				<textElement>
 					<font fontName="Arial Black" size="9" isBold="false"/>
+					<paragraph leftIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{descricaoRota}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{qntCotas}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="25">
