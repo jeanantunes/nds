@@ -337,6 +337,12 @@ var fecharDiaController =  $.extend(true, {
                 sortable : false,
                 align : 'right'
             }, {
+                display : 'Dt. Emissão',
+                name : 'dataEmissaoFormatada',
+                width : 80,
+                sortable : false,
+                align : 'center'
+            }, {
                 display : 'Dt. Vencto',
                 name : 'dataVencimentoFormatada',
                 width : 80,
@@ -1334,13 +1340,23 @@ var fecharDiaController =  $.extend(true, {
 	
 	processarResumoDividasVencer : function(itens) {
         var tabela =  $('#tabela_dividas_vencer', fecharDiaController.workspace);
-        fecharDiaController.processarResumoDividas(itens, tabela);
+        fecharDiaController.processarResumoDividasAVencer(itens, tabela);
     },
 	
 	processarResumoDividas : function(itens, tabela) {
         $(tabela).html("");
         $(tabela).append(fecharDiaController.gerarLinhaBrancoResumoDividas());
         $(tabela).append(fecharDiaController.gerarCabecalhoResumoDividas());
+        $.each(itens, function(index, item) {
+            $(tabela).append(fecharDiaController.gerarLinhaResumoDividas(item));                       
+        });
+        $(tabela).append((fecharDiaController.gerarLinhaBrancoResumoDividas()));
+    },
+    
+    processarResumoDividasAVencer : function(itens, tabela) {
+        $(tabela).html("");
+        $(tabela).append(fecharDiaController.gerarLinhaBrancoResumoDividas());
+        $(tabela).append(fecharDiaController.gerarCabecalhoResumoDividasAVencer());
         $.each(itens, function(index, item) {
             $(tabela).append(fecharDiaController.gerarLinhaResumoDividas(item));                       
         });
@@ -1419,6 +1435,16 @@ var fecharDiaController =  $.extend(true, {
        return linhaCabecalho; 
     },
 	
+    gerarCabecalhoResumoDividasAVencer : function() {
+        var linhaCabecalho = "<tr class=\"header_table\">";  
+        linhaCabecalho += "<td align=\"left\">Forma de Pagamento</td>";
+        linhaCabecalho += "<td align=\"right\">Total R$</td>";
+        linhaCabecalho += "<td align=\"right\">Valor Pago</td>";
+        linhaCabecalho += "<td align=\"right\">A vencer</td>";
+        linhaCabecalho += "</tr>";
+        return linhaCabecalho; 
+     },
+    
 	gerarLinhaBrancoResumoDividas : function() {
 	   var linhaBranco = "<tr>";  
 	   linhaBranco += "<td align=\"left\">&nbsp;</td>";
