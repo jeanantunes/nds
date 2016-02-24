@@ -47,8 +47,23 @@ public class DevolucaoEncalheBandeirasWSServiceClient {
 		String ufDistribuidor = uf;
 		String codDistribuidor = "001M";
 		Integer tipoNota = nota.getTipoNota();
+		/*
+		 *De: Monica Badner 
+			Enviada em: quarta-feira, 24 de fevereiro de 2016 14:14
+			Para: Cesar De Holanda Marracho <cesar.holanda@DGB.com.br>
+			Assunto: Sem leitura das bandeiras!
+			Prioridade: Alta
+			 
+			Cesar,
+			 
+			A nota do RIO deve ter serie 109  e de SP 108 ... este é o problema ..
+ 
+		 */
 		if ( "RJ".equals(uf) )
-			  tipoNota = 108;
+			  tipoNota = 109;
+		else
+			  tipoNota= 108;
+		
 		Integer numNota = nota.getNumNota();
 		Integer codVolume = nota.getCodVolume();
 		Integer qtdSacosPaletes =  nota.getQtdSacosPaletes();
