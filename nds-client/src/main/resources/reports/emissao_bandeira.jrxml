@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="emissao_bandeira" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="585" leftMargin="5" rightMargin="5" topMargin="5" bottomMargin="5" uuid="6a9f96f8-9dd9-4299-9e23-35d95ba7f941">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="232"/>
+	<property name="ireport.y" value="445"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -198,7 +198,7 @@ DEVOLUCAO TREELOG]]></text>
 				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barHeight="80">
 					<jr:codeExpression><![CDATA[("RIO DE JANEIRO".equalsIgnoreCase($F{praca}) ?"RJ001M":"SP001M")+
 String.format("%06d",Integer.parseInt($F{numeroNota})) +
-"109"+
+("RIO DE JANEIRO".equalsIgnoreCase($F{praca})?"109":"108")+
 String.format("%02d",Integer.parseInt($F{volumes}.split("/")[0].trim()))+
 "1"]]></jr:codeExpression>
 				</jr:barbecue>
@@ -220,7 +220,7 @@ String.format("%02d",Integer.parseInt($F{volumes}.split("/")[0].trim()))+
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[("RIO DE JANEIRO".equalsIgnoreCase($F{praca}) ?"RJ001M":"SP001M")+
 String.format("%06d",Integer.parseInt($F{numeroNota})) +
-"109"+
+("RIO DE JANEIRO".equalsIgnoreCase($F{praca})?"109":"108")+
 String.format("%02d",Integer.parseInt($F{volumes}.split("/")[0].trim()))+
 "1"]]></textFieldExpression>
 			</textField>

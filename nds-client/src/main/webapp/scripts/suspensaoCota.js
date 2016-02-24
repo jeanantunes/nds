@@ -327,6 +327,12 @@ var suspensaoCotaController = $.extend(true, {
 	 	var cabecalho = document.createElement("TR");
 	 	cabecalho.className="header_table";
 	 	
+	 	var tdEmissao = document.createElement("TD");
+	 	tdEmissao.width="136";
+	 	tdEmissao.align="left";
+	 	tdEmissao.innerHTML="Dt Emissao".bold();
+	 	cabecalho.appendChild(tdEmissao);
+	 	
 	 	var tdDia = document.createElement("TD");
 	 	tdDia.width="136";
 	 	tdDia.align="left";
@@ -351,9 +357,15 @@ var suspensaoCotaController = $.extend(true, {
 	 	 
 		 	var cel = document.createElement("TD");
 		 	cel.align="left";
-		 	text = document.createTextNode(divida.vencimento);
+		 	text = document.createTextNode(divida.emissao);
 		 	cel.appendChild(text);			 	
 		 	linha.appendChild(cel);
+
+		 	var cel1 = document.createElement("TD");
+		 	cel1.align="left";
+		 	text = document.createTextNode(divida.vencimento);
+		 	cel1.appendChild(text);			 	
+		 	linha.appendChild(cel1);
 		 	
 		 	var cel2 = document.createElement("TD");
 		 	cel2.align="right";

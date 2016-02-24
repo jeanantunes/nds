@@ -1631,7 +1631,14 @@ if ( dto.getRepartePrevisto() != null) {
             }
             
         }else{
-            
+        	
+      //  	DescontoLogistica des = produtoEdicao.getDescontoLogistica();
+        	
+        	if(produtoEdicao.getDescontoLogistica()!=null ){
+                dto.setDesconto( produtoEdicao.getDescontoLogistica().getPercentualDesconto() );
+                dto.setDescricaoDesconto(produtoEdicao.getDescontoLogistica().getDescricao());
+            }
+        	else 
             if(produto.getDescontoLogistica()!=null ){
                 dto.setDesconto( produto.getDescontoLogistica().getPercentualDesconto() );
                 dto.setDescricaoDesconto(produto.getDescontoLogistica().getDescricao());

@@ -69,7 +69,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		criteria.add(Restrictions.lt("dataVencimento", data));
 		
 		// criteria.add(Restrictions.isNull("divida.dividaRaiz"));
-		criteria.addOrder(Order.asc("dataVencimento"));
+		criteria.addOrder(Order.desc("dataVencimento"));
 		
 		return criteria.list();				
 	}

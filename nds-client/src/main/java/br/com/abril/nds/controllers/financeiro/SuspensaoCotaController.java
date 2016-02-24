@@ -130,7 +130,8 @@ public class SuspensaoCotaController extends BaseController {
 		
 		for(Cobranca cobranca : cobrancas) {
 			dividas.add(new DividaDTO(
-					DateUtil.formatarData(cobranca.getDataVencimento(), FORMATO_DATA), 
+					DateUtil.formatarData(cobranca.getDataVencimento(), FORMATO_DATA),
+					DateUtil.formatarData(cobranca.getDataEmissao(), FORMATO_DATA),
 					CurrencyUtil.formatarValorQuatroCasas(MathUtil.round(cobranca.getValor(), 4))));
 		}
 		result.use(Results.json()).from(dividas, "result").serialize();

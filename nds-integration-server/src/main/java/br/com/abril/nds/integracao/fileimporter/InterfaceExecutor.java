@@ -308,15 +308,15 @@ public class InterfaceExecutor {
 		
 		this.carregarDiretorios(interfaceEnum);
 		List<String> distribuidores = recuperaDistribuidores(codigoDistribuidor);
-		LOGGER.error("Interface de arquivos.. Numero de distribuidores="+distribuidores.size()+"  "+distribuidores.toString());
+		LOGGER.warn("Interface de arquivos.. Numero de distribuidores="+distribuidores.size()+"  "+distribuidores.toString());
 		// Processa arquivos do distribuidor
 		for (String distribuidor: distribuidores) {
 			
-			LOGGER.error("Interface de arquivos.. Processando distribuidor="+distribuidor+" Procurando arquivos em "+this.diretorio+" "+this.pastaInterna);
+			LOGGER.warn("Interface de arquivos.. Processando distribuidor="+distribuidor+" Procurando arquivos em "+this.diretorio+" "+this.pastaInterna);
 			List<File> arquivos = this.recuperaArquivosProcessar(this.diretorio, this.pastaInterna, interfaceExecucao, distribuidor);
 			
 			if(arquivos == null || arquivos.isEmpty()) {
-				LOGGER.error("NAO HA ARQUIVOS PARA ESTE DISTRIBUIDOR");
+				LOGGER.warn("NAO HA ARQUIVOS PARA ESTE DISTRIBUIDOR");
 				this.logarArquivo(logExecucao, distribuidor, null, StatusExecucaoEnum.FALHA, NAO_HA_ARQUIVOS);
 				continue;
 			} else {
@@ -324,7 +324,7 @@ public class InterfaceExecutor {
 			}
 			
 			CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_" + StringUtils.leftPad(distribuidor, 8, "0"));
-			LOGGER.error("Couchdb="+couchDbClient.toString());
+			LOGGER.warn("Couchdb="+couchDbClient.toString());
 			interfaceEnum = this.tratarInterfaceEnumDistribuidorFilial(interfaceEnum,distribuidor);
 			
 			for (File arquivo: arquivos) {
@@ -363,7 +363,7 @@ public class InterfaceExecutor {
 		    }
 		});
 		if(imagens == null || imagens.length == 0 ) {
-			LOGGER.error("NAO HA ARQUIVOS DE IMAGENS DE CAPA A SEREM PROCESSADOS NO DIRETORIO "+diretorio);
+			LOGGER.warn("NAO HA ARQUIVOS DE IMAGENS DE CAPA A SEREM PROCESSADOS NO DIRETORIO "+diretorio);
 			 this.logarArquivo(logExecucao,"0",diretorio,StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
 			 return;
 		} 
@@ -378,16 +378,16 @@ public class InterfaceExecutor {
 			try {
 				
 				doc = couchDbClient.find(IntegracaoDocument.class, id);
-				LOGGER.error("ACHOU CAPA id="+ doc.get_id() );
+				LOGGER.warn("ACHOU CAPA id="+ doc.get_id() );
 				// ver se tem imagem associada
 				
 				try {
 					couchDbClient.find(id+ "/" + id+".jpg");
-					LOGGER.error("IMAGEM CAPA JA EXISTE NO COUCH.NAO SERA INSERIDO e IMAGEM SERA DELETADA");
+					LOGGER.warn("IMAGEM CAPA JA EXISTE NO COUCH.NAO SERA INSERIDO e IMAGEM SERA DELETADA");
 					imagem.delete();
 					
 				} catch ( NoDocumentException e) {
-					LOGGER.error("IMAGEM CAPA NAO EXISTE NO COUCH.CAPA SERA RECRIADA E IMAGEM INSERIDA");
+					LOGGER.warn("IMAGEM CAPA NAO EXISTE NO COUCH.CAPA SERA RECRIADA E IMAGEM INSERIDA");
 				inserir=true;
 				couchDbClient.remove(doc);
 				}
@@ -398,7 +398,7 @@ public class InterfaceExecutor {
 			}
 				
 			if ( inserir ) {
-				LOGGER.error("INSERINDO NO COUCH IMAGEM "+imagem);
+				LOGGER.warn("INSERINDO NO COUCH IMAGEM "+imagem);
 				doc = new IntegracaoDocument();
 				doc.set_id(id);
 				doc.setTipoDocumento("ImagemCapa");				
@@ -419,7 +419,7 @@ public class InterfaceExecutor {
 				} catch (FileNotFoundException e1) {
                     this.logarArquivo(logExecucao,"0",diretorio,StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
 				} catch ( Exception e2 ) {
-					LOGGER.error(e2.getMessage(), e2);
+					LOGGER.warn(e2.getMessage(), e2);
 				}
 				
 				finally {
@@ -713,27 +713,27 @@ public class InterfaceExecutor {
 			LOGGER.warn("PARAMETRO DO DISTRIBUIDOR: Parâmetro do distribuidor não foi encontrado para o código [ " + Long.parseLong(distribuidor) +"]" );
 		}
 		
-		LOGGER.error("TIPO DISTRIBUIDOR  para codigo "+Long.parseLong(distribuidor));
+		LOGGER.warn("TIPO DISTRIBUIDOR  para codigo "+Long.parseLong(distribuidor));
 		boolean isDistribuidorFilial = ((parametroDistribuidor != null 
 				&& TipoDistribuidor.FILIAL.equals(parametroDistribuidor.getTipoDistribuidor())));
 		
-		LOGGER.error("ISDISTRIBUIDORFILAL"+isDistribuidorFilial);
+		LOGGER.warn("ISDISTRIBUIDORFILAL"+isDistribuidorFilial);
 		
 		
 		
 		if(InterfaceEnum.EMS0110.equals(interfaceEnum)){
-			LOGGER.error("PROCESSANDO ARQUIVO COM INTERFACE EMS110");
+			LOGGER.warn("PROCESSANDO ARQUIVO COM INTERFACE EMS110");
 			
 			if(isDistribuidorFilial){
 			  interfaceEnum = InterfaceEnum.EMS0110.getInterfaceEnum(EMS0110FilialInput.class);
-			  LOGGER.error("FILIAL");
+			  LOGGER.warn("FILIAL");
 			}else{
 			  interfaceEnum = InterfaceEnum.EMS0110.getInterfaceEnum(EMS0110Input.class);
-			  LOGGER.error("DISTRIBUIDOR");
+			  LOGGER.warn("DISTRIBUIDOR");
 			}
 		}
 		
-		LOGGER.error("PROCESSANDO ARQUIVO COM INTERFACE "+interfaceEnum);
+		LOGGER.warn("PROCESSANDO ARQUIVO COM INTERFACE "+interfaceEnum);
 		return interfaceEnum;
 	}
 	                    /**
@@ -752,7 +752,7 @@ public class InterfaceExecutor {
 						:interfaceExecucao.getMascaraArquivo();
 				
 		String dirPath = diretorio + codigoDistribuidor + File.separator + pastaInterna + File.separator;
-		LOGGER.error("PROCURANDO ARQUIVOS EM "+dirPath+" com  padrao="+pattern);
+		LOGGER.warn("PROCURANDO ARQUIVOS EM "+dirPath+" com  padrao="+pattern);
 		File dir = new File(dirPath);
 		
 		FilenameFilter filter = (FilenameFilter) new RegexFileFilter(pattern, IOCase.INSENSITIVE);
@@ -774,7 +774,7 @@ public class InterfaceExecutor {
 	 * @return client
 	 */
 	private CouchDbClient getCouchDbClientInstance(String databaseName) {
-		LOGGER.error("COUCHDB="+couchDbProperties.getHost()+":"+couchDbProperties.getPort()+"  database="+databaseName);
+		LOGGER.warn("COUCHDB="+couchDbProperties.getHost()+":"+couchDbProperties.getPort()+"  database="+databaseName);
 		return new CouchDbClient(
 				databaseName,
 				true,

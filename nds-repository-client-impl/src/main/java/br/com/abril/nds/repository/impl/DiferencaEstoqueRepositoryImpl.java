@@ -838,7 +838,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
     }
 	
 	@Override
-	public BigDecimal obterSaldoDaDiferencaDeEntradaDoConsignadoDoDistribuidor(final Date dataFechamento) {
+	public BigDecimal obterSaldoDaDiferencaDeEntradaDoConsignadoDoDistribuidor(final Date dataFechamento, Integer mes) {
 		
 		final StringBuilder sql = new StringBuilder();
 		
@@ -859,7 +859,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 	    sql.append("		inner join PRODUTO produto  on produtoEdicao.PRODUTO_ID = produto.ID "); 
 	    sql.append("		where lancamentoProduto.STATUS <> :statusFuro ");
 	    sql.append("		and produto.FORMA_COMERCIALIZACAO = :formaComercializacao ");
-	    sql.append("		and data_lcto_distribuidor between date_add(:dataMovimentacao, interval -7 month) and date_add(:dataMovimentacao, interval -1 day) ");
+	    sql.append("		and data_lcto_distribuidor between date_add(:dataMovimentacao, interval -"+mes+" month) and date_add(:dataMovimentacao, interval -1 day) ");
 	    sql.append(" ) ");
 	    sql.append(" and diferenca_.PRODUTO_EDICAO_ID not in ( ");
 	    sql.append(" 		select distinct produtoEdicao.ID ");
