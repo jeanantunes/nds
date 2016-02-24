@@ -348,30 +348,39 @@ public class CotaDAO {
 
 	    @Override
 	    public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
-		CotaEstudo cota = new CotaEstudo();
-		cota.setId(rs.getLong("COTA_ID"));
-		if (rs.getString("BAIRRO") != null) {
-		    cota.getBairros().add(rs.getString("BAIRRO"));
-		}
-		if (rs.getString("TIPO_COTA") != null) {
-		    cota.getTiposCota().add(rs.getString("TIPO_COTA"));
-		}
-		if (rs.getString("UF") != null) {
-		    cota.getEstados().add(rs.getString("UF"));
-		}
-		if (rs.getInt("TIPO_PONTO_PDV_ID") != 0) { 
-		    cota.getTiposPontoPdv().add(rs.getInt("TIPO_PONTO_PDV_ID"));
-		}
-		if (rs.getInt("TIPO_GERADOR_FLUXO_ID") != 0) {
-		    cota.getTiposGeradorFluxo().add(rs.getInt("TIPO_GERADOR_FLUXO_ID"));
-		}
-		if (rs.getInt("REGIAO_ID") != 0) {
-		    cota.getRegioes().add(rs.getInt("REGIAO_ID"));
-		}
-		if (rs.getInt("AREA_INFLUENCIA_PDV_ID") != 0) {
-		    cota.getAreasInfluenciaPdv().add(rs.getInt("AREA_INFLUENCIA_PDV_ID"));
-		}
-		return cota;
+	    	
+	    	CotaEstudo cota = new CotaEstudo();
+	    	cota.setId(rs.getLong("COTA_ID"));
+	    	
+			if (rs.getString("BAIRRO") != null) {
+			    cota.getBairros().add(rs.getString("BAIRRO"));
+			}
+			
+			if (rs.getString("TIPO_COTA") != null) {
+			    cota.getTiposCota().add(rs.getString("TIPO_COTA"));
+			}
+			
+			if (rs.getString("UF") != null) {
+			    cota.getEstados().add(rs.getString("UF"));
+			}
+			
+			if (rs.getInt("TIPO_PONTO_PDV_ID") != 0) { 
+			    cota.getTiposPontoPdv().add(rs.getInt("TIPO_PONTO_PDV_ID"));
+			}
+			
+			if (rs.getInt("TIPO_GERADOR_FLUXO_ID") != 0) {
+			    cota.getTiposGeradorFluxo().add(rs.getInt("TIPO_GERADOR_FLUXO_ID"));
+			}
+			
+			if (rs.getInt("REGIAO_ID") != 0) {
+			    cota.getRegioes().add(rs.getInt("REGIAO_ID"));
+			}
+			
+			if (rs.getInt("AREA_INFLUENCIA_PDV_ID") != 0) {
+			    cota.getAreasInfluenciaPdv().add(rs.getInt("AREA_INFLUENCIA_PDV_ID"));
+			}
+			
+			return cota;
 	    }
 	});
 
@@ -385,19 +394,19 @@ public class CotaDAO {
 	for (CotaEstudo cota : retorno) {
 	    CotaEstudo temp = mapCota.get(cota.getId());
 	    if (temp != null) {
-		copySets(cota, temp);
+	    	copySets(cota, temp);
 	    }
 	}
     }
     
     private void copySets(CotaEstudo origem, CotaEstudo destino) {
-	destino.getTiposPontoPdv().addAll(origem.getTiposPontoPdv());
-	destino.getTiposGeradorFluxo().addAll(origem.getTiposGeradorFluxo());
-	destino.getBairros().addAll(origem.getBairros());
-	destino.getRegioes().addAll(origem.getRegioes());
-	destino.getTiposCota().addAll(origem.getTiposCota());
-	destino.getAreasInfluenciaPdv().addAll(origem.getAreasInfluenciaPdv());
-	destino.getEstados().addAll(origem.getEstados());
+		destino.getTiposPontoPdv().addAll(origem.getTiposPontoPdv());
+		destino.getTiposGeradorFluxo().addAll(origem.getTiposGeradorFluxo());
+		destino.getBairros().addAll(origem.getBairros());
+		destino.getRegioes().addAll(origem.getRegioes());
+		destino.getTiposCota().addAll(origem.getTiposCota());
+		destino.getAreasInfluenciaPdv().addAll(origem.getAreasInfluenciaPdv());
+		destino.getEstados().addAll(origem.getEstados());
     }
 
     private List<CotaEstudo> agruparCotas(List<CotaEstudo> lista) {
@@ -405,17 +414,18 @@ public class CotaDAO {
 	if (lista.size() > 0) {
 	    CotaEstudo previous = null;
 	    for (CotaEstudo cota : lista) {
-		if (previous == null) {
-		    previous = cota;
-		    continue;
-		} else {
-		    if (previous.getId().equals(cota.getId())) {
-			copySets(cota, previous);
-		    } else {
-			retorno.add(previous);
-			previous = cota;
-		    }
-		}
+		
+	    	if (previous == null) {
+			    previous = cota;
+			    continue;
+			} else {
+			    if (previous.getId().equals(cota.getId())) {
+			    	copySets(cota, previous);
+			    } else {
+			    	retorno.add(previous);
+			    	previous = cota;
+			    }
+			}
 	    }
 	    retorno.add(previous);
 	}

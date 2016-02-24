@@ -86,7 +86,6 @@ public class Bonificacoes extends ProcessoAbstrato {
 				}
 				
 				if(reparteMinimo.multiply(BigInteger.valueOf(cotasClassificacaoVendaZeroOuSemHistorico)).compareTo(estudo.getReparteDistribuir()) > 0) {
-					
 					throw new ValidacaoException(TipoMensagem.WARNING, "A soma do reparte mínimo das cotas excede o reparte total.");
 				}
 				
