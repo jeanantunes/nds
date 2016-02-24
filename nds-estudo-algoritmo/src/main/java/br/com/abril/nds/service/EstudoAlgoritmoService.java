@@ -274,6 +274,7 @@ public class EstudoAlgoritmoService {
     	}
     	
         final List<LocalDate> periodoVeraneio = new ArrayList<LocalDate>();
+       
         final Date dataLancamento = edicao.getDataLancamento();
         
         DataReferencia dataReferenciaFevereiro = DataReferencia.FEVEREIRO_15; 
@@ -377,8 +378,10 @@ public class EstudoAlgoritmoService {
             });
             
             for (final ProdutoEdicaoDTO base : distribuicaoVendaMedia.getBases()) {
-                final ProdutoEdicaoEstudo ed = new ProdutoEdicaoEstudo();
-                ed.setProduto(new Produto());
+               
+            	final ProdutoEdicaoEstudo ed = new ProdutoEdicaoEstudo();
+                
+            	ed.setProduto(new Produto());
                 ed.setId(base.getId());
                 ed.getProduto().setCodigo(base.getCodigoProduto());
                 ed.getProduto().setId(base.getIdProduto());
