@@ -415,7 +415,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
                 String msg = e.getMessage();
                 LOGGER.error(msg, e);
                 msg = "Erro ao obter desconto: Cota: " + cota.getNumeroCota() + " / Produto: "
-                        + produtoEdicao.getProduto().getCodigo() + " - " + produtoEdicao.getNumeroEdicao();
+                        + produtoEdicao.getProduto().getCodigo() + " - " + produtoEdicao.getNumeroEdicao()+"  "+msg;
                 LOGGER.error(msg, e);
                 throw new ValidacaoException(TipoMensagem.ERROR, msg);
             }
