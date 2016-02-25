@@ -780,7 +780,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		sql.append("      SELECT ");
 		sql.append("         @posicaoRanking\\:=@posicaoRanking + 1 as ranking, ");
-		sql.append("         @valorAcumulado\\:=@valorAcumulado + consolidado.participacao as participacaoAcumulada, ");
+		sql.append("         @valorAcumulado\\:=@valorAcumulado + consolidado.faturamentoCapa as participacaoAcumulada, ");
 		sql.append("         consolidado.numeroCota as numeroCota, ");
 		sql.append("         consolidado.nomeCota AS nomeCota, ");
 		sql.append("         consolidado.faturamentoCapa as faturamentoCapa, ");

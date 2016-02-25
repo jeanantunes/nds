@@ -313,13 +313,14 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		if (participacaoTotal.compareTo(BigDecimal.ZERO) != 0) {
 		
 			//Verifica o percentual dos valores em relação ao total de participacao
-			for (RegistroCurvaABCDTO registro : lista) {
+			for (RegistroRankingSegmentoDTO registro : lista) {
 				
-				if(registro.getParticipacao() != null){
-					participacaoRegistro = registro.getParticipacao().multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN);
+				if(registro.getFaturamentoCapa() != null){
+					participacaoRegistro = registro.getFaturamentoCapa().multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN);
 					registro.setParticipacao(participacaoRegistro);
 				}else{
 					registro.setParticipacao(BigDecimal.ZERO);
+					registro.setParticipacaoAcumulada(BigDecimal.ZERO);
 				}
 				
 				if(registro.getParticipacaoAcumulada()!=null) {
