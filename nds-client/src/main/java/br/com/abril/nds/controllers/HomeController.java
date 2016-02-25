@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers;
 
-import java.math.BigInteger;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -15,6 +14,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import net.vidageek.mirror.dsl.Mirror;
@@ -33,9 +33,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.listener.ControleSessionListener;
 import br.com.abril.nds.dto.MenuDTO;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.service.UsuarioService;
-import br.com.abril.nds.util.Intervalo;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
@@ -100,18 +98,17 @@ public class HomeController {
         	session.setAttribute(ControleSessionListener.USUARIO_LOGADO,authentication.getName());
             
         }
-            
-        String remoteAddress = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest().getRemoteAddr();
-        
-        List l = ControleSessionListener.usuariosLogado.get(authentication.getName());
-        if ( l == null ) {
-          l = new LinkedList();
-          l.add(remoteAddress+"->"+new Date());
-          ControleSessionListener.usuariosLogado.put(authentication.getName(), l );
+       
+        String remoteAddress = this.getClientIpAddr(((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest());
+        List listaLogados = ControleSessionListener.usuariosLogado.get(authentication.getName());
+        if ( listaLogados == null ) {
+          listaLogados = new LinkedList();
+          listaLogados.add(remoteAddress+"->"+new Date());
+          ControleSessionListener.usuariosLogado.put(authentication.getName(), listaLogados );
         }
         else {
-	        l.add(remoteAddress+"->"+new Date());
-	        ControleSessionListener.usuariosLogado.put(authentication.getName(), l);
+        	listaLogados.add(remoteAddress+"->"+new Date());
+	        ControleSessionListener.usuariosLogado.put(authentication.getName(), listaLogados);
         }
        
        
@@ -126,6 +123,30 @@ public class HomeController {
          		
     }
     
+    public  String getClientIpAddr(HttpServletRequest request) {  
+     try {
+        String ip = request.getHeader("X-Forwarded-For");  
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
+            ip = request.getHeader("Proxy-Client-IP");  
+        }  
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
+            ip = request.getHeader("WL-Proxy-Client-IP");  
+        }  
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
+            ip = request.getHeader("HTTP_CLIENT_IP");  
+        }  
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");  
+        }  
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {  
+            ip = request.getRemoteAddr();  
+        }  
+        return ip;  
+     } catch ( Exception e ) {
+    	 LOGGER.error("ERRO OBTENDO IP DO CLIENT",e);
+     }
+     return "";
+    }  
     public String obterInformacoesDoSistema() {
     try {
     				
