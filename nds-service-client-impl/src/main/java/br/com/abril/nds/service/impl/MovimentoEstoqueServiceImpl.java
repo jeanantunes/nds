@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.AlteracaoPrecoDTO;
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.FormaCobrancaFornecedorDTO;
@@ -28,6 +29,7 @@ import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueDTO;
 import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
+import br.com.abril.nds.dto.OutraMovimentacaoDTO;
 import br.com.abril.nds.enums.CodigoErro;
 import br.com.abril.nds.enums.Dominio;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -1992,5 +1994,17 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     	
     	return movimentoEstoqueRepository.obterValorConsignadoDeVendaEncalheSuplementar(dataMovimentacao);
     }
+
+	@Override
+	@Transactional
+	public List<AlteracaoPrecoDTO> obterAlteracoesPrecos(Date dataFechamento) {
+		return movimentoEstoqueRepository.obterAlteracoesPrecos(dataFechamento);
+	}
+
+	@Override
+	@Transactional
+	public List<OutraMovimentacaoDTO> obterOutraMovimentacaoVendaEncalheSuplementar(Date dataMovimentacao) {
+		return movimentoEstoqueRepository.obterOutraMovimentacaoVendaEncalheSuplementar(dataMovimentacao);
+	}
     
 }

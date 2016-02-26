@@ -34,8 +34,8 @@ $("#cotaPesquisa",roteirizacao.workspace).justInput(/[0-9]/);
 			<div id="botoesExportacao" style="display:none;">
 				<span class="bt_arq"><a href="javascript:;" onclick="roteirizacao.exportar('XLS');" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
 	    		<span class="bt_arq"><a href="javascript:;" onclick="roteirizacao.exportar('PDF');" rel="tipsy" title="Imprimir"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" /></a></span>
-	    		<span class="bt_arq"><a href="javascript:;" onclick="roteirizacao.imprimir();" rel="tipsy" title="Imprimir"><img src="${pageContext.request.contextPath}/images/bt_expedicao.png" alt="Imprimir PDF" hspace="5" border="0" /></a></span>
-	    		<span class="bt_arq"><a href="javascript:;" onclick="roteirizacao.imprimirXLS();" rel="tipsy" title="Imprimir XLS"><img src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" alt="Extração Excel" hspace="5" border="0" /></a></span>
+	    		<span class="bt_arq"><a href="javascript:;" onclick="roteirizacao.imprimir();" rel="tipsy" title="Extra&ccedil;&atilde;o em PDF"><img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" alt="Imprimir PDF" hspace="5" border="0" /></a></span>
+	    		<span class="bt_arq"><a href="javascript:;" onclick="roteirizacao.imprimirXLS();" rel="tipsy" title="Extra&ccedil;&atilde;o em Excel"><img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" alt="Extração Excel" hspace="5" border="0" /></a></span>
     		</div>
 		</div>
 	</div>

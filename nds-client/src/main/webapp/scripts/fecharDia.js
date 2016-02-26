@@ -97,6 +97,64 @@ var fecharDiaController =  $.extend(true, {
 			height : 155
 		});
 		
+		$(".alteracaoGrid", fecharDiaController.workspace).flexigrid({
+			preProcess: fecharDiaController.executarPreProcessamentoAlteracaoPreco,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigo',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'numeroEdicao',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Valor Anterior',
+				name : 'valorAntigo',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Valor Atual',
+				name : 'valorAtual',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Usuario',
+				name : 'nomeUsuario',
+				width : 120,
+				sortable : true,
+				align : 'left'
+			}],
+			width : 500,
+			height : 155
+		});
+		
+		$(".outraMovimentacaoGrid", fecharDiaController.workspace).flexigrid({
+			preProcess: fecharDiaController.executarPreProcessamentoOutraMovimentacao,
+			dataType : 'json',
+			colModel : [{
+				display : 'Valor',
+				name : 'valor',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Operacao',
+				name : 'operacao',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}],
+			width : 500,
+			height : 155
+		});
+		
 		$(".reparteDialogGrid", fecharDiaController.workspace).flexigrid({
 			preProcess: fecharDiaController.executarPreProcessamentoReparte,
 			dataType : 'json',
@@ -337,6 +395,12 @@ var fecharDiaController =  $.extend(true, {
                 sortable : false,
                 align : 'right'
             }, {
+                display : 'Dt. Emissão',
+                name : 'dataEmissaoFormatada',
+                width : 80,
+                sortable : false,
+                align : 'center'
+            }, {
                 display : 'Dt. Vencto',
                 name : 'dataVencimentoFormatada',
                 width : 80,
@@ -572,6 +636,46 @@ var fecharDiaController =  $.extend(true, {
 		}
 		
 		$("#dialog-lancto-faltas-sobras", fecharDiaController.workspace).show();
+		
+		
+		return resultado;
+		
+	},
+	
+	executarPreProcessamentoAlteracaoPreco : function(resultado){
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			$(".dialog-consolidado-alteracao-preco", fecharDiaController.workspace).hide();
+
+			return resultado;
+		}
+		
+		$("#dialog-consolidado-alteracao-preco", fecharDiaController.workspace).show();
+		
+		
+		return resultado;
+		
+	},
+	
+	executarPreProcessamentoOutraMovimentacao : function(resultado){
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			$(".dialog-consolidado-alteracao-preco", fecharDiaController.workspace).hide();
+
+			return resultado;
+		}
+		
+		$("#dialog-consolidado-alteracao-preco", fecharDiaController.workspace).show();
 		
 		
 		return resultado;
@@ -1334,13 +1438,23 @@ var fecharDiaController =  $.extend(true, {
 	
 	processarResumoDividasVencer : function(itens) {
         var tabela =  $('#tabela_dividas_vencer', fecharDiaController.workspace);
-        fecharDiaController.processarResumoDividas(itens, tabela);
+        fecharDiaController.processarResumoDividasAVencer(itens, tabela);
     },
 	
 	processarResumoDividas : function(itens, tabela) {
         $(tabela).html("");
         $(tabela).append(fecharDiaController.gerarLinhaBrancoResumoDividas());
         $(tabela).append(fecharDiaController.gerarCabecalhoResumoDividas());
+        $.each(itens, function(index, item) {
+            $(tabela).append(fecharDiaController.gerarLinhaResumoDividas(item));                       
+        });
+        $(tabela).append((fecharDiaController.gerarLinhaBrancoResumoDividas()));
+    },
+    
+    processarResumoDividasAVencer : function(itens, tabela) {
+        $(tabela).html("");
+        $(tabela).append(fecharDiaController.gerarLinhaBrancoResumoDividas());
+        $(tabela).append(fecharDiaController.gerarCabecalhoResumoDividasAVencer());
         $.each(itens, function(index, item) {
             $(tabela).append(fecharDiaController.gerarLinhaResumoDividas(item));                       
         });
@@ -1419,6 +1533,16 @@ var fecharDiaController =  $.extend(true, {
        return linhaCabecalho; 
     },
 	
+    gerarCabecalhoResumoDividasAVencer : function() {
+        var linhaCabecalho = "<tr class=\"header_table\">";  
+        linhaCabecalho += "<td align=\"left\">Forma de Pagamento</td>";
+        linhaCabecalho += "<td align=\"right\">Total R$</td>";
+        linhaCabecalho += "<td align=\"right\">Valor Pago</td>";
+        linhaCabecalho += "<td align=\"right\">A vencer</td>";
+        linhaCabecalho += "</tr>";
+        return linhaCabecalho; 
+     },
+    
 	gerarLinhaBrancoResumoDividas : function() {
 	   var linhaBranco = "<tr>";  
 	   linhaBranco += "<td align=\"left\">&nbsp;</td>";
@@ -1492,6 +1616,64 @@ var fecharDiaController =  $.extend(true, {
 		});
 	},
 	
+	popup_valorAlteracaoPreco : function(resumo){
+		
+		var dataFechamento = $('#dataDaOperacao', fecharDiaController.workspace).val();
+		
+		var param = [{name:"dataFechamento", value:dataFechamento}];
+		
+		$(".alteracaoGrid", fecharDiaController.workspace).flexOptions({
+			url: contextPath + "/administracao/fecharDia/obterAlteracaoPreco",
+			dataType : 'json',
+			params: param
+		});
+		
+		$(".alteracaoGrid", fecharDiaController.workspace).flexReload();
+		
+		$( "#dialog-consolidado-alteracao-preco", fecharDiaController.workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:540,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+				},
+			},
+			
+			form: $("#dialog-consolidado-alteracao-preco", fecharDiaController.workspace).parents("form")
+		});
+	},
+	
+	popup_OutraMovimentacao : function(resumo){
+		
+		var dataFechamento = $('#dataDaOperacao', fecharDiaController.workspace).val();
+		
+		var param = [{name:"dataFechamento", value:dataFechamento}];
+		
+		$(".outraMovimentacaoGrid", fecharDiaController.workspace).flexOptions({
+			url: contextPath + "/administracao/fecharDia/obterOutraMovimentacao",
+			dataType : 'json',
+			params: param
+		});
+		
+		$(".outraMovimentacaoGrid", fecharDiaController.workspace).flexReload();
+		
+		$( "#dialog-consolidado-outra-movimentacao", fecharDiaController.workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:540,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog("close" );
+				},
+			},
+			
+			form: $("#dialog-consolidado-outra-movimentacao", fecharDiaController.workspace).parents("form")
+		});
+	},
+	
 	popup_valorSaidaConsigando:function(resumo){
 		
 		$( "#dialog-consolidado-valor-saida", fecharDiaController.workspace ).dialog({
@@ -1519,11 +1701,28 @@ var fecharDiaController =  $.extend(true, {
 		
 		$("#consignaddo-saida-valorExpedicaoDia", fecharDiaController.workspace).html(resumo.resumoConsignado.valorExpedicaoFormatado);
 		
-		$("#consignaddo-saida-outrosValores", fecharDiaController.workspace).html(resumo.resumoConsignado.valorOutrosValoresSaidasFormatado);
+		var saidaOutrosValores = null;
+		
+		if(resumo.resumoConsignado.valorAlteracaoPrecoFormatado == '0,00') {
+			saidaOutrosValores = resumo.resumoConsignado.valorOutrosValoresSaidasFormatado;
+		} else {
+			saidaOutrosValores = "<a href=\"javascript:;\" onclick=\"fecharDiaController.popup_OutraMovimentacao();\">"+resumo.resumoConsignado.valorOutrosValoresSaidasFormatado+"</a>";
+		}
+		
+		$("#consignaddo-saida-outrosValores", fecharDiaController.workspace).html(saidaOutrosValores);
 		
 		$("#consignaddo-saida-a-vista", fecharDiaController.workspace).html(resumo.resumoConsignado.valorAVistaFormatado);
 		
-		$("#consignaddo-alteracao-de-preco", fecharDiaController.workspace).html(resumo.resumoConsignado.valorAlteracaoPrecoFormatado);
+		var alteracaoDePreco = null;
+		
+		if(resumo.resumoConsignado.valorAlteracaoPrecoFormatado == '0,00') {
+			alteracaoDePreco = resumo.resumoConsignado.valorAlteracaoPrecoFormatado;
+		} else {
+			alteracaoDePreco = "<a href=\"javascript:;\" onclick=\"fecharDiaController.popup_valorAlteracaoPreco();\">"+resumo.resumoConsignado.valorAlteracaoPrecoFormatado+"</a>";
+		}
+		
+		
+		$("#consignaddo-alteracao-de-preco", fecharDiaController.workspace).html(alteracaoDePreco);
 
 		var linhaResumo = "<tr>";
 		
@@ -1646,6 +1845,8 @@ var fecharDiaController =  $.extend(true, {
 			}
 		);
 	}
+	
+	
 	
 }, BaseController);
 //@ sourceURL=fecharDia.js

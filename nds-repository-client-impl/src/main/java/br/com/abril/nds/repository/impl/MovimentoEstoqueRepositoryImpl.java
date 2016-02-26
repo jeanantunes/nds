@@ -15,8 +15,10 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.AlteracaoPrecoDTO;
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueDTO;
+import br.com.abril.nds.dto.OutraMovimentacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroExtratoEdicaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -435,7 +437,8 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		return (result == null) ? BigDecimal.ZERO : (BigDecimal) result;
 	}
     	
-    private StringBuilder getSQLDescontoLogistica(){
+    @SuppressWarnings("unused")
+	private StringBuilder getSQLDescontoLogistica(){
             
         StringBuilder sql = new StringBuilder();
         
@@ -525,6 +528,7 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		return (MovimentoEstoque) query.uniqueResult();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> obterMovimentosRepartePromocionalSemEstornoRecebimentoFisico(
 			Long idProdutoEdicao,
@@ -671,4 +675,101 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		
 		return (BigDecimal) query.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<AlteracaoPrecoDTO> obterAlteracoesPrecos(Date dataFechamento) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append(" p.codigo as codigo, ");
+		sql.append(" pe.NUMERO_EDICAO as numeroEdicao, "); 
+		sql.append(" hapv.VALOR_ATUAL as valorAtual,  ");
+		sql.append(" hapv.VALOR_ANTIGO as valorAntigo, ");
+		sql.append(" u.nome as nomeUsuario");
+		sql.append(" from movimento_estoque_cota mec                                                                                   ");
+		sql.append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID                                                     ");
+		sql.append(" inner join historico_alteracao_preco_venda hapv on hapv.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID                 ");
+		sql.append(" inner join produto_edicao pe on pe.id = hapv.PRODUTO_EDICAO_ID                                                    ");
+		sql.append(" inner join produto p on pe.produto_id = p.ID                                                                      ");
+		sql.append(" inner join usuario u on hapv.usuario_id = u.ID                                                                      ");
+		sql.append(" where 1 = 1                                                                                                       ");
+		sql.append(" and hapv.data_operacao = :dataMovimento                                                                           ");
+		sql.append(" and mec.PRODUTO_EDICAO_ID not in (                                                                                ");
+		sql.append(" 	select distinct produtoEdicao_.ID                                                                              ");
+		sql.append(" 	from EXPEDICAO expedicao                                                                                       ");
+		sql.append(" 	inner join LANCAMENTO lancamento on expedicao.ID=lancamento.EXPEDICAO_ID                                       ");
+		sql.append(" 	inner join PRODUTO_EDICAO produtoEdicao_ on lancamento.PRODUTO_EDICAO_ID=produtoEdicao_.ID                     ");
+		sql.append(" 	inner join PRODUTO produto_ on produtoEdicao_.PRODUTO_ID=produto_.ID                                           ");
+		sql.append(" 	where                                                                                                          ");
+		sql.append(" 		lancamento.STATUS <> :statusFuro                                                                           ");
+		sql.append(" 		and lancamento.DATA_LCTO_DISTRIBUIDOR between date_add(:dataMovimento, interval -1 day) and :dataMovimento ");
+		sql.append(" 		and produto_.FORMA_COMERCIALIZACAO = :formaComercializacaoConsignado                                       ");
+		sql.append(" )                                                                                                                 ");
+		sql.append(" group by p.codigo, pe.NUMERO_EDICAO                                                                               ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataMovimento", dataFechamento);
+		query.setParameter("statusFuro", StatusLancamento.FURO.name());
+		query.setParameter("formaComercializacaoConsignado", FormaComercializacao.CONSIGNADO.name());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(AlteracaoPrecoDTO.class));
+		
+		return query.list();
+	}
+	
+	public List<OutraMovimentacaoDTO> obterOutraMovimentacaoVendaEncalheSuplementar(final Date dataMovimentacao) {
+		
+		final StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append("  'Suplementar' as operacao, ");
+		sql.append(" coalesce(sum(produtoEdicao.PRECO_VENDA * case when (tipoMovimento.operacao_estoque = 'SAIDA') ");
+	    sql.append("        then movimentoEstoque.qtde ");
+	    sql.append("        else - movimentoEstoque.qtde ");
+	    sql.append("    end ), 0) as valor ");
+		sql.append(" from ");
+		sql.append("	MOVIMENTO_ESTOQUE movimentoEstoque ");
+		sql.append("	join TIPO_MOVIMENTO tipoMovimento on movimentoEstoque.TIPO_MOVIMENTO_ID = tipoMovimento.ID ");
+		sql.append("	join PRODUTO_EDICAO produtoEdicao on movimentoEstoque.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
+		sql.append("	left outer join venda_produto_movimento_estoque mVenda on mVenda.ID_MOVIMENTO_ESTOQUE = movimentoEstoque.id ");
+		sql.append("	left outer join venda_produto venda on venda.ID = mVenda.ID_VENDA_PRODUTO ");
+		sql.append("	join cota cota on venda.id_cota = cota.id "); 
+		sql.append("	join PESSOA pessoa on pessoa.id = cota.PESSOA_ID ");
+		sql.append(" where ");
+		sql.append("	movimentoEstoque.DATA = :dataMovimentacao "); 
+		sql.append("	and movimentoEstoque.STATUS = :statusAprovado ");
+		sql.append("	and tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:vendaEncalheSuplementar, :estornoVendaEncalheSuplementar) ");
+		sql.append("	and if(venda.TIPO_COMERCIALIZACAO_VENDA is not null, venda.TIPO_COMERCIALIZACAO_VENDA = :formaComercializacao, venda.TIPO_COMERCIALIZACAO_VENDA is null) ");
+		sql.append("	and if(venda.TIPO_VENDA_ENCALHE is not null, venda.TIPO_VENDA_ENCALHE = :tipoVenda, venda.TIPO_VENDA_ENCALHE is null) ");	
+		sql.append("	and ");
+		sql.append("		movimentoEstoque.PRODUTO_EDICAO_ID in ( ");
+		sql.append("			select distinct produtoEdicao_.ID "); 
+		sql.append("			from ");
+		sql.append("				EXPEDICAO expedicao  ");
+		sql.append("				inner join LANCAMENTO lancamento on expedicao.ID = lancamento.EXPEDICAO_ID "); 
+		sql.append("				inner join PRODUTO_EDICAO produtoEdicao_ on lancamento.PRODUTO_EDICAO_ID = produtoEdicao_.ID ");  
+		sql.append("				inner join PRODUTO produto_ on produtoEdicao_.PRODUTO_ID = produto_.ID ");  
+		sql.append("			where lancamento.STATUS <> :statusFuro ");
+		sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR <= :dataMovimentacao "); 
+		sql.append("				and produto_.FORMA_COMERCIALIZACAO = :formaComercializacao ");
+		sql.append("		) ");
+		sql.append("   GROUP BY movimentoEstoque.DATA 	");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataMovimentacao", dataMovimentacao);
+		query.setParameter("statusAprovado",StatusAprovacao.APROVADO.name() );
+		query.setParameter("vendaEncalheSuplementar", GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR.name());
+		query.setParameterList("estornoVendaEncalheSuplementar", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR.name()));
+		query.setParameter("formaComercializacao", FormaComercializacao.CONSIGNADO.name());
+		query.setParameter("tipoVenda", TipoVendaEncalhe.SUPLEMENTAR.name());
+		query.setParameter("statusFuro",StatusLancamento.FURO.name());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(OutraMovimentacaoDTO.class));
+		
+		return query.list();
+	}
+	
 }

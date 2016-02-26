@@ -23,9 +23,11 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.report.RelatorioFechamentoDiario;
 import br.com.abril.nds.client.vo.DetalheCotaFechamentoDiarioVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.AlteracaoPrecoDTO;
 import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.EncalheFecharDiaDTO;
 import br.com.abril.nds.dto.FecharDiaDTO;
+import br.com.abril.nds.dto.OutraMovimentacaoDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
@@ -730,4 +732,23 @@ public class FecharDiaController extends BaseController {
         }
 		return isDataOperacao;
 	}
+	
+	@Post
+    @Path("/obterAlteracaoPreco")
+    public void obterAlteracaoPreco(final Date dataFechamento){
+       
+		List<AlteracaoPrecoDTO> lista = fecharDiaService.obterAlteracaoPreco(dataFechamento);
+		
+		result.use(FlexiGridJson.class).from(lista).page(1).total(1).serialize();
+    }
+	
+	@Post
+    @Path("/obterOutraMovimentacao")
+    public void obterOutraMovimentacao(final Date dataFechamento){
+       
+		List<OutraMovimentacaoDTO> lista = fecharDiaService.obterOutraMovimentacao(dataFechamento);
+		
+		result.use(FlexiGridJson.class).from(lista).page(1).total(1).serialize();
+		
+    }
 }

@@ -5,8 +5,10 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.AlteracaoPrecoDTO;
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueDTO;
+import br.com.abril.nds.dto.OutraMovimentacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroExtratoEdicaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -70,5 +72,8 @@ public interface MovimentoEstoqueRepository extends Repository<MovimentoEstoque,
 	BigDecimal obterValorConsignadoDeVendaEncalheSuplementar(final Date dataMovimentacao );
 
 	BigDecimal obterValorAlteracoesPrecosExpedicoesAnteriores(Date dataFechamento);
+	
+	List<AlteracaoPrecoDTO> obterAlteracoesPrecos(Date dataFechamento);
 
+	List<OutraMovimentacaoDTO> obterOutraMovimentacaoVendaEncalheSuplementar(final Date dataMovimentacao );
 }
