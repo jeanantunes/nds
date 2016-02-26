@@ -372,9 +372,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" select distinct ");
-		sql.append(" cota.numero_cota as numeroCota, ");
-		sql.append(" (case when (pessoa.TIPO = 'F') then pessoa.NOME else pessoa.RAZAO_SOCIAL end) AS nomeCota, ");
+		sql.append(" select ");
 		sql.append(" 'Cota Ausente' as operacao, ");
 		sql.append(" coalesce(sum(movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA),0)*-1 as valor ");
 		sql.append(" from ");
@@ -389,7 +387,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		sql.append("	and movimentoEstoque.STATUS=:statusAprovado ");
 		sql.append("	and movimentoEstoque.FORMA_COMERCIALIZACAO = :formaComercializacaoConsignado ");
 		sql.append("	and tipoMovimento.id = 14 ");
-		sql.append("   Group by cota.id, movimentoEstoque.DATA 	");
+		sql.append("   Group by movimentoEstoque.DATA 	");
 		
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
