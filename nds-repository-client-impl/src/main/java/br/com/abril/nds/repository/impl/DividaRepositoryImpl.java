@@ -1133,6 +1133,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         final StringBuilder sql = new StringBuilder();
         
         sql.append(" SELECT ");
+        
+        /*
         sql.append(" CASE WHEN DIVIDA_.DIVIDA_RAIZ_ID is null ");
         sql.append(" THEN DIVIDA_.VALOR ");
         sql.append(" ELSE  ");
@@ -1143,6 +1145,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         sql.append(" where ");
         sql.append(" ACUMULADAS_.id = DIVIDA_.DIVIDA_RAIZ_ID) ");
         sql.append(" END as dividaAcumulada, ");
+        */
+        
+        sql.append(" DIVIDA_.VALOR as dividaAcumulada, ");
         
         sql.append(" DIVIDA_.ID as idDivida, ");
         
