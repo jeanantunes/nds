@@ -65,7 +65,7 @@
       <to>odemir.olivatti_INFO@abril.com.br</to>
       <username>teste</username>
     <password>rTZ0PAtThz</password>
-      <subject>ERRO NDS SERVIDOR=%property{HOSTNAME} (%property{CATALINA_HOME}) APLICACAO </subject>
+      <subject>ERRO NDS SERVIDOR=%property{HOSTNAME} %m APLICACAO %property{catalina.base} </subject>
       <layout class="ch.qos.logback.classic.PatternLayout">
       <pattern>%date %-5level %logger - %message%n</pattern>
     </layout> 
@@ -164,6 +164,9 @@
 	
 	<logger name="br.com.caelum.vraptor" level="ERROR"/>
 	
+	<logger name="org.springframework.jdbc" level="ERROR" />
+
+
 	<!--  logger name="org.hibernate.typeorg.hibernate.hql.ast.AST" level="DEBUG"/>
   	<logger name="org.hibernate.tool.hbm2ddl" level="ERROR" />
   	<logger name="org.hibernate.hql" level="DEBUG" />

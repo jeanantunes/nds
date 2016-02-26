@@ -24,6 +24,8 @@ public class RegistroRankingSegmentoDTO extends RegistroCurvaABCDTO implements S
 	
 	@Export(label="Faturamento Capa R$",exhibitionOrder=4)
 	private String faturamentoCapaFormatado;
+	
+	private BigDecimal totalFaturamento;
 
 	public Long getRanking() {
 		return ranking;
@@ -77,4 +79,13 @@ public class RegistroRankingSegmentoDTO extends RegistroCurvaABCDTO implements S
 	public String getParticipacaoAcumuladaFormatado() {
 		return super.getParticipacaoAcumuladaFormatado();
 	}
+
+	public BigDecimal getTotalFaturamento() {
+		return totalFaturamento;
+	}
+
+	public void setTotalFaturamento(BigDecimal totalFaturamento) {
+		this.totalFaturamento = totalFaturamento;
+	}
+	
 }

@@ -62,6 +62,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	}
 
 	boolean existeCotaComHistorico = false;
+	
 	for (CotaEstudo cota : cotas) {
 	    
 		cota.setEdicoesRecebidas(new ArrayList<ProdutoEdicaoEstudo>());
@@ -409,23 +410,23 @@ public class SelecaoBancas extends ProcessoAbstrato {
 
 		if (cotasComHistoricoMap.get(cotaDesenglobada.getId()).getEdicoesRecebidas() != null) {
 		    for (ProdutoEdicaoEstudo edicaoCotaDesenglobada : cotasComHistoricoMap.get(cotaDesenglobada.getId()).getEdicoesRecebidas()) {
-			BigDecimal reparteInicial = edicaoCotaDesenglobada.getReparte();
-			BigDecimal vendaInicial = edicaoCotaDesenglobada.getVenda();
-
-			for (CotaEnglobada cotaEnglobada : cotaDesenglobada.getCotasEnglobadas()) {
-			    BigDecimal porcentualEnglobacao = BigDecimal.valueOf(cotaEnglobada.getPorcentualEnglobacao()).divide(BIGDECIMAL_100);
-
-			    if (validaEnglobacaoComPeriodoVigente(cotaEnglobada.getDataInclusao())) {
-					if (cotasComHistoricoMap.containsKey(cotaEnglobada.getId())) {
-					    distribuiEnglobacao(reparteInicial, vendaInicial, porcentualEnglobacao, edicaoCotaDesenglobada,
-					    cotasComHistoricoMap.get(cotaEnglobada.getId()));
-					} else {
-					    CotaEstudo cota = cotaDAO.getCotaById(cotaEnglobada.getId());
-					    distribuiEnglobacao(reparteInicial, vendaInicial, porcentualEnglobacao, edicaoCotaDesenglobada, cota);
-					    cotasComHistoricoMap.put(cota.getId(), cota);
-					}
-			    }
-			}
+				BigDecimal reparteInicial = edicaoCotaDesenglobada.getReparte();
+				BigDecimal vendaInicial = edicaoCotaDesenglobada.getVenda();
+	
+				for (CotaEnglobada cotaEnglobada : cotaDesenglobada.getCotasEnglobadas()) {
+				    BigDecimal porcentualEnglobacao = BigDecimal.valueOf(cotaEnglobada.getPorcentualEnglobacao()).divide(BIGDECIMAL_100);
+	
+				    if (validaEnglobacaoComPeriodoVigente(cotaEnglobada.getDataInclusao())) {
+						if (cotasComHistoricoMap.containsKey(cotaEnglobada.getId())) {
+						    distribuiEnglobacao(reparteInicial, vendaInicial, porcentualEnglobacao, edicaoCotaDesenglobada,
+						    cotasComHistoricoMap.get(cotaEnglobada.getId()));
+						} else {
+						    CotaEstudo cota = cotaDAO.getCotaById(cotaEnglobada.getId());
+						    distribuiEnglobacao(reparteInicial, vendaInicial, porcentualEnglobacao, edicaoCotaDesenglobada, cota);
+						    cotasComHistoricoMap.put(cota.getId(), cota);
+						}
+				    }
+				}
 		    }
 		}
 	    }
