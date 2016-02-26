@@ -6,12 +6,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import br.com.abril.nds.dto.AlteracaoPrecoDTO;
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueDTO;
 import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
+import br.com.abril.nds.dto.OutraMovimentacaoDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -147,4 +149,7 @@ public interface MovimentoEstoqueService {
 	
 	 BigDecimal obterValorConsignadoDeVendaSuplementar(final Date dataMovimentacao);
 	
+	 List<AlteracaoPrecoDTO> obterAlteracoesPrecos(Date dataFechamento);
+	 
+	 List<OutraMovimentacaoDTO> obterOutraMovimentacaoVendaEncalheSuplementar(final Date dataMovimentacao );
 }

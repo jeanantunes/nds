@@ -48,10 +48,15 @@ public class DividaDTO implements Serializable {
     @Export(label = "Valor R$", exhibitionOrder = 5, alignment = Alignment.RIGHT)
     private String valorFormatado = CurrencyUtil.formatarValor(BigDecimal.ZERO);
     
+    private Date dataEmissao;
+    
     private Date dataVencimento;
     
     @Export(label = "Dt. Vencto", exhibitionOrder = 6, alignment = Alignment.CENTER)
     private String dataVencimentoFormatada;
+    
+    @Export(label = "Dt. Emissão", exhibitionOrder = 6, alignment = Alignment.CENTER)
+    private String dataEmissaoFormatada;
     
     private TipoCobranca formaPagamento;
     
@@ -62,7 +67,7 @@ public class DividaDTO implements Serializable {
     
     public DividaDTO(Long idDivida, Integer numeroCota, String nomeCota, String nomeBanco,
             String contaCorrente, String nossoNumero, BigDecimal valor,
-            Date dataVencimento, TipoCobranca formaPagamento) {
+            Date dataVencimento, TipoCobranca formaPagamento, Date DataEmissao) {
         this.idDivida = idDivida;
         this.numeroCota = numeroCota;
         this.nomeCota = nomeCota;
@@ -75,6 +80,8 @@ public class DividaDTO implements Serializable {
         this.dataVencimentoFormatada = DateUtil.formatarDataPTBR(dataVencimento);
         this.formaPagamento = formaPagamento;
         this.descricaoFormaPagamento = formaPagamento.getDescricao();
+        this.dataEmissao = DataEmissao;
+        this.dataEmissaoFormatada = DateUtil.formatarDataPTBR(dataEmissao);
     }
 
     /**
@@ -248,9 +255,16 @@ public class DividaDTO implements Serializable {
         DividaDTO dto = new DividaDTO(cobranca.getId(), cota.getNumeroCota(),
                 nomeCota, nomeBanco, contaCorrente, cobranca.getNossoNumero(),
                 cobranca.getValor(), cobranca.getDataVencimento(),
-                cobranca.getTipoCobranca());
+                cobranca.getTipoCobranca(), cobranca.getDataEmissao());
         return dto;
     }
-    
 
+	public Date getDataEmissao() {
+		return dataEmissao;
+	}
+
+	public void setDataEmissao(Date dataEmissao) {
+		this.dataEmissao = dataEmissao;
+		this.dataEmissaoFormatada = DateUtil.formatarDataPTBR(dataEmissao);
+	}
 }
