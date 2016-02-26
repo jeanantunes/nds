@@ -11,6 +11,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaAusenteDTO;
+import br.com.abril.nds.dto.OutraMovimentacaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSuplementarDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
@@ -363,6 +365,42 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		query.addScalar("VALOR_COTA_AUSENTE",StandardBasicTypes.BIG_DECIMAL);
 		
 		return (BigDecimal) query.uniqueResult();
+	}
+	
+	@Override
+	public List<OutraMovimentacaoDTO> obterOutraMovimentacaoCotaAusente(final Date dataMovimentacao) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select distinct ");
+		sql.append(" cota.numero_cota as numeroCota, ");
+		sql.append(" (case when (pessoa.TIPO = 'F') then pessoa.NOME else pessoa.RAZAO_SOCIAL end) AS nomeCota, ");
+		sql.append(" 'Cota Ausente' as operacao, ");
+		sql.append(" coalesce(sum(movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA),0)*-1 as valor ");
+		sql.append(" from ");
+		sql.append("	MOVIMENTO_ESTOQUE_COTA movimentoEstoque");
+		sql.append("	join TIPO_MOVIMENTO tipoMovimento on movimentoEstoque.TIPO_MOVIMENTO_ID=tipoMovimento.ID ");
+		sql.append("	join PRODUTO_EDICAO produtoEdicao on movimentoEstoque.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
+		sql.append("	join COTA_AUSENTE ca on (ca.DATA = movimentoEstoque.DATA) ");
+		sql.append("	join COTA cota on (ca.COTA_ID = cota.ID) and (movimentoEstoque.cota_id =  cota.ID) ");
+		sql.append("	join PESSOA pessoa on pessoa.id = cota.PESSOA_ID ");
+		sql.append(" where");
+		sql.append("	movimentoEstoque.DATA = :dataMovimento "); 
+		sql.append("	and movimentoEstoque.STATUS=:statusAprovado ");
+		sql.append("	and movimentoEstoque.FORMA_COMERCIALIZACAO = :formaComercializacaoConsignado ");
+		sql.append("	and tipoMovimento.id = 14 ");
+		sql.append("   Group by cota.id, movimentoEstoque.DATA 	");
+		
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataMovimento", dataMovimentacao);
+		query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
+		query.setParameter("formaComercializacaoConsignado", FormaComercializacao.CONSIGNADO.name());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(OutraMovimentacaoDTO.class));
+		
+		return query.list();
 	}
 	
 }

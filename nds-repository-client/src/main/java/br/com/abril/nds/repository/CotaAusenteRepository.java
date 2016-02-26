@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.CotaAusenteDTO;
+import br.com.abril.nds.dto.OutraMovimentacaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSuplementarDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
@@ -26,4 +27,5 @@ public interface CotaAusenteRepository extends Repository<CotaAusente,Long> {
 	 
 	 BigDecimal obterSaldoDeSaidaDoConsignadoDasCotasAusenteNoDistribuidor(final Date dataMovimentacao);
 	 
+	 List<OutraMovimentacaoDTO> obterOutraMovimentacaoCotaAusente(final Date dataMovimentacao);
 }

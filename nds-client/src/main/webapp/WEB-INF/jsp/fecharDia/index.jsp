@@ -687,5 +687,25 @@
     </div>
 </div> 
 
+<form id="form-consolidado-alteracao-preco">
+<div id="dialog-consolidado-alteracao-preco" title="Altera&ccedil;&atilde;o de Pre&ccedil;o" style="display:none;">
+	<fieldset style="width:500px;">
+    	<legend>Altera&ccedil;&atilde;o de Pre&ccedil;o</legend>
+        <table class="alteracaoGrid"></table>
+        	
+    </fieldset>
+</div>
+</form>
+
+<form id="form-consolidado-outra-movimentacao">
+<div id="dialog-consolidado-outra-movimentacao" title="Outras Movimenta&ccedil;&otilde;es" style="display:none;">
+	<fieldset style="width:500px;">
+    	<legend>Outras Movimenta&ccedil;&otilde;es</legend>
+        <table class="outraMovimentacaoGrid"></table>
+        	
+    </fieldset>
+</div>
+</form>
+
 </body>
 </html>

@@ -17,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.AlteracaoPrecoDTO;
 import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.EncalheFecharDiaDTO;
+import br.com.abril.nds.dto.OutraMovimentacaoDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
@@ -32,7 +34,6 @@ import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
-import br.com.abril.nds.dto.chamadaencalhe.ChamadaEncalheCotaDTO;
 import br.com.abril.nds.dto.fechamentodiario.DiferencaDTO;
 import br.com.abril.nds.dto.fechamentodiario.DividaDTO;
 import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
@@ -57,7 +58,6 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.FlagPendenteAtivacao;
-import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
@@ -69,7 +69,6 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.HistoricoEstoqueProduto;
 import br.com.abril.nds.model.estoque.LancamentoDiferenca;
-import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -93,13 +92,11 @@ import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsolidadoDivida
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoEstoque;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
-import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalCota;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
-import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -2101,5 +2098,25 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		return (dataEmOperacao == null) ? false : (dataFechamento.compareTo(dataEmOperacao) < 0) ;
 	}
+
+	@Override
+	public List<AlteracaoPrecoDTO> obterAlteracaoPreco(Date dataFechamento) {
+		return this.movimentoEstoqueService.obterAlteracoesPrecos(dataFechamento);
+	}
   
+	@Transactional
+	public List<OutraMovimentacaoDTO> obterOutraMovimentacao(final Date dataFechamento) {
+		
+		List<OutraMovimentacaoDTO> outrasMovimentacoes = new ArrayList<OutraMovimentacaoDTO>(); 
+		
+		List<OutraMovimentacaoDTO> listaCotaAusentes = cotaAusenteRepository.obterOutraMovimentacaoCotaAusente(dataFechamento);
+		
+		List<OutraMovimentacaoDTO> listaSuplementar = movimentoEstoqueService.obterOutraMovimentacaoVendaEncalheSuplementar(dataFechamento);
+		
+		outrasMovimentacoes.addAll(listaCotaAusentes);
+        
+		outrasMovimentacoes.addAll(listaSuplementar);
+		
+        return outrasMovimentacoes;
+	}
 }

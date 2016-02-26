@@ -3,7 +3,9 @@ package br.com.abril.nds.service;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.AlteracaoPrecoDTO;
 import br.com.abril.nds.dto.CotaResumoDTO;
+import br.com.abril.nds.dto.OutraMovimentacaoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO.TipoResumo;
@@ -214,6 +216,10 @@ public interface FecharDiaService {
 	 */
 	boolean isDiaComFechamentoRealizado(Date dataFechamento);
 	
-	
 	List<CotaResumoDTO> obterDetalheCotaFechamentoDiario(Date dataFechamento,TipoResumo tipoResumo);
+
+	List<AlteracaoPrecoDTO> obterAlteracaoPreco(Date dataFechamento);
+	
+	List<OutraMovimentacaoDTO> obterOutraMovimentacao(final Date dataFechamento);
+	
 }
