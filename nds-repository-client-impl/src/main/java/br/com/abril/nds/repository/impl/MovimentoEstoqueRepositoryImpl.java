@@ -724,8 +724,6 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		final StringBuilder sql = new StringBuilder();
 		
 		sql.append(" select ");
-		sql.append("  cota.numero_cota as numeroCota, ");
-		sql.append(" (case when (pessoa.TIPO = 'F') then pessoa.NOME else pessoa.RAZAO_SOCIAL end) AS nomeCota, ");
 		sql.append("  'Suplementar' as operacao, ");
 		sql.append(" coalesce(sum(produtoEdicao.PRECO_VENDA * case when (tipoMovimento.operacao_estoque = 'SAIDA') ");
 	    sql.append("        then movimentoEstoque.qtde ");
@@ -757,7 +755,7 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR <= :dataMovimentacao "); 
 		sql.append("				and produto_.FORMA_COMERCIALIZACAO = :formaComercializacao ");
 		sql.append("		) ");
-		sql.append("   GROUP BY cota.id 	");
+		sql.append("   GROUP BY movimentoEstoque.DATA 	");
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		

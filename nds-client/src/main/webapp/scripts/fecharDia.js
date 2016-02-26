@@ -138,19 +138,7 @@ var fecharDiaController =  $.extend(true, {
 		$(".outraMovimentacaoGrid", fecharDiaController.workspace).flexigrid({
 			preProcess: fecharDiaController.executarPreProcessamentoOutraMovimentacao,
 			dataType : 'json',
-			colModel : [ {
-				display : 'Cota',
-				name : 'numeroCota',
-				width : 50,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome',
-				name : 'nomeCota',
-				width : 50,
-				sortable : true,
-				align : 'left'
-			}, {
+			colModel : [{
 				display : 'Valor',
 				name : 'valor',
 				width : 100,
