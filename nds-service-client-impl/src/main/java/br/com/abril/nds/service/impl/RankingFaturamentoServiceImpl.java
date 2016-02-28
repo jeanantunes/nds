@@ -25,7 +25,7 @@ public class RankingFaturamentoServiceImpl implements RankingFaturamentoService 
 		
 		this.rankingFaturamentoRepository.gerarRankingFaturamento();
 		
-		this.rankingFaturamentoRepository.gerarRankingFaturamentoParaCotasSemRanking();
+//		this.rankingFaturamentoRepository.gerarRankingFaturamentoParaCotasSemRanking();
 		
 		this.rankingFaturamentoRepository.atualizarClassificacaoCota();
 	}
