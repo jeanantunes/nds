@@ -771,7 +771,12 @@ public abstract class Util {
             chave.append(nNF);  
             chave.append(tpEmis);  
             chave.append(cNF);  
-           retorno = montarChaveAcesso(chave.toString());              
+            chave.append(gerarChaveAcesso(chave.toString())); 
+            
+           
+           if(!chaveAcessoInformada.equals(chave)) {
+        	   return true;
+           }
             
 		} catch (Exception e) {  
 			LOGGER.error("Exception: "+ e.getMessage());  
@@ -779,6 +784,20 @@ public abstract class Util {
     	    	
         return retorno;
     }
+    
+    public static int gerarChaveAcesso(String chave) {  
+        int total = 0;  
+        int peso = 2;  
+              
+        for (int i = 0; i < chave.length(); i++) {  
+            total += (chave.charAt((chave.length()-1) - i) - '0') * peso;  
+            peso ++;  
+            if (peso == 10)  
+                peso = 2;  
+        }  
+        int resto = total % 11;  
+        return (resto == 0 || resto == 1) ? 0 : (11 - resto);  
+    } 
     
     public static boolean montarChaveAcesso(String chave) {  
         int total = 0;  
