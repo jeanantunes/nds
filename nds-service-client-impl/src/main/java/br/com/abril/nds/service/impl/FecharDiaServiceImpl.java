@@ -1351,6 +1351,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				DividaDTO dividaDTO = DividaDTO.fromDivida(item);
 				
 				dividaFechamentoDiario.setBanco(dividaDTO.getNomeBanco());
+				dividaFechamentoDiario.setDataEmissao(dividaDTO.getDataEmissao());
 				dividaFechamentoDiario.setDataVencimento(dividaDTO.getDataVencimento());
 				dividaFechamentoDiario.setTipoCobranca(dividaDTO.getFormaPagamento());
 				dividaFechamentoDiario.setIdntificadorDivida(dividaDTO.getIdDivida());
