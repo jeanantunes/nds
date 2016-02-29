@@ -45,6 +45,8 @@ public class DividaDTO implements Serializable {
     
     private BigDecimal valor = BigDecimal.ZERO;
     
+    private BigDecimal valorPago = BigDecimal.ZERO;
+    
     @Export(label = "Valor R$", exhibitionOrder = 5, alignment = Alignment.RIGHT)
     private String valorFormatado = CurrencyUtil.formatarValor(BigDecimal.ZERO);
     
@@ -81,7 +83,7 @@ public class DividaDTO implements Serializable {
         this.formaPagamento = formaPagamento;
         this.descricaoFormaPagamento = formaPagamento.getDescricao();
         this.dataEmissao = DataEmissao;
-        this.dataEmissaoFormatada = DateUtil.formatarDataPTBR(dataEmissao);
+        this.dataEmissaoFormatada = dataEmissao == null ? "" : DateUtil.formatarDataPTBR(dataEmissao);
     }
 
     /**
@@ -167,8 +169,16 @@ public class DividaDTO implements Serializable {
     public void setNossoNumero(String nossoNumero) {
         this.nossoNumero = nossoNumero;
     }
+    
+    public BigDecimal getValorPago() {
+		return valorPago;
+	}
 
-    /**
+	public void setValorPago(BigDecimal valorPago) {
+		this.valorPago = valorPago;
+	}
+
+	/**
      * @return the valor
      */
     public BigDecimal getValor() {
@@ -265,6 +275,6 @@ public class DividaDTO implements Serializable {
 
 	public void setDataEmissao(Date dataEmissao) {
 		this.dataEmissao = dataEmissao;
-		this.dataEmissaoFormatada = DateUtil.formatarDataPTBR(dataEmissao);
+		this.dataEmissaoFormatada = dataEmissao == null ? "" : DateUtil.formatarDataPTBR(dataEmissao);
 	}
 }

@@ -139,14 +139,14 @@ var fecharDiaController =  $.extend(true, {
 			preProcess: fecharDiaController.executarPreProcessamentoOutraMovimentacao,
 			dataType : 'json',
 			colModel : [{
-				display : 'Valor',
-				name : 'valor',
+				display : 'Operacao',
+				name : 'operacao',
 				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Operacao',
-				name : 'operacao',
+				display : 'Valor',
+				name : 'valorFormatado',
 				width : 100,
 				sortable : true,
 				align : 'left'
@@ -331,6 +331,12 @@ var fecharDiaController =  $.extend(true, {
                 width : 70,
                 sortable : false,
                 align : 'right'
+            }, {
+                display : 'Valor Pago R$',
+                name : 'valorPago',
+                width : 70,
+                sortable : false,
+                align : 'right'    	
             }, {
                 display : 'Dt. Vencto',
                 name : 'dataVencimentoFormatada',

@@ -53,6 +53,10 @@ public class FechamentoDiarioDivida implements Serializable {
 	@Column(name="VALOR")
 	private BigDecimal valor;
 	
+	@Column(name="DATA_EMISSAO")
+	@Temporal(TemporalType.DATE)
+	private Date dataEmissao;
+	
 	@Column(name="DATA_VENCIMENTO")
 	@Temporal(TemporalType.DATE)
 	private Date dataVencimento;
@@ -127,6 +131,14 @@ public class FechamentoDiarioDivida implements Serializable {
 
 	public void setValor(BigDecimal valor) {
 		this.valor = valor;
+	}
+
+	public Date getDataEmissao() {
+		return dataEmissao;
+	}
+
+	public void setDataEmissao(Date dataEmissao) {
+		this.dataEmissao = dataEmissao;
 	}
 
 	public Date getDataVencimento() {
