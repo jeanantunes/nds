@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import br.com.abril.nds.util.CurrencyUtil;
+
 public class OutraMovimentacaoDTO implements Serializable {
 	
 	private static final long serialVersionUID = -9160921967560123153L;
@@ -13,6 +15,8 @@ public class OutraMovimentacaoDTO implements Serializable {
 	private String nomeCota;
 
 	private BigDecimal valor;
+	
+	private String valorFormatado;
 	
 	private String operacao;
 
@@ -38,8 +42,14 @@ public class OutraMovimentacaoDTO implements Serializable {
 
 	public void setValor(BigDecimal valor) {
 		this.valor = valor;
+		this.valorFormatado = CurrencyUtil.formatarValor(valor);
 	}
 
+	public String getValorFormatado() {
+        return valorFormatado;
+    }
+
+	
 	public String getOperacao() {
 		return operacao;
 	}

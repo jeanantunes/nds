@@ -1760,7 +1760,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
 			
 			parameters.put("IMAGEM", logoTipoDistribuidor);
-			parameters.put("NOME_RELATORIO", "Extração das Roteirizações!");
+			parameters.put("NOME_RELATORIO", "Extração de Roteirização.");
 			parameters.put("NOME_DISTRIBUIDOR", razaoSocial);
 			
 			path = diretorioReports.toURI().getPath() + "/rel_roteirizacao_principal_xls.jasper";			
