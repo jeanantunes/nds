@@ -1256,9 +1256,15 @@ public class BoletoServiceImpl implements BoletoService {
     		dividaRaiz.getCobranca().setDataPagamento(dataOperacao);
     		
     		dividaRepository.alterar(dividaRaiz);
+    		
+    		if(dividaRaiz.getDividaRaiz() != null) {    			
+    			Divida dividaAux = dividaRaiz.getDividaRaiz();
+    			
+    			if(dividaAux != null) {    			
+    				this.pagarCobrancasRaizes(dividaAux, dataOperacao);
+    			}
+    		}
     	}
-
-            
     }
     
     private MovimentoFinanceiroCotaDTO getMovimentoFinanceiroCotaDTO(final Cota cota,
