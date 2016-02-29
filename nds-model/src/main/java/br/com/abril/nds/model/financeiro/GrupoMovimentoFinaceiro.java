@@ -87,7 +87,9 @@ public enum GrupoMovimentoFinaceiro {
 	
 	DEBITO_COTA_TAXA_DE_ENTREGA_ENTREGADOR(OperacaoFinaceira.DEBITO, "Débito Taxa de Entrega - Entregador"),
 	
-	TAXA_EXTRA(OperacaoFinaceira.DEBITO, "Taxa Extra");
+	TAXA_EXTRA(OperacaoFinaceira.DEBITO, "Taxa Extra"),
+	
+	BCT(OperacaoFinaceira.DEBITO, "BCT");
 	
 	private OperacaoFinaceira operacaoFinaceira;
 	
