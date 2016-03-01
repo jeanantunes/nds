@@ -404,7 +404,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 	    BigDecimal saldo = this.movimentoFinanceiroCotaRepository.obterSaldoCotasAVista(null, data); 
 	    
-	    if (saldo != null && saldo.compareTo(BigDecimal.ZERO) > 0){
+	    if (saldo != null && saldo.compareTo(BigDecimal.ZERO) != 0){
 	    	
 	    	return false;
 	    }
