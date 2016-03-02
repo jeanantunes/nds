@@ -83,7 +83,7 @@ var baixaFinanceiraController = $.extend(true, {
 			colModel : [ {
 				display : 'Cota',
 				name : 'numeroCota',
-				width : 50,
+				width : 35,
 				sortable : true,
 				align : 'left'
 			},{
@@ -107,7 +107,7 @@ var baixaFinanceiraController = $.extend(true, {
 			}, {
 				display : 'Nosso Número',
 				name : 'nossoNumero',
-				width : 140,
+				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -117,9 +117,15 @@ var baixaFinanceiraController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Data Vencimento',
+				display : 'Dt Emissão',
+				name : 'dataEmissao',
+				width : 75,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Dt Vencimento',
 				name : 'dataVencimento',
-				width : 90,
+				width : 75,
 				sortable : true,
 				align : 'center'
 			}],
@@ -141,7 +147,7 @@ var baixaFinanceiraController = $.extend(true, {
 			colModel : [ {
 				display : 'Cota',
 				name : 'numeroCota',
-				width : 60,
+				width : 35,
 				sortable : true,
 				align : 'left'
 			},{
@@ -165,7 +171,7 @@ var baixaFinanceiraController = $.extend(true, {
 			}, {
 				display : 'Nosso Número',
 				name : 'nossoNumero',
-				width : 140,
+				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -175,9 +181,15 @@ var baixaFinanceiraController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Data Vencimento',
+				display : 'Dt Emissão',
+				name : 'dataEmissao',
+				width : 75,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Dt Vencimento',
 				name : 'dataVencimento',
-				width : 90,
+				width : 75,
 				sortable : true,
 				align : 'center'
 			}],
@@ -272,6 +284,18 @@ var baixaFinanceiraController = $.extend(true, {
 				width : 70,
 				sortable : true,
 				align : 'right'
+			}, {
+				display : 'Dt Emissão',
+				name : 'dataEmissao',
+				width : 75,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Dt Vencimento',
+				name : 'dataVencimento',
+				width : 75,
+				sortable : true,
+				align : 'center'
 			}],
 			sortname : "motivoDivergencia",
 			sortorder : "asc",
@@ -291,7 +315,7 @@ var baixaFinanceiraController = $.extend(true, {
 			colModel : [ {
 				display : 'Cota',
 				name : 'numeroCota',
-				width : 60,
+				width : 45,
 				sortable : true,
 				align : 'left'
 			},{
@@ -315,7 +339,7 @@ var baixaFinanceiraController = $.extend(true, {
 			}, {
 				display : 'Nosso Número',
 				name : 'nossoNumero',
-				width : 140,
+				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -325,9 +349,15 @@ var baixaFinanceiraController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Data Vencimento',
+				display : 'Dt Emissão',
+				name : 'dataEmissao',
+				width : 75,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Dt Vencimento',
 				name : 'dataVencimento',
-				width : 90,
+				width : 75,
 				sortable : true,
 				align : 'center'
 			}],
@@ -1667,8 +1697,6 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 	//------ Baixa CONSOLIDADA ------
 	
 	integrarCobrancaConsolidada : function() {
-		
-//		$('#formBaixaConsolidada', baixaFinanceiraController.workspace).submit();
 		
 		 $('#formBaixaConsolidada', baixaFinanceiraController.workspace).ajaxSubmit({
    		   
