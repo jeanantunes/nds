@@ -82,7 +82,7 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 			this.getSession().createQuery(
 				" select ep from EstoqueProduto ep where ep.produtoEdicao.id = :idProdutoEdicao ");
 		
-		query.setLockOptions(LockOptions.UPGRADE.setTimeOut(60000)); // timeout de 60s para evitar dead lock
+		query.setLockOptions(LockOptions.UPGRADE.setTimeOut(180000)); // timeout de 180s para evitar dead lock
 		
 
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);

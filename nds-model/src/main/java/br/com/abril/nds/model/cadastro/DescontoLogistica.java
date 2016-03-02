@@ -185,4 +185,20 @@ public class DescontoLogistica implements Serializable {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		try {
+		return "DescontoLogistica [ descricao=" + descricao
+				+ ", tipoDesconto=" + tipoDesconto + ", percentualDesconto="
+				+ percentualDesconto + ", percentualPrestacaoServico="
+				+ percentualPrestacaoServico + ", dataInicioVigencia="
+				+ dataInicioVigencia 
+				+ ", fornecedor=" + fornecedor + "]";
+		} catch ( Exception e ) {
+		   return ""+this.id;
+		}
+	}
+
+	
+	
 }
