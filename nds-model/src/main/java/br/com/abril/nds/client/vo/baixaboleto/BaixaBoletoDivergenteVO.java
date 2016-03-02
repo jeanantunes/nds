@@ -1,6 +1,7 @@
 package br.com.abril.nds.client.vo.baixaboleto;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -31,6 +32,12 @@ public class BaixaBoletoDivergenteVO extends BaixaBoletoBaseVO {
 	
 	@Export(label = "Diferença R$", exhibitionOrder=3)
 	private BigDecimal diferencaValor;
+	
+	@Export(label = "Data Emissão", exhibitionOrder=4)
+	private String dataEmissao;
+	
+	@Export(label = "Data Vencimento", exhibitionOrder=5)
+	private String dataVencimento;
 	
 
 	/**
@@ -87,6 +94,22 @@ public class BaixaBoletoDivergenteVO extends BaixaBoletoBaseVO {
 	 */
 	public void setValorBoleto(BigDecimal valorBoleto) {
 		this.valorBoleto = valorBoleto;
+	}
+
+	public String getDataEmissao() {
+		return dataEmissao;
+	}
+
+	public void setDataEmissao(String dataEmissao) {
+		this.dataEmissao = dataEmissao;
+	}
+
+	public String getDataVencimento() {
+		return dataVencimento;
+	}
+
+	public void setDataVencimento(String dataVencimento) {
+		this.dataVencimento = dataVencimento;
 	}
 	
 }

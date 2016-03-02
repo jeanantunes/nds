@@ -28,6 +28,8 @@ public class DetalheBaixaBoletoDTO implements Serializable {
 	
 	private Date dataVencimento;
 	
+	private Date dataEmissao;
+	
 	private String motivoRejeitado;
 	
 	private String motivoDivergencia;
@@ -156,6 +158,15 @@ public class DetalheBaixaBoletoDTO implements Serializable {
 	 */
 	public void setDataVencimento(Date dataVencimento) {
 		this.dataVencimento = dataVencimento;
+	}
+	
+
+	public Date getDataEmissao() {
+		return dataEmissao;
+	}
+
+	public void setDataEmissao(Date dataEmissao) {
+		this.dataEmissao = dataEmissao;
 	}
 
 	/**

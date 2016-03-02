@@ -15,7 +15,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.metamodel.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +67,6 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.LeitorArquivoBaixaFinanConsolidadaService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
-import br.com.abril.nds.service.impl.GerarCobrancaServiceImpl;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -398,7 +396,7 @@ public class BaixaFinanceiraController extends BaseController {
 			this.boletoService.obterQuantidadeBoletosBaixadosComDivergencia(filtro).intValue();
 		
 		List<BaixaBoletoBaseVO> listaBaixaBoletoVO =
-			(List<BaixaBoletoBaseVO>) this.obterBaixaBoletoExportacaoVO(listaDetalheBaixaBoleto, TipoBaixaBoleto.DIVERGENTES);
+				(List<BaixaBoletoBaseVO>) this.obterBaixaBoletoExportacaoVO(listaDetalheBaixaBoleto, TipoBaixaBoleto.DIVERGENTES);
 		
 		this.criarTableModel(filtro, listaBaixaBoletoVO, qtdeTotalRegistros);
 	}
@@ -1334,6 +1332,7 @@ public class BaixaFinanceiraController extends BaseController {
 			baixa.setNumeroCota(detalhe.getNumeroCota());
 			baixa.setValorBoleto(detalhe.getValorBoleto() == null ? null : 
 				detalhe.getValorBoleto().setScale(2, RoundingMode.HALF_EVEN));
+			baixa.setDataEmissao(DateUtil.formatarDataPTBR(detalhe.getDataEmissao()));
 			
 			lista.add(baixa);
 		}
@@ -1360,6 +1359,8 @@ public class BaixaFinanceiraController extends BaseController {
 				detalhe.getValorBoleto().setScale(2, RoundingMode.HALF_EVEN));
 			baixa.setValorPago(detalhe.getValorPago() == null ? null : 
 				detalhe.getValorPago().setScale(2, RoundingMode.HALF_EVEN));
+			baixa.setDataEmissao(DateUtil.formatarDataPTBR(detalhe.getDataEmissao()));
+			baixa.setDataVencimento(DateUtil.formatarDataPTBR(detalhe.getDataVencimento()));
 			
 			lista.add(baixa);
 		}

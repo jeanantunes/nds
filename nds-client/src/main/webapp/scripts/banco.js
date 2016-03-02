@@ -505,12 +505,12 @@ var bancoController = $.extend(true, {
 	    
 	    limparMulta : function(){
 	    	
-	    	if(priceToFloat($("#newVrMulta", this.workspace).val()) == 0.0)
+	    	if(priceToFloat($("#newVrMulta", this.workspace).val()) < 0.0)
 	    		$("#newVrMulta", this.workspace).val("");
 	    	else 	    	
 	    		$("#newMulta", this.workspace).val("");
 	    	
-	    	if(priceToFloat($("#alterVrMulta", this.workspace).val()) == 0.0)
+	    	if(priceToFloat($("#alterVrMulta", this.workspace).val()) < 0.0)
 	    		$("#alterVrMulta", this.workspace).val("");
 	    	else 	    	
 	    		$("#alterMulta", this.workspace).val("");
@@ -519,12 +519,12 @@ var bancoController = $.extend(true, {
 	    
 	    limparVrMulta : function(){
 	    	
-	    	if(priceToFloat($("#newMulta", this.workspace).val()) == 0.0)
+	    	if(priceToFloat($("#newMulta", this.workspace).val()) < 0.0)
 	    		$("#newMulta", this.workspace).val("");
 	    	else 	    	
 	    		$("#newVrMulta", this.workspace).val("");
 	    	
-	    	if(priceToFloat($("#alterMulta", this.workspace).val()) == 0.0)
+	    	if(priceToFloat($("#alterMulta", this.workspace).val()) < 0.0)
 	    		$("#alterMulta", this.workspace).val("");
 	    	else 	    	
 	    		$("#alterVrMulta", this.workspace).val("");

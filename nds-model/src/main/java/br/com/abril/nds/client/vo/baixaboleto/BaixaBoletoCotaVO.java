@@ -34,8 +34,12 @@ public class BaixaBoletoCotaVO extends BaixaBoletoBaseVO {
 	@Export(label = "Valor R$", exhibitionOrder=2)
 	private BigDecimal valorBoleto;
 	
-	@Export(label="Data de Vencimento", exhibitionOrder=3)
+	@Export(label="Data de Emissão", exhibitionOrder=3)
+	private String dataEmissao;
+
+	@Export(label="Data de Vencimento", exhibitionOrder=4)
 	private String dataVencimento;
+	
 	
 	/**
 	 * @return the numeroCota
@@ -106,5 +110,14 @@ public class BaixaBoletoCotaVO extends BaixaBoletoBaseVO {
 	public void setValorBoleto(BigDecimal valorBoleto) {
 		this.valorBoleto = valorBoleto;
 	}
+
+	public String getDataEmissao() {
+		return dataEmissao;
+	}
+
+	public void setDataEmissao(String dataEmissao) {
+		this.dataEmissao = dataEmissao;
+	}
+	
 	
 }
