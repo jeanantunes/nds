@@ -558,7 +558,8 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		   .append(" 		concat(cobranca.banco.conta, case when cobranca.banco.dvConta is not null then concat('-', cobranca.banco.dvConta) else '' end) as numeroConta, ")
   		   .append(" 		cobranca.nossoNumeroCompleto as nossoNumero, ")
 		   .append(" 		cobranca.valor as valorBoleto, ")
-		   .append(" 		cobranca.dataVencimento as dataVencimento ")
+		   .append(" 		cobranca.dataVencimento as dataVencimento, ")
+		   .append(" 		cobranca.dataEmissao as dataEmissao ")
 		   .append(this.obterFromWhereBoletosPrevistos());
 
 		if (filtro.getOrdenacaoColuna() != null && filtro.getPaginacao() != null) {
@@ -590,7 +591,8 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		hql.append("  concat(banco.conta, case when banco.dvConta is not null then concat('-', banco.dvConta) else '' end) as numeroConta, ");
 		hql.append("  cobranca.nossoNumero as nossoNumero, ");
 		hql.append("  baixaAutomatica.valorPago as valorBoleto, ");
-		hql.append("  cobranca.dataVencimento as dataVencimento");
+		hql.append("  cobranca.dataVencimento as dataVencimento, ");
+		hql.append("  cobranca.dataEmissao as dataEmissao ");
 		hql.append(this.obterFromWhereBoletosBaixados());
 		
 		if (filtro.getOrdenacaoColuna() != null && filtro.getPaginacao() != null) {
@@ -650,7 +652,9 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		   .append(" 		concat(baixaAutomatica.banco.conta, case when baixaAutomatica.banco.dvConta is not null then concat('-',baixaAutomatica.banco.dvConta) else '' end) as numeroConta, ")
 		   .append(" 		cobranca.valor as valorBoleto, ")
 		   .append(" 		baixaAutomatica.valorPago as valorPago, ")
-		   .append(" 		cobranca.valor - baixaAutomatica.valorPago as valorDiferenca ")
+		   .append(" 		cobranca.valor - baixaAutomatica.valorPago as valorDiferenca, ")
+		   .append("  		cobranca.dataVencimento as dataVencimento, ")
+		   .append("  		cobranca.dataEmissao as dataEmissao ")
 		   .append(this.obterFromWhereConsultaBoletosBaixadosComDivergencia());
 		
 		if (filtro.getOrdenacaoColuna() != null && filtro.getPaginacao() != null) {
@@ -682,7 +686,8 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		hql.append("  concat(cobranca.banco.conta, case when cobranca.banco.dvConta is not null then concat('-', cobranca.banco.dvConta) else '' end) as numeroConta, ");
 		hql.append("  cobranca.nossoNumeroCompleto as nossoNumero, ");
 		hql.append("  cobranca.valor as valorBoleto, ");
-		hql.append("  cobranca.dataVencimento as dataVencimento");
+		hql.append("  cobranca.dataVencimento as dataVencimento, ");
+		hql.append("  cobranca.dataEmissao as dataEmissao ");
 		hql.append(this.obterFromWhereBoletosInadimplentes());
 		
 		if (filtro.getOrdenacaoColuna() != null && filtro.getPaginacao() != null) {
