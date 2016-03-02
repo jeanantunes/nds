@@ -725,7 +725,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	sql.append(" (select rota_id from "+getQueryFromRoteirizacao() +"  as cod_rota, ");
     	sql.append(" (select descricao_rota from "+getQueryFromRoteirizacao() +"  as rota, ");
     	sql.append(" (select roteiro_id from "+getQueryFromRoteirizacao() +"  as cod_roteiro, ");
-    	sql.append(" (select descricao_roteiro from "+getQueryFromRoteirizacao() +"  as roteiro ");
+    	sql.append(" (select descricao_roteiro from "+getQueryFromRoteirizacao() +"  as roteiro, ");
+    	sql.append(" (select box.codigo from "+getQueryFromRoteirizacao() +"  as box_dp ");
     	
     	sql.append(" FROM movimento_financeiro_cota mfc ");
     	sql.append(" left join consolidado_mvto_financeiro_cota cf ");
@@ -743,7 +744,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	sql.append(" left join tipo_movimento tm  ");
     	sql.append("   ON mfc.TIPO_MOVIMENTO_ID = tm.ID ");
 
-    	sql.append("   WHERE d.DATA = :dtOperacao ");
+    	sql.append("   WHERE d.DATA = :dtOperacao   and cb.cota_id = ct.id and d.cota_id = ct.id  and ct.id = mfc.cota_id ");
     	sql.append("   GROUP BY mfc.COTA_ID ");
     	sql.append("   ORDER BY ct.NUMERO_COTA ");
     	
@@ -788,6 +789,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	query.addScalar("cod_rota", StandardBasicTypes.STRING);
     	query.addScalar("rota", StandardBasicTypes.STRING);
     	query.addScalar("cod_roteiro", StandardBasicTypes.STRING);
+    	query.addScalar("box_dp", StandardBasicTypes.STRING);
     	query.addScalar("roteiro", StandardBasicTypes.STRING);
     	
     	query.setResultTransformer(new AliasToBeanResultTransformer(ExportarCobrancaDTO.class));

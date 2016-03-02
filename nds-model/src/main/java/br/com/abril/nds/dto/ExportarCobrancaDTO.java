@@ -26,7 +26,7 @@ public class ExportarCobrancaDTO implements Serializable{
 	private String cod_roteiro ;
 	private String roteiro ;
 	private String ftvenc = "null";
-	private String box_dp = "null";
+	private String box_dp ;
 	
 	private String nossoNumero = "0";
 	private Boolean cotaProcessada = false;
