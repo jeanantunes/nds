@@ -526,13 +526,13 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 				produtosBoxRota.get(0).getCodigoProduto().trim(),
 				produtosBoxRota.get(0).getNomeProduto().trim(),
 				produtosBoxRota.get(0).getNumeroEdicao().longValue(),
-				produtosBoxRota.get(0).getCodigoBarra().trim(),
+				produtosBoxRota.get(0).getCodigoBarra() != null ? produtosBoxRota.get(0).getCodigoBarra().trim():"",
 				produtosBoxRota.get(0).getPrecoCapa().trim(),
 				new LinkedHashMap<String, BoxRotasDTO>(),
 				produtosBoxRota.get(0).getMaterialPromocional());
 		
 		if(produtosBoxRota.size() == 0) {	
-			return null;
+			return null; 
 		}
 		
 		Set<String> rotas = new HashSet<String>();
