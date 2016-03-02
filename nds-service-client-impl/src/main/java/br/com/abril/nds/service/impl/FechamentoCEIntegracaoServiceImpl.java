@@ -409,9 +409,17 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 					ValoresAplicados valoresAplicados = new ValoresAplicados();
 					
 					valoresAplicados.setValorDesconto(estoqueProduto.getProdutoEdicao().getDesconto());
-					
+					 
+					// verifica se tem desconto_logistica para produto edicao ou produto se origem for INTERFACE
 					if(produtoEdicao.getOrigem().equals(Origem.INTERFACE)) {
-						valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract((itemFo.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto())).setScale(4,BigDecimal.ROUND_HALF_EVEN));
+						if ( itemFo.getProdutoEdicao().getDescontoLogistica()== null && itemFo.getProdutoEdicao().getProduto().getDescontoLogistica() == null ) {
+							LOGGER.error("ERRO. PRODUTO EDICAO ORIGEM INTERFACE SEM DESCONTO LOGISTICA ="+itemFo.getProdutoEdicao().getProduto().getCodigo()+
+									" ed.="+itemFo.getProdutoEdicao().getNumeroEdicao());
+							throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao e Produto sem desconto Logistica ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+
+									                "/"+itemFo.getProdutoEdicao().getNumeroEdicao());
+						}
+						valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract((itemFo.getProdutoEdicao().getDescontoLogistica()!= null ?
+								itemFo.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto(): itemFo.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto())).setScale(4,BigDecimal.ROUND_HALF_EVEN));
 					} else if(produtoEdicao.getOrigem().equals(Origem.PRODUTO_SEM_CADASTRO)) {
 						valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract((itemFo.getProdutoEdicao().getDesconto())).setScale(4,BigDecimal.ROUND_HALF_EVEN));
 					} else {
@@ -964,7 +972,41 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		return (valorRetorno == null)? BigDecimal.ZERO: valorRetorno;
 	}
 	
-	  /**
+	  @Override
+	@Transactional(readOnly=true)
+	public FechamentoCEIntegracaoDTO obterDiferencaCEIntegracaoFornecedor(
+			final FiltroFechamentoCEIntegracaoDTO filtroCE,
+			final Map<Long,ItemFechamentoCEIntegracaoDTO> itensAlteradosFechamento) {
+		
+	    if (filtroCE.getSemana() == null){
+	        
+	        throw new ValidacaoException(TipoMensagem.WARNING, "Semana é obrigatório");
+	    }
+	    
+	    filtroCE.setPeriodoRecolhimento(
+	            this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtroCE.getSemana())));
+	    
+	    filtroCE.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtroCE));
+		
+		List<ItemFechamentoCEIntegracaoDTO> itensFechamento = 
+				fechamentoCEIntegracaoRepository.buscarItensFechamentoCeIntegracaoComDiferenca(filtroCE);
+		
+		if(itensFechamento == null || itensFechamento.isEmpty()){
+			return new FechamentoCEIntegracaoDTO();
+		}
+		
+		itensFechamento = this.filtrarItensComDiferenca(itensFechamento,itensAlteradosFechamento);
+		
+		FechamentoCEIntegracaoDTO fechamentoCEIntegracaoDTO = new FechamentoCEIntegracaoDTO();
+	
+		fechamentoCEIntegracaoDTO.setItensFechamentoCE(itensFechamento);
+		
+		fechamentoCEIntegracaoDTO.setQntItensCE(itensFechamento.size());
+		
+		return fechamentoCEIntegracaoDTO;
+	}
+
+	/**
      * {@inheritDoc}
      */
     @Override
@@ -1051,41 +1093,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
         }
     }
     
-    @Override
-    @Transactional(readOnly=true)
-    public FechamentoCEIntegracaoDTO obterDiferencaCEIntegracaoFornecedor(
-    		final FiltroFechamentoCEIntegracaoDTO filtroCE,
-    		final Map<Long,ItemFechamentoCEIntegracaoDTO> itensAlteradosFechamento) {
-    	
-        if (filtroCE.getSemana() == null){
-            
-            throw new ValidacaoException(TipoMensagem.WARNING, "Semana é obrigatório");
-        }
-        
-        filtroCE.setPeriodoRecolhimento(
-                this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtroCE.getSemana())));
-        
-        filtroCE.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtroCE));
-		
-    	List<ItemFechamentoCEIntegracaoDTO> itensFechamento = 
-    			fechamentoCEIntegracaoRepository.buscarItensFechamentoCeIntegracaoComDiferenca(filtroCE);
-    	
-    	if(itensFechamento == null || itensFechamento.isEmpty()){
-    		return new FechamentoCEIntegracaoDTO();
-    	}
-    	
-    	itensFechamento = this.filtrarItensComDiferenca(itensFechamento,itensAlteradosFechamento);
-    	
-		FechamentoCEIntegracaoDTO fechamentoCEIntegracaoDTO = new FechamentoCEIntegracaoDTO();
-	
-		fechamentoCEIntegracaoDTO.setItensFechamentoCE(itensFechamento);
-		
-		fechamentoCEIntegracaoDTO.setQntItensCE(itensFechamento.size());
-		
-    	return fechamentoCEIntegracaoDTO;
-    }
-
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
 	private List<ItemFechamentoCEIntegracaoDTO> filtrarItensComDiferenca(
 			final List<ItemFechamentoCEIntegracaoDTO> itensFechamento,
 			final Map<Long, ItemFechamentoCEIntegracaoDTO> itensAlteradosFechamento) {
