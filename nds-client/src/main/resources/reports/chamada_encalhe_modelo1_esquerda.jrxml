@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="chamada_encalhe_modelo1_esquerda" pageWidth="350" pageHeight="843" whenNoDataType="AllSectionsNoDetail" columnWidth="346" leftMargin="2" rightMargin="2" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ea9abc14-cabb-4d88-9a89-4ada7afa32cd">
-	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="true"/>
@@ -170,8 +170,8 @@
 					<imageExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></imageExpression>
 				</image>
 				<componentElement>
-					<reportElement x="1" y="45" width="55" height="41" uuid="6b685790-f720-40f4-8f67-518e59d44ff0"/>
-					<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barHeight="80">
+					<reportElement x="1" y="66" width="55" height="20" uuid="6b685790-f720-40f4-8f67-518e59d44ff0"/>
+					<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="EAN13" drawText="false" checksumRequired="false" barHeight="80">
 						<jr:codeExpression><![CDATA[$F{numCota}]]></jr:codeExpression>
 					</jr:barbecue>
 				</componentElement>
