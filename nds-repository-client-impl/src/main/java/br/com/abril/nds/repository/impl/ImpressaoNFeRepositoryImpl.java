@@ -18,6 +18,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -679,6 +680,12 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
 		
+		if(filtro.getNaturezaOperacao().getTipoDestinatario().equals(TipoDestinatario.COTA) || filtro.getNaturezaOperacao().getTipoDestinatario().equals(TipoDestinatario.DISTRIBUIDOR)) {
+			hql.append(" AND caracteristicasPdv.pontoPrincipal = true ");			
+		}
+		
+		
+		
 		if(isGroup) {
 
 			hql.append(" group by notaFiscal.id ");
@@ -725,6 +732,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 					.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal as item ")
 					.append(" JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.pessoaDestinatarioReferencia as pj ")
 					.append(" join cota.pdvs pdv ")
+					.append(" left outer join pdv.caracteristicas caracteristicasPdv ")
 					.append(" left outer join pdv.rotas rotaPdv ")
 					.append(" left outer join rotaPdv.rota rota ")
 					.append(" left outer join rota.roteiro roteiro ")
