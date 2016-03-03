@@ -44,6 +44,11 @@ public class SemaforoController extends BaseController {
 		List<Semaforo> semaforosNaDataDeOperacao = 
 			this.semaforoService.obterStatusProcessosEncalhe(
 				this.distribuidorService.obterDataOperacaoDistribuidor());
+		
+		
+		Long total = 
+				this.semaforoService.obterTotalStatusProcessosEncalhe(
+						this.distribuidorService.obterDataOperacaoDistribuidor());
 			
 		List<StatusProcessoEncalheVO> statusProcessosEncalhe = new ArrayList<>();
 		
@@ -55,8 +60,9 @@ public class SemaforoController extends BaseController {
 			}
 		}
 		
+		
 		this.result.use(FlexiGridJson.class).from(
-			statusProcessosEncalhe).total(statusProcessosEncalhe.size()).page(1).serialize();
+			statusProcessosEncalhe).total(total.intValue()).page(1).serialize();
 	}
 	
 }

@@ -10,4 +10,7 @@ public interface SemaforoService {
 	public List<Semaforo> obterStatusProcessosEncalhe(Date data);
 	
 	void atualizarStatusProcessoEncalheIniciadoEm(Date data);
+	
+	public Long obterTotalStatusProcessosEncalhe(Date data);
+	
 }

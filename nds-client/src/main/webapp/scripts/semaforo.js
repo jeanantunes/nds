@@ -80,19 +80,20 @@ var semaforoController = $.extend(true, {
 			
 			return resultado;
 		}
-		total=0;
+		
 		finalizado=0;
 		andamento=0;
 		erro=0;
 		
 		$.each(resultado.rows, function(index, row) {
-            total++;
+           
 			if (row.cell.status == 'Iniciado') {
 				andamento++;
 				row.cell.status = "<img src= " + contextPath + "/images/ico_semdados.png />";
 			} else if (row.cell.status == 'Finalizado') {
 				finalizado++;
 				row.cell.status = "<img src= " + contextPath + "/images/ico_operando.png />";
+				row.cell.remove();
 			} else {
 				erro++;
 				row.cell.status = "<img src= " + contextPath + "/images/ico_encerrado.png />";
@@ -102,7 +103,8 @@ var semaforoController = $.extend(true, {
 				row.cell.mensagem = "";
 			}
 		});
-		$("#totalId",semaforoController.workspace).html("Total=" + total+" (Finalizados="+finalizado+" Andamento="+andamento+" Erros="+erro+")");
+		finalizado = resultado.total - andamento - erro;
+		$("#totalId",semaforoController.workspace).html("Total= "+resultado.total +" (Finalizados="+finalizado+" Andamento="+andamento+" Erros="+erro+")");
 		
 		semaforoController.pollStatusProcessosEncalhe();
 		
