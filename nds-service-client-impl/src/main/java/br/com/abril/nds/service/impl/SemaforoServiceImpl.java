@@ -26,6 +26,14 @@ public class SemaforoServiceImpl implements SemaforoService {
 		return this.semaforoRepository.obterSemaforosAtualizadosEm(data);
 	}
 	
+	@Transactional(readOnly = true)
+	public Long obterTotalStatusProcessosEncalhe(Date data) {
+		
+		Validate.notNull(data, "A data informada é inválida");
+		
+		return this.semaforoRepository.obterTotalSemaforosAtualizadosEm(data);
+	}
+	
 	@Transactional
 	public void atualizarStatusProcessoEncalheIniciadoEm(Date data) {
 		

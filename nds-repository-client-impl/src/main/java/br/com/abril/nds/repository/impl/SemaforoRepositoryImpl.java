@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -44,14 +45,32 @@ public class SemaforoRepositoryImpl extends
 		
 		hql.append(" select semaforo from Semaforo semaforo ");
 		hql.append(" join fetch semaforo.usuario ");
-		hql.append(" where semaforo.dataOperacao = :data ");
-		hql.append(" order by semaforo.dataFim desc ");
+		hql.append(" where semaforo.dataOperacao = :data and semaforo.statusProcessoEncalhe <> 'FINALIZADO' ");
+		hql.append(" order by semaforo.statusProcessoEncalhe desc,semaforo.dataFim desc ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("data", data);
 		
 		return query.list();
+	}
+	
+	
+	public Long obterTotalSemaforosAtualizadosEm(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(*) from  semaforo ");
+		hql.append(" where data_operacao = :data ");
+		
+		
+		Query query = this.getSession().createSQLQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		
+		BigInteger total =(BigInteger) query.uniqueResult();
+		
+		return total.longValue() ;
 	}
 	
 	@Override

@@ -21,12 +21,12 @@ public class ExportarCobrancaDTO implements Serializable{
 	private BigDecimal vlr_postergado;
 	private BigDecimal vlr_total;
 	private BigDecimal vlr_taxa_extra;
-	private String cod_rota = "null";
-	private String rota = "null";
-	private String cod_roteiro = "null";
-	private String roteiro = "null";
+	private String cod_rota;
+	private String rota ;
+	private String cod_roteiro ;
+	private String roteiro ;
 	private String ftvenc = "null";
-	private String box_dp = "null";
+	private String box_dp ;
 	
 	private String nossoNumero = "0";
 	private Boolean cotaProcessada = false;

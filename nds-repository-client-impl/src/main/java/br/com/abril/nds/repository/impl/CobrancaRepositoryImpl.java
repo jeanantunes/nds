@@ -712,17 +712,22 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	sql.append("       and mfc_s.COTA_ID = mfc.COTA_ID ");
     	sql.append("       and tm_s.GRUPO_MOVIMENTO_FINANCEIRO in (:postergado_debito, :postergado_credito)),0) as vlr_postergado, ");
     	sql.append("        ");
-    	sql.append("   cb.VALOR as vlr_total ");
+    	sql.append("   cb.VALOR as vlr_total ,");
 
     	/* Valores Null por Default!
     	sql.append("   null as cod_rota, ");
     	sql.append("   null as rota, ");
     	sql.append("   null as cod_roteiro, ");
     	sql.append("   null as roteiro, ");
-    	sql.append("   null as ftvenc, ");
+    	sql.append("   null as ftvenc, "); fator de vencimento Tipo roteiro diferente de especial
     	sql.append("   null as box_dp "); 
     	*/
-
+    	sql.append(" (select rota_id from "+getQueryFromRoteirizacao() +"  as cod_rota, ");
+    	sql.append(" (select descricao_rota from "+getQueryFromRoteirizacao() +"  as rota, ");
+    	sql.append(" (select roteiro_id from "+getQueryFromRoteirizacao() +"  as cod_roteiro, ");
+    	sql.append(" (select descricao_roteiro from "+getQueryFromRoteirizacao() +"  as roteiro, ");
+    	sql.append(" (select box.codigo from "+getQueryFromRoteirizacao() +"  as box_dp ");
+    	
     	sql.append(" FROM movimento_financeiro_cota mfc ");
     	sql.append(" left join consolidado_mvto_financeiro_cota cf ");
     	sql.append("   ON cf.MVTO_FINANCEIRO_COTA_ID = mfc.ID ");
@@ -739,7 +744,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	sql.append(" left join tipo_movimento tm  ");
     	sql.append("   ON mfc.TIPO_MOVIMENTO_ID = tm.ID ");
 
-    	sql.append("   WHERE d.DATA = :dtOperacao ");
+    	sql.append("   WHERE d.DATA = :dtOperacao   and cb.cota_id = ct.id and d.cota_id = ct.id  and ct.id = mfc.cota_id ");
     	sql.append("   GROUP BY mfc.COTA_ID ");
     	sql.append("   ORDER BY ct.NUMERO_COTA ");
     	
@@ -778,13 +783,34 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	query.addScalar("vlr_taxa_extra", StandardBasicTypes.BIG_DECIMAL);
     	query.addScalar("vlr_pagto_diverg", StandardBasicTypes.BIG_DECIMAL);  
     	query.addScalar("vlr_postergado", StandardBasicTypes.BIG_DECIMAL);   
-    	query.addScalar("vlr_total", StandardBasicTypes.BIG_DECIMAL);        
+    	query.addScalar("vlr_total", StandardBasicTypes.BIG_DECIMAL);   
+    	
+    	
+    	query.addScalar("cod_rota", StandardBasicTypes.STRING);
+    	query.addScalar("rota", StandardBasicTypes.STRING);
+    	query.addScalar("cod_roteiro", StandardBasicTypes.STRING);
+    	query.addScalar("box_dp", StandardBasicTypes.STRING);
+    	query.addScalar("roteiro", StandardBasicTypes.STRING);
     	
     	query.setResultTransformer(new AliasToBeanResultTransformer(ExportarCobrancaDTO.class));
     	
     	return query.list();
     	
     }
+	
+	private String getQueryFromRoteirizacao() {
+		
+		 StringBuilder sql = new StringBuilder();
+	     sql.append("   COTA cota ");
+	     sql.append("    JOIN PDV pdv ON (pdv.COTA_ID = cota.ID) ");
+	     sql.append("    JOIN ROTA_PDV rotaPDV ON (rotaPDV.PDV_ID = pdv.ID) ");
+	     sql.append("    JOIN ROTA rota ON (rotaPDV.ROTA_ID = rota.ID) ");
+	     sql.append("    JOIN ROTEIRO roteiro ON (roteiro.ID = rota.ROTEIRO_ID) ");
+	     sql.append("    JOIN ROTEIRIZACAO rtz ON (rtz.ID = roteiro.ROTEIRIZACAO_ID) ");
+	     sql.append("    JOIN BOX box ON (box.ID = rtz.BOX_ID) ");
+		 sql.append(" 	WHERE    cota.id = ct.id AND box.tipo_box <> 'ESPECIAL' ) ");    
+		 return sql.toString();
+	}
 	
 	@Override
 	public void updateNossoNumero (Date dataOperacao, Integer numeroCota, String nossoNumero){
