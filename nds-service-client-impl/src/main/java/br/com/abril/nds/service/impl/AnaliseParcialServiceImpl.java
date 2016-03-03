@@ -126,6 +126,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 		BigInteger total_qtdCotas = BigInteger.ZERO;
 	    BigInteger total_somatorioReparteSugerido = BigInteger.ZERO;
 	    BigInteger total_somatorioUltimoReparte = BigInteger.ZERO;
+	    BigInteger total_somatorioReparteOrigem = BigInteger.ZERO;
 	    Map<String, BigInteger> mapTotaisEd = new HashMap<>();
     	
     	if (queryDTO.getModoAnalise() != null && queryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL")) {
@@ -179,6 +180,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 total_somatorioUltimoReparte = somatorioUltimoReparte(total_somatorioUltimoReparte, item);
                 
                 total_somatorioReparteSugerido = somatorioReparteSugerido(total_somatorioReparteSugerido, item);
+                
+                total_somatorioReparteOrigem = somatorioReparteEstudoOrigem(total_somatorioReparteOrigem, item);
    
                 total_qtdCotas = BigIntegerUtil.soma(total_qtdCotas, BigInteger.ONE);
                 
@@ -274,6 +277,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 total_somatorioUltimoReparte = somatorioUltimoReparte(total_somatorioUltimoReparte, item);
                 
                 total_somatorioReparteSugerido = somatorioReparteSugerido(total_somatorioReparteSugerido, item);
+                
+                total_somatorioReparteOrigem = somatorioReparteEstudoOrigem(total_somatorioReparteOrigem, item);
    
                 total_qtdCotas = BigIntegerUtil.soma(total_qtdCotas, BigInteger.ONE);
                 
@@ -319,6 +324,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	dto.setTotal_qtdCotas(total_qtdCotas);
     	dto.setTotal_somatorioUltimoReparte(total_somatorioUltimoReparte);
     	dto.setTotal_somatorioReparteSugerido(total_somatorioReparteSugerido);
+    	dto.setTotal_somatorioReparteEstudoOrigem(total_somatorioReparteOrigem);
     	
     	formatarTotaisReparteVendaEdicao(mapTotaisEd, dto);
     	
@@ -337,6 +343,13 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 			total_somatorioUltimoReparte = BigIntegerUtil.soma(total_somatorioUltimoReparte, item.getUltimoReparte());
 		}
 		return total_somatorioUltimoReparte;
+	}
+	
+	private BigInteger somatorioReparteEstudoOrigem(BigInteger total_somatorioReparteEstudoOrigem, AnaliseParcialDTO item) {
+		if(BigIntegerUtil.isMaiorQueZero(item.getReparteEstudoOrigemCopia())){
+			total_somatorioReparteEstudoOrigem = BigIntegerUtil.soma(total_somatorioReparteEstudoOrigem, item.getReparteEstudoOrigemCopia());
+		}
+		return total_somatorioReparteEstudoOrigem;
 	}
 
 	private void putMapSomatorioTotaisEdicao(Map<String, BigInteger> mapTotaisEd, EdicoesProdutosDTO ed) {

@@ -318,6 +318,7 @@ public class AnaliseParcialController extends BaseController {
     	vo.setTotal_qtdCotas(analise.getTotal_qtdCotas());
     	vo.setTotal_somatorioReparteSugerido(analise.getTotal_somatorioReparteSugerido());
     	vo.setTotal_somatorioUltimoReparte(analise.getTotal_somatorioUltimoReparte());
+    	vo.setTotal_somatorioReparteEstudoOrigem(analise.getTotal_somatorioReparteEstudoOrigem());
     	vo.setPercentualAbrangencia(analiseParcialService.calcularPercentualAbrangencia(id));
     	vo.setReparteTotalEdicao(analise.getReparteTotalEdicao());
     	vo.setVendaTotalEdicao(analise.getVendaTotalEdicao());
