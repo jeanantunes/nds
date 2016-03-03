@@ -20,6 +20,7 @@ public class AnaliseEstudoNormal_E_ParcialDTO implements Serializable{
 	private BigInteger total_qtdCotas;
     private BigInteger total_somatorioReparteSugerido;
     private BigInteger total_somatorioUltimoReparte;
+    private BigInteger total_somatorioReparteEstudoOrigem;
     private BigDecimal percentualAbrangencia;
     private List<BigInteger> reparteTotalEdicao;
     private List<BigInteger> vendaTotalEdicao;
@@ -87,6 +88,12 @@ public class AnaliseEstudoNormal_E_ParcialDTO implements Serializable{
 	}
 	public void setSaldo(BigInteger saldo) {
 		this.saldo = saldo;
+	}
+	public BigInteger getTotal_somatorioReparteEstudoOrigem() {
+		return total_somatorioReparteEstudoOrigem;
+	}
+	public void setTotal_somatorioReparteEstudoOrigem(BigInteger total_somatorioReparteEstudoOrigem) {
+		this.total_somatorioReparteEstudoOrigem = total_somatorioReparteEstudoOrigem;
 	}
 	
 }

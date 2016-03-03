@@ -404,6 +404,10 @@ var analiseParcialController = $.extend(true, {
             }else{
             	colSpanEdicoesBase = colSpanEdicoesBase - 1;
             }
+            
+            if ($("#gridAnaliseEstudo").find('.hDivBox').find('tr th[abbr^="reparteEstudoOrigemCopia"]:first').size() == 1) {
+            	colSpanEdicoesBase = colSpanEdicoesBase+1;
+            }
 
             if (analiseParcialController.tipoExibicao === 'NORMAL') {
                 $header.prepend($('<tr>').append($('<th colspan="' + colSpanEdicoesBase + '" style="border-bottom: 1px solid #DDDDDD;">')
@@ -657,6 +661,10 @@ var analiseParcialController = $.extend(true, {
     	$('#total_ultimo_reparte').text(resultado.analiseEstudoNormal_E_ParcialDTO.total_somatorioUltimoReparte);
     	$('#total_reparte_sugerido').text(resultado.analiseEstudoNormal_E_ParcialDTO.total_somatorioReparteSugerido);
     	$('#total_de_cotas').text(resultado.analiseEstudoNormal_E_ParcialDTO.total_qtdCotas);
+    	
+    	if ($("#gridAnaliseEstudo").find('.hDivBox').find('tr th[abbr^="reparteEstudoOrigemCopia"]:first').size() == 1) {
+    		$('#total_reparte_origem').text(resultado.analiseEstudoNormal_E_ParcialDTO.total_somatorioReparteEstudoOrigem);
+        }
     	
     	var disabled = $('#status_estudo').text()==='Liberado';
     	
