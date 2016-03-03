@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="chamada_encalhe_modelo2" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="591" leftMargin="2" rightMargin="2" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="b891bc34-8c93-407c-bb03-65e0637d3d27">
-	<property name="ireport.zoom" value="1.8627639691774651"/>
+	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="SansSerif" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
@@ -471,9 +471,9 @@ $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,1
 					<textFieldExpression><![CDATA[$F{inscricaoEstadual}]]></textFieldExpression>
 				</textField>
 				<componentElement>
-					<reportElement x="376" y="0" width="91" height="20" isPrintWhenDetailOverflows="true" uuid="8ac2920f-7790-48e8-9811-d18cd7dba88d"/>
-					<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="EAN13" drawText="false" checksumRequired="false" barHeight="80">
-						<jr:codeExpression><![CDATA[$F{numCota}]]></jr:codeExpression>
+					<reportElement x="349" y="1" width="120" height="20" uuid="246d994e-694b-4f60-8ace-06f74f9195fb"/>
+					<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barHeight="80">
+						<jr:codeExpression><![CDATA[String.format("%04d", Integer.parseInt($F{numCota}.toString()))]]></jr:codeExpression>
 					</jr:barbecue>
 				</componentElement>
 			</frame>
