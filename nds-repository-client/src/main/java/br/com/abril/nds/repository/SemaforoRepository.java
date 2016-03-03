@@ -13,4 +13,6 @@ public interface SemaforoRepository extends Repository<Semaforo, Integer> {
 
 	void atualizarStatusProcessoEncalheIniciadoEm(Date data);
 	
+	public Long obterTotalSemaforosAtualizadosEm(Date data);
+	
 }
