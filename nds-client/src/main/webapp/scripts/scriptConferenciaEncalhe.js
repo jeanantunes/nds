@@ -84,7 +84,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 			$("#dialog-pesquisar", ConferenciaEncalhe.workspace).dialog("close");
 			
-			focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+			focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 			
 			ConferenciaEncalhe.verificarPermissaoSuperVisor();
 			
@@ -103,7 +103,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					$("#dialog-pesquisar", ConferenciaEncalhe.workspace).dialog("close");
 					
-					focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+					focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 
 					ConferenciaEncalhe.verificarPermissaoSuperVisor();
 				},
@@ -191,7 +191,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 			if (e.keyCode == 13) {
 				
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 			}
 		});
 		
@@ -315,7 +315,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		if (event.keyCode == 32 && visibleOverlay()) {
 			 
-			focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+			focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 		}
 	},
 	
@@ -351,7 +351,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 				ConferenciaEncalhe.verificarPermissaoSuperVisor();
 				
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 			
 			}, function() {
 				
@@ -513,7 +513,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		$(document.body).bind('keydown.ordenarConferencia', jwerty.event('F10',function() {
 			if (!ConferenciaEncalhe.modalAberta){
 				
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 				
 				setTimeout(function() {
 					ConferenciaEncalhe.ordenarItensPorSM();
@@ -625,7 +625,7 @@ var ConferenciaEncalhe = $.extend(true, {
 							
 							ConferenciaEncalhe.modalAberta = false;
 							
-							focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+							focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 							
 							ConferenciaEncalhe.numeroCotaEditavel(false);
 						},
@@ -694,7 +694,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 				} else {
 					
-					focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+					focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 				}
 				
 				ConferenciaEncalhe.numeroCotaEditavel(true);
@@ -1063,7 +1063,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 			} else {
 				
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 				
 			}
 			
@@ -1569,7 +1569,7 @@ var ConferenciaEncalhe = $.extend(true, {
 									
 									ConferenciaEncalhe.resetValue = false;
 									ConferenciaEncalhe.autenticarSupervisor(index, reBindFunction);
-									focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+									focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 									
 								},
 								"Cancelar": function(reBindFunction) {
@@ -1584,7 +1584,7 @@ var ConferenciaEncalhe = $.extend(true, {
 									
 									ConferenciaEncalhe.atribuirAtalhos();
 									
-									focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+									focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 									
 									if($('#dialog-autenticar-supervisor input')) {
 										
@@ -1619,7 +1619,7 @@ var ConferenciaEncalhe = $.extend(true, {
 									$("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).select();
 								}, 1);
 								
-								focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+								focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 							},
 							open: function(){
 								
@@ -1832,7 +1832,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 			}
 		});
 	},
@@ -1950,7 +1950,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				
                 ConferenciaEncalhe.limparDadosProduto(true);
 				
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 				
 				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val(1);
 			},
@@ -1958,7 +1958,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 				ConferenciaEncalhe.limparDadosProduto(true);
 				
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 				
 				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val(1);
 			}, null, null, false	
@@ -2057,7 +2057,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			}, close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 			},
 			form: $("#dialog-alert", this.workspace).parents("form")
 		});
@@ -2113,7 +2113,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
 					
-					focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));					
+					focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));					
 				}
 			},
 			form: $("#dialog-notaFiscal", this.workspace).parents("form")
@@ -2172,7 +2172,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 				ConferenciaEncalhe.modalAberta = false;
 				
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 			},
 			form: $("#dialog-pesquisar", this.workspace).parents("form")
 		});
@@ -2209,7 +2209,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 			},
 			form: $("#dialog-detalhe-publicacao", this.workspace).parents("form")
 		});
@@ -2266,7 +2266,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 			},
 			form: $("#dialog-outros-valores", this.workspace).parents("form")
 		});
@@ -2577,7 +2577,7 @@ var ConferenciaEncalhe = $.extend(true, {
 						close : function(){
 							
 							ConferenciaEncalhe.modalAberta = false;
-							focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+							focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 						},
 						
 						
@@ -2671,7 +2671,7 @@ function confirmarPopup_notaFiscal() {
 		
 			$("#dialog-notaFiscal", ConferenciaEncalhe.workspace).dialog("close");
 			
-			focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+			focusSelectRefField($("#qtdeExemplar", ConferenciaEncalhe.workspace));
 			
 			$("#conferencia-vlrCE", ConferenciaEncalhe.workspace).val($("#conferencia-valorNotaFiscal", ConferenciaEncalhe.workspace).val());
 			

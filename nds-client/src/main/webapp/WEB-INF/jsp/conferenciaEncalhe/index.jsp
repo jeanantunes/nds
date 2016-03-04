@@ -91,7 +91,8 @@
 				<tr>
 					<td width="40">Cota:</td>
 					<td width="121">
-						<input type="text" id="conferencia-numeroCota" name="conferencia-numeroCota" style="width: 80px; float: left; margin-right: 5px;" maxlength="6"/>
+						
+						<input type="text" id="conferencia-numeroCota" name="conferencia-numeroCota" style="width: 80px; float: left; font-weight:bold; margin-right: 5px;" maxlength="6"/>
 						<span class="classPesquisar">
 							<a href="javascript:;" onclick="ConferenciaEncalhe.pesquisarCota();">&nbsp;</a>
 						</span>

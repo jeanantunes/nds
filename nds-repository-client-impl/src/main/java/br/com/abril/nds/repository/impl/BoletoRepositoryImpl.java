@@ -791,10 +791,11 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" from Cobranca cobranca ");
+		hql.append(" join cobranca.divida divida ");
 		hql.append(" where cobranca.dataVencimento = :data ");
 		hql.append(" and cobranca.statusCobranca =:statusCobranca");
 		hql.append(" and cobranca.tipoCobranca in (:tipoCobranca) ");
-		
+		hql.append(" and divida.status not in(:statusPendente) ");
 		return hql.toString();
 	}
 	
@@ -876,6 +877,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		query.setParameter("data", data);
 		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO);
 		query.setParameterList("tipoCobranca", Arrays.asList(TipoCobranca.BOLETO,TipoCobranca.BOLETO_EM_BRANCO));
+		query.setParameterList("statusPendente", Arrays.asList(StatusDivida.POSTERGADA));
 		
 		return query;
 	}
