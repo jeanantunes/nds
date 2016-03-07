@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
+import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.BoletoCotaDTO;
 import br.com.abril.nds.dto.BoletoEmBrancoDTO;
@@ -113,6 +114,7 @@ import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
+import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
@@ -228,6 +230,9 @@ public class BoletoServiceImpl implements BoletoService {
     
     @Autowired
     private RoteirizacaoRepository roteirizacaoRepository;
+    
+    @Autowired
+    private ParametrosDistribuidorService parametrosDistribuidorService;
     
     /**
      * Método responsável por obter boletos por numero da cota
@@ -414,8 +419,6 @@ public class BoletoServiceImpl implements BoletoService {
         
         final List<Cobranca> boletosNaoPagos = boletoRepository.obterBoletosNaoPagos(dataPagamento);
         
-        final Integer numeroMaximoAcumulosDistribuidor = distribuidorRepository.numeroMaximoAcumuloDividas();
-        
         int contador = 0;
         
         final int qtdBoletosNaoPagos = boletosNaoPagos.size();
@@ -439,6 +442,8 @@ public class BoletoServiceImpl implements BoletoService {
         
         for (final Cobranca boleto : boletosNaoPagos) {
             
+        	 boolean isPermiteAcumulo = true;
+        	
             if (!this.isCotaAtiva(boleto.getCota())) {
                 
                 continue;
@@ -513,7 +518,11 @@ public class BoletoServiceImpl implements BoletoService {
                             "Cobrança não paga");
                 }
                 
-                this.gerarAcumuloDivida(usuario, divida, movimentoPendente, movimentoJuros, movimentoMulta);
+                isPermiteAcumulo = permiteAcumuloDivida(isPermiteAcumulo, divida);
+                
+                if(isPermiteAcumulo) {
+                	this.gerarAcumuloDivida(usuario, divida, movimentoPendente, movimentoJuros, movimentoMulta);
+                }
                 
             } catch (final IllegalArgumentException e) {
                 
@@ -525,6 +534,51 @@ public class BoletoServiceImpl implements BoletoService {
             }
         }
     }
+
+	private boolean permiteAcumuloDivida(boolean isPermiteAcumulo, final Divida divida) {
+		BigInteger qtdeAcumulo = BigInteger.ZERO;
+		Cota cota = divida.getCota();
+		
+		BigInteger numeroMaximoAcumulo = acumuloDividasService.obterNumeroMaximoAcumuloCota(cota.getId());
+		
+		if(cota.isSugereSuspensaoDistribuidor()) {
+			ParametrosDistribuidorVO parametrosDistribuidorVO = parametrosDistribuidorService.getParametrosDistribuidor();
+			
+			if(parametrosDistribuidorVO.isPararAcumuloDividas()) {
+				
+				if(parametrosDistribuidorVO.getSugereSuspensaoQuandoAtingirBoletos() != null && !parametrosDistribuidorVO.getSugereSuspensaoQuandoAtingirBoletos().isEmpty()){
+					qtdeAcumulo = new BigInteger(parametrosDistribuidorVO.getSugereSuspensaoQuandoAtingirBoletos());
+				}
+				
+				if(numeroMaximoAcumulo.compareTo(qtdeAcumulo) >= 0) {
+					
+					isPermiteAcumulo = false;
+				}
+				
+			} else {
+				isPermiteAcumulo = true;
+			}
+			
+		} else {
+			if(cota.isSugereSuspensao()) {
+				
+				if(cota.getPoliticaSuspensao().getNumeroAcumuloDivida() > 0){
+					qtdeAcumulo = BigInteger.valueOf(cota.getPoliticaSuspensao().getNumeroAcumuloDivida().intValue());
+				}
+				
+				if(numeroMaximoAcumulo.compareTo(qtdeAcumulo) >= 0) {
+					
+					isPermiteAcumulo = false;
+				}
+				
+			} else {
+				isPermiteAcumulo = true;
+			}
+			
+		}
+		
+		return isPermiteAcumulo;
+	}
     
     private Date obterNovaDataVencimentoAcumulo(final Date dataOperacao) {
         
@@ -574,7 +628,7 @@ public class BoletoServiceImpl implements BoletoService {
     private AcumuloDivida gerarAcumuloDivida(final Usuario usuario, final Divida divida,
             final MovimentoFinanceiroCota movimentoPendente,
             final MovimentoFinanceiroCota movimentoJuros,
-            final MovimentoFinanceiroCota movimentoMulta) {
+            final MovimentoFinanceiroCota movimentoMulta) { 
         
         final AcumuloDivida acumuloDivida = new AcumuloDivida();
         

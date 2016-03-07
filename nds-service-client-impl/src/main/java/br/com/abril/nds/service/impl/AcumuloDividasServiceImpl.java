@@ -13,7 +13,6 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.repository.AcumuloDividasRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
-import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.service.AcumuloDividasService;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 
@@ -29,9 +28,6 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 
 	@Autowired
 	private AcumuloDividasRepository acumuloDividasRepository;
-	
-	@Autowired
-	private DividaRepository dividaRepository;
 	
 	@Autowired
 	private CobrancaRepository cobrancaRepository;
