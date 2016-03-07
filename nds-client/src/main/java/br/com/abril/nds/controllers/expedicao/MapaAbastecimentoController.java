@@ -557,7 +557,7 @@ public class MapaAbastecimentoController extends BaseController {
 			break;
 			case PRODUTO_ESPECIFICO:
 				
-				filtro.getPaginacao().setSortColumn("produto_especifico");
+				filtro.getPaginacao().setSortColumn("produtoEspecifico");
 				
 				dados = Arrays.asList(mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro));
 
