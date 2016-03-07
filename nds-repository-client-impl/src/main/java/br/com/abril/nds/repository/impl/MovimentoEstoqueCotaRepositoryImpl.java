@@ -2541,6 +2541,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	        case CODIGO_BOX:
 	            nome = " codigoBox ";
 	            break;
+	        case PRODUTO_ESPECIFICO:
+	            nome = " codigoBox, nomeProduto, roteiro.ordem, rota.ordem, rotaPDV.ORDEM ";
+	            break;
+	            
 	        case NOME_EDICAO:
 	            nome = " nomeProduto, numeroEdicao ";
 	            break;
@@ -2558,7 +2562,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	        
 	        case SEQUENCIA_MATRIZ:
 	         //   nome = " codigoBox, roteiro.ordem, rota.ordem, rotaPDV.ORDEM, sequenciaMatriz, nomeProduto ";
-	            nome = " sequenciaMatriz, nomeProduto, codigoBox, roteiro.ordem, rota.ordem, rotaPDV.ORDEM, codigoCota,  descRota ";
+	            nome = " codigoBox, sequenciaMatriz, nomeProduto,  roteiro.ordem, rota.ordem, rotaPDV.ORDEM, codigoCota,  descRota ";
 	            break;  
 	            
 	        default:
