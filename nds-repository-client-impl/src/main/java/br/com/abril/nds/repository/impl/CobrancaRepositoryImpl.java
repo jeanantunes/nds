@@ -722,11 +722,13 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	sql.append("   null as ftvenc, "); fator de vencimento Tipo roteiro diferente de especial
     	sql.append("   null as box_dp "); 
     	*/
-    	sql.append(" (select rota_id from "+getQueryFromRoteirizacao() +"  as cod_rota, ");
-    	sql.append(" (select descricao_rota from "+getQueryFromRoteirizacao() +"  as rota, ");
-    	sql.append(" (select roteiro_id from "+getQueryFromRoteirizacao() +"  as cod_roteiro, ");
-    	sql.append(" (select descricao_roteiro from "+getQueryFromRoteirizacao() +"  as roteiro, ");
-    	sql.append(" (select box.codigo from "+getQueryFromRoteirizacao() +"  as box_dp ");
+    	sql.append(" (select coalesce(rota_id,0) from "+getQueryFromRoteirizacao() +"  as cod_rota, ");
+    	sql.append(" (select coalesce(descricao_rota,'') from "+getQueryFromRoteirizacao() +"  as rota, ");
+    	sql.append(" (select coalesce(roteiro_id,0) from "+getQueryFromRoteirizacao() +"  as cod_roteiro, ");
+    	sql.append(" (select coalesce(descricao_roteiro,'') from "+getQueryFromRoteirizacao() +"  as roteiro, ");
+    	sql.append(" (select coalesce(box.codigo,'') from "+getQueryFromRoteirizacao() +"  as box_dp, ");
+    	sql.append(" (select coalesce(parametroCobrancaCota.fator_vencimento,( select p.fator_vencimento from Forma_Cobranca f inner "+
+    	" join politica_cobranca p on p.forma_cobranca_id = f.id where p.ativo = true and p.principal = true limit 1)) from "+getQueryFromParametroCobranca() +"  as ftvenc ");
     	
     	sql.append(" FROM movimento_financeiro_cota mfc ");
     	sql.append(" left join consolidado_mvto_financeiro_cota cf ");
@@ -791,6 +793,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	query.addScalar("cod_roteiro", StandardBasicTypes.STRING);
     	query.addScalar("box_dp", StandardBasicTypes.STRING);
     	query.addScalar("roteiro", StandardBasicTypes.STRING);
+    	query.addScalar("ftvenc", StandardBasicTypes.STRING);
     	
     	query.setResultTransformer(new AliasToBeanResultTransformer(ExportarCobrancaDTO.class));
     	
@@ -811,6 +814,17 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		 sql.append(" 	WHERE    cota.id = ct.id AND box.tipo_box <> 'ESPECIAL' ) ");    
 		 return sql.toString();
 	}
+	
+	private String getQueryFromParametroCobranca() {
+		
+		 StringBuilder sql = new StringBuilder();
+	     sql.append("   PARAMETRO_COBRANCA_COTA parametroCobrancaCota ");
+	     sql.append("    JOIN COTA cota on parametro_cobranca_id = parametroCobrancaCota.id ");
+		 sql.append(" 	WHERE    cota.id = ct.id ) ");    
+		 return sql.toString();
+	}
+	
+	
 	
 	@Override
 	public void updateNossoNumero (Date dataOperacao, Integer numeroCota, String nossoNumero){
