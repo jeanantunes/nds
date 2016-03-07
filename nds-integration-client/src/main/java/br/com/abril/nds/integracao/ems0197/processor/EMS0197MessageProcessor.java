@@ -533,9 +533,9 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("       '01' as versao, ");
 		sql.append("       'L' as tipoArquivo, ");
 		sql.append("       CAST((SELECT if (d.COD_DISTRIBUIDOR_DINAP != 0,d.COD_DISTRIBUIDOR_DINAP,d.COD_DISTRIBUIDOR_FC) FROM distribuidor d LIMIT 1) AS CHAR) AS codDistribuidor, ");
-		sql.append("       CAST(c.PESSOA_ID AS CHAR) AS codJornaleiro, ");
+		sql.append("       CAST(coalesce(c.numero_jornaleiro_ipv,c.PESSOA_ID) AS CHAR) AS codJornaleiro, ");
 		sql.append("       CAST(c.NUMERO_COTA AS CHAR) AS codCota, ");
-		sql.append("       CAST(pdvs.ID AS CHAR) AS codPDV, ");
+		sql.append("       CAST(coalesce(pdvs.numero_pdv,pdvs.ID) AS CHAR )  AS codPDV, ");
 		sql.append("       DATE_FORMAT((eg.DATA_LANCAMENTO), '%Y%m%d') AS dataMovimento, ");
 		sql.append("       CAST(SUBSTRING(p.CODIGO, -8) AS CHAR) AS codProduto, ");
 		sql.append("       CAST(pe.NUMERO_EDICAO AS CHAR) AS numEdicao, ");
@@ -547,7 +547,8 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		sql.append("       pe.CHAMADA_CAPA AS chamadaCapa, ");
 		sql.append("       DATE_FORMAT((eg.DATA_LANCAMENTO), '%Y%m%d') AS dataLancamento, ");
-		sql.append("       DATE_FORMAT(((select l.DATA_LCTO_DISTRIBUIDOR from lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1)), '%Y%m%d') AS dataPrimeiroLancamentoParcial, ");
+		//sql.append("       DATE_FORMAT(((select l.DATA_LCTO_DISTRIBUIDOR from lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1)), '%Y%m%d') AS dataPrimeiroLancamentoParcial, ");
+		sql.append("   '        '  as dataPrimeiroLancamentoParcial,");
 		sql.append("       CAST(lct.ID AS CHAR) as idLancamento, ");
 		sql.append("       CAST(pe.ID AS CHAR) as idProdutoEdicao, ");
 		sql.append("       CAST(p.ID AS CHAR) as idProduto, ");
