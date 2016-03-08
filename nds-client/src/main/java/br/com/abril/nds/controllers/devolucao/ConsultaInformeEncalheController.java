@@ -22,7 +22,6 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CalendarioService;
-import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
@@ -58,9 +57,6 @@ public class ConsultaInformeEncalheController extends BaseController {
     
     @Autowired
     private FornecedorService fornecedorService;
-    
-    @Autowired
-    private CapaService capaService;
     
     @Autowired
     private DistribuidorService distribuidorService;
@@ -158,7 +154,7 @@ public class ConsultaInformeEncalheController extends BaseController {
     @Post
     public void relatorioInformeEncalhe(final Long idFornecedor, Integer semanaRecolhimento,
             final Calendar dataRecolhimento,
-            final TipoImpressaoInformeEncalheDTO tipoImpressao, final String sortorder){
+            final TipoImpressaoInformeEncalheDTO tipoImpressao, String tpObservacao, final String sortorder){
         
         final String sortname = "sequenciaMatriz";
         
@@ -316,6 +312,8 @@ public class ConsultaInformeEncalheController extends BaseController {
         final String nomeDistribuidor = distribuidorService.obterRazaoSocialDistribuidor();
         
         result.include("nomeDistribuidor", nomeDistribuidor);
+        
+        result.include("tpObservacao", tpObservacao);
         
         result.include("colunas", colunas);
         

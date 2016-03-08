@@ -14,7 +14,9 @@ function InformeEncalhe() {
 		};
 	$("#checkTipoImpressaoDados", this.workspace).button();
 	$("#buttonsetTipoImpressaoCapas", this.workspace).buttonset();
+	
 	var _this = this;
+	
 	$("#sugerirSemana", this.workspace).click(function(e){
 		
 		if($(this).is(":checked")){
@@ -23,8 +25,8 @@ function InformeEncalhe() {
 			$("#semanaRecolhimentoBox", _this.workspace).val("");
 		 }
 	});
-
 };
+
 InformeEncalhe.prototype.path = contextPath + "/devolucao/informeEncalhe/";
 
 InformeEncalhe.prototype.initGrid = function() {
@@ -294,6 +296,7 @@ InformeEncalhe.prototype.carregarDiaSemana = function() {
 InformeEncalhe.prototype.initDialogImprimir = function() {
 	
 	var _this = this;
+	$(tpObservacao).hide();
 	this.$dialogImprimir = $( "#dialog-imprimir", this.workspace ).dialog({
 		autoOpen : false,
 		resizable: false,
@@ -307,6 +310,7 @@ InformeEncalhe.prototype.initDialogImprimir = function() {
 				$("input[name='semanaRecolhimento']", this.workspace).val($("#semanaRecolhimentoBox").val());
 				$("input[name='dataRecolhimento']", this.workspace).val($("#dataRecolhimentoBox").val());
 				$("input[name='somenteVisualizarImpressao']", this.workspace).val(true);
+				$("input[name='tpObservacao']", this.workspace).val("#observacao").val();
 				
 				$( this ).dialog( "close" );
 				$("#form-imprimir", this.workspace).attr("action", contextPath + '/devolucao/informeEncalhe/relatorioInformeEncalhe');
@@ -321,6 +325,7 @@ InformeEncalhe.prototype.initDialogImprimir = function() {
 				$("input[name='semanaRecolhimento']", this.workspace).val($("#semanaRecolhimentoBox").val());
 				$("input[name='dataRecolhimento']", this.workspace).val($("#dataRecolhimentoBox").val());
 				$("input[name='somenteVisualizarImpressao']", this.workspace).val(false);
+				$("input[name='tpObservacao']", $('#tpObservacao', this.workspace).val());
 				
 				$( this ).dialog( "close" );
 				$("#form-imprimir", this.workspace).attr("action", contextPath + '/devolucao/informeEncalhe/relatorioInformeEncalhe');
@@ -557,6 +562,20 @@ function CapaUpload(idProdutoEdicao, callBack) {
 						}
 
 					});
+}
+
+function habilitarDesabilitar() {
+	
+	var obs = $("input[name='tipoImpressao.observacao']:checked").val();
+	
+	if (obs) {	
+		$('#tpObservacao', this.workspace).wysiwyg({
+	        initialContent: function() {return "<p><br></p>";},
+	        controls: "bold,italic,underline,|,undo,redo"
+		});
+	} else {
+		$(tpObservacao).hide()
+	}
 }
 
 //@ sourceURL=informeEncalhe.js
