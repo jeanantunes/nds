@@ -2,8 +2,12 @@
 <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 
-<link rel="stylesheet" type="text/css"
-	href="${pageContext.request.contextPath}/scripts/jquery-upload/css/jquery.fileupload-ui.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/editor/jquery.wysiwyg.css"></link>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/jquery.wysiwyg.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.image.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.link.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.table.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 <style type="text/css">
 #dialog-imprimir {
 	display: none;
@@ -117,23 +121,36 @@ fieldset label {
 						<td>
 							<label for="tipoImpressao.colunas.tipoLancamentoParcial">Recolhimento Parcial/Final</label>
 						</td>
-						
 						<td>
 							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.pacotePadrao" type="checkbox" value="pacotePadrao" />
-						</td>			
+						</td>
 						<td>
-							<label for="tipoImpressao.colunas.pacotePadrao">Pacote Padrao</label>
+							<label for="tipoImpressao.colunas.pacotePadrao">Pacote Padr&atilde;o</label>
+						</td>
+						
+						<td>
+							<input name="tipoImpressao.observacao" id="tipoImpressao.observacao" type="checkbox" onclick="habilitarDesabilitar();" />
+						</td>
+						<td>
+							<label for="tipoImpressao.observacao">Observa&ccedil;&atilde;o</label>
 						</td>
 					</tr>
+					<div id="observacao">
+						<tr>	
+							<td colspan="10">
+								<textarea name="tpObservacao" id="tpObservacao" type="text" style="width: 40px;" style="width:40px;"></textarea>
+							</td>
+						</tr>
+					</div>
 				</table>
 			</fieldset>
 	</div>
 	<div class="areaBts">
 		<div class="area">
-			<span class="bt_arq"><a href="javascript:;"
-				id="btnImprimir" rel="tipsy" title="Imprimir"><img
-					src="${pageContext.request.contextPath}/images/ico_impressora.gif"
-					hspace="5" border="0" alt="" /></a>
+			<span class="bt_arq">
+				<a href="javascript:;" id="btnImprimir" rel="tipsy" title="Imprimir">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" alt="" />
+				</a>
 			</span>
 		</div>
 	</div>
@@ -143,19 +160,19 @@ fieldset label {
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="74">Fornecedor:</td>
-				<td width="210"><select name="select" id="idFornecdorSelect"
-					style="width: 200px;">
+				<td width="210">
+					<select name="select" id="idFornecdorSelect" style="width: 200px;">
 						<option value="" selected="selected">Todos</option>
 						<c:forEach items="${fornecedores}" var="fornecedor">
 							<option value="${fornecedor.key }">${fornecedor.value }</option>
 						</c:forEach>
-				</select></td>
+					</select>
+				</td>
 
 				<td colspan="3">Semana:</td>
 
 				<td width="100">
-					<input type="text" id="semanaRecolhimentoBox"
-						style="width: 70px;" />
+					<input type="text" id="semanaRecolhimentoBox" style="width: 70px;" />
 				</td>
 				
 				<td colspan="3">Sugerir Semana:</td>

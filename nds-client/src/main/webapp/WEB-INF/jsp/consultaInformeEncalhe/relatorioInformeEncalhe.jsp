@@ -1,6 +1,12 @@
 <html>
 	<head>
-		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/NDS.css" />
+		
+		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/editor/jquery.wysiwyg.css"></link>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/jquery.wysiwyg.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.image.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.link.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/editor/wysiwyg.table.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 		<style type="text/css">
 			body{
 				font-size:12px!important; 	
@@ -43,6 +49,7 @@
 			
 			$(".header").remove();
 			$(".menu_superior").remove();
+							
 		});
 		</script>
 	</head>
@@ -375,12 +382,17 @@
 						</c:choose>
 					</c:forEach>
 					
-					
 					<c:if test="!tableFechada">
 						</table>
 					</c:if>
 				</td>
 			</tr>
-		</table>
+			
+			<tr>
+				<td colspan="9">
+					${tpObservacao}
+				</td>
+			</tr>
+		</table>		
 	</body>
 </html>
