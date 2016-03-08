@@ -4360,7 +4360,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	sql.append(" select SUM(CONSIGNADO.total) as TOTAL ");
     	sql.append(" from ( ");
     	sql.append("	SELECT  C.ID AS cotaId,  PE.ID AS produtoEdicaoId, ");  
-    	sql.append("	(COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * SUM(CASE WHEN TM.OPERACAO_ESTOQUE=:opEntrada THEN MEC.QTDE ELSE MEC.QTDE * -1 END)) AS total ");
+    	sql.append("	(COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * SUM(CASE WHEN TM.OPERACAO_ESTOQUE=:opSaida THEN MEC.QTDE ELSE MEC.QTDE * -1 END)) AS total ");
     	sql.append(" FROM MOVIMENTO_ESTOQUE_COTA MEC ");
     	sql.append(" INNER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID) ");
     	sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");

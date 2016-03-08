@@ -723,7 +723,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         		this.movimentoEstoqueCotaRepository.obterValorExpedicaoCotaAVista(dataFechamento, false, false), BigDecimal.ZERO);
         
         //Subtrai as vendas firmes
-        valorExpedido = valorExpedido.subtract(valorSaidaExpedicaoAVistaNaoDevolveEncalhe);
+        //valorExpedido = valorExpedido.subtract(valorSaidaExpedicaoAVistaNaoDevolveEncalhe);
+        
+    
         
         BigDecimal valorExpedidoAlteracaoPreco = Util.nvl(
         		movimentoEstoqueRepository.obterSaldoDeReparteExpedido(dataFechamento, true), BigDecimal.ZERO);
@@ -736,11 +738,13 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         
         resumoConsignado.setValorAVistaCE(valorCEAvista);
         
-        resumoConsignado.setValorExpedicao(valorExpedido.subtract(valorSaidaExpedicaoAVistaDevolveEncalhe));
+        //resumoConsignado.setValorExpedicao(valorExpedido.subtract(valorSaidaExpedicaoAVistaDevolveEncalhe));
+        resumoConsignado.setValorExpedicao(valorExpedido);
+        
         
         resumoConsignado.setValorOutrosValoresSaidas(this.obterValorSaidaOutros(dataFechamento));
         
-        resumoConsignado.setValorSaidas(valorExpedido.add(valorExpedidoAlteracaoPreco).add(resumoConsignado.getValorOutrosValoresSaidas()));
+        resumoConsignado.setValorSaidas(valorExpedido.add(valorExpedidoAlteracaoPreco).add(resumoConsignado.getValorOutrosValoresSaidas().add(valorSaidaExpedicaoAVistaDevolveEncalhe).add(valorSaidaExpedicaoAVistaNaoDevolveEncalhe)));
        
         resumoConsignado.setSaldoAtual(resumoConsignado.getSaldoAnterior().subtract(resumoConsignado.getValorEntradas()).add(resumoConsignado.getValorSaidas()));
         
