@@ -57,6 +57,8 @@ public class LeitorArquivoBaixaFinanConsolidadaServiceImpl implements LeitorArqu
 		String idLinha;
 		
 		for (String linha : linhas) {
+			if ( linha == null || linha.trim().length() == 0 )
+				continue;
 			idLinha = linha.substring(0, 1);
 			BaixaBancariaConsolidadaDTO baixa = new BaixaBancariaConsolidadaDTO();
 			
