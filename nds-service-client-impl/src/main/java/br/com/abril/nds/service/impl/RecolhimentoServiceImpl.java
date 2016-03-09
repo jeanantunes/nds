@@ -628,7 +628,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					}
 				 }
 				
-				// odemir
+				// odemir - fim
+				 
+				 
 				Set<ChamadaEncalhe> chamadasEncalheProdutoEdicao = new HashSet<>(this.processaListaChamadaEncaleProdutoEdicao(listaChamadaEncalhe, produtoEdicao.getId()));
 
 				for (CotaReparteDTO cotaReparte : cotasReparteLancamento) {
@@ -759,6 +761,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 		
 		BigInteger qtdPrevistaExistente = chamadaEncalheCota.getQtdePrevista() != null ? chamadaEncalheCota.getQtdePrevista() : BigInteger.ZERO;
+		
+		if (! qtdPrevistaExistente.equals(BigInteger.ZERO)) {
+			LOGGER.error("ATENCAO.INCREMENTANDO QUANTIDADE PREVISTA NA CHAMADA ENCALHE COTA ..COTA.id="+cota.getId() +
+					" chamada encalhe id ="+chamadaEncalhe.getId() +"  QTDE PREVISTA EXISTENTE="+qtdPrevistaExistente +
+					" QTDE PREVISTA A ADICIONAR="+qtdPrevista.intValue());
+		}
 		
 		qtdPrevista = qtdPrevista.add(qtdPrevistaExistente);
 		
