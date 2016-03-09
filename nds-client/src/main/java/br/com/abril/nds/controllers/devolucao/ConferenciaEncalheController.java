@@ -419,17 +419,25 @@ public class ConferenciaEncalheController extends BaseController {
 	@LogFuncional(value="Conferência de Encalhe [Início da conferência]")
 	public void iniciarConferenciaEncalhe(final Integer numeroCota) {
 
+	 Cota cota=null;
+		
+	 // evitar que duas conferencia na mesma cota
+	 
+	synchronized (DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA  ) {
+		
 		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(this.session, numeroCota);
 
 		limparDadosSessao();
 		
-		final Cota cota = this.conferenciaEncalheService.validarCotaParaInicioConferenciaEncalhe(numeroCota);
+		cota = this.conferenciaEncalheService.validarCotaParaInicioConferenciaEncalhe(numeroCota);
 		
 		if (conferenciaEncalheSessionScopeAttr.getIdBoxLogado() == null){
 	        throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento não informado.");
 	    }
+		
         bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(cota.getNumeroCota(), this.session);
     	
+	 }
 		carregarMapaDatasEncalheConferiveis(numeroCota);
 		
 		if(this.conferenciaEncalheService.verificarCotaComConferenciaEncalheFinalizada(numeroCota)) {
