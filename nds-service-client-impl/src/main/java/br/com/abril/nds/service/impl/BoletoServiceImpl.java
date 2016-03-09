@@ -1314,8 +1314,10 @@ public class BoletoServiceImpl implements BoletoService {
     		if(dividaRaiz.getDividaRaiz() != null) {    			
     			Divida dividaAux = dividaRaiz.getDividaRaiz();
     			
-    			if(dividaAux != null) {    			
-    				this.pagarCobrancasRaizes(dividaAux, dataOperacao);
+    			if(dividaAux != null) {
+    				if(!dividaAux.getId().equals(dividaAux.getDividaRaiz().getId())) {
+    					this.pagarCobrancasRaizes(dividaAux, dataOperacao);
+    				}
     			}
     		}
     	}

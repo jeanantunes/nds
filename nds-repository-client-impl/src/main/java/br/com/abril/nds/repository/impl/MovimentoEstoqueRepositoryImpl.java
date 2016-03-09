@@ -289,7 +289,7 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		sql.append("	and movimentoEstoque.STATUS = :statusAprovado ");
 		sql.append("	and (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEnvioJornaleiroJuramentado ");
 		if(precoCapaHistoricoAlteracao) {
-			sql.append("	or (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:gruposMovimentosConsignado) ");
+			// sql.append("	AND (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:gruposMovimentosConsignado) ");
 		} else {
 			sql.append("	or (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEnvioAoJornaleiro ");
 		}
@@ -304,12 +304,16 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		sql.append("				inner join  PRODUTO produto_  on produtoEdicao_.PRODUTO_ID=produto_.ID ");
 		sql.append("			where lancamento.STATUS <> :statusFuro");
 		if(precoCapaHistoricoAlteracao) {
-			sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR between date_add(:dataMovimento, interval -1 day) and :dataMovimento ");
+			//sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR between date_add(:dataMovimento, interval -1 day) and :dataMovimento ");
 		} else {
 			sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR = :dataMovimento");
 		}
 		sql.append("		        and produto_.FORMA_COMERCIALIZACAO = :formaComercializacaoConsignado");
-		sql.append("		))) ");
+		if(precoCapaHistoricoAlteracao) {
+			sql.append("		)) ");
+		} else {
+			sql.append("		))) ");
+		}
 
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
@@ -319,6 +323,8 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
 		
 		if(precoCapaHistoricoAlteracao) {
+			/*
+			 * 
 			query.setParameterList("gruposMovimentosConsignado", Arrays.asList(
 							  GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name()
 							, GrupoMovimentoEstoque.AJUSTE_REPARTE_FALTA_COTA.name()
@@ -333,6 +339,7 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 							, GrupoMovimentoEstoque.VENDA_ENCALHE.name()
 							, GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR.name()
 						));
+			 */
 		} else {
 			query.setParameter("grupoMovimentoEnvioAoJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name());
 		}

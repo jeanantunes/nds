@@ -676,12 +676,12 @@ var fecharDiaController =  $.extend(true, {
 				resultado.mensagens.listaMensagens
 			);
 			
-			$(".dialog-consolidado-alteracao-preco", fecharDiaController.workspace).hide();
+			$(".dialog-consolidado-outra-movimentacao", fecharDiaController.workspace).hide();
 
 			return resultado;
 		}
 		
-		$("#dialog-consolidado-alteracao-preco", fecharDiaController.workspace).show();
+		$("#dialog-consolidado-outra-movimentacao", fecharDiaController.workspace).show();
 		
 		
 		return resultado;
@@ -1643,7 +1643,7 @@ var fecharDiaController =  $.extend(true, {
 			modal: true,
 			buttons: {
 				"Fechar": function() {
-					$( this ).dialog( "close" );
+					$("#dialog-consolidado-alteracao-preco").dialog( "close" );
 				},
 			},
 			
@@ -1709,7 +1709,7 @@ var fecharDiaController =  $.extend(true, {
 		
 		var saidaOutrosValores = null;
 		
-		if(resumo.resumoConsignado.valorAlteracaoPrecoFormatado == '0,00') {
+		if(resumo.resumoConsignado.valorOutrosValoresSaidasFormatado == '0,00') {
 			saidaOutrosValores = resumo.resumoConsignado.valorOutrosValoresSaidasFormatado;
 		} else {
 			saidaOutrosValores = "<a href=\"javascript:;\" onclick=\"fecharDiaController.popup_OutraMovimentacao();\">"+resumo.resumoConsignado.valorOutrosValoresSaidasFormatado+"</a>";
