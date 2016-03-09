@@ -397,8 +397,7 @@ public class MatrizLancamentoController extends BaseController {
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void confirmarMatrizLancamento(final List<Date> datasConfirmadas) {
         
-        this.verificarBloqueioMatrizLancamento();
-        
+    	    
         this.verificarExecucaoInterfaces();
         
         final BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
@@ -408,7 +407,7 @@ public class MatrizLancamentoController extends BaseController {
             throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
         }
         
-        this.validarDatasConfirmacao(datasConfirmadas.toArray(new Date[] {}));
+        this.validarDatasConfirmacao(datasConfirmadas != null ?datasConfirmadas.toArray(new Date[] {}):null);
         
         final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao = balanceamentoLancamento.getMatrizLancamento();
         
