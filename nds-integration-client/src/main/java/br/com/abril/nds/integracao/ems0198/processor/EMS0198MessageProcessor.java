@@ -263,9 +263,9 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		sql.append("  select  ");
 
 		sql.append("       CAST((select if (d.COD_DISTRIBUIDOR_DINAP != 0,d.COD_DISTRIBUIDOR_DINAP,d.COD_DISTRIBUIDOR_FC) from distribuidor d limit 1) as CHAR) codDistribuidor ");
-		sql.append("      , CAST(c.PESSOA_ID as CHAR) as codJornaleiro ");
+		sql.append("      , CAST(coalesce(c.numero_jornaleiro_ipv,c.PESSOA_ID) AS CHAR) AS codJornaleiro ");
 		sql.append("      , CAST(c.NUMERO_COTA as CHAR) as codCota ");
-		sql.append("      , CAST(pdv.ID as CHAR) as codPDV ");
+		sql.append("      , CAST(coalesce(pdv.numero_pdv,pdv.ID) AS CHAR )  AS codPDV ");
 		sql.append("      , DATE_FORMAT((ce.DATA_RECOLHIMENTO),'%Y%m%d') as dataMovimento ");
 		sql.append("      , CAST(SUBSTRING(p.CODIGO, -8) as CHAR) as codProduto ");
 		sql.append("      , CAST(pe.NUMERO_EDICAO as CHAR) as numEdicao ");
