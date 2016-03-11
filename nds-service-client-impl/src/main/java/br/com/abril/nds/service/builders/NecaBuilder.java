@@ -249,7 +249,6 @@ public class NecaBuilder  implements Serializable {
         
         final List<ItemNotaEnvio> itensNotaEnvio =  notaEnvio.getListaItemNotaEnvio();
         
-        boolean temLancamentoComFuroDeProduto = false;
         String codigoProduto 		= "";
         String descricaoProduto 	= "";
         Long produtoEdicao 			= null;
@@ -300,7 +299,7 @@ public class NecaBuilder  implements Serializable {
             listaItemImpressaoNfe.add(item);
             
             if(itemNotaEnvio.getFuroProduto() != null) {
-            	temLancamentoComFuroDeProduto = true;
+            	nfeImpressao.setItensComFuroLancamento(true);
             }
 
         }
