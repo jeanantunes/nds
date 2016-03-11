@@ -10,6 +10,8 @@
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
+
 <script language="javascript" type="text/javascript">
 
 var pesquisaCotaConsultaEncalhe = new PesquisaCota(ConsultaEncalhe.workspace);

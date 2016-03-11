@@ -6,6 +6,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/geracaoNotaEnvio.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
 
 <script>
 	geracaoNotaEnvioController.init();
