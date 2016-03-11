@@ -46,9 +46,23 @@ var p3Controller = $.extend(true,{
 			    				 {name:'dataFinal', value: dateFinal},
 			    				 {name:'opcaoDeRelatorio', value: $(f+" .opcaoDeRelatorio:checked").val()}],	
 			    				 function(result) {
-			    			console.log(result);
+
 			    			if(result.quantidadeGerada>0){
-			    				$(f).submit();
+			    				
+			    				data = [];
+								data.push({'name':'dataInicial', 'value':dateInicial});
+								data.push({'name':'dataFinal', 'value':dateFinal});
+								data.push({'name':'opcaoDeRelatorio', 'value':$(f+" .opcaoDeRelatorio:checked").val()});
+								
+								$.fileDownload(contextPath + "/financeiro/p3/gerarP3", {
+						            httpMethod : "GET",
+						            data : data,
+						            failCallback : function(arg) {
+						                exibirMensagem("WARNING", ["Erro ao gerar o arquivo P3!"]);
+						            }
+								});
+			    				
+			    				
 			    				exibirMensagem("SUCCESS", ["Arquivo gerado com sucesso!! Efetuando o download, aguarde... "]);
 			    			}else{
 			    				exibirMensagem("WARNING", ["Não há Lançamentos para este período!"]);							

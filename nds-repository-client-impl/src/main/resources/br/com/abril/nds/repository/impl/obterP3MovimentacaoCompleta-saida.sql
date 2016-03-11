@@ -23,7 +23,7 @@
 		 '' AS numSequencialItem, 
 		 '' AS numSerieMaterial, 
 
-		 cast(CASE WHEN tnf.EMITENTE='COTA' OR  tnf.DESTINATARIO ='COTA' 
+		 cast(CASE WHEN natOp.TIPO_EMITENTE ='COTA' OR natOp.TIPO_DESTINATARIO ='COTA'
 		 	THEN 'CL' 
 		    ELSE 'FO' 
 		 END as char) categoriaPfPj, 
@@ -61,7 +61,7 @@
 		 cast(YEAR(nfs.data_emissao) as char) anoDocumento, 
 		 '' AS observacao, 
 		 'NDS' AS openflex01, 
-		 now() AS openflex02, 
+		 cast(NOW() as char) AS openflex02, 
 		 '' AS openflex03, 
 		 'NDS' AS openflex04, 
 		 '' AS openflex05, 
@@ -92,11 +92,11 @@
 		     pessoa pes 
 		         ON pes.id = nfs.pj_id 
 		 INNER JOIN 
-		     tipo_nota_fiscal tnf  
-		         ON nfs.tipo_nf_id = tnf.id 
+			 natureza_operacao natOp  
+				 ON nfs.NATUREZA_OPERACAO = natOp.ID
 
 		 WHERE 
 
 		 nfs.data_emissao BETWEEN :dataInicial AND :dataFinal 
 
-		 AND TIPO_NF_ID NOT IN (3,4,11,28,29) order by infs.NOTA_FISCAL_ID 
+		 AND NATUREZA_OPERACAO NOT IN (3,11,28) order by infs.NOTA_FISCAL_ID 

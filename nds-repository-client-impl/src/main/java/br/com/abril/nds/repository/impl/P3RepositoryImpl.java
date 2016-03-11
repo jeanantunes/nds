@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -36,11 +38,17 @@ public class P3RepositoryImpl extends AbstractRepository implements
 
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" SELECT regime_especial FROM distribuidor; ");
-
-		Query query = this.getSession().createSQLQuery(sql.toString());
-
+		sql.append(" SELECT POSSUI_REGIME_ESPECIAL_DISPENSA_INTERNA FROM distribuidor ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.addScalar("POSSUI_REGIME_ESPECIAL_DISPENSA_INTERNA", StandardBasicTypes.BOOLEAN);
+		
 		return (Boolean) query.uniqueResult();
+		
+//		javax.persistence.Query query = this.getSession().createSQLQuery(sql.toString());
+
+		 
 	}
 
 	@SuppressWarnings("unchecked")
@@ -76,7 +84,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" '' AS numSequencialItem, ");
 		sql.append(" '' AS numSerieMaterial, ");
 
-		sql.append(" cast(CASE WHEN tnf.emitente='COTA' OR  tnf.destinatario ='COTA' ");
+		sql.append(" cast(CASE WHEN no.TIPO_EMITENTE ='COTA' OR no.TIPO_DESTINATARIO ='COTA' ");
 		sql.append(" 	THEN 'CL' ");
 		sql.append("    ELSE 'FO' ");
 		sql.append(" END as char) categoriaPfPj, ");
@@ -143,15 +151,15 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append("     pessoa pes ");
 		sql.append("         ON pes.id = nfe.pj_id ");
 		sql.append(" INNER JOIN ");
-		sql.append("     tipo_nota_fiscal tnf  ");
-		sql.append("         ON nfe.tipo_nf_id = tnf.id ");
-
+		sql.append("     natureza_operacao no  ");
+		sql.append("         ON nfe.NATUREZA_OPERACAO_ID = no.ID ");
+		
 		sql.append(" WHERE ");
 
 		sql.append(" nfe.data_emissao BETWEEN :dataInicial AND :dataFinal ");
 
-		sql.append(" AND TIPO_NF_ID NOT IN (2,3,4,9,10,11,28,29) order by nfe.data_recebimento ");
-
+		sql.append(" AND NATUREZA_OPERACAO_ID NOT IN (2,3,9,11,28) order by nfe.data_recebimento ");
+		
 		Query query = this.getSession().createSQLQuery(sql.toString());
 
 		query.setParameter("dataInicial", dataInicial);
@@ -198,7 +206,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" '' AS numSequencialItem, ");
 		sql.append(" '' AS numSerieMaterial, ");
 
-		sql.append(" cast(CASE WHEN tnf.EMITENTE='COTA' OR  tnf.DESTINATARIO ='COTA' ");
+		sql.append(" cast(CASE WHEN no.TIPO_EMITENTE ='COTA' OR no.TIPO_DESTINATARIO ='COTA' ");
 		sql.append(" 	THEN 'CL' ");
 		sql.append("    ELSE 'FO' ");
 		sql.append(" END as char) categoriaPfPj, ");
@@ -265,14 +273,17 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append("     pessoa pes ");
 		sql.append("         ON pes.id = nfs.pj_id ");
 		sql.append(" INNER JOIN ");
-		sql.append("     tipo_nota_fiscal tnf  ");
-		sql.append("         ON nfs.tipo_nf_id = tnf.id ");
-
+		sql.append("     natureza_operacao no  ");
+		sql.append("         ON nfs.NATUREZA_OPERACAO = no.ID ");
+		
 		sql.append(" WHERE ");
 
 		sql.append(" nfs.data_emissao BETWEEN :dataInicial AND :dataFinal ");
 
-		sql.append(" AND TIPO_NF_ID NOT IN (2,3,4,9,10,11,28,29) order by infs.NOTA_FISCAL_ID ");
+		sql.append(" AND nfs.TIPO_NF_ID NOT IN (2,3,4,9,10,11,28,29) order by infs.NOTA_FISCAL_ID ");
+		
+//		TODO confirmar na homologação, qual amarração estará correta (NATUREZA_OPERACAO_ID || TIPO_NF_ID)
+		//		sql.append(" AND NATUREZA_OPERACAO_ID NOT IN (2,3,9,11,28) order by infs.NOTA_FISCAL_ID ");
 
 		Query query = this.getSession().createSQLQuery(sql.toString());
 
@@ -330,7 +341,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 
 		sql.append(" cast(nei.sequencia AS char) numSequencialItem, ");
 		sql.append(" '' AS numSerieMaterial, ");
-		sql.append(" cast(CASE WHEN tnf.EMITENTE='COTA' OR  tnf.DESTINATARIO ='COTA' ");
+		sql.append(" cast(CASE WHEN no.TIPO_EMITENTE ='COTA' OR no.TIPO_DESTINATARIO ='COTA' ");
 		sql.append(" 	THEN 'CL' ");
 		sql.append("    ELSE 'FO' ");
 		sql.append(" END as char) categoriaPfPj, ");
@@ -411,8 +422,8 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append("     nota_fiscal_saida nfs ");
 		sql.append("         ON infs.nota_fiscal_id = nfs.id ");
 		sql.append(" LEFT JOIN ");
-		sql.append("     tipo_nota_fiscal tnf  ");
-		sql.append("         ON nfs.tipo_nf_id = tnf.id ");
+		sql.append("     natureza_operacao no  ");
+		sql.append("         ON nfs.TIPO_NF_ID = no.ID ");
 		sql.append(" INNER JOIN ");
 		sql.append("     pessoa pes ");
 		sql.append("         ON ne.pessoa_destinatario_id_referencia = pes.id ");
@@ -455,7 +466,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" p.codigo AS codMaterial, ");
 
 		sql.append(" 	CASE ");
-		sql.append("  		WHEN tnf.tipo_operacao='ENTRADA'");
+		sql.append("  		WHEN no.TIPO_OPERACAO='ENTRADA'");
 		sql.append(" 		THEN '  ESE' ");
 		sql.append(" 		ELSE '  ESS'  ");
 		sql.append(" END AS tipoOperacao, ");
@@ -467,7 +478,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" END, 3) AS char),'.',',') quantidade, ");
 
 		sql.append(" 	cast(CASE ");
-		sql.append("  		WHEN tnf.tipo_operacao='ENTRADA'");
+		sql.append("  		WHEN no.TIPO_OPERACAO='ENTRADA'");
 		sql.append(" 		THEN 'E' ");
 		sql.append(" 		ELSE 'S'  ");
 		sql.append(" END AS char) indLancamento, ");
@@ -487,7 +498,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" '' AS numSequencialItem, ");
 		sql.append(" '' AS numSerieMaterial, ");
 
-		sql.append(" cast(CASE WHEN tnf.EMITENTE='COTA' OR  tnf.DESTINATARIO ='COTA' ");
+		sql.append(" cast(CASE WHEN no.TIPO_EMITENTE ='COTA' OR no.TIPO_DESTINATARIO ='COTA' ");
 		sql.append(" 	THEN 'CL' ");
 		sql.append("    ELSE 'FO' ");
 		sql.append(" END as char) categoriaPfPj, ");
@@ -501,26 +512,26 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" cast(1 as char) localizacao, ");
 
 		sql.append(" 	replace(cast(round(CASE ");
-		sql.append("  		WHEN tnf.tipo_operacao='ENTRADA' && infe.preco is not null && infe.desconto is not null THEN (infe.preco - infe.desconto) ");
-		sql.append(" 		WHEN tnf.tipo_operacao='SAIDA' && pe.preco_venda is not null THEN (pe.preco_venda) ");
+		sql.append("  		WHEN no.TIPO_OPERACAO='ENTRADA' && infe.preco is not null && infe.desconto is not null THEN (infe.preco - infe.desconto) ");
+		sql.append(" 		WHEN no.TIPO_OPERACAO='SAIDA' && pe.preco_venda is not null THEN (pe.preco_venda) ");
 		sql.append(" 		ELSE 0  ");
 		sql.append(" END, 4) AS char),'.',',') vlrUnitario, ");
 
 		sql.append(" 	replace(cast(round(CASE ");
-		sql.append("  		WHEN tnf.tipo_operacao='ENTRADA' && infe.preco is not null && infe.desconto is not null && infe.qtde is not null THEN (infe.preco - infe.desconto)*infe.qtde ");
-		sql.append(" 		WHEN tnf.tipo_operacao='SAIDA' && pe.preco_venda is not null && infs.qtde is not null THEN (pe.preco_venda)*infs.qtde ");
+		sql.append("  		WHEN no.TIPO_OPERACAO='ENTRADA' && infe.preco is not null && infe.desconto is not null && infe.qtde is not null THEN (infe.preco - infe.desconto)*infe.qtde ");
+		sql.append(" 		WHEN no.TIPO_OPERACAO='SAIDA' && pe.preco_venda is not null && infs.qtde is not null THEN (pe.preco_venda)*infs.qtde ");
 		sql.append(" 		ELSE 0 ");
 		sql.append(" END, 2) AS char),'.',',') vlrTotal, ");
 
 		sql.append(" 	replace(cast(round(CASE ");
-		sql.append("  		WHEN tnf.tipo_operacao='ENTRADA' && infe.preco is not null && infe.desconto is not null THEN (infe.preco - infe.desconto) ");
-		sql.append(" 		WHEN tnf.tipo_operacao='SAIDA' && pe.preco_venda is not null THEN (pe.preco_venda) ");
+		sql.append("  		WHEN no.TIPO_OPERACAO='ENTRADA' && infe.preco is not null && infe.desconto is not null THEN (infe.preco - infe.desconto) ");
+		sql.append(" 		WHEN no.TIPO_OPERACAO='SAIDA' && pe.preco_venda is not null THEN (pe.preco_venda) ");
 		sql.append(" 		ELSE ''  ");
 		sql.append(" END, 4) AS char),'.',',') custoUnitario, ");
 
 		sql.append(" 	replace(cast(round(CASE ");
-		sql.append("  		WHEN tnf.tipo_operacao='ENTRADA' && infe.preco is not null && infe.desconto is not null && infe.qtde is not null THEN (infe.preco - infe.desconto)*infe.qtde ");
-		sql.append(" 		WHEN tnf.tipo_operacao='SAIDA' && pe.preco_venda is not null && infs.qtde is not null THEN (pe.preco_venda)*infs.qtde ");
+		sql.append("  		WHEN no.TIPO_OPERACAO='ENTRADA' && infe.preco is not null && infe.desconto is not null && infe.qtde is not null THEN (infe.preco - infe.desconto)*infe.qtde ");
+		sql.append(" 		WHEN no.TIPO_OPERACAO='SAIDA' && pe.preco_venda is not null && infs.qtde is not null THEN (pe.preco_venda)*infs.qtde ");
 		sql.append(" 		ELSE '' ");
 		sql.append(" END, 2) AS char),'.',',') custoTotal, ");
 
@@ -531,8 +542,8 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" cfop.codigo AS cfop, ");
 
 		sql.append(" 	replace(cast(round(CASE ");
-		sql.append("  		WHEN tnf.tipo_operacao='ENTRADA' && infe.aliquota_ipi_produto is not null THEN infe.aliquota_ipi_produto ");
-		sql.append(" 		WHEN tnf.tipo_operacao='SAIDA' && infs.aliquota_ipi_produto is not null THEN infs.aliquota_ipi_produto ");
+		sql.append("  		WHEN no.TIPO_OPERACAO='ENTRADA' && infe.aliquota_ipi_produto is not null THEN infe.aliquota_ipi_produto ");
+		sql.append(" 		WHEN no.TIPO_OPERACAO='SAIDA' && infs.aliquota_ipi_produto is not null THEN infs.aliquota_ipi_produto ");
 		sql.append(" 		ELSE '' ");
 		sql.append(" END, 2) AS char),'.',',') vlrIpi, ");
 
@@ -570,11 +581,11 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append("     pessoa pes  ");
 		sql.append("         ON nfn.pessoa_destinatario_id_referencia = pes.id ");
 		sql.append(" LEFT JOIN ");
-		sql.append("     tipo_nota_fiscal tnf ");
-		sql.append("         ON nfn.TIPO_NOTA_FISCAL_ID = tnf.ID ");
+		sql.append("     natureza_operacao no ");
+		sql.append("         ON nfn.NATUREZA_OPERACAO_ID = no.ID ");
 		sql.append(" LEFT JOIN ");
 		sql.append("     cfop  ");
-		sql.append("         ON tnf.CFOP_ESTADO = cfop.ID ");
+		sql.append("         ON no.CFOP_ESTADO = cfop.ID ");
 		sql.append(" LEFT JOIN ");
 		sql.append("     item_nota_fiscal_entrada infe ");
 		sql.append("         ON infe.produto_edicao_id = pe.id ");
@@ -583,7 +594,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append("         ON infe.NOTA_FISCAL_ID = nfe.ID ");
 		sql.append(" LEFT JOIN ");
 		sql.append("     nota_fiscal_saida nfs ");
-		sql.append("         ON nfs.tipo_nf_id = tnf.id ");
+		sql.append("         ON nfs.NATUREZA_OPERACAO = no.id ");
 		sql.append(" LEFT JOIN ");
 		sql.append("      item_nota_fiscal_saida infs ");
 		sql.append("         ON infs.produto_edicao_id = pe.id ");
@@ -591,7 +602,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" WHERE ");
 
 		sql.append(" nfn.data_emissao BETWEEN :dataInicial AND :dataFinal ");
-		sql.append(" AND nfn.TIPO_NOTA_FISCAL_ID NOT IN (2,3,4,9,10,11,28,29) order by nfps.nota_fiscal_id ");
+		sql.append(" AND nfn.NATUREZA_OPERACAO_ID NOT IN (2,3,9,11,28) order by nfps.nota_fiscal_id ");
 
 		Query query = this.getSession().createSQLQuery(sql.toString());
 
@@ -638,14 +649,14 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append("     pessoa pes ");
 		sql.append("         ON pes.id = nfe.pj_id ");
 		sql.append(" INNER JOIN ");
-		sql.append("     tipo_nota_fiscal tnf  ");
-		sql.append("         ON nfe.tipo_nf_id = tnf.id ");
-
+		sql.append("     natureza_operacao no  ");
+		sql.append("         ON nfe.NATUREZA_OPERACAO_ID = no.ID ");
+		
 		sql.append(" WHERE ");
 
 		sql.append(" nfe.data_emissao BETWEEN :dataInicial AND :dataFinal ");
 
-		sql.append(" AND TIPO_NF_ID NOT IN (2,3,4,9,10,11,28,29) order by nfe.data_recebimento ");
+		sql.append(" AND NATUREZA_OPERACAO_ID NOT IN (2,3,9,11,28) order by nfe.data_recebimento ");
 
 		Query query = this.getSession().createSQLQuery(sql.toString());
 
@@ -687,15 +698,12 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" LEFT JOIN ");
 		sql.append("     pessoa pes ");
 		sql.append("         ON pes.id = nfs.pj_id ");
-		sql.append(" INNER JOIN ");
-		sql.append("     tipo_nota_fiscal tnf  ");
-		sql.append("         ON nfs.tipo_nf_id = tnf.id ");
 
 		sql.append(" WHERE ");
 
 		sql.append(" nfs.data_emissao BETWEEN :dataInicial AND :dataFinal ");
 
-		sql.append(" AND TIPO_NF_ID NOT IN (2,3,4,9,10,11,28,29) order by infs.NOTA_FISCAL_ID ");
+		sql.append(" AND nfs.TIPO_NF_ID NOT IN (2,3,4,9,10,11,28,29) order by infs.NOTA_FISCAL_ID ");
 
 		Query query = this.getSession().createSQLQuery(sql.toString());
 
@@ -737,9 +745,6 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" LEFT JOIN ");
 		sql.append("     nota_fiscal_saida nfs ");
 		sql.append("         ON infs.nota_fiscal_id = nfs.id ");
-		sql.append(" LEFT JOIN ");
-		sql.append("     tipo_nota_fiscal tnf  ");
-		sql.append("         ON nfs.tipo_nf_id = tnf.id ");
 		sql.append(" INNER JOIN ");
 		sql.append("     pessoa pes ");
 		sql.append("         ON ne.pessoa_destinatario_id_referencia = pes.id ");
@@ -789,11 +794,11 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append("     pessoa pes  ");
 		sql.append("         ON nfn.pessoa_destinatario_id_referencia = pes.id ");
 		sql.append(" LEFT JOIN ");
-		sql.append("     tipo_nota_fiscal tnf ");
-		sql.append("         ON nfn.TIPO_NOTA_FISCAL_ID = tnf.ID ");
+		sql.append("     natureza_operacao no ");
+		sql.append("         ON nfn.NATUREZA_OPERACAO_ID = no.ID ");
 		sql.append(" LEFT JOIN ");
 		sql.append("     cfop  ");
-		sql.append("         ON tnf.CFOP_ESTADO = cfop.ID ");
+		sql.append("         ON no.CFOP_ESTADO = cfop.ID ");
 		sql.append(" LEFT JOIN ");
 		sql.append("     item_nota_fiscal_entrada infe ");
 		sql.append("         ON infe.produto_edicao_id = pe.id ");
@@ -802,7 +807,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append("         ON infe.NOTA_FISCAL_ID = nfe.ID ");
 		sql.append(" LEFT JOIN ");
 		sql.append("     nota_fiscal_saida nfs ");
-		sql.append("         ON nfs.tipo_nf_id = tnf.id ");
+		sql.append("         ON nfs.NATUREZA_OPERACAO = no.id ");
 		sql.append(" LEFT JOIN ");
 		sql.append("      item_nota_fiscal_saida infs ");
 		sql.append("         ON infs.produto_edicao_id = pe.id ");
@@ -810,7 +815,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" WHERE ");
 
 		sql.append(" nfn.data_emissao BETWEEN :dataInicial AND :dataFinal ");
-		sql.append(" AND nfn.TIPO_NOTA_FISCAL_ID NOT IN (2,3,4,9,10,11,28,29) order by nfps.nota_fiscal_id ");
+		sql.append(" AND nfn.NATUREZA_OPERACAO_ID NOT IN (2,3,9,11,28) order by nfps.nota_fiscal_id ");
 
 		Query query = this.getSession().createSQLQuery(sql.toString());
 

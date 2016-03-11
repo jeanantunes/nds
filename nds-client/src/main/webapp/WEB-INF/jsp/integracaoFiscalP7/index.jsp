@@ -1,63 +1,19 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 
+<script type="text/javascript" src="scripts/p7.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 
-<script>
-
-var month,year;
-var dateInventario;
+<script language="javascript" type="text/javascript">
 
 $(function(){
-	$( "#datepickerMesAno").datepicker({
-		changeMonth: true,
-        changeYear: true,
-		showOn: "button",
-		dateFormat: 'MM/yy',
-		monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
-        monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
-		buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-		buttonImageOnly: true,
-		onClose: function(dateText, inst) { 
-	        month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-	        year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-	        dateInventario = new Date(year, month, 1);
-	        
-	        $("#mesInput").val(month);
-	        $("#anoInput").val(year);
-	        $("#mesInputXLS").val(month);
-	        $("#anoInputXLS").val(year);
-	        
-	        $(this).datepicker('setDate', dateInventario);
-	    },
-	    beforeShow: function() {
-	    	$(".ui-datepicker-calendar").hide();
-	    }
-	});
-	$( "#datepickerMesAno").datepicker($.datepicker.regional["pt-BR"]);
+	p7Controller.init();
 });
 
-function submitForm(f){
+function submitForm(f, tipo){
+	var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+    var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
 	
-	if(month==null && year==null){
-		exibirMensagem("WARNING", ["Escolha uma data válida"]);
-	}else if(dateInventario.getTime() > new Date().getTime()){
-		exibirMensagem("WARNING", ["Mês/Ano maior que o mês atual."]);
-	}else{
-		$.postJSON(contextPath + "/financeiro/integracaoFiscalP7/verificarExportar", 
-				$(f).serialize(),
-				function(result) {
-						console.log(result);
-						if(result.quantidadeGerada>0){
-							$(f).submit();
-							exibirMensagem("SUCCESS", [" Aguarde enquanto o arquivo é gerado e disponibilizado para download! "]);
-						}else{
-							exibirMensagem("WARNING", ["Nenhum dado encontrado para inventário."]);							
-						}
-			   	},
-			   null,
-			   true
-		);
-		
-	}
+    p7Controller.validarDados(month, year, f, tipo);		
 }
 
 </script>
@@ -83,12 +39,12 @@ function submitForm(f){
 		   	<td>
 				 <input class="campoDePesquisa" type="text" name="" id="datepickerMesAno" readonly="readonly" style="width:120px;" value="" />
 				 
-			   	<form method="POST" action="${pageContext.request.contextPath}/financeiro/integracaoFiscalP7/exportar" id="formInventario">
+			   	<form id="formInventario">
 				 <input type="hidden" name="mes" id="mesInput" value=""/>
 				 <input type="hidden" name="ano" id="anoInput" value=""/>
 				</form>
 				
-				<form method="POST" action="${pageContext.request.contextPath}/financeiro/integracaoFiscalP7/exportarXLS" id="formInventarioXLS">
+				<form id="formInventarioXLS">
 				 <input type="hidden" name="mes" id="mesInputXLS" value=""/>
 				 <input type="hidden" name="ano" id="anoInputXLS" value=""/>
 				</form>
@@ -101,13 +57,13 @@ function submitForm(f){
 		<tr>
             <td>
             	<span class="bt_novos" title="Gerar Arquivo">
-					<a href="javascript:submitForm('#formInventario');" rel="tipsy" title="Arquivo .TXT">
+					<a href="javascript:submitForm('#formInventario', 'txt');" rel="tipsy" title="Arquivo .TXT">
 						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						Arquivo
 					</a>
 				</span>
 				<span class="bt_arq" id="gerarAquivoP7XLS">
-				<a href="javascript:submitForm('#formInventarioXLS');" rel="tipsy" title="Arquivo .XLS">
+				<a href="javascript:submitForm('#formInventarioXLS', 'xls');" rel="tipsy" title="Arquivo .XLS">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 					Arquivo
 				</a>
