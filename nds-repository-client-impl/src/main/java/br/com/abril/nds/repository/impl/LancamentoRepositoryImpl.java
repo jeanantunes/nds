@@ -1083,7 +1083,7 @@ public class LancamentoRepositoryImpl extends
 
 		hql.append(" lancamento.id as idLancamento, ");
 		hql.append(" lancamento.produto_edicao_id as idProdutoEdicao, 		  	");
-		hql.append(" chamada_encalhe.sequencia as sequenciaMatriz,			  	");
+		hql.append(" max(chamada_encalhe.sequencia) as sequenciaMatriz,			  	");
 		hql.append(" produto.codigo as codigoProduto, 	");
 		hql.append(" produto.nome as nomeProduto,		");
 		hql.append(" periodo_lancamento_parcial.tipo as tipoLancamentoParcial, ");
