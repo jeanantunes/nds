@@ -1,5 +1,6 @@
 <script type="text/javascript" src="scripts/p3.js"></script>
- 
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
+
 <script>
 
 	function submitForm(f){
@@ -15,7 +16,8 @@
 		
 		<fieldset class="classFieldset fieldFiltroItensNaoBloqueados" width="950">
    	    <legend> Integração Fiscal P3 </legend>
-   	    <form action="${pageContext.request.contextPath}/financeiro/p3/gerarP3" method="get" id="p3-form">
+   	    
+   	    <form id="p3-form">
 		<table width="520" border="0" class="filtro">
 			<tr>
 				<td>
@@ -43,6 +45,8 @@
        		  </td>
             </tr>
           </table>
+          </form>
+          
       </fieldset>
 		<div class="linha_separa_fields">&nbsp;</div>
 	</div>

@@ -63,6 +63,7 @@ public class IntegracaoFiscalP7Controller extends BaseController{
 			Integer quantidadeGerada=count;
 		};
         result.use(Results.json()).withoutRoot().from(o).serialize();
+//        result.use(Results.json()).from(listaRegiao, "listaRegiao").recursive().serialize();
 	}
 
 	@Path("/exportar")

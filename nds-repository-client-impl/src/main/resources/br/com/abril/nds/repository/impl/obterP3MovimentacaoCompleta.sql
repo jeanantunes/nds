@@ -15,14 +15,14 @@
 				nfe.numero, p.CODIGO, pe.NUMERO_EDICAO)
 				 AS numArquivamento,  
 		 	CASE 
-		  		WHEN nfe.TIPO_NF_ID =  2 or nfe.TIPO_NF_ID =  9 or nfe.TIPO_NF_ID =  10	THEN 'NFD'
+		  		WHEN nfe.NATUREZA_OPERACAO_ID =  2 or nfe.NATUREZA_OPERACAO_ID =  9 or nfe.NATUREZA_OPERACAO_ID =  10	THEN 'NFD'
 		 		ELSE ''  
 		 END AS tipoDocumento, 
 		 cast(nfe.numero as char) numDocumento, 
 		 nfe.serie AS serDocumento, 
 		 '' AS numSequencialItem, 
 		 '' AS numSerieMaterial, 
-		 cast(CASE WHEN tnf.emitente='COTA' OR  tnf.destinatario ='COTA' 
+		 cast(CASE WHEN natOp.TIPO_EMITENTE ='COTA' OR natOp.TIPO_DESTINATARIO ='COTA'
 		 	THEN 'CL' 
 		    ELSE 'FO' 
 		 END as char) categoriaPfPj, 
@@ -54,7 +54,7 @@
 		 cast(YEAR(nfe.data_emissao) as char) anoDocumento, 
 		 '' AS observacao, 
 		 'NDS' AS openflex01, 
-		 now() AS openflex02, 
+		 cast(NOW() as char) AS openflex02, 
 		 '' AS openflex03, 
 		 'NDS' AS openflex04, 
 		 '' AS openflex05, 
@@ -82,9 +82,10 @@
 		 LEFT JOIN 
 		     pessoa pes 
 		         ON pes.id = nfe.pj_id 
-		 INNER JOIN 
-		     tipo_nota_fiscal tnf  
-		         ON nfe.tipo_nf_id = tnf.id 
+         INNER JOIN 
+			 natureza_operacao natOp 
+		         ON nfe.NATUREZA_OPERACAO_ID = natOp.ID 
+		         
 		 WHERE 
 		 nfe.data_emissao BETWEEN :dataInicial AND :dataFinal 
-		 AND TIPO_NF_ID IN (2,9,10) order by nfe.data_recebimento 
+		 AND NATUREZA_OPERACAO_ID IN (2,9) order by nfe.data_recebimento 

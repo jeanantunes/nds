@@ -1,5 +1,7 @@
 package br.com.abril.nds.dto;
 
+import java.math.BigInteger;
+
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFfield;
 import br.com.abril.nds.util.export.Delimiter;
@@ -229,8 +231,8 @@ public class P3DTO extends FTFBaseDTO {
 		return serDocumento;
 	}
 
-	public void setSerDocumento(String serDocumento) {
-		this.serDocumento = serDocumento;
+	public void setSerDocumento(BigInteger serDocumento) {
+		this.serDocumento = serDocumento.toString();
 	}
 
 	public String getNumSequencialItem() {

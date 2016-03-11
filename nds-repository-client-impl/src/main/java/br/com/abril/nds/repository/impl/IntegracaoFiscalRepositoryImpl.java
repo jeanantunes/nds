@@ -10,6 +10,7 @@ import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ExtratoEdicaoArquivoP7DTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;

@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ExtratoEdicaoArquivoP7DTO;
 import br.com.abril.nds.ftfutil.FTFParser;
@@ -26,6 +27,7 @@ public class IntegracaoFiscalServiceImpl implements IntegracaoFiscalService {
 	private IntegracaoFiscalRepository integracaoFiscalRepository;
 	
 	@Override
+	@Transactional
 	public File gerarArquivoP7(Date time) {
 		
 		List<ExtratoEdicaoArquivoP7DTO> p7dto = integracaoFiscalRepository.inventarioP7(time);
@@ -52,6 +54,7 @@ public class IntegracaoFiscalServiceImpl implements IntegracaoFiscalService {
 		
 	}
 
+	@Transactional
 	public Integer countGeracaoArquivoP7(Date time) {
 
 		Integer p7dto = integracaoFiscalRepository.countInventarioP7(time);
@@ -60,6 +63,7 @@ public class IntegracaoFiscalServiceImpl implements IntegracaoFiscalService {
 	}
 
 	@Override
+	@Transactional
 	public List<ExtratoEdicaoArquivoP7DTO> inventarioP7(Date time) {
 		return integracaoFiscalRepository.inventarioP7(time);
 	}
