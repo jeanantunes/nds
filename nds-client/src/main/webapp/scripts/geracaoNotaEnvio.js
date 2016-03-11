@@ -336,33 +336,39 @@ var geracaoNotaEnvioController = $.extend({
 		},
 	
 		getArquivoNotaEnvio : function(data) {
-			if ( confirm('Confirmar Impressao NE/NECA ?')) {
-			var path = geracaoNotaEnvioController.path + 'getArquivoNotaEnvio';
+			 this.confirmDialog = new ConfirmDialog('Confirmar Impressao NE/NECA.?', function() {
+			    	
+				 var path = geracaoNotaEnvioController.path + 'getArquivoNotaEnvio';
 
-            $.fileDownload(path, {
-                httpMethod : "POST",
-                failCallback : function(responseHtml, url) {
-                	var response = responseHtml; 
-                	if(responseHtml){
-                		var data =  $.parseJSON($(responseHtml).html());                   	 
-                   	    exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
-                	} else {
-                		exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA! " + response]);
-                	}
-//                	document.location = responseHtml;
-//                	if(responseHtml){
-//                		var data =  $.parseJSON($(responseHtml).html());                   	 
-//                   	    exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
-//                	}else{
-//                		exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA! " + responseHtml]);
-//                	}
-                    
-                },
-                successCallback : function() {
-                    _this.pesquisar();
-                }
-            });
-			}
+		            $.fileDownload(path, {
+		                httpMethod : "POST",
+		                failCallback : function(responseHtml, url) {
+		                	var response = responseHtml; 
+		                	if(responseHtml){
+		                		var data =  $.parseJSON($(responseHtml).html());                   	 
+		                   	    exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+		                	} else {
+		                		exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA! " + response]);
+		                	}
+//		                	document.location = responseHtml;
+//		                	if(responseHtml){
+//		                		var data =  $.parseJSON($(responseHtml).html());                   	 
+//		                   	    exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+//		                	}else{
+//		                		exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA! " + responseHtml]);
+//		                	}
+		                    
+		                },
+		                successCallback : function() {
+		                    _this.pesquisar();
+		                }
+		            });
+			        return true;
+			    }, function() {
+			    	 
+			    });
+			 this.confirmDialog.open();
+			
 		},
 		
 		/**

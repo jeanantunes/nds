@@ -256,7 +256,8 @@ var ConsultaEncalhe = $
 					},
 
 					gerarSlip : function() {
-						if (confirm("Confirmar Geracao do Slip ?")) {
+					
+						this.confirmDialog = new ConfirmDialog('Confirmar Geracao do Slip ?', function() {
 							var dataRecolhimentoInicial = $(
 									"#dataRecolhimentoInicial",
 									ConsultaEncalhe.workspace).val();
@@ -281,8 +282,12 @@ var ConsultaEncalhe = $
 
 							$("#download-iframe", ConsultaEncalhe.workspace)
 									.attr('src', link);
+						return true;
 
-						}
+						},function() {
+					    	 
+					    });
+					 this.confirmDialog.open();
 					},
 
 					popupOutrosValores : function() {
