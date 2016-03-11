@@ -130,7 +130,7 @@ public class PeriodoLancamentoParcial implements Serializable {
 		
 		for (Lancamento lancamento : this.lancamentos) {
 			
-			if (lancamento.getNumeroLancamento().equals(numeroLancamento)) {
+			if (numeroLancamento.equals(lancamento.getNumeroLancamento())) {
 				
 				return lancamento;
 			}
@@ -153,7 +153,7 @@ public class PeriodoLancamentoParcial implements Serializable {
 		
 		for (Lancamento lancamento : this.lancamentos) {
 			
-			if (lancamento.getNumeroLancamento().equals(numeroLancamentoAnterior)) {
+			if (numeroLancamentoAnterior.equals(lancamento.getNumeroLancamento())) {
 				
 				return lancamento;
 			}
@@ -172,7 +172,7 @@ public class PeriodoLancamentoParcial implements Serializable {
 		
 		for (Lancamento lancamento : this.lancamentos) {
 			
-			if (lancamento.getNumeroLancamento().equals(numeroLancamentoPosterior)) {
+			if (numeroLancamentoPosterior.equals(lancamento.getNumeroLancamento())) {
 				
 				return lancamento;
 			}
