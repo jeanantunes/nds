@@ -1178,7 +1178,7 @@ public class ConferenciaEncalheController extends BaseController {
 
 			conferenciaEncalheDTOSessao.setQtdExemplar(qtdeEncalheTotal);
 			conferenciaEncalheDTOSessao.setQtdInformada(qtdeEncalheTotal);
-			 
+			conferenciaEncalheDTOSessao.setOcultarItem(false);
 			final BigDecimal precoCapa = conferenciaEncalheDTOSessao.getPrecoCapa() == null ? BigDecimal.ZERO : conferenciaEncalheDTOSessao.getPrecoCapa();
 			final BigDecimal desconto = conferenciaEncalheDTOSessao.getDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTOSessao.getDesconto();
 			final BigDecimal qtdExemplar = conferenciaEncalheDTOSessao.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTOSessao.getQtdExemplar()); 

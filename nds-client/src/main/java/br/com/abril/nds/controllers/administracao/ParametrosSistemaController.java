@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import org.hibernate.mapping.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +24,7 @@ import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoAmbiente;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.service.impl.GeracaoNotaEnvioServiceImpl;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -112,7 +112,9 @@ public class ParametrosSistemaController extends BaseController {
 		  session.getServletContext().removeAttribute(HistogramaPosEstudoController.MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
 		  LOGGER.error("MATRIZ DE LANCAMENTO BLOQUEANDO:"+session.getServletContext().getAttribute(MatrizRecolhimentoController.TRAVA_MATRIZ_RECOLHIMENTO_CONTEXT_ATTRIBUTE));
 		  session.getServletContext().removeAttribute(MatrizRecolhimentoController.TRAVA_MATRIZ_RECOLHIMENTO_CONTEXT_ATTRIBUTE);
-		
+		  LOGGER.error("NOVA FISCAL ENVIO:"+GeracaoNotaEnvioServiceImpl.TRAVA_GERACAO_NE);
+		 
+		  GeracaoNotaEnvioServiceImpl.TRAVA_GERACAO_NE.clear();
 		  result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Removidos Travas de todos estudos."), "result").recursive().serialize();
 		 }
 		 else

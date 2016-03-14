@@ -967,6 +967,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         query.setLong(1, reparteSubtraido);
         query.setLong(2, estudoId);
         query.setInteger(3, numeroCota);
+        query.setTimeout(180); // timeout de 180 segundos para evitar lock exception
         query.executeUpdate();
     }
 

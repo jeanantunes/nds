@@ -156,7 +156,7 @@ public class BloqueioConferenciaEncalheComponent {
 			conferenciaEncalheCotaUsuarioRepository.removerPorLogin(login);
 			ConferenciaEncalheCotaUsuario cuc = new ConferenciaEncalheCotaUsuario(login, nomeUsuario, session.getId(), numeroCota);
 			try {
-				LOGGER.warn("INSERINDO TRAVA NA TABELA CONFERENCIA_ENCALHE_COTA_USUARIO");
+				LOGGER.warn("INSERINDO TRAVA NA TABELA CONFERENCIA_ENCALHE_COTA_USUARIO login="+login+"  cota="+numeroCota+" sessao="+session.getId());
 				conferenciaEncalheCotaUsuarioRepository.adicionar(cuc);
 				// salvar qual janela fez o bloqueio para remove-lo para recuperar o sessionid usado no bloqueio
 				// para evitar o problema de multiplas abas, onde o sessionid pode mudar
