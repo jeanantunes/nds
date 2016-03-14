@@ -139,7 +139,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
     
     // Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
     // O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
-    private static final Map<String, Object> TRAVA_GERACAO_NE = new HashMap<>();
+    public static final Map<String, Object> TRAVA_GERACAO_NE = new HashMap<>();
     
     @Override
     @Transactional
