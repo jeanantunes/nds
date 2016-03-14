@@ -420,7 +420,7 @@ public class AnaliseParcialController extends BaseController {
     public void mudarReparteLote(Long estudoId, List<CotaQueNaoEntrouNoEstudoDTO> cotas) {
 
         for (CotaQueNaoEntrouNoEstudoDTO cota : cotas) {
-            analiseParcialService.atualizaReparte(estudoId, cota.getNumeroCota(), cota.getQuantidade().longValue(), cota.getQuantidade().longValue());
+            analiseParcialService.atualizaReparte(estudoId, cota.getNumeroCota(),cota.getQuantidade() != null ? cota.getQuantidade().longValue():0L, cota.getQuantidade()!= null ?cota.getQuantidade().longValue():0L);
             
             if(cota.getMotivo().equalsIgnoreCase("SM")){
             	analiseParcialService.atualizaClassificacaoCota(estudoId, cota.getNumeroCota(), "MX");
