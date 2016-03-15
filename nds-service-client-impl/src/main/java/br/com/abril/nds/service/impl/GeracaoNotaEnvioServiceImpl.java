@@ -521,7 +521,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         
         for (final RotaPDV r : pdvPrincipal.getRotas()){
             
-            if (!r.getRota().getRoteiro().getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)){
+        
+            if (!TipoRoteiro.ESPECIAL.equals(r.getRota() != null && r.getRota().getRoteiro()!= null ? r.getRota().getRoteiro().getTipoRoteiro():null)){
                 
                 idRota = r.getRota().getId();
                 
@@ -539,7 +540,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
                 
                 for (final Roteiro r : roteiros) {
                     
-                    if (!r.getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
+                    if (!TipoRoteiro.ESPECIAL.equals(r.getTipoRoteiro())) {
                         
                         roteiro = r;
                         
