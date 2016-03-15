@@ -467,7 +467,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteração do Editor"
 					+ " de " + " Nulo "
-					+ " para " + editor.getPessoaJuridica().getNome()
+					+ " para " + (editor != null && editor.getPessoaJuridica() != null ? editor.getPessoaJuridica().getNome():null)
 					+" Produto " + produto.getCodigo());
 			
 			produto.setEditor(editor);
