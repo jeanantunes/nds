@@ -285,6 +285,38 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 	}
 	
+	
+	
+	
+	public List<ChamadaEncalheCota> obterListaChamadaEncalheCotaChamadao(Long idCota, Long idProdutoEdicao, Date dataOperacao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select cec from ChamadaEncalheCota cec ");
+		
+		hql.append(" where cec.cota.id = :idCota  ");
+		
+		hql.append(" and cec.chamadaEncalhe.tipoChamadaEncalhe=:tipoChamadaEncalhe ");
+		
+		hql.append(" and cec.chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
+		
+		hql.append(" and cec.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
+
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.CHAMADAO);
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		return query.list();
+		
+	}
+	
+	
 	public Long obterQtdListaChamaEncalheCota(Integer numeroCota,
 			Date dataOperacao, Long idProdutoEdicao,
 			boolean indPesquisaCEFutura, boolean conferido, boolean postergado) {
