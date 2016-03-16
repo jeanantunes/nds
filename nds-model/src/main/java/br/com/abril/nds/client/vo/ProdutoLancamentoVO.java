@@ -59,6 +59,10 @@ public class ProdutoLancamentoVO  implements Serializable {
 	
 	@Export(label="Fornec.", exhibitionOrder = 14, widthPercent = 5)
 	private String nomeFantasia;
+	
+	
+	@Export(label="Sequencia", exhibitionOrder = 15, widthPercent = 8)
+	private String sequenciaMatriz;
 
 	private Long fornecedorId;
 
@@ -72,6 +76,16 @@ public class ProdutoLancamentoVO  implements Serializable {
 	
 	private boolean possuiFuro;
 	
+
+
+	public String getSequenciaMatriz() {
+		return sequenciaMatriz;
+	}
+
+	public void setSequenciaMatriz(String sequenciaMatriz) {
+		this.sequenciaMatriz = sequenciaMatriz;
+	}
+
 	private boolean produtoContaFirme;
 	
 	
