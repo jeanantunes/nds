@@ -677,6 +677,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	
     	sql.append("   0 as vlr_pagto_diverg, ");
     	
+    	sql.append("   0 as cotaProcessada, ");
+    	
 //    	sql.append("   coalesce((select sum(mfc_s.VALOR) ");
 //    	sql.append("     from movimento_financeiro_cota mfc_s ");
 //    	sql.append("       join consolidado_mvto_financeiro_cota cf_s ");
@@ -787,6 +789,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	query.addScalar("vlr_postergado", StandardBasicTypes.BIG_DECIMAL);   
     	query.addScalar("vlr_total", StandardBasicTypes.BIG_DECIMAL);   
     	
+    	query.addScalar("cotaProcessada", StandardBasicTypes.BOOLEAN);   
     	
     	query.addScalar("cod_rota", StandardBasicTypes.STRING);
     	query.addScalar("rota", StandardBasicTypes.STRING);
