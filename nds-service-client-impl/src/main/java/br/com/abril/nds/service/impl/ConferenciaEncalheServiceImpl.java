@@ -587,7 +587,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			controleConferenciaEncalheCota = controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(numeroCota, dataOperacao);
 		} catch (Exception e) {
 			
-			LOGGER.error("Verificar a duplicidade de conferência.", e);
+			LOGGER.error("Verificar a duplicidade de conferência cota=."+numeroCota, e);
 			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao obter a Conferência de Encalhe. Contate o Administrador do sistema.");
 		}
 		
@@ -597,6 +597,25 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 		return false;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public void verificarControleConferenciaEncalheCotaDuplicaca(ControleConferenciaEncalheCota ccec) {
+		
+		if ( ccec.getId() != null )  // usando controle ja existente..
+			 return ;
+		
+		// eh novo controle. ver se ja nao existe.. se existir, problema de duplicacao .. abortar operacao
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(ccec.getCota().getNumeroCota(), ccec.getDataOperacao());
+	
+		if ( controleConferenciaEncalheCota != null) {
+			LOGGER.warn("Cota ja esta sendo processada .. tem que aguardar Cota="+ccec.getCota().getNumeroCota()+ " usuario="+
+					controleConferenciaEncalheCota.getUsuario().getLogin());
+			throw new ValidacaoException(TipoMensagem.ERROR, "Atencao.. Cota sendo Processada.. Tente novamente mais tarde.");
+		}
+		
+		
 	}
 	
 	    /**

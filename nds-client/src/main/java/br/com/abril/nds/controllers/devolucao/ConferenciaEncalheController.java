@@ -220,6 +220,9 @@ public class ConferenciaEncalheController extends BaseController {
 	@LogFuncional(value="Conferência de Encalhe [Abertura da tela]")
 	public void index() {
 		
+		LOGGER.warn("LOGFUNCIONAL USUARIO ABRINDO TELA DE CONFERENCIA ENCALHE NORMAL usuario="+usuarioService.getUsuarioLogado().getLogin()+
+				" sessionid="+session.getId());
+		
 		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(this.session, null);
 		
 		boolean permissaoContingencia = usuarioPossuiRule(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_CONTINGENCIA);
@@ -240,6 +243,9 @@ public class ConferenciaEncalheController extends BaseController {
 	@Path("/contingencia")
 	@LogFuncional(value="Conferência de Encalhe [Abertura tela Contingência]")
 	public void contingencia() {
+		
+		LOGGER.warn("LOGFUNCIONAL USUARIO ABRINDO TELA DE CONFERENCIA ENCALHE CONTINGENCIA 1 usuario="+usuarioService.getUsuarioLogado().getLogin()+
+				" sessionid="+session.getId());
 		
 		final Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 
@@ -331,6 +337,8 @@ public class ConferenciaEncalheController extends BaseController {
 	@Post
 	public void removerTravaConferenciaEncalheCotaUsuario() {
 		
+		  LOGGER.warn("LOGFUNCIONAL REMOVENDO TRAVA CONFERENCIA  usuario="+usuarioService.getUsuarioLogado().getLogin()+
+					" sessionid="+session.getId());
 		bloqueioConferenciaEncalheComponent.removerTravaConferenciaCotaUsuario(session);
 		
 		this.result.nothing();
@@ -419,6 +427,8 @@ public class ConferenciaEncalheController extends BaseController {
 	@LogFuncional(value="Conferência de Encalhe [Início da conferência]")
 	public void iniciarConferenciaEncalhe(final Integer numeroCota) {
 
+		LOGGER.warn("LOGFUNCIONAL INICIO CONFERENCIA usuario="+usuarioService.getUsuarioLogado().getLogin()+
+				" sessionid="+session.getId()+"  cota="+numeroCota);
 	 Cota cota=null;
 		
 	 // evitar que duas conferencia na mesma cota
@@ -469,6 +479,9 @@ public class ConferenciaEncalheController extends BaseController {
 		this.session.setAttribute(NUMERO_COTA, numeroCota);
         this.session.setAttribute(COTA, cota);
         this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
+        
+        LOGGER.warn("INICIO CONFERENCIA COTA BLOQUEADA usuario="+usuarioService.getUsuarioLogado().getLogin()+
+				" sessionid="+session.getId()+"  cota="+numeroCota);
 		
 	}
 	
@@ -544,7 +557,7 @@ public class ConferenciaEncalheController extends BaseController {
 			bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(this.getNumeroCotaFromSession(), this.session);
 		} catch(Throwable e) {
 			
-			LOGGER.error("A Cota %s está sendo conferida.", e);
+			LOGGER.warn("A Cota "+numeroCota+" está sendo conferida.", e);
 			throw new ValidacaoException(TipoMensagem.WARNING, String.format("A Cota %s está sendo conferida.", numeroCota));
 		}
 		
@@ -561,7 +574,7 @@ public class ConferenciaEncalheController extends BaseController {
 			Integer numeroCota, 
 			final boolean indObtemDadosFromBD,  
 			final boolean indConferenciaContingencia){
-		
+		LOGGER.warn("LOGUFNCIONAL  CARREGANDO LISTA DE ENCALHES numero_cota="+numeroCota+" sessionid="+session.getId());
 		final Map<String, Object> dados = obterMapaConferenciaEncalhe(numeroCota, indObtemDadosFromBD, indConferenciaContingencia);
 		
 		result.use(CustomJson.class).from(dados).serialize();
@@ -946,7 +959,7 @@ public class ConferenciaEncalheController extends BaseController {
 			} 
 			
 		} catch(final EncalheRecolhimentoParcialException e) {
-            LOGGER.error("Não existe chamada de encalhe deste produto para essa cota: " + e.getMessage(), e);
+            LOGGER.error("Não existe chamada de encalhe deste produto para essa cota: "+numeroCota+" " + e.getMessage(), e);
             throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para produto parcial na data operação.");
 		}
 		
@@ -1007,7 +1020,7 @@ public class ConferenciaEncalheController extends BaseController {
 			produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(this.getNumeroCotaFromSession(), idProdutoEdicao);
 		} catch (final EncalheRecolhimentoParcialException e) {
 			
-            LOGGER.error("Não existe chamada de encalhe para produto parcial na data operação: " + e.getMessage(), e);
+            LOGGER.warn("Não existe chamada de encalhe para produto parcial id="+idProdutoEdicao+" na data operação: " + e.getMessage(), e);
             
             throw new ValidacaoException(TipoMensagem.WARNING,"Não existe chamada de encalhe para produto parcial na data operação.");
 		} 
@@ -1338,6 +1351,8 @@ public class ConferenciaEncalheController extends BaseController {
 	@LogFuncional(value="Conferência de Encalhe [Atualizar valores grid]")
 	public void atualizarValoresGridInteira(final List<ConferenciaEncalheDTO> listaConferenciaEncalhe, final boolean indConferenciaContingencia) {
 		
+		LOGGER.warn("LOGFUNCIONAL ATUALIZAR VALORES GRID usuario="+usuarioService.getUsuarioLogado().getLogin()+
+				" sessionid="+session.getId());
 		if(listaConferenciaEncalhe!=null && !listaConferenciaEncalhe.isEmpty()) {
 
 			for(final ConferenciaEncalheDTO conf : listaConferenciaEncalhe) {
@@ -1456,6 +1471,9 @@ public class ConferenciaEncalheController extends BaseController {
 	@LogFuncional(value="Conferência de Encalhe [Atualizar valores grid]")
 	public void atualizarValores(final Long idConferencia, String qtdExemplares, final Boolean juramentada, final BigDecimal valorCapa, final boolean indConferenciaContingencia){
 		
+		LOGGER.warn("LOGFUNCIONAL atualziarvalorgrid usuario="+usuarioService.getUsuarioLogado().getLogin()+
+				" sessionid="+session.getId());
+		
 		final ConferenciaEncalheDTO conf = atualizarItemConferenciaEncalhe(idConferencia, qtdExemplares, juramentada, valorCapa, indConferenciaContingencia);
 		
 		final Map<String, Object> dados = new HashMap<String, Object>();
@@ -1543,7 +1561,7 @@ public class ConferenciaEncalheController extends BaseController {
                             this.getNumeroCotaFromSession(), 
                             produtoEdicaoId);
                 } catch (final EncalheRecolhimentoParcialException e) {
-                    LOGGER.error("Não existe chamada de encalhe para produto parcial na data operação: " + e.getMessage(), e);
+                    LOGGER.warn("Não existe chamada de encalhe para produto parcial="+produtoEdicaoId+" na data operação: " + e.getMessage(), e);
                     throw new ValidacaoException(TipoMensagem.WARNING,
                             "Não existe chamada de encalhe para produto parcial na data operação.");
                 }
@@ -1685,6 +1703,8 @@ public class ConferenciaEncalheController extends BaseController {
 	@LogFuncional(value="Conferência de Encalhe [Alterar quantidade]")
 	public void alterarQtdeValorInformado(final Long idConferencia, final Long qtdInformada, final BigDecimal valorCapaInformado){
 		
+		LOGGER.warn("LOGFUNCIONAL ALTERAR QTDE usuario="+usuarioService.getUsuarioLogado().getLogin()+
+				" sessionid="+session.getId());
 		final Set<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
 		
 		ConferenciaEncalheDTO conf = null;
@@ -1771,7 +1791,9 @@ public class ConferenciaEncalheController extends BaseController {
 	//public synchronized void salvarConferencia(final boolean indConferenciaContingencia){
 		public  void salvarConferencia(final boolean indConferenciaContingencia){	
 		
-		LOGGER.warn("F8 - salvando conferencia encalhe - inicio ");
+		  LOGGER.warn("LOGFUNCIONAL F8  Salvar conferencia usuario="+usuarioService.getUsuarioLogado().getLogin()+
+					" sessionid="+session.getId()+"  cota="+this.session.getAttribute(NUMERO_COTA));
+		  
 		final Integer numeroCota = (Integer) this.session.getAttribute(NUMERO_COTA);
 		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(session, numeroCota);
 		
@@ -1788,6 +1810,12 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		controleConfEncalheCota.setCota(info.getCota());
 		controleConfEncalheCota.setId(this.getInfoConferenciaSession().getIdControleConferenciaEncalheCota());
+		
+	    if (controleConfEncalheCota.getId() == null ) { // nova conferencia, veja se ja nao existe..
+
+		  conferenciaEncalheService.verificarControleConferenciaEncalheCotaDuplicaca(controleConfEncalheCota);
+		  
+	    }
 		
 		this.carregarNotasFiscais(controleConfEncalheCota, info);
 		
@@ -2063,7 +2091,7 @@ public class ConferenciaEncalheController extends BaseController {
 	@LogFuncional(value="Conferência de Encalhe [Finalizar conferência - F9]")
 	public void finalizarConferencia(final boolean indConferenciaContingencia) throws Exception {
 		
-		LOGGER.warn("F9 - finalizando conferencia encalhe - inicio ");
+		LOGGER.warn("LOGFUNCIONAL F9 - finalizando conferencia encalhe - inicio cota="+this.session.getAttribute(NUMERO_COTA)+ " session.id="+this.session.getId());
 		final Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
 		
 		final Integer numeroCota = (Integer) this.session.getAttribute(NUMERO_COTA);
@@ -2096,6 +2124,12 @@ public class ConferenciaEncalheController extends BaseController {
             	
 				controleConfEncalheCota.setUsuario(this.usuarioService.getUsuarioLogado());
 			}
+            
+            if (controleConfEncalheCota.getId() == null ) { // nova conferencia, veja se ja nao existe..
+
+      		  conferenciaEncalheService.verificarControleConferenciaEncalheCotaDuplicaca(controleConfEncalheCota);
+      		  
+      	    }
             
 			final Long idBox = conferenciaEncalheSessionScopeAttr.getIdBoxLogado();
 			
@@ -2183,13 +2217,13 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			limparDadosSessao();
 			limparDadosSessaoConferenciaEncalheCotaFinalizada();
-			
+				
 			this.result.use(CustomMapJson.class).put("result", dados).serialize();
 			
 		} else {
 			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalhe não inicializada."), "result").recursive().serialize();
 		}
-		LOGGER.warn("F9 - finalizando conferencia encalhe - fim ");
+		LOGGER.warn("LOGFUNCIONAL F9 - finalizando conferencia fim  cota="+numeroCota+ " session.id="+this.session.getId());
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -2389,6 +2423,7 @@ public class ConferenciaEncalheController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	@LogFuncional(value="Conferência de Encalhe [Excluir conferência]")
 	public void excluirConferencia(final Long idConferenciaEncalhe) {
+		
 		
 		Set<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
 		
@@ -2711,7 +2746,7 @@ public class ConferenciaEncalheController extends BaseController {
 		} catch (final EncalheRecolhimentoParcialException e) {
 			
             LOGGER.error(
-                    "Erro no ao pesquisar Produto Edicação por Id Encalhe Recolhimento Parcial: " + e.getMessage(), e);
+                    "Erro no ao pesquisar Produto Edicação por Id "+idProdutoEdicao+" Encalhe Recolhimento Parcial: " + e.getMessage(), e);
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 
 		}
