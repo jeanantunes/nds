@@ -1033,6 +1033,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		mffc.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.ENTRADA));
 		mffc.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
 		mffc.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()));
+		mffc.setQtdeChamadaEncAnterior(BigInteger.ZERO);
 		mffc.setTipoDestinatario(TipoDestinatario.COTA);
 		mffc.setCota(movimentoEstoqueCota.getCota());
 		mffc.setChamadaEncalheCota(chamadaEncalheCota);

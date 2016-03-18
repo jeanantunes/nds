@@ -473,7 +473,7 @@ public class ItemNotaFiscalBuilder  {
 					.append(produtoServico.getProdutoEdicao().getNumeroEdicao());
 			
 			LOGGER.error(sb.toString() );
-			throw new ValidacaoException(TipoMensagem.ERROR, sb.toString());
+			// throw new ValidacaoException(TipoMensagem.ERROR, sb.toString());
 		}
 		
 		//FIXME: Ajustar o codigo Excessao do ipi
