@@ -729,8 +729,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	sql.append(" (select coalesce(roteiro_id,0) from "+getQueryFromRoteirizacao() +"  as cod_roteiro, ");
     	sql.append(" (select coalesce(descricao_roteiro,'') from "+getQueryFromRoteirizacao() +"  as roteiro, ");
     	sql.append(" (select coalesce(box.codigo,'') from "+getQueryFromRoteirizacao() +"  as box_dp, ");
-    	sql.append(" (select coalesce(parametroCobrancaCota.fator_vencimento,( select p.fator_vencimento from Forma_Cobranca f inner "+
-    	" join politica_cobranca p on p.forma_cobranca_id = f.id where p.ativo = true and p.principal = true limit 1)) from "+getQueryFromParametroCobranca() +"  as ftvenc ");
+    	sql.append(" (select coalesce(max(coalesce(parametroCobrancaCota.fator_vencimento,( select p.fator_vencimento from Forma_Cobranca f inner "+
+    	" join politica_cobranca p on p.forma_cobranca_id = f.id where p.ativo = true and p.principal = true limit 1))),2) from "+getQueryFromParametroCobranca() +"  as ftvenc ");
     	
     	sql.append(" FROM movimento_financeiro_cota mfc ");
     	sql.append(" left join consolidado_mvto_financeiro_cota cf ");
