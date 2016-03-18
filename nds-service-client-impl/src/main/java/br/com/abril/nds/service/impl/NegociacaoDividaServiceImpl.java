@@ -20,12 +20,15 @@ import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.hibernate.Hibernate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.CalculaParcelasVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
+
 import br.com.abril.nds.dto.ImpressaoNegociacaoDTO;
 import br.com.abril.nds.dto.ImpressaoNegociacaoParecelaDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
@@ -98,6 +101,8 @@ import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
+	
+	private static Logger LOGGER = LoggerFactory.getLogger(NegociacaoDividaServiceImpl.class);
     
     private static final int DEFAULT_SCALE = 2;
     
@@ -236,7 +241,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
         
         if (formaCobranca != null) {
-            
+            if ( idBanco == null ) {
+            	 LOGGER.error("Banco nao encontrado idBanco="+idBanco+" cota="+numeroCota+"  formaCobranca="+formaCobranca);
+            	 throw new ValidacaoException(TipoMensagem.WARNING, "Banco nao Selecionado.");
+            }
             final Banco banco = bancoRepository.buscarPorId(idBanco);
             formaCobranca.setBanco(banco);
         }
