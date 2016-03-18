@@ -77,6 +77,9 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 	@JoinColumn(name="TIPO_MOVIMENTO_ID")
 	private TipoMovimento tipoMovimento;
 	
+	@Column(name = "QTDE_CHAMADA_ENC_ANTERIOR")
+	private BigInteger 	qtdeChamadaEncAnterior;
+	
 	@OneToMany(cascade=CascadeType.ALL, mappedBy="movimentoFechamentoFiscal")
 	private List<OrigemItemMovFechamentoFiscal> origemMovimentoFechamentoFiscal;
 
@@ -152,6 +155,14 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 		this.valoresAplicados = valoresAplicados;
 	}
 	
+	public BigInteger getQtdeChamadaEncAnterior() {
+		return qtdeChamadaEncAnterior;
+	}
+
+	public void setQtdeChamadaEncAnterior(BigInteger qtdeChamadaEncAnterior) {
+		this.qtdeChamadaEncAnterior = qtdeChamadaEncAnterior;
+	}
+
 	public TipoDestinatario getTipoDestinatario() {
 		return tipoDestinatario;
 	}

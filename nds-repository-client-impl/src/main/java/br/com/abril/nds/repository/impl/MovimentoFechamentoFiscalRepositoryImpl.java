@@ -1,18 +1,20 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Arrays;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.StandardBasicTypes;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalCota;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalFornecedor;
@@ -22,10 +24,7 @@ import br.com.abril.nds.repository.MovimentoFechamentoFiscalRepository;
 @Repository
 public class MovimentoFechamentoFiscalRepositoryImpl extends AbstractRepositoryModel<MovimentoFechamentoFiscal, Long> implements MovimentoFechamentoFiscalRepository {
     
-    @Autowired
-    private DataSource dataSource;
-    
-    public MovimentoFechamentoFiscalRepositoryImpl() {
+	public MovimentoFechamentoFiscalRepositoryImpl() {
         super(MovimentoFechamentoFiscal.class);
     }
 
@@ -94,6 +93,29 @@ public class MovimentoFechamentoFiscalRepositoryImpl extends AbstractRepositoryM
 		query.setParameter("desobrigaEmissaoVendaConsignado", desobrigaEmissaoVendaConsignado);
 		
 		query.executeUpdate();	
+		
+	}
+
+	@Override
+	public MovimentoFechamentoFiscalCota buscarPorChamadaEncalheCotaProdutoEdicaoCota(Long chamadaEncalheId, Long produtoEdicao, Long cotaId) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select mffc ");
+		hql.append(" from MovimentoFechamentoFiscalCota mffc ");
+		hql.append(" join mffc.chamadaEncalheCota cec ");
+		hql.append(" join mffc.produtoEdicao pe ");
+		hql.append(" join mffc.cota c ");
+		hql.append(" where cec.id = :chamadaEncalheId ");
+		hql.append(" and pe.id =:produtoEdicao ");
+		hql.append(" and c.id = :cotaId ");
+
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("chamadaEncalheId", chamadaEncalheId);
+		query.setParameter("produtoEdicao", produtoEdicao);
+		query.setParameter("cotaId", cotaId);
+		
+		return (MovimentoFechamentoFiscalCota) query.uniqueResult();
 		
 	}
     

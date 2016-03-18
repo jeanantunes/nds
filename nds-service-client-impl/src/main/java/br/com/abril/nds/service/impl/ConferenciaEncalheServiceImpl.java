@@ -2659,21 +2659,38 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				movimentoEstoque,
 				chamadaEncalheCota);
 		
-		List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
-		MovimentoFechamentoFiscalCota mff = new MovimentoFechamentoFiscalCota();
-		listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalMEC(mff, movimentoEstoqueCota));
-		mff.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
-		mff.setNotaFiscalLiberadaEmissao(false);
-		mff.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
-		mff.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()));
-		mff.setTipoDestinatario(TipoDestinatario.COTA);
-		mff.setCota(movimentoEstoqueCota.getCota());
-		mff.setChamadaEncalheCota(chamadaEncalheCota);
-		mff.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
-		mff.setData(dataOperacao);
-		mff.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.ENTRADA));
+		MovimentoFechamentoFiscalCota movimentosFechamentoFiscalCota = movimentoFechamentoFiscalRepository.buscarPorChamadaEncalheCotaProdutoEdicaoCota(chamadaEncalheCota.getId(), conferenciaEncalheDTO.getIdProdutoEdicao(), movimentoEstoqueCota.getCota().getId());
 		
-		movimentoFechamentoFiscalRepository.adicionar(mff);
+		if(movimentosFechamentoFiscalCota != null ){
+			
+			LOGGER.info("Prevista: " +chamadaEncalheCota.getQtdePrevista());
+			LOGGER.info("Informada: " +conferenciaEncalheDTO.getQtdInformada());
+			LOGGER.info("Chamada Enc: " +movimentosFechamentoFiscalCota.getQtdeChamadaEncAnterior());
+			
+			System.out.println("MFFC calculado: " +chamadaEncalheCota.getQtdePrevista().subtract(movimentosFechamentoFiscalCota.getQtdeChamadaEncAnterior()).subtract(conferenciaEncalheDTO.getQtdInformada()));
+			
+			movimentosFechamentoFiscalCota.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentosFechamentoFiscalCota.getQtdeChamadaEncAnterior()).subtract(conferenciaEncalheDTO.getQtdInformada()));
+			movimentosFechamentoFiscalCota.setQtdeChamadaEncAnterior(movimentosFechamentoFiscalCota.getQtdeChamadaEncAnterior().add(conferenciaEncalheDTO.getQtdInformada()));
+			movimentoFechamentoFiscalRepository.merge(movimentosFechamentoFiscalCota);
+		} else {
+			List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
+			MovimentoFechamentoFiscalCota mff = new MovimentoFechamentoFiscalCota();
+			listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalMEC(mff, movimentoEstoqueCota));
+			mff.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
+			mff.setNotaFiscalLiberadaEmissao(false);
+			mff.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
+			mff.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()));
+			mff.setQtdeChamadaEncAnterior(conferenciaEncalheDTO.getQtdInformada());
+			mff.setTipoDestinatario(TipoDestinatario.COTA);
+			mff.setCota(movimentoEstoqueCota.getCota());
+			mff.setChamadaEncalheCota(chamadaEncalheCota);
+			mff.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
+			mff.setData(dataOperacao);
+			mff.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.ENTRADA));
+			
+			movimentoFechamentoFiscalRepository.adicionar(mff);
+		}
+		
 	}
 	
 	/**
