@@ -521,8 +521,11 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         
         for (final RotaPDV r : pdvPrincipal.getRotas()){
             
-        
-            if (!TipoRoteiro.ESPECIAL.equals(r.getRota() != null && r.getRota().getRoteiro()!= null ? r.getRota().getRoteiro().getTipoRoteiro():null)){
+            if ( r.getRota() == null ||  r.getRota().getRoteiro() == null ){
+            	LOGGER.error("ERRO INTERNO.TABELA ROTA.ROTEIRO_ID NULO !!!");
+            	continue;
+             }
+            if (!TipoRoteiro.ESPECIAL.equals(r.getRota().getRoteiro().getTipoRoteiro())){
                 
                 idRota = r.getRota().getId();
                 
