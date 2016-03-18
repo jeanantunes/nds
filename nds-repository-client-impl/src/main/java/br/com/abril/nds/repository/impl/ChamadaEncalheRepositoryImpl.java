@@ -868,7 +868,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		if (filtro.getFornecedores() != null && !filtro.getFornecedores().isEmpty()){
 		    
-		    hql.append(" and fornecedor7_.id in (:fornec) ");
+		    hql.append(" and fornecedor8_.id in (:fornec) ");
 		    param.put("fornec", filtro.getFornecedores());
 		}
 		
