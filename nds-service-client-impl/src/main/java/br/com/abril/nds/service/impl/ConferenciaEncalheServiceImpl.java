@@ -2667,7 +2667,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			LOGGER.info("Informada: " +conferenciaEncalheDTO.getQtdInformada());
 			LOGGER.info("Chamada Enc: " +movimentosFechamentoFiscalCota.getQtdeChamadaEncAnterior());
 			
-			System.out.println("MFFC calculado: " +chamadaEncalheCota.getQtdePrevista().subtract(movimentosFechamentoFiscalCota.getQtdeChamadaEncAnterior()).subtract(conferenciaEncalheDTO.getQtdInformada()));
+			LOGGER.info("MFFC calculado: " +chamadaEncalheCota.getQtdePrevista().subtract(movimentosFechamentoFiscalCota.getQtdeChamadaEncAnterior()).subtract(conferenciaEncalheDTO.getQtdInformada()));
 			
 			movimentosFechamentoFiscalCota.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentosFechamentoFiscalCota.getQtdeChamadaEncAnterior()).subtract(conferenciaEncalheDTO.getQtdInformada()));
 			movimentosFechamentoFiscalCota.setQtdeChamadaEncAnterior(movimentosFechamentoFiscalCota.getQtdeChamadaEncAnterior().add(conferenciaEncalheDTO.getQtdInformada()));
