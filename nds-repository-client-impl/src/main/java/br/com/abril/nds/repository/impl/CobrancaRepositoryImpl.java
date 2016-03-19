@@ -729,9 +729,11 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	sql.append(" (select coalesce(roteiro_id,0) from "+getQueryFromRoteirizacao() +"  as cod_roteiro, ");
     	sql.append(" (select coalesce(descricao_roteiro,'') from "+getQueryFromRoteirizacao() +"  as roteiro, ");
     	sql.append(" (select coalesce(box.codigo,'') from "+getQueryFromRoteirizacao() +"  as box_dp, ");
-    	sql.append(" (select coalesce(parametroCobrancaCota.fator_vencimento,( select p.fator_vencimento from Forma_Cobranca f inner "+
-    	" join politica_cobranca p on p.forma_cobranca_id = f.id where p.ativo = true and p.principal = true limit 1)) from "+getQueryFromParametroCobranca() +"  as ftvenc ");
-    	
+    	sql.append(" (select COALESCE((SELECT parametroCobrancaCota.fator_vencimento  FROM  PARAMETRO_COBRANCA_COTA parametroCobrancaCota "+
+               "        LEFT JOIN  COTA cota ON parametro_cobranca_id = parametroCobrancaCota.id  WHERE   cota.id = ct.id), "+
+               " (SELECT p.fator_vencimento  FROM  Forma_Cobranca f "+
+               "           INNER JOIN   politica_cobranca p ON p.forma_cobranca_id = f.id  WHERE  p.ativo = TRUE AND p.principal = TRUE LIMIT 1), "+
+               "   0)) as ftvenc ");
     	sql.append(" FROM movimento_financeiro_cota mfc ");
     	sql.append(" left join consolidado_mvto_financeiro_cota cf ");
     	sql.append("   ON cf.MVTO_FINANCEIRO_COTA_ID = mfc.ID ");
