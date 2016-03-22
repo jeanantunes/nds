@@ -429,6 +429,11 @@ var negociacaoDividaController = $.extend(true, {
 	
 	popup_formaPgto : function() {
 
+		if ($("#negociacaoDivida_numCota", this.workspace).val() == "") {
+			exibirMensagem("WARNING", ["Cota nao selecionada."], "");
+			return;
+		}
+		
 		if ($("#totalSelecionado", this.workspace).html() == "0,00") {
 			exibirMensagem("WARNING", ["Não foram selecionadas dívidas para negociação."], "");
 			return;
