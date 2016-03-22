@@ -206,7 +206,7 @@ public class GeracaoArquivosController extends BaseController {
 		 FilenameFilter fileFilter = new FilenameFilter() {
 				public boolean accept(File dir, String name) {
 					
-					if (name.endsWith(".zip") ) {
+					if (name != null && name.endsWith(".zip") ) {
 						return true;
 					} else {
 						return false;
@@ -214,7 +214,7 @@ public class GeracaoArquivosController extends BaseController {
 				}
 			};
 			File[] files = new File(path).listFiles(fileFilter);
-		//	if ( files != null && files.length > 0  ) {
+			if ( files != null && files.length > 0  ) {
 			Arrays.sort(files, new Comparator<File>(){
 			    public int compare(File f1, File f2)
 			    {
@@ -224,7 +224,7 @@ public class GeracaoArquivosController extends BaseController {
 			for(File input : files) {				
 				list.add(input.getName());				
 			}
-		//	}
+			}
 		
 	
 		} catch (Exception e) {
@@ -694,7 +694,7 @@ public class GeracaoArquivosController extends BaseController {
 		   FilenameFilter fileFilter = new FilenameFilter() {
 				public boolean accept(File dir, String name) {
 					
-					if (name.toUpperCase().endsWith(".RCL") || name.toUpperCase().endsWith(".LCT") ) {
+					if (name != null && (name.toUpperCase().endsWith(".RCL") || name.toUpperCase().endsWith(".LCT")) ) {
 						return true;
 					} else {
 						return false;
@@ -852,7 +852,7 @@ public class GeracaoArquivosController extends BaseController {
 				  
 			   }
 			
-			ret.append("Quantidade de arquivos fc unificados com dinap :"+files.size()+"</br>");
+			ret.append("Quantidade de arquivos fc unificados com dinap :"+(files != null ?files.size():0)+"</br>");
 			ret.append("Sem box dinap="+fileSemDePara.size()+ " Conflitos="+conflitos+"</br>");
 			String arqDinapFc="unificado_"+dinapName;
 			compactarArquivos(dirOut,arqDinapFc);
@@ -1046,7 +1046,7 @@ public class GeracaoArquivosController extends BaseController {
 			FilenameFilter fileFilter = new FilenameFilter() {
 				public boolean accept(File dir, String name) {
 					
-					if (name.toUpperCase().endsWith(".RCL") || name.toUpperCase().endsWith(".LCT") ) {
+					if (name != null && (name.toUpperCase().endsWith(".RCL") || name.toUpperCase().endsWith(".LCT") )) {
 						return true;
 					} else {
 						return false;

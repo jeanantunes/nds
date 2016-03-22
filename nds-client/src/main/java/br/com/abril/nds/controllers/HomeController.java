@@ -68,7 +68,7 @@ public class HomeController {
     @Autowired
 	private HttpSession session;
     
-    
+
     /**
      * @param router
      * @param result
@@ -99,18 +99,21 @@ public class HomeController {
             
         }
        
-        String remoteAddress = this.getClientIpAddr(((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest());
-        List listaLogados = ControleSessionListener.usuariosLogado.get(authentication.getName());
-        if ( listaLogados == null ) {
-          listaLogados = new LinkedList();
-          listaLogados.add(remoteAddress+"->"+new Date());
-          ControleSessionListener.usuariosLogado.put(authentication.getName(), listaLogados );
-        }
-        else {
-        	listaLogados.add(remoteAddress+"->"+new Date());
-	        ControleSessionListener.usuariosLogado.put(authentication.getName(), listaLogados);
-        }
-       
+     try {
+	        String remoteAddress = this.getClientIpAddr(((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest());
+	        List listaLogados = ControleSessionListener.usuariosLogado.get(authentication.getName());
+	        if ( listaLogados == null ) {
+	          listaLogados = new LinkedList();
+	          listaLogados.add(remoteAddress+"->"+new Date());
+	          ControleSessionListener.usuariosLogado.put(authentication.getName(), listaLogados );
+	        }
+	        else {
+	        	listaLogados.add(remoteAddress+"->"+new Date());
+		        ControleSessionListener.usuariosLogado.put(authentication.getName(), listaLogados);
+	        }
+     } catch ( Exception e ) {
+    	 LOGGER.warn("Erro salvando usuarios logados",e);
+     }
        
         result.include("menus", mapaMenus);
         result.include("nomeUsuario", usuarioService.getNomeUsuarioLogado());
