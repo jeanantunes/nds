@@ -1047,7 +1047,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     private BigDecimal obterValorMinimoEmissao(final Integer numeroCota) {
         
         final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
-        
+        if ( cota == null ) {
+        	 throw new ValidacaoException(TipoMensagem.WARNING,
+                     "Cota nao especificada/encontrada.");
+        }
         BigDecimal valorMinimoCobranca = cota.getValorMinimoCobranca();
                 
                 if (valorMinimoCobranca == null) {
