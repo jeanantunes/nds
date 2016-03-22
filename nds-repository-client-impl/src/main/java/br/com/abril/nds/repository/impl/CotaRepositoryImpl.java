@@ -2177,7 +2177,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
                 StatusLancamento.EM_BALANCEAMENTO.name() });
         
         query.setParameterList("statusNaoEmitiveis", new String[] {StatusLancamento.PLANEJADO.name(),
-                StatusLancamento.FECHADO.name(), StatusLancamento.CONFIRMADO.name(),
+            //    StatusLancamento.FECHADO.name(),
+                StatusLancamento.CONFIRMADO.name(),
                 StatusLancamento.EM_BALANCEAMENTO.name(), StatusLancamento.CANCELADO.name() });
         
         if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
@@ -3870,7 +3871,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		query.setParameter("dataAte", intervaloDataLancamento.getDe());
 		
 		query.setParameterList("statusNaoEmitiveis", new String[] {StatusLancamento.PLANEJADO.name(),
-                StatusLancamento.FECHADO.name(), StatusLancamento.CONFIRMADO.name(),
+                StatusLancamento.FECHADO.name(), 
+                StatusLancamento.CONFIRMADO.name(),
                 StatusLancamento.EM_BALANCEAMENTO.name(), StatusLancamento.CANCELADO.name() });
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(AbastecimentoBoxCotaDTO.class));
