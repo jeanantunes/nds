@@ -3023,7 +3023,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         
         if (numeroCotas != null && !numeroCotas.isEmpty()) {
             
-            hql.append(useAnd ? " and " : " where ");
+            hql.append(useAnd ? " and " : "  ");
             
             hql.append(" cota.numeroCota in (:numeroCotas)");
             parameters.put("numeroCotas", numeroCotas);
