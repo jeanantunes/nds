@@ -1413,6 +1413,7 @@ public class ConferenciaEncalheController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de exemplares inválida.");
 		}
 
+		
 		boolean utilizaContagemEnvelope = false;
 		
 		if(qtdExemplaresDaGrid.contains(Constants.ENVELOPE_DE_CROMO)) {
@@ -1420,7 +1421,8 @@ public class ConferenciaEncalheController extends BaseController {
 			utilizaContagemEnvelope = true;
 		}
 		
-		BigInteger qtdExemplares = new BigInteger(qtdExemplaresDaGrid);
+		
+		BigInteger qtdExemplares = new BigInteger(qtdExemplaresDaGrid.trim());
 		
 		ConferenciaEncalheDTO conf = null;
 		
