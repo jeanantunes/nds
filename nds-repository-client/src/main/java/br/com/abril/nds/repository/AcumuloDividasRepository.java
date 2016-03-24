@@ -40,7 +40,7 @@ public interface AcumuloDividasRepository extends Repository<AcumuloDivida, Long
 	 * 
 	 * @return - Número de maior acúmulo de suas dívidas.
 	 */
-	BigInteger obterNumeroMaximoAcumuloCota(Long idCota);
+	BigInteger obterNumeroMaximoAcumuloCota(Long idCota, Long idDivida);
 	
 	/**
 	 * Obtém o número atual de acúmulos de dívida da cota.

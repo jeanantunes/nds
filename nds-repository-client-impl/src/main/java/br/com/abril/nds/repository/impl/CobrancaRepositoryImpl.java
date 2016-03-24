@@ -273,6 +273,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		hql.append(" LEFT JOIN ACUMULO_DIVIDA acd on (acd.DIVIDA_ID = d.ID) ");
 		hql.append(" WHERE ct.NUMERO_COTA = :ncota ");
 		hql.append(" AND c.DT_PAGAMENTO IS NULL ");
+		hql.append(" AND d.STATUS = 'EM_ABERTO' ");
 		
 		if (filtro.getDataVencimento()!=null){
 		    hql.append(" AND c.DT_VENCIMENTO <= :vcto ");
