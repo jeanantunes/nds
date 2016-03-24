@@ -13,6 +13,7 @@ import br.com.abril.nds.model.financeiro.AcumuloDivida;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.AcumuloDividasRepository;
 
@@ -69,13 +70,27 @@ public class AcumuloDividasRepositoryImpl extends AbstractRepositoryModel<Acumul
 	 * {@inheritDoc}
 	 */
 	@Override
-	public BigInteger obterNumeroMaximoAcumuloCota(Long idCota) {
+	public BigInteger obterNumeroMaximoAcumuloCota(Long idCota, Long idDivida) {
+		
+		StringBuilder hql = new StringBuilder();
 
-		return (BigInteger) getSession().createCriteria(AcumuloDivida.class)
-				.add(Restrictions.eq("cota.id", idCota))
-				.add(Restrictions.ne("status", StatusInadimplencia.QUITADA))
-				.setProjection(Projections.max("numeroAcumulo"))
-				.uniqueResult();
+		hql.append(" select max(ad.numero_acumulo) from ACUMULO_DIVIDA ad ");
+		hql.append(" inner join divida d on d.DIVIDA_RAIZ_ID = ad.divida_id	");
+		hql.append(" inner join cota c on ad.COTA_ID = c.id ");
+		hql.append(" where 1=1 ");
+		hql.append(" and c.id = :idCota ");
+		hql.append(" and d.id = :idDivida ");
+		hql.append(" and ad.STATUS <> :statusInadimplencia ");
+		
+		Query query = this.getSession().createSQLQuery(hql.toString());
+
+		query.setParameter("idCota", idCota);
+		query.setParameter("idDivida", idDivida);
+		query.setParameter("statusInadimplencia", StatusInadimplencia.QUITADA.name());
+		
+		Integer retorno = (Integer) query.uniqueResult();
+		
+		return BigInteger.valueOf(retorno == null ? 0 : retorno);
 	}
 	
 	/**
