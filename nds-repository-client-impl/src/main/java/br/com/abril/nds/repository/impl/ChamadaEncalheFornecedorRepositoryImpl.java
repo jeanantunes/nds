@@ -51,6 +51,23 @@ public class ChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryMo
     	return query.list();
     }
     
+    
+ public ChamadaEncalheFornecedor  buscarPorNumero(Long numeroChamadaEncalhe){
+    	
+    	StringBuilder hql = new StringBuilder();
+    	
+    	hql.append(" select cef ")
+    		.append(" from ChamadaEncalheFornecedor as cef ");
+    	
+    		hql.append(" where cef.numeroChamadaEncalhe = :numeroChamadaEncalhe ");
+    	
+    	Query query = getSession().createQuery(hql.toString());
+        query.setParameter("numeroChamadaEncalhe", numeroChamadaEncalhe);
+
+    	
+    	return (ChamadaEncalheFornecedor) query.uniqueResult();
+       }
+    
     public List<Long> obterIdentificadorFornecedoresChamadasEncalheFornecedor(FiltroFechamentoCEIntegracaoDTO filtro){
     	
     	StringBuilder hql = new StringBuilder();
