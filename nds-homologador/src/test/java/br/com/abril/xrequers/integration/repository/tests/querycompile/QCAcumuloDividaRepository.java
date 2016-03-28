@@ -24,8 +24,8 @@ public class QCAcumuloDividaRepository extends AbstractRepositoryTest {
     
     @Test
     public void testQCObterNumeroMaximoAcumuloCota() {
-        this.acumuloDividaRepository.obterNumeroMaximoAcumuloCota(1L);
-        this.acumuloDividaRepository.obterNumeroMaximoAcumuloCota(1L);
+        this.acumuloDividaRepository.obterNumeroMaximoAcumuloCota(1L, 1L);
+        this.acumuloDividaRepository.obterNumeroMaximoAcumuloCota(1L, 1L);
     }
     
     @Test
