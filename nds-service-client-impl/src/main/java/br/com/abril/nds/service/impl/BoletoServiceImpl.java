@@ -666,9 +666,9 @@ public class BoletoServiceImpl implements BoletoService {
         
         divida.setAcumulada(true);
         
-        if(divida.getDividaRaiz() != null) {        	
-        	divida.setDividaRaiz(divida);
-        }     	
+        LOGGER.info("DIVIDA ANTERIOR: ", divida.toString());
+        
+        divida.setDividaRaiz(divida);
         
         dividaRepository.alterar(divida);
         

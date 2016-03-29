@@ -14,6 +14,8 @@ import javax.annotation.PostConstruct;
 
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -127,6 +129,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 	private CouchDbProperties couchDbProperties;
 	
 	private CouchDbClient couchDbClient;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(CobrancaServiceImpl.class);
 	
 	@PostConstruct
 	public void initCouchDbClient() {
@@ -740,9 +744,14 @@ public class CobrancaServiceImpl implements CobrancaService {
 		    	itemCobranca.setTipoBaixa(TipoBaixaCobranca.MANUAL);
 		    	itemCobranca.setStatusCobranca(StatusCobranca.PAGO);
 		    	itemCobranca.getDivida().setStatus(StatusDivida.QUITADA);
+		    	
 		    	if(itemCobranca.getDivida().getDividaRaiz() != null) {
-		    		itemCobranca.getDivida().setDividaRaiz(itemCobranca.getDivida().getDividaRaiz());		    		
+		    		
+		    		LOGGER.info("Divida", itemCobranca.getDivida().toString());
+		    		
+//		    		itemCobranca.getDivida().setDividaRaiz(itemCobranca.getDivida().getDividaRaiz());		    		
 		    	}
+		    	
 		    	itemCobranca.setBanco( (pagamento.getBanco()==null)?itemCobranca.getBanco() :  pagamento.getBanco() );
 		    	
 		    	this.dividaRepository.merge(itemCobranca.getDivida());
