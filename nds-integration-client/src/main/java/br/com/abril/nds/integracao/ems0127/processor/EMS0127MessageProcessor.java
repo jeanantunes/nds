@@ -30,6 +30,7 @@ import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
+import br.com.abril.nds.repository.ItemChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
@@ -54,6 +55,8 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private ChamadaEncalheFornecedorRepository chamadaEncalheFornecedorRepository;
 	
+	@Autowired
+	private ItemChamadaEncalheFornecedorRepository itemChamadaEncalheFornecedorRepository;
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -101,13 +104,14 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			dbClient = getCouchDBClient(input.getCodigoDistribuidor(), true);
 			
 			ChamadaEncalheFornecedor ce = montarChamadaEncalheFornecedor(message, input);
-			
-			getSession().merge(ce);
-			getSession().flush();
-			
-			this.ndsiLoggerFactory.getLogger().logWarning(message,
-					EventoExecucaoEnum.RELACIONAMENTO, 
-					"Chamada Encalhe Fornecedor inserida com sucesso: "+ input.getCePK().getNumeroChamadaEncalhe());
+			if ( ce != null ) {
+				getSession().merge(ce);
+				getSession().flush();
+				
+				this.ndsiLoggerFactory.getLogger().logWarning(message,
+						EventoExecucaoEnum.RELACIONAMENTO, 
+						"Chamada Encalhe Fornecedor inserida com sucesso: "+ input.getCePK().getNumeroChamadaEncalhe());
+			}
 			return;
 
 		} catch (Exception e) {
@@ -138,8 +142,17 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		ce = chamadaEncalheFornecedorRepository.buscarPorNumero (input.getCePK().getNumeroChamadaEncalhe());
 		
 		
-		if ( ce == null )
+		if ( ce == null ) 
 	    	ce = new ChamadaEncalheFornecedor();
+		else
+		if ( ce.getDataFechamentoNDS() != null ) { // CE JA ESTA FECHADA. NAO ALTERAR
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.SEM_DOMINIO,	
+					"Chamada Encalhe nao alterada pois ja esta fechada : "+ input.getCePK().getNumeroChamadaEncalhe() +
+					" Data Fechamento: "+ ce.getDataFechamentoNDS());
+			return null;
+			
+		}
 		
 		ce.setNumeroChamadaEncalhe(input.getCePK().getNumeroChamadaEncalhe());
 		ce.setAnoReferencia(input.getDataAnoReferencia());
@@ -160,9 +173,19 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		ce.setTotalVendaInformada(input.getValorTotalVendaInformada());
 		ce.setControle(input.getNumeroControle());
 		
-		if(input.getItems() != null && !input.getItems().isEmpty()) {
-			ce.setItens(new ArrayList<ItemChamadaEncalheFornecedor>());
+		if(input.getItems() != null && !input.getItems().isEmpty() ) {
 			
+			if (  ce.getItens() == null || ce.getItens().isEmpty() )  {   
+			  ce.setItens(new ArrayList<ItemChamadaEncalheFornecedor>());
+			}else{
+				
+				this.itemChamadaEncalheFornecedorRepository.removerItensChamadaEncalheFornecedor(ce.getItens());
+				ce.setItens(new ArrayList<ItemChamadaEncalheFornecedor>());
+				getSession().merge(ce);
+				getSession().flush();
+				getSession().clear();
+				
+			}
 			//orientação de Cesar - item 5, planilha sprint 5, as informações faltantes dizem respeito a fornecedor
 			//que nunca foi inserido
 			String codigoProduto = input.getItems().get(0).getLancamentoEdicaoPublicacao().getCodigoPublicacao();
@@ -225,7 +248,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			}
 			
 			ItemChamadaEncalheFornecedor ice = new ItemChamadaEncalheFornecedor();
-			
+		   
 			ice.setChamadaEncalheFornecedor(ce);
 			ice.setNumeroItem(item.getCeItemPK().getNumeroItem());
 			ice.setProdutoEdicao(produtoEdicao);

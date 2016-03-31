@@ -97,4 +97,11 @@ public class ItemChamadaEncalheFornecedorRepositoryImpl extends AbstractReposito
 		
 		return query.list();
 	}
+	
+	@Override
+	public void removerItensChamadaEncalheFornecedor(
+			List<ItemChamadaEncalheFornecedor> itens) {
+		for (ItemChamadaEncalheFornecedor item:itens)
+			this.removerPorId(item.getId());
+	}
 }
