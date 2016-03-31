@@ -219,8 +219,8 @@ public class Divida implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Divida [id=" + id + ", data=" + data + ", responsavel=" + responsavel + ", status=" + status
-				+ ", cobranca=" + cobranca + ", dividaRaiz=" + dividaRaiz + ", acumulada=" + acumulada
+		return "Divida [id=" + id + ", data=" + data + ", status=" + status
+				+ ", acumulada=" + acumulada
 				+ ", origemNegociacao=" + origemNegociacao + "]";
 	}
 }
