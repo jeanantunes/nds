@@ -97,7 +97,5 @@ public class NegociacaoDividaDTO implements Serializable {
 	public void setIdDivida(Long idDivida) {
 		this.idDivida = idDivida;
 	}
-	
-	
 
 }
