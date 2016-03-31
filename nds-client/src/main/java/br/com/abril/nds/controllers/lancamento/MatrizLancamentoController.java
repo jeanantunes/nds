@@ -1437,6 +1437,8 @@ public class MatrizLancamentoController extends BaseController {
         
         produtoBalanceamentoVO.setProdutoContaFirme(produtoLancamentoDTO.isProdutoContaFirme());
         
+        produtoBalanceamentoVO.setSequenciaMatriz(produtoLancamentoDTO.getSequenciaMatriz()!= null ?produtoLancamentoDTO.getSequenciaMatriz().toString():"");
+       
         return produtoBalanceamentoVO;
     }
     

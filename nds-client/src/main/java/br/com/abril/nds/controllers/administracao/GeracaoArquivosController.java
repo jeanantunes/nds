@@ -46,11 +46,14 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CaracteristicaDistribuicaoSimplesDTO;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
+import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ControleCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
+import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoSimplesDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -58,12 +61,14 @@ import br.com.abril.nds.integracao.ems0129.route.EMS0129Route;
 import br.com.abril.nds.integracao.ems0197.route.EMS0197Route;
 import br.com.abril.nds.integracao.ems0198.route.EMS0198Route;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CaracteristicaDistribuicaoService;
 import br.com.abril.nds.service.ConsolidadoFinanceiroService;
+import br.com.abril.nds.service.ConsultaEncalheService;
 import br.com.abril.nds.service.ControleCotaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DeparaService;
@@ -171,6 +176,10 @@ public class GeracaoArquivosController extends BaseController {
 	
 	
 	@Autowired
+	private ConsultaEncalheService  consultaEncalheService;
+	 
+	
+	@Autowired
 	private EmailService emailService;
 	
     
@@ -197,7 +206,7 @@ public class GeracaoArquivosController extends BaseController {
 		 FilenameFilter fileFilter = new FilenameFilter() {
 				public boolean accept(File dir, String name) {
 					
-					if (name.endsWith(".zip") ) {
+					if (name != null && name.endsWith(".zip") ) {
 						return true;
 					} else {
 						return false;
@@ -205,7 +214,7 @@ public class GeracaoArquivosController extends BaseController {
 				}
 			};
 			File[] files = new File(path).listFiles(fileFilter);
-		//	if ( files != null && files.length > 0  ) {
+			if ( files != null && files.length > 0  ) {
 			Arrays.sort(files, new Comparator<File>(){
 			    public int compare(File f1, File f2)
 			    {
@@ -215,7 +224,7 @@ public class GeracaoArquivosController extends BaseController {
 			for(File input : files) {				
 				list.add(input.getName());				
 			}
-		//	}
+			}
 		
 	
 		} catch (Exception e) {
@@ -397,7 +406,7 @@ public class GeracaoArquivosController extends BaseController {
 		    		  List<EncalheCotaDTO> listaEncalheCota = consolidadoFinanceiroService.obterMovimentoEstoqueCotaEncalhe(filtro);
 		    		 
 		    		  Map <String,EncalheCotaDTO> mapEncalheCota = new HashMap();
-		    		  
+		    		   
 		    		  for(EncalheCotaDTO encalhe : listaEncalheCota)
 		    			  mapEncalheCota.put(encalhe.getCodigoProduto()+encalhe.getNumeroEdicao(), encalhe);
 		    		 
@@ -416,7 +425,7 @@ public class GeracaoArquivosController extends BaseController {
 			    		  StringBuffer sb = new StringBuffer();
 			    		  
 			    		  EncalheCotaDTO encalhe  = mapEncalheCota.get(consignado.getCodigoProduto()+consignado.getNumeroEdicao());
-			    		  
+			    		  	  
 			    		  sb.append("011"+String.format("%07d", Integer.parseInt(codigoDistribuidor)));
 			    		  
 			    		  Integer codigoJornaleiro=cota;
@@ -469,6 +478,105 @@ public class GeracaoArquivosController extends BaseController {
 	                      
 	                     
 					      String repCapa= consignado.getChamadaCapa();//produtoEdicao.getChamadaCapa()!= null ?produtoEdicao.getChamadaCapa():"" ;//"30 MODELOS PASSO A PASSO";
+					    	
+					      
+					      sb.append(StringUtils.rightPad(repCapa,30,' ').substring(0,30));
+					     
+					     
+				    	  sb.append(DateUtil.formatarData(dtMov, "ddMMyyyy"));
+					     
+	                      Long devol=encalhe != null ? encalhe.getEncalhe().longValue():0;
+	                      
+	                      sb.append(String.format("%08d",devol));
+	                      cont++;
+			    		  out.println(sb.toString());
+			    		  mapEncalheCota.remove(consignado.getCodigoProduto()+consignado.getNumeroEdicao());
+			    		  
+		    		  }
+		    		  
+		    		  for(String  pes:mapEncalheCota.keySet() ) {
+		    			  
+			    		  StringBuffer sb = new StringBuffer();
+			    		  
+			    		  
+			    		  EncalheCotaDTO encalhe  = mapEncalheCota.get(pes);
+			    		  
+			    		  sb.append("011"+String.format("%07d", Integer.parseInt(codigoDistribuidor)));
+			    		  
+			    		  Integer codigoJornaleiro=cota;
+			    		  sb.append(String.format("%07d",codigoJornaleiro));
+			    		  sb.append(String.format("%05d",codigoJornaleiro));
+			    		  sb.append(String.format("%05d",codigoJornaleiro));
+			    		  
+			    		  Date dtMov = data;
+			    		  sb.append(DateUtil.formatarData(dtMov, "ddMMyyyy"));
+			    		  
+			    		  String codPublicacao=encalhe.getCodigoProduto();
+			    		  
+			    		  
+	                      sb.append(StringUtils.leftPad(codPublicacao,8,'0'));
+	                      
+					      String edicaoCapa=encalhe.getNumeroEdicao().toString();
+	                      sb.append(StringUtils.leftPad(edicaoCapa,4,'0'));
+	                     
+	                      FiltroConsultaEncalheDTO filtrod = new FiltroConsultaEncalheDTO();
+	                		
+	                    
+	                     filtrod.setNumCota(cotac.getNumeroCota());
+	                     filtrod.setIdCota(cotac.getId());
+	                     filtrod.setCodigoProduto(Integer.parseInt(encalhe.getCodigoProduto()));
+	                     filtrod.setNumeroEdicao(encalhe.getNumeroEdicao().intValue());
+	                     filtrod.setDataRecolhimentoInicial(dataLctoPrevisto);
+	                     filtrod.setDataRecolhimentoFinal(dataLctoPrevisto);
+	                	 InfoConsultaEncalheDTO infoConsultaEncalhe = consultaEncalheService.pesquisarEncalhe(filtrod);
+	                		
+	                	 List<ConsultaEncalheDTO> listaResultado = infoConsultaEncalhe.getListaConsultaEncalhe();
+	                		
+	                	 if ( listaResultado == null || listaResultado.isEmpty()) {
+	                		 LOGGER.error("ERRO gerando ipv/caruzo . Encalhe encontrado, mas reparte nao encontrado cotaid="+cotac.getId()+" produto="+encalhe.getCodigoProduto()
+	                				      + "  edicao="+encalhe.getNumeroEdicao()+"  Continuando sem este produto no .ENP");
+	                		 continue;
+	                	 }
+	                	 ConsultaEncalheDTO consignado = listaResultado.get(0)	;
+	                		
+	                 
+	  		    		
+	                	  ProdutoEdicao pe = produtoEdicaoService.buscarPorID(consignado.getIdProdutoEdicao());
+	                      
+	                      String codBarra=  pe.getCodigoDeBarras();
+	                      
+	                      if (codBarra == null )
+	                    	  codBarra="0";
+					      sb.append(StringUtils.leftPad(codBarra,18,'0'));
+					    
+					      String descPublic=encalhe.getNomeProduto();
+	                      sb.append(String.format("%-30s",descPublic).substring(0,30));
+					     
+	                               
+					      Long reparte=consignado.getReparte().longValue();
+					      sb.append(String.format("%08d",reparte));
+					      
+					      FiltroConsultaCaracteristicaDistribuicaoSimplesDTO filtrocp = new FiltroConsultaCaracteristicaDistribuicaoSimplesDTO();
+					      filtrocp.setCodigoProduto(encalhe.getCodigoProduto());
+					      List<CaracteristicaDistribuicaoSimplesDTO> cp= caracteristicaDistribuicaoService.buscarComFiltroSimples(filtrocp);
+					      
+					     
+					                
+					      String nomeEditor=(cp != null ? cp.get(0).getNomeEditor():  pe.getProduto().getEditor().getPessoaJuridica().getNome());//produto.getEditor().getPessoaJuridica().getNome();
+					     
+					      sb.append(String.format("%-35s",nomeEditor).substring(0,35));
+					   
+					      
+	                      BigDecimal vrVenda =  encalhe.getPrecoCapa();
+	                      sb.append(String.format("%011.2f",vrVenda.floatValue()).replace(",", "").replace("\\.", ""));
+	                      
+	                      BigDecimal vrCusto = encalhe.getPrecoComDesconto();
+	                      sb.append(String.format("%011.2f",vrCusto.floatValue()).replace(",","").replace("\\.", ""));
+	
+	                     
+	                      
+	                     
+					      String repCapa= pe.getChamadaCapa()!= null ?pe.getChamadaCapa():"" ;//"30 MODELOS PASSO A PASSO";
 					    	
 					      
 					      sb.append(StringUtils.rightPad(repCapa,30,' ').substring(0,30));
@@ -586,7 +694,7 @@ public class GeracaoArquivosController extends BaseController {
 		   FilenameFilter fileFilter = new FilenameFilter() {
 				public boolean accept(File dir, String name) {
 					
-					if (name.toUpperCase().endsWith(".RCL") || name.toUpperCase().endsWith(".LCT") ) {
+					if (name != null && (name.toUpperCase().endsWith(".RCL") || name.toUpperCase().endsWith(".LCT")) ) {
 						return true;
 					} else {
 						return false;
@@ -744,7 +852,7 @@ public class GeracaoArquivosController extends BaseController {
 				  
 			   }
 			
-			ret.append("Quantidade de arquivos fc unificados com dinap :"+files.size()+"</br>");
+			ret.append("Quantidade de arquivos fc unificados com dinap :"+(files != null ?files.size():0)+"</br>");
 			ret.append("Sem box dinap="+fileSemDePara.size()+ " Conflitos="+conflitos+"</br>");
 			String arqDinapFc="unificado_"+dinapName;
 			compactarArquivos(dirOut,arqDinapFc);
@@ -938,7 +1046,7 @@ public class GeracaoArquivosController extends BaseController {
 			FilenameFilter fileFilter = new FilenameFilter() {
 				public boolean accept(File dir, String name) {
 					
-					if (name.toUpperCase().endsWith(".RCL") || name.toUpperCase().endsWith(".LCT") ) {
+					if (name != null && (name.toUpperCase().endsWith(".RCL") || name.toUpperCase().endsWith(".LCT") )) {
 						return true;
 					} else {
 						return false;

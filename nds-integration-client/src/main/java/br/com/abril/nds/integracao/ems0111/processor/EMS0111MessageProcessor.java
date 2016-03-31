@@ -186,7 +186,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 				lancamento.setDataRecolhimentoPrevista(dataOriginal);// confirmado 
 			} else {
 				
-				Date dataRecolhimentoSugerida = recolhimentoService.obterDataRecolhimentoValido(this.getProximaDataUtil(dataRecolhimento, produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO),produtoEdicao.getProduto().getFornecedor().getId());
+				// comentado por odemir, pois esta com pau, e datarecolhimentosugerida nao 'e usada. foi comentada
+				// abaixo, nao explicado por que. a funcao getProximadatautil esta em loop, porque ele nao
+				// tenta so a proxima data util, mas a anterior tb.. e ai ficam em loop..
+				
+				// Date dataRecolhimentoSugerida = recolhimentoService.obterDataRecolhimentoValido(this.getProximaDataUtil(dataRecolhimento, produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO),produtoEdicao.getProduto().getFornecedor().getId());
 
 				//lancamento.setDataRecolhimentoDistribuidor(dataRecolhimentoSugerida);// confirmado
 				lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);// confirmado

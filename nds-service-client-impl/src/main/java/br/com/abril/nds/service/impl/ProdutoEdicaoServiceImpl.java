@@ -676,7 +676,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     	if(dto.isParcial()) {
         	if(!semRestricao) {
         		if(indDataLancamentoAlterada || indDataRecolhimentoAlterada || indDataLancamentoPrevistoAlterada) {
-        			throw new ValidacaoException(TipoMensagem.WARNING, "Data do Lançamento Alterada não é possível alteração de Lancamentos de Parciais. Utilize a tela de Parciais.");
+        			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível a alteração de datas dos Lancamentos de Parciais. Utilize a tela de Parciais.");
         		}
         	}
         }

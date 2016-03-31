@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Hibernate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,6 +100,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
 public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
+	
+	private static Logger LOGGER = LoggerFactory.getLogger(NegociacaoDividaServiceImpl.class);
     
     private static final int DEFAULT_SCALE = 2;
     
@@ -233,7 +237,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
         
         if (formaCobranca != null) {
-            
+            if ( idBanco == null ) {
+            	 LOGGER.error("Banco nao encontrado idBanco="+idBanco+" cota="+numeroCota+"  formaCobranca="+formaCobranca);
+            	 throw new ValidacaoException(TipoMensagem.WARNING, "Banco nao Selecionado.");
+            }
             final Banco banco = bancoRepository.buscarPorId(idBanco);
             formaCobranca.setBanco(banco);
         }
@@ -1036,7 +1043,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     private BigDecimal obterValorMinimoEmissao(final Integer numeroCota) {
         
         final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
-        
+        if ( cota == null ) {
+        	 throw new ValidacaoException(TipoMensagem.WARNING,
+                     "Cota nao especificada/encontrada.");
+        }
         BigDecimal valorMinimoCobranca = cota.getValorMinimoCobranca();
                 
                 if (valorMinimoCobranca == null) {

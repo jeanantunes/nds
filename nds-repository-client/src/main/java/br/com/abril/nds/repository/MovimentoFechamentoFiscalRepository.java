@@ -18,4 +18,5 @@ public interface MovimentoFechamentoFiscalRepository extends Repository<Moviment
 
 	void atualizarMovimentosFechamentosFiscaisPorLancamento(long lancamentoId, boolean desobrigaEmissaoDevolucaoSimbolica, boolean desobrigaEmissaoVendaConsignado);
 	
+	MovimentoFechamentoFiscalCota buscarPorChamadaEncalheCotaProdutoEdicaoCota(Long chamadaEncalheId, Long produtoEdicao, Long cotaId);
 }

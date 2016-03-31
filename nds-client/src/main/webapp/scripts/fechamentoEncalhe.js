@@ -76,6 +76,7 @@ var fechamentoEncalheController = $.extend(true, {
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
+		
 		$("#dtPostergada", fechamentoEncalheController.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -139,6 +140,7 @@ var fechamentoEncalheController = $.extend(true, {
 			height : 240,
 			singleSelect : true
 		});
+		
 		$(".fechamentoGrid", fechamentoEncalheController.workspace).flexigrid({
 			dataType : 'json',
 			onSuccess: function() {
@@ -265,7 +267,6 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	pesquisar : function(aplicaRegraMudancaTipo) {
 
-		
 		dataHolder.clearAction('fechamentoEncalhe');
 		
 		if (aplicaRegraMudancaTipo == null ){
@@ -308,6 +309,7 @@ var fechamentoEncalheController = $.extend(true, {
 		fechamentoEncalheController.vBoxId = $('#selectBoxEncalhe', fechamentoEncalheController.workspace).val();
 		
 	},
+	
 	preprocessamentoGridFechamento : function(resultado) {
 		
 		if (typeof resultado.mensagens == "object") {
@@ -331,11 +333,11 @@ var fechamentoEncalheController = $.extend(true, {
 			
 			var fisicoDigitado = fechamentoEncalheController.fechamentosManuais[row.cell.produtoEdicao];
 			
-			var valorFisico = ((typeof fisicoDigitado != "undefined") && fisicoDigitado > 0) ? fisicoDigitado : row.cell.fisico == null ? '' : row.cell.fisico;
+			var valorFisico = ((typeof fisicoDigitado != "undefined") && fisicoDigitado >= 0) ? fisicoDigitado : row.cell.fisico == null ? '' : row.cell.fisico;
 
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
 			
-			if (((typeof fisicoDigitado != "undefined") && fisicoDigitado > 0) || valorFisico > 0) {
+			if (((typeof fisicoDigitado != "undefined") && fisicoDigitado >= 0) || valorFisico >= 0) {
 				
 				// calcular a diferença da linha após o fechamento.
 				row.cell.diferenca = valorFisico - (row.cell.exemplaresDevolucao - row.cell.exemplaresDevolucaoJuramentado - row.cell.exemplaresVendaEncalhe);
@@ -345,12 +347,8 @@ var fechamentoEncalheController = $.extend(true, {
 			// row.cell.fisico = '<input tabindex="'+ index + '" class="numericInput" isEdicao="true" type="text" value="'+ (valorFisico != undefined ? valorFisico : "") +'" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',event); fechamentoEncalheController.retirarCheckBox('+index+', ' + row.cell.produtoEdicao + ');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ', ' +row.cell.produtoEdicao+')" ' + fechado + '/>';
 			row.cell.fisico = '<input tabindex="'+ index + '" class="" isEdicao="true" type="text" value="'+ (valorFisico != undefined ? valorFisico : "") +'" onkeyup="this.value = this.value.replace(/[^0-9]*/gi, \'\')" onkeydown="fechamentoEncalheController.nextInputExemplares(this, '+index+',event); fechamentoEncalheController.retirarCheckBox('+index+', ' + row.cell.produtoEdicao + ');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'" name="fisico" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ', ' +row.cell.produtoEdicao+')" ' + fechado + ' maxlength="6" />';
 			
-			if((row.cell.replicar == 'true' || (!fechamentoEncalheController.modoBox.ativo && fechamentoEncalheController.checkAllGrid)) 
-					&& ($.inArray(row.cell.produtoEdicao, fechamentoEncalheController.nonSelected) < 0)) {
-				row.cell.replicar = '<input isEdicao="true" type="checkbox" onchange="fechamentoEncalheController.selecionarLinha('+ row.cell.produtoEdicao +', this.checked)" id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index +', this, ' + row.cell.produtoEdicao + ');"' + fechado+ ' checked />';
-			} else {
-				row.cell.replicar = '<input isEdicao="true" type="checkbox" onchange="fechamentoEncalheController.selecionarLinha('+ row.cell.produtoEdicao +', this.checked)" id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index +', this, ' + row.cell.produtoEdicao + ');"' + fechado+ '/>';
-			}	
+				
+			row.cell.replicar = '<input isEdicao="true" type="checkbox" onchange="fechamentoEncalheController.selecionarLinha('+ row.cell.produtoEdicao +', this.checked)" id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index +', this, ' + row.cell.produtoEdicao + ');"' + fechado+ '/>';
 			
 			if (fechado != '') {
 				$('.divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
@@ -389,7 +387,7 @@ var fechamentoEncalheController = $.extend(true, {
 			fechamentoEncalheController.nonSelected.push(idProdutoEdicao);
 		}
 		
-		dataHolder.hold('fechamentoEncalhe', idProdutoEdicao , 'checado', checked);
+		// dataHolder.hold('fechamentoEncalhe', idProdutoEdicao , 'checado', checked);
 	},
 	
 	replicarTodos : function() {
@@ -399,6 +397,7 @@ var fechamentoEncalheController = $.extend(true, {
 		for (var i = 0; i<tabela.rows.length; i++) {
 			
 			fechamentoEncalheController.replicarItem(i);
+			
 		}
 		
 		fechamentoEncalheController.isAllFechamentos = true;
@@ -419,8 +418,70 @@ var fechamentoEncalheController = $.extend(true, {
 		});
 	},
 	
-	replicar:function(index, campo, produtoEdicao){
-
+	xitao : function() {
+		
+		var index = 0;
+		
+		$('.fechamentoGrid', fechamentoEncalheController.workspace).find('tr').each(function(){
+			
+			var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
+			var devolucao = parseInt(tabela.rows[index].cells[7].firstChild.innerHTML);
+			var juramentado = parseInt(tabela.rows[index].cells[8].firstChild.innerHTML);
+			var vendaEncalhe = parseInt(tabela.rows[index].cells[9].firstChild.innerHTML);
+			var diferenca = tabela.rows[index].cells[11].firstChild;
+			var valor = tabela.rows[index].cells[7].firstChild.innerHTML;
+			var campo2 = tabela.rows[index].cells[10].firstChild.firstChild;
+			
+			
+			if (campo2.disabled) {
+				
+				return;
+			}
+			
+			var fisico = tabela.rows[index].cells[10].firstChild.firstChild;
+			
+			var campo = $("#"+fisico.id).val();
+			
+			console.log("Fisico: "+valor)
+			
+			if ($('#ch'+index).is(':checked')) {
+			
+				if ($(campo2).val() != null || $(campo2).val() != "") {
+					
+					$(campo2).parent('div').children('.divEscondidoValorFisico_' + index).remove();
+					$(campo2).parent('div').append('<div class="divEscondidoValorFisico_' + index + '" style="display:none;">' + $(campo2).val() + '</div>');
+					
+					$(campo2).parent('div').children('.divEscondidoValorDiferenca_' + index).remove();
+					$(campo2).parent('div').append('<div class="divEscondidoValorDiferenca_' + index + '" style="display:none;">' + diferenca.innerHTML + '</div>');
+				}
+				
+				campo.value = valor - juramentado - vendaEncalhe;
+				diferenca.innerHTML = "0";
+				$("#"+fisico.id).val(devolucao);
+			} else {
+				
+				campo2.value = "";
+				diferenca.innerHTML = "";
+				
+				var valorAntigoFisico = $(campo2).parent('div').children('.divEscondidoValorFisico_' + index).html();
+				$(campo2).val(valorAntigoFisico);
+				
+				var valorAntigoDiferenca = $(campo2).parent('div').children('.divEscondidoValorDiferenca_' + index).html();
+				diferenca.innerHTML = valorAntigoDiferenca;
+			}	
+			
+			//fechamentoEncalheController.fechamentosManuais[produtoEdicao] = campo.value;
+			
+			fechamentoEncalheController.isAllFechamentos = true;
+			
+			fechamentoEncalheController.modoBox.alterarBox(true);
+			index++;
+		});
+		
+	},
+	
+	replicar : function(index, campo, produtoEdicao){
+		
 		$("#sel",this.workspace).attr("checked",false);
 		fechamentoEncalheController.replicarItem(index);
 		
@@ -474,16 +535,13 @@ var fechamentoEncalheController = $.extend(true, {
 		}			
 	},
 	
-	checkAll:function(input){
+	checkAll : function(input){
 
 		checkAll(input,"checkgroupFechamento");
 		
-		fechamentoEncalheController.replicarTodos(input.checked);
+		fechamentoEncalheController.xitao();
 		
 		fechamentoEncalheController.checkAllGrid = input.checked;
-		
-		fechamentoEncalheController.fechamentosManuais = new Array();
-		fechamentoEncalheController.nonSelected = new Array();
 	},
 	
 	onChangeFisico : function(campo, index, produtoEdicao) {
@@ -915,7 +973,6 @@ var fechamentoEncalheController = $.extend(true, {
 
 	},
 	
-	
 	obterCotasMarcadas : function() {
  
 		var cotasAusentesSelecionadas = new Array();
@@ -1235,12 +1292,14 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 	
 	 populaParametrosFechamentoEncalheInformados : function(){
-		 
-		linhasTabela = [];
+		
 		$('.fechamentoGrid', fechamentoEncalheController.workspace).find('tr').each(function(){
 			var codigo = $(this).children('td[abbr="codigo"]').children('div').html().toString();
 			var produtoEdicao = $(this).children('td').children('div').children('input[name=fisico]').attr("id");//Envia o id que eh setado com produtoEdicaoId
 			var fisico = $(this).children('td').children('div').children('input[name=fisico]').val();
+			
+			console.log('valor do fisico: '+ fisico)
+			
 			var checkbox = $(this).children('td').children('div').children('input[name=checkgroupFechamento]:checked').val() == "on" ? true : false;
 			var envioController = {
 				"codigo"  		: 	codigo,
@@ -1352,8 +1411,6 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	nextInputExemplares : function(auxx,curIndex,evt) {
 		
-
-		
 		var num = (evt.keyCode != 0 ? evt.keyCode : evt.charCode);
 
 		if((parseInt(num)>47 && parseInt(num)<58)|| parseInt(num)==13) {
@@ -1370,15 +1427,13 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	retirarCheckBox : function(index,idProdutoEdicao) {
 		
-		if ($("#ch" + index).is(":checked")) {
-			
-			$("#ch" + index).attr("checked", false);
-		}
+		console.log("passou")
 		
-		if ($("#sel").is(":checked")) {
-			
-			$("#sel").attr("checked", false);
-		}
+		console.log($("#ch" + index).is(":checked"))
+		
+		console.log($("#sel").is(":checked"));
+		
+		
 		
 		fechamentoEncalheController.nonSelected.push(idProdutoEdicao);
 	},

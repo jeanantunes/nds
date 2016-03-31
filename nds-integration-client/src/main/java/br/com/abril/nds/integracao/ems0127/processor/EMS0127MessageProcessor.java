@@ -28,6 +28,7 @@ import br.com.abril.nds.model.planejamento.fornecedor.FormaDevolucao;
 import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -48,6 +49,11 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 	
 	@Autowired
 	private FornecedorRepository fornecedorRepository;
+	
+	
+	@Autowired
+	private ChamadaEncalheFornecedorRepository chamadaEncalheFornecedorRepository;
+	
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -126,7 +132,14 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 
 	private ChamadaEncalheFornecedor montarChamadaEncalheFornecedor(Message message, EMS0127Input input) {
 		
-		ChamadaEncalheFornecedor ce = new ChamadaEncalheFornecedor();
+		ChamadaEncalheFornecedor ce = null;
+		
+		
+		ce = chamadaEncalheFornecedorRepository.buscarPorNumero (input.getCePK().getNumeroChamadaEncalhe());
+		
+		
+		if ( ce == null )
+	    	ce = new ChamadaEncalheFornecedor();
 		
 		ce.setNumeroChamadaEncalhe(input.getCePK().getNumeroChamadaEncalhe());
 		ce.setAnoReferencia(input.getDataAnoReferencia());
@@ -175,7 +188,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 				
 				this.ndsiLoggerFactory.getLogger().logError(message,
 						EventoExecucaoEnum.SEM_DOMINIO,
-						"Não foi possível incluir registro - Dados incompletos vindos do Icd - Codigo Produto: " +
+						"Não foi possível incluir registro - Dados incompletos vindos do Icd(Codigo Publicacao) - Codigo Produto: " +
 						"Chamada Encalhe: "+ item.getCeItemPK().getNumeroChamadaEncalhe() +
 						" Item Chamada Encalhe: "+ item.getCeItemPK().getNumeroItem());
 				continue;

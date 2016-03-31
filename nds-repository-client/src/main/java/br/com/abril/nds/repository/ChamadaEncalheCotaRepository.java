@@ -194,4 +194,6 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 
 	void removerChamadaEncalheCotaZerada(Date dataConfirmada);
 	
+	 List<ChamadaEncalheCota> obterListaChamadaEncalheCotaChamadao(Long idCota, Long idProdutoEdicao,Date dataOperacao) ;
+	
 }

@@ -139,7 +139,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
     
     // Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
     // O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
-    private static final Map<String, Object> TRAVA_GERACAO_NE = new HashMap<>();
+    public static final Map<String, Object> TRAVA_GERACAO_NE = new HashMap<>();
     
     @Override
     @Transactional
@@ -521,7 +521,11 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         
         for (final RotaPDV r : pdvPrincipal.getRotas()){
             
-            if (!r.getRota().getRoteiro().getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)){
+            if ( r.getRota() == null ||  r.getRota().getRoteiro() == null ){
+            	LOGGER.error("ERRO INTERNO.TABELA ROTA.ROTEIRO_ID NULO !!!");
+            	continue;
+             }
+            if (!TipoRoteiro.ESPECIAL.equals(r.getRota().getRoteiro().getTipoRoteiro())){
                 
                 idRota = r.getRota().getId();
                 
@@ -539,7 +543,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
                 
                 for (final Roteiro r : roteiros) {
                     
-                    if (!r.getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
+                    if (!TipoRoteiro.ESPECIAL.equals(r.getTipoRoteiro())) {
                         
                         roteiro = r;
                         

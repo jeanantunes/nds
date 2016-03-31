@@ -729,9 +729,22 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 										 boolean cotaContribuinteExigeNF,
 										 Usuario usuario,boolean isParcialFinal) {
 		
+		// nao criar chamada encalhe se for chamadao ou antecipada
 		if (!chamadaEncalhe.getTipoChamadaEncalhe().equals(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO)) {
-			
+			LOGGER.warn("CEC NAO CRIADA. NAO EH MATRIZ RECOLHIMENTO" );
 		    return;
+		}
+		
+		// verificar se existe chamadao para esta cota e produto nesta data. se tiver nao criar
+		
+		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
+		 
+		List <ChamadaEncalheCota> cecChamadao = chamadaEncalheCotaRepository.obterListaChamadaEncalheCotaChamadao(cota.getId(),chamadaEncalhe.getProdutoEdicao().getId(),dataOperacao);
+		
+		if ( cecChamadao != null && cecChamadao.size() > 0 ) { 
+			// tem chamadao . nao incluir cec para esta cota
+			LOGGER.warn("CEC NAO CRIADA. JA EXISTE CHAMADADO PARA ESTA COTA e PRODUTO cec.id="+cecChamadao.get(0).getId() );
+			return;
 		}
 		
 		if(BigInteger.ZERO.compareTo(qtdPrevista) >= 0) {

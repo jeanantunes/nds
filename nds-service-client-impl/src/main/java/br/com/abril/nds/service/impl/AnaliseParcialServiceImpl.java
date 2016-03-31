@@ -835,12 +835,19 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	
     	BigInteger sumReparteCotas = new BigInteger("0");
     	BigInteger sumQtdEfetivaCotas = new BigInteger("0");
-    	
+    	int count = 0; 
+    	//estudoGerado.getEstudoCotas().size()
     	for (EstudoCotaGerado estudoCota : estudoGerado.getEstudoCotas()) {
+    		
     		if(BigIntegerUtil.isMenorQueZero(estudoCota.getReparte())){
-    			validacao = new ValidacaoException(TipoMensagem.WARNING,"Há cota(s) com reparte(s) negativo(s), por favor ajustá-la(s)!");
-    			break;
+    			
+    			validacao = new ValidacaoException(TipoMensagem.WARNING,"Há cota(s) com reparte(s) negativo(s), por favor ajustá-la(s)! Cota=" +
+    			estudoCota.getCota().getNumeroCota() + " ");
+    			return validacao;
+    			
     		}
+    		
+    		count++;
     		
     		if(BigIntegerUtil.isMaiorQueZero(estudoCota.getReparte())){
     			sumReparteCotas = sumReparteCotas.add(estudoCota.getReparte());
@@ -851,7 +858,9 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     		}
     		
     	} 
-
+    	
+    	System.out.println("count: "+ count);
+    	
     	if((reparteFisicoOuPrevisto != null)&&(estudoGerado.getQtdeReparte().compareTo(reparteFisicoOuPrevisto.toBigInteger()) > 0)) {
     		validacao =  new ValidacaoException(TipoMensagem.WARNING,"O reparte distribuido é maior que estoque disponível!");
     		return validacao;

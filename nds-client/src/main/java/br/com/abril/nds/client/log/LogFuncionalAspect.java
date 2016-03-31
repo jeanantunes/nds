@@ -36,7 +36,12 @@ public class LogFuncionalAspect {
 	
 		
 		
-		String nomeUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
+		String nomeUsuario = "none";
+		try {
+			nomeUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
+		} catch ( Exception ee) {
+			nomeUsuario="naoLogado";
+		}
 		String remoteAddress = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest().getRemoteAddr();
 		nomeUsuario+="/"+remoteAddress;
 		Class clazz = joinPoint.getTarget().getClass();

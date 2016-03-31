@@ -242,6 +242,9 @@ public class FechamentoEncalheController extends BaseController {
 	public void salvar(List<FechamentoFisicoLogicoDTO> listaFechamento, boolean isAllFechamentos, 
 					   String dataEncalhe, Long fornecedorId, Long boxId) {
 		
+		
+		listaFechamento = (List<FechamentoFisicoLogicoDTO>) this.getSession().getAttribute("gridFechamentoEncalheDTO");
+		
 		List<FechamentoFisicoLogicoDTO> todosFechamentos = this.consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, false, null, null, 0, 0);
 		
 		List<FechamentoFisicoLogicoDTO> fechamentos = mergeItensFechamento(todosFechamentos, listaFechamento);

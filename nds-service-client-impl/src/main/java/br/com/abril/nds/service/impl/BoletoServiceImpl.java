@@ -537,9 +537,12 @@ public class BoletoServiceImpl implements BoletoService {
 
 	private boolean permiteAcumuloDivida(boolean isPermiteAcumulo, final Divida divida) {
 		BigInteger qtdeAcumulo = BigInteger.ZERO;
+		
 		Cota cota = divida.getCota();
 		
-		BigInteger numeroMaximoAcumulo = acumuloDividasService.obterNumeroMaximoAcumuloCota(cota.getId());
+		LOGGER.info("Cota: "+cota.getNumeroCota());
+		
+		BigInteger numeroMaximoAcumulo = acumuloDividasService.obterNumeroMaximoAcumuloCota(cota.getId(), divida.getId());
 		
 		if(cota.isSugereSuspensaoDistribuidor()) {
 			ParametrosDistribuidorVO parametrosDistribuidorVO = parametrosDistribuidorService.getParametrosDistribuidor();
@@ -550,15 +553,15 @@ public class BoletoServiceImpl implements BoletoService {
 					qtdeAcumulo = new BigInteger(parametrosDistribuidorVO.getSugereSuspensaoQuandoAtingirBoletos());
 				}
 				
-				if(numeroMaximoAcumulo.compareTo(qtdeAcumulo) >= 0) {
+				LOGGER.info("Acumulo: "+numeroMaximoAcumulo);
+				LOGGER.info("QTDE: "+qtdeAcumulo);
+				
+				if(numeroMaximoAcumulo.compareTo(qtdeAcumulo) > 0) {
 					
-					isPermiteAcumulo = false;
+					return isPermiteAcumulo = false;
 				}
 				
-			} else {
-				isPermiteAcumulo = true;
-			}
-			
+			} 			
 		} else {
 			if(cota.isSugereSuspensao()) {
 				
@@ -566,13 +569,11 @@ public class BoletoServiceImpl implements BoletoService {
 					qtdeAcumulo = BigInteger.valueOf(cota.getPoliticaSuspensao().getNumeroAcumuloDivida().intValue());
 				}
 				
-				if(numeroMaximoAcumulo.compareTo(qtdeAcumulo) >= 0) {
+				if(numeroMaximoAcumulo.compareTo(qtdeAcumulo) > 0) {
 					
-					isPermiteAcumulo = false;
+					return isPermiteAcumulo = false;
 				}
 				
-			} else {
-				isPermiteAcumulo = true;
 			}
 			
 		}
@@ -652,9 +653,9 @@ public class BoletoServiceImpl implements BoletoService {
         }
         
         if (c != null) {
-            acumuloDivida.setNumeroAcumulo(acumuloDividasService.obterNumeroDeAcumulosDivida(c.getId()).add(
-                    BigInteger.ONE));
+            acumuloDivida.setNumeroAcumulo(acumuloDividasService.obterNumeroDeAcumulosDivida(c.getId()).add(BigInteger.ONE));
         }
+        
         acumuloDivida.setDataCriacao(new Date());
         
         acumuloDivida.setResponsavel(usuario);
@@ -665,9 +666,9 @@ public class BoletoServiceImpl implements BoletoService {
         
         divida.setAcumulada(true);
         
-        if(divida.getDividaRaiz() != null) {        	
-        	divida.setDividaRaiz(divida.getDividaRaiz());
-        }
+        LOGGER.info("DIVIDA ANTERIOR: ", divida.toString());
+        
+        divida.setDividaRaiz(divida);
         
         dividaRepository.alterar(divida);
         

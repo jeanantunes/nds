@@ -1629,12 +1629,16 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				novaDivida.setResponsavel(usuario);
 				
 				if(idDividaPendente != null) {
-					Divida divida= dividaRepository.buscarPorId(Long.valueOf(idDividaPendente.intValue()));
+					
+					Divida divida = dividaRepository.buscarPorId(Long.valueOf(idDividaPendente.intValue()));
+					
+					LOGGER.info("Divida Raiz: ", divida.toString());
 					
 					if(divida.getDividaRaiz() != null) {
-						novaDivida.setDividaRaiz(divida.getDividaRaiz());					
+						novaDivida.setDividaRaiz(divida);					
 					}
 				}
+				
 				novaDivida.setOrigemNegociacao(false);
 									
                 Cobranca cobranca = this.salvarDividaCobranca(formaCobrancaPrincipal, 

@@ -150,6 +150,9 @@ public class URLSecurityInterceptor implements Interceptor {
 	
 	private boolean usuarioPossuiRule(Permissao permissao) {
 		
+		if ( SecurityContextHolder.getContext() == null || SecurityContextHolder.getContext().getAuthentication() == null )
+		   return false;
+		   
 		Collection<? extends GrantedAuthority> auths = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
 		
 		for(GrantedAuthority auth : auths) {

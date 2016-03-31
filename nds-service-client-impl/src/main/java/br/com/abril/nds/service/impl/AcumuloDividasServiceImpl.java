@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.financeiro.AcumuloDivida;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
@@ -65,9 +66,9 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public BigInteger obterNumeroMaximoAcumuloCota(Long idCota) {
+	public BigInteger obterNumeroMaximoAcumuloCota(Long idCota, Long idDivida) {
 
-		BigInteger numeroAcumulo = this.acumuloDividasRepository.obterNumeroMaximoAcumuloCota(idCota);
+		BigInteger numeroAcumulo = this.acumuloDividasRepository.obterNumeroMaximoAcumuloCota(idCota, idDivida);
 		
 		return numeroAcumulo == null ? BigInteger.ZERO : numeroAcumulo;
 	}
@@ -98,6 +99,8 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 			dividaAtual = acumuloDivida.getDividaAnterior();
 					
 			dividaAtual.getCobranca().setDataPagamento(dataPagamento);
+			
+			dividaAtual.getCobranca().setStatusCobranca(StatusCobranca.PAGO);
 			
 			dividaAtual.getCobranca().setTipoBaixa(tipoBaixa);
 				

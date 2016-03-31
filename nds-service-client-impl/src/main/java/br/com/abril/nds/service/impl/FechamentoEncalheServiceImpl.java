@@ -694,7 +694,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             	throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, indique valor de físico para todos os produtos.");            	
             }
             
-            if(fechamento.getFisico().compareTo(BigInteger.ZERO) > 0) {
+            if(fechamento.getFisico().compareTo(BigInteger.ZERO) >= 0) {
             	
             	qtd =  fechamento.getFisico() == null ? BigInteger.ZERO : fechamento.getFisico();
             	
@@ -1033,6 +1033,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		mffc.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.ENTRADA));
 		mffc.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
 		mffc.setQtde(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()));
+		mffc.setQtdeChamadaEncAnterior(BigInteger.ZERO);
 		mffc.setTipoDestinatario(TipoDestinatario.COTA);
 		mffc.setCota(movimentoEstoqueCota.getCota());
 		mffc.setChamadaEncalheCota(chamadaEncalheCota);

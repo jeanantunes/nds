@@ -1083,7 +1083,7 @@ public class LancamentoRepositoryImpl extends
 
 		hql.append(" lancamento.id as idLancamento, ");
 		hql.append(" lancamento.produto_edicao_id as idProdutoEdicao, 		  	");
-		hql.append(" chamada_encalhe.sequencia as sequenciaMatriz,			  	");
+		hql.append(" max(chamada_encalhe.sequencia) as sequenciaMatriz,			  	");
 		hql.append(" produto.codigo as codigoProduto, 	");
 		hql.append(" produto.nome as nomeProduto,		");
 		hql.append(" periodo_lancamento_parcial.tipo as tipoLancamentoParcial, ");
@@ -1410,6 +1410,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" periodoLancamentoParcial.TIPO as parcial, ");
 		sql.append(" lancamento.STATUS as statusLancamento, ");
 		sql.append(" lancamento.ID as idLancamento, ");
+		sql.append(" lancamento.sequencia_matriz as sequenciaMatriz, ");
 		sql.append(" lancamento.DATA_LCTO_PREVISTA as dataLancamentoPrevista, ");
 		sql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR as dataLancamentoDistribuidor, ");
 		sql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR as novaDataLancamento, ");
@@ -1539,6 +1540,7 @@ public class LancamentoRepositoryImpl extends
 				.addScalar("tipoLancamento",StandardBasicTypes.STRING)
 				.addScalar("parcial")
 				.addScalar("statusLancamento")
+				.addScalar("sequenciaMatriz")
 				.addScalar("idLancamento", StandardBasicTypes.LONG)
 				.addScalar("dataLancamentoPrevista")
 				.addScalar("dataLancamentoDistribuidor")

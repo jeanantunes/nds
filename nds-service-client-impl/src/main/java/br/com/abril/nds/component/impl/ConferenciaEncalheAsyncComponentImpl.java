@@ -59,12 +59,15 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 			agendarAgoraAtualizacaoEstoqueProdutoConf();
 			
 			conferenciaEncalheService.sinalizarFimProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota());
+			LOGGER.warn("LOGFUNCIONAL FINALIZADO  processo async  usuario="+controleConfEncalheCota.getUsuario().getLogin()+
+					" cota ="+controleConfEncalheCota.getCota().getNumeroCota());
 			
 		} catch(Exception e) {
 			
 			conferenciaEncalheService.sinalizarErroProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota(), e);
 			
-			LOGGER.error("", e);
+			LOGGER.error("LOGFUNCIONAL ERRO FINALIZANDO CONFERENCIA ENCALHE usuario="+usuario.getNome() +" cota="+controleConfEncalheCota.getCota().getNumeroCota()+
+					" cota="+controleConfEncalheCota.getCota().getNumeroCota(), e);
 			
 		}
 		
@@ -95,7 +98,7 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 			
 			conferenciaEncalheService.sinalizarErroProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota(), e);
 			
-			LOGGER.error("", e);
+			LOGGER.error("Erro salvando conferencia encalhe cota"+controleConfEncalheCota.getCota().getNumeroCota(), e);
 			
 		} 
 		

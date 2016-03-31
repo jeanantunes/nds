@@ -12,6 +12,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -70,6 +72,8 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA)
 public class NegociacaoDividaController extends BaseController {
 	
+    private static final Logger LOGGER = LoggerFactory.getLogger(NegociacaoDividaController.class);
+    
 	private static final String FILTRO_NEGOCIACAO_DIVIDA = "FILTRO_NEGOCIACAO_DIVIDA";
 
 	private static final String ID_ULTIMA_NEGOCIACAO = "ID_ULTIMA_NEGOCIACAO";
@@ -495,7 +499,15 @@ public class NegociacaoDividaController extends BaseController {
 	@Post
 	public void buscarComissaoCota(){
 		
-		Integer numeroCota = ((FiltroConsultaNegociacaoDivida)this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA)).getNumeroCota();
+		Integer numeroCota = null;
+		
+		try {
+			numeroCota=	((FiltroConsultaNegociacaoDivida)this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA))
+				.getNumeroCota();
+		} catch ( Exception e ) {
+			LOGGER.error("cota nao encontrada="+this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA),e);
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota nao encontrada.Tente novamente.");
+		}
 
 		List<Object> valoresDesconto = new ArrayList<Object>();
 

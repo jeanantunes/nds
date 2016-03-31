@@ -155,7 +155,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 			
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.RELACIONAMENTO, 
-					"Código do distribuidor do arquivo não é o mesmo do Sistema.");
+					"Código do distribuidor do arquivo não é o mesmo do Sistema."+input.getCodigoDistribuidor());
 			return false;
 		}
 		
@@ -605,7 +605,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 	
 	// Caso tenha lancamentos_parcial com mais de um periodo com tipo FINAL, ajustar  para ter PARCIAL e um FINAL
 	private void atualizarLancamentosComMaisdeUmPeriodoFinal() {
-		LOGGER.error("ATUALIZANDO LANCAMENTOPARCIAL COM MAIS DE UM PERIODO COM TIPO FINAL");
+		LOGGER.warn("ATUALIZANDO LANCAMENTOPARCIAL COM MAIS DE UM PERIODO COM TIPO FINAL");
 		StringBuilder sql = new StringBuilder();
 		Session session = this.getSessionIcd();
 		try {    
@@ -615,9 +615,9 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 			   .append(" from periodo_lancamento_parcial where tipo = 'FINAL' group by 1 having count(*) > 1");
 			SQLQuery query = session.createSQLQuery(sql.toString());
 			List <BigInteger > lancamentoParcialIds = query.list();
-			LOGGER.error("ENCONTRADOS "+lancamentoParcialIds.size());
+			LOGGER.warn("ENCONTRADOS "+lancamentoParcialIds.size());
 			for( BigInteger lancamentoParcialId:lancamentoParcialIds  ) {
-				LOGGER.error("PROCESSANDO  "+lancamentoParcialId +"  i="+i++);
+				LOGGER.warn("PROCESSANDO  "+lancamentoParcialId +"  i="+i++);
 			
 			// atualizar o status de todos os periodos deste lancamento parcial para PARCIAL
 			SQLQuery q1 = session.createSQLQuery(
@@ -625,7 +625,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 			
 			q1.setParameter("id",lancamentoParcialId);
 			q1.executeUpdate();
-			LOGGER.error("ATUALIZANDO PARA PARCIAL  "+lancamentoParcialId);
+			LOGGER.warn("ATUALIZANDO PARA PARCIAL  "+lancamentoParcialId);
 			// Obter maior periodo 
 			StringBuilder sqlm = new StringBuilder();
 			sqlm.append(" select  max(numero_periodo) ")
@@ -646,7 +646,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 			q2.setParameter("id",lancamentoParcialId);
 			q2.setParameter("numero_periodo",numeroPeriodo);
 			q2.executeUpdate();
-			LOGGER.error("ATUALIZADO PERIODO FINAL PARA id "+lancamentoParcialId +  "  numero_periodo "+ numeroPeriodo);
+			LOGGER.warn("ATUALIZADO PERIODO FINAL PARA id "+lancamentoParcialId +  "  numero_periodo "+ numeroPeriodo);
 			}
 			
 			
