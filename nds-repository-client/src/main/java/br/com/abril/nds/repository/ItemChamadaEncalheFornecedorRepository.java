@@ -11,5 +11,5 @@ public interface ItemChamadaEncalheFornecedorRepository extends Repository<ItemC
 	
 	List<ItemChamadaEncalheFornecedor> obterItensChamadaEncalheFornecedor(Long idChamadaEncalheFornecedor);
 
-	
+	void removerItensChamadaEncalheFornecedor(List<ItemChamadaEncalheFornecedor> itens);
 }
