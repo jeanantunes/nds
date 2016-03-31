@@ -13,8 +13,11 @@ import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaFollowupNegociacaoDTO;
+import br.com.abril.nds.dto.ConsultaNegociacaoDividaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacoesDTO;
+import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupNegociacaoDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -24,6 +27,7 @@ import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoNegociacao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.NegociacaoDividaRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Negociacao, Long> 
@@ -669,5 +673,166 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 	        .executeUpdate();
 		
 	}
+    
+    
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ConsultaNegociacaoDividaDTO> buscarNegociacaoDivida(FiltroConsultaNegociacoesDTO filtro){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT  ");
+		
+		sql.append(" sub.numeroCota as numeroCota, ");
+		sql.append(" sub.nomeCota as nomeCota, ");
+		sql.append(" sub.statusCota as statusCota, ");
+		sql.append(" ROUND(sub.dividaInicial, 2) as dividaInicial, ");
+		sql.append(" ROUND(sub.valorEncargos, 2) as valorEncargos, ");
+		sql.append(" ROUND(sub.dividaNegociada, 2) as dividaNegociada, ");
+		sql.append(" sub.dataNegociacao as dataNegociacao, ");
+		sql.append(" sub.dataVencimento as dataVencimento, ");
+		sql.append(" concat(@countParcela\\:=@countParcela + 1,'/', sub.countParcelas) as parcela,  ");
+		sql.append(" ROUND(sub.valorParcela, 2) as valorParcela, ");
+		sql.append(" sub.situacaoParcela as situacaoParcela, ");
+		sql.append(" sub.idCob2 as idCobranca, ");
+		sql.append(" sub.idnegociacao as idNegociacao ");
+
+		sql.append(" FROM ");
+		
+		sql.append("   (SELECT  ");
+		sql.append("       ct.NUMERO_COTA as numeroCota, ");
+		sql.append("       coalesce(ps.NOME_FANTASIA, ps.RAZAO_SOCIAL, ps.NOME, '') as nomeCota, ");
+		sql.append("       ct.SITUACAO_CADASTRO as statusCota, ");
+		sql.append("       ng.VALOR_ORIGINAL as dividaInicial, ");
+		sql.append("       cb.ENCARGOS as valorEncargos, ");
+		sql.append("       (COALESCE(cb.ENCARGOS, 0) + ceil(cb.VALOR)) as dividaNegociada, ");
+		sql.append("       cb.DT_EMISSAO as dataNegociacao, ");
+		sql.append("       pn.DATA_VENCIMENTO as dataVencimento, ");
+		sql.append("       (select count(id) from parcela_negociacao where NEGOCIACAO_ID = nco.NEGOCIACAO_ID)  as countParcelas,  ");
+		sql.append("       if(mfc2.valor is null, mfc.VALOR, mfc2.valor) valorParcela, ");
+		sql.append("       if(cb2.STATUS_COBRANCA is null, cb.STATUS_COBRANCA, cb2.STATUS_COBRANCA) situacaoParcela, ");
+		sql.append("       cb2.id as idCob2, ");
+		sql.append("       ng.id as idnegociacao ");
+		
+//		sql.append("       mfc.VALOR valorParcela, ");
+//		sql.append("       cb.STATUS_COBRANCA situacaoParcela ");
+		
+		
+		sql.append("   FROM cobranca cb ");
+		
+		sql.append("   JOIN divida dv ");
+		sql.append("     ON cb.DIVIDA_ID = dv.ID ");
+		sql.append("   JOIN negociacao_cobranca_originaria nco ");
+		sql.append("     ON nco.COBRANCA_ID = cb.ID ");
+		sql.append("   JOIN negociacao ng ");
+		sql.append("     ON nco.NEGOCIACAO_ID = ng.ID ");
+		sql.append("   JOIN forma_cobranca fc ");
+		sql.append("     ON ng.FORMA_COBRANCA_ID = fc.id ");
+		sql.append("   JOIN parcela_negociacao pn ");
+		sql.append("     ON pn.NEGOCIACAO_ID = ng.ID ");
+		sql.append("   JOIN movimento_financeiro_cota mfc  ");
+		sql.append("     ON pn.MOVIMENTO_FINANCEIRO_ID = mfc.id ");
+		sql.append("   LEFT OUTER JOIN consolidado_mvto_financeiro_cota cmfc  ");
+		sql.append("     ON cmfc.MVTO_FINANCEIRO_COTA_ID = mfc.id ");
+		sql.append("   LEFT OUTER JOIN consolidado_financeiro_cota cfc  ");
+		sql.append("     ON cfc.id = cmfc.CONSOLIDADO_FINANCEIRO_ID ");
+		sql.append("   LEFT OUTER JOIN divida_consolidado dc  ");
+		sql.append("     ON dc.CONSOLIDADO_ID = cfc.ID ");
+		sql.append("   LEFT OUTER JOIN movimento_financeiro_cota mfc2 ");
+		sql.append("     ON cmfc.MVTO_FINANCEIRO_COTA_ID = mfc2.ID ");
+		sql.append("   LEFT OUTER JOIN divida dv2 ");
+		sql.append("     ON dv2.id = dc.divida_id ");
+		sql.append("   LEFT OUTER JOIN cobranca cb2 ");
+		sql.append("     ON dv2.id = cb2.divida_id ");
+		sql.append("   JOIN cota ct ");
+		sql.append("     ON cb.COTA_ID = ct.ID ");
+		sql.append("   JOIN pessoa ps  ");
+		sql.append("     ON ct.PESSOA_ID = ps.ID ");
+		sql.append("   WHERE 1 = 1 ");
+		
+		this.getParametrosBuscarNegociacaoDivida(filtro, sql, null);
+		
+		sql.append("     ORDER BY pn.DATA_VENCIMENTO) sub,  ");
+		
+		sql.append("     (SELECT @countParcela\\:=0) as sub2 ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		this.getParametrosBuscarNegociacaoDivida(filtro, null, query);
+
+		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		query.addScalar("nomeCota", StandardBasicTypes.STRING);
+		query.addScalar("statusCota", StandardBasicTypes.STRING);
+		query.addScalar("dividaInicial", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("valorEncargos", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("dividaNegociada", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("dataNegociacao", StandardBasicTypes.DATE);
+		query.addScalar("dataVencimento", StandardBasicTypes.DATE);
+		query.addScalar("parcela", StandardBasicTypes.STRING);
+		query.addScalar("valorParcela", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("situacaoParcela", StandardBasicTypes.STRING);
+		query.addScalar("idCobranca", StandardBasicTypes.LONG);
+		query.addScalar("idNegociacao", StandardBasicTypes.LONG);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ConsultaNegociacaoDividaDTO.class));
+		
+		this.configurarPaginacao(filtro, query);
+		
+		return query.list();
+	}
 	
+	public void getParametrosBuscarNegociacaoDivida(FiltroConsultaNegociacoesDTO filtro, StringBuilder sql, Query query){
+		
+		if(filtro.getNumeroCota() != null && !filtro.getNumeroCota().equals("")){
+			if(sql != null){
+				sql.append(" AND ct.NUMERO_COTA = :numeroCota ");
+			}else{
+				query.setParameter("numeroCota", filtro.getNumeroCota());
+			}
+		}
+		
+		if(filtro.getSituacaoParcela() != null && !filtro.getSituacaoParcela().equals("")){
+			if(sql != null){
+//				sql.append(" AND ct.NUMERO_COTA = :numeroCota ");
+			}else{
+//				query.setParameter("numeroCota", filtro.getNumeroCota());
+			}
+		}
+		
+		if(filtro.getDataNegociacaoDe() != null && filtro.getDataNegociacaoAte() != null){
+			if(sql != null){
+				sql.append(" AND cb.DT_EMISSAO BETWEEN DATE_FORMAT(:dataNegociacaoDe,'%Y-%m-%d') AND DATE_FORMAT(:dataNegociacaoAte,'%Y-%m-%d') ");
+			}else{
+				query.setParameter("dataNegociacaoDe", filtro.getDataNegociacaoDe());
+				query.setParameter("dataNegociacaoAte", filtro.getDataNegociacaoAte());
+			}
+		}
+		
+		if(filtro.getDataVencimentoDe() != null && filtro.getDataVencimentoAte() != null){
+			if(sql != null){
+				sql.append(" AND pn.DATA_VENCIMENTO BETWEEN DATE_FORMAT(:dataVencimentoDe,'%Y-%m-%d') AND DATE_FORMAT(:dataVencimentoAte,'%Y-%m-%d') ");
+			}else{
+				query.setParameter("dataVencimentoDe", filtro.getDataVencimentoDe());
+				query.setParameter("dataVencimentoAte", filtro.getDataVencimentoAte());
+			}
+		}
+		
+	}
+	
+	private void configurarPaginacao(FiltroDTO filtro, Query query) {
+
+		PaginacaoVO paginacao = filtro.getPaginacao();
+
+		if (paginacao.getQtdResultadosTotal().equals(0)) {
+			paginacao.setQtdResultadosTotal(query.list().size());
+		}
+
+		if(paginacao.getQtdResultadosPorPagina() != null) {
+			query.setMaxResults(paginacao.getQtdResultadosPorPagina());
+		}
+
+		if (paginacao.getPosicaoInicial() != null) {
+			query.setFirstResult(paginacao.getPosicaoInicial());
+		}
+	}
 }

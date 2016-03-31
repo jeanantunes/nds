@@ -347,6 +347,8 @@ public enum Permissao {
 	ROLE_FINANCEIRO_MANUTENCAO_PUBLICACAO_ALTERACAO("Manutenção de Preço de Publicação Expedida", 			Permissao.ROLE_FINANCEIRO, true),
 	ROLE_FINANCEIRO_MANUTENCAO_PUBLICACAO("Manutenção de Preço de Publicação Expedida",						Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_MANUTENCAO_PUBLICACAO_ALTERACAO, true, null),
 
+	ROLE_FINANCEIRO_CONSULTA_NEGOCIACOES_ALTERACAO("Consulta negociações",									Permissao.ROLE_FINANCEIRO, true),
+	ROLE_FINANCEIRO_CONSULTA_NEGOCIACOES("Consulta negociações",									   		Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_CONSULTA_NEGOCIACOES_ALTERACAO, true, null),
 	
 	ROLE_FINANCEIRO_HELP_ALTERACAO("Help",           														Permissao.ROLE_FINANCEIRO, true),
 	ROLE_FINANCEIRO_HELP("Help",           															 	   	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_HELP_ALTERACAO, true, null),

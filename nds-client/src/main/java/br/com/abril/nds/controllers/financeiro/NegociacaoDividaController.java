@@ -23,8 +23,6 @@ import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaVO;
 import br.com.abril.nds.client.vo.ParametroCobrancaVO;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.controllers.devolucao.ConsultaEncalheController;
-import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCalculaParcelas;
@@ -37,7 +35,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
@@ -47,7 +44,6 @@ import br.com.abril.nds.model.financeiro.TipoNegociacao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BancoService;
-import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.EmailService;
@@ -90,9 +86,6 @@ public class NegociacaoDividaController extends BaseController {
 	
 	@Autowired
 	private BancoService bancoService;
-	
-	@Autowired
-	private CobrancaService cobrancaService;
 	
 	@Autowired
 	private CotaService cotaService;
@@ -161,10 +154,10 @@ public class NegociacaoDividaController extends BaseController {
 	private List<FormaCobrancaDefaultVO> obterFormaCobrancaNegociacao(Integer numeroCota, boolean isNegociacaoAvulsa) {
 		
 		List<FormaCobrancaDefaultVO> tiposCobranca = new ArrayList<FormaCobrancaDefaultVO>();
-		List<FormaCobrancaDTO> tiposCobrancaDTO = new ArrayList<FormaCobrancaDTO>();
+//		List<FormaCobrancaDTO> tiposCobrancaDTO = new ArrayList<FormaCobrancaDTO>();
 		List<ParametroCobrancaVO> parametrosCobrancaVO = new ArrayList<ParametroCobrancaVO>();
 		
-		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
+//		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
 		
 		//String fonecedorCota = cota.getParametroCobranca().getFornecedorPadrao().getJuridica().getNomeFantasia().toUpperCase();
 	
@@ -365,6 +358,43 @@ public class NegociacaoDividaController extends BaseController {
 		
 		FiltroConsultaNegociacaoDivida filtro = (FiltroConsultaNegociacaoDivida) this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA);
 		
+		efetuarNegociacao(porComissao, comissaoUtilizar, tipoCobranca, tipoFormaCobranca, diasSemana, diaInicio, diaFim,
+				negociacaoAvulsa, isentaEncargos, ativarAposPagar, parcelas, idsCobrancas, idBanco, valorDividaComissao,
+				recebeCobrancaPorEmail, filtro);
+	}
+	
+	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA_ALTERACAO)
+	public void confirmarNegociacaoDivida(boolean porComissao, Integer numeroCota, BigDecimal comissaoUtilizar, 
+			TipoCobranca tipoCobranca, TipoFormaCobranca tipoFormaCobranca, List<DiaSemana> diasSemana,
+			Integer diaInicio, Integer diaFim, boolean negociacaoAvulsa, boolean isentaEncargos,
+			Integer ativarAposPagar, List<ParcelaNegociacao> parcelas, List<Long> idsCobrancas, Long idBanco,
+			BigDecimal valorDividaComissao,boolean recebeCobrancaPorEmail){
+		
+		Long idNegociacao = (Long) this.session.getAttribute(ID_ULTIMA_NEGOCIACAO);
+		
+		if(idNegociacao != null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Negociação já efetuada.");
+		}
+		
+//		FiltroConsultaNegociacaoDivida filtro = (FiltroConsultaNegociacaoDivida) this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA);
+		
+		FiltroConsultaNegociacaoDivida filtro = new FiltroConsultaNegociacaoDivida();
+		
+		filtro.setNumeroCota(numeroCota);
+		
+		efetuarNegociacao(porComissao, comissaoUtilizar, tipoCobranca, tipoFormaCobranca, diasSemana, diaInicio, diaFim,
+				negociacaoAvulsa, isentaEncargos, ativarAposPagar, parcelas, idsCobrancas, idBanco, valorDividaComissao,
+				recebeCobrancaPorEmail, filtro);
+	}
+
+	private void efetuarNegociacao(boolean porComissao, BigDecimal comissaoUtilizar, TipoCobranca tipoCobranca,
+			TipoFormaCobranca tipoFormaCobranca, List<DiaSemana> diasSemana, Integer diaInicio, Integer diaFim,
+			boolean negociacaoAvulsa, boolean isentaEncargos, Integer ativarAposPagar, List<ParcelaNegociacao> parcelas,
+			List<Long> idsCobrancas, Long idBanco, BigDecimal valorDividaComissao, boolean recebeCobrancaPorEmail,
+			FiltroConsultaNegociacaoDivida filtro) {
+		Long idNegociacao;
 		FormaCobranca formaCobranca = null;
 		
 		TipoNegociacao tipoNegociacao = negociacaoAvulsa ? TipoNegociacao.PAGAMENTO_AVULSO : TipoNegociacao.PAGAMENTO;
@@ -469,8 +499,6 @@ public class NegociacaoDividaController extends BaseController {
 	@Post
 	public void buscarComissaoCota(){
 		
-		BigDecimal comissao = this.descontoService.obterComissaoParametroDistribuidor();
-		
 		Integer numeroCota = null;
 		
 		try {
@@ -478,21 +506,36 @@ public class NegociacaoDividaController extends BaseController {
 				.getNumeroCota();
 		} catch ( Exception e ) {
 			LOGGER.error("cota nao encontrada="+this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA),e);
-			throw new ValidacaoException(
-					TipoMensagem.WARNING, "Cota nao encontrada.Tente novamente.");
-			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota nao encontrada.Tente novamente.");
 		}
+
+		List<Object> valoresDesconto = new ArrayList<Object>();
+
+		getComissaoCota(numeroCota, valoresDesconto);
+		
+		this.result.use(Results.json()).from(valoresDesconto, "result").recursive().serialize();
+	}
+	
+	@Post
+	public void buscarComissaoCotaPorNumeroCota(Integer numeroCota){
 		
 		List<Object> valoresDesconto = new ArrayList<Object>();
 
+		getComissaoCota(numeroCota, valoresDesconto);
+		
+		this.result.use(Results.json()).from(valoresDesconto, "result").recursive().serialize();
+	}
+
+	private void getComissaoCota(Integer numeroCota, List<Object> valoresDesconto) {
+		BigDecimal comissao = this.descontoService.obterComissaoParametroDistribuidor();
+		
 		if (comissao != null && BigDecimal.ZERO.compareTo(comissao) != 0) {
 
 			valoresDesconto.add(comissao);
 		}
 
 		//forma cobrança 'default' da cota
-		FormaCobranca formaDefault = 
-			this.formaCobrancaService.obterFormaCobrancaPrincipalCota(numeroCota);
+		FormaCobranca formaDefault = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(numeroCota);
 		
 		if (formaDefault == null){
 			
@@ -500,14 +543,22 @@ public class NegociacaoDividaController extends BaseController {
 		}
 		
 		valoresDesconto.add(formaDefault.getTipoCobranca());
-		
-		this.result.use(Results.json()).from(valoresDesconto, "result").recursive().serialize();
 	}
 	
 	public void imprimirNegociacao(String valorDividaSelecionada) throws Exception{
 		
 		Long idNegociacao = (Long) this.session.getAttribute(ID_ULTIMA_NEGOCIACAO);
 		
+		gerarArquivoParaImprimirNegociacao(valorDividaSelecionada, idNegociacao);
+	}
+	
+	public void imprimirNegociacaoDivida(String valorDividaSelecionada, Long idNegociacao) throws Exception{
+		
+		gerarArquivoParaImprimirNegociacao(valorDividaSelecionada, idNegociacao);
+	}
+
+	private void gerarArquivoParaImprimirNegociacao(String valorDividaSelecionada, Long idNegociacao)
+			throws Exception, IOException {
 		if (idNegociacao == null){
 			
 			throw new ValidacaoException(
@@ -550,10 +601,19 @@ public class NegociacaoDividaController extends BaseController {
 		this.result.use(Results.nothing());		
 	}
 	
+	public void imprimirBoletosNegociacao(Long idNegociacao) throws IOException{
+		
+		gerarBoletosParaImpressao(idNegociacao);
+	}
+	
 	public void imprimirBoletos() throws IOException{
 		
 		Long idNegociacao = (Long) this.session.getAttribute(ID_ULTIMA_NEGOCIACAO);
 		
+		gerarBoletosParaImpressao(idNegociacao);
+	}
+
+	private void gerarBoletosParaImpressao(Long idNegociacao) throws IOException {
 		if (idNegociacao == null){
 			
 			throw new ValidacaoException(
