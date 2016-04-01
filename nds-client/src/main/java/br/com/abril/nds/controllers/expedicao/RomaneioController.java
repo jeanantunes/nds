@@ -38,10 +38,12 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RomaneioService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -195,6 +197,15 @@ public class RomaneioController extends BaseController {
 		httpResponse.getOutputStream().close();
 		
 		result.nothing();
+	}
+	
+	@Post
+	@Path("/gerarArquivoRot")
+	public void gerarArquivoRot(FileType fileType) {
+		
+		this.romaneioService.gerarArquivoRot(fileType);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Download do arquivo com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
 	}
 
 	private String obterNomesProduto(FiltroRomaneioDTO filtro) {
