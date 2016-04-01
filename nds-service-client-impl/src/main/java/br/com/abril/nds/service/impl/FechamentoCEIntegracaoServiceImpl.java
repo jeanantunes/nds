@@ -403,6 +403,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	        		mff.setQtde(BigInteger.valueOf(itemFo.getQtdeEnviada() - itemFo.getQtdeDevolucaoApurada()).subtract(estoqueProduto.getQtdeDevolucaoFornecedor() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoFornecedor() ));
 					mff.setNotaFiscalLiberadaEmissao(false);
 					mff.setDesobrigaNotaFiscalDevolucaoSimbolica(true);
+					mff.setQtdeChamadaEncAnterior(BigInteger.ZERO);
 					
 					ProdutoEdicao produtoEdicao = itemFo.getProdutoEdicao();
 					
