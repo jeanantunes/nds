@@ -539,6 +539,8 @@ public class BoletoServiceImpl implements BoletoService {
 	private boolean permiteAcumuloDivida(boolean isPermiteAcumulo, final Divida divida) {
 		BigInteger qtdeAcumulo = BigInteger.ZERO;
 		
+		BigDecimal valorBoleto = BigDecimal.ZERO;
+		
 		Cota cota = divida.getCota();
 		
 		LOGGER.info("Cota: "+cota.getNumeroCota());
@@ -554,12 +556,19 @@ public class BoletoServiceImpl implements BoletoService {
 					qtdeAcumulo = new BigInteger(parametrosDistribuidorVO.getSugereSuspensaoQuandoAtingirBoletos());
 				}
 				
-				LOGGER.info("Acumulo: "+numeroMaximoAcumulo);
-				LOGGER.info("QTDE: "+qtdeAcumulo);
-				
 				if(numeroMaximoAcumulo.compareTo(qtdeAcumulo) >= 0) {
-					
 					return false;
+				}
+				
+				if(parametrosDistribuidorVO.getSugereSuspensaoQuandoAtingirReais() != null && !parametrosDistribuidorVO.getSugereSuspensaoQuandoAtingirReais().isEmpty()){
+					
+					valorBoleto = new BigDecimal(parametrosDistribuidorVO.getSugereSuspensaoQuandoAtingirReais());				
+					
+					if(valorBoleto.intValue() > 0) {
+						if(divida.getValor().compareTo(valorBoleto) >= 0) {
+							return false;
+						}
+					}
 				}
 				
 			} else {
@@ -573,14 +582,21 @@ public class BoletoServiceImpl implements BoletoService {
 				}
 				
 				if(numeroMaximoAcumulo.compareTo(qtdeAcumulo) >= 0) {
-					
 					return false;
 				}
 				
+				if(cota.getPoliticaSuspensao().getValor() != null) {
+					valorBoleto = cota.getPoliticaSuspensao().getValor();
+					
+					if(valorBoleto.intValue() > 0) {						
+						if(divida.getValor().compareTo(valorBoleto) >= 0) {
+							return false;
+						}
+					}
+				}
 			} else {
 				return false;
 			}
-			
 		}
 		
 		return isPermiteAcumulo;
