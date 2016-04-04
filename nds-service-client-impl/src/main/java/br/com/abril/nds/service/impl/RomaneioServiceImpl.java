@@ -1,8 +1,12 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -11,20 +15,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.export.JRXlsExporter;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.icd.axis.util.DateUtil;
+import br.com.abril.nds.dto.ArquivoRotDTO;
 import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.RomaneioModelo01DTO;
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
@@ -33,12 +31,22 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.RomaneioRepository;
+import br.com.abril.nds.rot.util.ArquivoRotBaseDTO;
+import br.com.abril.nds.rot.util.ArquivoRotParser;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.RomaneioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
 
 @Service
 public class RomaneioServiceImpl implements RomaneioService {
@@ -54,6 +62,8 @@ public class RomaneioServiceImpl implements RomaneioService {
 	
 	@Autowired
 	protected DistribuidorService distribuidorService;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(FTFServiceImpl.class);
 	
 	@Override
 	@Transactional
@@ -280,5 +290,53 @@ public class RomaneioServiceImpl implements RomaneioService {
 		}
 		
 		return this.romaneioRepository.buscarTotal(filtro, true);
+	}
+
+	@Override
+	@Transactional
+	public byte[] gerarArquivoRot(FiltroRomaneioDTO filtro, FileType fileType) {
+
+		List<ArquivoRotDTO> list = this.romaneioRepository.obterInformacoesParaArquivoRot(filtro);
+		
+		BufferedWriter bw = null;
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
+		try {
+			
+			bw = new BufferedWriter(new OutputStreamWriter(baos));
+			
+			ArquivoRotParser rotParser = new ArquivoRotParser();
+			
+			int count = 0;
+			
+			int quantidade = list.size(); 
+			
+			for (ArquivoRotBaseDTO dto : list) {
+				
+				if(count <= quantidade) {					
+					rotParser.parseFTF(dto, bw);
+					bw.newLine();
+				}
+				
+				count ++;
+			}
+			
+			LOGGER.debug("Valor do contador: "+count);
+			
+			bw.flush();
+			bw.close();
+
+		} catch (FileNotFoundException e) {
+			LOGGER.error("Não foi possivel localizar o arquivo no diretorio especifico!", e);
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possivel localizar o arquivo no diretorio especifico!");
+		} catch (IOException e) {
+			LOGGER.error("Erro ao acessar arquivo!", e);
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao acessar arquivo!");
+		} catch (Exception e) {
+			LOGGER.error("Erro ao gerar o arquivo!", e);
+		}
+		
+		return baos.toByteArray();
 	}
 }

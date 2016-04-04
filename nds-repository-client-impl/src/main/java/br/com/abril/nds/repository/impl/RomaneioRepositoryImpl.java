@@ -9,6 +9,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ArquivoRotDTO;
 import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
 import br.com.abril.nds.model.cadastro.Box;
@@ -145,7 +146,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			
 		if(filtro.getIdRoteiro() != null){
 			
-			hql.append( " and roteiro_.id = :idRoteiro ");
+			hql.append( " and roteiro_.id in (:idRoteiro) ");
 		}
 		
 		if(filtro.getIdRota() != null){
@@ -238,7 +239,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		if(filtro.getIdRoteiro() != null){
 			
-			query.setParameter("idRoteiro", filtro.getIdRoteiro());
+			query.setParameterList("idRoteiro", filtro.getIdRoteiro());
 		}
 		
 		if(filtro.getIdRota() != null){
@@ -428,5 +429,157 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		this.setarParametrosRomaneioParaExportacao(filtro, query, qtdProdutos);
 		
 		return query;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ArquivoRotDTO> obterInformacoesParaArquivoRot(FiltroRomaneioDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select lpad(e.ordem,6,0) as roteiroOrdem, ");
+		hql.append("rpad(e.descricao_roteiro,30,' ') as roteiroDescricao, ");
+		hql.append(" lpad(d.ordem,3,0) as rotaOrdem, ");
+		hql.append("case when (e.descricao_roteiro = 'VEJA-PLANTAO COMPRADOR')  then 'ROTA CD PLANTAO               ' ");
+		hql.append("else ");
+		hql.append("rpad(d.descricao_rota,30,' ') ");
+		hql.append("end as rota, "); 
+		hql.append("6389563 as codigoDistribuidor, ");
+		hql.append("'04/04/2016' as dataOperacao, ");
+		hql.append("lpad(numero_cota,5,0) as numeroCota, ");
+		hql.append("rpad(l.nome,35,' ') as nome,  ");
+		hql.append("rpad(coalesce(n.TIPO_LOGRADOURO,5,' '),5,' ') as tipoLogradouro, ");
+		hql.append("rpad(n.logradouro,30,' ') as logradouro, ");
+		hql.append("rpad(n.numero,5,' ') as numero,");
+		hql.append("rpad(coalesce(n.COMPLEMENTO,' '),20,' ') as complemento, ");
+		hql.append("rpad(n.bairro,30,' ') as bairro, ");
+		hql.append("rpad(n.cidade,30,' ') as cidade, "); 
+		hql.append("lpad(k.codigo,8,0) as codigoProduto, ");
+		hql.append("rpad(j.nome_comercial,30,' ') as nomeComercial, ");
+		hql.append("lpad(j.numero_edicao,4,0) as edicao,  ");
+		hql.append("lpad(truncate(i.QTDE_efetiva,0),10,0) as qtdeEfetiva, ");
+		hql.append("lpad(truncate((i.QTDE_efetiva / j.pacote_padrao),0),10,0) as divisaoQtdeEfetivaPacotePadrao, ");
+		hql.append("lpad(truncate(mod(i.QTDE_efetiva, j.pacote_padrao),0),10,0) as modQtdeEfetivaPacotePadrao "); 
+		hql.append("from cota a, pdv b, rota_pdv c, rota d, roteiro e, roteirizacao f, box g, estudo h, estudo_cota i, produto_edicao j, produto k, ");
+		hql.append("pessoa l, endereco_pdv m, endereco n ");
+		hql.append("where a.id = b.cota_id ");
+		hql.append("and g.id = f.box_id ");
+		hql.append("and e.roteirizacao_id = f.id ");
+		hql.append("and d.roteiro_id = e.id ");
+		hql.append("and c.pdv_id = b.id  ");
+		hql.append("and d.id = c.rota_id ");
+		hql.append("and i.cota_id = a.id ");
+		hql.append("and n.id = m.endereco_id ");
+		hql.append("and m.pdv_id = b.id ");
+		hql.append("and e.TIPO_ROTEIRO = 'ESPECIAL' ");
+		hql.append("and h.id = i.estudo_id ");
+		hql.append("and k.id = j.produto_id ");
+		hql.append("and l.id = a.pessoa_id ");
+		// hql.append(" and DESCRICAO_ROTEIRO in ('VEJA-GRAFICA', 'VEJA-PLANTAO COMPRADOR') ");
+		if(filtro.getIdRoteiro() != null && !filtro.getIdRoteiro().isEmpty()) {			
+			hql.append(" and e.id in (:idRoteiro) ");		
+		}
+		hql.append(" and b.ponto_principal = true ");
+		hql.append(" and h.produto_edicao_id = j.id ");
+		
+		hql.append(" and h.produto_edicao_id = j.id ");
+		hql.append(" and h.data_lancamento = :dataLancamento ");
+		hql.append(" and j.id in (:produtoEdicao) ");
+		
+		hql.append(" and b.id not in (select pdv_id from estudo_pdv where estudo_id = e.id) ");
+		hql.append(" union all ");
+		hql.append(" select lpad(e.ordem,6,0) as roteiroOrdem, ");
+		hql.append(" rpad(e.descricao_roteiro,30,' ') as roteiroDescricao, ");
+		hql.append(" lpad(d.ordem,3,0) as rotaOrdem, ");
+		hql.append("  ");
+		hql.append(" case when (e.descricao_roteiro = 'VEJA-PLANTAO COMPRADOR') "); 
+		hql.append(" then 'ROTA CD PLANTAO               ' ");
+		hql.append(" else ");
+		hql.append(" rpad(d.descricao_rota,30,' ') ");
+		hql.append(" end as rota, ");
+		hql.append("  ");
+		hql.append(" 6389563 as 'codigoDistribuidor', ");
+		hql.append(" '04/04/2016' as dataOperacao, "); 
+		hql.append(" lpad(numero_cota,5,0) as numeroCota, ");
+		hql.append(" rpad(l.nome,35,' ') as nome, ");
+		hql.append(" rpad(coalesce(n.TIPO_LOGRADOURO,5,' '),5,' ') as tipoLogradouro, ");
+		hql.append(" rpad(n.logradouro,30,' ') as logradouro, ");
+		hql.append("        rpad(n.numero,5,' ') as numero, ");
+		hql.append(" rpad(coalesce(n.COMPLEMENTO,' '),20,' ') as complemento, ");
+		hql.append(" rpad(n.bairro,30,' ') as bairro, ");
+		hql.append(" rpad(n.cidade,30,' ') as cidade, ");
+		hql.append("        lpad(k.codigo,8,0) as codigoProduto, ");
+		hql.append(" rpad(j.nome_comercial,30,' ') as nomeComercial, ");
+		hql.append(" lpad(j.numero_edicao,4,0) as edicao, ");
+		hql.append(" lpad(truncate(EP.REPARTE,0),10,0) as qtdeEfetiva, ");
+		hql.append(" 	   lpad(truncate((EP.REPARTE / j.pacote_padrao),0),10,0) as divisaoQtdeEfetivaPacotePadrao, ");
+		hql.append(" 	   lpad(truncate(mod(EP.REPARTE, j.pacote_padrao),0),10,0) as modQtdeEfetivaPacotePadrao ");
+		hql.append(" from cota a, pdv b, rota_pdv c, rota d, roteiro e, roteirizacao f, box g, estudo h, estudo_cota i, produto_edicao j, produto k, ");
+		hql.append(" 	pessoa l, endereco_pdv m, endereco n, estudo_pdv ep ");
+		hql.append(" where a.id = b.cota_id  ");
+		hql.append(" and g.id = f.box_id ");
+		hql.append(" and e.roteirizacao_id = f.id ");
+		hql.append(" and ep.estudo_id = h.id ");
+		hql.append(" and ep.pdv_id = b.id ");
+		hql.append(" and d.roteiro_id = e.id ");
+		hql.append(" and c.pdv_id = b.id  ");
+		hql.append(" and d.id = c.rota_id ");
+		hql.append(" and i.cota_id = a.id ");
+		hql.append(" and n.id = m.endereco_id ");
+		hql.append(" and m.pdv_id = b.id ");
+		hql.append(" and e.TIPO_ROTEIRO = 'ESPECIAL' ");
+		hql.append(" and h.id = i.estudo_id ");
+		hql.append(" and k.id = j.produto_id ");
+		hql.append(" and l.id = a.pessoa_id ");
+		
+		if(filtro.getIdRoteiro() != null && !filtro.getIdRoteiro().isEmpty()) {			
+			hql.append(" and e.id in (:idRoteiro) ");		
+		}
+		
+		hql.append(" and h.produto_edicao_id = j.id ");
+		hql.append(" and h.data_lancamento = :dataLancamento ");
+		
+		if(filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()) {
+			hql.append(" and j.id in (:produtoEdicao) ");
+		}
+		
+		hql.append(" AND EP.ESTUDO_ID = e.id ");
+		hql.append(" order by roteiroOrdem, roteiroDescricao, rotaOrdem, rota, numeroCota, nome ");
+		
+		final SQLQuery query =  getSession().createSQLQuery(hql.toString());
+		query.addScalar("roteiroOrdem", StandardBasicTypes.STRING);
+        query.addScalar("roteiroDescricao", StandardBasicTypes.STRING);
+        query.addScalar("rotaOrdem", StandardBasicTypes.STRING);
+        query.addScalar("rota", StandardBasicTypes.STRING);
+        query.addScalar("codigoDistribuidor", StandardBasicTypes.STRING);
+        query.addScalar("dataOperacao", StandardBasicTypes.STRING);
+        query.addScalar("numeroCota", StandardBasicTypes.STRING);
+        query.addScalar("nome", StandardBasicTypes.STRING);
+        query.addScalar("tipoLogradouro", StandardBasicTypes.STRING);
+        query.addScalar("logradouro", StandardBasicTypes.STRING);
+        query.addScalar("numero", StandardBasicTypes.STRING);
+        query.addScalar("complemento", StandardBasicTypes.STRING);
+        query.addScalar("bairro", StandardBasicTypes.STRING);
+        query.addScalar("cidade", StandardBasicTypes.STRING);
+        query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+        query.addScalar("nomeComercial", StandardBasicTypes.STRING);
+        query.addScalar("edicao", StandardBasicTypes.STRING);
+        query.addScalar("qtdeEfetiva", StandardBasicTypes.STRING);
+        query.addScalar("divisaoQtdeEfetivaPacotePadrao", StandardBasicTypes.STRING);
+        query.addScalar("modQtdeEfetivaPacotePadrao", StandardBasicTypes.STRING);
+        
+        if(filtro.getIdRoteiro() != null && !filtro.getIdRoteiro().isEmpty()) {
+        	query.setParameterList("idRoteiro", filtro.getIdRoteiro());
+		}
+        
+        query.setParameter("dataLancamento", filtro.getData());
+        
+        if(filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()) {
+        	query.setParameterList("produtoEdicao", filtro.getProdutos());
+        }
+        
+        query.setResultTransformer(new AliasToBeanResultTransformer(ArquivoRotDTO.class));
+		
+		return query.list();
 	}	
 }

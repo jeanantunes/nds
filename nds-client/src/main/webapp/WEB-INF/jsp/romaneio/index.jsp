@@ -3,6 +3,7 @@
 	<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/romaneios.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.min.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.br.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 	<script language="javascript" type="text/javascript">
 	$(function(){
 		romaneiosController.init();
@@ -36,6 +37,12 @@
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0" />
 				</a>
 			</span>
+			
+			<span class="bt_arq" style="display: none;">
+				<a href="javascript:;" id="romaneio-btnExtracao" title="Imprimir" onclick="romaneiosController.gerarArquivo('PDF');">
+					<img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" alt="Imprimir" hspace="5" border="0" />
+				</a>				
+			</span>
 		</div>
 	</div>
 	
@@ -67,13 +74,12 @@
 								</td>
 	                		<td width="49" align="right">Roteiro:</td>
 	                		<td width="260">
-	                			<select name="idRoteiro" id="idRoteiro" style="width: 200px;"
-	                					onchange="romaneiosController.recarregarComboRotas(this.value)">
-									 <option selected="selected" value="">Todos</option>
+	                			<select name="idRoteiro" id="idRoteiro" multiple="multiple" style="width: 200px;" >
 									<c:forEach var="roteiro" items="${listaRoteiro}">
 										<option value="${roteiro.key}">${roteiro.value}</option>
 									</c:forEach>
 					    		</select>
+					    		
 	                		</td>
 	                		<td width="32" align="right">Rota:</td>
 	                		<td colspan="2">

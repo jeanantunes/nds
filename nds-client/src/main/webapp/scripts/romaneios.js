@@ -40,6 +40,10 @@ var romaneiosController = $.extend(true, {
 			height : 150
 		});
 		
+		$("#idRoteiro", romaneiosController.workspace).multiselect({
+			selectedList : 6
+		})
+		
 		$( "#romaneio-dataLancamento", romaneiosController.workspace ).datepicker({
 			showOn: "button",
 			buttonImage: contextPath +"/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -72,11 +76,24 @@ var romaneiosController = $.extend(true, {
 		
 		params.push({name: 'filtro.data',      	value: $("#romaneio-dataLancamento", romaneiosController.workspace).val()});
 		params.push({name: 'filtro.idBox', 	value:$('#codigoBox', romaneiosController.workspace).val()});
-		params.push({name: 'filtro.idRoteiro', 	value:$('#idRoteiro', romaneiosController.workspace).val()});
+		//params.push({name: 'filtro.idRoteiro', 	value:$('#idRoteiro', romaneiosController.workspace).val()});
 		params.push({name: 'filtro.idRota',    	value:$('#idRota', romaneiosController.workspace).val()});
 		params.push({name: 'filtro.nomeRota',	value: $('#idRota option:selected', romaneiosController.workspace).text()});
 		params.push({name: 'filtro.nomeRoteiro',value: $('#idRoteiro option:selected', romaneiosController.workspace).text()});
 		params.push({name: 'filtro.nomeBox',  	value: $('#codigoBox option:selected', romaneiosController.workspace).text()});
+		
+		var idRoteiros = $("#idRoteiro", romaneiosController.workspace).val();
+		
+		if (idRoteiros){
+			$.each(idRoteiros, function(index, value){
+				if(value == null || value == "") {
+					console.log('olá')
+				} else {
+					
+					params.push({name: 'filtro.idRoteiro['+index+']', value: value});
+				}
+			});
+		}
 		
 		var produtos = $("#selectProdutos", romaneiosController.workspace).val();
 		
@@ -219,8 +236,71 @@ var romaneiosController = $.extend(true, {
 	esconderBotoes : function() {
 		
 		$(".areaBts", romaneiosController.workspace).find("span").hide();
-	}
+	},
+	
+	gerarArquivo : function (fileType) {
+    	
+    	var path = contextPath + "/romaneio/gerarArquivoRot";
+    	
+    	var params = [];
 		
+		params.push({name: 'filtro.data',      	value: $("#romaneio-dataLancamento", romaneiosController.workspace).val()});
+		params.push({name: 'filtro.idBox', 	value:$('#codigoBox', romaneiosController.workspace).val()});
+		//params.push({name: 'filtro.idRoteiro', 	value:$('#idRoteiro', romaneiosController.workspace).val()});
+		params.push({name: 'filtro.idRota',    	value:$('#idRota', romaneiosController.workspace).val()});
+		params.push({name: 'filtro.nomeRota',	value: $('#idRota option:selected', romaneiosController.workspace).text()});
+		params.push({name: 'filtro.nomeRoteiro',value: $('#idRoteiro option:selected', romaneiosController.workspace).text()});
+		params.push({name: 'filtro.nomeBox',  	value: $('#codigoBox option:selected', romaneiosController.workspace).text()});
+		
+		var idRoteiros = $("#idRoteiro", romaneiosController.workspace).val();
+		
+		if (idRoteiros){
+			$.each(idRoteiros, function(index, value){
+				if(value == null || value == "") {
+					console.log('olá')
+				} else {
+					
+					params.push({name: 'filtro.idRoteiro['+index+']', value: value});
+				}
+			});
+		}
+		
+		var produtos = $("#selectProdutos", romaneiosController.workspace).val();
+		
+		if (produtos){
+			$.each(produtos, function(index, value){
+				params.push({name: 'filtro.produtos['+index+']', value: value});
+			});
+		}
+    	
+    	
+    	$.fileDownload(path, {
+			httpMethod : "POST",
+			data : params,
+			successCallback: function(result) {
+				if (result.mensagens) {
+					exibirMensagem(
+						result.mensagens.tipoMensagem, 
+						result.mensagens.listaMensagens
+					);
+				}			
+			},
+            failCallback: function(result) {
+	
+        		res = $.parseJSON($(result).text());
+        		if ((typeof res != "undefined") && (typeof res.mensagens != "undefined")) {
+        			
+					exibirMensagem(
+							res.mensagens.tipoMensagem, 
+							res.mensagens.listaMensagens
+					);
+				}	
+			}
+		});
+    	
+    },
+	
+	
 }, BaseController);
 
 //@ sourceURL=romaneios.js
