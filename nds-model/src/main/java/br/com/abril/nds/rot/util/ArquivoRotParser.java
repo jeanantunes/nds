@@ -3,14 +3,9 @@ package br.com.abril.nds.rot.util;
 import java.io.BufferedWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -91,6 +86,7 @@ public final class ArquivoRotParser {
 				
 				if (isTrace()) {
 					System.out.println(campo);
+					LOGGER.debug(campo);
 				}
 				
 				if(campo != null) {
@@ -163,6 +159,7 @@ public final class ArquivoRotParser {
 				}
 			}
 		}
+		
 		if(delimiter!=null){
 			
 			retorno.append(StringUtils.join(campos,delimiter));

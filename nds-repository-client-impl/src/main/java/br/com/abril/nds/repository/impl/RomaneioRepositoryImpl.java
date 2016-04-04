@@ -10,7 +10,6 @@ import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ArquivoRotDTO;
-import br.com.abril.nds.dto.CaracteristicaDistribuicaoSimplesDTO;
 import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
 import br.com.abril.nds.model.cadastro.Box;
@@ -147,7 +146,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			
 		if(filtro.getIdRoteiro() != null){
 			
-			hql.append( " and roteiro_.id = :idRoteiro ");
+			hql.append( " and roteiro_.id in (:idRoteiro) ");
 		}
 		
 		if(filtro.getIdRota() != null){
@@ -240,7 +239,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		if(filtro.getIdRoteiro() != null){
 			
-			query.setParameter("idRoteiro", filtro.getIdRoteiro());
+			query.setParameterList("idRoteiro", filtro.getIdRoteiro());
 		}
 		
 		if(filtro.getIdRota() != null){
@@ -434,7 +433,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ArquivoRotDTO> obterRot() {
+	public List<ArquivoRotDTO> obterInformacoesParaArquivoRot(FiltroRomaneioDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -476,13 +475,18 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append("and h.id = i.estudo_id ");
 		hql.append("and k.id = j.produto_id ");
 		hql.append("and l.id = a.pessoa_id ");
-		hql.append(" and DESCRICAO_ROTEIRO in ('VEJA-GRAFICA', 'VEJA-PLANTAO COMPRADOR') ");
+		// hql.append(" and DESCRICAO_ROTEIRO in ('VEJA-GRAFICA', 'VEJA-PLANTAO COMPRADOR') ");
+		if(filtro.getIdRoteiro() != null && !filtro.getIdRoteiro().isEmpty()) {			
+			hql.append(" and e.id in (:idRoteiro) ");		
+		}
 		hql.append(" and b.ponto_principal = true ");
 		hql.append(" and h.produto_edicao_id = j.id ");
-		hql.append(" AND H.ID = 1540 ");
-		hql.append(" and k.codigo = 552 ");
-		hql.append(" and numero_edicao = 2472 ");
-		hql.append(" and b.id not in (select pdv_id from estudo_pdv where estudo_id = 1540) ");
+		
+		hql.append(" and h.produto_edicao_id = j.id ");
+		hql.append(" and h.data_lancamento = :dataLancamento ");
+		hql.append(" and j.id in (:produtoEdicao) ");
+		
+		hql.append(" and b.id not in (select pdv_id from estudo_pdv where estudo_id = e.id) ");
 		hql.append(" union all ");
 		hql.append(" select lpad(e.ordem,6,0) as roteiroOrdem, ");
 		hql.append(" rpad(e.descricao_roteiro,30,' ') as roteiroDescricao, ");
@@ -527,12 +531,20 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" and h.id = i.estudo_id ");
 		hql.append(" and k.id = j.produto_id ");
 		hql.append(" and l.id = a.pessoa_id ");
-		hql.append(" and DESCRICAO_ROTEIRO in ('VEJA-GRAFICA', 'VEJA-PLANTAO COMPRADOR') ");
+		
+		if(filtro.getIdRoteiro() != null && !filtro.getIdRoteiro().isEmpty()) {			
+			hql.append(" and e.id in (:idRoteiro) ");		
+		}
+		
 		hql.append(" and h.produto_edicao_id = j.id ");
-		hql.append(" and k.codigo = 552 ");
-		hql.append(" and numero_edicao = 2472 ");
-		hql.append(" AND EP.ESTUDO_ID = 1540 ");
-		hql.append(" order by 1,2,3,4,5,6 ");
+		hql.append(" and h.data_lancamento = :dataLancamento ");
+		
+		if(filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()) {
+			hql.append(" and j.id in (:produtoEdicao) ");
+		}
+		
+		hql.append(" AND EP.ESTUDO_ID = e.id ");
+		hql.append(" order by roteiroOrdem, roteiroDescricao, rotaOrdem, rota, numeroCota, nome ");
 		
 		final SQLQuery query =  getSession().createSQLQuery(hql.toString());
 		query.addScalar("roteiroOrdem", StandardBasicTypes.STRING);
@@ -555,6 +567,16 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
         query.addScalar("qtdeEfetiva", StandardBasicTypes.STRING);
         query.addScalar("divisaoQtdeEfetivaPacotePadrao", StandardBasicTypes.STRING);
         query.addScalar("modQtdeEfetivaPacotePadrao", StandardBasicTypes.STRING);
+        
+        if(filtro.getIdRoteiro() != null && !filtro.getIdRoteiro().isEmpty()) {
+        	query.setParameterList("idRoteiro", filtro.getIdRoteiro());
+		}
+        
+        query.setParameter("dataLancamento", filtro.getData());
+        
+        if(filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()) {
+        	query.setParameterList("produtoEdicao", filtro.getProdutos());
+        }
         
         query.setResultTransformer(new AliasToBeanResultTransformer(ArquivoRotDTO.class));
 		

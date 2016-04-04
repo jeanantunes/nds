@@ -4,7 +4,8 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.dto.ArquivoRotDTO;
+import javax.servlet.http.HttpServletResponse;
+
 import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -24,5 +25,6 @@ public interface RomaneioService {
 
 	Integer buscarTotalDeCotas(FiltroRomaneioDTO filtro);
 
-	List<ArquivoRotDTO> gerarArquivoRot(FileType fileType);
+	byte[] gerarArquivoRot(FiltroRomaneioDTO filtro, FileType fileType);
+	
 }

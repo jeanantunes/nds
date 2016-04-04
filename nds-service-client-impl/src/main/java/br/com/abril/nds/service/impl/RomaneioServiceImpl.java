@@ -3,9 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -296,32 +294,36 @@ public class RomaneioServiceImpl implements RomaneioService {
 
 	@Override
 	@Transactional
-	public List<ArquivoRotDTO> gerarArquivoRot(FileType fileType) {
+	public byte[] gerarArquivoRot(FiltroRomaneioDTO filtro, FileType fileType) {
 
-		List<ArquivoRotDTO> list = this.romaneioRepository.obterRot();
+		List<ArquivoRotDTO> list = this.romaneioRepository.obterInformacoesParaArquivoRot(filtro);
 		
-		String pathExportacao = "/home/dgb/";
-
-		File diretorioExportacaoServidor = new File(pathExportacao);
-
-		File f = new File(String.format("%s/%s", pathExportacao, "ROT.txt"));
-
 		BufferedWriter bw = null;
 		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
 		try {
-
-			if (!diretorioExportacaoServidor.isDirectory()) {
-				throw new FileNotFoundException("O diretório["+ pathExportacao +"] de exportação parametrizado não é válido!");
-			}
-
-			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f), "ASCII"));
+			
+			bw = new BufferedWriter(new OutputStreamWriter(baos));
+			
 			ArquivoRotParser rotParser = new ArquivoRotParser();
-
+			
+			int count = 0;
+			
+			int quantidade = list.size(); 
+			
 			for (ArquivoRotBaseDTO dto : list) {
-				rotParser.parseFTF(dto, bw);
-				bw.newLine();
+				
+				if(count <= quantidade) {					
+					rotParser.parseFTF(dto, bw);
+					bw.newLine();
+				}
+				
+				count ++;
 			}
-
+			
+			LOGGER.debug("Valor do contador: "+count);
+			
 			bw.flush();
 			bw.close();
 
@@ -334,7 +336,7 @@ public class RomaneioServiceImpl implements RomaneioService {
 		} catch (Exception e) {
 			LOGGER.error("Erro ao gerar o arquivo!", e);
 		}
-
-		return list;
+		
+		return baos.toByteArray();
 	}
 }

@@ -201,9 +201,21 @@ public class RomaneioController extends BaseController {
 	
 	@Post
 	@Path("/gerarArquivoRot")
-	public void gerarArquivoRot(FileType fileType) {
+	public void gerarArquivoRot(FiltroRomaneioDTO filtro, String sortorder, String sortname, int page, int rp) throws IOException, URISyntaxException, JRException {
 		
-		this.romaneioService.gerarArquivoRot(fileType);
+		FileType fileType = FileType.TXT; 
+		
+		byte[] arquivo = this.romaneioService.gerarArquivoRot(filtro, fileType);
+		
+		this.httpResponse.setContentType("application/txt");
+		
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=ARQUIVOROT"+DateUtil.formatarData(new Date(),"ddMMyyHHmm") + fileType.getExtension());
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		
+		output.write(arquivo);
+
+		httpResponse.getOutputStream().close();
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Download do arquivo com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
 	}

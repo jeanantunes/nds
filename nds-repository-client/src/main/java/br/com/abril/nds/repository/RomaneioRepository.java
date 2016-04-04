@@ -22,6 +22,6 @@ public interface RomaneioRepository extends Repository<Box, Long> {
 	 */
 	List<RomaneioDTO> buscarRomaneiosParaExportacao(FiltroRomaneioDTO filtro);
 
-	List<ArquivoRotDTO> obterRot();
+	List<ArquivoRotDTO> obterInformacoesParaArquivoRot(FiltroRomaneioDTO filtro);
 	
 }
