@@ -15,10 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.CalculaParcelasVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
-
+import br.com.abril.nds.dto.ConsultaNegociacaoDividaDTO;
 import br.com.abril.nds.dto.ImpressaoNegociacaoDTO;
 import br.com.abril.nds.dto.ImpressaoNegociacaoParecelaDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
@@ -36,6 +32,7 @@ import br.com.abril.nds.dto.NegociacaoDividaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCalculaParcelas;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacoesDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
@@ -81,7 +78,6 @@ import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.NegociacaoDividaRepository;
 import br.com.abril.nds.repository.ParcelaNegociacaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
-import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DescontoService;
@@ -98,6 +94,9 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
 public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
@@ -147,9 +146,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     
     @Autowired
     private ParametrosDistribuidorService parametrosDistribuidorService;
-    
-    @Autowired
-    private BancoService bancoService;
     
     @Autowired
     private CobrancaService cobrancaService;
@@ -1399,5 +1395,11 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
             this.situacaoCotaService.atualizarSituacaoCota(
                 novoHistoricoSituacaoCota, dataOperacaoDistribuidor);
         }
+    }
+    
+    @Override
+	@Transactional
+    public List<ConsultaNegociacaoDividaDTO> buscarNegociacoesDividas(FiltroConsultaNegociacoesDTO filtro){
+    	return this.negociacaoDividaRepository.buscarNegociacaoDivida(filtro);
     }
 }
