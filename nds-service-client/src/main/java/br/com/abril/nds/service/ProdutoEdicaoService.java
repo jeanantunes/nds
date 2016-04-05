@@ -50,7 +50,7 @@ public interface ProdutoEdicaoService {
 	 * 
 	 * @return List - String
 	 */
-	public List<String> validarDadosBasicosEdicao(ProdutoEdicaoDTO dto, String codigoProduto);
+	public List<String> validarDadosBasicosEdicao(ProdutoEdicaoDTO dto, String codigoProduto,ProdutoEdicaoDTO dtoAnterior);
 
 	
 	/**
