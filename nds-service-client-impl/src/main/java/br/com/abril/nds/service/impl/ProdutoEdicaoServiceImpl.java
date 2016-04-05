@@ -450,8 +450,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
     }
     
-    private boolean isDataRecolhimentoAlterada(ProdutoEdicaoDTO dto, Lancamento lancamento) {
+    private boolean isDataRecolhimentoAlterada(ProdutoEdicaoDTO dto, Lancamento lancamento,ProdutoEdicaoDTO dtoAnterior) {
     	
+    	if ( dtoAnterior != null && dto.getDataRecolhimentoDistribuidor() != null &&
+    			dto.getDataRecolhimentoDistribuidor().equals(dtoAnterior.getDataRecolhimentoDistribuidor()))
+    		return false;
     	if(lancamento != null && lancamento.getPeriodoLancamentoParcial() != null) {
             
     		final PeriodoLancamentoParcial ultimoPeriodo = periodoLancamentoParcialRepository.obterUltimoLancamentoParcial(dto.getId());
@@ -480,8 +483,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     	
     }
     
-    private boolean isDataLancamentoAlterada(ProdutoEdicaoDTO dto, Lancamento lancamento)  {
+    private boolean isDataLancamentoAlterada(ProdutoEdicaoDTO dto, Lancamento lancamento,ProdutoEdicaoDTO dtoAnterior)  {
 
+    	if (dtoAnterior != null &&  dto.getDataLancamento() != null  && dto.getDataLancamento().equals(dtoAnterior.getDataLancamento()))
+    		return false;
 		if( dto.getDataLancamento() != null && 
 			dto.getDataLancamento().compareTo(lancamento.getDataLancamentoDistribuidor()) == 0 ) {
 			return false;
@@ -491,8 +496,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
     }
     
-    private boolean isDataLancamentoPrevistoAlterada(ProdutoEdicaoDTO dto, Lancamento lancamento)  {
+    private boolean isDataLancamentoPrevistoAlterada(ProdutoEdicaoDTO dto, Lancamento lancamento,ProdutoEdicaoDTO dtoAnterior)  {
 
+    	if ( dtoAnterior != null && dto.getDataLancamentoPrevisto() != null &&  dto.getDataLancamentoPrevisto().equals(dtoAnterior.getDataLancamentoPrevisto()))
+    			return false;
 		if( dto.getDataLancamentoPrevisto() != null && 
 			dto.getDataLancamentoPrevisto().compareTo(lancamento.getDataLancamentoPrevista()) == 0 ) {
 			return false;
@@ -515,7 +522,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     }
 
     @Transactional(readOnly=true)
-	public List<String> validarDadosBasicosEdicao(ProdutoEdicaoDTO dto, String codigoProduto) {
+	public List<String> validarDadosBasicosEdicao(ProdutoEdicaoDTO dto, String codigoProduto,ProdutoEdicaoDTO dtoAnterior) {
     	
     	boolean indDataLancamentoPrevistoAlterada = true;
     	
@@ -529,11 +536,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         	
     		if(lancamento != null) {
     			
-    			indDataLancamentoPrevistoAlterada = isDataLancamentoPrevistoAlterada(dto, lancamento);
-    			
-        		indDataLancamentoAlterada = isDataLancamentoAlterada(dto, lancamento);
-        		
-        		indDataRecolhimentoAlterada = isDataRecolhimentoAlterada(dto, lancamento);
+    			    indDataLancamentoPrevistoAlterada = isDataLancamentoPrevistoAlterada(dto, lancamento,dtoAnterior);
+    		
+    				indDataLancamentoAlterada = isDataLancamentoAlterada(dto, lancamento,dtoAnterior);
+    						
+        			indDataRecolhimentoAlterada = isDataRecolhimentoAlterada(dto, lancamento,dtoAnterior);
         	}
     	}
     	
@@ -667,9 +674,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         	
     		if(lancamento != null) {
     			
-        		indDataLancamentoAlterada = isDataLancamentoAlterada(dto, lancamento);
-        		indDataRecolhimentoAlterada = isDataRecolhimentoAlterada(dto, lancamento);
-        		indDataLancamentoPrevistoAlterada = isDataLancamentoPrevistoAlterada(dto, lancamento);
+        		indDataLancamentoAlterada = isDataLancamentoAlterada(dto, lancamento,null);
+        		indDataRecolhimentoAlterada = isDataRecolhimentoAlterada(dto, lancamento,null);
+        		indDataLancamentoPrevistoAlterada = isDataLancamentoPrevistoAlterada(dto, lancamento,null);
         	}
     	}
         
