@@ -8,6 +8,7 @@ public class FiltroConsultaNegociacoesDTO extends FiltroDTO implements Serializa
 	private static final long serialVersionUID = -3322353136192094144L;
 	
 	private Integer numeroCota;
+	private String nomeCota;
 	private String situacaoParcela;
 	private Date dataNegociacaoDe;
 	private Date dataNegociacaoAte;
@@ -50,6 +51,12 @@ public class FiltroConsultaNegociacoesDTO extends FiltroDTO implements Serializa
 	}
 	public void setDataVencimentoAte(Date dataVencimentoAte) {
 		this.dataVencimentoAte = dataVencimentoAte;
+	}
+	public String getNomeCota() {
+		return nomeCota;
+	}
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
 	}
 
 }

@@ -48,6 +48,8 @@ public class ConsultaNegociacaoDividaDTO implements Serializable {
 	private Long idCobranca;
 	
 	private Long idNegociacao;
+	
+	private Integer countParcelas;
 
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -152,6 +154,13 @@ public class ConsultaNegociacaoDividaDTO implements Serializable {
 	public void setIdNegociacao(Long idNegociacao) {
 		this.idNegociacao = idNegociacao;
 	}
-	
 
+	public Integer getCountParcelas() {
+		return countParcelas;
+	}
+
+	public void setCountParcelas(Integer countParcelas) {
+		this.countParcelas = countParcelas;
+	}
+	
 }

@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
@@ -1400,6 +1401,40 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     @Override
 	@Transactional
     public List<ConsultaNegociacaoDividaDTO> buscarNegociacoesDividas(FiltroConsultaNegociacoesDTO filtro){
-    	return this.negociacaoDividaRepository.buscarNegociacaoDivida(filtro);
+    	
+    	List<ConsultaNegociacaoDividaDTO> negociacoes = this.negociacaoDividaRepository.buscarNegociacaoDivida(filtro); 
+    	
+    	HashMap<Long, List<ConsultaNegociacaoDividaDTO>> mapNegociacoes = new HashMap<>();
+    	
+    	for (ConsultaNegociacaoDividaDTO negociacaoDTO : negociacoes) {
+			if(!mapNegociacoes.containsKey(negociacaoDTO.getIdNegociacao())){
+				List<ConsultaNegociacaoDividaDTO> listNegociacoes = new ArrayList<>();
+				listNegociacoes.add(negociacaoDTO);
+				mapNegociacoes.put(negociacaoDTO.getIdNegociacao(), listNegociacoes);
+			}else{
+				mapNegociacoes.get(negociacaoDTO.getIdNegociacao()).add(negociacaoDTO);
+			}
+		}
+    	
+    	Set<Long> keys = mapNegociacoes.keySet();
+    	
+    	for (Long key : keys) {
+			List<ConsultaNegociacaoDividaDTO> negociacoesMapList = mapNegociacoes.get(key);
+			int indexParcela = 1;
+
+			Collections.sort(negociacoesMapList, new Comparator<ConsultaNegociacaoDividaDTO>() {
+				public int compare(ConsultaNegociacaoDividaDTO negociacao1, ConsultaNegociacaoDividaDTO negociacao2){
+					return negociacao1.getDataVencimento().compareTo(negociacao2.getDataVencimento()) < 0 ? -1 : 
+						(negociacao1.getDataVencimento().compareTo(negociacao2.getDataVencimento()) > 0 ? +1 : 0);
+				}
+			});
+			
+			for (ConsultaNegociacaoDividaDTO negociacao : negociacoesMapList) {
+				negociacao.setParcela(indexParcela+"/"+negociacao.getCountParcelas());
+				indexParcela++;
+			}
+		}
+    	
+    	return negociacoes;
     }
 }

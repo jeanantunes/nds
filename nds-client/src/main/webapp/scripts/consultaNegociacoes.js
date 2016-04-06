@@ -113,16 +113,18 @@ var consultaNegociacoesController = $.extend(true, {
 				display : 'Ação',
 				name : 'acao',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			} ],
-			sortname : "cota",
-			sortorder : "asc",
+			sortname : "dataNegociacao",
+			sortorder : "desc",
 			width : 950,
 			height : 200,
 			usepager : true,
 			useRp : true,
 			rp : 15,
+			colMove: false,
+			showToggleBtn: false,
 			showTableToggleBtn : true
 		});
 
@@ -148,23 +150,6 @@ var consultaNegociacoesController = $.extend(true, {
 		}
 		
 		$.each(resultado.rows, function(index, row) {
-			// ,'+row.cell.valorParcela+', '+row.cell.nomeCota+', '+row.cell.statusCota+'
-			
-//			var inputNegociacao = '<input style="display:none;" numeroCota="#numCota" valorParcela="#vlrParcela" nomeCota="#nmCota" statusCota="#sttCota"/>';
-//            
-//			var inputNone = inputNegociacao.toString()
-//                            .replace(/#numCota/g, row.cell.numeroCota)
-//                            .replace(/#vlrParcela/g, row.cell.valorParcela)
-//                            .replace(/#nmCota/g, row.cell.nomeCota)
-//                            .replace(/#sttCota/g, row.cell.statusCota);
-			
-//			consultaNegociacoesController.negociacaoMap = new Map();
-//			
-//			consultaNegociacoesController.negociacaoMap.set('numCota', row.cell.numeroCota);
-//			consultaNegociacoesController.negociacaoMap.set('nmCota', row.cell.nomeCota);
-//			consultaNegociacoesController.negociacaoMap.set('sttCota', row.cell.statusCota);
-//			consultaNegociacoesController.negociacaoMap.set('vlrParcela', row.cell.valorParcela);
-//			
 			
 			var botaoOpcoes = '<a href="javascript:;" nomeCota="'+row.cell.nomeCota+'" negociacaoId="'+row.cell.idNegociacao+'" cobrancaId="'+row.cell.idCobranca+'" statusCota="'+row.cell.statusCota+'" onclick="consultaNegociacoesController.popup_formaPgto('+row.cell.numeroCota+', '+row.cell.valorParcela+', this);" style="cursor:pointer" rel="tipsy" title="Detalhes">' +
 			'<img src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0" />'+	
@@ -186,8 +171,8 @@ var consultaNegociacoesController = $.extend(true, {
 						
 		});
 		
-//		$(".grids", regiaoController.workspace).show();
 		
+		$(".areaBts").show();
 		$("#negociacoesGrid", consultaNegociacoesController.workspace).show();
 		
 		return resultado;
