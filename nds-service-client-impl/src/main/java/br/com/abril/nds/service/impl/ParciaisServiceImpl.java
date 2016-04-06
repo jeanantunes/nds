@@ -441,7 +441,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		Date dataRecolhimentoAntecipada = this.obterProximaData(data, -1);
 		
-		long difDiasAntecipada = DateUtil.obterDiferencaDias(data, dataRecolhimentoAntecipada);
+		long difDiasAntecipada = DateUtil.obterDiferencaDias(dataRecolhimentoAntecipada,data);
 		
 		return (difDiasAntecipada < difDiasPosterior)
 					? dataRecolhimentoAntecipada : dataRecolhimentoPosterior;
@@ -588,6 +588,12 @@ public class ParciaisServiceImpl implements ParciaisService{
 		if(lancamento == null)
 			throw new ValidacaoException(TipoMensagem.WARNING, "Lancamento não deve ser nulo.");
 		
+		// caso esteja mudando a data de recolhimento, verificar se situacao do lancamento perfmite
+		if (lancamento.getDataRecolhimentoDistribuidor().compareTo(dataRecolhimento) != 0) {
+					
+					this.validarStatusLancamentoPeriodo(lancamento, "Lancamento já foi realizado, não pode ser alterado.");
+				}
+				
 		if (lancamento.getDataLancamentoDistribuidor().compareTo(dataLancamento) != 0) {
 			
 			this.validarStatusLancamentoPeriodo(lancamento, "Lancamento já foi realizado, não pode ser alterado.");

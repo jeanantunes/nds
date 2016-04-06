@@ -457,71 +457,72 @@ public class BoletoServiceImpl implements BoletoService {
             
             try {
                 
-                divida.setStatus(StatusDivida.PENDENTE_INADIMPLENCIA);
-                dividaRepository.alterar(divida);
-                
-                boleto.setStatusCobranca(StatusCobranca.NAO_PAGO);
-                cobrancaRepository.alterar(boleto);
-                
-                final Date dataVencimento = this.obterNovaDataVencimentoAcumulo(dataPagamento);
-                
-                //movimentoFinanceiro do valor do boleto
-                final MovimentoFinanceiroCota movimentoPendente = this.gerarMovimentoFinanceiro(
-                        dataPagamento,
-                        usuario,
-                        boleto.getCota(),
-                        dataVencimento,
-                        boleto.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN),
-                        tipoMovimentoFinanceiroPendente,
-                        "Cobrança não paga");
-                
-                MovimentoFinanceiroCota movimentoJuros = null;
-                
-                MovimentoFinanceiroCota movimentoMulta = null;
-                
-                BigDecimal valor = cobrancaService.calcularJuros(
-                        boleto.getBanco(),
-                        boleto.getCota().getId(),
-                        boleto.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN),
-                        boleto.getDataVencimento(),
-                        dataCalculoJuros, formaCobrancaPrincipal);
-                
-                if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0){
-                    
-                    //movimento finaceiro juros
-                    movimentoJuros = this.gerarMovimentoFinanceiro(
-                            dataPagamento,
-                            usuario,
-                            boleto.getCota(),
-                            dataVencimento,
-                            valor,
-                            tipoMovimentoFinanceiroJuros,
-                            "Cobrança não paga");
-                }
-                
-                valor = cobrancaService.calcularMulta(
-                        boleto.getBanco(),
-                        boleto.getCota(),
-                        boleto.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN),
-                        formaCobrancaPrincipal);
-                
-                if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0){
-                    
-                    //movimento financeiro multa
-                    movimentoMulta = this.gerarMovimentoFinanceiro(
-                            dataPagamento,
-                            usuario,
-                            boleto.getCota(),
-                            dataVencimento,
-                            valor,
-                            tipoMovimentoFinanceiroMulta,
-                            "Cobrança não paga");
-                }
-                
-                isPermiteAcumulo = permiteAcumuloDivida(isPermiteAcumulo, divida);
+            	isPermiteAcumulo = permiteAcumuloDivida(isPermiteAcumulo, divida);
                 
                 if(isPermiteAcumulo) {
-                	this.gerarAcumuloDivida(usuario, divida, movimentoPendente, movimentoJuros, movimentoMulta);
+            	
+	                divida.setStatus(StatusDivida.PENDENTE_INADIMPLENCIA);
+	                dividaRepository.alterar(divida);
+	                
+	                boleto.setStatusCobranca(StatusCobranca.NAO_PAGO);
+	                cobrancaRepository.alterar(boleto);
+	                
+	                final Date dataVencimento = this.obterNovaDataVencimentoAcumulo(dataPagamento);
+	                
+	                //movimentoFinanceiro do valor do boleto
+	                final MovimentoFinanceiroCota movimentoPendente = this.gerarMovimentoFinanceiro(
+	                        dataPagamento,
+	                        usuario,
+	                        boleto.getCota(),
+	                        dataVencimento,
+	                        boleto.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN),
+	                        tipoMovimentoFinanceiroPendente,
+	                        "Cobrança não paga");
+	                
+	                MovimentoFinanceiroCota movimentoJuros = null;
+	                
+	                MovimentoFinanceiroCota movimentoMulta = null;
+	                
+	                BigDecimal valor = cobrancaService.calcularJuros(
+	                        boleto.getBanco(),
+	                        boleto.getCota().getId(),
+	                        boleto.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN),
+	                        boleto.getDataVencimento(),
+	                        dataCalculoJuros, formaCobrancaPrincipal);
+	                
+	                if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0){
+	                    
+	                    //movimento finaceiro juros
+	                    movimentoJuros = this.gerarMovimentoFinanceiro(
+	                            dataPagamento,
+	                            usuario,
+	                            boleto.getCota(),
+	                            dataVencimento,
+	                            valor,
+	                            tipoMovimentoFinanceiroJuros,
+	                            "Cobrança não paga");
+	                }
+	                
+	                valor = cobrancaService.calcularMulta(
+	                        boleto.getBanco(),
+	                        boleto.getCota(),
+	                        boleto.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN),
+	                        formaCobrancaPrincipal);
+	                
+	                if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0){
+	                    
+	                    //movimento financeiro multa
+	                    movimentoMulta = this.gerarMovimentoFinanceiro(
+	                            dataPagamento,
+	                            usuario,
+	                            boleto.getCota(),
+	                            dataVencimento,
+	                            valor,
+	                            tipoMovimentoFinanceiroMulta,
+	                            "Cobrança não paga");
+	                }
+
+	                this.gerarAcumuloDivida(usuario, divida, movimentoPendente, movimentoJuros, movimentoMulta);
                 }
                 
             } catch (final IllegalArgumentException e) {
@@ -538,6 +539,8 @@ public class BoletoServiceImpl implements BoletoService {
 	private boolean permiteAcumuloDivida(boolean isPermiteAcumulo, final Divida divida) {
 		BigInteger qtdeAcumulo = BigInteger.ZERO;
 		
+		BigDecimal valorBoleto = BigDecimal.ZERO;
+		
 		Cota cota = divida.getCota();
 		
 		LOGGER.info("Cota: "+cota.getNumeroCota());
@@ -553,15 +556,24 @@ public class BoletoServiceImpl implements BoletoService {
 					qtdeAcumulo = new BigInteger(parametrosDistribuidorVO.getSugereSuspensaoQuandoAtingirBoletos());
 				}
 				
-				LOGGER.info("Acumulo: "+numeroMaximoAcumulo);
-				LOGGER.info("QTDE: "+qtdeAcumulo);
-				
-				if(numeroMaximoAcumulo.compareTo(qtdeAcumulo) > 0) {
-					
-					return isPermiteAcumulo = false;
+				if(numeroMaximoAcumulo.compareTo(qtdeAcumulo) >= 0) {
+					return false;
 				}
 				
-			} 			
+				if(parametrosDistribuidorVO.getSugereSuspensaoQuandoAtingirReais() != null && !parametrosDistribuidorVO.getSugereSuspensaoQuandoAtingirReais().isEmpty()){
+					
+					valorBoleto = new BigDecimal(parametrosDistribuidorVO.getSugereSuspensaoQuandoAtingirReais());				
+					
+					if(valorBoleto.intValue() > 0) {
+						if(divida.getValor().compareTo(valorBoleto) >= 0) {
+							return false;
+						}
+					}
+				}
+				
+			} else {
+				return false;
+			}			
 		} else {
 			if(cota.isSugereSuspensao()) {
 				
@@ -569,13 +581,22 @@ public class BoletoServiceImpl implements BoletoService {
 					qtdeAcumulo = BigInteger.valueOf(cota.getPoliticaSuspensao().getNumeroAcumuloDivida().intValue());
 				}
 				
-				if(numeroMaximoAcumulo.compareTo(qtdeAcumulo) > 0) {
-					
-					return isPermiteAcumulo = false;
+				if(numeroMaximoAcumulo.compareTo(qtdeAcumulo) >= 0) {
+					return false;
 				}
 				
+				if(cota.getPoliticaSuspensao().getValor() != null) {
+					valorBoleto = cota.getPoliticaSuspensao().getValor();
+					
+					if(valorBoleto.intValue() > 0) {						
+						if(divida.getValor().compareTo(valorBoleto) >= 0) {
+							return false;
+						}
+					}
+				}
+			} else {
+				return false;
 			}
-			
 		}
 		
 		return isPermiteAcumulo;
@@ -666,9 +687,14 @@ public class BoletoServiceImpl implements BoletoService {
         
         divida.setAcumulada(true);
         
-        LOGGER.info("DIVIDA ANTERIOR: ", divida.toString());
+        LOGGER.info("DIVIDA ANTERIOR: "+ divida);
         
-        divida.setDividaRaiz(divida);
+        System.out.println(divida);
+        
+        if(divida.getDividaRaiz() != null) {
+        	//divida.setDividaRaiz(acumuloDivida.getDividaAnterior());
+        	 System.out.println(divida);
+        }
         
         dividaRepository.alterar(divida);
         
