@@ -24,17 +24,17 @@ var pesquisaCota = new PesquisaCota();
 <body>
 
 
-	<form id="formPesquisaDebitosCreditos">
+	<form id="formPesquisaConsultaNegociacoes">
 	
-	<div class="areaBts">
+	<div class="areaBts" style="display:none;">
 		<div class="area">
 			<span class="bt_arq">
-			<a href="${pageContext.request.contextPath}/financeiro/debitoCreditoCota/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+			<a href="${pageContext.request.contextPath}/financeiro/consultaNegociacoes/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 				<img src="${pageContext.request.contextPath}/images/ico_excel.png"  hspace="5" border="0" />
 			</a>
 		</span>
 		<span class="bt_arq">
-			<a href="${pageContext.request.contextPath}/financeiro/debitoCreditoCota/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+			<a href="${pageContext.request.contextPath}/financeiro/consultaNegociacoes/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0" />
 			</a>
 		</span>
@@ -77,8 +77,8 @@ var pesquisaCota = new PesquisaCota();
 		    <td>
 			    <select name="situacaoParcela" id="consultaNegociacaoSituacaoParcela" style="width:150px;">
 				  <option selected="selected"></option>
-				  <option value="PAGA">Paga</option>
-				  <option value="NAO_PAGA">N&atilde;o paga</option>
+				  <option value="PAGO">Paga</option>
+				  <option value="NAO_PAGO">N&atilde;o paga</option>
 				  <option value="A_VENCER">A vencer</option>
 				  <!-- 
 				  <c:forEach items="${tiposMovimentoFinanceiroMain}" var="tipoMovimento">
