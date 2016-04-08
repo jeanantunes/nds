@@ -1046,7 +1046,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			mffc.setDesobrigaNotaFiscalDevolucaoSimbolica(false); 
 		} else {
 			
-			mffc.setNotaFiscalDevolucaoSimbolicaEmitida(false);
+			mffc.setNotaFiscalDevolucaoSimbolicaEmitida(true);
 			mffc.setDesobrigaNotaFiscalDevolucaoSimbolica(false);
 		}
 			
