@@ -66,7 +66,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		criteria.add(Restrictions.eq("statusCobranca", StatusCobranca.NAO_PAGO));
 		criteria.add(Restrictions.isNull("cobranca.dataPagamento"));
 		
-		criteria.add(Restrictions.lt("dataVencimento", data));
+		criteria.add(Restrictions.le("dataVencimento", data));
 		
 		// criteria.add(Restrictions.isNull("divida.dividaRaiz"));
 		criteria.addOrder(Order.desc("dataVencimento"));
