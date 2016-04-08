@@ -3393,8 +3393,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			ctrlConfEncalheCota.setDataFim(dataFinalizacao);
 			
+			LOGGER.warn("LOGFUNCIONAL . inserindo novo controle_conferencia_encalhe_cota ");
+			// ver se ja nao tem duplicado ..
+			 this.verificarControleConferenciaEncalheCotaDuplicaca(ctrlConfEncalheCota);
+			 
 			controleConferenciaEncalheCotaRepository.adicionar(ctrlConfEncalheCota);
-			
+			LOGGER.warn("LOGFUNCIONAL . inserindo novo controle_conferencia_encalhe_cota "+ctrlConfEncalheCota.getId());
 			return ctrlConfEncalheCota;
 		}
 	}
