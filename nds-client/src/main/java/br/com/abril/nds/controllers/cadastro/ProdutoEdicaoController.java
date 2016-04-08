@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +94,12 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	@Autowired
 	private ProdutoService prodService;
+	
+	@Autowired
+	private HttpSession session;
+	
+	
+	public static String DTO_ANTERIOR="DTO_ANTERIOR";
 	
 	/** Traz a página inicial. */
 	@Get
@@ -241,7 +249,8 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 		
 		ProdutoEdicaoDTO dto = produtoEdicaoService.obterProdutoEdicaoDTO(filtro.getCodigo(), idProdutoEdicao, redistribuicao, situacaoProdutoEdicao);
-		
+
+		session.setAttribute(DTO_ANTERIOR, dto);
 		this.result.use(Results.json()).from(dto, "result").serialize();
 	}
 	
@@ -476,7 +485,7 @@ public class ProdutoEdicaoController extends BaseController {
      */
 	private void validarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, ModoTela modoTela) {
 		
-		List<String> listaMensagensValidacao = produtoEdicaoService.validarDadosBasicosEdicao(dto, codigoProduto);
+		List<String> listaMensagensValidacao = produtoEdicaoService.validarDadosBasicosEdicao(dto, codigoProduto,(ProdutoEdicaoDTO) session.getAttribute(DTO_ANTERIOR));
 		
 		if (!listaMensagensValidacao.isEmpty()) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagensValidacao));

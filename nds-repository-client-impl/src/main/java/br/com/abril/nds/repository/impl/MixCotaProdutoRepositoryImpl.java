@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
@@ -483,6 +484,8 @@ public class MixCotaProdutoRepositoryImpl extends AbstractRepositoryModel<MixCot
 			.add(Restrictions.eq("cota.id", cotaId))
 			.add(Restrictions.eq("tipoClassificacaoProduto.id", classificaoProdutoId))
 			.add(Restrictions.eq("codigoICD", codICD))
+			.addOrder(Order.desc("dataHora")) // odemir -- pegar o mais recente
+			.setMaxResults(1) 				  //  para evitar problema quando ha duplicacao de informacao
 			.uniqueResult();
 		}
 		

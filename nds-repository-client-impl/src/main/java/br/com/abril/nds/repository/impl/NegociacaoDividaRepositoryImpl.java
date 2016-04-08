@@ -555,7 +555,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 
     @Override
     public boolean verificarAtivacaoCotaAposPgtoParcela(Long idCobranca) {
-        
+    
         SQLQuery query = this.getSession().createSQLQuery(
                 " select "+
                 "    case when parcelaneg7_.ID = i.idParcelaAtivar then true else false end as ativa "+
@@ -607,9 +607,11 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
                 "    )  "+
                 "    and cobranca0_.ID= :idCobranca  "+
                 "    and cota1_.SITUACAO_CADASTRO<> :ativo "+
-                "    and i.parcelaAtv = negociacao8_.ATIVAR_PAGAMENTO_APOS_PARCELA");
-        
+                "    and i.parcelaAtv = negociacao8_.ATIVAR_PAGAMENTO_APOS_PARCELA"+
+        		" group by cobranca0_.id ");
         query.setParameter("idCobranca", idCobranca);
+        
+        
         query.setParameter("ativo", SituacaoCadastro.ATIVO.name());
         
         query.addScalar("ativa", StandardBasicTypes.BOOLEAN);
@@ -681,42 +683,29 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" SELECT  ");
-		
-		sql.append(" sub.numeroCota as numeroCota, ");
-		sql.append(" sub.nomeCota as nomeCota, ");
-		sql.append(" sub.statusCota as statusCota, ");
-		sql.append(" ROUND(sub.dividaInicial, 2) as dividaInicial, ");
-		sql.append(" ROUND(sub.valorEncargos, 2) as valorEncargos, ");
-		sql.append(" ROUND(sub.dividaNegociada, 2) as dividaNegociada, ");
-		sql.append(" sub.dataNegociacao as dataNegociacao, ");
-		sql.append(" sub.dataVencimento as dataVencimento, ");
-		sql.append(" concat(@countParcela\\:=@countParcela + 1,'/', sub.countParcelas) as parcela,  ");
-		sql.append(" ROUND(sub.valorParcela, 2) as valorParcela, ");
-		sql.append(" sub.situacaoParcela as situacaoParcela, ");
-		sql.append(" sub.idCob2 as idCobranca, ");
-		sql.append(" sub.idnegociacao as idNegociacao ");
-
-		sql.append(" FROM ");
-		
-		sql.append("   (SELECT  ");
+		sql.append("   SELECT  ");
 		sql.append("       ct.NUMERO_COTA as numeroCota, ");
 		sql.append("       coalesce(ps.NOME_FANTASIA, ps.RAZAO_SOCIAL, ps.NOME, '') as nomeCota, ");
 		sql.append("       ct.SITUACAO_CADASTRO as statusCota, ");
-		sql.append("       ng.VALOR_ORIGINAL as dividaInicial, ");
-		sql.append("       cb.ENCARGOS as valorEncargos, ");
-		sql.append("       (COALESCE(cb.ENCARGOS, 0) + ceil(cb.VALOR)) as dividaNegociada, ");
+		sql.append("       ROUND(ng.VALOR_ORIGINAL, 2) as dividaInicial, ");
+		sql.append("       ROUND(cb.ENCARGOS, 2) as valorEncargos, ");
+		sql.append("       ROUND((COALESCE(cb.ENCARGOS, 0) + cb.VALOR), 2) as dividaNegociada, ");
 		sql.append("       cb.DT_EMISSAO as dataNegociacao, ");
 		sql.append("       pn.DATA_VENCIMENTO as dataVencimento, ");
 		sql.append("       (select count(id) from parcela_negociacao where NEGOCIACAO_ID = nco.NEGOCIACAO_ID)  as countParcelas,  ");
-		sql.append("       if(mfc2.valor is null, mfc.VALOR, mfc2.valor) valorParcela, ");
-		sql.append("       if(cb2.STATUS_COBRANCA is null, cb.STATUS_COBRANCA, cb2.STATUS_COBRANCA) situacaoParcela, ");
-		sql.append("       cb2.id as idCob2, ");
-		sql.append("       ng.id as idnegociacao ");
+		sql.append("       ROUND(if(mfc2.valor is null, mfc.VALOR, mfc2.valor), 2) valorParcela, ");
+
+//		sql.append("       if(cb2.STATUS_COBRANCA is null, cb.STATUS_COBRANCA, cb2.STATUS_COBRANCA) situacaoParcela, ");
+
+		sql.append("       if(cb2.STATUS_COBRANCA = 'NAO_PAGO', ");
+		sql.append("            CASE ");
+		sql.append("              WHEN  DATEDIFF(pn.data_vencimento, (select data_operacao from distribuidor)) > 0 THEN 'A_VENCER' ");
+		sql.append("              WHEN  DATEDIFF(pn.data_vencimento, (select data_operacao from distribuidor)) <= 0 THEN cb2.STATUS_COBRANCA  ");
+		sql.append("            END,  ");
+		sql.append("            if(cb2.STATUS_COBRANCA is null, cb.STATUS_COBRANCA,cb2.STATUS_COBRANCA)) as situacaoParcela, ");
 		
-//		sql.append("       mfc.VALOR valorParcela, ");
-//		sql.append("       cb.STATUS_COBRANCA situacaoParcela ");
-		
+		sql.append("       cb2.id as idCobranca, ");
+		sql.append("       ng.id as idNegociacao ");
 		
 		sql.append("   FROM cobranca cb ");
 		
@@ -752,9 +741,21 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		
 		this.getParametrosBuscarNegociacaoDivida(filtro, sql, null);
 		
-		sql.append("     ORDER BY pn.DATA_VENCIMENTO) sub,  ");
+		sql.append(" ORDER BY ");
 		
-		sql.append("     (SELECT @countParcela\\:=0) as sub2 ");
+		if (filtro.getPaginacao() != null){
+		
+        	if(filtro.getPaginacao().getSortColumn().equalsIgnoreCase("PARCELA")){
+        		sql.append(" dividaInicial ");
+        	}else{
+        		sql.append(filtro.getPaginacao().getSortColumn());
+        	}
+
+        	sql.append(" "+filtro.getPaginacao().getSortOrder());
+			
+		} else {
+			sql.append(" dataNegociacao desc ");
+		}
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
@@ -768,7 +769,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		query.addScalar("dividaNegociada", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("dataNegociacao", StandardBasicTypes.DATE);
 		query.addScalar("dataVencimento", StandardBasicTypes.DATE);
-		query.addScalar("parcela", StandardBasicTypes.STRING);
+		query.addScalar("countParcelas", StandardBasicTypes.INTEGER);
 		query.addScalar("valorParcela", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("situacaoParcela", StandardBasicTypes.STRING);
 		query.addScalar("idCobranca", StandardBasicTypes.LONG);
@@ -793,8 +794,24 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		
 		if(filtro.getSituacaoParcela() != null && !filtro.getSituacaoParcela().equals("")){
 			if(sql != null){
-//				sql.append(" AND ct.NUMERO_COTA = :numeroCota ");
-			}else{
+				if(filtro.getSituacaoParcela().equalsIgnoreCase("A_VENCER")){
+					
+					sql.append(" AND DATEDIFF(pn.data_vencimento, (select data_operacao from distribuidor)) > 0 ");
+					sql.append(" AND cb2.STATUS_COBRANCA = 'NAO_PAGO' ");
+					
+				}else{
+					if(filtro.getSituacaoParcela().equalsIgnoreCase("NAO_PAGO")){
+						sql.append(" AND DATEDIFF(pn.data_vencimento, (select data_operacao from distribuidor)) <= 0 ");
+						sql.append(" AND cb2.STATUS_COBRANCA = 'NAO_PAGO' ");
+						
+					}else{
+						if(filtro.getSituacaoParcela().equalsIgnoreCase("PAGO")){
+							sql.append(" AND cb2.STATUS_COBRANCA = 'PAGO' ");
+						}
+					}
+				}
+				
+			}else{	
 //				query.setParameter("numeroCota", filtro.getNumeroCota());
 			}
 		}

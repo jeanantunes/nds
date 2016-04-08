@@ -750,8 +750,15 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	sql.append("   ON d.COTA_ID = ct.ID ");
     	sql.append(" left join tipo_movimento tm  ");
     	sql.append("   ON mfc.TIPO_MOVIMENTO_ID = tm.ID ");
+    	
+    	sql.append("    JOIN PDV pdv ON (pdv.COTA_ID = ct.ID) ");
+	    sql.append("    JOIN ROTA_PDV rotaPDV ON (rotaPDV.PDV_ID = pdv.ID) ");
+	    sql.append("    JOIN ROTA rota ON (rotaPDV.ROTA_ID = rota.ID) ");
+	    sql.append("    JOIN ROTEIRO roteiro ON (roteiro.ID = rota.ROTEIRO_ID) ");
+	    sql.append("    JOIN ROTEIRIZACAO rtz ON (rtz.ID = roteiro.ROTEIRIZACAO_ID) ");
+	    sql.append("    JOIN BOX box ON (box.ID = rtz.BOX_ID) ");
 
-    	sql.append("   WHERE d.DATA = :dtOperacao   and cb.cota_id = ct.id and d.cota_id = ct.id  and ct.id = mfc.cota_id ");
+    	sql.append("   WHERE d.DATA = :dtOperacao   and cb.cota_id = ct.id and d.cota_id = ct.id  and ct.id = mfc.cota_id and box.tipo_box <> 'ESPECIAL' ");
     	sql.append("   GROUP BY mfc.COTA_ID ");
     	sql.append("   ORDER BY ct.NUMERO_COTA ");
     	
@@ -817,7 +824,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	     sql.append("    JOIN ROTEIRO roteiro ON (roteiro.ID = rota.ROTEIRO_ID) ");
 	     sql.append("    JOIN ROTEIRIZACAO rtz ON (rtz.ID = roteiro.ROTEIRIZACAO_ID) ");
 	     sql.append("    JOIN BOX box ON (box.ID = rtz.BOX_ID) ");
-		 sql.append(" 	WHERE    cota.id = ct.id AND box.tipo_box <> 'ESPECIAL' ) ");    
+		 sql.append(" 	WHERE    cota.id = ct.id AND box.tipo_box <> 'ESPECIAL' limit 1) ");    
 		 return sql.toString();
 	}
 	

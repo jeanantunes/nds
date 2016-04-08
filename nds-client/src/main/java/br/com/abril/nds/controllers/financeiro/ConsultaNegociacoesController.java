@@ -1,7 +1,11 @@
 package br.com.abril.nds.controllers.financeiro;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,7 +23,10 @@ import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -39,10 +46,18 @@ public class ConsultaNegociacoesController extends BaseController {
     private Result result;
 	
 	@Autowired
+	private HttpServletResponse httpResponse;
+	
+	@Autowired
+	private HttpSession session;
+	
+	@Autowired
 	private DistribuidorService distribuidorService;
 	
 	@Autowired
 	private BancoService bancoService;
+	
+	private static final String FILTRO_SESSION_ATTRIBUTE = "consultaNegociacoesCota";
 	
 	@Path("/")
 	public void index(){
@@ -74,6 +89,8 @@ public class ConsultaNegociacoesController extends BaseController {
 
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
+		this.tratarFiltro(filtro);
+		
 		TableModel<CellModelKeyValue<ConsultaNegociacaoDividaDTO>> tableModel = efetuarConsultaNegociacaoDivida(filtro);
 
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
@@ -101,6 +118,46 @@ public class ConsultaNegociacoesController extends BaseController {
 
 		return tableModel;
 
+	}
+	
+	@Get
+	public void exportar(FileType fileType) throws IOException {
+		
+		FiltroConsultaNegociacoesDTO filtro = this.obterFiltroExportacao(); 
+		
+		List<ConsultaNegociacaoDividaDTO> listaExport = negociacaoDividaService.buscarNegociacoesDividas(filtro);
+		
+		FileExporter.to("consulta-negociação-cota", fileType)
+			.inHTTPResponse(this.getNDSFileHeader(), null, listaExport, ConsultaNegociacaoDividaDTO.class, this.httpResponse);
+	}
+	
+	private FiltroConsultaNegociacoesDTO obterFiltroExportacao() {
+		
+		FiltroConsultaNegociacoesDTO filtro = (FiltroConsultaNegociacoesDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtro != null) {
+			if (filtro.getPaginacao() != null) {
+				filtro.getPaginacao().setPaginaAtual(null);
+				filtro.getPaginacao().setQtdResultadosPorPagina(null);
+			}
+		}else{
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tente pesquisar, antes de exportar os dados.");
+		}
+		
+		return filtro;
+	}
+	
+	private void tratarFiltro(FiltroConsultaNegociacoesDTO filtro) {
+
+		FiltroConsultaNegociacoesDTO filtroSession = (FiltroConsultaNegociacoesDTO) session
+				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtroSession != null && !filtroSession.equals(filtro)) {
+
+			filtro.getPaginacao().setPaginaAtual(1);
+		}
+		
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 	}
 	
 }
