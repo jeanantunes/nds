@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.administracao;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSServiceClient;
+import br.com.abril.icd.axis.util.SemanaUtil;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.DetalheInterfaceVO;
@@ -636,13 +638,17 @@ public class PainelProcessamentoController extends BaseController {
     	List<ItemEncalheBandeiraVO> itens= ftfService.obterItensNotasNaoEnviadas(nota.getNotaId()) ;
     	 try {
     		 
-    		  ItemEncalheBandeiraVO item0 = itens.get(0);
-     		 DestinoEncalhe destinoEncalhe = notaFiscalService.obterDestinoEncalhe(item0.getCodPublicacao().toString(),new Long(item0.getNumEdicao()));
-    		  if ( destinoEncalhe != null )
-     		 nota.setNomeDestinoEncalhe(destinoEncalhe.getNomeDestinoDDE());
-    		  else
-    			  LOGGER.warn("NAO ENCONTRADO DESTINO ENCALHE PARA PRODUTO/EDICAO "+item0.getCodPublicacao() +"/"
-    					  															+item0.getNumEdicao());
+    		  
+    		  // setar anosemana do encalhe de acordo com destino encalhe do item
+    		 
+    			for(ItemEncalheBandeiraVO item : itens ) {
+    				
+	    			DestinoEncalhe destinoEncalhe = notaFiscalService.obterDestinoEncalhe(item.getCodPublicacao().toString(),new Long(item.getNumEdicao()));
+	    			item.setAnoSemanaRecolhimento(destinoEncalhe.getSemanaRecolhimento());
+	    			nota.setNomeDestinoEncalhe(destinoEncalhe.getNomeDestinoDDE());
+	    			
+    			}
+    			
     	          DevolucaoEncalheBandeirasWSServiceClient.enviarNotasDevEncalheBandeiras(nota,itens,homolog,uf);
     	   
     	      
