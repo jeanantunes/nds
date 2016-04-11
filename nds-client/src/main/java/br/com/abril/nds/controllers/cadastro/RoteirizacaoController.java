@@ -963,6 +963,7 @@ public class RoteirizacaoController extends BaseController {
 		List<PdvRoteirizacaoDTO> lista = this.roteirizacaoService.obterPdvsDisponiveis(numCota, municipio, uf, bairro, cep, pesquisaPorCota, boxID);
 		
 		verificarExistenciaPDVsRotaAtual(idRoteiro, idRota, lista);
+		excluirPDVsJaAdicionados(lista);
 		
 		Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
 		PaginacaoUtil.ordenarEmMemoria(lista, ordenacao, sortname);
@@ -1028,6 +1029,36 @@ public class RoteirizacaoController extends BaseController {
 		}
 	}
 	
+	
+	private void excluirPDVsJaAdicionados( List<PdvRoteirizacaoDTO> lista) {
+		
+		RoteirizacaoDTO roteirizacao = (RoteirizacaoDTO) session.getAttribute(ROTEIRIZACAO_DTO_SESSION_KEY);
+		
+		if (roteirizacao != null) {
+			
+			List<RoteiroRoteirizacaoDTO> roteiros = roteirizacao.getRoteiros();
+				
+				for (RoteiroRoteirizacaoDTO roteiro : roteiros) {
+					
+					
+					
+					List<RotaRoteirizacaoDTO> rotas = roteiro.getRotas();
+					
+							for (RotaRoteirizacaoDTO rota : rotas) {
+							
+							
+							
+							List<PdvRoteirizacaoDTO> pdvs = rota.getPdvs();
+							
+							if (pdvs != null) {
+								
+								lista.removeAll(pdvs);
+							}
+						}
+					}
+			
+		}
+	}
 	/**
 	 * Recupera o DTO de rota da Sessão, pertencente a um roteiro, pela Ordem
 	 * 
@@ -1478,6 +1509,10 @@ public class RoteirizacaoController extends BaseController {
 		Long idRotaNova = null;
 		Integer novaOrdem = null;
 		
+		if  ( pdvs == null  || pdvs.isEmpty() ) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione ao menos um PDV para a transferencia.");
+		}
+		
 		if (_idRotaNova != null){
 			if (_idRotaNova.contains("_")){
 				
@@ -1511,6 +1546,9 @@ public class RoteirizacaoController extends BaseController {
         
         } catch (ValidacaoException ve) {
         	
+        	if  ( idRotaNova == null   ) {
+    			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione a nova Rota para a transferencia.");
+    		}
         	Rota rota = this.roteirizacaoService.buscarRotaPorId(idRotaNova);
 
         	RoteirizacaoDTO roteirizacaoDTO = this.getRoteirizacaoDTOSessao();
