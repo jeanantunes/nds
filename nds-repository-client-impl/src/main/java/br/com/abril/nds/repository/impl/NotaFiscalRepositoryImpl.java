@@ -964,7 +964,13 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		if(!isGroup){
-			hql.append(" GROUP BY mfff.fornecedor.id ");
+			if(filtro.isEmissaoPorEditor()) {
+				hql.append(" GROUP BY mfff.fornecedor.id ");
+			} else {				
+				hql.append(" and mfff.qtde > 0 ");
+				hql.append(" GROUP BY mfff.id ");
+			}
+			
 		} else {
 			hql.append(" GROUP BY mfff ");
 		}
@@ -983,7 +989,11 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		// Realizar a consulta e converter ao objeto cota exemplares.
 		Query query = this.getSession().createQuery(hql.toString());		
 
-		query.setParameter("true", true);
+		if(!filtro.isEmissaoPorEditor()) {
+			query.setParameter("true", false);
+		} else {
+			query.setParameter("true", false);
+		}
 		
 		query.setParameter("false", false);
 		

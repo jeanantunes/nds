@@ -76,9 +76,8 @@ public class DevolucaoEncalheBandeirasWSServiceClient {
 		for ( ItemEncalheBandeiraVO item:itens) {
 		 
 		ItemNotaEncalheBandeiraVO itemNotaEncalheBandeiraVO = new ItemNotaEncalheBandeiraVO();
-		String anoSemana = SemanaUtil.obterAnoNumeroSemana(item.getDataRecolhimento(),Calendar.WEDNESDAY);
 		
-		itemNotaEncalheBandeiraVO.setAnoSemanaRecolhimento(anoSemana);
+		itemNotaEncalheBandeiraVO.setAnoSemanaRecolhimento(item.getAnoSemanaRecolhimento());
 		itemNotaEncalheBandeiraVO.setCodPublicacaoProdin(item.getCodPublicacao());
 		itemNotaEncalheBandeiraVO.setExemplaresPacote(item.getExemplaresPacote());
 		itemNotaEncalheBandeiraVO.setIndiceVolume(item.getIndiceVolume());

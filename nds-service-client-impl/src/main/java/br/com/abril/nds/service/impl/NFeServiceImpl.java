@@ -1090,9 +1090,9 @@ public class NFeServiceImpl implements NFeService {
 			
 			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, parametrosSistema, naturezaOperacao);
 			
-			EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, cota);
-			
 			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
+			
+			EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, cota);
 			
 			montaChaveAcesso(notaFiscal);
 			
@@ -1188,13 +1188,24 @@ public class NFeServiceImpl implements NFeService {
 		
 		NotaFiscalBuilder.popularDadosTransportadora(notaFiscal, distribuidor);
 		
+		NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, distribuidor, parametrosSistema);
+		
 		EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, distribuidor);
+		
+		NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 		
 		NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
 		
-		NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, distribuidor, parametrosSistema);
+		montaChaveAcesso(notaFiscal);
 		
-		NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
+		if(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica() == null) {
+			notaFiscal.getNotaFiscalInformacoes().setInformacaoEletronica(new InformacaoEletronica());
+		}
+		
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().setChaveAcesso(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(3, 47));
+		
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(Long.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(46, 47)));
+		
 		
 		final List<MovimentoFechamentoFiscal> movimentosFechamentoFiscal = new ArrayList<>();
 		final List<MovimentoEstoqueCota> movimentosEstoqueCota = new ArrayList<>();

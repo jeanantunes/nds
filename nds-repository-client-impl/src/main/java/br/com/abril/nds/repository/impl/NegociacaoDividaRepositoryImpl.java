@@ -556,7 +556,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 
     @Override
     public boolean verificarAtivacaoCotaAposPgtoParcela(Long idCobranca) {
-        
+    
         SQLQuery query = this.getSession().createSQLQuery(
                 " select "+
                 "    case when parcelaneg7_.ID = i.idParcelaAtivar then true else false end as ativa "+
@@ -608,9 +608,11 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
                 "    )  "+
                 "    and cobranca0_.ID= :idCobranca  "+
                 "    and cota1_.SITUACAO_CADASTRO<> :ativo "+
-                "    and i.parcelaAtv = negociacao8_.ATIVAR_PAGAMENTO_APOS_PARCELA");
-        
+                "    and i.parcelaAtv = negociacao8_.ATIVAR_PAGAMENTO_APOS_PARCELA"+
+        		" group by cobranca0_.id ");
         query.setParameter("idCobranca", idCobranca);
+        
+        
         query.setParameter("ativo", SituacaoCadastro.ATIVO.name());
         
         query.addScalar("ativa", StandardBasicTypes.BOOLEAN);
