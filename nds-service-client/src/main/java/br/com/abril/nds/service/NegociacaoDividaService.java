@@ -3,11 +3,10 @@ package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import br.com.abril.nds.client.vo.CalculaParcelasVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.ConsultaNegociacaoDividaDTO;
+import br.com.abril.nds.dto.DetalheConsultaNegociacaoDividaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCalculaParcelas;
@@ -57,4 +56,6 @@ public interface NegociacaoDividaService {
     void verificarAtivacaoCotaAposPgtoParcela(Cobranca cobranca, Usuario usuario);
 
 	List<ConsultaNegociacaoDividaDTO> buscarNegociacoesDividas(FiltroConsultaNegociacoesDTO filtro);
+
+	DetalheConsultaNegociacaoDividaDTO buscarDetalhesNegociacaoDivida(Long idNegociacao);
 }

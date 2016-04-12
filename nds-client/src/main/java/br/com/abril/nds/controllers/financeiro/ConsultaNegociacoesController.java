@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaNegociacaoDividaDTO;
+import br.com.abril.nds.dto.DetalheConsultaNegociacaoDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacoesDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -118,6 +119,16 @@ public class ConsultaNegociacoesController extends BaseController {
 
 		return tableModel;
 
+	}
+	
+	@Post
+	@Path("/buscarDetalhesNegociacao")
+	public void buscarDetalhesNegociacao(Long idNegociacao){
+		
+		DetalheConsultaNegociacaoDividaDTO consultaDetalhes = negociacaoDividaService.buscarDetalhesNegociacaoDivida(idNegociacao);
+		
+		result.use(Results.json()).withoutRoot().from(consultaDetalhes).recursive().serialize();
+		
 	}
 	
 	@Get

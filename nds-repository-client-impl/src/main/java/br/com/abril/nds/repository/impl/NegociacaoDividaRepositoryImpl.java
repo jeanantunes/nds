@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaFollowupNegociacaoDTO;
 import br.com.abril.nds.dto.ConsultaNegociacaoDividaDTO;
+import br.com.abril.nds.dto.DetalheConsultaNegociacaoDividaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacoesDTO;
@@ -776,6 +777,88 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		query.setResultTransformer(new AliasToBeanResultTransformer(ConsultaNegociacaoDividaDTO.class));
 		
 		this.configurarPaginacao(filtro, query);
+		
+		return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<DetalheConsultaNegociacaoDividaDTO> buscarDetalhesNegociacaoDivida(Long idNegociacao){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("   SELECT  ");
+		
+		sql.append("    ng.TIPO_NEGOCIACAO as tipoNegociacao, ");
+		sql.append("    (select count(id) from parcela_negociacao where NEGOCIACAO_ID = ng.ID) as qtdParcelas, ");
+		sql.append("    fc.TIPO_COBRANCA as tipoDePagamento, ");
+		sql.append("    fc.TIPO_FORMA_COBRANCA as tipoFormaCobranca, ");
+		sql.append("    ng.NEGOCIACAO_AVULSA as negAvulsa, ");
+		sql.append("    DATE_FORMAT(pn.DATA_VENCIMENTO,'%d/%m/%Y') as dataVencimento, ");
+		sql.append("    ROUND(if(mfc2.valor is null, mfc.VALOR, mfc2.valor), 2) as parcela, ");
+		sql.append("    ROUND(pn.ENCARGOS, 2) as valorEncargos,  ");
+//		sql.append("    ROUND(cb.ENCARGOS, 2) as valorEncargos,  ");
+		sql.append("    ROUND((COALESCE(cb.ENCARGOS, 0) + cb.VALOR), 2) as parcelaTotal,  ");
+		sql.append("    ng.ATIVAR_PAGAMENTO_APOS_PARCELA as ativaAoPagar, ");
+		sql.append("    bc.NOME as nomeBanco, ");
+		sql.append("    ng.ISENTA_ENCARGOS as isIsentaEncargos, ");
+		sql.append("    fc.RECEBE_COBRANCA_EMAIL as isReceberPorEmail ");
+		
+		sql.append("   FROM cobranca cb ");
+		
+		sql.append("   JOIN divida dv ");
+		sql.append("     ON cb.DIVIDA_ID = dv.ID ");
+		sql.append("   JOIN negociacao_cobranca_originaria nco ");
+		sql.append("     ON nco.COBRANCA_ID = cb.ID ");
+		sql.append("   JOIN negociacao ng ");
+		sql.append("     ON nco.NEGOCIACAO_ID = ng.ID ");
+		sql.append("   JOIN forma_cobranca fc ");
+		sql.append("     ON ng.FORMA_COBRANCA_ID = fc.id ");
+		sql.append("   JOIN parcela_negociacao pn ");
+		sql.append("     ON pn.NEGOCIACAO_ID = ng.ID ");
+		sql.append("   JOIN movimento_financeiro_cota mfc  ");
+		sql.append("     ON pn.MOVIMENTO_FINANCEIRO_ID = mfc.id ");
+		sql.append("   LEFT OUTER JOIN consolidado_mvto_financeiro_cota cmfc  ");
+		sql.append("     ON cmfc.MVTO_FINANCEIRO_COTA_ID = mfc.id ");
+		sql.append("   LEFT OUTER JOIN consolidado_financeiro_cota cfc  ");
+		sql.append("     ON cfc.id = cmfc.CONSOLIDADO_FINANCEIRO_ID ");
+		sql.append("   LEFT OUTER JOIN divida_consolidado dc  ");
+		sql.append("     ON dc.CONSOLIDADO_ID = cfc.ID ");
+		sql.append("   LEFT OUTER JOIN movimento_financeiro_cota mfc2 ");
+		sql.append("     ON cmfc.MVTO_FINANCEIRO_COTA_ID = mfc2.ID ");
+		sql.append("   LEFT OUTER JOIN divida dv2 ");
+		sql.append("     ON dv2.id = dc.divida_id ");
+		sql.append("   LEFT OUTER JOIN cobranca cb2 ");
+		sql.append("     ON dv2.id = cb2.divida_id ");
+		sql.append("   JOIN cota ct ");
+		sql.append("     ON cb.COTA_ID = ct.ID ");
+		sql.append("   JOIN pessoa ps  ");
+		sql.append("     ON ct.PESSOA_ID = ps.ID ");
+		sql.append("   LEFT JOIN banco bc  ");
+		sql.append("     ON fc.BANCO_ID = bc.ID ");
+		
+		sql.append("   WHERE  ng.id = :idNegociacao ");
+		sql.append("   ORDER BY pn.DATA_VENCIMENTO ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("idNegociacao", idNegociacao);
+		
+		query.addScalar("tipoNegociacao", StandardBasicTypes.STRING);
+		query.addScalar("qtdParcelas", StandardBasicTypes.INTEGER);
+		query.addScalar("tipoDePagamento", StandardBasicTypes.STRING);
+		query.addScalar("tipoFormaCobranca", StandardBasicTypes.STRING);
+		query.addScalar("negAvulsa", StandardBasicTypes.BOOLEAN);
+		query.addScalar("dataVencimento", StandardBasicTypes.STRING);
+		query.addScalar("parcela", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("valorEncargos", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("parcelaTotal", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("ativaAoPagar", StandardBasicTypes.INTEGER);
+		query.addScalar("nomeBanco", StandardBasicTypes.STRING);
+		query.addScalar("isIsentaEncargos", StandardBasicTypes.BOOLEAN);
+		query.addScalar("isReceberPorEmail", StandardBasicTypes.BOOLEAN);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(DetalheConsultaNegociacaoDividaDTO.class));
 		
 		return query.list();
 	}

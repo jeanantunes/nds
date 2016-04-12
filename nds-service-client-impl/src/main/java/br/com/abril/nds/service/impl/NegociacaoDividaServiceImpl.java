@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.CalculaParcelasVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.ConsultaNegociacaoDividaDTO;
+import br.com.abril.nds.dto.DetalheConsultaNegociacaoDividaDTO;
 import br.com.abril.nds.dto.ImpressaoNegociacaoDTO;
 import br.com.abril.nds.dto.ImpressaoNegociacaoParecelaDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
@@ -1436,5 +1437,48 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		}
     	
     	return negociacoes;
+    }
+    
+    @Override
+	@Transactional
+    public DetalheConsultaNegociacaoDividaDTO buscarDetalhesNegociacaoDivida(Long idNegociacao){
+    	
+    	List<DetalheConsultaNegociacaoDividaDTO> detalhes = this.negociacaoDividaRepository.buscarDetalhesNegociacaoDivida(idNegociacao);
+    	
+    	List<CalculaParcelasVO> listParcelas = new ArrayList<>();
+    	
+    	DetalheConsultaNegociacaoDividaDTO detalheReturn = new DetalheConsultaNegociacaoDividaDTO();
+    	
+    	int countParcela = 1;
+
+    	for (DetalheConsultaNegociacaoDividaDTO detalhe : detalhes) {
+			
+			if(countParcela == 1){
+				detalheReturn = detalhe;
+			}
+    		
+    		if(!detalhe.getTipoNegociacao().equalsIgnoreCase(TipoNegociacao.COMISSAO.toString())){
+    			
+    			CalculaParcelasVO parcela = new CalculaParcelasVO();
+    			
+    			parcela.setNumParcela(Integer.toString(countParcela));
+    			parcela.setParcela(CurrencyUtil.formatarValor(detalhe.getParcelaTotal()));
+    			parcela.setDataVencimento(detalhe.getDataVencimento());
+    			parcela.setEncargos(CurrencyUtil.formatarValor(detalhe.getValorEncargos() != null ? detalhe.getValorEncargos() : BigDecimal.ZERO));
+    			parcela.setParcTotal(CurrencyUtil.formatarValor(detalhe.getParcela().add(detalhe.getValorEncargos() != null ? detalhe.getValorEncargos() : BigDecimal.ZERO)));
+    			
+    			countParcela++;
+    			
+    			listParcelas.add(parcela);
+    		}
+    		
+		}
+    	
+    	if(!listParcelas.isEmpty()){
+    		detalheReturn.setListParcelas(listParcelas);
+    	}
+    	
+    	return detalheReturn;
+    	
     }
 }
