@@ -221,81 +221,172 @@ var consultaNegociacoesController = $.extend(true, {
 		var idCobranca = elemento.attributes.getNamedItem('cobrancaId').textContent;
 		var idNegociacao = elemento.attributes.getNamedItem('negociacaoId').textContent;
 		
-		if (valorParcela == "0,00") {
-			exibirMensagem("WARNING", ["Não há possibilidades de negociar este valor!"], "");
-			return;
-		}
-		
-		consultaNegociacoesController.valorSelecionadoSemEncargo = floatToPrice(valorParcela);
-		consultaNegociacoesController.idCobrancaSelecionada = idCobranca;
-		consultaNegociacoesController.idNegociacaoSelecionada = idNegociacao;
-		
 		$("#cn_formaPgtoForm")[0].reset();
-
-		consultaNegociacoesController.limparPopupFormaPgto();
 		
+		consultaNegociacoesController.limparPopupFormaPgto();
+				
 		$('span[name$="botoes"]').hide();
 		
-		$.postJSON(contextPath + '/financeiro/negociacaoDivida/buscarComissaoCotaPorNumeroCota',
-			{'numeroCota':numeroCota}, 
-			function(result) {
-
-				if (isNaN(result[0])){
+		
+		$.postJSON(contextPath + '/financeiro/consultaNegociacoes/buscarDetalhesNegociacao',
+				{'idNegociacao':idNegociacao}, 
+				function(result) {
 					
-					$("#cn_negociacaoPorComissao",consultaNegociacoesController.workspace).attr("disabled", true);
-					$("#cn_negociacaoPorComissao-tr",consultaNegociacoesController.workspace).hide();
-					
-				} else {
-//					var comissao = result[0];
-					
-					$("#cn_comissaoUtilizar",consultaNegociacoesController.workspace).val(floatToPrice(result[0]));
-//					$("#cn_comissaoUtilizar",consultaNegociacoesController.workspace).val(floatToPrice(comissao));
-					
-					$("#cn_negociacaoPorComissao",consultaNegociacoesController.workspace).attr("disabled", false);
-					$("#cn_negociacaoPorComissao-tr",consultaNegociacoesController.workspace).show();
-				}
-
-				$("#cn_selectPagamento", consultaNegociacoesController.workspace).val(result[1]);
-				
-				$('#cn_formaPgto_numEnomeCota',consultaNegociacoesController.workspace).html('<strong>Cota:</strong> '+ numeroCota +' - <strong>Nome: </strong>'+ nomeCota+' - <strong>Status: </strong>'+ statusCota);
-				$('#cn_dividaSelecionada',consultaNegociacoesController.workspace).html(floatToPrice(valorParcela));
-				$('#cn_valorSelecionado',consultaNegociacoesController.workspace).val(floatToPrice(valorParcela));
-				$('#cn_numeroCota',consultaNegociacoesController.workspace).val(numeroCota);
-
-				$("#cn_dialog-NegociacaoformaPgto").dialog({
-					resizable: false,
-					height:550,
-					width:760,
-					modal: true,
-					buttons: {
-						"Confirmar": function() {
-							
-							consultaNegociacoesController.confirmarNegociacao();							
-						},
-						"Cancelar": function() {
-							 $("#cn_dialog-NegociacaoformaPgto", consultaNegociacoesController.workspace).dialog("close");
+					if(result.tipoNegociacao == "COMISSAO"){
+						
+					}else{
+						
+						$('#cn_pagamentoEm', consultaNegociacoesController.workspace).attr("checked", true);
+						
+						$('#cn_checknegociacaoAvulsa', consultaNegociacoesController.workspace).attr("checked", result.negAvulsa);
+						$('.cn_comissaoAtual', consultaNegociacoesController.workspace).hide();
+						$('.cn_pgtos', consultaNegociacoesController.workspace).show();	
+						
+						$("#cn_selectPagamento").append("<option selected='selected'>" + result.tipoDePagamento + "</option>");
+						
+						consultaNegociacoesController.opcaoFormasPagto(result.tipoDePagamento); 
+						
+						$('#cn_radio'+result.tipoFormaCobranca, consultaNegociacoesController.workspace).attr("checked", true);
+						
+						if($('#cn_selectPagamento',consultaNegociacoesController.workspace).val() == 'CHEQUE'){
+							consultaNegociacoesController.geraLinhasCheque(result.listParcelas);
+						}else{
+							consultaNegociacoesController.geraLinhasParcelas(result.listParcelas, result.ativaAoPagar);
 						}
-					},
-					form: $("#cn_formaPgtoForm", consultaNegociacoesController.workspace),
-					close: function(event, ui) {
 						
-						consultaNegociacoesController.pesquisar();
-					},
-					open: function(event, ui) {
+						$("#cn_selectBancosBoleto").append("<option selected='selected'>" + result.nomeBanco + "</option>");
 						
-						$(this).keydown(function(event) {
-							if (event.keyCode == $.ui.keyCode.ENTER) {
-								event.stopPropagation();
-								event.preventDefault();
-							}
-						});
+						$('#cn_checkReceberEmail').attr("checked", result.isReceberPorEmail);
 						
-						consultaNegociacoesController.tratarSituacaoCota(consultaNegociacoesController.situacaoCota);
+						$('#cn_isentaEncargos').attr("checked", result.isIsentaEncargos);
+						
+						$("#cn_selectParcelas").val(result.qtdParcelas);
+						
+						if(result.tipoDePagamento == 'BOLETO' || result.tipoDePagamento == 'BOLETO_EM_BRANCO') {
+		            		$("#cn_botaoImprimirBoleto", consultaNegociacoesController.workspace).show();
+		            		$("#cn_botaoImprimirBoleto", consultaNegociacoesController.workspace).append('<a href="javascript:;" onclick="consultaNegociacoesController.imprimirBoleto('+idNegociacao+');" >'+ 
+		            				'<img src="'+contextPath+'/images/ico_impressora.gif" hspace="5" border="0" /> Imprimir Boletos </a>');
+		            	} else {
+		            		$("#cn_botaoImprimirRecibo", consultaNegociacoesController.workspace).show();
+		            	}
+						
+		            	$("#cn_botaoImprimirNegociacao", consultaNegociacoesController.workspace).show();
+		            	
+		            	$("#cn_botaoImprimirNegociacao", consultaNegociacoesController.workspace).append('<a href="javascript:;" onclick="consultaNegociacoesController.imprimirNegociacao('+idNegociacao+', '+valorParcela+');">'+
+		            			'<img src="'+contextPath+'/images/ico_impressora.gif" hspace="5" border="0" /> Imprimir Negociação </a>');
+		            	
 					}
+					
+					$('#cn_formaPgto_numEnomeCota').html('<strong>Cota:</strong> '+ numeroCota +' - <strong>Nome: </strong>'+ nomeCota+' - <strong>Status: </strong>'+ statusCota);
+					$('#cn_dividaSelecionada').html(floatToPrice(valorParcela));
+					$('#cn_valorSelecionado').val(floatToPrice(valorParcela));
+					$('#cn_numeroCota').val(numeroCota);
+	
+					$("#cn_dialog-NegociacaoformaPgto").dialog({
+						resizable: false,
+						height:550,
+						width:760,
+						modal: true,
+						buttons: {
+							"Cancelar": function() {
+								 $(this).dialog("close");
+							}
+						},
+						open: function(event, ui) {
+							
+							$(this).keydown(function(event) {
+								if (event.keyCode == $.ui.keyCode.ENTER) {
+									event.stopPropagation();
+									event.preventDefault();
+								}
+							});
+							$(".negociacaoClass").disable(true);
+						},
+						beforeClose: function() {
+							$(".negociacaoClass").removeAttr("disabled");
+						},
+					});
+				},
+				function(result) {
+					
 				});
-			} ,
-			null
-		);
+				
+		
+//		if (valorParcela == "0,00") {
+//			exibirMensagem("WARNING", ["Não há possibilidades de negociar este valor!"], "");
+//			return;
+//		}
+//		
+//		consultaNegociacoesController.valorSelecionadoSemEncargo = floatToPrice(valorParcela);
+//		consultaNegociacoesController.idCobrancaSelecionada = idCobranca;
+//		consultaNegociacoesController.idNegociacaoSelecionada = idNegociacao;
+//		
+//		$("#cn_formaPgtoForm")[0].reset();
+//
+//		consultaNegociacoesController.limparPopupFormaPgto();
+//		
+//		$('span[name$="botoes"]').hide();
+//		
+//		$.postJSON(contextPath + '/financeiro/negociacaoDivida/buscarComissaoCotaPorNumeroCota',
+//			{'numeroCota':numeroCota}, 
+//			function(result) {
+//
+//				if (isNaN(result[0])){
+//					
+//					$("#cn_negociacaoPorComissao",consultaNegociacoesController.workspace).attr("disabled", true);
+//					$("#cn_negociacaoPorComissao-tr",consultaNegociacoesController.workspace).hide();
+//					
+//				} else {
+////					var comissao = result[0];
+//					
+//					$("#cn_comissaoUtilizar",consultaNegociacoesController.workspace).val(floatToPrice(result[0]));
+////					$("#cn_comissaoUtilizar",consultaNegociacoesController.workspace).val(floatToPrice(comissao));
+//					
+//					$("#cn_negociacaoPorComissao",consultaNegociacoesController.workspace).attr("disabled", false);
+//					$("#cn_negociacaoPorComissao-tr",consultaNegociacoesController.workspace).show();
+//				}
+//
+//				$("#cn_selectPagamento", consultaNegociacoesController.workspace).val(result[1]);
+//				
+//				$('#cn_formaPgto_numEnomeCota',consultaNegociacoesController.workspace).html('<strong>Cota:</strong> '+ numeroCota +' - <strong>Nome: </strong>'+ nomeCota+' - <strong>Status: </strong>'+ statusCota);
+//				$('#cn_dividaSelecionada',consultaNegociacoesController.workspace).html(floatToPrice(valorParcela));
+//				$('#cn_valorSelecionado',consultaNegociacoesController.workspace).val(floatToPrice(valorParcela));
+//				$('#cn_numeroCota',consultaNegociacoesController.workspace).val(numeroCota);
+//
+//				$("#cn_dialog-NegociacaoformaPgto").dialog({
+//					resizable: false,
+//					height:550,
+//					width:760,
+//					modal: true,
+//					buttons: {
+//						"Confirmar": function() {
+//							
+//							consultaNegociacoesController.confirmarNegociacao();							
+//						},
+//						"Cancelar": function() {
+//							 $("#cn_dialog-NegociacaoformaPgto", consultaNegociacoesController.workspace).dialog("close");
+//						}
+//					},
+//					form: $("#cn_formaPgtoForm", consultaNegociacoesController.workspace),
+//					close: function(event, ui) {
+//						
+//						consultaNegociacoesController.pesquisar();
+//					},
+//					open: function(event, ui) {
+//						
+//						$(this).keydown(function(event) {
+//							if (event.keyCode == $.ui.keyCode.ENTER) {
+//								event.stopPropagation();
+//								event.preventDefault();
+//							}
+//						});
+//						
+//						consultaNegociacoesController.tratarSituacaoCota(consultaNegociacoesController.situacaoCota);
+//					}
+//				});
+//			} ,
+//			null
+//		);
 	},
 	
 	limparPopupFormaPgto : function() {
@@ -494,7 +585,7 @@ var consultaNegociacoesController = $.extend(true, {
 		});
 	},
 	
-	geraLinhasParcelas : function(result) {
+	geraLinhasParcelas : function(result, ativaAoPagar) {
 		
 		consultaNegociacoesController.parcelas = result;
 		
@@ -539,10 +630,13 @@ var consultaNegociacoesController = $.extend(true, {
 				coluna3.innerHTML = '<input type="text" name="cn_valorParcela" id="cn_parcela'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].parcela+'" onchange="consultaNegociacoesController.recalcularParcelas('+(i-1)+',this, false)" />';
 				coluna4.innerHTML = '<input type="text" name="cn_encargoParcela" id="cn_encargos'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].encargos+'" disabled="disabled"/>';
 				coluna5.innerHTML = '<input type="text" name="cn_parcTotal" id="cn_parcTotal'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].parcTotal+'"/ disabled="disabled">';
+				coluna6.innerHTML = '<input type="radio" name="radioAtivarApos" id="cn_ativarAoPagar'+i+'" value="'+ i +'" />';
 				
-				if(this.situacaoCota != 'ATIVO'){
-					coluna6.innerHTML = '<input type="radio" name="radioAtivarApos" id="cn_ativarAoPagar'+i+'" value="'+ i +'" onchange="consultaNegociacoesController.ativarAoPagarOnchange('+(i-1)+',this)" />';
-				}				
+				if(ativaAoPagar != undefined && ativaAoPagar == i){
+					coluna6.innerHTML = '<input type="radio" checked="yes" name="radioAtivarApos" id="cn_ativarAoPagar'+i+'" value="'+ i +'" />';
+				}else{
+					coluna6.innerHTML = '<input type="radio" name="radioAtivarApos" id="cn_ativarAoPagar'+i+'" value="'+ i +'" />';
+				}
 				
 				totalParcela = sumPrice(result[i-1].parcela, totalParcela);
 				totalEncargos = sumPrice(result[i-1].encargos, totalEncargos);
@@ -682,7 +776,7 @@ var consultaNegociacoesController = $.extend(true, {
 					if($('#cn_selectPagamento',consultaNegociacoesController.workspace).val() == 'CHEQUE'){
 						consultaNegociacoesController.geraLinhasCheque(result);
 					}else{
-						consultaNegociacoesController.geraLinhasParcelas(result);
+//						consultaNegociacoesController.geraLinhasParcelas(result);
 					}
 				}, function(result) {
 					$(parcelaInput).val(parcelaValorAntigo);
@@ -996,7 +1090,7 @@ var consultaNegociacoesController = $.extend(true, {
 						if($('#cn_selectPagamento').val() == 'CHEQUE'){
 							consultaNegociacoesController.geraLinhasCheque(result);
 						}else{
-							consultaNegociacoesController.geraLinhasParcelas(result);
+//							consultaNegociacoesController.geraLinhasParcelas(result);
 						}
 					}
 			);
@@ -1122,6 +1216,13 @@ var consultaNegociacoesController = $.extend(true, {
 		
 		var url = contextPath + '/financeiro/negociacaoDivida/imprimirBoletosNegociacao?idNegociacao='+idNegociacao;
 		window.open(url, '_blank');
+	},
+	
+	impressaoBoletoDialog : function() {
+		
+		var idNegociacao = 
+		
+		negociacaoDividaController.imprimirBoleto();
 	},
 
 	

@@ -117,7 +117,7 @@ var pesquisaCota = new PesquisaCota();
       </fieldset>
 
       <form id="cn_formaPgtoForm">
-		<div id="cn_dialog-NegociacaoformaPgto" title="Negociar D&iacute;vida" style="display:none;">
+		<div id="cn_dialog-NegociacaoformaPgto" title="Dados da negocia&ccedil;&atilde;o da d&iacute;vida" style="display:none;">
 			
 	
 			<input type="hidden" name ="filtro.valorSelecionado" id="cn_valorSelecionado"/>
@@ -133,7 +133,7 @@ var pesquisaCota = new PesquisaCota();
 			</fieldset>
 			<br clear="all" />
 
-			<fieldset style="width: 690px !important;">
+			<fieldset style="width: 690px !important;" class="negociacaoClass">
 				<legend>Formas de Pagamento</legend>
 
 				<table width="640" border="0" cellspacing="1" cellpadding="1">
@@ -183,25 +183,26 @@ var pesquisaCota = new PesquisaCota();
 					class="cn_pgtos">
 					<!-- <tr>
 						<strong class="pgtos">Cobran&ccedil;a</strong>
-					</tr> -->
+					</tr> 
+					-->
 					<tr>
-						<td width="3%"><input type="radio" name="filtro.periodicidade" id="cn_radioDiario"
-							value="DIARIA" checked="yes"
+						<td width="3%"><input type="radio" name="filtro.periodicidade" id="cn_radioDIARIA"
+							value="DIARIA" 
 							onclick="consultaNegociacoesController.mostraDiario(); consultaNegociacoesController.calcularParcelas();" /></td>
 							
 						<td width="5%">Di&aacute;rio</td>
 						
-						<td width="3%"><input type="radio" name="filtro.periodicidade" id="cn_radioSemanal"
+						<td width="3%"><input type="radio" name="filtro.periodicidade" id="cn_radioSEMANAL"
 							value="SEMANAL"
 							onclick="consultaNegociacoesController.mostraSemanal(); consultaNegociacoesController.calcularParcelasSemanal();" /></td>
 							
 						<td width="7%">Semanal</td>
-						<td width="3%"><input type="radio" name="filtro.periodicidade" id="cn_radioQuinzenal"
+						<td width="3%"><input type="radio" name="filtro.periodicidade" id="cn_radioQUINZENAL"
 							value="QUINZENAL"
 							onclick="consultaNegociacoesController.mostraQuinzenal(); consultaNegociacoesController.calcularParcelasQuinzenal();" /></td>
 							
 						<td width="9%">Quinzenal</td>
-						<td width="3%"><input type="radio" name="filtro.periodicidade" id="cn_radioMensal"
+						<td width="3%"><input type="radio" name="filtro.periodicidade" id="cn_radioMENSAL"
 							value="MENSAL"
 							onclick="consultaNegociacoesController.mostraMensal(); consultaNegociacoesController.calcularParcelasMensal();" /></td>
 							
@@ -361,19 +362,10 @@ var pesquisaCota = new PesquisaCota();
 					</tr>
 				</table>
 			</fieldset>
-			<span class="bt_novos" title="Imprimir" name="botoes" id="cn_botaoImprimirNegociacao">
-
-				<a href="javascript:;" onclick="consultaNegociacoesController.imprimirNegociacao()">
-					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-						Imprimir Negocia&ccedil;&atilde;o
-				</a>
-			</span>
-			<span class="bt_novos" title="Imprimir Boletos" name="botoes" id="cn_botaoImprimirBoleto">
-				<a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/imprimirBoletos">
-					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-						Imprimir Boletos
-				</a>
-			</span>
+			<span class="bt_novos" title="Imprimir" name="botoes" id="cn_botaoImprimirNegociacao"> </span>
+			
+			<span class="bt_novos" title="Imprimir Boletos" name="botoes" id="cn_botaoImprimirBoleto"> </span>
+			
 			<span class="bt_novos" title="Imprimir Recibo" name="botoes" id="cn_botaoImprimirRecibo">
 				<a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/imprimirRecibo">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
