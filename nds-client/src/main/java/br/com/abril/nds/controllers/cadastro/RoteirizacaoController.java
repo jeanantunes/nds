@@ -963,7 +963,10 @@ public class RoteirizacaoController extends BaseController {
 		List<PdvRoteirizacaoDTO> lista = this.roteirizacaoService.obterPdvsDisponiveis(numCota, municipio, uf, bairro, cep, pesquisaPorCota, boxID);
 		
 		verificarExistenciaPDVsRotaAtual(idRoteiro, idRota, lista);
-		excluirPDVsJaAdicionados(lista);
+		
+		Box box = boxService.buscarPorId(boxID);
+		if ( !TipoBox.ESPECIAL.equals(box.getTipoBox()))
+			excluirPDVsJaAdicionados(lista);
 		
 		Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
 		PaginacaoUtil.ordenarEmMemoria(lista, ordenacao, sortname);

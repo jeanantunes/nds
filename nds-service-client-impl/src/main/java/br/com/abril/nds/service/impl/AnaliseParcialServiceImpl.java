@@ -867,19 +867,19 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	}
     	
     	if((estudoGerado.getSobra() != null) && estudoGerado.getSobra().compareTo(BigInteger.ZERO) != 0){
-    		validacao =  new ValidacaoException(TipoMensagem.WARNING,"Não é possível liberar estudo com saldo de reparte.");
+    		validacao =  new ValidacaoException(TipoMensagem.WARNING,"Não é possível liberar estudo com saldo de reparte.Sobra("+estudoGerado.getSobra()+")  != 0");
     		return validacao;
     	}
     	
     	if((estudoGerado.getQtdeReparte().compareTo(sumReparteCotas) != 0) || (estudoGerado.getQtdeReparte().compareTo(sumQtdEfetivaCotas) != 0)){
-    		validacao =  new ValidacaoException(TipoMensagem.WARNING,"Não é possível liberar estudo com saldo de reparte.");
+    		validacao =  new ValidacaoException(TipoMensagem.WARNING,"Não é possível liberar estudo com saldo de reparte. Total de reparte das cotas("+sumReparteCotas+") != Estudo ("+estudoGerado.getQtdeReparte()+")");
     		return validacao;
     	}
     	
     	ResumoEstudoHistogramaPosAnaliseDTO resumo = estudoGeradoRepository.obterResumoEstudo(estudoId, false);
     	
     	if((resumo.getSaldo() != null) && resumo.getSaldo().compareTo(BigDecimal.ZERO) != 0){
-    		validacao =  new ValidacaoException(TipoMensagem.WARNING,"Não é possível liberar estudo com saldo de reparte.");
+    		validacao =  new ValidacaoException(TipoMensagem.WARNING,"Não é possível liberar estudo com saldo de reparte. Saldo ("+resumo.getSaldo()+") != zero ");
     		return validacao;
     	}
     	
