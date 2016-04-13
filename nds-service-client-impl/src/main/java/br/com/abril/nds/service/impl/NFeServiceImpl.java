@@ -797,7 +797,7 @@ public class NFeServiceImpl implements NFeService {
 		} catch (Exception e) {
 			
 			LOGGER.error("Erro ao Gerar NF-e", e);
-			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao Gerar NF-e");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao Gerar NF-e: "+e.getMessage());
 			
 		}
 		
@@ -1090,9 +1090,9 @@ public class NFeServiceImpl implements NFeService {
 			
 			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, parametrosSistema, naturezaOperacao);
 			
-			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
-			
 			EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, cota);
+			
+			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 			
 			montaChaveAcesso(notaFiscal);
 			
