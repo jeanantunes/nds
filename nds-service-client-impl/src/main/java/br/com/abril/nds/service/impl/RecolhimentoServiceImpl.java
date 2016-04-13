@@ -737,8 +737,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		// verificar se existe chamadao para esta cota e produto nesta data. se tiver nao criar
 		
-		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
-		 
+		// Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
+		
+		/*
 		List <ChamadaEncalheCota> cecChamadao = chamadaEncalheCotaRepository.obterListaChamadaEncalheCotaChamadao(cota.getId(),chamadaEncalhe.getProdutoEdicao().getId(),dataOperacao);
 		
 		if ( cecChamadao != null && cecChamadao.size() > 0 ) { 
@@ -746,6 +747,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			LOGGER.warn("CEC NAO CRIADA. JA EXISTE CHAMADADO PARA ESTA COTA e PRODUTO cec.id="+cecChamadao.get(0).getId() );
 			return;
 		}
+		*/
 		
 		if(BigInteger.ZERO.compareTo(qtdPrevista) >= 0) {
           if ( isParcialFinal) { // se for pacialFinal, criar chamada com zero..
