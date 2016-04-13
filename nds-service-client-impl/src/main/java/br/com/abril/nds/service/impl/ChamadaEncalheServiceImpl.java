@@ -18,10 +18,13 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.controllers.HomeController;
 import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.ChamadaEncalheImpressaoWrapper;
@@ -78,7 +81,8 @@ import br.com.abril.nds.vo.PaginacaoVO;
 @Service
 public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	
-	
+	 private static final Logger LOGGER = LoggerFactory.getLogger(ChamadaEncalheServiceImpl.class);
+	 
 	@Autowired
 	private ChamadaEncalheRepository chamadaEncalheRepository;
 	
@@ -352,7 +356,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		List<Long> idsProdutoEdicao = new ArrayList<>();
 		
 		if(cota != null && cota.getProdutos() == null) {
-			
+			LOGGER.error("Não foram encontrados produtos para a Cota "+cota.getNumCota()+ " .Verificar se tem movimento estoque cota com reparte > 0");
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados produtos para a Cota "+cota.getNumCota());
 		}
 		
