@@ -353,7 +353,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		if(cota != null && cota.getProdutos() == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados produtos para a Cota selecionada.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados produtos para a Cota "+cota.getNumCota());
 		}
 		
 		for(ProdutoEmissaoDTO produtoDTO : cota.getProdutos()) {
