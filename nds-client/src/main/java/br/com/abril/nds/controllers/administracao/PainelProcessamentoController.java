@@ -633,58 +633,89 @@ public class PainelProcessamentoController extends BaseController {
         int erros=0;
          List<NotaEncalheBandeiraVO> notas = ftfService.obterNotasNaoEnviadas();
 	     int cont=0;
+	     int semPaletes=0;
+	     int semDE=0;
         for (NotaEncalheBandeiraVO nota: notas ) {
-        LOGGER.warn("ENVIADO NOTA "+(++cont)+" de "+notas.size());
-    	List<ItemEncalheBandeiraVO> itens= ftfService.obterItensNotasNaoEnviadas(nota.getNotaId()) ;
-    	 try {
-    		 
-    		  
-    		  // setar anosemana do encalhe de acordo com destino encalhe do item
-    		 
-    			for(ItemEncalheBandeiraVO item : itens ) {
-    				
-	    			DestinoEncalhe destinoEncalhe = notaFiscalService.obterDestinoEncalhe(item.getCodPublicacao().toString(),new Long(item.getNumEdicao()));
-	    			item.setAnoSemanaRecolhimento(destinoEncalhe.getSemanaRecolhimento());
-	    			nota.setNomeDestinoEncalhe(destinoEncalhe.getNomeDestinoDDE());
+	       try {
+	        LOGGER.warn("ENVIADO NOTA "+(++cont)+" de "+notas.size());
+	      
+	    	List<ItemEncalheBandeiraVO> itens= ftfService.obterItensNotasNaoEnviadas(nota.getNotaId()) ;
+	    	 try {
+	    		 
+	    		  if ( nota.getQtdSacosPaletes() == null || nota.getQtdSacosPaletes().intValue() <= 0  ) {
+	    			  // nao enviar, pois nao foi digitado ainda
+	    			  LOGGER.warn("Nota nao enviada  .. sem palete "+nota.getNumNota() );
+	    			  semPaletes++;
+	    			  continue;
+	    		  }
+	    		  
+	    		  // setar anosemana do encalhe de acordo com destino encalhe do item
+	    		 
+	    		    boolean semDestino=false;
+	    			for(ItemEncalheBandeiraVO item : itens ) {
+	    				
+		    			DestinoEncalhe destinoEncalhe = notaFiscalService.obterDestinoEncalhe(item.getCodPublicacao().toString(),new Long(item.getNumEdicao()));
+		    			if ( destinoEncalhe != null ) {
+		    			item.setAnoSemanaRecolhimento(destinoEncalhe.getSemanaRecolhimento());
+		    			nota.setNomeDestinoEncalhe(destinoEncalhe.getNomeDestinoDDE());
+		    			} else {
+		    				  LOGGER.warn("ERRO AO GRAVAR BANDEIRA  ..SEM DESTINO ENCALHE "+nota.getNumNota() );
+		    				 msg+="</br>ERRO AO ENVIAR NOTA ->Produto="+item.getCodPublicacao().toString()+" Edicao="+item.getNumEdicao()+" SEM DESTINO ENCALHE  Nota:"+nota.getNumNota() ;
+		        	    	  
+		        	    	  semDestino=true;
+		    			
+		    			}
+		    			
+	    			}
+	    			if ( semDestino ) {
+	    				semDE++;
+	    				continue;
+	    				
+	    			   }
 	    			
-    			}
-    			
-    	          DevolucaoEncalheBandeirasWSServiceClient.enviarNotasDevEncalheBandeiras(nota,itens,homolog,uf);
-    	   
-    	      
-    	       }catch (Exception e )
-    	       {
-    	    	  if ( e.getLocalizedMessage().contains("0020 - NOTA JA ENVIADA")) {
-    	    		  msg+="</br>NOTA JA ENVIADA  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe();
-    	    		
-    	    		  ftfService.atualizaFlagInterfaceNotasEnviadas(nota.getNotaId(),true); 
-    	    	  }
-    	    	  else
-    	    	  if ( !e.getLocalizedMessage().contains("BANDEIRA GRAVADA COM SUCESSO")) {
-    	    		 
-    	    	   LOGGER.warn("ERRO AO GRAVAR BANDEIRA ",e);
-    	    	   String it="";
-    	    	   for ( ItemEncalheBandeiraVO item:  itens)
-    	    		   it +="<"+item.getCodPublicacao()+"/"+item.getNumEdicao()+">";
-    	    	   msg+="</br>ERRO AO ENVIAR NOTA ->"+ e.getLocalizedMessage() +" " +e.getMessage()+ "  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe()+" Itens:"+it;
-    	    	  
-    	    	   erros++;
-    	    	  }
-    	    	  else {
-    	    		  String it="";
-       	    	   for ( ItemEncalheBandeiraVO item:  itens)
-       	    		   it +="<"+item.getCodPublicacao()+"/"+item.getNumEdicao()+">";
-    	    		  msg+="</br>BANDEIRA GRAVADA COM SUCESSO  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe()+" Itens:"+it;
-    	    		 
-    	    		  ftfService.atualizaFlagInterfaceNotasEnviadas(nota.getNotaId(),true);
-    	    	  }
-    	       }
+	    	          DevolucaoEncalheBandeirasWSServiceClient.enviarNotasDevEncalheBandeiras(nota,itens,homolog,uf);
+	    	   
+	    	      
+	    	       }catch (Exception e )
+	    	       {
+	    	    	   
+	    	    	  if (e.getLocalizedMessage().contains("ERRO: 9999") || e.getLocalizedMessage().contains("0020 - NOTA JA ENVIADA")) {
+	    	    		  msg+="</br>NOTA JA ENVIADA  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe();
+	    	    		
+	    	    		  ftfService.atualizaFlagInterfaceNotasEnviadas(nota.getNotaId(),true); 
+	    	    	  }
+	    	    	  else
+	    	    	  if ( !e.getLocalizedMessage().contains("BANDEIRA GRAVADA COM SUCESSO")) {
+	    	    		 
+	    	    	   LOGGER.warn("ERRO AO GRAVAR BANDEIRA ",e);
+	    	    	   String it="";
+	    	    	   for ( ItemEncalheBandeiraVO item:  itens)
+	    	    		   it +="<"+item.getCodPublicacao()+"/"+item.getNumEdicao()+">";
+	    	    	   msg+="</br>ERRO AO ENVIAR NOTA ->"+ e.getLocalizedMessage() +" " +e.getMessage()+ "  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe()+" Itens:"+it;
+	    	    	  
+	    	    	   erros++;
+	    	    	  }
+	    	    	  else {
+	    	    		  String it="";
+	       	    	   for ( ItemEncalheBandeiraVO item:  itens)
+	       	    		   it +="<"+item.getCodPublicacao()+"/"+item.getNumEdicao()+">";
+	    	    		  msg+="</br>BANDEIRA GRAVADA COM SUCESSO  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe()+" Itens:"+it;
+	    	    		 
+	    	    		  ftfService.atualizaFlagInterfaceNotasEnviadas(nota.getNotaId(),true);
+	    	    	  }
+	    	       }
+		       } catch ( Exception ee ) {
+		    	   LOGGER.warn("ERRO ENVIADO NOTA "+nota.getNumNota(),ee);
+		    	   msg+="ERRO ENVIADO NOTA "+nota.getNumNota()+" Erro:"+ee;
+		       }
     	 
-        }
+        } 
     	
         msg = "</br>Interface de Devolucao ao Fornecedor processadas "+
                 "</br>Qtde Notas Processada:"+notas.size()+
                 "</br>Qtde Notas com Erros :"+erros+
+                 "</br>Sem Paletes :"+semPaletes+
+                  "</br>Sem Destino Encalhe :"+semDE+
                 "</br>Mensagens            :"+msg;
          LOGGER.error(msg); 
     	result.use(Results.json()).from(
