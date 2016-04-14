@@ -575,6 +575,17 @@ public class NegociacaoDividaController extends BaseController {
 		this.result.use(Results.nothing());
 	}
 	
+	public void imprimirReciboConsultaNegociacao(Long idNegociacao) throws IOException {
+		
+		if (idNegociacao == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Negociação não encontrada.");
+		}
+		
+		gerarArquivoRecibo(idNegociacao);
+			
+	}
+	
 	public void imprimirRecibo() throws IOException {
 		
 		Long idNegociacao = (Long) this.session.getAttribute(ID_ULTIMA_NEGOCIACAO);
@@ -585,6 +596,11 @@ public class NegociacaoDividaController extends BaseController {
 					TipoMensagem.WARNING, "É necessário confirmar a negociação antes de imprimir.");
 		}
 		
+		gerarArquivoRecibo(idNegociacao);
+			
+	}
+
+	private void gerarArquivoRecibo(Long idNegociacao) throws IOException {
 		List<byte[]> arquivos = this.negociacaoDividaService.imprimirRecibos(idNegociacao);
 		
 		this.httpServletResponse.setContentType("application/pdf");
@@ -597,8 +613,8 @@ public class NegociacaoDividaController extends BaseController {
 		output.write(arquivo);
 
 		this.httpServletResponse.getOutputStream().close();
-
-		this.result.use(Results.nothing());		
+		
+		this.result.use(Results.nothing());	
 	}
 	
 	public void imprimirBoletosNegociacao(Long idNegociacao) throws IOException{
