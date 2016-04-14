@@ -244,6 +244,16 @@ var romaneiosController = $.extend(true, {
     	
     	var params = [];
 		
+    	var produtos = $("#selectProdutos", romaneiosController.workspace).val();
+    	
+    	var idRoteiros = $("#idRoteiro", romaneiosController.workspace).val();
+    	
+    	if(!idRoteiros || !produtos) {
+			exibirMensagem("WARNING", ["Favor selecionar 'ROTEIROS / PRODUTO' ."], "");
+			return false;
+    	}
+    	 	
+    	
 		params.push({name: 'filtro.data',      	value: $("#romaneio-dataLancamento", romaneiosController.workspace).val()});
 		params.push({name: 'filtro.idBox', 	value:$('#codigoBox', romaneiosController.workspace).val()});
 		//params.push({name: 'filtro.idRoteiro', 	value:$('#idRoteiro', romaneiosController.workspace).val()});
@@ -251,8 +261,6 @@ var romaneiosController = $.extend(true, {
 		params.push({name: 'filtro.nomeRota',	value: $('#idRota option:selected', romaneiosController.workspace).text()});
 		params.push({name: 'filtro.nomeRoteiro',value: $('#idRoteiro option:selected', romaneiosController.workspace).text()});
 		params.push({name: 'filtro.nomeBox',  	value: $('#codigoBox option:selected', romaneiosController.workspace).text()});
-		
-		var idRoteiros = $("#idRoteiro", romaneiosController.workspace).val();
 		
 		if (idRoteiros){
 			$.each(idRoteiros, function(index, value){
@@ -265,7 +273,7 @@ var romaneiosController = $.extend(true, {
 			});
 		}
 		
-		var produtos = $("#selectProdutos", romaneiosController.workspace).val();
+		
 		
 		if (produtos){
 			$.each(produtos, function(index, value){
