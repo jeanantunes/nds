@@ -222,12 +222,17 @@ public class NotaFiscalBuilder implements Serializable {
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoEmissao(TipoEmissao.NORMAL);
 		
-		TipoMovimentoEstoque tipoMovimentoEstoque =  (TipoMovimentoEstoque) naturezaOperacao.getTipoMovimento().get(0);
-		
-		if(!tipoMovimentoEstoque.getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE)) {
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe.NORMAL);
+		if( naturezaOperacao.getTipoMovimento().get(0) instanceof TipoMovimentoEstoque) {
+			
+			TipoMovimentoEstoque tipoMovimentoEstoque =  (TipoMovimentoEstoque) naturezaOperacao.getTipoMovimento().get(0);
+			
+			if(!tipoMovimentoEstoque.getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE)) {
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe.NORMAL);
+			} else {
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe.DEVOLUCAO_RETORNO);
+			}
 		} else {
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe.DEVOLUCAO_RETORNO);
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe.NORMAL);
 		}
 		
 		//FIXME: Ajustar para variavel parametrizada
