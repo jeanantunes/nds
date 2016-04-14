@@ -38,9 +38,9 @@
 				</a>
 			</span>
 			
-			<span class="bt_arq" style="display: none;">
+			<span class="bt_arq">
 				<a href="javascript:;" id="romaneio-btnExtracao" title="Imprimir" onclick="romaneiosController.gerarArquivo('PDF');">
-					<img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" alt="Imprimir" hspace="5" border="0" />
+					<img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" alt="Extração Arquivo ROT" hspace="5" border="0" />
 				</a>				
 			</span>
 		</div>
