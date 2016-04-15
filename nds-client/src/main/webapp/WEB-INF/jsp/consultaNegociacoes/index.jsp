@@ -362,12 +362,24 @@ var pesquisaCota = new PesquisaCota();
 					</tr>
 				</table>
 			</fieldset>
-			<span class="bt_novos" title="Imprimir" name="botoes" id="cn_botaoImprimirNegociacao"> </span>
-			
-			<span class="bt_novos" title="Imprimir Boletos" name="botoes" id="cn_botaoImprimirBoleto"> </span>
-			
-			<span class="bt_novos" title="Imprimir Recibo" name="botoes" id="cn_botaoImprimirRecibo">
+			<span class="bt_novos" title="Imprimir" name="botoes" id="cn_botaoImprimirNegociacao">
+
+				<a href="javascript:;" onclick="consultaNegociacoesController.imprimirNegociacaoDialog()">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+						Imprimir Negocia&ccedil;&atilde;o
+				</a>
+			</span>
+			<span class="bt_novos" title="Imprimir Boletos" name="botoes" id="cn_botaoImprimirBoleto">
+				 <a href="javascript:;" onclick="consultaNegociacoesController.imprimirBoletoDialog()">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+						Imprimir Boletos
+				</a>
+			</span>
+				<!-- 
 				<a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/imprimirRecibo">
+				 -->
+			<span class="bt_novos" title="Imprimir Recibo" name="botoes" id="cn_botaoImprimirRecibo">
+				 <a href="javascript:;" onclick="consultaNegociacoesController.imprimirReciboDialog()">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						Imprimir Recibo
 				</a>
