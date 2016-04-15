@@ -26,6 +26,8 @@ public class DetalheConsultaNegociacaoDividaDTO implements Serializable {
 	private boolean isIsentaEncargos;
 	private boolean isReceberPorEmail;
 	
+	private BigDecimal comissaoParaSaldoDivida;
+		
 	private List<CalculaParcelasVO> listParcelas;
 
 	public String getTipoNegociacao() {
@@ -139,7 +141,13 @@ public class DetalheConsultaNegociacaoDividaDTO implements Serializable {
 	public void setListParcelas(List<CalculaParcelasVO> listParcelas) {
 		this.listParcelas = listParcelas;
 	}
-	
-	
 
+	public BigDecimal getComissaoParaSaldoDivida() {
+		return comissaoParaSaldoDivida;
+	}
+
+	public void setComissaoParaSaldoDivida(BigDecimal comissaoParaSaldoDivida) {
+		this.comissaoParaSaldoDivida = comissaoParaSaldoDivida;
+	}
+	
 }

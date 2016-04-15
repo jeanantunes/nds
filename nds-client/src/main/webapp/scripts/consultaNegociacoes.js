@@ -147,11 +147,13 @@ var consultaNegociacoesController = $.extend(true, {
 		
 		$.each(resultado.rows, function(index, row) {
 			
-			var botaoOpcoes = '<a href="javascript:;" nomeCota="'+row.cell.nomeCota+'" negociacaoId="'+row.cell.idNegociacao+'" cobrancaId="'+row.cell.idCobranca+'" statusCota="'+row.cell.statusCota+'" onclick="consultaNegociacoesController.popup_formaPgto('+row.cell.numeroCota+', '+row.cell.valorParcela+', this);" style="cursor:pointer" rel="tipsy" title="Detalhes">' +
+			var valor = row.cell.valorParcela != undefined ? row.cell.valorParcela : row.cell.dividaNegociada;
+			
+			var botaoOpcoes = '<a href="javascript:;" nomeCota="'+row.cell.nomeCota+'" negociacaoId="'+row.cell.idNegociacao+'" cobrancaId="'+row.cell.idCobranca+'" statusCota="'+row.cell.statusCota+'" onclick="consultaNegociacoesController.popup_formaPgto('+row.cell.numeroCota+', '+valor+', this);" style="cursor:pointer" rel="tipsy" title="Detalhes">' +
 			'<img src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0" />'+	
 			'</a>';
 			
-			var botaoImprimirNegociacao = '&nbsp;<a href="javascript:;" onclick="consultaNegociacoesController.imprimirNegociacao('+row.cell.idNegociacao+', '+row.cell.valorParcela+');" style="cursor:pointer" rel="tipsy" title="Imprimir Negociação">' +
+			var botaoImprimirNegociacao = '&nbsp;<a href="javascript:;" onclick="consultaNegociacoesController.imprimirNegociacao('+row.cell.idNegociacao+', '+valor+');" style="cursor:pointer" rel="tipsy" title="Imprimir Negociação">' +
 			'<img src="' + contextPath + '/images/ico_impressora.gif" hspace="5" border="0" />'+	
 			'</a>';
 			
@@ -163,6 +165,18 @@ var consultaNegociacoesController = $.extend(true, {
 			
 			if(row.cell.valorEncargos == undefined){
 				row.cell.valorEncargos = 'isento';
+			}
+			
+			if(row.cell.dataVencimento == undefined){
+				row.cell.dataVencimento = '';
+			}
+			
+			if(row.cell.valorParcela == undefined){
+				row.cell.valorParcela = '-';
+			}
+			
+			if(row.cell.countParcelas == 0){
+				row.cell.parcela = '-';
 			}
 						
 		});
@@ -232,20 +246,31 @@ var consultaNegociacoesController = $.extend(true, {
 				function(result) {
 					
 					if(result.tipoNegociacao == "COMISSAO"){
+						$('#cn_negociacaoPorComissao').attr("checked", true);
+						consultaNegociacoesController.comissaoCota();
+						
+						$('#cn_isentaEncargos').attr("checked", result.isIsentaEncargos);
+						
+						$("#cn_comissaoUtilizar").val(result.comissaoParaSaldoDivida);
+						
+						$("#divComissao").show();
+						$('#divPagamento').hide();
 						
 					}else{
 						
-						$('#cn_pagamentoEm', consultaNegociacoesController.workspace).attr("checked", true);
+						$("#divComissao").hide();
+						$('#divPagamento').show();
 						
-						$('#cn_checknegociacaoAvulsa', consultaNegociacoesController.workspace).attr("checked", result.negAvulsa);
-						$('.cn_comissaoAtual', consultaNegociacoesController.workspace).hide();
-						$('.cn_pgtos', consultaNegociacoesController.workspace).show();	
+						$('#cn_pagamentoEm').attr("checked", true);
+						
+						$('#cn_checknegociacaoAvulsa').attr("checked", result.negAvulsa);
+						$('.cn_pgtos').show();	
 						
 						$("#cn_selectPagamento").append("<option selected='selected'>" + result.tipoDePagamento + "</option>");
 						
 						consultaNegociacoesController.opcaoFormasPagto(result.tipoDePagamento); 
 						
-						$('#cn_radio'+result.tipoFormaCobranca, consultaNegociacoesController.workspace).attr("checked", true);
+						$('#cn_radio'+result.tipoFormaCobranca).attr("checked", true);
 						
 						if($('#cn_selectPagamento',consultaNegociacoesController.workspace).val() == 'CHEQUE'){
 							consultaNegociacoesController.geraLinhasCheque(result.listParcelas);
@@ -308,7 +333,7 @@ var consultaNegociacoesController = $.extend(true, {
 	
 	limparPopupFormaPgto : function() {
 		
-		$('.cn_comissaoAtual', consultaNegociacoesController.workspace).hide();
+//		$('.cn_comissaoAtual', consultaNegociacoesController.workspace).hide();
 		
 		consultaNegociacoesController.esconderPagamentoParcelas();
 	},

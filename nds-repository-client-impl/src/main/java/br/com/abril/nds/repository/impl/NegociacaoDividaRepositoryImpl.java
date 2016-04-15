@@ -716,11 +716,11 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		sql.append("     ON nco.COBRANCA_ID = cb.ID ");
 		sql.append("   JOIN negociacao ng ");
 		sql.append("     ON nco.NEGOCIACAO_ID = ng.ID ");
-		sql.append("   JOIN forma_cobranca fc ");
+		sql.append("   LEFT JOIN forma_cobranca fc ");
 		sql.append("     ON ng.FORMA_COBRANCA_ID = fc.id ");
-		sql.append("   JOIN parcela_negociacao pn ");
+		sql.append("   LEFT JOIN parcela_negociacao pn ");
 		sql.append("     ON pn.NEGOCIACAO_ID = ng.ID ");
-		sql.append("   JOIN movimento_financeiro_cota mfc  ");
+		sql.append("   LEFT JOIN movimento_financeiro_cota mfc  ");
 		sql.append("     ON pn.MOVIMENTO_FINANCEIRO_ID = mfc.id ");
 		sql.append("   LEFT OUTER JOIN consolidado_mvto_financeiro_cota cmfc  ");
 		sql.append("     ON cmfc.MVTO_FINANCEIRO_COTA_ID = mfc.id ");

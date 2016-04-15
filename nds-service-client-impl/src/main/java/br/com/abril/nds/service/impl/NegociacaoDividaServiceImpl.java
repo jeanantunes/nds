@@ -1443,39 +1443,53 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 	@Transactional
     public DetalheConsultaNegociacaoDividaDTO buscarDetalhesNegociacaoDivida(Long idNegociacao){
     	
-    	List<DetalheConsultaNegociacaoDividaDTO> detalhes = this.negociacaoDividaRepository.buscarDetalhesNegociacaoDivida(idNegociacao);
     	
-    	List<CalculaParcelasVO> listParcelas = new ArrayList<>();
+    	Negociacao negociacaoDivida = this.negociacaoDividaRepository.buscarPorId(idNegociacao);
+
+    	if(negociacaoDivida == null){
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Negociação não encontrada.");
+    	}
     	
     	DetalheConsultaNegociacaoDividaDTO detalheReturn = new DetalheConsultaNegociacaoDividaDTO();
     	
-    	int countParcela = 1;
-
-    	for (DetalheConsultaNegociacaoDividaDTO detalhe : detalhes) {
-			
-			if(countParcela == 1){
-				detalheReturn = detalhe;
-			}
+    	if(negociacaoDivida.getTipoNegociacao().equals(TipoNegociacao.COMISSAO)){
+    		detalheReturn.setTipoNegociacao(negociacaoDivida.getTipoNegociacao().toString());
+    		detalheReturn.setComissaoParaSaldoDivida(negociacaoDivida.getComissaoParaSaldoDivida());
+    		detalheReturn.setIsentaEncargos(negociacaoDivida.isIsentaEncargos());
+    	}else{
     		
-    		if(!detalhe.getTipoNegociacao().equalsIgnoreCase(TipoNegociacao.COMISSAO.toString())){
+    		List<DetalheConsultaNegociacaoDividaDTO> detalhes = this.negociacaoDividaRepository.buscarDetalhesNegociacaoDivida(idNegociacao);
+    		
+    		List<CalculaParcelasVO> listParcelas = new ArrayList<>();
+    		
+    		int countParcela = 1;
+    		
+    		for (DetalheConsultaNegociacaoDividaDTO detalhe : detalhes) {
     			
-    			CalculaParcelasVO parcela = new CalculaParcelasVO();
+    			if(countParcela == 1){
+    				detalheReturn = detalhe;
+    			}
     			
-    			parcela.setNumParcela(Integer.toString(countParcela));
-    			parcela.setParcela(CurrencyUtil.formatarValor(detalhe.getParcelaTotal()));
-    			parcela.setDataVencimento(detalhe.getDataVencimento());
-    			parcela.setEncargos(CurrencyUtil.formatarValor(detalhe.getValorEncargos() != null ? detalhe.getValorEncargos() : BigDecimal.ZERO));
-    			parcela.setParcTotal(CurrencyUtil.formatarValor(detalhe.getParcela().add(detalhe.getValorEncargos() != null ? detalhe.getValorEncargos() : BigDecimal.ZERO)));
+    			if(!detalhe.getTipoNegociacao().equalsIgnoreCase(TipoNegociacao.COMISSAO.toString())){
+    				
+    				CalculaParcelasVO parcela = new CalculaParcelasVO();
+    				
+    				parcela.setNumParcela(Integer.toString(countParcela));
+    				parcela.setParcela(CurrencyUtil.formatarValor(detalhe.getParcelaTotal()));
+    				parcela.setDataVencimento(detalhe.getDataVencimento());
+    				parcela.setEncargos(CurrencyUtil.formatarValor(detalhe.getValorEncargos() != null ? detalhe.getValorEncargos() : BigDecimal.ZERO));
+    				parcela.setParcTotal(CurrencyUtil.formatarValor(detalhe.getParcela().add(detalhe.getValorEncargos() != null ? detalhe.getValorEncargos() : BigDecimal.ZERO)));
+    				
+    				countParcela++;
+    				
+    				listParcelas.add(parcela);
+    			}
     			
-    			countParcela++;
-    			
-    			listParcelas.add(parcela);
     		}
     		
-		}
-    	
-    	if(!listParcelas.isEmpty()){
-    		detalheReturn.setListParcelas(listParcelas);
+    		if(!listParcelas.isEmpty()){
+    			detalheReturn.setListParcelas(listParcelas);
+    		}
     	}
     	
     	return detalheReturn;
