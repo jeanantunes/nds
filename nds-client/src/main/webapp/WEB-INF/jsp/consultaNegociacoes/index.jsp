@@ -136,221 +136,219 @@ var pesquisaCota = new PesquisaCota();
 			<fieldset style="width: 690px !important;" class="negociacaoClass">
 				<legend>Formas de Pagamento</legend>
 
-				<table width="640" border="0" cellspacing="1" cellpadding="1">
-					<tr id="cn_negociacaoPorComissao-tr">
-						<td width="20"><input name="tipoPgtos" type="radio" value=""
-							id="cn_negociacaoPorComissao" onclick="consultaNegociacoesController.comissaoCota();" /></td>
-						<td width="118">Comiss&atilde;o da Cota</td>
-						<td width="502"></td>
-					</tr>
-				</table>
-				<div class="cn_comissaoAtual">
-					<table width="100%" border="0" cellspacing="0" cellpadding="2">
-						<tr>
-							<td width="7%">Utilizar:</td>
-							<td width="13%"><input name="" type="text" id="cn_comissaoUtilizar"
-								style="width: 80px;" /></td>
-							<td width="57%" colspan="3">% para pagamento da
-								d&iacute;vida</td>
+				<div id="divComissao">
+					<table width="640" border="0" cellspacing="1" cellpadding="1">
+						<tr id="cn_negociacaoPorComissao-tr">
+							<td width="20"><input name="tipoPgtos" type="radio" value=""
+								id="cn_negociacaoPorComissao" onclick="consultaNegociacoesController.comissaoCota();" /></td>
+							<td width="118">Comiss&atilde;o da Cota</td>
+							<td width="502"></td>
 						</tr>
 					</table>
+					<div class="cn_comissaoAtual">
+						<table width="100%" border="0" cellspacing="0" cellpadding="2">
+							<tr>
+								<td width="7%">Utilizar:</td>
+								<td width="13%"><input name="" type="text" id="cn_comissaoUtilizar"
+									style="width: 80px;" /></td>
+								<td width="57%" colspan="3">% para pagamento da
+									d&iacute;vida</td>
+							</tr>
+						</table>
+					</div>
 				</div>
 				
-				
-				<table width="685" border="0" cellpadding="1" cellspacing="1">
-					<tr>
-						<td width="25"><input id="cn_pagamentoEm" name="tipoPgtos" type="radio" value=""
-							onclick="consultaNegociacoesController.mostraPgto();" /></td>
-						<td width="126">Pagamento em:</td>
-						<td width="187"><select name="filtro.qntdParcelas" id="cn_selectParcelas"
-							style="width: 100px;" class="cn_pgtos" onchange="consultaNegociacoesController.calcularParcelas();" >
-							<c:forEach items="${qntdParcelas}" var="parcela">
-								<option value="${parcela}" >${parcela}x</option>
-							</c:forEach>
-						</select></td>
-						<td width="133"><strong class="cn_pgtos">Tipo de Pagamento:</strong></td>
-						<td width="198"><select name="filtro.tipoPagamento" id="cn_selectPagamento"
-							onchange="consultaNegociacoesController.opcaoFormasPagto(this.value); consultaNegociacoesController.calcularParcelas();"  class="cn_pgtos">
-								<c:forEach items="${tipoPagamento}" var="pagamento">
-									<option value="${pagamento}" >${pagamento.descricao}</option>
+				<div id="divPagamento">
+					<table width="685" border="0" cellpadding="1" cellspacing="1">
+						<tr id="trPagarEm">
+							<td width="25"><input id="cn_pagamentoEm" name="tipoPgtos" type="radio" value=""
+								onclick="consultaNegociacoesController.mostraPgto();" /></td>
+							<td width="126">Pagamento em:</td>
+							<td width="187"><select name="filtro.qntdParcelas" id="cn_selectParcelas"
+								style="width: 100px;" class="cn_pgtos" onchange="consultaNegociacoesController.calcularParcelas();" >
+								<c:forEach items="${qntdParcelas}" var="parcela">
+									<option value="${parcela}" >${parcela}x</option>
 								</c:forEach>
-						</select></td>
-					</tr>
-				</table>
-				
-				
-				<table width="100%" border="0" cellspacing="0" cellpadding="0"
-					class="cn_pgtos">
-					<!-- <tr>
-						<strong class="pgtos">Cobran&ccedil;a</strong>
-					</tr> 
-					-->
-					<tr>
-						<td width="3%"><input type="radio" name="filtro.periodicidade" id="cn_radioDIARIA"
-							value="DIARIA" 
-							onclick="consultaNegociacoesController.mostraDiario(); consultaNegociacoesController.calcularParcelas();" /></td>
+							</select></td>
+							<td width="133"><strong class="cn_pgtos">Tipo de Pagamento:</strong></td>
+							<td width="198"><select name="filtro.tipoPagamento" id="cn_selectPagamento"
+								onchange="consultaNegociacoesController.opcaoFormasPagto(this.value); consultaNegociacoesController.calcularParcelas();"  class="cn_pgtos">
+									<c:forEach items="${tipoPagamento}" var="pagamento">
+										<option value="${pagamento}" >${pagamento.descricao}</option>
+									</c:forEach>
+							</select></td>
+						</tr>
+					</table>
+					
+					
+					<table width="100%" border="0" cellspacing="0" cellpadding="0"
+						class="cn_pgtos">
+						<tr>
+							<td width="3%"><input type="radio" name="filtro.periodicidade" id="cn_radioDIARIA"
+								value="DIARIA" 
+								onclick="consultaNegociacoesController.mostraDiario(); consultaNegociacoesController.calcularParcelas();" /></td>
+								
+							<td width="5%">Di&aacute;rio</td>
 							
-						<td width="5%">Di&aacute;rio</td>
-						
-						<td width="3%"><input type="radio" name="filtro.periodicidade" id="cn_radioSEMANAL"
-							value="SEMANAL"
-							onclick="consultaNegociacoesController.mostraSemanal(); consultaNegociacoesController.calcularParcelasSemanal();" /></td>
+							<td width="3%"><input type="radio" name="filtro.periodicidade" id="cn_radioSEMANAL"
+								value="SEMANAL"
+								onclick="consultaNegociacoesController.mostraSemanal(); consultaNegociacoesController.calcularParcelasSemanal();" /></td>
+								
+							<td width="7%">Semanal</td>
+							<td width="3%"><input type="radio" name="filtro.periodicidade" id="cn_radioQUINZENAL"
+								value="QUINZENAL"
+								onclick="consultaNegociacoesController.mostraQuinzenal(); consultaNegociacoesController.calcularParcelasQuinzenal();" /></td>
+								
+							<td width="9%">Quinzenal</td>
+							<td width="3%"><input type="radio" name="filtro.periodicidade" id="cn_radioMENSAL"
+								value="MENSAL"
+								onclick="consultaNegociacoesController.mostraMensal(); consultaNegociacoesController.calcularParcelasMensal();" /></td>
+								
+							<td width="35%">Mensal</td>
 							
-						<td width="7%">Semanal</td>
-						<td width="3%"><input type="radio" name="filtro.periodicidade" id="cn_radioQUINZENAL"
-							value="QUINZENAL"
-							onclick="consultaNegociacoesController.mostraQuinzenal(); consultaNegociacoesController.calcularParcelasQuinzenal();" /></td>
+							<td width="4%"><input type="checkbox" 
+								id="cn_checknegociacaoAvulsa" class="cn_pgtos" /></td>
+							<td width="28%">Negocia&ccedil;&atilde;o Avulsa</td>
+						</tr>
+					</table>
+					
+					
+					<table width="100%" border="0" cellspacing="1" cellpadding="1"
+						class="cn_quinzenal">
+						<tr>
+							<td width="68">Todo dia:</td>
+							<td width="66">
+								<input type="text" name="filtro.quinzenalDia1" style="width: 60px;" 
+									   id="cn_diaInputQuinzenal1" maxlength="2"
+									   onchange="consultaNegociacoesController.calcularParcelasQuinzenal();" />
+							</td>
+							<td id="cn_textoDiaInputQuinzenal" width="21">&nbsp; e:</td>
+							<td width="522">
+								<input type="text" name="filtro.quinzenalDia2"
+									   id="cn_diaInputQuinzenal2" style="width: 60px;"
+									   readonly="readonly" />
+							</td>
+						</tr>
+					</table>
+					
+					<table width="130px" border="0" cellspacing="1" cellpadding="1"
+						class="cn_mensal">
+						<tr>
+							<td width="68">Todo dia:</td>
+							<td width="66">
+								<input type="text" name="filtro.quinzenalDia1" style="width: 60px;" maxlength="2"
+									   id="cn_mensalDia" onchange="consultaNegociacoesController.calcularParcelasMensal();" />
+							</td>
 							
-						<td width="9%">Quinzenal</td>
-						<td width="3%"><input type="radio" name="filtro.periodicidade" id="cn_radioMENSAL"
-							value="MENSAL"
-							onclick="consultaNegociacoesController.mostraMensal(); consultaNegociacoesController.calcularParcelasMensal();" /></td>
+						</tr>
+					</table>
+					
+					
+					<table width="100%" border="0" cellspacing="1" cellpadding="1"
+						class="cn_semanal">
+						<tr>
+							<td width="20"><input type="checkbox" name="cn_semanalDias" onchange="consultaNegociacoesController.opcaoFormasPagto($('#cn_selectPagamento').val()); consultaNegociacoesController.calcularParcelasSemanal()"
+								value="SEGUNDA_FEIRA" id="cn_checkbSegunda" /></td>
+							<td width="86">Segunda-feira</td>
+							<td width="20"><input type="checkbox" name="cn_semanalDias" onchange="consultaNegociacoesController.opcaoFormasPagto($('#cn_selectPagamento').val()); consultaNegociacoesController.calcularParcelasSemanal()"
+								value="TERCA_FEIRA"id="cn_checkTerca" /></td>
+							<td width="70">Ter&ccedil;a-feira</td>
+							<td width="20"><input type="checkbox" name="cn_semanalDias" onchange="consultaNegociacoesController.opcaoFormasPagto($('#cn_selectPagamento').val()); consultaNegociacoesController.calcularParcelasSemanal()"
+								value="QUARTA_FEIRA"id="cn_checkQuarta" /></td>
+							<td width="78">Quarta-feira</td>
+							<td width="20"><input type="checkbox" name="cn_semanalDias" onchange="consultaNegociacoesController.opcaoFormasPagto($('#cn_selectPagamento').val()); consultaNegociacoesController.calcularParcelasSemanal()"
+								value="QUINTA_FEIRA" id="cn_checkQuinta" /></td>
+							<td width="78">Quinta-feira</td>
+							<td width="20"><input type="checkbox" name="cn_semanalDias" onchange="consultaNegociacoesController.opcaoFormasPagto($('#cn_selectPagamento').val()); consultaNegociacoesController.calcularParcelasSemanal()"
+								value="SEXTA_FEIRA" id="cn_checkSexta" /></td>
+							<td width="70">Sexta-feira</td>
+							<td width="20"><input type="checkbox" name="cn_semanalDias" onchange="consultaNegociacoesController.opcaoFormasPagto($('#cn_selectPagamento').val()); consultaNegociacoesController.calcularParcelasSemanal()"
+								value="SABADO"id="cn_checkSabado" /></td>
+							<td width="53">S&aacute;bado</td>
+							<td width="20"><input type="checkbox" name="cn_semanalDias" onchange="consultaNegociacoesController.opcaoFormasPagto($('#cn_selectPagamento').val()); consultaNegociacoesController.calcularParcelasSemanal()"
+								value="DOMINGO" id="cn_checkDomingo" /></td>
+							<td width="72">Domingo</td>
+						</tr>
+					</table>
+					
+					
+					<br /> <br clear="all" />
+	
+	
+					<table width="633" border="0" cellspacing="1" cellpadding="1">
+						<tr>
+							<td width="278" valign="top">
 							
-						<td width="35%">Mensal</td>
-						
-						<td width="4%"><input type="checkbox" 
-							id="cn_checknegociacaoAvulsa" class="cn_pgtos" /></td>
-						<td width="28%">Negocia&ccedil;&atilde;o Avulsa</td>
-					</tr>
-				</table>
-				
-				
-				<table width="100%" border="0" cellspacing="1" cellpadding="1"
-					class="cn_quinzenal">
-					<tr>
-						<td width="68">Todo dia:</td>
-						<td width="66">
-							<input type="text" name="filtro.quinzenalDia1" style="width: 60px;" 
-								   id="cn_diaInputQuinzenal1" maxlength="2"
-								   onchange="consultaNegociacoesController.calcularParcelasQuinzenal();" />
-						</td>
-						<td id="cn_textoDiaInputQuinzenal" width="21">&nbsp; e:</td>
-						<td width="522">
-							<input type="text" name="filtro.quinzenalDia2"
-								   id="cn_diaInputQuinzenal2" style="width: 60px;"
-								   readonly="readonly" />
-						</td>
-					</tr>
-				</table>
-				
-				<table width="130px" border="0" cellspacing="1" cellpadding="1"
-					class="cn_mensal">
-					<tr>
-						<td width="68">Todo dia:</td>
-						<td width="66">
-							<input type="text" name="filtro.quinzenalDia1" style="width: 60px;" maxlength="2"
-								   id="cn_mensalDia" onchange="consultaNegociacoesController.calcularParcelasMensal();" />
-						</td>
-						
-					</tr>
-				</table>
-				
-				
-				<table width="100%" border="0" cellspacing="1" cellpadding="1"
-					class="cn_semanal">
-					<tr>
-						<td width="20"><input type="checkbox" name="cn_semanalDias" onchange="consultaNegociacoesController.opcaoFormasPagto($('#cn_selectPagamento').val()); consultaNegociacoesController.calcularParcelasSemanal()"
-							value="SEGUNDA_FEIRA" id="cn_checkbSegunda" /></td>
-						<td width="86">Segunda-feira</td>
-						<td width="20"><input type="checkbox" name="cn_semanalDias" onchange="consultaNegociacoesController.opcaoFormasPagto($('#cn_selectPagamento').val()); consultaNegociacoesController.calcularParcelasSemanal()"
-							value="TERCA_FEIRA"id="cn_checkTerca" /></td>
-						<td width="70">Ter&ccedil;a-feira</td>
-						<td width="20"><input type="checkbox" name="cn_semanalDias" onchange="consultaNegociacoesController.opcaoFormasPagto($('#cn_selectPagamento').val()); consultaNegociacoesController.calcularParcelasSemanal()"
-							value="QUARTA_FEIRA"id="cn_checkQuarta" /></td>
-						<td width="78">Quarta-feira</td>
-						<td width="20"><input type="checkbox" name="cn_semanalDias" onchange="consultaNegociacoesController.opcaoFormasPagto($('#cn_selectPagamento').val()); consultaNegociacoesController.calcularParcelasSemanal()"
-							value="QUINTA_FEIRA" id="cn_checkQuinta" /></td>
-						<td width="78">Quinta-feira</td>
-						<td width="20"><input type="checkbox" name="cn_semanalDias" onchange="consultaNegociacoesController.opcaoFormasPagto($('#cn_selectPagamento').val()); consultaNegociacoesController.calcularParcelasSemanal()"
-							value="SEXTA_FEIRA" id="cn_checkSexta" /></td>
-						<td width="70">Sexta-feira</td>
-						<td width="20"><input type="checkbox" name="cn_semanalDias" onchange="consultaNegociacoesController.opcaoFormasPagto($('#cn_selectPagamento').val()); consultaNegociacoesController.calcularParcelasSemanal()"
-							value="SABADO"id="cn_checkSabado" /></td>
-						<td width="53">S&aacute;bado</td>
-						<td width="20"><input type="checkbox" name="cn_semanalDias" onchange="consultaNegociacoesController.opcaoFormasPagto($('#cn_selectPagamento').val()); consultaNegociacoesController.calcularParcelasSemanal()"
-							value="DOMINGO" id="cn_checkDomingo" /></td>
-						<td width="72">Domingo</td>
-					</tr>
-				</table>
-				
-				
-				<br /> <br clear="all" />
-
-
-				<table width="633" border="0" cellspacing="1" cellpadding="1">
-					<tr>
-						<td width="278" valign="top">
-						
-						
-							<div id="cn_gridCheque" style="display: none;">
-								<strong>Dados do Cheque</strong> <br />
-								<table id="cn_tabelaCheque" width="347" border="0" cellspacing="1" cellpadding="1">
-									<tr class="header_table">
-										<td width="95" align="center">Vencimento</td>
-										<td width="102" align="center">Valor R$</td>
-										<td width="112" align="center">Num. Cheque</td>
-										<td width="48" align="center">A&ccedil;&atilde;o</td>
-									</tr>				
-									
-								</table>
-							</div>
-
-							<div id="cn_gridVenctos" style="display: none;">
-								<strong>Dados das Parcelas</strong> <br />
-								<table id="cn_tabelaParcelas" width="396" border="0" cellspacing="1" cellpadding="1">
-									<tr>
-										<td height="21" align="center">&nbsp;</td>
-										<td align="center">&nbsp;</td>
-										<td colspan="3" align="center" bgcolor="#F2F2F2"><strong>Valor R$</strong></td>
-										<td align="center">&nbsp;</td>
-									</tr>
-									<tr class="header_table">
-										<td width="15" height="27" align="center">&nbsp;</td>
-										<td width="72" align="center">Vencimento</td>
-										<td width="60" align="center" class="header_table">Parcela</td>
-										<td width="64" align="center" class="header_table">Encargos</td>
-										<td width="60" align="center" class="header_table">Parc Total</td>
-										<td width="106" align="center" id="cn_header_table_Ativar">Ativar ao pagar</td>
-									</tr>
-									
-								</table>
-
-							</div>
-
-
-						</td>
-						
-						<td width="10" valign="top" style="width: 10px;">&nbsp;</td>
-						<td width="335" valign="top">
-
-							<div id="cn_divBanco" style="display: none;">
-								<table width="270" border="0" cellpadding="2" cellspacing="2">
-									<tr>
-										<td colspan="2"><b>Dados do Banco</b></td>
-									</tr>
-									<tr>
-										<td width="53">Nome:</td>
-										<td width="203"><select name="filtro.idBanco" id="cn_selectBancosBoleto"
-											style="width: 160px;"  onchange="consultaNegociacoesController.calcularParcelas();">
-											<c:forEach items="${bancos}" var="banco">
-													<option value="${banco.id}" >${banco.nome}</option>
-											</c:forEach>
-										</select></td>
-									</tr>
-									<tr>
-										<td align="right"><input type="checkbox" name="checkbox"
-											id="cn_checkReceberEmail" /></td>
-										<td>Receber por E-mail?</td>
-									</tr>
-								</table>
-							</div>
-
-						</td>
-					</tr>
-				</table>
-
-				<br clear="all" /> 
-				
+							
+								<div id="cn_gridCheque" style="display: none;">
+									<strong>Dados do Cheque</strong> <br />
+									<table id="cn_tabelaCheque" width="347" border="0" cellspacing="1" cellpadding="1">
+										<tr class="header_table">
+											<td width="95" align="center">Vencimento</td>
+											<td width="102" align="center">Valor R$</td>
+											<td width="112" align="center">Num. Cheque</td>
+											<td width="48" align="center">A&ccedil;&atilde;o</td>
+										</tr>				
+										
+									</table>
+								</div>
+	
+								<div id="cn_gridVenctos" style="display: none;">
+									<strong>Dados das Parcelas</strong> <br />
+									<table id="cn_tabelaParcelas" width="396" border="0" cellspacing="1" cellpadding="1">
+										<tr>
+											<td height="21" align="center">&nbsp;</td>
+											<td align="center">&nbsp;</td>
+											<td colspan="3" align="center" bgcolor="#F2F2F2"><strong>Valor R$</strong></td>
+											<td align="center">&nbsp;</td>
+										</tr>
+										<tr class="header_table">
+											<td width="15" height="27" align="center">&nbsp;</td>
+											<td width="72" align="center">Vencimento</td>
+											<td width="60" align="center" class="header_table">Parcela</td>
+											<td width="64" align="center" class="header_table">Encargos</td>
+											<td width="60" align="center" class="header_table">Parc Total</td>
+											<td width="106" align="center" id="cn_header_table_Ativar">Ativar ao pagar</td>
+										</tr>
+										
+									</table>
+	
+								</div>
+	
+	
+							</td>
+							
+							<td width="10" valign="top" style="width: 10px;">&nbsp;</td>
+							<td width="335" valign="top">
+	
+								<div id="cn_divBanco" style="display: none;">
+									<table width="270" border="0" cellpadding="2" cellspacing="2">
+										<tr>
+											<td colspan="2"><b>Dados do Banco</b></td>
+										</tr>
+										<tr>
+											<td width="53">Nome:</td>
+											<td width="203"><select name="filtro.idBanco" id="cn_selectBancosBoleto"
+												style="width: 160px;"  onchange="consultaNegociacoesController.calcularParcelas();">
+												<c:forEach items="${bancos}" var="banco">
+														<option value="${banco.id}" >${banco.nome}</option>
+												</c:forEach>
+											</select></td>
+										</tr>
+										<tr>
+											<td align="right"><input type="checkbox" name="checkbox"
+												id="cn_checkReceberEmail" /></td>
+											<td>Receber por E-mail?</td>
+										</tr>
+									</table>
+								</div>
+	
+							</td>
+						</tr>
+					</table>
+	
+					<br clear="all" /> 
+				</div>				
 				<table id="cn_encargos">
 					<tr>
 						<td>
@@ -361,6 +359,7 @@ var pesquisaCota = new PesquisaCota();
 						</td>
 					</tr>
 				</table>
+				
 			</fieldset>
 			<span class="bt_novos" title="Imprimir" name="botoes" id="cn_botaoImprimirNegociacao">
 
