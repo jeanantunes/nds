@@ -131,9 +131,9 @@ public class EmitenteDestinatarioBuilder {
 		
 		if(distribuidor.getJuridica().getInscricaoEstadual() != null && !distribuidor.getJuridica().getInscricaoEstadual().isEmpty()){
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual().trim());			
-		}
+		} 
 		
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setIndicadorDestinatario(9);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setIndicadorDestinatario(1);
 		
 		if(distribuidor.getJuridica().getEnderecos() != null 
 				&& !distribuidor.getJuridica().getEnderecos().isEmpty()) {
@@ -222,9 +222,10 @@ public class EmitenteDestinatarioBuilder {
 			
 			if(pessoaJuridica.getInscricaoEstadual() != null && !pessoaJuridica.getInscricaoEstadual().isEmpty()){
 				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual().trim());
-			}
+			} 
 			
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setIndicadorDestinatario(9);
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setIndicadorDestinatario(1);
+			
 		} else if (pessoa instanceof PessoaFisica) {			
 			PessoaFisica pessoaFisica = (PessoaFisica) pessoa;
 			
