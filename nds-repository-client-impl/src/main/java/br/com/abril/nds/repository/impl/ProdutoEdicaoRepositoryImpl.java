@@ -1415,7 +1415,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		final StringBuilder sql = new StringBuilder();
 
-		sql.append(" SELECT   ");
+		sql.append(" SELECT  SQL_SMALL_RESULT ");
 		sql.append("         T.codigoProduto AS codigoProduto,  ");
 		sql.append("         T.id as id,  ");
 		sql.append("         T.nomeProduto AS nomeProduto,  ");
