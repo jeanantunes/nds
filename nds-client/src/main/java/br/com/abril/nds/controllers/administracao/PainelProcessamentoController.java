@@ -635,6 +635,8 @@ public class PainelProcessamentoController extends BaseController {
 	     int cont=0;
 	     int semPaletes=0;
 	     int semDE=0;
+	     int jaenviadas=0;
+	     int enviadas=0;
         for (NotaEncalheBandeiraVO nota: notas ) {
 	       try {
 	    	 
@@ -681,14 +683,16 @@ public class PainelProcessamentoController extends BaseController {
 	    	       {
 	    	    	   
 	    	    	  if ( e.getLocalizedMessage().contains("0020 - NOTA JA ENVIADA")) {
+	    	    		  LOGGER.warn("BANDEIRA:NOTA JA ENVIADA nota="+nota.getNumNota()+ " - " +e.getLocalizedMessage(),e);
 	    	    		  msg+="</br>NOTA JA ENVIADA  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe()+" - " +e.getLocalizedMessage();
 	    	    		
 	    	    		  ftfService.atualizaFlagInterfaceNotasEnviadas(nota.getNotaId(),true); 
+	    	    		  jaenviadas++;
 	    	    	  }
 	    	    	  else
 	    	    	  if ( !e.getLocalizedMessage().contains("BANDEIRA GRAVADA COM SUCESSO")) {
 	    	    		 
-	    	    	   LOGGER.warn("ERRO AO GRAVAR BANDEIRA ",e);
+	    	    		  LOGGER.error("BANDEIRA:ERRO AO GRAVAR  nota="+nota.getNumNota()+ " - " +e.getLocalizedMessage(),e);
 	    	    	   String it="";
 	    	    	   for ( ItemEncalheBandeiraVO item:  itens)
 	    	    		   it +="<"+item.getCodPublicacao()+"/"+item.getNumEdicao()+">";
@@ -700,25 +704,27 @@ public class PainelProcessamentoController extends BaseController {
 	    	    		  String it="";
 	       	    	   for ( ItemEncalheBandeiraVO item:  itens)
 	       	    		   it +="<"+item.getCodPublicacao()+"/"+item.getNumEdicao()+">";
-	    	    		  msg+="</br>BANDEIRA GRAVADA COM SUCESSO  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe()+" Itens:"+it+
-	    	    				  " -"+e.getLocalizedMessage();
-	    	    		 
+	    	    		  msg+="</br>BANDEIRA GRAVADA COM SUCESSO  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe()+" Itens:"+it;
+	    	    		  LOGGER.warn("BANDEIRA: GRAVADA COM SUCESSO nota="+nota.getNumNota()+ " - " +e.getLocalizedMessage(),e);
 	    	    		  ftfService.atualizaFlagInterfaceNotasEnviadas(nota.getNotaId(),true);
+	    	    		  enviadas++;
 	    	    	  }
 	    	       }
 		       } catch ( Exception ee ) {
-		    	   LOGGER.warn("ERRO ENVIADO NOTA "+nota.getNumNota(),ee);
+		    	   LOGGER.error("ERRO ENVIANDO NOTA "+nota.getNumNota(),ee);
 		    	   msg+="ERRO ENVIADO NOTA "+nota.getNumNota()+" Erro:"+ee;
 		       }
     	 
         } 
     	
         msg = "</br>Interface de Devolucao ao Fornecedor processadas "+
-                "</br>Qtde Notas Processada:"+notas.size()+
-                "</br>Qtde Notas com Erros :"+erros+
-                 "</br>Sem Paletes :"+semPaletes+
-                  "</br>Sem Destino Encalhe :"+semDE+
-                "</br>Mensagens            :"+msg;
+                 "</br>Total Notas Processadas             :"+notas.size()+
+                 "</br>Notas Enviadas                      :"+enviadas+
+                 "</br>Notas que ja tinham sido Enviadas   :"+jaenviadas+
+                 "</br>Notas com Erros                     :"+erros+
+                 "</br>Notas Sem Paletes                   :"+semPaletes+
+                 "</br>Sem Destino Encalhe                 :"+semDE+
+                "</br></br>Mensagens            :"+msg;
          LOGGER.error(msg); 
     	result.use(Results.json()).from(
             new ValidacaoVO(TipoMensagem.WARNING,
