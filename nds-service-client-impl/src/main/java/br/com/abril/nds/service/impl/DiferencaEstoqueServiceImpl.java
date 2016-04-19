@@ -595,7 +595,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	                    	} else if (diferenca.getTipoDiferenca().isFalta() || diferenca.getTipoDiferenca().isFaltaParaCota()) {
 	                    	
 	                    		statusAprovacao = StatusAprovacao.PERDA;
-	                    				
+	                    	
+	                    	} else if (diferenca.getTipoDiferenca().isPerda()) {
+		                    	
+	                    		statusAprovacao = StatusAprovacao.PERDA;
+	                    		
 	                    	} else {
 	                            
 	                            statusAprovacao = StatusAprovacao.GANHO;
@@ -1399,7 +1403,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	                                    /*
      * Efetua a geração de lançamento de diferença.
      */
-    private LancamentoDiferenca gerarLancamentoDiferenca(final StatusAprovacao statusAprovacao,
+    private LancamentoDiferenca gerarLancamentoDiferenca(StatusAprovacao statusAprovacao,
             final MovimentoEstoque movimentoEstoque,
             final List<MovimentoEstoqueCota> listaMovimentosEstoqueCota) {
         
