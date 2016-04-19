@@ -86,11 +86,7 @@ public class ItemEncalheBandeiraVO  implements java.io.Serializable {
      */
     public java.lang.String getAnoSemanaRecolhimento() {
     	
-    	Calendar calendar = Calendar.getInstance();
-		if ( this.getDataRecolhimento() == null ) 
-			this.setDataRecolhimento(new Date());
-		calendar.setTime(this.getDataRecolhimento());
-		return ""+calendar.get(Calendar.YEAR)+calendar.getWeekYear();
+    	return this.anoSemanaRecolhimento;
     }
 
 
