@@ -288,31 +288,62 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 	
 	
 	
-	public List<ChamadaEncalheCota> obterListaChamadaEncalheCotaChamadao(Long idCota, Long idProdutoEdicao, Date dataOperacao) {
+	public BigInteger obterListaChamadaEncalheCotaChamadao(Long idCota, Long idProdutoEdicao, Date dataOperacao) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select cec from ChamadaEncalheCota cec ");
+		hql.append(" select count(*) from chamada_encalhe_cota cec ");
 		
-		hql.append(" where cec.cota.id = :idCota  ");
+		hql.append("  inner join chamada_encalhe ce on ce.id = cec.chamada_encalhe_id " );
 		
-		hql.append(" and cec.chamadaEncalhe.tipoChamadaEncalhe=:tipoChamadaEncalhe ");
+		hql.append(" where cec.cota_id = :idCota  ");
 		
-		hql.append(" and cec.chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
+		hql.append(" and ce.tipo_chamada_encalhe =:tipoChamadaEncalhe ");
 		
-		hql.append(" and cec.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
+		hql.append(" and ce.produto_edicao_id = :idProdutoEdicao ");
+		
+		hql.append(" and ce.data_recolhimento >= :dataOperacao ");
 
-		Query query = getSession().createQuery(hql.toString());
+		SQLQuery query = getSession().createSQLQuery(hql.toString());
 		
 		query.setParameter("idCota", idCota);
 		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
-		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.CHAMADAO);
+		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.CHAMADAO.toString());
 		
 		query.setParameter("dataOperacao", dataOperacao);
 		
-		return query.list();
+		return (BigInteger) query.uniqueResult();
+		
+	}
+	
+	
+	
+	public List<Long> obterListaCotaChamadao( Date dataOperacao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select distinct cota_id from chamada_encalhe_cota cec ");
+		
+		hql.append(" inner join chamada_encalhe ce on ce.id = cec.chamada_encalhe_id  ");
+		
+		hql.append(" where ce.tipo_chamada_encalhe =:tipoChamadaEncalhe ");
+		
+		hql.append(" and ce.data_recolhimento >= :dataOperacao ");
+		
+		hql.append("  group by cec.cota_id ");
+
+		SQLQuery query = getSession().createSQLQuery(hql.toString());
+		
+		
+		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.CHAMADAO.toString());
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		query.addScalar("cota_id", StandardBasicTypes.LONG);
+		
+		return (List<Long>) query.list();
 		
 	}
 	

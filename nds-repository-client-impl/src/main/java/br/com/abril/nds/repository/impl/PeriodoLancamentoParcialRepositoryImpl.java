@@ -111,7 +111,14 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		hql.append(" FROM PERIODO_LANCAMENTO_PARCIAL periodolan0_ ");
 		hql.append(" INNER JOIN LANCAMENTO_PARCIAL lancamento1_ ON periodolan0_.LANCAMENTO_PARCIAL_ID=lancamento1_.ID ");
-		hql.append(" INNER JOIN LANCAMENTO lancamento2_ ON periodolan0_.ID=lancamento2_.PERIODO_LANCAMENTO_PARCIAL_ID ");
+		
+		// se tiver index NDX_STATUS_IDX ignorar na query, por problema de performance
+		List list= getSession().createSQLQuery("show index from lancamento where Key_name = 'NDX_STATUS_IDX'").list();
+		if ( list != null && !list.isEmpty())
+		  hql.append(" INNER JOIN LANCAMENTO lancamento2_ ignore index ( NDX_STATUS_IDX) ON periodolan0_.ID=lancamento2_.PERIODO_LANCAMENTO_PARCIAL_ID ");
+		else
+		 hql.append(" INNER JOIN LANCAMENTO lancamento2_  ON periodolan0_.ID=lancamento2_.PERIODO_LANCAMENTO_PARCIAL_ID ");
+	
 		hql.append(" INNER JOIN PRODUTO_EDICAO produtoedi3_ ON lancamento2_.PRODUTO_EDICAO_ID=produtoedi3_.ID ");
 		hql.append(" INNER JOIN PRODUTO produto4_ ON produtoedi3_.PRODUTO_ID=produto4_.ID ");
 		hql.append(" INNER JOIN PRODUTO_FORNECEDOR fornecedor7_ ON produto4_.ID=fornecedor7_.PRODUTO_ID ");
