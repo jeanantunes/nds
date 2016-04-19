@@ -284,9 +284,10 @@ public class FechamentoEncalheController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING, "ERRO.Produto na tela ja nao existe na base de dados.Efetuar pesquisa novamente");
 				
 			}
-		LOGGER.warn( "index="+fechamentosBanco.get(index).getSequencia()+" "+index +" produtoid="+fechamentosBanco.get(index).getProdutoEdicao() +" codigo="+
+			LOGGER.warn( "index="+fechamentosBanco.get(index).getSequencia()+" "+index +" produtoid="+fechamentosBanco.get(index).getProdutoEdicao() +" codigo="+
 				fechamentosBanco.get(index).getCodigo()+"  qtd="+
 				fechamentosBanco.get(index).getFisico());
+			
 			fechamentosBanco.get(index).setFisico(fechamento.getFisico());
 			LOGGER.warn( "index="+fechamentosBanco.get(index).getSequencia()+" "+index +" produtoid="+fechamentosBanco.get(index).getProdutoEdicao() +" codigo="+
 					fechamentosBanco.get(index).getCodigo()+"  qtd="+
@@ -909,9 +910,9 @@ public class FechamentoEncalheController extends BaseController {
 		
 		fechamentoEncalheService.verificarEstoqueProdutoNaoAtualizado();
 		
-		listaFechamento = 
-				this.mergeItensFechamento(
-						this.consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, false, null, null, 0, 0), listaFechamento);
+		listaFechamento = (List<FechamentoFisicoLogicoDTO>) this.getSession().getAttribute("gridFechamentoEncalheDTO");
+		
+		listaFechamento = this.mergeItensFechamento(this.consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, false, null, null, 0, 0), listaFechamento);
 
 		this.validarObrigatoriedadeQuantidadeFisica(listaFechamento, isAllFechamentos);
 		

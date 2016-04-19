@@ -759,10 +759,9 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	    sql.append("    JOIN BOX box ON (box.ID = rtz.BOX_ID) ");
 
     	sql.append("   WHERE d.DATA = :dtOperacao   and cb.cota_id = ct.id and d.cota_id = ct.id  and ct.id = mfc.cota_id and box.tipo_box <> 'ESPECIAL' ");
+    	sql.append("   and cb.ORIUNDA_NEGOCIACAO_AVULSA = false "); 
     	sql.append("   GROUP BY mfc.COTA_ID ");
     	sql.append("   ORDER BY ct.NUMERO_COTA ");
-    	
-    	
     	
     	SQLQuery query = this.getSession().createSQLQuery(sql.toString());
     	

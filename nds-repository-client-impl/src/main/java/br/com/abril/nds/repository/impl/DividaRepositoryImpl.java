@@ -1271,6 +1271,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         hql.append(" divida1_.STATUS = 'PENDENTE_INADIMPLENCIA'                                                                             ");
         hql.append(" and cota3_.ID = :cotaId                                                                                                ");
         hql.append(" and consolidad5_.DT_CONSOLIDADO < :data                                                                                ");
+        hql.append(" and cobranca2_.DT_PAGAMENTO is null                                                                                    ");
         hql.append(" group by divida1_.id                                                                                                   ");
         hql.append(" order by divida1_.DATA desc                                                                                            ");
         
