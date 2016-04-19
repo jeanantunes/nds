@@ -30,7 +30,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" select  ");
+		sql.append(" select SQL_SMALL_RESULT ");
 		sql.append("             T.numEdicao as numEdicao, ");
 		sql.append("             T.statusLancamento as statusLancamento, ");
 		sql.append("             T.idProdutoEdicao AS idProdutoEdicao, ");
