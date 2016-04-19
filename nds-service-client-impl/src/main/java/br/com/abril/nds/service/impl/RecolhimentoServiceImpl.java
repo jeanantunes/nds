@@ -566,6 +566,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			return;
 		}
 		
+		// obter cotas com chamadao para fazer verificacao de duplicidade ao criar chamada
+		
+		List <Long> cotasChamadao = chamadaEncalheCotaRepository.obterListaCotaChamadao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
+		
 		for (Map.Entry<Date, Set<Long>> entry : mapaDataRecolhimentoLancamentos.entrySet()) {
 		
 			Set<Long> idsLancamento = entry.getValue();
@@ -670,7 +674,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					}
 					
 					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor(), cotaReparte.isCotaContribuinteExigeNF(), 
-							usuario,cotaReparte.isParcialFinal());
+							usuario,cotaReparte.isParcialFinal(),cotasChamadao);
 				
 					this.chamadaEncalheRepository.merge(chamadaEncalhe);
 				}
@@ -727,7 +731,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 										 Cota cota, ChamadaEncalhe chamadaEncalhe,
 										 Date dataLctoDistribuidor,
 										 boolean cotaContribuinteExigeNF,
-										 Usuario usuario,boolean isParcialFinal) {
+										 Usuario usuario,boolean isParcialFinal,List<Long> cotasChamadao) {
 		
 		// nao criar chamada encalhe se for chamadao ou antecipada
 		if (!chamadaEncalhe.getTipoChamadaEncalhe().equals(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO)) {
@@ -736,18 +740,17 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 		
 		// verificar se existe chamadao para esta cota e produto nesta data. se tiver nao criar
+		if ( cotasChamadao != null &&  cotasChamadao.contains(cota.getId())) {
+		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
+		 
+		BigInteger count = chamadaEncalheCotaRepository.obterListaChamadaEncalheCotaChamadao(cota.getId(),chamadaEncalhe.getProdutoEdicao().getId(),dataOperacao);
 		
-		// Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
-		
-		/*
-		List <ChamadaEncalheCota> cecChamadao = chamadaEncalheCotaRepository.obterListaChamadaEncalheCotaChamadao(cota.getId(),chamadaEncalhe.getProdutoEdicao().getId(),dataOperacao);
-		
-		if ( cecChamadao != null && cecChamadao.size() > 0 ) { 
+		if ( count != null && count.intValue() > 0 ) { 
 			// tem chamadao . nao incluir cec para esta cota
-			LOGGER.warn("CEC NAO CRIADA. JA EXISTE CHAMADADO PARA ESTA COTA e PRODUTO cec.id="+cecChamadao.get(0).getId() );
+			LOGGER.warn("CEC NAO CRIADA. JA EXISTE CHAMADADO PARA ESTA COTA e PRODUTO cec.id="+cota.getId() +" produto_edicao="+ chamadaEncalhe.getProdutoEdicao().getId());
 			return;
 		}
-		*/
+		}
 		
 		if(BigInteger.ZERO.compareTo(qtdPrevista) >= 0) {
           if ( isParcialFinal) { // se for pacialFinal, criar chamada com zero..
