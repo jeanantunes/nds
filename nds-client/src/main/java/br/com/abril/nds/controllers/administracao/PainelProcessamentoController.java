@@ -637,7 +637,8 @@ public class PainelProcessamentoController extends BaseController {
 	     int semDE=0;
         for (NotaEncalheBandeiraVO nota: notas ) {
 	       try {
-	        LOGGER.warn("ENVIADO NOTA "+(++cont)+" de "+notas.size());
+	    	 
+	            LOGGER.warn("ENVIADO NOTA "+(++cont)+" de "+notas.size());
 	      
 	    	List<ItemEncalheBandeiraVO> itens= ftfService.obterItensNotasNaoEnviadas(nota.getNotaId()) ;
 	    	 try {
@@ -679,8 +680,8 @@ public class PainelProcessamentoController extends BaseController {
 	    	       }catch (Exception e )
 	    	       {
 	    	    	   
-	    	    	  if (e.getLocalizedMessage().contains("ERRO: 9999") || e.getLocalizedMessage().contains("0020 - NOTA JA ENVIADA")) {
-	    	    		  msg+="</br>NOTA JA ENVIADA  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe();
+	    	    	  if ( e.getLocalizedMessage().contains("0020 - NOTA JA ENVIADA")) {
+	    	    		  msg+="</br>NOTA JA ENVIADA  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe()+" - " +e.getLocalizedMessage();
 	    	    		
 	    	    		  ftfService.atualizaFlagInterfaceNotasEnviadas(nota.getNotaId(),true); 
 	    	    	  }
@@ -699,7 +700,8 @@ public class PainelProcessamentoController extends BaseController {
 	    	    		  String it="";
 	       	    	   for ( ItemEncalheBandeiraVO item:  itens)
 	       	    		   it +="<"+item.getCodPublicacao()+"/"+item.getNumEdicao()+">";
-	    	    		  msg+="</br>BANDEIRA GRAVADA COM SUCESSO  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe()+" Itens:"+it;
+	    	    		  msg+="</br>BANDEIRA GRAVADA COM SUCESSO  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe()+" Itens:"+it+
+	    	    				  " -"+e.getLocalizedMessage();
 	    	    		 
 	    	    		  ftfService.atualizaFlagInterfaceNotasEnviadas(nota.getNotaId(),true);
 	    	    	  }
