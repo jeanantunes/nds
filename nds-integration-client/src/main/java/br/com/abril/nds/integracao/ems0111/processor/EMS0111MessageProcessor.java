@@ -155,58 +155,15 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 
 		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(produtoEdicao, dataGeracaoArquivo, statusLancamento);
 
-		if(lancamento != null) {
+		 Date dataRecolhimento = input.getDataRecolhimento() != null ? input.getDataRecolhimento():this.atualizaPeb(input.getDataLancamento(), produtoEdicao);
 
-			BigInteger repartePromocional = BigInteger.valueOf(input.getRepartePromocional());
-
-			if (null != lancamento.getRepartePromocional() && !lancamento.getRepartePromocional().equals(repartePromocional)) {
-				this.ndsiLoggerFactory.getLogger().logInfo(message,
-						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteração do REPARTE PROMOCIONAL"
-								+ " de " + lancamento.getRepartePromocional() 
-								+ " para " + repartePromocional
-								+ " Produto "+codigoProduto
-								+ " Edição " + edicao);
-				lancamento.setRepartePromocional(repartePromocional);
-				
-				
-				
-			}
-			
-			Date dataOriginal = input.getDataLancamento();
-			Date dataSugerida = lancamentoService.obterDataLancamentoValido(dataOriginal, produtoEdicao.getProduto().getFornecedor().getId());
-			final Date dataRecolhimento = this.atualizaPeb(input.getDataLancamento(), produtoEdicao);
-			
-			final boolean produtoContaFirme = (FormaComercializacao.CONTA_FIRME.equals(produtoEdicao.getProduto().getFormaComercializacao()));
-			
-			if(produtoContaFirme) {
-				
-				lancamento.setDataRecolhimentoDistribuidor(dataSugerida);// confirmado
-				
-				lancamento.setDataRecolhimentoPrevista(dataOriginal);// confirmado 
-			} else {
-				
-				// comentado por odemir, pois esta com pau, e datarecolhimentosugerida nao 'e usada. foi comentada
-				// abaixo, nao explicado por que. a funcao getProximadatautil esta em loop, porque ele nao
-				// tenta so a proxima data util, mas a anterior tb.. e ai ficam em loop..
-				
-				// Date dataRecolhimentoSugerida = recolhimentoService.obterDataRecolhimentoValido(this.getProximaDataUtil(dataRecolhimento, produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO),produtoEdicao.getProduto().getFornecedor().getId());
-
-				//lancamento.setDataRecolhimentoDistribuidor(dataRecolhimentoSugerida);// confirmado
-				lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);// confirmado
-				
-				lancamento.setDataRecolhimentoPrevista(dataRecolhimento);// confirmado 
-			}
-
-		}
 		
 		if (lancamento == null) {
 		    
 			// Cadastrar novo lançamento
 			lancamento = new Lancamento();
 			
-			final Date dataRecolhimento = this.atualizaPeb(input.getDataLancamento(), produtoEdicao);
-
+		 
 			// Data da Operação do sistema:
 			final Date dataOperacao = distribuidorService.obter().getDataOperacao();
 			lancamento.setDataStatus(dataOperacao);
@@ -258,15 +215,18 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 					
 					Date dataRecolhimentoSugerida = recolhimentoService.obterDataRecolhimentoValido(this.getProximaDataUtil(dataRecolhimento, produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO),produtoEdicao.getProduto().getFornecedor().getId());
 
-					//lancamento.setDataRecolhimentoDistribuidor(dataRecolhimentoSugerida);// confirmado
-					lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);// confirmado
-					
+					lancamento.setDataRecolhimentoDistribuidor(dataRecolhimentoSugerida);// confirmado
+						
 					lancamento.setDataRecolhimentoPrevista(dataRecolhimento);// confirmado 
 				}
 
 
 			} catch (Exception e) {
-				
+				ndsiLoggerFactory.getLogger().logError(
+						message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						String.format("Erro criar lancamento para Produto %1$s Edição %2$s. " + e.getMessage(),
+									  codigoProduto, edicao));
 				return;
 			}
 			
@@ -293,23 +253,58 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 			
 			return;
 			
-		} else if(lancamento.getStatus().equals(StatusLancamento.CONFIRMADO) 
+		} 
+		
+	
+		
+		// lancamento ja existe 
+
+			BigInteger repartePromocional = BigInteger.valueOf(input.getRepartePromocional());
+
+			if (null != lancamento.getRepartePromocional() && !lancamento.getRepartePromocional().equals(repartePromocional)) {
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alteração do REPARTE PROMOCIONAL"
+								+ " de " + lancamento.getRepartePromocional() 
+								+ " para " + repartePromocional
+								+ " Produto "+codigoProduto
+								+ " Edição " + edicao);
+				lancamento.setRepartePromocional(repartePromocional);
+				
+				
+				
+			}
+			
+			Date dataOriginal = input.getDataLancamento();
+			Date dataSugerida = lancamentoService.obterDataLancamentoValido(dataOriginal, produtoEdicao.getProduto().getFornecedor().getId());
+			
+			final boolean produtoContaFirme = (FormaComercializacao.CONTA_FIRME.equals(produtoEdicao.getProduto().getFormaComercializacao()));
+			
+			if(produtoContaFirme) {
+				
+				lancamento.setDataRecolhimentoDistribuidor(dataSugerida);// confirmado
+				
+				lancamento.setDataRecolhimentoPrevista(dataOriginal);// confirmado 
+			} 
+
+		
+		
+		
+		
+		if(lancamento.getStatus().equals(StatusLancamento.CONFIRMADO) 
 			   || lancamento.getStatus().equals(StatusLancamento.PLANEJADO)
 			   || lancamento.getStatus().equals(StatusLancamento.BALANCEADO)
 			   || lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO)
 			   || lancamento.getStatus().equals(StatusLancamento.FURO)){
 		    
-		    boolean alterarData;
+		    boolean alterarData=false;
 		    
-		    if (!lancamento.getStatus().equals(StatusLancamento.CONFIRMADO)
-		            && !lancamento.getStatus().equals(StatusLancamento.PLANEJADO)) {
-		        
-		        alterarData = false;
-		        
-		    } else {
+		    if (lancamento.getStatus().equals(StatusLancamento.CONFIRMADO)
+		            || lancamento.getStatus().equals(StatusLancamento.PLANEJADO)) {
 		        
 		        alterarData = true;
-		    }
+		        
+		    } 
 		    
 			lancamento.setAlteradoInteface(true);
 			/*
@@ -340,7 +335,6 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 			}
 			
 			lancamento.setDataLancamentoPrevista(input.getDataLancamento());
-			final BigInteger repartePromocional = BigInteger.valueOf(input.getRepartePromocional());
 			
 			if (null != lancamento.getRepartePromocional() && !lancamento.getRepartePromocional().equals(repartePromocional)) {
 				
@@ -389,7 +383,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
     					
     					dtLancamentoNovo = lancamentoService.obterDataLancamentoValido(input.getDataLancamento(), produtoEdicao.getProduto().getFornecedor().getId());
     				} catch (Exception e) {
-    					
+    					ndsiLoggerFactory.getLogger().logError(
+    							message,
+    							EventoExecucaoEnum.INF_DADO_ALTERADO,
+    							String.format("Erro alterando data de lancamento  o Produto %1$s Edição %2$s. " + e.getMessage(),
+    										  codigoProduto, edicao));
     					return;
     				}
 
@@ -414,32 +412,35 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
     				}
     			}
 			}
-		}
-		Date dataRecolhimento = this.atualizaPeb(input.getDataLancamento(), produtoEdicao);
 		
-		if(lancamento.getDataRecolhimentoDistribuidor() != null) {
+		 Date dataRecolhimentoSugerida = recolhimentoService.obterDataRecolhimentoValido(this.getProximaDataUtil(dataRecolhimento, produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO),produtoEdicao.getProduto().getFornecedor().getId());
+
+		
+		if(lancamento.getDataRecolhimentoDistribuidor() == null || !lancamento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoSugerida) ) {
 			
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 				EventoExecucaoEnum.INF_DADO_ALTERADO,
-				"Alteração da DATA RECOLHIMENTO PREVISTO/DISTRIBUIDOR"
-						+ " de " + DateUtil.formatarDataPTBR(lancamento.getDataRecolhimentoDistribuidor())
-						+ " para " + DateUtil.formatarDataPTBR(dataRecolhimento)
+				"Alteração da DATA RECOLHIMENTO DISTRIBUIDOR"
+						+ " de " + (lancamento.getDataRecolhimentoDistribuidor() != null ? DateUtil.formatarDataPTBR(lancamento.getDataRecolhimentoDistribuidor()):"Nulo")
+						+ " para " + (dataRecolhimentoSugerida!= null ? DateUtil.formatarDataPTBR(dataRecolhimentoSugerida): "Nulo")
 						+ " Produto "+codigoProduto
 						+ " Edição " + edicao);
-		// } else {
-			
+			lancamento.setDataRecolhimentoDistribuidor(dataRecolhimentoSugerida);// confirmado
+		   } 
+
+		if(lancamento.getDataRecolhimentoPrevista() == null || !lancamento.getDataRecolhimentoPrevista().equals(dataRecolhimento) ) {
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração da DATA RECOLHIMENTO PREVISTO/DISTRIBUIDOR"
-							+ " de Nulo"
-							+ " para " + DateUtil.formatarDataPTBR(dataRecolhimento)
+					"Alteração da DATA RECOLHIMENTO PREVISTO"
+							+ " de " + (lancamento.getDataRecolhimentoPrevista() != null ? DateUtil.formatarDataPTBR(lancamento.getDataRecolhimentoPrevista()):"Nulo")
+							+ " para " + (dataRecolhimento!= null ? DateUtil.formatarDataPTBR(dataRecolhimento): "Nulo")
 							+ " Produto "+codigoProduto
 							+ " Edição " + edicao);
+			lancamento.setDataRecolhimentoPrevista(dataRecolhimento);// confirmado 
+		
+		  }
 		}
 		
-		lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);// confirmado
-		
-		lancamento.setDataRecolhimentoPrevista(dataRecolhimento);// confirmado 
 		this.getSession().merge(lancamento);
 	}
 	
@@ -590,7 +591,7 @@ private Date getProximaDataUtil(Date data, Long idFornecedor, OperacaoDistribuid
 			return novaData;
 		}
 		
-		return this.getProximaDataUtil(DateUtil.adicionarDias(novaData, 1), idFornecedor, operacaoDistribuidor);
+		return this.getProximaDataUtil(DateUtil.adicionarDias(data, 1), idFornecedor, operacaoDistribuidor);
 
 	}
 	
