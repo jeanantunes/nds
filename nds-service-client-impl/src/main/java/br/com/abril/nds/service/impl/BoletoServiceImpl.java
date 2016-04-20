@@ -1331,8 +1331,7 @@ public class BoletoServiceImpl implements BoletoService {
         dividaRaiz = divida.getDividaRaiz();
     	
         if (dividaRaiz != null) {
-    		dividaRaiz.setStatus(StatusDivida.QUITADA);
-    		
+        	
     		dividaRaiz.getCobranca().setStatusCobranca(StatusCobranca.PAGO);
     		dividaRaiz.getCobranca().setDataPagamento(dataOperacao);
     		
