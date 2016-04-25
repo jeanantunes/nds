@@ -557,9 +557,13 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
     @Override
     public boolean verificarAtivacaoCotaAposPgtoParcela(Long idCobranca) {
     
+    	//" case when parcelaneg7_.ID = i.idParcelaAtivar then true else false end as ativa "+
+    	
         SQLQuery query = this.getSession().createSQLQuery(
                 " select "+
-                "    case when parcelaneg7_.ID = i.idParcelaAtivar then true else false end as ativa "+
+                
+        		"  IF(parcelaneg7_.ID = i.idParcelaAtivar OR parcelaneg7_.ID > i.idParcelaAtivar, TRUE, FALSE) as ativa  "+
+                		
                 " from "+
                 "    COBRANCA cobranca0_  "+
                 " inner join "+
