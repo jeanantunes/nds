@@ -123,9 +123,9 @@ public class ConsultaNegociacoesController extends BaseController {
 	
 	@Post
 	@Path("/buscarDetalhesNegociacao")
-	public void buscarDetalhesNegociacao(Long idNegociacao){
+	public void buscarDetalhesNegociacao(Long idNegociacao, Long idCobranca){
 		
-		DetalheConsultaNegociacaoDividaDTO consultaDetalhes = negociacaoDividaService.buscarDetalhesNegociacaoDivida(idNegociacao);
+		DetalheConsultaNegociacaoDividaDTO consultaDetalhes = negociacaoDividaService.buscarDetalhesNegociacaoDivida(idNegociacao, idCobranca);
 		
 		result.use(Results.json()).withoutRoot().from(consultaDetalhes).recursive().serialize();
 		

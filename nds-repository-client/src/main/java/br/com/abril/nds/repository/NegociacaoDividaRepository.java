@@ -52,5 +52,5 @@ public interface NegociacaoDividaRepository extends Repository<Negociacao, Long>
 
 	List<ConsultaNegociacaoDividaDTO> buscarNegociacaoDivida(FiltroConsultaNegociacoesDTO filtro);
 
-	List<DetalheConsultaNegociacaoDividaDTO> buscarDetalhesNegociacaoDivida(Long idNegociacao);
+	List<DetalheConsultaNegociacaoDividaDTO> buscarDetalhesNegociacaoDivida(Long idNegociacao, Long idCobranca);
 }
