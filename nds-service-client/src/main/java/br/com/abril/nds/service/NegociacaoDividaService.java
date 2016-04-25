@@ -57,5 +57,5 @@ public interface NegociacaoDividaService {
 
 	List<ConsultaNegociacaoDividaDTO> buscarNegociacoesDividas(FiltroConsultaNegociacoesDTO filtro);
 
-	DetalheConsultaNegociacaoDividaDTO buscarDetalhesNegociacaoDivida(Long idNegociacao);
+	DetalheConsultaNegociacaoDividaDTO buscarDetalhesNegociacaoDivida(Long idNegociacao, Long idCobranca);
 }

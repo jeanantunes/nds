@@ -709,7 +709,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		sql.append("            END,  ");
 		sql.append("            if(cb2.STATUS_COBRANCA is null, cb.STATUS_COBRANCA,cb2.STATUS_COBRANCA)) as situacaoParcela, ");
 		
-		sql.append("       cb2.id as idCobranca, ");
+		sql.append("       nco.COBRANCA_ID as idCobranca, ");
 		sql.append("       ng.id as idNegociacao ");
 		
 		sql.append("   FROM cobranca cb ");
@@ -755,12 +755,14 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
         	}else{
         		sql.append(filtro.getPaginacao().getSortColumn());
         	}
-
+        	
         	sql.append(" "+filtro.getPaginacao().getSortOrder());
 			
 		} else {
 			sql.append(" dataNegociacao desc ");
 		}
+		
+		sql.append(", dataNegociacao desc, dataVencimento asc ");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
@@ -789,7 +791,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<DetalheConsultaNegociacaoDividaDTO> buscarDetalhesNegociacaoDivida(Long idNegociacao){
+	public List<DetalheConsultaNegociacaoDividaDTO> buscarDetalhesNegociacaoDivida(Long idNegociacao, Long idCobranca){
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -843,12 +845,13 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		sql.append("   LEFT JOIN banco bc  ");
 		sql.append("     ON fc.BANCO_ID = bc.ID ");
 		
-		sql.append("   WHERE  ng.id = :idNegociacao ");
+		sql.append("   WHERE  ng.id = :idNegociacao AND cb.id = :idCobranca");
 		sql.append("   ORDER BY pn.DATA_VENCIMENTO ");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("idNegociacao", idNegociacao);
+		query.setParameter("idCobranca", idCobranca);
 		
 		query.addScalar("tipoNegociacao", StandardBasicTypes.STRING);
 		query.addScalar("qtdParcelas", StandardBasicTypes.INTEGER);
