@@ -398,7 +398,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 			return novaData;
 		}
 		
-		return this.getProximaDataUtil(DateUtil.adicionarDias(novaData, 1), idFornecedor, operacaoDistribuidor);
+		return this.getProximaDataUtil(DateUtil.adicionarDias(data, 1), idFornecedor, operacaoDistribuidor);
 
 	}
 
