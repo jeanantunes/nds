@@ -813,7 +813,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sqlMovimentoFinaceiroCotaNaoConsolidado.append("	and mfc.STATUS = :statusAprovacao ");
         sqlMovimentoFinaceiroCotaNaoConsolidado.append("	and mfc.id not in ( ");
         sqlMovimentoFinaceiroCotaNaoConsolidado.append("                       select cmfc.MVTO_FINANCEIRO_COTA_ID from ");
-        sqlMovimentoFinaceiroCotaNaoConsolidado.append("                       CONSOLIDADO_MVTO_FINANCEIRO_COTA cmfc )");
+        sqlMovimentoFinaceiroCotaNaoConsolidado.append("                       CONSOLIDADO_MVTO_FINANCEIRO_COTA cmfc  where cmfc.MVTO_FINANCEIRO_COTA_ID = mfc.id )");
         sqlMovimentoFinaceiroCotaNaoConsolidado.append(" ) ");
         
         final StringBuilder sql = new StringBuilder();
@@ -1735,7 +1735,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sqlMovimentoFinaceiroCotaNaoConsolidado.append("	and mfc.STATUS = :statusAprovacao ");
         sqlMovimentoFinaceiroCotaNaoConsolidado.append("	and mfc.id not in ( ");
         sqlMovimentoFinaceiroCotaNaoConsolidado.append("                       select cmfc.MVTO_FINANCEIRO_COTA_ID from ");
-        sqlMovimentoFinaceiroCotaNaoConsolidado.append("                       CONSOLIDADO_MVTO_FINANCEIRO_COTA cmfc )");
+        sqlMovimentoFinaceiroCotaNaoConsolidado.append("                       CONSOLIDADO_MVTO_FINANCEIRO_COTA cmfc where cmfc.MVTO_FINANCEIRO_COTA_ID = mfc.id  )");
         sqlMovimentoFinaceiroCotaNaoConsolidado.append(" ) ");
         
         final StringBuilder sql = new StringBuilder();

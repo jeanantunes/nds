@@ -952,40 +952,38 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     }
 
     @Override
-    public void atualizaReparteCota(Long estudoId, Integer numeroCota, Long reparteSubtraido) {
+    public void atualizaReparteCota(Long estudoId, Long cotaId, Long reparteSubtraido) {
 
         StringBuilder sql = new StringBuilder();
         sql.append("  update estudo_cota_gerado ec ");
-        sql.append("  left join cota cota on cota.id = ec.cota_id ");
         sql.append("  set ec.reparte = coalesce(ec.reparte,0) + ?, ");
         sql.append("      ec.qtde_efetiva = coalesce(ec.qtde_efetiva,0) + ? ");
         sql.append("  where ec.estudo_id = ? ");
-        sql.append("  and cota.numero_cota = ? ");
+        sql.append("  and   ec.cota_id  = ? ");
 
         SQLQuery query = getSession().createSQLQuery(sql.toString());
         query.setLong(0, reparteSubtraido);
         query.setLong(1, reparteSubtraido);
         query.setLong(2, estudoId);
-        query.setInteger(3, numeroCota);
+        query.setLong(3, cotaId);
         query.setTimeout(180); // timeout de 180 segundos para evitar lock exception
         query.executeUpdate();
     }
 
     @Override
-    public void atualizaClassificacaoCota(Long estudoId, Integer numeroCota, String classificacaoCota) {
+    public void atualizaClassificacaoCota(Long estudoId, Long cotaId, String classificacaoCota) {
 
         StringBuilder sql = new StringBuilder();
         
         sql.append("update estudo_cota_gerado ec ");
-        sql.append("  left join cota cota on cota.id = ec.cota_id ");
         sql.append("   set ec.classificacao = ? ");
         sql.append(" where ec.estudo_id = ? ");
-        sql.append("   and cota.numero_cota = ? ");
+        sql.append("   and ec.cota_id = ? ");
 
         SQLQuery query = getSession().createSQLQuery(sql.toString());
         query.setString(0, classificacaoCota);
         query.setLong(1, estudoId);
-        query.setInteger(2, numeroCota);
+        query.setLong(2, cotaId);
         query.executeUpdate();
     }
 
@@ -1172,12 +1170,12 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     }
     
 	@Override
-	public AnaliseParcialDTO buscarReparteDoEstudo(Long estudoOrigem,Integer numeroCota) {
-		String sql = "select estudo_cota.REPARTE as ultimoReparte from estudo_cota_gerado estudo_cota join cota ON estudo_cota.COTA_ID = cota.ID where estudo_id = :estudoID and cota.numero_cota= :numeroCota";
+	public AnaliseParcialDTO buscarReparteDoEstudo(Long estudoOrigem,Long cotaId) {
+		String sql = "select estudo_cota.REPARTE as ultimoReparte from estudo_cota_gerado estudo_cota  where estudo_id = :estudoID and cota_id= :cotaId";
 		
 		  SQLQuery query = getSession().createSQLQuery(sql);
 	        query.setParameter("estudoID", estudoOrigem);
-	        query.setParameter("numeroCota", numeroCota);
+	        query.setParameter("cotaId", cotaId);
 	        query.addScalar("ultimoReparte", StandardBasicTypes.BIG_DECIMAL);
 	        
 	        query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseParcialDTO.class));

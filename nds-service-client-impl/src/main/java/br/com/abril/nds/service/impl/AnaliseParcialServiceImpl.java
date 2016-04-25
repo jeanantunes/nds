@@ -548,7 +548,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Override
     @Transactional
     public void atualizaClassificacaoCota(Long estudoId, Integer numeroCota, String classificacaoCota) {
-    	analiseParcialRepository.atualizaClassificacaoCota(estudoId, numeroCota, classificacaoCota);
+    	Cota c = cotaRepository.obterPorNumerDaCota(numeroCota);
+    	analiseParcialRepository.atualizaClassificacaoCota(estudoId, c.getId(), classificacaoCota);
     }
     
     @Override
@@ -561,6 +562,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	
     	EstudoGerado estudoGerado = estudoService.obterEstudoSql(estudoId);
     	
+    	
 		
 		if(estudoGerado.isLiberado()){
     		throw new ValidacaoException(TipoMensagem.WARNING, "Estudo já liberado!");
@@ -569,11 +571,12 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	if(estudoGerado.getDistribuicaoPorMultiplos() != null && estudoGerado.getDistribuicaoPorMultiplos() == 1){
     		this.validarDistribuicaoPorMultiplo(estudoId, reparteDigitado, estudoGerado);
     	}
-		
+    	Cota c = cotaRepository.obterPorNumerDaCota(numeroCota);
+    	
     	if(reparteDigitado >= 0){
-    		analiseParcialRepository.atualizaReparteCota(estudoId, numeroCota, reparte);
+    		analiseParcialRepository.atualizaReparteCota(estudoId, c.getId(), reparte);
     	}else{
-    		EstudoCotaGerado estudoCota = estudoService.obterEstudoCotaGerado(numeroCota.intValue(), estudoId);
+    		EstudoCotaGerado estudoCota = estudoService.obterEstudoCotaGerado(c.getId(), estudoId);
     		estudoCotaGerado.removerEstudoCotaGerado(estudoCota.getId());
     	}
     	

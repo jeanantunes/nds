@@ -27,8 +27,8 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 public interface AnaliseParcialRepository {
 	
 	List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO);
-	void atualizaClassificacaoCota(Long estudoId, Integer numeroCota, String classificacaoCota);
-	void atualizaReparteCota(Long estudoId, Integer numeroCota, Long reparteSubtraido);
+	void atualizaClassificacaoCota(Long estudoId, Long cotaId, String classificacaoCota);
+	void atualizaReparteCota(Long estudoId, Long cotaId, Long reparteSubtraido);
 	void atualizaReparteEstudo(Long estudoId, Long reparteSubtraido);
 	void liberar(Long id);
 	List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo);
@@ -37,7 +37,7 @@ public interface AnaliseParcialRepository {
 	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase, boolean parcialComRedistribuicao);
 	List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO);
     public List<EdicoesProdutosDTO> carregarPublicacaoDoEstudo(Long estudoId);
-    AnaliseParcialDTO buscarReparteDoEstudo(Long estudoOrigem, Integer numeroCota);
+    AnaliseParcialDTO buscarReparteDoEstudo(Long estudoOrigem, Long cotaId);
     Integer[] buscarCotasPorTipoDistribuicao(TipoDistribuicaoCota tipo);
     void atualizaReparteTotalESaldo(Long idEstudo, Integer reparteTotal);
     boolean verificarRedistribuicaoNoPeriodoParcial(final Long estudoId,final Integer numeroPeriodoBase);
