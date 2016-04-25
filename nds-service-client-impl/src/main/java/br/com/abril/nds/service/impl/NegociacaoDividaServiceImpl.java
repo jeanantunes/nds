@@ -1408,12 +1408,12 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     	HashMap<Long, List<ConsultaNegociacaoDividaDTO>> mapNegociacoes = new HashMap<>();
     	
     	for (ConsultaNegociacaoDividaDTO negociacaoDTO : negociacoes) {
-			if(!mapNegociacoes.containsKey(negociacaoDTO.getIdNegociacao())){
+			if(!mapNegociacoes.containsKey(negociacaoDTO.getIdCobranca())){
 				List<ConsultaNegociacaoDividaDTO> listNegociacoes = new ArrayList<>();
 				listNegociacoes.add(negociacaoDTO);
-				mapNegociacoes.put(negociacaoDTO.getIdNegociacao(), listNegociacoes);
+				mapNegociacoes.put(negociacaoDTO.getIdCobranca(), listNegociacoes);
 			}else{
-				mapNegociacoes.get(negociacaoDTO.getIdNegociacao()).add(negociacaoDTO);
+				mapNegociacoes.get(negociacaoDTO.getIdCobranca()).add(negociacaoDTO);
 			}
 		}
     	
@@ -1441,7 +1441,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     
     @Override
 	@Transactional
-    public DetalheConsultaNegociacaoDividaDTO buscarDetalhesNegociacaoDivida(Long idNegociacao){
+    public DetalheConsultaNegociacaoDividaDTO buscarDetalhesNegociacaoDivida(Long idNegociacao, Long idCobranca){
     	
     	
     	Negociacao negociacaoDivida = this.negociacaoDividaRepository.buscarPorId(idNegociacao);
@@ -1458,7 +1458,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     		detalheReturn.setIsentaEncargos(negociacaoDivida.isIsentaEncargos());
     	}else{
     		
-    		List<DetalheConsultaNegociacaoDividaDTO> detalhes = this.negociacaoDividaRepository.buscarDetalhesNegociacaoDivida(idNegociacao);
+    		List<DetalheConsultaNegociacaoDividaDTO> detalhes = this.negociacaoDividaRepository.buscarDetalhesNegociacaoDivida(idNegociacao, idCobranca);
     		
     		List<CalculaParcelasVO> listParcelas = new ArrayList<>();
     		

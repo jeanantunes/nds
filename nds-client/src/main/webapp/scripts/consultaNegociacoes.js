@@ -242,7 +242,7 @@ var consultaNegociacoesController = $.extend(true, {
 		
 		
 		$.postJSON(contextPath + '/financeiro/consultaNegociacoes/buscarDetalhesNegociacao',
-				{'idNegociacao':idNegociacao}, 
+				{'idNegociacao':idNegociacao, 'idCobranca': idCobranca}, 
 				function(result) {
 					
 					if(result.tipoNegociacao == "COMISSAO"){
