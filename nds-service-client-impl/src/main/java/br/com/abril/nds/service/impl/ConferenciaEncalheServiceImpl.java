@@ -2191,7 +2191,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
      * @return Set - String
      * @throws GerarCobrancaValidacaoException
      */
-	private Set<String> gerarCobranca(final ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
+	private synchronized Set<String> gerarCobranca(final ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
 		
 		
 		if(controleConferenciaEncalheCota.getId() != null) {
