@@ -481,7 +481,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteração do Editor"
 					+ " de " + produto.getEditor().getPessoaJuridica().getNome()
-					+ " para " + ( editor != null && editor.getPessoaJuridica() != null ? editor.getPessoaJuridica().getNome():"nulo")
+					+ " para " + ( editor != null && editor.getPessoaJuridica() != null ? editor.getPessoaJuridica().getNome():" Nulo:Sem pessoa juridica")
 					+" Produto " + produto.getCodigo());
 		 }else{
             this.ndsiLoggerFactory.getLogger().logInfo(message,
