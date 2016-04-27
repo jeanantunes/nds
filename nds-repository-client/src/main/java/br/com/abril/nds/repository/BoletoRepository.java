@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.BoletoCotaDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 
@@ -199,6 +200,6 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	
 	Long verificaEnvioDeEmail(String nossoNumero);
 
-    List<Boleto> obterPorNossoNumero(Collection<String> nossoNumero);
+    List<Boleto> obterPorNossoNumero(Collection<String> nossoNumero, final FiltroDividaGeradaDTO filtro);
 	
 }

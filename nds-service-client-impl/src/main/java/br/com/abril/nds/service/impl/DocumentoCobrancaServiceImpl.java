@@ -33,6 +33,7 @@ import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.ItemSlipVendaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoSlip;
@@ -223,7 +224,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     
     @Transactional
     @Override
-    public byte[] gerarDocumentoCobrancaComSlip(final List<GeraDividaDTO> dividas, final TipoCobranca tipoCobranca,
+    public byte[] gerarDocumentoCobrancaComSlip(final List<GeraDividaDTO> dividas, final FiltroDividaGeradaDTO filtro,
             final List<PoliticaCobranca> politicasCobranca, final Date data) {
         
         final List<String> listNossoNumero = getNossoNumeros(dividas);
@@ -241,7 +242,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         
         try {
             
-            final List<Boleto> boletos = this.boletoRepository.obterPorNossoNumero(listNossoNumero);
+            final List<Boleto> boletos = this.boletoRepository.obterPorNossoNumero(listNossoNumero, filtro);
             
             for (int index = 0 ; index < boletos.size() ; index++){
                 

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.GeraDividaDTO;
+import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -39,7 +40,7 @@ public interface DocumentoCobrancaService {
 	 */
 	byte[] gerarDocumentoCobranca(List<GeraDividaDTO> dividas,TipoCobranca tipoCobranca);
 	
-	byte[] gerarDocumentoCobrancaComSlip(final List<GeraDividaDTO> dividas, final TipoCobranca tipoCobranca,
+	byte[] gerarDocumentoCobrancaComSlip(final List<GeraDividaDTO> dividas, final FiltroDividaGeradaDTO filtro,
 	        final List<PoliticaCobranca> politicasCobranca, final Date data);
 
 	/**
