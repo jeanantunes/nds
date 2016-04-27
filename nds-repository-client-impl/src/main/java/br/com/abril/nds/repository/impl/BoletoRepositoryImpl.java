@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.BoletoCotaDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO.OrdenacaoColunaDetalheBaixaBoleto;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
@@ -386,7 +387,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 	
 	@SuppressWarnings("unchecked")
     @Override
-    public List<Boleto> obterPorNossoNumero(Collection<String> nossoNumero) {
+    public List<Boleto> obterPorNossoNumero(Collection<String> nossoNumero, final FiltroDividaGeradaDTO filtro) {
 	    
 	    StringBuilder hql = new StringBuilder("select b from Boleto b ");
 	    hql.append(" JOIN b.cota cota ")
@@ -398,12 +399,42 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
            .append(" left JOIN rotaPdv.rota rota  ")
            .append(" left JOIN rota.roteiro roteiro ")
            .append(" where b.nossoNumero in (:nossoNumero) ")
-           .append(" and roteiro.tipoRoteiro != :tipoRoteiroEspecial ")
-           .append(" ORDER BY box.codigo, roteiro.ordem, rota.ordem, rotaPdv.ordem ");
+           .append(" and roteiro.tipoRoteiro != :tipoRoteiroEspecial ");
+           
+           if(filtro != null) {
+        	   if(filtro.getIdBox() != null) {        		   
+        		   hql.append(" and box.id = :idBox ");
+        	   }
+        	   
+        	   if(filtro.getIdRoteiro() != null) {        		   
+        		   hql.append(" and roteiro.id = :idRoteiro ");
+        	   }
+        	   
+        	   if(filtro.getIdRota() != null) {        		   
+        		   hql.append(" and rota.id = :idRota ");
+        	   }
+           }
+        	   
+           
+           hql.append(" ORDER BY box.codigo, roteiro.ordem, rota.ordem, rotaPdv.ordem ");
 	    
 	    final Query query = this.getSession().createQuery(hql.toString());
         
 	    query.setParameterList("nossoNumero", nossoNumero);
+	    
+	    if(filtro != null) {
+     	   if(filtro.getIdBox() != null) {
+     		  query.setParameter("idBox", filtro.getIdBox());
+     	   }
+     	   
+     	   if(filtro.getIdRoteiro() != null) {        		   
+     		  query.setParameter("idRoteiro", filtro.getIdRoteiro());
+     	   }
+     	   
+     	   if(filtro.getIdRota() != null) {        		   
+     		  query.setParameter("idRota", filtro.getIdRota());
+     	   }
+        }
 	    
 	    query.setParameter("tipoRoteiroEspecial", TipoRoteiro.ESPECIAL);
 	    
