@@ -832,23 +832,40 @@ public class BoletoServiceImpl implements BoletoService {
         dataPagamento = DateUtil.removerTimestamp(dataPagamento);
         
         // Boleto vencido
+        
         if (dataVencimentoUtil.compareTo(dataPagamento) < 0) {
             
-            if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
-                
-                baixarBoletoVencidoAutomatico(tipoBaixaCobranca, pagamento, usuario, nomeArquivo,
-                        dataNovoMovimento, dataOperacao,
-                        boleto, resumoBaixaBoletos, banco, dataPagamento);
-                
-            } else {
-                
-                baixarBoletoVencidoManual(tipoBaixaCobranca, pagamento, usuario, nomeArquivo,
-                        dataNovoMovimento, dataOperacao,
-                        boleto, resumoBaixaBoletos, banco, dataPagamento);
-            }
+        	if(this.distribuidorRepository.aceitaBaixaPagamentoVencido()){
+        		if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
+        			
+        			baixarBoletoVencidoAutomatico(tipoBaixaCobranca, pagamento, usuario, nomeArquivo,
+        					dataNovoMovimento, dataOperacao,
+        					boleto, resumoBaixaBoletos, banco, dataPagamento);
+        			
+        		}else{
+        			
+        			baixarBoletoVencidoManual(tipoBaixaCobranca, pagamento, usuario, nomeArquivo,
+        					dataNovoMovimento, dataOperacao,
+        					boleto, resumoBaixaBoletos, banco, dataPagamento);
+        		}
+        	}else{
+        		if (TipoBaixaCobranca.MANUAL.equals(tipoBaixaCobranca)) {
+        			throw new ValidacaoException(TipoMensagem.WARNING, "Distribuidor não aceita pagamento vencido.");
+        		}else{
+        			
+        			movimentoFinanceiroCotaService
+                    .gerarMovimentosFinanceirosDebitoCredito(
+                            getMovimentoFinanceiroCotaDTO(boleto.getCota(),
+                                    GrupoMovimentoFinaceiro.CREDITO,
+                                    usuario, pagamento.getValorPagamento(),
+                                    dataOperacao, null,
+                                    calendarioService.adicionarDiasUteis(dataOperacao, 1), null));
+        		}
+        	}
             
             return boleto;
         }
+        
         //alterado para HALF_UP, com HALF_EVEN o valor poderia acabar errado, segundo os cálculos feitos dessa maneira
         //a decisão de arredondar pra cima dependeria de mais cáculos e mais um dígito, levando em conta se este é par ou ímpar
         final BigDecimal valorBoleto = boleto.getValor().setScale(2, RoundingMode.HALF_UP);
