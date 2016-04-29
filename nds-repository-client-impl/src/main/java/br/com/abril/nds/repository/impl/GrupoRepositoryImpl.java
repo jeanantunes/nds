@@ -68,7 +68,8 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
     }
     
 
-    public List<CotaEmissaoDTO> obterCotasSemOperacaoDiferenciada(FiltroEmissaoCE filtro) {
+    @SuppressWarnings("unchecked")
+	public List<CotaEmissaoDTO> obterCotasSemOperacaoDiferenciada(FiltroEmissaoCE filtro) {
     	
     	StringBuilder sql = new StringBuilder();
     	
@@ -103,7 +104,7 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 		
 		return query.list();
 
-    }
+    }	
 	
 	private StringBuilder getSQLCotasOperacaoDiferenciadas() {
     	
@@ -120,7 +121,7 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 		sql.append(" inner join pdv on ( pdv.cota_id = c.id and pdv.ponto_principal = true ) ");
 		sql.append(" inner join endereco_pdv on ( endereco_pdv.pdv_id = pdv.id and endereco_pdv.principal = true ) 	");
 		sql.append(" inner join endereco on ( endereco.id = endereco_pdv.endereco_id )  		");
-		sql.append(" inner join ( select gm.localidade as localidade ");
+		sql.append(" left outer join ( select gm.localidade as localidade ");
 		sql.append(" from grupo_cota gc ");
 		sql.append(" inner join grupo_municipio as gm on (gm.grupo_cota_id = gc.id)	");
 		sql.append(" where ");
@@ -165,9 +166,9 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 
 		hql.append(" inner join g.diasRecolhimento diaRecolhimento	");
 	
-		hql.append(" left join g.cotas cota ");
+		hql.append(" left outer join g.cotas cota ");
 		
-		hql.append(" left join g.municipios municipio ");
+		hql.append(" left outer join g.municipios municipio ");
 		
 		hql.append(" where ");
 		
