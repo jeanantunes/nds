@@ -266,16 +266,17 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
                 
                 if (adicionarSlip){
                     
-                    final Slip slip = this.slipRepository.obterPorNumeroCotaData(
-                                    boletos.get(index).getCota().getNumeroCota(),
-                                    data);
+                    final Slip slip = this.slipRepository.obterPorNumeroCotaData(boletos.get(index).getCota().getNumeroCota(), data);
                     
-                    listaCotas.add(boletos.get(index).getCota().getNumeroCota());
-                    
-                  //  geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
+                    if(slip != null){                    	
+                    	geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
+                    } else {
+                    	LOGGER.warn("Nullo para cota: "+boletos.get(index).getCota().getNumeroCota());
+                    }
                 }
             }
             
+            /*
             Map<Integer, List<Slip>> mapSlip = this.slipRepository.obterSlipsPorCotasData(listaCotas, data, null);
             
             List<Integer> cotasRoteirizadas = this.slipRepository.obterCotasRoteirizadas(listaCotas);
@@ -290,6 +291,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 					}
             	}
 			}
+            */
             
         } catch (Exception e) {
             LOGGER.error("Erro gerando arquivo",e);

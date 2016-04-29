@@ -68,10 +68,8 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 		List<GeraDividaDTO> dividas = null;
 		
 		if( TipoCobranca.BOLETO.equals(filtro.getTipoCobranca())){
-
 			dividas = dividaRepository.obterDividasGeradas(filtro);
-		}
-		else {
+		} else {
 			dividas = dividaRepository.obterDividasGeradasSemBoleto(filtro);
 		}
 		
@@ -81,8 +79,7 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 		final List<PoliticaCobranca> politicasCobranca = politicaCobrancaRepository.obterPoliticasCobranca(Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO));
 		
 		if (comSlip){
-		
-		    return documentoCobrancaService.gerarDocumentoCobrancaComSlip(dividas, filtro, politicasCobranca, filtro.getDataMovimento());
+			return documentoCobrancaService.gerarDocumentoCobrancaComSlip(dividas, filtro, politicasCobranca, filtro.getDataMovimento());
 		} else {
 		    
 		    return documentoCobrancaService.gerarDocumentoCobranca(dividas, filtro.getTipoCobranca());
