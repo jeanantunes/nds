@@ -315,7 +315,7 @@ public class RomaneioServiceImpl implements RomaneioService {
 			for (ArquivoRotBaseDTO dto : list) {
 				
 				if(count <= quantidade) {					
-					rotParser.parseFTF(dto, bw);
+					rotParser.parseROT(dto, bw);
 					bw.newLine();
 				}
 				
