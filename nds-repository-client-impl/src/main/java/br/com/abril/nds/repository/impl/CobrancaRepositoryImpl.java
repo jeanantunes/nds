@@ -734,7 +734,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
                "        LEFT JOIN  COTA cota ON parametro_cobranca_id = parametroCobrancaCota.id  WHERE   cota.id = ct.id), "+
                " (SELECT p.fator_vencimento  FROM  Forma_Cobranca f "+
                "           INNER JOIN   politica_cobranca p ON p.forma_cobranca_id = f.id  WHERE  p.ativo = TRUE AND p.principal = TRUE LIMIT 1), "+
-               "   0)) as ftvenc ");
+               "   1)) as ftvenc ");
     	sql.append(" FROM movimento_financeiro_cota mfc ");
     	sql.append(" left join consolidado_mvto_financeiro_cota cf ");
     	sql.append("   ON cf.MVTO_FINANCEIRO_COTA_ID = mfc.ID ");
