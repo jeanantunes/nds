@@ -1508,7 +1508,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             }
         }
         
-        this.processarMovimentosProdutosJuramentados(dataEncalhe, usuario, distribuidorRepository.obterDataOperacaoDistribuidor());
+        // this.processarMovimentosProdutosJuramentados(dataEncalhe, usuario, distribuidorRepository.obterDataOperacaoDistribuidor());
         
         if (!listaEncalhe.isEmpty()) {
             

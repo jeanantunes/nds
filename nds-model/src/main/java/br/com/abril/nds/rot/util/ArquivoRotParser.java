@@ -28,7 +28,7 @@ public final class ArquivoRotParser {
 	}
 	
 	@SuppressWarnings("all")
-	public void parseFTF(ArquivoRotBaseDTO rotBaseDTO, BufferedWriter parser) throws Exception {
+	public void parseROT(ArquivoRotBaseDTO rotBaseDTO, BufferedWriter parser) throws Exception {
 		
 		Class<? extends ArquivoRotBaseDTO> c = rotBaseDTO.getClass();
 		

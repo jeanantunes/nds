@@ -329,8 +329,7 @@ public class SuspensaoCotaController extends BaseController {
 				
 		List<CotaSuspensaoDTO> listaDividasGeradas = cotaService.obterDTOCotasSujeitasSuspensao(sortOrder, sortColumn, null, null);
 		
-		FileExporter.to("suspensao_cota", fileType).inHTTPResponse(this.getNDSFileHeader(), null,  
-				listaDividasGeradas, CotaSuspensaoDTO.class, this.httpResponse);
+		FileExporter.to("suspensao_cota", fileType).inHTTPResponse(this.getNDSFileHeader(), null,  listaDividasGeradas, CotaSuspensaoDTO.class, this.httpResponse);
 		
 		result.nothing();
 	}
