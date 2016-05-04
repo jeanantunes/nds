@@ -35,7 +35,7 @@ public class CotaSuspensaoDTO implements Serializable{
 	
 	@Export(label = "Divida Acumulada R$", alignment=Alignment.RIGHT, columnType=ColumnType.MOEDA)
 	@Footer(label = "Total R$", type=FooterType.SUM, columnType=ColumnType.MOEDA)
-	private String dividaAcumulada;
+	private BigDecimal dividaAcumulada;
 	
 	@Export(label = "Dias em Aberto", alignment=Alignment.CENTER, widthPercent=5f)
 	private Integer diasAberto;
@@ -64,8 +64,8 @@ public class CotaSuspensaoDTO implements Serializable{
 		this.nome = nome;
 		this.vlrConsignado = vlrConsignado;
 		this.vlrReparte = vlrReparte;
-		//this.dividaAcumulada = dividaAcumulada;
-		//this.diasAberto = diasAberto;
+		this.dividaAcumulada = new BigDecimal(dividaAcumulada);
+		
 		this.selecionado = selecionado;
 	}
 		
@@ -116,12 +116,12 @@ public class CotaSuspensaoDTO implements Serializable{
 		this.vlrReparte = CurrencyUtil.formatarValor(vlrReparte == null ? BigDecimal.ZERO : vlrReparte);
 	}
 
-	public String getDividaAcumulada() {
+	public BigDecimal getDividaAcumulada() {
 		return dividaAcumulada;
 	}
 
 	public void setDividaAcumulada(BigDecimal dividaAcumulada) {
-		this.dividaAcumulada = CurrencyUtil.formatarValor(dividaAcumulada == null ? BigDecimal.ZERO : dividaAcumulada); 
+		this.dividaAcumulada = dividaAcumulada == null ? BigDecimal.ZERO : dividaAcumulada; 
 	}
 
 	public Integer getDiasAberto() {

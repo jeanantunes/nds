@@ -446,8 +446,10 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append("else ");
 		hql.append("rpad(d.descricao_rota,30,' ') ");
 		hql.append("end as rota, "); 
-		hql.append("6389563 as codigoDistribuidor, ");
-		hql.append("'04/04/2016' as dataOperacao, ");
+		//hql.append("(select  ) as codigoDistribuidor, ");
+		hql.append("       CAST((select if (d.COD_DISTRIBUIDOR_DINAP != 0,d.COD_DISTRIBUIDOR_DINAP,d.COD_DISTRIBUIDOR_FC) from distribuidor d limit 1) as CHAR) codigoDistribuidor, ");
+		//hql.append("h.data_lancamento as dataOperacao, ");
+		hql.append(" DATE_FORMAT(h.data_lancamento,'%d/%m/%Y') as dataOperacao, ");
 		hql.append("lpad(numero_cota,5,0) as numeroCota, ");
 		hql.append("rpad(l.nome,35,' ') as nome,  ");
 		hql.append("rpad(coalesce(n.TIPO_LOGRADOURO,5,' '),5,' ') as tipoLogradouro, ");
@@ -477,10 +479,11 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append("and h.id = i.estudo_id ");
 		hql.append("and k.id = j.produto_id ");
 		hql.append("and l.id = a.pessoa_id ");
-		// hql.append(" and DESCRICAO_ROTEIRO in ('VEJA-GRAFICA', 'VEJA-PLANTAO COMPRADOR') ");
+		
 		if(filtro.getIdRoteiro() != null && !filtro.getIdRoteiro().isEmpty()) {			
 			hql.append(" and e.id in (:idRoteiro) ");		
 		}
+		
 		hql.append(" and b.ponto_principal = true ");
 		hql.append(" and h.produto_edicao_id = j.id ");
 		
@@ -500,8 +503,10 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" rpad(d.descricao_rota,30,' ') ");
 		hql.append(" end as rota, ");
 		hql.append("  ");
-		hql.append(" 6389563 as 'codigoDistribuidor', ");
-		hql.append(" '04/04/2016' as dataOperacao, "); 
+		//hql.append(" 6389563 as 'codigoDistribuidor', ");
+		hql.append("       CAST((select if (d.COD_DISTRIBUIDOR_DINAP != 0,d.COD_DISTRIBUIDOR_DINAP,d.COD_DISTRIBUIDOR_FC) from distribuidor d limit 1) as CHAR) codigoDistribuidor, ");
+		//hql.append(" h.data_lancamento as dataOperacao, "); 
+		hql.append(" DATE_FORMAT(h.data_lancamento,'%d/%m/%Y') as dataOperacao, "); 
 		hql.append(" lpad(numero_cota,5,0) as numeroCota, ");
 		hql.append(" rpad(l.nome,35,' ') as nome, ");
 		hql.append(" rpad(coalesce(n.TIPO_LOGRADOURO,5,' '),5,' ') as tipoLogradouro, ");
