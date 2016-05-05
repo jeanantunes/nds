@@ -6,7 +6,7 @@
 		 cast(:codFilial as char) codFilial, 
 		 '180' AS naturezaEstoque, 
 		 DATE_FORMAT(lc.data_lcto_distribuidor, '%d/%m/%Y') dataLancamento, 
-		 p.codigo AS codMaterial, 
+		 concat(p.codigo, pe.NUMERO_EDICAO) AS codMaterial,
 		 'ESS' AS tipoOperacao, 
 		 replace(cast(round(infs.qtde,3) AS char),'.',',') quantidade, 
 		 'S' AS indLancamento, 
@@ -21,7 +21,7 @@
 		 cast(nfs.numero as char) numDocumento, 
 		 nfs.serie AS serDocumento, 
 		 '' AS numSequencialItem, 
-		 '' AS numSerieMaterial, 
+		 pe.codigo_de_barras AS numSerieMaterial, 
 
 		 cast(CASE WHEN natOp.TIPO_EMITENTE ='COTA' OR natOp.TIPO_DESTINATARIO ='COTA'
 		 	THEN 'CL' 
@@ -41,11 +41,11 @@
 		 replace(cast(round(pe.preco_venda, 4) as char),'.',',') custoUnitario, 
 		 replace(cast(round((pe.preco_venda)*infs.qtde, 2) AS char),'.',',') custoTotal, 
 
-		 '' AS contaEstoque, 
+		 '1140301004' AS contaEstoque, 
 		 '' AS contraPartida, 
 		 '' AS contratoServico, 
 		 '@' AS centroCusto, 
-		 cfop.codigo AS cfop, 
+		 natOp.CFOP_ESTADO AS cfop, 
 
 		 	CASE 
 		  		WHEN infs.aliquota_ipi_produto is not null 
