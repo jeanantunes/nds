@@ -11,7 +11,6 @@ import org.hibernate.type.EnumType;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.Type;
 import org.hibernate.type.TypeResolver;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
@@ -25,15 +24,11 @@ import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
 import br.com.abril.nds.model.planejamento.fornecedor.StatusCeNDS;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
-import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.FechamentoCEIntegracaoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryModel<FechamentoEncalhe, FechamentoEncalhePK> implements FechamentoCEIntegracaoRepository {
-	
-	@Autowired
-	private ChamadaEncalheFornecedorRepository chamadaEncalheFornecedorRepository;
 	
 	public FechamentoCEIntegracaoRepositoryImpl() {
 		super(FechamentoEncalhe.class);

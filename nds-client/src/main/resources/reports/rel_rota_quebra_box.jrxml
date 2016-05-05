@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="555" pageHeight="850" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
 	<property name="ireport.zoom" value="3.0"/>
-	<property name="ireport.x" value="182"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
 		<paragraph leftIndent="1" tabStopWidth="30"/>
@@ -65,23 +65,23 @@
 					<reportElement x="0" y="0" width="550" height="20" isPrintWhenDetailOverflows="true" backcolor="#E2E2E2" uuid="72b2d1f4-200e-44d2-95f4-beb314dc91d5"/>
 				</rectangle>
 				<staticText>
-					<reportElement style="rel_ftext" x="0" y="0" width="42" height="20" isPrintWhenDetailOverflows="true" uuid="aa76ffa3-7fab-499c-9b9d-1eec9cb4cf38"/>
+					<reportElement style="rel_ftext" x="0" y="0" width="40" height="20" isPrintWhenDetailOverflows="true" uuid="aa76ffa3-7fab-499c-9b9d-1eec9cb4cf38"/>
 					<textElement>
 						<font fontName="Arial" isBold="false"/>
-						<paragraph leftIndent="2"/>
+						<paragraph leftIndent="1"/>
 					</textElement>
 					<text><![CDATA[Produto:]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="rel_stext" x="41" y="0" width="164" height="20" isPrintWhenDetailOverflows="true" uuid="c459a7e1-73b4-465b-a9e8-82292c56a977"/>
+					<reportElement style="rel_stext" x="39" y="0" width="150" height="20" isPrintWhenDetailOverflows="true" uuid="c459a7e1-73b4-465b-a9e8-82292c56a977"/>
 					<textElement>
 						<font fontName="Arial Black" size="8" isBold="true"/>
-						<paragraph leftIndent="2"/>
+						<paragraph leftIndent="1"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement style="rel_ftext" x="203" y="0" width="20" height="20" isPrintWhenDetailOverflows="true" uuid="b9929995-bf80-478e-9f1c-9b92bd513d0b"/>
+					<reportElement style="rel_ftext" x="188" y="0" width="20" height="20" isPrintWhenDetailOverflows="true" uuid="b9929995-bf80-478e-9f1c-9b92bd513d0b"/>
 					<textElement>
 						<font fontName="Arial"/>
 						<paragraph leftIndent="2"/>
@@ -89,10 +89,10 @@
 					<text><![CDATA[Ed.]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="rel_stext" mode="Transparent" x="222" y="0" width="25" height="20" isPrintWhenDetailOverflows="true" uuid="efb2c31b-d78c-4083-a052-6ba0333a2273"/>
+					<reportElement style="rel_stext" mode="Transparent" x="207" y="0" width="40" height="20" isPrintWhenDetailOverflows="true" uuid="efb2c31b-d78c-4083-a052-6ba0333a2273"/>
 					<textElement>
 						<font fontName="Arial Black" size="9" isBold="true"/>
-						<paragraph leftIndent="2"/>
+						<paragraph leftIndent="1"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{numeroEdicao}]]></textFieldExpression>
 				</textField>
