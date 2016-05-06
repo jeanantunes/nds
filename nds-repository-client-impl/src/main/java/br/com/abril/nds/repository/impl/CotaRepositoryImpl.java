@@ -3773,7 +3773,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     	 sql.append("select count(*) ");
          sql.append("  from cota c ");
          sql.append(" where c.NUMERO_COTA in (:numCota)");
-         sql.append("   and c.SITUACAO_CADASTRO in (upper(:situacaoCadastroAtivo), upper(:situacaoCadastroSuspenso)) ");
+         sql.append("   and c.SITUACAO_CADASTRO in (upper(:situacaoCadastroAtivo), upper(:situacaoCadastroSuspenso),upper(:situacaoCadastroPendente)) ");
          sql.append("   and c.TIPO_DISTRIBUICAO_COTA = upper(:tipoDistribuicaoCota) ");
          
          final SQLQuery query = getSession().createSQLQuery(sql.toString());
@@ -3781,6 +3781,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
          query.setParameter("numCota", numCota);
          query.setParameter("situacaoCadastroAtivo", SituacaoCadastro.ATIVO.toString());
          query.setParameter("situacaoCadastroSuspenso", SituacaoCadastro.SUSPENSO.toString());
+         query.setParameter("situacaoCadastroPendente", SituacaoCadastro.PENDENTE.toString());
          query.setParameter("tipoDistribuicaoCota", tipoDistribuicaoCota.toString());
     	
     	
