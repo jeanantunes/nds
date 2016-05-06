@@ -220,6 +220,10 @@ public class MatrizLancamentoController extends BaseController {
     @Path("/salvarMatriz")
     public void salvarMatriz(final Date dataLancamento, final List<Long> idsFornecedores) {
         
+    	if (dataLancamento == null ) {
+            throw new ValidacaoException(TipoMensagem.ERROR, "Informe a data !");
+        }
+
         //Solicitado para salvar somente no dia
     	if (dataLancamento.before(distribuidorService.obterDataOperacaoDistribuidor())) {
             

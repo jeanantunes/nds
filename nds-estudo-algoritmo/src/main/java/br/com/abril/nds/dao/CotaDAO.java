@@ -185,8 +185,14 @@ public class CotaDAO {
 		params.put("produto_id", estudo.getProdutoEdicaoEstudo().getProduto().getId());
 		params.put("data_lcto", estudo.getProdutoEdicaoEstudo().getDataLancamento());
 		params.put("numero_edicao", estudo.getProdutoEdicaoEstudo().getNumeroEdicao());
+		
+		String maxDataRanking = (String)jdbcTemplate.queryForObject(
+				"SELECT  DATE_FORMAT(max(data_geracao_rank),'%d/%m/%Y') FROM ranking_segmento", new HashMap(), String.class);
+		
+		
+		 params.put("maxDataRanking", maxDataRanking);
 	
-	List<CotaEstudo> retorno = jdbcTemplate.query(queryCotas, params, new RowMapper<CotaEstudo>() {
+		 List<CotaEstudo> retorno = jdbcTemplate.query(queryCotas, params, new RowMapper<CotaEstudo>() {
 
 	    @Override
 	    public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
