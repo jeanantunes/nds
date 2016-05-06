@@ -2619,7 +2619,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
         final ProdutoEdicao pe = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(diferencaVO.getCodigoProduto(), diferencaVO.getNumeroEdicao());
         
         final BigInteger qtdeEstoqueAtual =
-                atualizarQuantidadeEstoqueComNovasDiferencas(obterReparteAtualProdutoEdicao(diferencaVO,pe.getId()), diferencaVO.getTipoEstoque());
+                atualizarQuantidadeEstoqueComNovasDiferencas(diferencaVO.getCodigoProduto(), Long.valueOf(diferencaVO.getNumeroEdicao()), obterReparteAtualProdutoEdicao(diferencaVO,pe.getId()), diferencaVO.getTipoEstoque());
         
         diferencaVO.setQtdeEstoqueAtual(qtdeEstoqueAtual);
         
@@ -2877,6 +2877,9 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
         
         final List<EstoqueDTO> estoques = new ArrayList<EstoqueDTO>();
         
+        String codigo =   StringUtils.leftPad(estoque.getProdutoEdicao().getProduto().getCodigo(), 8, '0');
+        Long numeroEdicao =  estoque.getProdutoEdicao().getNumeroEdicao();
+        
         final BigInteger qtde =
                 estoque.getQtde() != null
                 ? estoque.getQtde() : BigInteger.ZERO;
@@ -2886,7 +2889,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
                             new EstoqueDTO(
                                     TipoEstoque.LANCAMENTO.name(),
                                     TipoEstoque.LANCAMENTO.getDescricao(),
-                                    atualizarQuantidadeEstoqueComNovasDiferencas(qtde, TipoEstoque.LANCAMENTO)
+                                    atualizarQuantidadeEstoqueComNovasDiferencas(codigo, numeroEdicao, qtde, TipoEstoque.LANCAMENTO)
                                     )
                             );
                 }
@@ -2900,7 +2903,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
                                     new EstoqueDTO(
                                             TipoEstoque.SUPLEMENTAR.name(),
                                             TipoEstoque.SUPLEMENTAR.getDescricao(),
-                                            atualizarQuantidadeEstoqueComNovasDiferencas(qtdeSuplementar, TipoEstoque.SUPLEMENTAR)
+                                            atualizarQuantidadeEstoqueComNovasDiferencas(codigo, numeroEdicao, qtdeSuplementar, TipoEstoque.SUPLEMENTAR)
                                             )
                                     );
                         }
@@ -2914,7 +2917,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
                                             new EstoqueDTO(
                                                     TipoEstoque.RECOLHIMENTO.name(),
                                                     TipoEstoque.RECOLHIMENTO.getDescricao(),
-                                                    atualizarQuantidadeEstoqueComNovasDiferencas(qtdeDevolucaoEncalhe, TipoEstoque.DEVOLUCAO_ENCALHE)
+                                                    atualizarQuantidadeEstoqueComNovasDiferencas(codigo, numeroEdicao, qtdeDevolucaoEncalhe, TipoEstoque.DEVOLUCAO_ENCALHE)
                                                     )
                                             );
                                 }
@@ -2928,7 +2931,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
                                                     new EstoqueDTO(
                                                             TipoEstoque.DANIFICADO.name(),
                                                             TipoEstoque.DANIFICADO.getDescricao(),
-                                                            atualizarQuantidadeEstoqueComNovasDiferencas(qtdeDanificados, TipoEstoque.DANIFICADO)
+                                                            atualizarQuantidadeEstoqueComNovasDiferencas(codigo, numeroEdicao, qtdeDanificados, TipoEstoque.DANIFICADO)
                                                             )
                                                     );
                                         }
@@ -2937,7 +2940,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
     }
     
     @SuppressWarnings("unchecked")
-    private BigInteger atualizarQuantidadeEstoqueComNovasDiferencas(BigInteger quantidadeEstoqueAtual,
+    private BigInteger atualizarQuantidadeEstoqueComNovasDiferencas(final String codigoProduto, final Long numeroEdicao, BigInteger quantidadeEstoqueAtual,
             final TipoEstoque tipoEstoque) {
         
         final Set<DiferencaVO> listaNovasDiferencas =
@@ -2953,14 +2956,19 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
                         && diferencaVO.getTipoEstoque().equals(tipoEstoque)) {
                     
                     if (diferencaVO.getTipoDiferenca().isFalta()) {
-                        
-                        quantidadeEstoqueAtual =
-                                quantidadeEstoqueAtual.subtract(diferencaVO.getQuantidade());
-                        
+                    	LOGGER.debug("Tela Produto/ED: "+ codigoProduto +"-"+numeroEdicao);
+                    	
+                    	LOGGER.debug("Tela Produto/ED: "+ StringUtils.leftPad(diferencaVO.getCodigoProduto(), 8, '0') +"-"+diferencaVO.getNumeroEdicao());
+                    	if(StringUtils.leftPad(diferencaVO.getCodigoProduto(), 8, '0').equals(codigoProduto)
+                                && diferencaVO.getNumeroEdicao().equals(numeroEdicao.toString())
+                                && diferencaVO.getTipoEstoque().equals(tipoEstoque)){
+                    		
+                    		quantidadeEstoqueAtual = quantidadeEstoqueAtual.subtract(diferencaVO.getQuantidade());
+                    	} 
+                    	
                     } else {
                         
-                        quantidadeEstoqueAtual =
-                                quantidadeEstoqueAtual.add(diferencaVO.getQuantidade());
+                        quantidadeEstoqueAtual = quantidadeEstoqueAtual.add(diferencaVO.getQuantidade());
                     }
                 }
             }
