@@ -46,9 +46,6 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		
 		return (Boolean) query.uniqueResult();
 		
-//		javax.persistence.Query query = this.getSession().createSQLQuery(sql.toString());
-
-		 
 	}
 
 	@SuppressWarnings("unchecked")
@@ -65,13 +62,11 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" cast(:codFilial as char) codFilial, ");
 		sql.append(" '00180' AS naturezaEstoque, ");
 		sql.append(" DATE_FORMAT(lc.data_lcto_distribuidor, '%d/%m/%Y') dataLancamento, ");
-		sql.append(" p.codigo AS codMaterial, ");
+		sql.append(" concat(p.codigo, pe.NUMERO_EDICAO) AS codMaterial, ");
 		sql.append(" '  ESE' AS tipoOperacao, ");
 		sql.append(" replace(cast(round(infe.qtde,3) as char),'.',',') quantidade, ");
 		sql.append(" 'E' AS indLancamento, ");
-		sql.append(" concat(DATE_FORMAT(CURRENT_DATE, '%Y%m'), distrib.codigo, "
-				+ " nfe.numero, p.CODIGO, pe.NUMERO_EDICAO)"
-				+ " AS numArquivamento, ");
+		sql.append(" concat(DATE_FORMAT(CURRENT_DATE, '%Y%m'), distrib.COD_DISTRIBUIDOR_DINAP, nfe.numero, p.CODIGO, pe.NUMERO_EDICAO) AS numArquivamento, ");
 
 		sql.append(" 	CASE ");
 		sql.append("  		WHEN nfe.chave_acesso is not null ");
@@ -82,7 +77,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" cast(nfe.numero as char) numDocumento, ");
 		sql.append(" nfe.serie AS serDocumento, ");
 		sql.append(" '' AS numSequencialItem, ");
-		sql.append(" '' AS numSerieMaterial, ");
+		sql.append(" pe.codigo_de_barras AS numSerieMaterial, ");
 
 		sql.append(" cast(CASE WHEN no.TIPO_EMITENTE ='COTA' OR no.TIPO_DESTINATARIO ='COTA' ");
 		sql.append(" 	THEN 'CL' ");
@@ -98,15 +93,15 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" cast(1 as char) localizacao, ");
 
 		sql.append(" replace(cast(round(infe.preco, 4) as char),'.',',') vlrUnitario, ");
-		sql.append(" replace(cast(round(nfe.valor_bruto, 2) as char),'.',',') vlrTotal, ");
-		sql.append(" replace(cast(round(infe.preco, 4) as char),'.',',') custoUnitario, ");
-		sql.append(" replace(cast(round(nfe.valor_bruto, 2) as char),'.',',') custoTotal, ");
+		sql.append(" replace(cast(round((infe.PRECO*infe.QTDE), 2) as char),'.',',') vlrTotal, ");
+		sql.append(" replace(cast(round((infe.preco*((100-infe.DESCONTO)/100)), 4) as char),'.',',') custoUnitario, ");
+		sql.append(" replace(cast(round((infe.preco*((100-infe.DESCONTO)/100))*infe.QTDE, 2) as char),'.',',') custoTotal, ");
 
-		sql.append(" '' AS contaEstoque, ");
-		sql.append(" '' AS contraPartida, ");
+		sql.append(" '1140301004' AS contaEstoque, ");
+		sql.append(" '1140301004' AS contraPartida, ");
 		sql.append(" '' AS contratoServico, ");
-		sql.append(" '' AS centroCusto, ");
-		sql.append(" cfop.codigo AS cfop, ");
+		sql.append(" '@' AS centroCusto, ");
+		sql.append(" no.CFOP_ESTADO AS cfop, ");
 
 		sql.append(" 	CASE ");
 		sql.append("  		WHEN infe.aliquota_ipi_produto is not null ");
@@ -187,11 +182,11 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" cast(:codFilial as char) codFilial, ");
 		sql.append(" '00180' AS naturezaEstoque, ");
 		sql.append(" DATE_FORMAT(lc.data_lcto_distribuidor, '%d/%m/%Y') dataLancamento, ");
-		sql.append(" p.codigo AS codMaterial, ");
+		sql.append(" concat(p.codigo, pe.NUMERO_EDICAO) AS codMaterial, ");
 		sql.append(" 'BAIXA' AS tipoOperacao, ");
 		sql.append(" replace(cast(round(infs.qtde,3) AS char),'.',',') quantidade, ");
 		sql.append(" '  ESS' AS indLancamento, ");
-		sql.append(" concat(DATE_FORMAT(CURRENT_DATE, '%Y%m'), distrib.codigo, nfs.numero"
+		sql.append(" concat(DATE_FORMAT(CURRENT_DATE, '%Y%m'), distrib.COD_DISTRIBUIDOR_DINAP, nfs.numero"
 				+ ", p.CODIGO, pe.NUMERO_EDICAO)"
 				+ " AS numArquivamento, ");
 		
@@ -204,7 +199,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" cast(nfs.numero as char) numDocumento, ");
 		sql.append(" nfs.serie AS serDocumento, ");
 		sql.append(" '' AS numSequencialItem, ");
-		sql.append(" '' AS numSerieMaterial, ");
+		sql.append(" pe.codigo_de_barras AS numSerieMaterial, ");
 
 		sql.append(" cast(CASE WHEN no.TIPO_EMITENTE ='COTA' OR no.TIPO_DESTINATARIO ='COTA' ");
 		sql.append(" 	THEN 'CL' ");
@@ -224,11 +219,11 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" replace(cast(round(pe.preco_venda, 4) as char),'.',',') custoUnitario, ");
 		sql.append(" replace(cast(round((pe.preco_venda)*infs.qtde, 2) AS char),'.',',') custoTotal, ");
 
-		sql.append(" '' AS contaEstoque, ");
+		sql.append(" '1140301004' AS contaEstoque, ");
 		sql.append(" '' AS contraPartida, ");
 		sql.append(" '' AS contratoServico, ");
 		sql.append(" '' AS centroCusto, ");
-		sql.append(" cfop.codigo AS cfop, ");
+		sql.append(" no.CFOP_ESTADO AS cfop, ");
 
 		sql.append(" 	CASE ");
 		sql.append("  		WHEN infs.aliquota_ipi_produto is not null ");
@@ -313,7 +308,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" cast(:codFilial as char) codFilial, ");
 		sql.append(" '00180' AS naturezaEstoque, ");
 		sql.append(" DATE_FORMAT(lc.data_lcto_distribuidor, '%d/%m/%Y') dataLancamento, ");
-		sql.append(" p.codigo AS codMaterial, ");
+		sql.append(" concat(p.codigo, pe.NUMERO_EDICAO) AS codMaterial, ");
 		sql.append(" '  ESS' AS tipoOperacao, ");
 
 		sql.append(" 	replace(cast(round(CASE ");
@@ -323,7 +318,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" END, 3) AS char),'.',',') quantidade, ");
 
 		sql.append(" 'S' AS indLancamento, ");
-		sql.append(" concat(DATE_FORMAT(CURRENT_DATE, '%Y%m'), distrib.codigo, "
+		sql.append(" concat(DATE_FORMAT(CURRENT_DATE, '%Y%m'), distrib.COD_DISTRIBUIDOR_DINAP, "
 				+ " ne.numero, p.CODIGO, pe.NUMERO_EDICAO)"
 				+ " AS numArquivamento, ");
 		sql.append(" 	CASE ");
@@ -340,7 +335,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" END AS serDocumento, ");
 
 		sql.append(" cast(nei.sequencia AS char) numSequencialItem, ");
-		sql.append(" '' AS numSerieMaterial, ");
+		sql.append(" pe.codigo_de_barras AS numSerieMaterial, ");
 		sql.append(" cast(CASE WHEN no.TIPO_EMITENTE ='COTA' OR no.TIPO_DESTINATARIO ='COTA' ");
 		sql.append(" 	THEN 'CL' ");
 		sql.append("    ELSE 'FO' ");
@@ -368,14 +363,14 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" 		ELSE '' ");
 		sql.append(" END, 2) AS char),'.',',') custoTotal, ");
 
-		sql.append(" '' AS contaEstoque, ");
-		sql.append(" '' AS contraPartida, ");
+		sql.append(" '1140301004' AS contaEstoque, ");
+		sql.append(" '3220302001' AS contraPartida, ");
 		sql.append(" '' AS contratoServico, ");
 		sql.append(" '' AS centroCusto, ");
 
 		sql.append(" 	CASE ");
-		sql.append("  		WHEN cfop.codigo is not null ");
-		sql.append(" 		THEN cfop.codigo  ");
+		sql.append("  		WHEN no.CFOP_ESTADO is not null ");
+		sql.append(" 		THEN no.CFOP_ESTADO  ");
 		sql.append(" 		ELSE ''  ");
 		sql.append(" END AS cfop, ");
 
@@ -451,8 +446,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<P3DTO> obterP3ComRegimeEspecial_NotaFiscalNovo(
-			Date dataInicial, Date dataFinal) {
+	public List<P3DTO> obterP3ComRegimeEspecial_NotaFiscalNovo(Date dataInicial, Date dataFinal) {
 
 		StringBuilder sql = new StringBuilder();
 
@@ -463,7 +457,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" cast(:codFilial as char) codFilial, ");
 		sql.append(" '00180' AS naturezaEstoque, ");
 		sql.append(" DATE_FORMAT(lc.data_lcto_distribuidor, '%d/%m/%Y') dataLancamento, ");
-		sql.append(" p.codigo AS codMaterial, ");
+		sql.append(" concat(p.codigo, pe.NUMERO_EDICAO) AS codMaterial, ");
 
 		sql.append(" 	CASE ");
 		sql.append("  		WHEN no.TIPO_OPERACAO='ENTRADA'");
@@ -483,7 +477,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" 		ELSE 'S'  ");
 		sql.append(" END AS char) indLancamento, ");
 
-		sql.append(" concat(DATE_FORMAT(CURRENT_DATE, '%Y%m'), distrib.codigo, "
+		sql.append(" concat(DATE_FORMAT(CURRENT_DATE, '%Y%m'), distrib.COD_DISTRIBUIDOR_DINAP, "
 				+ " nfn.numero_documento_fiscal, p.CODIGO, pe.NUMERO_EDICAO)"
 				+ " AS numArquivamento, ");
 
@@ -496,7 +490,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" cast(nfn.numero_documento_fiscal as char) numDocumento, ");
 		sql.append(" cast(nfn.serie as char) serDocumento, ");
 		sql.append(" '' AS numSequencialItem, ");
-		sql.append(" '' AS numSerieMaterial, ");
+		sql.append(" pe.codigo_de_barras AS numSerieMaterial, ");
 
 		sql.append(" cast(CASE WHEN no.TIPO_EMITENTE ='COTA' OR no.TIPO_DESTINATARIO ='COTA' ");
 		sql.append(" 	THEN 'CL' ");
@@ -535,11 +529,11 @@ public class P3RepositoryImpl extends AbstractRepository implements
 		sql.append(" 		ELSE '' ");
 		sql.append(" END, 2) AS char),'.',',') custoTotal, ");
 
-		sql.append(" '' AS contaEstoque, ");
-		sql.append(" '' AS contraPartida, ");
+		sql.append(" '1140301004' AS contaEstoque, ");
+		sql.append(" '1140301004' AS contraPartida, ");
 		sql.append(" '' AS contratoServico, ");
 		sql.append(" '' AS centroCusto, ");
-		sql.append(" cfop.codigo AS cfop, ");
+		sql.append(" no.CFOP_ESTADO AS cfop, ");
 
 		sql.append(" 	replace(cast(round(CASE ");
 		sql.append("  		WHEN no.TIPO_OPERACAO='ENTRADA' && infe.aliquota_ipi_produto is not null THEN infe.aliquota_ipi_produto ");
@@ -767,8 +761,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 	}
 
 	@Override
-	public Integer count_obterP3ComRegimeEspecial_NotaFiscalNovo(
-			Date dataInicial, Date dataFinal) {
+	public Integer count_obterP3ComRegimeEspecial_NotaFiscalNovo(Date dataInicial, Date dataFinal) {
 
 		StringBuilder sql = new StringBuilder();
 
@@ -844,7 +837,7 @@ public class P3RepositoryImpl extends AbstractRepository implements
 			query.setParameter("codEmpresa", dist.getJuridica().getCnpj()
 					.substring(0, dist.getJuridica().getCnpj().indexOf("/"))
 					.replace(".", ""));
-			query.setParameter("distribCodigo", dist.getCodigo());
+			query.setParameter("distribCodigo", dist.getCodigoDistribuidorDinap());
 			query.setParameter("codFilial", dist.getCodigo().toString());
 			
 			query.setResultTransformer(new AliasToBeanResultTransformer(P3DTO.class));
