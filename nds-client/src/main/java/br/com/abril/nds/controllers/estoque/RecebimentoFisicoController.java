@@ -1429,10 +1429,10 @@ public class RecebimentoFisicoController extends BaseController {
         if(Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())){
             atualizarItensRecebimentoEmSession(itensRecebimento);
         }
+        List<RecebimentoFisicoDTO> listaItensNota = getItensRecebimentoFisicoFromSession();
+        
         final NotaFiscalEntrada notaFiscalFromSession = getNotaFiscalFromSession();
         notaFiscalFromSession.setStatusRecebimento(StatusRecebimento.CONFIRMADO);
-        
-        List<RecebimentoFisicoDTO> listaItensNota = getItensRecebimentoFisicoFromSession();
         
         this.recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), notaFiscalFromSession, listaItensNota, new Date(),false);
 
