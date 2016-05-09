@@ -837,16 +837,16 @@ var recebimentoFisicoController = $.extend(true, {
      */
 	confirmarRecebimentoFisico: function() {
 		
-		var params = recebimentoFisicoController.getParametrosConfirmacao();
-		
+		// var params = recebimentoFisicoController.getParametrosConfirmacao();
+		var listaDeValores = serializeArrayToPost('itensRecebimento', recebimentoFisicoController.obterListaValores());
 		$.postJSON(
 			this.path + 'confirmarRecebimentoFisico', 
-			params, 
+			listaDeValores, 
 			function(result) {
 
-				$(".grids", recebimentoFisicoController.workspace).hide();
-				
 				recebimentoFisicoController.limparCamposPesquisa();
+				
+				$(".grids", recebimentoFisicoController.workspace).hide();
 				
 				recebimentoFisicoController.ocultarBtns();
 			}
@@ -860,9 +860,11 @@ var recebimentoFisicoController = $.extend(true, {
 			if (!recebimentoFisicoController.validarPreenchimentoQuantidades()) {
 
 				return;
+			} else {
+				
+				return serializeArrayToPost('itensRecebimento', recebimentoFisicoController.obterListaValores());
 			}
 			
-			return serializeArrayToPost('itensRecebimento', recebimentoFisicoController.obterListaValores());
 		}
 	},
 	
@@ -941,7 +943,7 @@ var recebimentoFisicoController = $.extend(true, {
 				
 				"Confirmar" : function() {
 					recebimentoFisicoController.confirmarRecebimentoFisico();
-					$(this).dialog("close");
+					$("#dialog-verificacao-quantidades").dialog("close");
 					return true;
 				},
 
