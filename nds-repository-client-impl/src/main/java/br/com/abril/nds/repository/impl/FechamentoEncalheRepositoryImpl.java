@@ -39,6 +39,7 @@ import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
+import br.com.abril.nds.model.estoque.StatusProcessoEncalhe;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
@@ -1536,19 +1537,28 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
                    
                 + " (SELECT count(* )FROM CONTROLE_FECHAMENTO_ENCALHE "
                 + " WHERE data_encalhe = :dataOperacao)  > 0 "
-                + " as fechamentoEncalhe ";
+                + " as fechamentoEncalhe ,"
+                
+                // verificar se tem semaforo vermelho
+                + " (SELECT count(* )FROM semaforo "
+                + " WHERE data_operacao = :dataOperacao and status_processo_encalhe != :finalizado )  = 0 "
+                + " as erroSemaforo ";
         
         final SQLQuery query = getSession().createSQLQuery(sql.toString());
         query.setParameter("dataOperacao", data);
+        query.setParameter("finalizado", StatusProcessoEncalhe.FINALIZADO.toString());
         query.addScalar("chamadaEncalhe", StandardBasicTypes.BOOLEAN);
         query.addScalar("fechamentoEncalhe", StandardBasicTypes.BOOLEAN);
+        query.addScalar("erroSemaforo", StandardBasicTypes.BOOLEAN);
+        
         
         Object[] result = (Object[]) query.uniqueResult();
         
         Boolean chamadaEncalhe = (Boolean) result[0];
         Boolean fechamentoEncalhe = (Boolean) result[1];
+        Boolean erroSemaforo = (Boolean) result[2];
         
-        return !chamadaEncalhe || fechamentoEncalhe;
+        return !chamadaEncalhe || fechamentoEncalhe || erroSemaforo;
     }
     
     @Override
