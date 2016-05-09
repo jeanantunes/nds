@@ -131,6 +131,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
 	if (estudoId != null && estudoId != 0l) {
 	    estudo = estudoService.obterEstudo(estudoId);
+	    if ( estudo == null ) {
+	    	throw new ValidacaoException(TipoMensagem.WARNING, "Estudo ("+estudoId+") não encontrado.");
+	      }
 	    result.include("estudo", estudo);
 	    result.include("idEstudo", estudo.getId());
 	    result.include("statusEstudo", estudo.getStatus().getDescricao());
@@ -138,6 +141,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    produtoEdicao = estudo.getProdutoEdicao();
         produto = estudo.getProdutoEdicao().getProduto();
         lancamentoId = estudo.getLancamentoID();
+	   
     } else {
     	result.include("statusEstudo", " ");
     	result.include("idEstudo", " ");

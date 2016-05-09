@@ -92,6 +92,9 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 		
 	}
 	
+	
+	 
+	
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterListaCotaConferenciaNaoFinalizada(java.util.Date)
@@ -123,6 +126,37 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 		
 		query.setParameter("statusOperacao", StatusOperacao.EM_ANDAMENTO); 
 		
+		query.setParameter("dataOperacao", dataOperacao); 
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
+		
+		return query.list();
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CotaDTO> obterListaCotaConferenciaPendenciaErro(Date dataOperacao) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append("	 select 	");
+		
+		hql.append("	coalesce(pessoa.nome, pessoa.razaoSocial) as nomePessoa, ");
+		
+		hql.append("	cota.numeroCota as numeroCota	");
+		
+		hql.append("	from Semaforo semaforo,Cota cota ");
+		
+		hql.append("	join cota.pessoa pessoa	");
+		
+		hql.append("	where  cota.numeroCota = semaforo.numeroCota and semaforo.statusProcessoEncalhe != 'FINALIZADO' ");
+		
+		hql.append("	and semaforo.dataOperacao = :dataOperacao ");
+		
+		
+		Query query = getSession().createQuery(hql.toString());
+			
 		query.setParameter("dataOperacao", dataOperacao); 
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
