@@ -250,8 +250,9 @@ public abstract class Util {
             return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
             
         case BANCO_DO_NORDESTE_DO_BRASIL:
-            return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
-            
+        	
+        	//return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
+        	return Util.padLeft(idDivida.toString(), "0", 7);
         case BANCO_INTEMEDIUM:
             return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
             
