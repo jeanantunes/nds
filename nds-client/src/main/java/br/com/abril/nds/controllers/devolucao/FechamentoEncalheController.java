@@ -747,6 +747,28 @@ public class FechamentoEncalheController extends BaseController {
 			}
 			
 			validacao = new ValidacaoVO(TipoMensagem.WARNING, msg.toString());
+			return validacao;
+		}
+		List<CotaDTO> listaCotaConferenciaPendenciaErro = fechamentoEncalheService.obterListaCotaConferenciaPendenciaErro(dataEncalhe);
+		
+		if(listaCotaConferenciaPendenciaErro!=null && !listaCotaConferenciaPendenciaErro.isEmpty()) {
+			
+			StringBuffer msg = new StringBuffer();
+            msg.append("A seguintes cotas estao pendentes na tela  Status Processo Encalhe: ");
+			
+			for(CotaDTO cota : listaCotaConferenciaPendenciaErro) {
+				
+				msg.append("<br/>");
+				msg.append(" [").
+				append(cota.getNumeroCota())
+				.append("] ")
+				.append(" - ")
+				.append(cota.getNomePessoa());
+				
+			}
+			
+			validacao = new ValidacaoVO(TipoMensagem.WARNING, msg.toString());
+			return validacao;
 		}
 		
 		return validacao;

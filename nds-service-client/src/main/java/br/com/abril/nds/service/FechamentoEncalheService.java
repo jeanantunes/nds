@@ -96,5 +96,7 @@ public interface FechamentoEncalheService {
 			                  ValidacaoVO validacaoVO);
 	
 	Boolean validarEncerramentoOperacaoEncalhe(Date data);
+
+	List<CotaDTO> obterListaCotaConferenciaPendenciaErro(Date dataOperacao);
 	
 }

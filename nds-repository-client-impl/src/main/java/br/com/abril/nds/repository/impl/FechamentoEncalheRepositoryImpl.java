@@ -1537,28 +1537,19 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
                    
                 + " (SELECT count(* )FROM CONTROLE_FECHAMENTO_ENCALHE "
                 + " WHERE data_encalhe = :dataOperacao)  > 0 "
-                + " as fechamentoEncalhe ,"
-                
-                // verificar se tem semaforo vermelho
-                + " (SELECT count(* )FROM semaforo "
-                + " WHERE data_operacao = :dataOperacao and status_processo_encalhe != :finalizado )  = 0 "
-                + " as erroSemaforo ";
+                + " as fechamentoEncalhe ";
         
         final SQLQuery query = getSession().createSQLQuery(sql.toString());
         query.setParameter("dataOperacao", data);
-        query.setParameter("finalizado", StatusProcessoEncalhe.FINALIZADO.toString());
         query.addScalar("chamadaEncalhe", StandardBasicTypes.BOOLEAN);
         query.addScalar("fechamentoEncalhe", StandardBasicTypes.BOOLEAN);
-        query.addScalar("erroSemaforo", StandardBasicTypes.BOOLEAN);
-        
         
         Object[] result = (Object[]) query.uniqueResult();
         
         Boolean chamadaEncalhe = (Boolean) result[0];
         Boolean fechamentoEncalhe = (Boolean) result[1];
-        Boolean erroSemaforo = (Boolean) result[2];
         
-        return !chamadaEncalhe || fechamentoEncalhe || erroSemaforo;
+        return !chamadaEncalhe || fechamentoEncalhe;
     }
     
     @Override
