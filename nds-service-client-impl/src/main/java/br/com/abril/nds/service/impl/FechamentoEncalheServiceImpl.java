@@ -1417,6 +1417,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         return conferenciaEncalheRepository.obterListaCotaConferenciaNaoFinalizada(dataOperacao);
     }
     
+    @Override
+    @Transactional
+    public List<CotaDTO> obterListaCotaConferenciaPendenciaErro(final Date dataOperacao) {
+        return conferenciaEncalheRepository.obterListaCotaConferenciaPendenciaErro(dataOperacao);
+    }
+    
     private void agendarAgoraAtualizacaoEstoqueProdutoConf() {
 
 		Scheduler scheduler = schedulerFactoryBean.getScheduler();

@@ -137,4 +137,6 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 
 	public boolean obterProcessoUtilizaNfeConferenciaEncalheCota(Integer numeroCota, Date dataOperacao);
 
+	List<CotaDTO> obterListaCotaConferenciaPendenciaErro(Date dataOperacao);
+
 }
