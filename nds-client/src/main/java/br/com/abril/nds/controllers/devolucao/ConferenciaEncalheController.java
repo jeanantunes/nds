@@ -1421,8 +1421,12 @@ public class ConferenciaEncalheController extends BaseController {
 			utilizaContagemEnvelope = true;
 		}
 		
-		
-		BigInteger qtdExemplares = new BigInteger(qtdExemplaresDaGrid.trim());
+		BigInteger qtdExemplares = null;
+		try {
+		    qtdExemplares = new BigInteger(qtdExemplaresDaGrid.trim());
+		 } catch ( Exception e ) {
+			 throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de exemplares inválida.");
+		 }
 		
 		ConferenciaEncalheDTO conf = null;
 		
