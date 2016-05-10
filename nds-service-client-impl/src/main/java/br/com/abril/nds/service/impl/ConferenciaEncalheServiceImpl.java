@@ -455,7 +455,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(datasPosteriores!=null && !datasPosteriores.isEmpty()) {
 			
 			for(final Date dataPosterior : datasPosteriores) {
-				carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataPosterior, numeroCota, listaIdFornecedor, false);
+				carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataPosterior, numeroCota, listaIdFornecedor, indCotaOperacaoDiferenciada);
 			}
 			
 		}
@@ -3666,11 +3666,65 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(final Integer numeroCota, final String codigoBarras) {
 
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		List<Date> datasRecolhimentoValidas = new ArrayList<>();
+
+		final boolean indCotaOperacaoDiferenciada = cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacao);
 		
-		List<Date> datasRecolhimentoValidas = lancamentoRepository.obterDatasRecolhimentoValidas();
+		if(indCotaOperacaoDiferenciada){
+			List<ProdutoEdicao> produtoEdicao = produtoEdicaoService.buscarProdutoPorCodigoBarras(codigoBarras);
+			
+			if(produtoEdicao.isEmpty()){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Produto não encontrado pelo código de barras!");
+			}
+			
+			final DataCEConferivelDTO dataCEConferivel = new DataCEConferivelDTO();
+			
+			carregarObjetoDataCEConferivel(dataCEConferivel, numeroCota, produtoEdicao.get(0).getProduto().getFornecedor().getId(), dataOperacao, indCotaOperacaoDiferenciada);
+			
+			if(produtoEdicao.get(0).isParcial()){
+				datasRecolhimentoValidas = dataCEConferivel.getListaDataConferivelProdutoParcial();
+			}else{
+				datasRecolhimentoValidas = dataCEConferivel.getListaDataConferivelProdutoNaoParcial();
+			}
+			
+		}else{
+			datasRecolhimentoValidas = lancamentoRepository.obterDatasRecolhimentoValidas();
+		}
 		
 		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras, dataOperacao, datasRecolhimentoValidas);
 	}
+	
+	
+	/*
+	 * public Map<Long, DataCEConferivelDTO> obterDatasChamadaEncalheConferiveis(final Integer numeroCota) {
+		
+		final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		final List<Long> listaIdFornecedor = fornecedorRepository.obterIdFornecedores();
+		
+		final Map<Long, DataCEConferivelDTO> mapaForncedorDatasEncalhe = new HashMap<>();
+		
+		final boolean indCotaOperacaoDiferenciada = cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacao);
+		
+		for(final Long idFornecedor : listaIdFornecedor) {
+			
+			final DataCEConferivelDTO dataCEConferivel = new DataCEConferivelDTO();
+			
+			carregarObjetoDataCEConferivel(dataCEConferivel, numeroCota, idFornecedor, dataOperacao, indCotaOperacaoDiferenciada);
+			
+			if( !dataCEConferivel.getListaDataConferivelProdutoNaoParcial().isEmpty() ||
+				!dataCEConferivel.getListaDataConferivelProdutoParcial().isEmpty() ){
+				mapaForncedorDatasEncalhe.put(idFornecedor, dataCEConferivel);
+			}
+			
+			
+		}
+		
+		return mapaForncedorDatasEncalhe;
+		
+	}
+	 * 
+	 */
 	
     /**
 	* Valida informações basicas antes de iniciar o recolhimento:
