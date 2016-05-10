@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -274,6 +275,8 @@ public class DividaServiceImpl implements DividaService {
 			Date backupDataVencimento = cobranca.getDataVencimento();
 			
 			cobranca.getDivida().setStatus(StatusDivida.POSTERGADA);
+			cobranca.setStatusCobranca(StatusCobranca.PAGO);
+			cobranca.setDataPagamento(new Date());
 			
 			Cobranca cobrancaAtualizada = this.cobrancaRepository.merge(cobranca);
 			
