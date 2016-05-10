@@ -125,7 +125,6 @@ import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.MovimentoFechamentoFiscalRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
-import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ParametroEmissaoNotaFiscalRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
@@ -138,7 +137,6 @@ import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoMovimentoFiscalRepository;
 import br.com.abril.nds.service.BoletoService;
-import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
@@ -238,9 +236,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private ParametroEmissaoNotaFiscalRepository parametroEmissaoNotaFiscalRepository;
 
 	@Autowired
-	private NaturezaOperacaoRepository tipoNotaFiscalRepository;
-	
-	@Autowired
 	private RecebimentoFisicoRepository recebimentoFisicoRepository;
 	
 	@Autowired
@@ -273,9 +268,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Autowired
 	private GrupoService grupoService;
 
-	@Autowired
-	private CalendarioService calendarioService;
-	
 	@Autowired
 	private DebitoCreditoCotaService debitoCreditoCotaService;
 	
@@ -455,7 +447,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(datasPosteriores!=null && !datasPosteriores.isEmpty()) {
 			
 			for(final Date dataPosterior : datasPosteriores) {
-				carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataPosterior, numeroCota, listaIdFornecedor, false);
+				carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataPosterior, numeroCota, listaIdFornecedor, indCotaOperacaoDiferenciada);
 			}
 			
 		}
@@ -3666,8 +3658,30 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(final Integer numeroCota, final String codigoBarras) {
 
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		List<Date> datasRecolhimentoValidas = new ArrayList<>();
+
+		final boolean indCotaOperacaoDiferenciada = cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacao);
 		
-		List<Date> datasRecolhimentoValidas = lancamentoRepository.obterDatasRecolhimentoValidas();
+		if(indCotaOperacaoDiferenciada){
+			List<ProdutoEdicao> produtoEdicao = produtoEdicaoService.buscarProdutoPorCodigoBarras(codigoBarras);
+			
+			if(produtoEdicao.isEmpty()){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Produto não encontrado pelo código de barras!");
+			}
+			
+			final DataCEConferivelDTO dataCEConferivel = new DataCEConferivelDTO();
+			
+			carregarObjetoDataCEConferivel(dataCEConferivel, numeroCota, produtoEdicao.get(0).getProduto().getFornecedor().getId(), dataOperacao, indCotaOperacaoDiferenciada);
+			
+			if(produtoEdicao.get(0).isParcial()){
+				datasRecolhimentoValidas = dataCEConferivel.getListaDataConferivelProdutoParcial();
+			}else{
+				datasRecolhimentoValidas = dataCEConferivel.getListaDataConferivelProdutoNaoParcial();
+			}
+			
+		}else{
+			datasRecolhimentoValidas = lancamentoRepository.obterDatasRecolhimentoValidas();
+		}
 		
 		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras, dataOperacao, datasRecolhimentoValidas);
 	}

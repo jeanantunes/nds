@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,6 +22,8 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.itextpdf.text.pdf.codec.Base64;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.component.BloqueioConferenciaEncalheComponent;
@@ -64,12 +65,10 @@ import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ChamadaEncalheCotaService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
-import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.NFeService;
-import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
@@ -88,10 +87,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.converter.ConversionError;
 import br.com.caelum.vraptor.view.Results;
-
-import com.itextpdf.text.pdf.codec.Base64;
 
 @Resource
 @Path(value="/devolucao/conferenciaEncalhe")
@@ -164,9 +160,6 @@ public class ConferenciaEncalheController extends BaseController {
 	private GerarCobrancaService gerarCobrancaService;
 	
 	@Autowired
-	private CotaService cotaService;
-	
-	@Autowired
 	private Result result;
 	
 	@Autowired
@@ -178,9 +171,6 @@ public class ConferenciaEncalheController extends BaseController {
 	@Autowired
 	private BoxService boxService;
 	
-	@Autowired
-	private NaturezaOperacaoService naturezaOperacaoService;
-
 	@Autowired
 	private GrupoService grupoService;
 	
