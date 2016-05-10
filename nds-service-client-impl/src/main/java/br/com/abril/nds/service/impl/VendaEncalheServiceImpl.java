@@ -590,6 +590,9 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	
 	private ValoresAplicados obterValoresAplicados(Cota cota, ProdutoEdicao produtoEdicao){
 		
+		if ( produtoEdicao == null )
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Produto Edição não informada."));
+		
 		BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 		
 		BigDecimal percentualDesconto = null;
