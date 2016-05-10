@@ -125,7 +125,6 @@ import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.MovimentoFechamentoFiscalRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
-import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ParametroEmissaoNotaFiscalRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
@@ -138,7 +137,6 @@ import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoMovimentoFiscalRepository;
 import br.com.abril.nds.service.BoletoService;
-import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
@@ -238,9 +236,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private ParametroEmissaoNotaFiscalRepository parametroEmissaoNotaFiscalRepository;
 
 	@Autowired
-	private NaturezaOperacaoRepository tipoNotaFiscalRepository;
-	
-	@Autowired
 	private RecebimentoFisicoRepository recebimentoFisicoRepository;
 	
 	@Autowired
@@ -273,9 +268,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Autowired
 	private GrupoService grupoService;
 
-	@Autowired
-	private CalendarioService calendarioService;
-	
 	@Autowired
 	private DebitoCreditoCotaService debitoCreditoCotaService;
 	
@@ -3693,38 +3685,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras, dataOperacao, datasRecolhimentoValidas);
 	}
-	
-	
-	/*
-	 * public Map<Long, DataCEConferivelDTO> obterDatasChamadaEncalheConferiveis(final Integer numeroCota) {
-		
-		final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
-		
-		final List<Long> listaIdFornecedor = fornecedorRepository.obterIdFornecedores();
-		
-		final Map<Long, DataCEConferivelDTO> mapaForncedorDatasEncalhe = new HashMap<>();
-		
-		final boolean indCotaOperacaoDiferenciada = cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacao);
-		
-		for(final Long idFornecedor : listaIdFornecedor) {
-			
-			final DataCEConferivelDTO dataCEConferivel = new DataCEConferivelDTO();
-			
-			carregarObjetoDataCEConferivel(dataCEConferivel, numeroCota, idFornecedor, dataOperacao, indCotaOperacaoDiferenciada);
-			
-			if( !dataCEConferivel.getListaDataConferivelProdutoNaoParcial().isEmpty() ||
-				!dataCEConferivel.getListaDataConferivelProdutoParcial().isEmpty() ){
-				mapaForncedorDatasEncalhe.put(idFornecedor, dataCEConferivel);
-			}
-			
-			
-		}
-		
-		return mapaForncedorDatasEncalhe;
-		
-	}
-	 * 
-	 */
 	
     /**
 	* Valida informações basicas antes de iniciar o recolhimento:
