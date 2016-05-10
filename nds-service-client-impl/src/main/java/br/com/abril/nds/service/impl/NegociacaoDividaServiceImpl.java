@@ -458,7 +458,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 			
             			cobranca.setNossoNumero(nossoNumero);
             			
-            			String digitoVerificador = Util.calcularDigitoVerificador(nossoNumero, banco != null ? banco.getCodigoCedente() : "0", cobranca.getDataVencimento());
+            			String digitoVerificador = Util.calcularDigitoVerificador(nossoNumero, banco != null ? banco.getCodigoCedente() : "0", cobranca.getDataVencimento(), banco.getNumeroBanco());
             			cobranca.setDigitoNossoNumero(digitoVerificador);
             			cobranca.setNossoNumeroCompleto(nossoNumero + ((digitoVerificador != null) ? digitoVerificador : ""));
                         

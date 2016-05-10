@@ -1753,7 +1753,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			cobranca.setNossoNumero(nossoNumero);
 			
 			String digitoVerificador =
-				Util.calcularDigitoVerificador(nossoNumero, banco != null ? banco.getCodigoCedente() : "0", cobranca.getDataVencimento());
+				Util.calcularDigitoVerificador(nossoNumero, banco != null ? banco.getCodigoCedente() : "0", cobranca.getDataVencimento(), banco.getNumeroBanco());
 			
 			cobranca.setDigitoNossoNumero(digitoVerificador);
 			
