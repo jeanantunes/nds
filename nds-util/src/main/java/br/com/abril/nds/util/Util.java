@@ -159,7 +159,8 @@ public abstract class Util {
             return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
             
         case BANCO_DO_NORDESTE_DO_BRASIL:
-            return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+            //return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+            return Util.padLeft(idChamadaEncalheFornecedor.toString(), "0", 7);
             
         case BANCO_INTEMEDIUM:
             return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
@@ -299,13 +300,19 @@ public abstract class Util {
         }
     }
     
-    public static String calcularDigitoVerificador(String nossoNumero, final String codigoCedente, final Date dataVencimento) {
+    public static String calcularDigitoVerificador(String nossoNumero, final String codigoCedente, final Date dataVencimento, final String numeroBanco) {
         
-        if (nossoNumero == null || codigoCedente == null || dataVencimento == null) {
+    	if (nossoNumero == null || codigoCedente == null || dataVencimento == null) {
             
             return null;
         }
         
+    	final NomeBanco nomeBanco = NomeBanco.getByNumeroBanco(numeroBanco);
+    	
+    	if(nomeBanco.equals(NomeBanco.BANCO_DO_NORDESTE_DO_BRASIL)) {
+    		return String.valueOf(Util.calcularDigito(nossoNumero));
+    	}
+    	
         long primeiroDigito = 0;
         final long segundoDigito = 4;
         long terceiroDigito = 0;

@@ -28,7 +28,7 @@ public class UtilTest {
 		
 		String nossoNumero = "0000000000013";
 //		String nossoNumero = Util.gerarNossoNumero(numeroCota, c.getTime(), numeroBanco, idFornecedor, idDivida, agencia, contaCorrente, carteira);
-		String digitoVerificador = Util.calcularDigitoVerificador(nossoNumero, codigoCedente, c.getTime());
+		String digitoVerificador = Util.calcularDigitoVerificador(nossoNumero, codigoCedente, c.getTime(), numeroBanco);
 		System.out.println("NN: "+ nossoNumero);
     	System.out.println("NN+DV: "+ nossoNumero +"-"+ digitoVerificador);
 	}
@@ -36,6 +36,7 @@ public class UtilTest {
 //    @Test
     public void calcularDigitoVerificadorNossoNumeroBoleto() {
         
+    	String numeroBanco = "004";
     	String codigoCedente = "3775356";
     	Calendar c = Calendar.getInstance();
     	c.set(Calendar.DAY_OF_MONTH, 27);
@@ -44,7 +45,7 @@ public class UtilTest {
     	System.out.println(c.getTime());
     	
     	String nossoNumero = "0000000000007";
-    	String digitoVerificador = Util.calcularDigitoVerificador(nossoNumero, codigoCedente, c.getTime());
+    	String digitoVerificador = Util.calcularDigitoVerificador(nossoNumero, codigoCedente, c.getTime(), numeroBanco);
     	
     	System.out.println(digitoVerificador);
     }

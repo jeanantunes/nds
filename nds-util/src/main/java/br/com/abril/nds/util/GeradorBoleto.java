@@ -56,18 +56,18 @@ public class GeradorBoleto {
         Sacado sacado = null;
         
         try {
-         sacado= new Sacado(corpoBoleto.getSacadoNome(), corpoBoleto.getSacadoDocumento());
-	} catch (Exception e ) {
-		  	throw new ValidationException("Sacado= "+corpoBoleto.getSacadoNome() +"-"+ corpoBoleto.getSacadoDocumento()+". "+
-	e.getLocalizedMessage()!= null ? e.getLocalizedMessage().replaceAll("O código de cadastro", "O CPF/CNPJ")
-			   .replaceAll("não está em um formato válido !"," não é válido.")
-			   :"");
+        	sacado= new Sacado(corpoBoleto.getSacadoNome(), corpoBoleto.getSacadoDocumento());
+        } catch (Exception e ) {
+		  	throw new ValidationException("Sacado= "
+		  			+corpoBoleto.getSacadoNome() +"-"
+		  			+ corpoBoleto.getSacadoDocumento()+". "
+		  			+ e.getLocalizedMessage() != null ? e.getLocalizedMessage().replaceAll("O código de cadastro", "O CPF/CNPJ")
+		  			.replaceAll("não está em um formato válido !"," não é válido.") :"");
 		      
-	}
+        }
         //ENDERECO DO SACADO
         
         Endereco enderecoSac = new Endereco();
-        
         
         if(corpoBoleto.getEnderecoSacadoUf() != null && !corpoBoleto.getEnderecoSacadoUf().trim().isEmpty()) {
             enderecoSac.setUF(UnidadeFederativa.valueOf(corpoBoleto.getEnderecoSacadoUf()));
@@ -81,8 +81,10 @@ public class GeradorBoleto {
         sacado.addEndereco(enderecoSac);
         
         SacadorAvalista sacadorAvalista = null;
-        if ( (corpoBoleto.getSacadorAvalistaNome()!=null) && !("".equals(corpoBoleto.getSacadorAvalistaNome())) ){
-	        //SACADOR AVALISTA
+        
+        if ((corpoBoleto.getSacadorAvalistaNome()!=null) && !("".equals(corpoBoleto.getSacadorAvalistaNome()))) {
+	        
+        	//SACADOR AVALISTA
 	        sacadorAvalista = new SacadorAvalista(corpoBoleto.getSacadorAvalistaNome(), corpoBoleto.getSacadorAvalistaDocumento());
 	        //ENDERECO DO SACADO AVALISTA
 	        Endereco enderecoSacAval = new Endereco();
@@ -97,6 +99,7 @@ public class GeradorBoleto {
         
         //CONTA BANCARIA
         BancosSuportados bancoByNumero = getBancoByNumero(StringUtils.leftPad(corpoBoleto.getContaNumeroBanco(), 3, '0'));
+        
         //BancosSuportados bancoByNumero = getBancoByNumero(corpoBoleto.getContaNumeroBanco());
         if(bancoByNumero == null)
         	throw new ValidationException("Número do banco não encontrado: "+corpoBoleto.getContaNumeroBanco() +". favor contatar a área de sistemas. - Tabela Cobrança BANCO_ID");
@@ -104,6 +107,7 @@ public class GeradorBoleto {
         ContaBancaria contaBancaria = new ContaBancaria(bancoByNumero.create());
         contaBancaria.setAgencia(new Agencia(corpoBoleto.getContaAgencia(), corpoBoleto.getDigitoAgencia()));
         contaBancaria.setNumeroDaConta(new NumeroDaConta(Integer.valueOf(corpoBoleto.getCodigoCedente()), corpoBoleto.getDigitoCodigoCedente()));
+        
         //CARTEIRA DA CONTA BANCARIA  
         Carteira carteira = new Carteira(corpoBoleto.getContaCarteira());
         //TIPO DE COBRANCA DA CARTEIRA DA CONTA BANCARIA  

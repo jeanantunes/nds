@@ -1775,8 +1775,9 @@ public class BoletoServiceImpl implements BoletoService {
         }
         
         if (corpoBoleto.getContaTipoDeCobranca() == null || corpoBoleto.getContaTipoDeCobranca().isEmpty()){
-            
             corpoBoleto.setContaTipoDeCobranca(FormaCobrancaBoleto.SEM_REGISTRO.name());
+        } else {
+        	corpoBoleto.setContaTipoDeCobranca(FormaCobrancaBoleto.COM_REGISTRO.name());
         }
         
         corpoBoleto.setContaAgencia(banco.getAgencia().intValue());
@@ -2623,7 +2624,7 @@ public class BoletoServiceImpl implements BoletoService {
         
         final String digitoNossoNumero = Util.calcularDigitoVerificador(nossoNumero,
                 banco!=null?banco.getCodigoCedente():"0",
-                        dataVencimento);
+                        dataVencimento, banco.getNumeroBanco());
         
         bbDTO.setNossoNumero(nossoNumero);
         
