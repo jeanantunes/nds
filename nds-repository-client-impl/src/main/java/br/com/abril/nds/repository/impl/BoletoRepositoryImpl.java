@@ -996,7 +996,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		query.setParameter("data", data);
 		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO);
 		query.setParameter("oriundaNegociacaoAvulsa", false);
-		query.setParameterList("statusPendente", Arrays.asList(StatusDivida.PENDENTE_INADIMPLENCIA, StatusDivida.POSTERGADA));
+		query.setParameterList("statusPendente", Arrays.asList(StatusDivida.PENDENTE_INADIMPLENCIA, StatusDivida.POSTERGADA,StatusDivida.NEGOCIADA));
 		return query.list();
 		
 	}
