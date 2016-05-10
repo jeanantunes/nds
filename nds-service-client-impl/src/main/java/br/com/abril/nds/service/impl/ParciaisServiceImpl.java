@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -93,19 +94,24 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		LancamentoParcial lancamentoParcial = this.lancamentoParcialRepository.obterLancamentoPorProdutoEdicao(idProdutoEdicao);
 		
-		this.validarDataRecolhimentoPeriodo(lancamentoParcial, dataRecolhimento);
+		this.validarDataRecolhimentoPeriodo(lancamentoParcial, dataRecolhimento,null);
 		
 		this.gerarPeriodoManual(lancamentoParcial, dataRecolhimento, idProdutoEdicao, usuario);
 	}
 	
-	private void validarDataRecolhimentoPeriodo(LancamentoParcial lancamento, Date dataRecolhimento) {
+	private void validarDataRecolhimentoPeriodo(LancamentoParcial lancamento, Date dataRecolhimento,Lancamento lanc) {
 
 		if (!this.calendarioService.isDiaUtil(dataRecolhimento)){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data de recolhimento não é um dia util.");
 		}
 
-		if (DateUtil.isDataInicialMaiorDataFinal(dataRecolhimento, lancamento.getRecolhimentoFinal())) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Essa alteração deve ser feita através da matriz de recolhimento.");
+	
+		// se lancamento nao estiver nos status abaixo, permitir alterar data de recolhimento mesmo que maior que a data final
+		if(lanc == null || !Arrays.asList(StatusLancamento.PLANEJADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO
+				, StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO).contains(lanc.getStatus())) {
+			if (DateUtil.isDataInicialMaiorDataFinal(dataRecolhimento, lancamento.getRecolhimentoFinal())) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Essa alteração deve ser feita através da matriz de recolhimento.");
+			}
 		}
 		
 		if (DateUtil.isDataInicialMaiorDataFinal(this.distribuidorService.obterDataOperacaoDistribuidor(), dataRecolhimento)) {
@@ -604,7 +610,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		if(DateUtil.isDataInicialMaiorDataFinal(periodo.getLancamentoParcial().getLancamentoInicial(), dataLancamento))
 			throw new ValidacaoException(TipoMensagem.WARNING, "A data de Lançamento é inferior ao lançamento inicial da parcial.");
 
-		this.validarDataRecolhimentoPeriodo(periodo.getLancamentoParcial(), dataRecolhimento);
+		this.validarDataRecolhimentoPeriodo(periodo.getLancamentoParcial(), dataRecolhimento,lancamento);
 
 		PeriodoLancamentoParcial periodoAnterior = 
 				periodoLancamentoParcialRepository.obterPeriodoPorNumero(periodo.getNumeroPeriodo()-1, periodo.getLancamentoParcial().getId());
