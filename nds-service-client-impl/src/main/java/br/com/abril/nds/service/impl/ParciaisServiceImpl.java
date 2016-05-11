@@ -699,7 +699,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 				throw new ValidacaoException(TipoMensagem.WARNING, "A nova data ultrapassa lançamentos e/ou recolhimentos de outro período.");
 			}
 			
-			if(!DateUtil.validarDataEntrePeriodo(dataRecolhimento,lancamentoAnterior.getDataRecolhimentoDistribuidor(),lancamentoParcial.getRecolhimentoFinal())){
+			if(DateUtil.validarDataEntrePeriodo(dataRecolhimento,lancamentoAnterior.getDataRecolhimentoDistribuidor(),lancamentoParcial.getRecolhimentoFinal())){
 				throw new ValidacaoException(TipoMensagem.WARNING, "A nova data ultrapassa lançamentos e/ou recolhimentos de outro período.");
 			}
 		}
