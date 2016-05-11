@@ -107,11 +107,19 @@ public class ParciaisServiceImpl implements ParciaisService{
 
 	
 		// se lancamento nao estiver nos status abaixo, permitir alterar data de recolhimento mesmo que maior que a data final
-		if(lanc == null || !Arrays.asList(StatusLancamento.PLANEJADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO
-				, StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO).contains(lanc.getStatus())) {
+		
 			if (DateUtil.isDataInicialMaiorDataFinal(dataRecolhimento, lancamento.getRecolhimentoFinal())) {
-				throw new ValidacaoException(TipoMensagem.WARNING, "Essa alteração deve ser feita através da matriz de recolhimento.");
-			}
+				if(lanc == null || !Arrays.asList(StatusLancamento.PLANEJADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO
+						, StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO).contains(lanc.getStatus())) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "A nova data de recolhimento ultrapassa o recolhimento final("+DateUtil.formatarData(lancamento.getRecolhimentoFinal(),"dd/MM/yyyy")+").Essa alteração deve ser feita através da matriz de recolhimento.");
+				}
+				else
+				{ // alterar data do recolhimento final
+					lancamento.setRecolhimentoFinal(dataRecolhimento);
+				    lancamentoParcialRepository.merge(lancamento);
+					
+				}
+				
 		}
 		
 		if (DateUtil.isDataInicialMaiorDataFinal(this.distribuidorService.obterDataOperacaoDistribuidor(), dataRecolhimento)) {
@@ -685,33 +693,40 @@ public class ParciaisServiceImpl implements ParciaisService{
 		if(lancamentoAnterior == null && proximoLancamento!= null){
 			
 			if(!DateUtil.validarDataEntrePeriodo(dataLancamento, lancamentoParcial.getLancamentoInicial(),proximoLancamento.getDataLancamentoDistribuidor())){
-				throw new ValidacaoException(TipoMensagem.WARNING, "A nova data ultrapassa lançamentos e/ou recolhimentos de outro período.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "A nova data de lançamento deve estar entre lancamento inicial("+DateUtil.formatarData(lancamentoParcial.getLancamentoInicial(),"dd/MM/yyyy")+") e proximo lancamento("+
+						DateUtil.formatarData(proximoLancamento.getDataLancamentoDistribuidor(),"dd/MM/yyyy")+")." );
 			}
 			
 			if(!DateUtil.validarDataEntrePeriodo(dataRecolhimento, lancamentoParcial.getLancamentoInicial(),proximoLancamento.getDataRecolhimentoDistribuidor())){
-				throw new ValidacaoException(TipoMensagem.WARNING, "A nova data ultrapassa lançamentos e/ou recolhimentos de outro período.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "A nova data de recolhimento deve estar entre  lancamento inicial("+DateUtil.formatarData(lancamentoParcial.getLancamentoInicial(),"dd/MM/yyyy")+") e proximo recolhimento("+
+						DateUtil.formatarData(proximoLancamento.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy")+").");
 			}
 		}
 		
 		if(lancamentoAnterior != null && proximoLancamento == null){
 			
 			if(!DateUtil.validarDataEntrePeriodo(dataLancamento,lancamentoAnterior.getDataLancamentoDistribuidor(),lancamentoParcial.getRecolhimentoFinal())){
-				throw new ValidacaoException(TipoMensagem.WARNING, "A nova data ultrapassa lançamentos e/ou recolhimentos de outro período.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "A nova data de lançamento deve estar entre  lancamento anterior("+DateUtil.formatarData(lancamentoAnterior.getDataLancamentoDistribuidor(),"dd/MM/yyyy")+") e recolhimento final("+
+						DateUtil.formatarData(lancamentoParcial.getRecolhimentoFinal(),"dd/MM/yyyy")+")." );
 			}
 			
-			if(DateUtil.validarDataEntrePeriodo(dataRecolhimento,lancamentoAnterior.getDataRecolhimentoDistribuidor(),lancamentoParcial.getRecolhimentoFinal())){
-				throw new ValidacaoException(TipoMensagem.WARNING, "A nova data ultrapassa lançamentos e/ou recolhimentos de outro período.");
+			if(!DateUtil.validarDataEntrePeriodo(dataRecolhimento,lancamentoAnterior.getDataRecolhimentoDistribuidor(),lancamentoParcial.getRecolhimentoFinal())){
+				throw new ValidacaoException(TipoMensagem.WARNING, "A nova data de recolhimento deve estar entre  recolhimento anterior("+DateUtil.formatarData(lancamentoAnterior.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy")+") e recolhimento final("+
+						DateUtil.formatarData(lancamentoParcial.getRecolhimentoFinal(),"dd/MM/yyyy")+")."
+						);
 			}
 		}
 		
 		if(proximoLancamento != null && lancamentoAnterior!= null){
 			
 			if(!DateUtil.validarDataEntrePeriodo(dataLancamento,lancamentoAnterior.getDataLancamentoDistribuidor(),proximoLancamento.getDataLancamentoDistribuidor())){
-				throw new ValidacaoException(TipoMensagem.WARNING, "A nova data ultrapassa lançamentos e/ou recolhimentos de outro período.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "A nova data de lançamento  deve estar entre  lançamento anterior("+DateUtil.formatarData(lancamentoAnterior.getDataLancamentoDistribuidor(),"dd/MM/yyyy")+") e lancamento posterior("+
+						DateUtil.formatarData(proximoLancamento.getDataLancamentoDistribuidor(),"dd/MM/yyyy") +").");
 			}
 			
 			if(!DateUtil.validarDataEntrePeriodo(dataRecolhimento,lancamentoAnterior.getDataLancamentoDistribuidor(),proximoLancamento.getDataRecolhimentoDistribuidor())){
-				throw new ValidacaoException(TipoMensagem.WARNING, "A nova data ultrapassa lançamentos e/ou recolhimentos de outro período.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "A nova data de recolhimento  deve estar entre  lançamento anterior("+
+						DateUtil.formatarData(lancamentoAnterior.getDataLancamentoDistribuidor(),"dd/MM/yyyy")+") e recolhimento posterior("+DateUtil.formatarData(proximoLancamento.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy")+").");
 			}
 		}
 	}
