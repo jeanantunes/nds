@@ -113,11 +113,9 @@ var negociacaoDividaController = $.extend(true, {
 		
 		var selected = value.tipoCobranca === negociacaoDividaController.tipoCobrancaDefaultCota ? 'selected' : '';
 
-		var optionExists = $("#selectPagamento option").filter(function() {
-			return $(this).attr('value') === value.tipoCobranca;
-		}).length;
 
-		if (!optionExists && value.tipoCobranca) {
+	
+		if ( value.tipoCobranca) {
 
 			$("#selectPagamento").append("<option value='" 
 										+ value.tipoCobranca + "'" 
@@ -129,11 +127,8 @@ var negociacaoDividaController = $.extend(true, {
 
 	appendBancoOption: function(value) {
 		
-		var optionExists = $("#selectBancosBoleto option").filter(function() {
-			return $(this).attr('value') == value.idBanco;
-		}).length;
 		
-		if (!optionExists && value.idBanco) {
+		if ( value.idBanco) {
 			
 			$("#selectBancosBoleto").append("<option value='" + value.idBanco + "'>" + value.nomeBanco + "</option>");
 		}
