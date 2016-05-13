@@ -2,7 +2,6 @@ package br.com.abril.nds.client.vo;
 
 
 import java.util.Date;
-import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.dto.RegimeTributarioDTO;
@@ -196,6 +195,7 @@ public class ParametrosDistribuidorVO {
     // Aba Distribuição
     // Grid Distribuição
 	private boolean geracaoAutomaticaEstudo;
+	private boolean infoReparteComplementar;
 	private Integer vendaMediaMais;
 	private boolean pracaVeraneio;
 	private boolean complementarAutomatico;
@@ -1414,7 +1414,14 @@ public class ParametrosDistribuidorVO {
 	public void setAceitaRecolhimentoParcialAtraso(
 			boolean aceitaRecolhimentoParcialAtraso) {
 		this.aceitaRecolhimentoParcialAtraso = aceitaRecolhimentoParcialAtraso;
+	}
+
+	public boolean isInfoReparteComplementar() {
+		return infoReparteComplementar;
+	}
+
+	public void setInfoReparteComplementar(boolean infoReparteComplementar) {
+		this.infoReparteComplementar = infoReparteComplementar;
 	} 
-	
 	
 }

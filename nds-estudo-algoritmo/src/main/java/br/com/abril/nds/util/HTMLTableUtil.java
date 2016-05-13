@@ -21,6 +21,7 @@ import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
+import br.com.abril.nds.model.planejamento.InformacoesReparteComplementarEstudo;
 
 public class HTMLTableUtil {
     
@@ -279,6 +280,66 @@ public class HTMLTableUtil {
 //	sb.append("<br>");
 //	sb.append(HTMLTableUtil.buildHTMLTable(estudoAutomatico.getCotas()));
 //	return sb.toString();
+    }
+    
+    public static String informacoesReparteComplementarEstudo(EstudoTransient estudo){
+    	
+    	StringBuilder h = new StringBuilder();
+    	
+    	BigInteger reparteADistribuir = estudo.getReparteDistribuirInicial();
+    	BigInteger reparteADistribuidoComplementar = BigInteger.ZERO;
+    	BigInteger reparteADistribuidoSemComplementar = BigInteger.ZERO;
+    	
+    	for (CotaEstudo ce : estudo.getCotas()) {
+
+    	    if (ce.getReparteCalculado() != null && ce.getReparteCalculado().compareTo(BigInteger.ZERO) > 0) {
+    	    	if (ce.getClassificacao().equals(ClassificacaoCota.BancaEstudoComplementar)) {
+    	    		reparteADistribuidoComplementar = reparteADistribuidoComplementar.add(ce.getReparteCalculado());
+        		}else{
+        			reparteADistribuidoSemComplementar = reparteADistribuidoSemComplementar.add(ce.getReparteCalculado());
+        		}
+    	    }
+    	}
+    	
+    	InformacoesReparteComplementarEstudo informacoes = new InformacoesReparteComplementarEstudo();
+    	
+    	informacoes.setIdEstudo(estudo.getId());
+    	informacoes.setTotalReparteDistribuir(estudo.getReparteDistribuirInicial());
+    	informacoes.setTotalReparteDistribuidoPorComplementar(reparteADistribuidoComplementar);
+    	informacoes.setTotalReparteDistribuidoSemComplementar(reparteADistribuidoSemComplementar);
+    	
+    	estudo.setInformacoesRepComplementar(informacoes);
+    	
+//    	h.append("<html>");
+//    	h.append("<body >");
+    	
+    	h.append("<table border='2' style='width: 350px!important;' >");
+    	
+    	h.append("<tr>");
+    	h.append("<th style='width: 350px!important;'><h3><b>Total</b></h3></th>");
+    	h.append("<th style='width: 100px!important;'><h3><b>Valor</b></h3></th>");
+    	h.append("</tr>");
+    	
+    	h.append("<tr>");
+    	h.append("<td><h3>Reparte a distribuir</h3></td>");
+    	h.append("<td style='text-align: center;'><h3>").append(reparteADistribuir).append("</h3></td>");
+    	h.append("</tr>");
+
+    	h.append("<tr>");
+    	h.append("<td><h3>Reparte distribuído sem complementar</h3></td>");
+    	h.append("<td style='text-align: center;'><h3>").append(reparteADistribuidoSemComplementar).append("</h3></td>");
+    	h.append("</tr>");
+    	
+    	h.append("<tr>");
+    	h.append("<td><h3>Reparte Complementar</h3></td>");
+    	h.append("<td style='text-align: center;'><h3>").append(reparteADistribuidoComplementar).append("</h3></td>");
+    	h.append("</tr>");
+    	
+    	h.append("</table>");
+//    	h.append("</body>");
+//    	h.append("</html>");
+    	
+    	return h.toString();
     }
     
 	@SuppressWarnings("unchecked")

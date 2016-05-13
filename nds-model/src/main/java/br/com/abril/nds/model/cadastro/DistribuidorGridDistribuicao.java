@@ -30,6 +30,9 @@ public class DistribuidorGridDistribuicao implements Serializable {
 	@Column(name = "GERACAO_AUTOMATICA_ESTUDO")
 	private boolean geracaoAutomaticaEstudo;
 	
+	@Column(name = "EXIBIR_INFORMACOES_REPARTE_COMPLEMENTAR")
+	private boolean exibirInformacoesReparteComplementar;
+	
 	@Column(name = "VENDA_MEDIA_MAIS", nullable = false)
 	private Integer vendaMediaMais;
 	
@@ -97,4 +100,14 @@ public class DistribuidorGridDistribuicao implements Serializable {
 	public void setPercentualMaximoFixacao(Integer percentualMaximoFixacao) {
 		this.percentualMaximoFixacao = percentualMaximoFixacao;
 	}
+
+	public boolean isExibirInformacoesReparteComplementar() {
+		return exibirInformacoesReparteComplementar;
+	}
+
+	public void setExibirInformacoesReparteComplementar(boolean exibirInformacoesReparteComplementar) {
+		this.exibirInformacoesReparteComplementar = exibirInformacoesReparteComplementar;
+	}
+	
+	
 }

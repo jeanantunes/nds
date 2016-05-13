@@ -212,6 +212,7 @@ var parametrosDistribuidorController = $.extend(true, {
 
 			//Grid Distribuicao
 			{name:'parametrosDistribuidor.geracaoAutomaticaEstudo', value: $('#geracaoAutomaticaEstudo', this.workspace).is(':checked')},
+			{name:'parametrosDistribuidor.infoReparteComplementar', value: $('#infoReparteComplementar', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.vendaMediaMais', value: $('#vendaMediaMais', this.workspace).val()},
 			{name:'parametrosDistribuidor.pracaVeraneio', value: $('#pracaVeraneio', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.complementarAutomatico', value: $('#complementarAutomatico', this.workspace).is(':checked')},
