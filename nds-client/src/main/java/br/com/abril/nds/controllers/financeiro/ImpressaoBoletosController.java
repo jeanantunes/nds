@@ -613,23 +613,29 @@ public class ImpressaoBoletosController extends BaseController {
 	}
 	
 	@Post
+	@Path("/gerarArquivo")
 	public void gerarArquivo(final FiltroDividaGeradaDTO filtro) throws Exception {
 		
 		FileType fileType = FileType.TXT;
 		
 		byte[] arquivo = this.boletoService.gerarArquivo(filtro);
 		
-		this.httpResponse.setContentType("application/txt");
-		
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=COBRANCAREG"+DateUtil.formatarData(new Date(),"ddMMyyHHmm") + fileType.getExtension());
-
-		OutputStream output = this.httpResponse.getOutputStream();
-		
-		output.write(arquivo);
-
-		httpResponse.getOutputStream().close();
-		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Download do arquivo com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
-
+		if (arquivo == null) {
+			
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum arquivo Encontado."), Constantes.PARAM_MSGS).recursive().serialize();
+		} else {
+			
+			this.httpResponse.setContentType("application/txt");
+			
+			this.httpResponse.setHeader("Content-Disposition", "attachment; filename=COBRANCAREG"+DateUtil.formatarData(new Date(),"ddMMyyHHmm") + fileType.getExtension());
+			
+			OutputStream output = this.httpResponse.getOutputStream();
+			
+			output.write(arquivo);
+			
+			httpResponse.getOutputStream().close();
+			
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Download do arquivo com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
+		}
 	}
 }
