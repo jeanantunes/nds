@@ -32,6 +32,7 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
@@ -39,6 +40,7 @@ import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -46,6 +48,7 @@ import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -86,6 +89,9 @@ public class ImpressaoBoletosController extends BaseController {
 
 	@Autowired
 	private PoliticaCobrancaService politicaCobrancaService;
+	
+	@Autowired
+	private BoletoService boletoService;
 	
 	@Autowired
 	private HttpSession session;
@@ -604,5 +610,26 @@ public class ImpressaoBoletosController extends BaseController {
 		if (!DateUtil.isValidDate(dataMovimento, "dd/MM/yyyy")) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida.");
 		}
+	}
+	
+	@Post
+	public void gerarArquivo(final FiltroDividaGeradaDTO filtro) throws Exception {
+		
+		FileType fileType = FileType.TXT;
+		
+		byte[] arquivo = this.boletoService.gerarArquivo(filtro);
+		
+		this.httpResponse.setContentType("application/txt");
+		
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=COBRANCAREG"+DateUtil.formatarData(new Date(),"ddMMyyHHmm") + fileType.getExtension());
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		
+		output.write(arquivo);
+
+		httpResponse.getOutputStream().close();
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Download do arquivo com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
+
 	}
 }

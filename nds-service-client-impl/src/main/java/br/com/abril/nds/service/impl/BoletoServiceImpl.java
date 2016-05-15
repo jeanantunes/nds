@@ -1,6 +1,9 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -33,6 +36,7 @@ import br.com.abril.nds.dto.BoletoEmBrancoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
+import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
@@ -41,6 +45,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
@@ -128,6 +133,11 @@ import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.NomeBanco;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro00;
+import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro01;
+import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro09;
+import br.com.abril.nds.util.export.cobranca.util.CobRegBaseDTO;
+import br.com.abril.nds.util.export.cobranca.util.CobRegParser;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
@@ -2878,4 +2888,240 @@ public class BoletoServiceImpl implements BoletoService {
 		buffer.append("Rota : ").append(roteirizacao.getDescricaoRota());
 		return buffer.toString();
     }
+
+	@Override
+	@Transactional
+	public byte[] gerarArquivo(final FiltroDividaGeradaDTO filtro) throws Exception {
+		
+		LOGGER.debug("Metodo gerar cobranca registrada.");
+				
+		List<GeraDividaDTO> dividas = dividaRepository.obterDividasGeradas(filtro);
+		
+		final Pessoa pessoaCedente = distribuidorRepository.juridica();
+		
+		if(dividas == null) {
+			throw new ValidationException("Não foi encontrado nenhum registro para gerar o arquivo");
+		}
+
+		Banco banco = bancoRepository.buscarPorId(1L);
+		
+		List<CobRegBaseDTO> list = new ArrayList<CobRegBaseDTO>();
+		
+		CobRegEnvTipoRegistro00 registro00 = this.montarRegistro00(banco, pessoaCedente);
+		
+		list.add(registro00);
+		
+		int count = Integer.valueOf(registro00.getSequencial())+1;
+		
+		int somaSquencial = 0;
+		
+		for(GeraDividaDTO divida : dividas) {
+		
+			Boleto boleto = boletoRepository.obterPorNossoNumero(divida.getNossoNumero(), null, false);
+        
+        	if(boleto!= null){
+        		CobRegEnvTipoRegistro01 registro01 = this.montarRegistro01(boleto, pessoaCedente, banco, count);
+        		list.add(registro01);
+        		count++;
+        		
+        		somaSquencial = count;
+        	}
+    	}
+		
+		list.add(this.montarRegistro09(somaSquencial));
+		
+		BufferedWriter bw = null;
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
+		try {
+			
+			bw = new BufferedWriter(new OutputStreamWriter(baos));
+			CobRegParser cobParser = new CobRegParser();
+			
+			for (CobRegBaseDTO dto : list) {
+				cobParser.parseCobrancaReg(dto, bw);
+				bw.newLine();
+			}
+			
+			bw.flush();
+			bw.close();
+		}catch (Exception e) {
+			throw new ValidationException("Erro na geração do arquivo"+ e.getMessage());
+		}
+			
+		return baos.toByteArray();	
+	}
+	
+	private CobRegEnvTipoRegistro00 montarRegistro00 (Banco banco, Pessoa pessoaCedente) throws ValidationException {
+		
+		CobRegEnvTipoRegistro00 registro00 = new CobRegEnvTipoRegistro00();
+		
+		registro00.setTipoRegistro("0");
+		registro00.setIdentificacaoArquivoRemessa("1");
+		registro00.setIdentificacaoExtenso("REMESSA");
+		registro00.setCodigoServico("01");
+		registro00.setLiteralServicos("COBRANCA");
+		registro00.setAgenciaCedente(String.valueOf(banco.getAgencia()));
+		registro00.setFiller("");
+		registro00.setContaCliente(String.valueOf(banco.getConta()));
+		registro00.setDigitoConta(banco.getDvConta());
+		registro00.setFiller2("");
+		
+		String nomeCliente = obterNomeCliente(pessoaCedente);
+		
+		registro00.setNomeCliente(nomeCliente);
+		registro00.setNumeroBanco(banco.getNumeroBanco());
+		registro00.setNomeBanco(banco.getNome());
+		
+		setarDataFomatada(registro00);
+		
+		registro00.setCodigoUsuario("");
+		registro00.setFiller3("");
+		registro00.setSequencial("01");
+		
+        return registro00;
+	}
+	
+	private String obterNomeCliente(Pessoa pessoaCedente) {
+		
+		if(pessoaCedente instanceof PessoaJuridica) {
+		    
+		   return ((PessoaJuridica) pessoaCedente).getRazaoSocial();
+		   
+		} else {
+		    
+			return ((PessoaFisica) pessoaCedente).getNome();
+		   
+		}
+	}
+	
+	private void setarDataFomatada(CobRegEnvTipoRegistro00 registro00) throws ValidationException {
+		try {
+			registro00.setDataGravacaoArquivo(Util.formataData(new Date()));
+		} catch (Exception e) {
+			throw new ValidationException("Não formatar a data do arquivo");
+		}
+	}
+	
+	private CobRegEnvTipoRegistro01 montarRegistro01(Boleto boleto, Pessoa pessoaCedente, Banco banco, int count) throws ValidationException {
+		
+		LOGGER.debug("metodo lista de itens da cobrança");
+		
+		CobRegEnvTipoRegistro01 registro01 = new CobRegEnvTipoRegistro01();
+		
+		registro01.setTipoRegistro("1");
+		registro01.setFiller("");
+		registro01.setAgenciaCedente(String.valueOf(banco.getAgencia()));
+		registro01.setFiller1("");
+		registro01.setContaCliente(String.valueOf(banco.getConta()));
+		registro01.setDigitoConta(String.valueOf(banco.getDvConta()));
+		registro01.setTaxa(String.valueOf(banco.getJuros().intValue()));
+		registro01.setFiller2("");
+		
+		// não sei o que setar
+		registro01.setNumeroControle("00");
+		registro01.setNossoNumero(boleto.getNossoNumero());;
+		registro01.setDigitoNossoNumero(boleto.getDigitoNossoNumero());
+		registro01.setNumeroContrato("0");
+		registro01.setDataSegundoDesconto("0");
+		registro01.setValorSegundoDesconto("0");;
+		registro01.setFiller3("");
+		registro01.setCarteira(String.valueOf(banco.getCarteira()));
+		
+		// não sei o que setar
+		registro01.setCodigoServico("01");
+		
+		registro01.setNumero(boleto.getNossoNumero());
+		
+		
+		try {
+			registro01.setDataVencimento(Util.formataData(boleto.getDataVencimento()));
+			registro01.setDataEmissao(Util.formataData(boleto.getDataEmissao()));
+		} catch (Exception e) {
+			throw new ValidationException("Erro ao Formatar a Data Vencimento / Emissão");
+		}
+		registro01.setValorTitulo(String.valueOf(boleto.getValor()));
+		registro01.setNumeroBanco(banco.getNumeroBanco());
+		registro01.setAgencia(String.valueOf(banco.getAgencia()));
+		registro01.setFiller4(" ");
+		registro01.setEspecie("01");
+		registro01.setAceite("A");
+		registro01.setJurosDia("0");;
+		registro01.setDataDesconto("0");
+		registro01.setValorDesconto("0");
+		registro01.setValorIOC("0");;
+		registro01.setValorAbatimento("0");
+		
+		this.popularSacadoCobrana(registro01, boleto);
+		
+		registro01.setSequencialRegistro(String.valueOf(count));
+		
+		return registro01;
+        
+	}
+
+	private void popularSacadoCobrana(CobRegEnvTipoRegistro01 registro01, Boleto boleto) {
+		
+		final Cota cota = boleto.getCota(); 
+		
+		final Pessoa pessoaSacado = cota.getPessoa();
+		
+		Endereco enderecoSacado = cota.getEnderecoPrincipal().getEndereco();
+		
+		//DADOS DO SACADO
+        
+		String codigoInscricaoSacado = null;
+		
+        String nomeSacado = null;
+        
+        String documentoSacado = null;
+        
+        if (pessoaSacado instanceof PessoaFisica) {
+        	codigoInscricaoSacado = "01";
+            nomeSacado = ((PessoaFisica) pessoaSacado).getNome();
+            documentoSacado = ((PessoaFisica) pessoaSacado).getCpf();
+        }
+        if (pessoaSacado instanceof PessoaJuridica) {
+        	codigoInscricaoSacado = "02";
+            nomeSacado = ((PessoaJuridica) pessoaSacado).getRazaoSocial();
+            documentoSacado = ((PessoaJuridica) pessoaSacado).getCnpj();
+        }
+        
+        
+        registro01.setCodigoInstrucao(codigoInscricaoSacado);
+        registro01.setNumeroCNPJCPF(documentoSacado);
+        
+        if(cota.getNumeroCota() != null && cota.getNumeroCota() > 0) {
+        	nomeSacado = cota.getNumeroCota() + " - " + nomeSacado;
+        } 
+        
+        registro01.setNomeSacado(nomeSacado);
+        
+        this.enderecoSacado(registro01, enderecoSacado, nomeSacado);
+	}
+
+	private void enderecoSacado(CobRegEnvTipoRegistro01 registro01, Endereco enderecoSacado, String nomeSacado) {
+		//ENDERECO DO SACADO
+        registro01.setEnderecoSacado(enderecoSacado.getLogradouro());
+		registro01.setComplemento(enderecoSacado.getComplemento());
+		registro01.setCEP(enderecoSacado.getCep());
+		registro01.setCidade(enderecoSacado.getCidade());
+		registro01.setUF(enderecoSacado.getUf());
+		registro01.setMensagemCedenteNomeSacadorAvalista(nomeSacado);
+		registro01.setPrazoProtesto("99");
+		registro01.setCodigoMoeda("00");
+	}
+	
+	private CobRegEnvTipoRegistro09 montarRegistro09(int sequencial) throws ValidationException {
+		
+		CobRegEnvTipoRegistro09 registro09 = new CobRegEnvTipoRegistro09();
+		
+		registro09.setTipoRegistro("9");
+		registro09.setFiller("");
+		registro09.setSequencial(String.valueOf(sequencial));
+		
+        return registro09;
+	}
+	
 }
