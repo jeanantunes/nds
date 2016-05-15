@@ -2897,12 +2897,12 @@ public class BoletoServiceImpl implements BoletoService {
 				
 		List<GeraDividaDTO> dividas = dividaRepository.obterDividasGeradas(filtro);
 		
+		if(dividas == null || dividas.isEmpty()) {
+			return null;
+		}
+		
 		final Pessoa pessoaCedente = distribuidorRepository.juridica();
 		
-		if(dividas == null) {
-			throw new ValidationException("Não foi encontrado nenhum registro para gerar o arquivo");
-		}
-
 		Banco banco = bancoRepository.buscarPorId(1L);
 		
 		List<CobRegBaseDTO> list = new ArrayList<CobRegBaseDTO>();
