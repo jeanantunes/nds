@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
@@ -256,4 +257,6 @@ public interface BoletoService {
 	
 	byte[] gerarImpressaoBoleto(final Boleto boleto, Pessoa cedente, boolean aceitaPagamentoVencido,
             final List<PoliticaCobranca> politicasCobranca) throws IOException, ValidationException;
+	
+	byte[] gerarArquivo(final FiltroDividaGeradaDTO filtro) throws Exception, ValidationException;
 }

@@ -379,6 +379,11 @@ public abstract class Util {
         return digito;
     }
     
+    public static void main(String[] args) {
+		System.out.println(calcularDigito("0000020"));
+	} 
+    // 
+    
     public static String padLeft(final String valor, final String caractere, final int tamanho){
         
         return StringUtils.leftPad(valor, tamanho, caractere);
@@ -847,5 +852,20 @@ public abstract class Util {
             e.printStackTrace();
         }  
         return date;  
-    }  
+    }
+    
+    public static String formataData(Date data) throws Exception {   
+        String dataFormatada = null;
+    	try {  
+    		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyy");
+        	
+        	dataFormatada = sdf.format(data);
+        	
+    	} catch (Exception e) {              
+            e.printStackTrace();
+        } 
+        
+        return dataFormatada;  
+    } 
+    
 }

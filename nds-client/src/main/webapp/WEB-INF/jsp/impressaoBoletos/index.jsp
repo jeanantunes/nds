@@ -2,6 +2,7 @@
 <head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/impressaoBoletos.js"></script>
 	<script language="javascript" type="text/javascript">
 
@@ -53,16 +54,21 @@
 					</span>
 				</div>
  					
- 					<span class="bt_arq">
-         				<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
-         					<img src="${pageContext.request.contextPath}/images/ico_excel.png"  hspace="5" border="0" />
-         				</a>
-         			</span>
+				<span class="bt_arq">
+       				<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+       					<img src="${pageContext.request.contextPath}/images/ico_excel.png"  hspace="5" border="0" />
+       				</a>
+       			</span>
 				<span class="bt_arq">
 					<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 					</a>
 				</span>
+ 				<span class="bt_arq">
+       				<a href="javascript:impressaoBoletosController.gerarArquivo()" rel="tipsy" title="Gerar Cobrança Registrada">
+       					<img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif"  hspace="5" border="0" />
+       				</a>
+       			</span>
 			</div>
 		</div>
 		<div class="linha_separa_fields">&nbsp;</div>

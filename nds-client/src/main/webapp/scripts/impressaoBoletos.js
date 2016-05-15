@@ -273,7 +273,43 @@ var impressaoBoletosController = $.extend(true, {
 			$("#rota", impressaoBoletosController.workspace).html(comboRotas);
 			$("#roteiro", impressaoBoletosController.workspace).html(comboRoteiros);
 		});
-	}
+	},
+	
+	gerarArquivo : function () {
+    	
+    	var path = contextPath + "/financeiro/impressaoBoletos/gerarArquivo";
+    	
+    	var params = [];
+		
+		params.push({name: 'filtro.dataMovimento',      	value: $("#dataMovimento", impressaoBoletosController.workspace).val()});
+		params.push({name: 'filtro.codigoBox', 	value:$("#impressao-boleto-box", impressaoBoletosController.workspace).val()});
+		
+		
+    	$.fileDownload(path, {
+			httpMethod : "POST",
+			data : params,
+			successCallback: function(result) {
+				if (result.mensagens) {
+					exibirMensagem(
+						result.mensagens.tipoMensagem, 
+						result.mensagens.listaMensagens
+					);
+				}			
+			},
+            failCallback: function(result) {
+	
+        		res = $.parseJSON($(result).text());
+        		if ((typeof res != "undefined") && (typeof res.mensagens != "undefined")) {
+        			
+					exibirMensagem(
+							res.mensagens.tipoMensagem, 
+							res.mensagens.listaMensagens
+					);
+				}	
+			}
+		});
+    	
+    },
 	
 }, BaseController);
 //@ sourceURL=impressaoBoletos.js
