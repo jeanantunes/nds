@@ -10,6 +10,7 @@ import java.util.Map;
 import br.com.abril.nds.dto.BonificacaoDTO;
 import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.InformacoesReparteComplementarEstudo;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 public class EstudoTransient extends EstudoGerado {
@@ -59,6 +60,8 @@ public class EstudoTransient extends EstudoGerado {
     private String tipoGeracao;
     
     private BigInteger reparteTotal;
+    
+    private InformacoesReparteComplementarEstudo informacoesRepComplementar;
     
     public EstudoTransient() {
 	excedenteDistribuir = BigDecimal.ZERO;
@@ -327,6 +330,14 @@ public class EstudoTransient extends EstudoGerado {
 	public void setUsarMix(boolean usarMix) {
 		this.usarMix = usarMix;
 	}
+	
+	public InformacoesReparteComplementarEstudo getInformacoesRepComplementar() {
+		return informacoesRepComplementar;
+	}
+
+	public void setInformacoesRepComplementar(InformacoesReparteComplementarEstudo informacoesRepComplementar) {
+		this.informacoesRepComplementar = informacoesRepComplementar;
+	}
 
 	@Override
     public String toString() {
@@ -353,8 +364,5 @@ public class EstudoTransient extends EstudoGerado {
 	 
 	 return string;
     }
-
-    
-    
 
 }

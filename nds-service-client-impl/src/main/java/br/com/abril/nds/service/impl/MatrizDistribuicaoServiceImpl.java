@@ -31,6 +31,7 @@ import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
+import br.com.abril.nds.model.planejamento.InformacoesReparteComplementarEstudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusEstudo;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -42,6 +43,7 @@ import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.EstudoRepository;
+import br.com.abril.nds.repository.InformacoesReparteEstudoComplementarRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
@@ -89,6 +91,9 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	
 	@Autowired
 	private AnaliseParcialService analiseParcialService;
+	
+	@Autowired
+	private InformacoesReparteEstudoComplementarRepository infoEstudoComplementarRepository;
 	
 	private static final int MAX_DUPLICACOES_PERMITIDA = 3;
 
@@ -305,6 +310,13 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 						TipoMensagem.WARNING,
 						"Não existe estudo para o produto selecionado!"));
 			}
+			
+			InformacoesReparteComplementarEstudo informacoes = this.infoEstudoComplementarRepository.buscarInformacoesIdEstudo(vo.getIdEstudo().longValue());
+			
+			if(informacoes != null){
+				this.infoEstudoComplementarRepository.remover(informacoes);
+			}
+			
 		}
 	}
 

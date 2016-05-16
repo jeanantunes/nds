@@ -773,6 +773,12 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		$.postJSON(pathTela + "/distribuicaoVendaMedia/gerarEstudo", data, function(result) {
 		    //usado para exibir as variaveis do estudo
             
+			$('#idEstudo').text(result.list[0]);
+			
+			var isLiberado = result.list[1];
+			
+			$('#idStatusEstudo').text(isLiberado === true ? "Liberado" : "Gerado");
+			
 //			myWindow = window.open('', '_blank');
 //			
 //			if(myWindow && myWindow.document) {
@@ -781,15 +787,26 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 //			} else {
 //				exibirMensagem("WARNING", ["Ajuste as configurações de popup no browser."]);
 //			}
+//			$("#dialog-infsRepComplementar").attr(result.list[0]);
             
-            var isLiberado = result.list[1];
-            	
-            $('#idEstudo').text(result.list[0]);
-            $('#idStatusEstudo').text(isLiberado === true ? "Liberado" : "Gerado");
-            
-            	
+			if(result.list[2]){
+				$(result.list[2]).dialog({
+					escondeHeader: false,
+					resizable: true,
+					height: 300,
+					width: 420,
+					modal: true,
+					title: 'Informações reparte complementar',
+					buttons: {
+						"FECHAR": function() {
+							$(this).dialog( "close" );
+						}
+					}
+				});
+			}
+			
             if(typeof(matrizDistribuicao)=="object"){
-            		matrizDistribuicao.carregarGrid();
+        		matrizDistribuicao.carregarGrid();
             }
             
             //T.produtoEdicaoBases = [];

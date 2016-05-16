@@ -12,6 +12,14 @@
 				</td>
 			</tr>
 			<tr>
+				<td>Exibir informa&ccedil;&otilde;es reparte complementar:</td>
+				<td align="center">
+					<input name="parametrosDistribuidor.infoReparteComplementar" 
+					id="infoReparteComplementar"
+					type="checkbox" ${parametrosDistribuidor.infoReparteComplementar ? "checked" : ""} />
+				</td>
+			</tr>
+			<tr>
 				<td width="161">Venda Média +:</td>
 				<td width="81" align="center">
 					<input name="parametrosDistribuidor.vendaMediaMais" type="text" 
