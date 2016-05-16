@@ -181,9 +181,9 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		hqlRecolhimentoPDV.append(" coalesce((select sum(conEnc.qtde) ")
 		   .append(" from ConferenciaEncalhe conEnc ")
 		   .append("	join conEnc.controleConferenciaEncalheCota conConfEncCota ")
-		   .append("	join conEnc.produtoEdicao pe ")
+		//   .append("	join conEnc.produtoEdicao pe ")
 		   .append("	where conConfEncCota.dataOperacao = :dataRecolhimento ")
-		   .append("	and pe.id = produtoEdicao.id),0) ");
+		   .append("	and conEnc.produtoEdicao.id = produtoEdicao.id),0) ");
 		
 		StringBuilder hql = new StringBuilder("select ");
 		hql.append(" chamadaEncalhe.sequencia as sequencia, ")
