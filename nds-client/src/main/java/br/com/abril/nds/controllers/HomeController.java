@@ -191,16 +191,17 @@ public class HomeController {
         // respeitada e evitar
         // que uma permissão filha seja carregada antes da permissão pai.
         final Set<Permissao> permissoes = new TreeSet<Permissao>();
-        for (final GrantedAuthority grantedAuthority : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
-            try {
-            	
-            	if ( grantedAuthority != null && grantedAuthority.getAuthority() != null )
-                   permissoes.add(Permissao.valueOf(grantedAuthority.getAuthority()));
-            } catch (final IllegalArgumentException e) {
-                LOGGER.warn("Não foi encontrado a seguinte permissao: " + grantedAuthority.getAuthority(), e);
-                continue;
-            }
-        }
+        if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null )
+	        for (final GrantedAuthority grantedAuthority : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
+	            try {
+	            	
+	            	if ( grantedAuthority != null && grantedAuthority.getAuthority() != null )
+	                   permissoes.add(Permissao.valueOf(grantedAuthority.getAuthority()));
+	            } catch (final IllegalArgumentException e) {
+	                LOGGER.warn("Não foi encontrado a seguinte permissao: " + grantedAuthority.getAuthority(), e);
+	                continue;
+	            }
+	        }
         return new ArrayList<>(permissoes);
     }
     
