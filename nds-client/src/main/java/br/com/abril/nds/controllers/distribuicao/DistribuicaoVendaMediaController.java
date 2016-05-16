@@ -24,6 +24,7 @@ import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.dto.filtro.FiltroEdicaoBaseDistribuicaoVendaMedia;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.DistribuidorGridDistribuicao;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Roteiro;
@@ -44,6 +45,7 @@ import br.com.abril.nds.service.EstrategiaService;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
 import br.com.abril.nds.service.EstudoProdutoEdicaoBaseService;
 import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.InformacoesReparteEstudoComplementarService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.ProdutoEdicaoAlgoritimoService;
@@ -51,7 +53,9 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RoteiroService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.ComponentesPDV;
+import br.com.abril.nds.util.HTMLTableUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -118,6 +122,12 @@ public class DistribuicaoVendaMediaController extends BaseController {
     
     @Autowired
     private MatrizDistribuicaoService matrizDistribuicaoService;
+    
+    @Autowired
+    private DistribuidorService distribuidorService;
+    
+    @Autowired
+    private InformacoesReparteEstudoComplementarService infoRepEstudoComplementarService;
     
     private static final int QTD_MAX_PRODUTO_EDICAO = 6;
 
@@ -575,12 +585,20 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	        
 	    estudoService.criarRepartePorPDV(estudo.getId());
 	        
-//		String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
-	
-		List<Object> response = new ArrayList<>();
-//		response.add(htmlEstudo);
-		response.add(estudo.getId());
-		response.add(estudo.isLiberado() == null ? false : true);
+	    DistribuidorGridDistribuicao distGrid = this.distribuidorService.obterGridDistribuicaoDistribuidor();
+
+	    List<Object> response = new ArrayList<>();
+
+	    response.add(estudo.getId());
+	    response.add(estudo.isLiberado() == null ? false : true);
+	    
+	    if(distGrid != null && distGrid.isExibirInformacoesReparteComplementar()){
+	    	String htmlEstudo = HTMLTableUtil.informacoesReparteComplementarEstudo(estudo);
+	    	response.add(htmlEstudo);
+	    	
+	    	this.infoRepEstudoComplementarService.salvarInformacoes(estudo.getInformacoesRepComplementar());
+	    	
+	    }
 		
 		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, null);
 		session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, null);

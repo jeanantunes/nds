@@ -47,7 +47,7 @@ public class RegiaoServiceImpl implements RegiaoService  {
 	@Transactional
 	public void salvarRegiao(Regiao regiao) {
 		regiaoRepository.adicionar(regiao);
-		}
+	}
 	
 	@Transactional(readOnly=true)
 	@Override

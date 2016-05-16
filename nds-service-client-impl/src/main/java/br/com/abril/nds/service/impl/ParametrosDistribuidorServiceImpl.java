@@ -28,6 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.gson.JsonObject;
+
 import br.com.abril.nds.client.vo.DistribuidorClassificacaoCotaVO;
 import br.com.abril.nds.client.vo.DistribuidorPercentualExcedenteVO;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
@@ -37,7 +39,6 @@ import br.com.abril.nds.dto.TributoAliquotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
 import br.com.abril.nds.model.cadastro.DistribuidorGridDistribuicao;
@@ -82,14 +83,12 @@ import br.com.abril.nds.repository.DistribuidorPercentualExcedenteRepository;
 import br.com.abril.nds.repository.EnderecoDistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
-import br.com.abril.nds.repository.ParametroContratoCotaRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorFaltasSobrasRepository;
 import br.com.abril.nds.repository.PessoaRepository;
 import br.com.abril.nds.repository.RegimeTributarioRepository;
 import br.com.abril.nds.repository.TelefoneDistribuidorRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
-import br.com.abril.nds.repository.TipoGarantiaAceitaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TributoAliquotaRepository;
@@ -98,8 +97,6 @@ import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.vo.EnderecoVO;
-
-import com.google.gson.JsonObject;
 
 /**
  * Implementação da interface de serviços do parametrosDistribuidorVO
@@ -131,17 +128,11 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	private ControleConferenciaEncalheRepository controleConferenciaEncalheRepository;
 
 	@Autowired
-	private ParametroContratoCotaRepository parametroContratoCotaRepository;
-
-	@Autowired
 	private ParametrosDistribuidorEmissaoDocumentoRepository parametrosDistribuidorEmissaoDocumentoRepository;
 
 	@Autowired
 	private ParametrosDistribuidorFaltasSobrasRepository parametrosDistribuidorFaltasSobrasRepository;
 
-	@Autowired
-	private TipoGarantiaAceitaRepository tipoGarantiaAceitaRepository;
-	
 	@Autowired
 	private EnderecoDistribuidorRepository enderecoDistribuidorRepository;
 	
@@ -180,9 +171,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	@Autowired
 	private GrupoPermissaoService grupoPermissaoService;
-	
-	@Autowired
-	private CouchDbProperties couchDbProperties;
 	
 	private CouchDbClient couchDbClient;
 	
@@ -475,9 +463,11 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
                 gridDistribuicao.setPracaVeraneio(false);
                 gridDistribuicao.setComplementarAutomatico(true);
                 gridDistribuicao.setGeracaoAutomaticaEstudo(false);
+                gridDistribuicao.setExibirInformacoesReparteComplementar(false);
                 gridDistribuicao.setPercentualMaximoFixacao(50);
         }
         parametrosDistribuidor.setGeracaoAutomaticaEstudo(gridDistribuicao.isGeracaoAutomaticaEstudo());
+        parametrosDistribuidor.setInfoReparteComplementar(gridDistribuicao.isExibirInformacoesReparteComplementar());
         parametrosDistribuidor.setVendaMediaMais(gridDistribuicao.getVendaMediaMais());
         parametrosDistribuidor.setPracaVeraneio(gridDistribuicao.isPracaVeraneio());
         parametrosDistribuidor.setComplementarAutomatico(gridDistribuicao.isComplementarAutomatico());
@@ -1156,6 +1146,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		gridDistribuicao.setPracaVeraneio(parametrosDistribuidor.isPracaVeraneio());
 		gridDistribuicao.setComplementarAutomatico(parametrosDistribuidor.isComplementarAutomatico());
 		gridDistribuicao.setPercentualMaximoFixacao(parametrosDistribuidor.getPercentualMaximoFixacao());
+		gridDistribuicao.setExibirInformacoesReparteComplementar(parametrosDistribuidor.isInfoReparteComplementar());
 
 		gridDistribuicaoRepository.merge(gridDistribuicao);
 		

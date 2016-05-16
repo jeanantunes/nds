@@ -4,10 +4,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import br.com.abril.nds.dto.DistribuidorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorGridDistribuicao;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
@@ -179,4 +182,6 @@ public interface DistribuidorService {
 	Distribuidor obterParaNFe();
 
     Integer obterNumeroSemana(Date data);
+
+	DistribuidorGridDistribuicao obterGridDistribuicaoDistribuidor();
 }

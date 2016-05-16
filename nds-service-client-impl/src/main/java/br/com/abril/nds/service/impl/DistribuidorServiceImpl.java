@@ -12,7 +12,6 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.xmlsoap.schemas.soap.encoding.Int;
 
 import br.com.abril.nds.dto.DistribuidorDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -20,6 +19,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorGridDistribuicao;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Feriado;
@@ -36,6 +36,7 @@ import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
+import br.com.abril.nds.repository.DistribuidorGridDistribuicaoRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FeriadoRepository;
 import br.com.abril.nds.service.CalendarioService;
@@ -69,6 +70,9 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	
 	@Autowired
 	FeriadoRepository feriadoRepository;
+	
+	@Autowired
+	private DistribuidorGridDistribuicaoRepository distribuidorGridDistribuicaoRepository;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -782,5 +786,19 @@ public class DistribuidorServiceImpl implements DistribuidorService {
         }
         
         return SemanaUtil.obterAnoNumeroSemana(data, diaSemana.getCodigoDiaSemana());
+	}
+	
+	@Override
+	@Transactional
+	public DistribuidorGridDistribuicao obterGridDistribuicaoDistribuidor(){
+		
+		List<DistribuidorGridDistribuicao> listGrid = this.distribuidorGridDistribuicaoRepository.buscarTodos();
+		
+		if(!listGrid.isEmpty()){
+			return listGrid.get(0);
+		}else{
+			return null;  
+		}
+		
 	}
 }
