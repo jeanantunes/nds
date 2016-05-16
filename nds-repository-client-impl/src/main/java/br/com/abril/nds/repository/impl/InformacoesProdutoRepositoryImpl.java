@@ -118,8 +118,11 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		sql.append("         movimento_estoque_cota mecReparte ");
 		sql.append("             on mecReparte.LANCAMENTO_ID = lanc.id ");
 		sql.append("     LEFT JOIN ");
-		sql.append("         tipo_movimento tipo ");
-		sql.append("             ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
+		// alteracao por motivo de performance 
+		// sql.append("         tipo_movimento tipo ");
+		// sql.append("             ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
+		sql.append(" (select * from  tipo_movimento  ) tipo on  tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
+		
 		sql.append("     WHERE (tipo.GRUPO_MOVIMENTO_ESTOQUE is null or ");
 		sql.append("         tipo.GRUPO_MOVIMENTO_ESTOQUE not in ('ENVIO_ENCALHE')) ");
 		
