@@ -147,6 +147,9 @@ public class VendaEncalheController extends BaseController {
 		
 		byte[] comprovate = this.vendaEncalheService.geraImpressaoVenda(filtro);
 		
+		if ( comprovate == null || comprovate.length == 0 ) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro gerando Slip.Documento vazio !");
+		 }
 		return new ByteArrayDownload(comprovate,"application/pdf", "slipVenda.pdf", true);
 	}
 	
