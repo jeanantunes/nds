@@ -38,7 +38,7 @@ public class EncalheCotaDTO implements Serializable {
 	@Export(label = "Fornecedor", fontSize=9, widthPercent=7)
 	private String nomeFornecedor;
 
-	@Export(label = "Toral R$", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA_QUATRO_CASAS, fontSize=9)
+	@Export(label = "Total R$", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA_QUATRO_CASAS, fontSize=9)
 	private BigDecimal total;
 
 	private BigDecimal desconto;
