@@ -592,12 +592,11 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    response.add(estudo.getId());
 	    response.add(estudo.isLiberado() == null ? false : true);
 	    
+	    String htmlEstudo = HTMLTableUtil.informacoesReparteComplementarEstudo(estudo);
+	    this.infoRepEstudoComplementarService.salvarInformacoes(estudo.getInformacoesRepComplementar());
+
 	    if(distGrid != null && distGrid.isExibirInformacoesReparteComplementar()){
-	    	String htmlEstudo = HTMLTableUtil.informacoesReparteComplementarEstudo(estudo);
 	    	response.add(htmlEstudo);
-	    	
-	    	this.infoRepEstudoComplementarService.salvarInformacoes(estudo.getInformacoesRepComplementar());
-	    	
 	    }
 		
 		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, null);
