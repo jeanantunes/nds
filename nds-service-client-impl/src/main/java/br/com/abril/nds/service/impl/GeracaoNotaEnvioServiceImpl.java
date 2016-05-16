@@ -1250,6 +1250,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
     
     private void validarRoteirizacaoCota(final FiltroConsultaNotaEnvioDTO filtro,final List<Long> listaIdCotas) {
         
+    	if (listaIdCotas == null || listaIdCotas.isEmpty() )
+    		throw new ValidacaoException(TipoMensagem.ERROR, "Lista de Cotas vazia !");
     	final List<ItemDTO<String, String>> itens = cotaRepository.obterCotasSemRoterizacao(listaIdCotas);
     	
     	final List<String> cotasSemRoteirizacao = new ArrayList<String>();
