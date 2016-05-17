@@ -2493,10 +2493,10 @@ public class ConferenciaEncalheController extends BaseController {
 		if(notaFiscalEntradaCota.getChaveAcesso() == null || notaFiscalEntradaCota.getChaveAcesso().isEmpty()) {
 			mensagens.add("A chave de acesso deve ser preenchida.");
 		}
-		
-		if(notaFiscalEntradaCota.getChaveAcesso().length() <= 43) {
-			mensagens.add("A quantidade de caracteres digitada para o campo ['Chave de Acesso'] e inválida.");
-		}
+		else
+			if(notaFiscalEntradaCota.getChaveAcesso().length() <= 43) {
+				mensagens.add("A quantidade de caracteres digitada para o campo ['Chave de Acesso'] e inválida.");
+			}
 		
 		if(!mensagens.isEmpty()){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
