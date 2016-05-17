@@ -433,7 +433,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	 * @param listaMovimentoEstoqueCota
 	 * @param listaIdProdutoEdicao
 	 */
-	private List<FechamentoFisicoLogicoDTO> carregarQtdLogicoNaListaEncalheFisicoLogico(
+	private void carregarQtdLogicoNaListaEncalheFisicoLogico(
 			final FiltroFechamentoEncalheDTO filtro,
 			List<FechamentoFisicoLogicoDTO> listaEncalhe,
 			final List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCota,
@@ -493,7 +493,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 }
             }
         }
-		return listaEncalhe;
 	}
     
     private List<FechamentoFisicoLogicoDTO> retornarListaOrdenada(
