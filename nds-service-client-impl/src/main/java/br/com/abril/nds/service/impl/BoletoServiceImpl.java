@@ -114,6 +114,7 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.EmailService;
+import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
@@ -265,7 +266,6 @@ public class BoletoServiceImpl implements BoletoService {
     @Override
     @Transactional(readOnly=true)
     public Boleto obterBoletoPorNossoNumero(final String nossoNumero, final Boolean dividaAcumulada) {
-        
         return boletoRepository.obterPorNossoNumero(nossoNumero, dividaAcumulada,true);
     }
     
@@ -2894,7 +2894,7 @@ public class BoletoServiceImpl implements BoletoService {
 	public byte[] gerarArquivo(final FiltroDividaGeradaDTO filtro) throws Exception {
 		
 		LOGGER.debug("Metodo gerar cobranca registrada.");
-				
+		
 		List<GeraDividaDTO> dividas = dividaRepository.obterDividasGeradas(filtro);
 		
 		if(dividas == null || dividas.isEmpty()) {
@@ -2903,7 +2903,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		final Pessoa pessoaCedente = distribuidorRepository.juridica();
 		
-		Banco banco = bancoRepository.buscarPorId(1L);
+		Banco banco = bancoRepository.buscarPorId(filtro.getIdBanco());
 		
 		List<CobRegBaseDTO> list = new ArrayList<CobRegBaseDTO>();
 		
@@ -3006,7 +3006,7 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	private CobRegEnvTipoRegistro01 montarRegistro01(Boleto boleto, Pessoa pessoaCedente, Banco banco, int count) throws ValidationException {
 		
-		LOGGER.debug("metodo lista de itens da cobrança");
+		LOGGER.debug("Metodo lista de itens da cobrança");
 		
 		CobRegEnvTipoRegistro01 registro01 = new CobRegEnvTipoRegistro01();
 		
@@ -3034,13 +3034,13 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		registro01.setNumero(boleto.getNossoNumero());
 		
-		
 		try {
 			registro01.setDataVencimento(Util.formataData(boleto.getDataVencimento()));
 			registro01.setDataEmissao(Util.formataData(boleto.getDataEmissao()));
 		} catch (Exception e) {
 			throw new ValidationException("Erro ao Formatar a Data Vencimento / Emissão");
 		}
+		
 		registro01.setValorTitulo(String.valueOf(boleto.getValor()));
 		registro01.setNumeroBanco(banco.getNumeroBanco());
 		registro01.setAgencia(String.valueOf(banco.getAgencia()));
