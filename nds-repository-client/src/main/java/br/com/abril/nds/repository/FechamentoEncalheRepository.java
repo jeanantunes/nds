@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -83,4 +84,7 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 	Boolean validarEncerramentoOperacaoEncalhe(Date data);
 	
     Integer obterDiaRecolhimento(Long produtoEdicao,Date dataRecolhimento);
+
+	BigInteger buscarQtdeFechamentoEncalhe(Date dataEncalhe,
+			Long produtoEdicaoId);
 }

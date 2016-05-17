@@ -18,6 +18,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.internal.TypeLocatorImpl;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigIntegerType;
 import org.hibernate.type.BooleanType;
 import org.hibernate.type.EnumType;
 import org.hibernate.type.StandardBasicTypes;
@@ -39,7 +40,6 @@ import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
-import br.com.abril.nds.model.estoque.StatusProcessoEncalhe;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
@@ -486,6 +486,28 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         criteria.setFetchMode("listFechamentoEncalheBox", FetchMode.JOIN);
         
         return criteria.list();
+    }
+    
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public BigInteger buscarQtdeFechamentoEncalhe(final Date dataEncalhe,Long produtoEdicaoId) {
+        
+    	   final StringBuilder sql = new StringBuilder();
+           
+           sql.append(" select coalesce(quantidade,0) as quantidade " );
+           sql.append(" from FECHAMENTO_ENCALHE f ");
+           sql.append(" where f.DATA_ENCALHE = :dataEncalhe and ");
+           sql.append(" f.produto_edicao_id  = :produtoEdicaoId ");
+           
+           final Query query = getSession().createSQLQuery(sql.toString());
+           
+           ((SQLQuery) query ).addScalar("quantidade", BigIntegerType.INSTANCE);
+           
+           query.setParameter("dataEncalhe", dataEncalhe);
+           query.setParameter("produtoEdicaoId", produtoEdicaoId);
+           
+           return (BigInteger) query.uniqueResult();
     }
     
     @Override

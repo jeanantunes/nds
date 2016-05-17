@@ -379,19 +379,19 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		if (filtro.getBoxId() == null) {
         	
-            final List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro.getDataEncalhe());
+           // final List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro.getDataEncalhe());
             
             for (final FechamentoFisicoLogicoDTO encalhe : listaEncalhe) {
             	
                 this.setarInfoComumFechamentoFisicoLogicoDTO(encalhe, fechado);
+                BigInteger quantidade = fechamentoEncalheRepository.buscarQtdeFechamentoEncalhe(filtro.getDataEncalhe(),encalhe.getProdutoEdicao());
                 
-                for (final FechamentoEncalhe fechamento : listaFechamento) {
-                    if (encalhe.getProdutoEdicao().equals(fechamento.getFechamentoEncalhePK().getProdutoEdicao().getId())) {
-                        encalhe.setFisico(fechamento.getQuantidade());
-                        encalhe.setDiferenca(calcularDiferenca(encalhe));
-                        break;
-                    }
-                }
+               
+	                encalhe.setFisico(quantidade);
+	                encalhe.setDiferenca(calcularDiferenca(encalhe));
+                
+                   
+              
             }
             
         } else {
@@ -418,6 +418,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 }
             }
         }
+		
 	}
 
 	/**
