@@ -46,7 +46,7 @@ public class CobRegEnvTipoRegistro01 extends CobRegBaseDTO {
 	@CobRegfield(tamanho = 6, tipo="char", ordem=13)
 	private String dataSegundoDesconto;
 	
-	@CobRegfield(tamanho = 13, tipo="char", ordem=14)
+	@CobRegfield(tamanho = 13, tipo="numeric", ordem=14)
 	private String valorSegundoDesconto;
 	
 	@CobRegfield(tamanho = 8, tipo="char", ordem=15)
@@ -64,7 +64,7 @@ public class CobRegEnvTipoRegistro01 extends CobRegBaseDTO {
 	@CobRegfield(tamanho = 6, tipo="char", ordem=19)
 	private String dataVencimento;
 	
-	@CobRegfield(tamanho= 13, tipo="char", ordem=20)
+	@CobRegfield(tamanho= 13, tipo="numeric", ordem=20)
 	private String valorTitulo;
 	
 	@CobRegfield(tamanho= 3, tipo="char", ordem=21)

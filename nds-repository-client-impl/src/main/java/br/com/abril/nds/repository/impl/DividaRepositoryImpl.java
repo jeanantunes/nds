@@ -192,6 +192,10 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
             param.put("roteiro", filtro.getIdRoteiro());
         }
         
+        if (filtro.getIdBanco() != null) {
+            param.put("idBanco", filtro.getIdBanco());
+        }
+        
         param.put("statusDivida", Arrays.asList(
                         StatusDivida.EM_ABERTO, 
                         StatusDivida.BOLETO_ANTECIPADO_EM_ABERTO, 
@@ -233,8 +237,13 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
            .append(" Divida divida ")
            .append(" JOIN divida.cobranca cobranca ")
            .append(" JOIN divida.consolidados consolidado ")
-           .append(" JOIN cobranca.cota cota ")
-           .append(" left JOIN cota.box box ")
+           .append(" JOIN cobranca.cota cota ");
+           
+           if(filtro.getIdBanco() != null) {
+        	   hql.append(" JOIN cobranca.banco banco ");
+           }
+           
+           hql.append(" left JOIN cota.box box ")
            .append(" left JOIN cota.pdvs pdv ")
            .append(" left JOIN cota.pessoa pessoa ")
            .append(" left JOIN cota.parametroCobranca parametroCobranca ")
@@ -273,6 +282,10 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         
         if (filtro.getIdRoteiro() != null) {
             hql.append(" AND roteiro.id =:roteiro ");
+        }
+        
+        if (filtro.getIdBanco() != null) {
+            hql.append(" AND banco.id = :idBanco ");
         }
         
         hql.append(" GROUP BY cobranca.id ");

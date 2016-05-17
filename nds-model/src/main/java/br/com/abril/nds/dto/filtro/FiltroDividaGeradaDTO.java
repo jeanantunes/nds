@@ -42,6 +42,8 @@ public class FiltroDividaGeradaDTO implements Serializable {
 	private Long idRota;
 	private Long idRoteiro;
 	
+	private Long idBanco;
+	
 	private PaginacaoVO paginacao;
 	
 	private	ColunaOrdenacao colunaOrdenacao;
@@ -267,6 +269,14 @@ public class FiltroDividaGeradaDTO implements Serializable {
 	 */
 	public void setIdRoteiro(Long idRoteiro) {
 		this.idRoteiro = idRoteiro;
+	}
+	
+	public Long getIdBanco() {
+		return idBanco;
+	}
+
+	public void setIdBanco(Long idBanco) {
+		this.idBanco = idBanco;
 	}
 
 	/* (non-Javadoc)

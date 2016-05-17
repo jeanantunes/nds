@@ -1,5 +1,5 @@
 var impressaoBoletosController = $.extend(true, {
-
+	
 	init : function() {
 		$( "#dataMovimento", impressaoBoletosController.workspace ).datepicker({
 			showOn: "button",
@@ -8,7 +8,6 @@ var impressaoBoletosController = $.extend(true, {
 			dateFormat: "dd/mm/yy"
 		});
 		
-		
 		$("#descricaoCota", impressaoBoletosController.workspace).autocomplete({source: ""});
 		
 		$('input[id^="data"]', impressaoBoletosController.workspace).mask("99/99/9999");
@@ -16,6 +15,21 @@ var impressaoBoletosController = $.extend(true, {
 		$("input[name='impressao-boleto-numCota']", impressaoBoletosController.workspace).numeric();
 		
 		$("#dataMovimento", impressaoBoletosController.workspace).focus();
+		
+	    $("#impressao-dialog-banco").dialog({
+			autoOpen : false,
+			resizable : false,
+			width : 400,
+			modal : true,
+			buttons : {
+				"Confirmar	" : function() {
+					impressaoBoletosController.downloadArquivo();					
+				},
+				"Cancelar" : function (){
+					$("#impressao-dialog-banco").dialog("close");
+				}
+			}
+		});
 		
 		$("#impressosGrid", impressaoBoletosController.workspace).flexigrid({
 			onSuccess: function() {bloquearItensEdicao(impressaoBoletosController.workspace);},
@@ -276,6 +290,21 @@ var impressaoBoletosController = $.extend(true, {
 	},
 	
 	gerarArquivo : function () {
+		$("#impressao-dialog-banco").dialog("open");
+    },
+    
+    downloadArquivo : function () {
+    	
+    	var banco = $("#impressao-boleto-banco").val();
+    	
+    	if(banco == '-1') {
+    		$("#impressao-dialog-banco").dialog("close");
+    		
+			exibirMensagem('WARNING', 'Favor selecionar um Banco');
+			return false;
+    	} else {
+    		$("#impressao-dialog-banco").dialog("close");
+    	}
     	
     	var path = contextPath + "/financeiro/impressaoBoletos/gerarArquivo";
     	
@@ -283,7 +312,7 @@ var impressaoBoletosController = $.extend(true, {
 		
 		params.push({name: 'filtro.dataMovimento',      	value: $("#dataMovimento", impressaoBoletosController.workspace).val()});
 		params.push({name: 'filtro.codigoBox', 	value:$("#impressao-boleto-box", impressaoBoletosController.workspace).val()});
-		
+		params.push({name: 'filtro.idBanco', value: banco});
 		
     	$.fileDownload(path, {
 			httpMethod : "POST",
@@ -308,8 +337,7 @@ var impressaoBoletosController = $.extend(true, {
 				}	
 			}
 		});
-    	
-    },
-	
+    }
+    
 }, BaseController);
 //@ sourceURL=impressaoBoletos.js

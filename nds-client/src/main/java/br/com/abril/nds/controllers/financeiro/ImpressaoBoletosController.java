@@ -32,9 +32,11 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.ImpressaoDividaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.RoteirizacaoService;
@@ -92,6 +94,12 @@ public class ImpressaoBoletosController extends BaseController {
 	
 	@Autowired
 	private BoletoService boletoService;
+
+	@Autowired
+	private BancoService bancoService;
+	
+	@Autowired
+    private FechamentoEncalheService fechamentoEncalheService;
 	
 	@Autowired
 	private HttpSession session;
@@ -114,6 +122,8 @@ public class ImpressaoBoletosController extends BaseController {
 		carregarBoxes();
 		carregarRota();
 		carregarRoteiro();
+		
+		this.carregarBancos();
 		
 		result.include("dataOperacao", getDataOperacaoDistribuidor());
 	}
@@ -190,7 +200,17 @@ public class ImpressaoBoletosController extends BaseController {
 
 		result.include("listaRoteiros", getRoteiros(roteiros));
 	}
+	
+	/**
+	 * Carrega as listas de Bancos
+	 */
+	private void carregarBancos() {
 
+		List<ItemDTO<Integer, String>> bancos = bancoService.getComboBancos(true);
+
+		result.include("listaBancos", bancos);
+	}
+	
 	/**
 	 * Retorna uma lista de roteiros no formato ItemDTO
 	 * 
@@ -284,9 +304,18 @@ public class ImpressaoBoletosController extends BaseController {
 	public void exportar(FileType fileType) throws IOException {
 
 		FiltroDividaGeradaDTO filtro = this.obterFiltroExportacao();
-
+		
+		if(filtro == null) {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "É necessário realizar a consulta."), Constantes.PARAM_MSGS).recursive().serialize();
+			return;
+		} 
+		
 		List<GeraDividaDTO> listaDividasGeradas = dividaService.obterDividasGeradas(filtro);
-
+		
+		if(listaDividasGeradas == null || listaDividasGeradas.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrado nenhum registro para ser exportado." );
+		}
+		
 		FileExporter.to("divida-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, listaDividasGeradas, GeraDividaDTO.class, this.httpResponse);
 	}
 
@@ -614,28 +643,39 @@ public class ImpressaoBoletosController extends BaseController {
 	
 	@Post
 	@Path("/gerarArquivo")
-	public void gerarArquivo(final FiltroDividaGeradaDTO filtro) throws Exception {
+	public void gerarArquivo(final FiltroDividaGeradaDTO filtro) {
 		
 		FileType fileType = FileType.TXT;
 		
-		byte[] arquivo = this.boletoService.gerarArquivo(filtro);
-		
-		if (arquivo == null) {
-			
-			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum arquivo Encontado."), Constantes.PARAM_MSGS).recursive().serialize();
-		} else {
-			
-			this.httpResponse.setContentType("application/txt");
-			
-			this.httpResponse.setHeader("Content-Disposition", "attachment; filename=COBRANCAREG"+DateUtil.formatarData(new Date(),"ddMMyyHHmm") + fileType.getExtension());
-			
-			OutputStream output = this.httpResponse.getOutputStream();
-			
-			output.write(arquivo);
-			
-			httpResponse.getOutputStream().close();
-			
-			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Download do arquivo com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
+		if(!fechamentoEncalheService.validarEncerramentoOperacaoEncalhe(filtro.getDataMovimento())) {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Favor realizar o fechamento de encalhe."), Constantes.PARAM_MSGS).recursive().serialize();
+			return;
 		}
+		
+		try {
+			byte[] arquivo = this.boletoService.gerarArquivo(filtro);
+			
+			if (arquivo == null) {
+				
+				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum arquivo Encontado."), Constantes.PARAM_MSGS).recursive().serialize();
+				return;
+			} else {
+				
+				this.httpResponse.setContentType("application/txt");
+				
+				this.httpResponse.setHeader("Content-Disposition", "attachment; filename=COBRANCAREG"+DateUtil.formatarData(new Date(),"ddMMyyHHmm") + fileType.getExtension());
+				
+				OutputStream output = this.httpResponse.getOutputStream();
+				
+				output.write(arquivo);
+				
+				httpResponse.getOutputStream().close();
+				
+				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Download do arquivo com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
+			}
+		} catch (Exception e) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi possivel realizar a geração do arquivo." + e.getMessage());
+		}
+		
 	}
 }
