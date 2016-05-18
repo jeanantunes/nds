@@ -101,4 +101,6 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 
 	
 	DestinoEncalhe obterDestinoEncalhe(String codigoProduto,Long numeroEdicao);
+	
+	List<Fornecedor> obterConjuntoFornecedoresMovimentoFechamentoFiscal(FiltroNFeDTO filtro);
 }

@@ -531,11 +531,22 @@ public class ItemNotaFiscalBuilder  {
 				}
 				
 				if(movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalCota || (movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalFornecedor)) {
-					if(((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getProdutoEdicao().getId().equals(dnf.getProdutoServico().getProdutoEdicao().getId())) {
+					
+					if(movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalCota) {
 						
-						notFound = false;
-						break;
+						if(((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getProdutoEdicao().getId().equals(dnf.getProdutoServico().getProdutoEdicao().getId())) {
+							
+							notFound = false;
+							break;
+						}
+					} else if (movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalFornecedor) {
+							if(((MovimentoFechamentoFiscalFornecedor) movimentoFechamentoFiscal).getProdutoEdicao().getId().equals(dnf.getProdutoServico().getProdutoEdicao().getId())) {
+							
+							notFound = false;
+							break;
+						}
 					}
+					
 				}
 				
 			}
@@ -686,7 +697,9 @@ public class ItemNotaFiscalBuilder  {
 			origemItens.add(oinf);
 		} else if(movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalFornecedor) {
 			
-			OrigemItemNotaFiscal oinf = new OrigemItemNotaFiscalMovimentoEstoqueCota();
+			movimentoFechamentoFiscal.setNotaFiscalDevolucaoSimbolicaEmitida(true);
+			
+			OrigemItemNotaFiscal oinf = new OrigemItemNotaFiscalMovimentoFechamentoFiscalFornecedor();
 			((OrigemItemNotaFiscalMovimentoFechamentoFiscalFornecedor) oinf).setMovimentoFechamentoFiscalFornecedor((MovimentoFechamentoFiscalFornecedor) movimentoFechamentoFiscal);
 			origemItens.add(oinf);
 		}

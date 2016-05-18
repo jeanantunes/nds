@@ -34,6 +34,7 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.NotaFiscalRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
@@ -1274,7 +1275,24 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		return query.list();
 		
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Fornecedor> obterConjuntoFornecedoresMovimentoFechamentoFiscal(FiltroNFeDTO filtro) {
+		
+		filtro.setPaginacaoVO(new PaginacaoVO());
+		
+		StringBuilder hql = new StringBuilder("SELECT ");
+		hql.append(" distinct fornecedor ");
+		Query query = queryConsultaFornecedorMFFNfeParameters(queryConsultaFornecedorMFFNfe(filtro, hql, false, false, false), filtro);
 
+		return query.list();
+		
+	}
+	
+	
+	
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Editor> obterConjuntoEditoresNotafiscal(FiltroNFeDTO filtro) {
