@@ -478,10 +478,9 @@ public class NFeServiceImpl implements NFeService {
 							}
 							
 						} else if(naturezaOperacao.getTipoMovimento().get(0) instanceof TipoMovimentoFiscal) {
-							List<Fornecedor> fornecedores = this.notaFiscalRepository.obterConjuntoFornecedoresNotafiscal(filtro);
+							List<Fornecedor> fornecedores = this.notaFiscalRepository.obterConjuntoFornecedoresMovimentoFechamentoFiscal(filtro);
 							this.gerarNotasFiscaisFornecedor(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, fornecedores);
 						}
-						
 					} else {
 						
 						throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de Movimento não suportado para geração de NF-e.");

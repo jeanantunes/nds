@@ -226,7 +226,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" where 1 = 1 ");
 		sqlBuilder.append(" and nfn.id in (:idsNotasFiscais) ");
 		sqlBuilder.append(" and no.id = :idNaturezaOperacao ");
-		sqlBuilder.append(" GROUP BY nfn.id, pe.id ");
+		sqlBuilder.append(" GROUP BY nfn.id ");
 		
 		SQLQuery query = getSession().createSQLQuery(sqlBuilder.toString());
 
