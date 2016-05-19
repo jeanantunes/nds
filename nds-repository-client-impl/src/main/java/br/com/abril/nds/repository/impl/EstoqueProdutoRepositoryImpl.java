@@ -240,9 +240,12 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		   .append(" join estoqueProduto.produtoEdicao produtoEdicao ")
 		   .append(" join produtoEdicao.produto produto ")
 		   .append(" join produtoEdicao.chamadaEncalhes chamadaEncalhe ")
-		   .append(" join chamadaEncalhe.chamadaEncalheCotas cec ")
+		 // alteracoes abaixo por questao de performance
+		 //.append(" join chamadaEncalhe.chamadaEncalheCotas cec ")
 		   .append(" where chamadaEncalhe.dataRecolhimento = :dataRecolhimento ")
-		   .append(" and cec.postergado = :naoPostergado ");
+		 //.append(" and cec.postergado = :naoPostergado ");
+		   .append("  AND exists (     select cec FROM ChamadaEncalheCota cec where chamadaEncalhe.id = cec.chamadaEncalhe.id ")
+           .append(" and  cec.postergado = :naoPostergado )");
 		   
 	}
 	
