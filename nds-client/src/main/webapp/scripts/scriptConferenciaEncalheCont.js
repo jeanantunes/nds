@@ -1424,6 +1424,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 
 	nextInputExemplares : function(curIndex, evt) {
 	
+		
+		var isOpen = $("#dialog-autenticar-supervisor", ConferenciaEncalheCont.workspace).dialog( "isOpen" );
+	
+		if (isOpen)
+					return;
+				
+		
 		if (evt.keyCode == 13 || evt.keyCode == 40) {
 			
 			var nextElement = $('input[tabindex=' + (curIndex + 1) + '][name="inputValorExemplares"]');
