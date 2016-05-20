@@ -184,8 +184,8 @@ public abstract class Util {
             return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
             
         case CAIXA_ECONOMICA_FEDERAL:
-            return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
-            
+            // return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+            return 2  + Util.padLeft(idChamadaEncalheFornecedor.toString(), "0", 16);
         case HSBC:
             
             // return Util.padLeft(codSacado + auxData + idMovimentoFinanceiro, "0", 13);
@@ -281,8 +281,10 @@ public abstract class Util {
             return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
             
         case CAIXA_ECONOMICA_FEDERAL:
-            return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
-            
+            //return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
+        	 
+        	return carteira  + Util.padLeft(idDivida.toString(), "0", 16);
+        			
         case HSBC:
             return Util.padLeft(idDivida.toString(), "0", 13);
             
@@ -310,6 +312,8 @@ public abstract class Util {
     	final NomeBanco nomeBanco = NomeBanco.getByNumeroBanco(numeroBanco);
     	
     	if(nomeBanco.equals(NomeBanco.BANCO_DO_NORDESTE_DO_BRASIL)) {
+    		return String.valueOf(Util.calcularDigito(nossoNumero));
+    	} else if(nomeBanco.equals(NomeBanco.CAIXA_ECONOMICA_FEDERAL)) {
     		return String.valueOf(Util.calcularDigito(nossoNumero));
     	}
     	
@@ -380,7 +384,7 @@ public abstract class Util {
     }
     
     public static void main(String[] args) {
-		System.out.println(calcularDigito("0000020"));
+		System.out.println(calcularDigito("20000000000000372"));
 	} 
     // 
     
