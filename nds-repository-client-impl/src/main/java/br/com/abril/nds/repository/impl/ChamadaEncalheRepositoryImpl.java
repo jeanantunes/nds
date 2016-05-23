@@ -1193,7 +1193,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	    .append("             chamada_encalhe_lancamento cel                                         ")
 	    .append("                 on cel.LANCAMENTO_ID = l.id                                        ")
 	    .append("         inner join                                                                 ")
-	    .append("             chamada_encalhe ce                                                     ")
+	    .append("             chamada_encalhe ce  force index ( ndx_chamada_encalhe)                 ")
 	    .append("                 on ce.PRODUTO_EDICAO_ID = l.PRODUTO_EDICAO_ID                      ")
 	    .append("                 and cel.CHAMADA_ENCALHE_ID = ce.id                                 ")
 	    .append("         inner join                                                                 ")
