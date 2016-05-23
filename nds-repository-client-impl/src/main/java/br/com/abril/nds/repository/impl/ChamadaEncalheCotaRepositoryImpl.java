@@ -326,7 +326,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		hql.append(" select distinct cota_id from chamada_encalhe_cota cec ");
 		
-		hql.append(" inner join chamada_encalhe ce on ce.id = cec.chamada_encalhe_id  ");
+		hql.append(" inner join chamada_encalhe ce USE index ( NDX_CHAMADA_ENCALHE ) on ce.id = cec.chamada_encalhe_id  ");
 		
 		hql.append(" where ce.tipo_chamada_encalhe =:tipoChamadaEncalhe ");
 		
