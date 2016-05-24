@@ -269,6 +269,8 @@ public class CotaDAO {
 				cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeDesseFornecedor);
 			}
 			
+			cota.setRecebeFornecedor(!rs.getBoolean("COTA_NAO_RECEBE_FORNECEDOR"));
+			
 			if (rs.getBoolean("COTA_NAO_RECEBE_CLASSIFICACAO")) {
 				cota.setClassificacao(ClassificacaoCota.BancaSemClassificacaoDaPublicacao);
 			}

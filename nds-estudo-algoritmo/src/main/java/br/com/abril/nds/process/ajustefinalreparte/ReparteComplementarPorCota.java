@@ -175,6 +175,10 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 		    	continue;
 		    }
 		    
+		    if(!cota.isRecebeFornecedor()){
+		    	continue;
+		    }
+		    
 		    if (cota.getIntervaloMaximo() != null && cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {
 		    	cota.setReparteCalculado(cota.getIntervaloMaximo());
 		    } else if (cota.getReparteCalculado().compareTo(cota.getIntervaloMinimo()) < 0) {
