@@ -771,7 +771,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		hql.append(" from Cobranca cobranca ");
 		hql.append(" where cobranca.dataVencimento = :data ");
-		hql.append(" and cobranca.tipoCobranca in (:tipoCobranca) ");
+		// hql.append(" and cobranca.tipoCobranca in (:tipoCobranca) ");
 		
 		return hql.toString();
 	}
@@ -811,7 +811,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		hql.append(" left join baixaAutomatica.cobranca cobranca ");
 		hql.append(" where baixaAutomatica.dataPagamento = :data ");
 		hql.append(" and baixaAutomatica.status in (:statusBaixa) ");
-		hql.append(" and cobranca.tipoCobranca in (:tipoCobranca) ");
+		// hql.append(" and cobranca.tipoCobranca in (:tipoCobranca) ");
 		
 		return hql.toString();
 	}
@@ -825,7 +825,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		hql.append(" join cobranca.divida divida ");
 		hql.append(" where cobranca.dataVencimento = :data ");
 		hql.append(" and cobranca.statusCobranca =:statusCobranca");
-		hql.append(" and cobranca.tipoCobranca in (:tipoCobranca) ");
+		// hql.append(" and cobranca.tipoCobranca in (:tipoCobranca) ");
 		hql.append(" and divida.status not in(:statusPendente) ");
 		return hql.toString();
 	}
@@ -848,7 +848,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("data", data);
-		query.setParameterList("tipoCobranca", Arrays.asList(TipoCobranca.BOLETO,TipoCobranca.BOLETO_EM_BRANCO));
+		// query.setParameterList("tipoCobranca", Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO, TipoCobranca.DEPOSITO));
 		
 		return query;
 	}
@@ -896,7 +896,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 
 		query.setParameter("data", data);
 		query.setParameterList("statusBaixa", listaParametros);
-		query.setParameterList("tipoCobranca", Arrays.asList(TipoCobranca.BOLETO,TipoCobranca.BOLETO_EM_BRANCO));
+		// query.setParameterList("tipoCobranca", Arrays.asList(TipoCobranca.BOLETO,TipoCobranca.BOLETO_EM_BRANCO));
 
 		return query;
 	}
@@ -907,7 +907,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		query.setParameter("data", data);
 		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO);
-		query.setParameterList("tipoCobranca", Arrays.asList(TipoCobranca.BOLETO,TipoCobranca.BOLETO_EM_BRANCO));
+		//query.setParameterList("tipoCobranca", Arrays.asList(TipoCobranca.BOLETO,TipoCobranca.BOLETO_EM_BRANCO, TipoCobranca.DEPOSITO));
 		query.setParameterList("statusPendente", Arrays.asList(StatusDivida.POSTERGADA));
 		
 		return query;
