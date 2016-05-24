@@ -383,6 +383,18 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				if(estoqueProduto != null) {
 					OrigemItemMovFechamentoFiscalFechamentoCEI oimffdf = new OrigemItemMovFechamentoFiscalFechamentoCEI();
 					
+					if(estoqueProduto.getProdutoEdicao().getId() == 50216) {
+						System.out.println(estoqueProduto.toString() );
+					}
+					
+					int value = estoqueProduto.getMovimentos().size();
+					
+					if(value == 0) {
+						System.out.println(estoqueProduto.toString() );
+						
+						throw new ValidacaoException(TipoMensagem.ERROR, "errouu.... ");
+					}
+					
 					oimffdf.setMovimento(estoqueProduto.getMovimentos().get(0));
 					
 					//TODO: Ajustar os movimentos fiscais ao fechar a CE Integracao				
@@ -404,8 +416,6 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 					
 					ValoresAplicados valoresAplicados = new ValoresAplicados();
 					
-					valoresAplicados.setValorDesconto(estoqueProduto.getProdutoEdicao().getDesconto());
-					 
 					// verifica se tem desconto_logistica para produto edicao ou produto se origem for INTERFACE
 					if(produtoEdicao.getOrigem().equals(Origem.INTERFACE)) {
 						if ( itemFo.getProdutoEdicao().getDescontoLogistica()== null && itemFo.getProdutoEdicao().getProduto().getDescontoLogistica() == null ) {
@@ -414,9 +424,16 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 									+" ed.="+itemFo.getProdutoEdicao().getNumeroEdicao());
 							throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao e Produto sem desconto Logistica ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+
 									                "/"+itemFo.getProdutoEdicao().getNumeroEdicao());
+							
 						}
-						valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract((itemFo.getProdutoEdicao().getDescontoLogistica()!= null ?
-								itemFo.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto(): itemFo.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto())).setScale(4,BigDecimal.ROUND_HALF_EVEN));
+						
+						BigDecimal valarDesconto =  (itemFo.getProdutoEdicao().getDescontoLogistica()!= null ?
+								itemFo.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto(): itemFo.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto());
+						
+						valoresAplicados.setValorDesconto(valarDesconto);
+						
+						valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract(estoqueProduto.getProdutoEdicao().getPrecoVenda().multiply(valarDesconto.divide(BigDecimal.valueOf(100)))));	
+						
 					} else if(produtoEdicao.getOrigem().equals(Origem.PRODUTO_SEM_CADASTRO)) {
 						
 						if ( itemFo.getProdutoEdicao().getDescontoLogistica()== null && itemFo.getProdutoEdicao().getProduto().getDescontoLogistica() == null ) {
@@ -425,10 +442,14 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 									+ " ed.="+itemFo.getProdutoEdicao().getNumeroEdicao());
 							throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao e Produto sem desconto Logistica ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+
 									                "/"+itemFo.getProdutoEdicao().getNumeroEdicao());
-						}
+						} 
 						
-						valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract((itemFo.getProdutoEdicao().getDescontoLogistica()!= null ?
-								itemFo.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto(): itemFo.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto())).setScale(4,BigDecimal.ROUND_HALF_EVEN));
+						BigDecimal valarDesconto =  (itemFo.getProdutoEdicao().getDescontoLogistica()!= null ?
+								itemFo.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto(): itemFo.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto());
+						
+						valoresAplicados.setValorDesconto(valarDesconto);
+
+						valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract(estoqueProduto.getProdutoEdicao().getPrecoVenda().multiply(valarDesconto.divide(BigDecimal.valueOf(100)))));
 					} else {
 						valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract((itemFo.getProdutoEdicao().getDesconto())).setScale(4,BigDecimal.ROUND_HALF_EVEN));
 					}
