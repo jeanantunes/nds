@@ -61,6 +61,7 @@ public class CotaEstudo extends Cota {
     private boolean cotaNaoRecebeClassificacao;
     private String tipoDistribuicao;
     private String status;
+    private boolean isRecebeFornecedor;
 
     public CotaEstudo() {
 	nova = false;
@@ -432,7 +433,15 @@ public class CotaEstudo extends Cota {
         this.excecaoParcial = excecaoParcial;
     }
 
-    @Override
+    public boolean isRecebeFornecedor() {
+		return isRecebeFornecedor;
+	}
+
+	public void setRecebeFornecedor(boolean isRecebeFornecedor) {
+		this.isRecebeFornecedor = isRecebeFornecedor;
+	}
+
+	@Override
     public int hashCode() {
 	final int prime = 31;
 	int result = super.hashCode();
