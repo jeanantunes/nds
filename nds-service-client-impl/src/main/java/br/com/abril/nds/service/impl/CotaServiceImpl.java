@@ -3344,4 +3344,10 @@ public class CotaServiceImpl implements CotaService {
 	public Map<Integer, AnaliseHistoricoXLSDTO> dadosPDVhistoricoXLS(List<Integer> cotas){
 		return cotaRepository.buscarDadosPdvParaXLS(cotas);
 	}
+	
+	@Override
+	@Transactional
+	public boolean isCotaRecebeFornecedor(Long idProdutoEdicao, Long idCota){
+		return cotaRepository.validarCotaRecebeFornecedor(idCota, idProdutoEdicao);
+	}
 }

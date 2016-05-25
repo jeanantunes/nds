@@ -572,6 +572,7 @@ var distribuicaoManual = $.extend(true, {
 			for (var i = 0; i < distribuicaoManual.rowCount; i++) {
 				if ($("#reparteGrid"+ i, distribuicaoManual.workspace).val() && ($("#reparteGrid"+ i, distribuicaoManual.workspace).val() > 0)) {
 					data.push({name: "estudoCotasDTO["+ i +"].idCota", value: $("#idCotaGrid"+ i, distribuicaoManual.workspace).val()});
+					data.push({name: "estudoCotasDTO["+ i +"].numeroCota", value: $("#numeroCotaGrid"+ i, distribuicaoManual.workspace).val()});
 					data.push({name: "estudoCotasDTO["+ i +"].qtdeEfetiva", value: $("#reparteGrid"+ i, distribuicaoManual.workspace).val()});
 				}
 			}

@@ -76,8 +76,10 @@ public class DistribuicaoManualController extends BaseController {
     @Post
     @Path("/consultarCotaPorNumero")
     public void consultarCotaPorNumero(Integer numeroCota) throws Exception {
-		CotaDTO cotaDTO = new CotaDTO();
+		
+    	CotaDTO cotaDTO = new CotaDTO();
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+
 		if (cota == null) {
 		    throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrada nenhuma cota com este número.");
 		} else {
@@ -120,7 +122,8 @@ public class DistribuicaoManualController extends BaseController {
     	}
     	
     	EstudoGerado estudo = new EstudoGerado();
-		estudo.setProdutoEdicao(new ProdutoEdicao(estudoDTO.getProdutoEdicaoId()));
+	
+    	estudo.setProdutoEdicao(new ProdutoEdicao(estudoDTO.getProdutoEdicaoId()));
 		estudo.setReparteDistribuir(BigInteger.valueOf(estudoDTO.getReparteDistribuir()));
 		estudo.setQtdeReparte(BigInteger.valueOf(estudoDTO.getReparteDistribuido()));
 		estudo.setDataCadastro(new Date());
@@ -131,18 +134,34 @@ public class DistribuicaoManualController extends BaseController {
 		estudo.setReparteTotal(estudoDTO.getReparteTotal());
 		estudo.setDataLancamento(dataLanctoFormatada);
 		
-		if (estudoCotasDTO != null  )
-		for (EstudoCotaDTO cotaDTO : estudoCotasDTO) {
-		    EstudoCotaGerado estudoCota = new EstudoCotaGerado();
-		    estudoCota.setCota(new Cota(cotaDTO.getIdCota()));
-		    estudoCota.setQtdePrevista(cotaDTO.getQtdeEfetiva());
-		    estudoCota.setQtdeEfetiva(cotaDTO.getQtdeEfetiva());
-		    estudoCota.setReparte(cotaDTO.getQtdeEfetiva());
-		    estudoCota.setReparteInicial(cotaDTO.getQtdeEfetiva());
-		    estudoCota.setClassificacao(ClassificacaoCota.InclusaoManualCotas.getCodigo());
-		    estudoCota.setTipoEstudo(TipoEstudoCota.NORMAL);
-		    estudo.getEstudoCotas().add(estudoCota);
+		if (estudoCotasDTO != null){
+			
+			String cotasNaoRecebemFornecedor = "";
+			
+			for (EstudoCotaDTO cotaDTO : estudoCotasDTO) {
+				
+				EstudoCotaGerado estudoCota = new EstudoCotaGerado();
+				
+				if(!cotaService.isCotaRecebeFornecedor(estudoDTO.getProdutoEdicaoId(), cotaDTO.getIdCota())){
+					cotasNaoRecebemFornecedor += "Cota "+cotaDTO.getNumeroCota().toString() + " - ";
+				}
+				
+				estudoCota.setCota(new Cota(cotaDTO.getIdCota()));
+				estudoCota.setQtdePrevista(cotaDTO.getQtdeEfetiva());
+				estudoCota.setQtdeEfetiva(cotaDTO.getQtdeEfetiva());
+				estudoCota.setReparte(cotaDTO.getQtdeEfetiva());
+				estudoCota.setReparteInicial(cotaDTO.getQtdeEfetiva());
+				estudoCota.setClassificacao(ClassificacaoCota.InclusaoManualCotas.getCodigo());
+				estudoCota.setTipoEstudo(TipoEstudoCota.NORMAL);
+				
+				estudo.getEstudoCotas().add(estudoCota);
+			}
+			
+			if(!cotasNaoRecebemFornecedor.isEmpty()){
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Há cotas que não recebem deste fornecedor: " + cotasNaoRecebemFornecedor));
+			}
 		}
+		
 		estudoService.gravarEstudo(estudo);
 		estudoService.setIdLancamentoNoEstudo(estudoDTO.getLancamentoId(), estudo.getId());
 		

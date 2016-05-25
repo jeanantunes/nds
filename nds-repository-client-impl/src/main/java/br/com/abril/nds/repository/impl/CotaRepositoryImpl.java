@@ -3939,4 +3939,30 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		return mapCotas;
     }
+	
+	@Override
+	public boolean validarCotaRecebeFornecedor(Long idCota, Long idEdicao){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select (CASE WHEN cf.fornecedor_id IS NOT NULL THEN 1 ELSE 0 END) cota_recebe_fornecedor ");
+		sql.append(" from cota c  ");
+		sql.append(" join produto_edicao pe ");
+		sql.append("   on pe.ID = :produtoEdicaoId ");
+		sql.append(" LEFT JOIN cota_fornecedor cf ");
+		sql.append("   ON cf.cota_id = c.id ");
+		sql.append("      AND cf.fornecedor_id IN (SELECT fornecedores_id ");
+		sql.append("                                 FROM produto_fornecedor ");
+		sql.append("                                WHERE produto_id = pe.PRODUTO_ID) ");
+		sql.append(" where c.id = :idCota ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("produtoEdicaoId", idEdicao);
+		query.setParameter("idCota", idCota);
+		
+		
+		return (BigIntegerUtil.isMaiorQueZero((BigInteger)query.uniqueResult()));
+		
+	}
 }
