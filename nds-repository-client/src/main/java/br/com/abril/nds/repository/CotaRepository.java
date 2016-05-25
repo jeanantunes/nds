@@ -3,14 +3,9 @@ package br.com.abril.nds.repository;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.hibernate.SQLQuery;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.hibernate.type.StandardBasicTypes;
 
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
@@ -460,4 +455,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
 
 	Map<Integer, AnaliseHistoricoXLSDTO> buscarDadosPdvParaXLS(List<Integer> listCota);
+
+
+	boolean validarCotaRecebeFornecedor(Long idCota, Long idEdicao);
 }
