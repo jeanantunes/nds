@@ -457,4 +457,6 @@ public interface CotaService {
 	Map<Integer, EstudoCotaDTO> obterPorNumeroDaCota(List<Integer> numeroCota);
 
 	Map<Integer, AnaliseHistoricoXLSDTO> dadosPDVhistoricoXLS(List<Integer> cotas);
+
+	boolean isCotaRecebeFornecedor(Long idProdutoEdicao, Long idCota);
 }
