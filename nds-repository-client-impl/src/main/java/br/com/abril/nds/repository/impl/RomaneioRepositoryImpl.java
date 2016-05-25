@@ -446,9 +446,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append("else ");
 		hql.append("rpad(d.descricao_rota,30,' ') ");
 		hql.append("end as rota, "); 
-		//hql.append("(select  ) as codigoDistribuidor, ");
 		hql.append("       CAST((select if (d.COD_DISTRIBUIDOR_DINAP != 0,d.COD_DISTRIBUIDOR_DINAP,d.COD_DISTRIBUIDOR_FC) from distribuidor d limit 1) as CHAR) codigoDistribuidor, ");
-		//hql.append("h.data_lancamento as dataOperacao, ");
 		hql.append(" DATE_FORMAT(h.data_lancamento,'%d/%m/%Y') as dataOperacao, ");
 		hql.append("lpad(numero_cota,5,0) as numeroCota, ");
 		hql.append("rpad(l.nome,35,' ') as nome,  ");
@@ -478,11 +476,10 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append("and e.TIPO_ROTEIRO = 'ESPECIAL' ");
 		hql.append("and h.id = i.estudo_id ");
 		hql.append("and k.id = j.produto_id ");
+		hql.append("and m.principal = true ");
 		hql.append("and l.id = a.pessoa_id ");
 		
-		if(filtro.getIdRoteiro() != null && !filtro.getIdRoteiro().isEmpty()) {			
-			hql.append(" and e.id in (:idRoteiro) ");		
-		}
+		hql.append(" and e.id in (:idRoteiro) ");		
 		
 		hql.append(" and b.ponto_principal = true ");
 		hql.append(" and h.produto_edicao_id = j.id ");
@@ -491,7 +488,8 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" and h.data_lancamento = :dataLancamento ");
 		hql.append(" and j.id in (:produtoEdicao) ");
 		
-		hql.append(" and b.id not in (select pdv_id from estudo_pdv where estudo_id = e.id) ");
+		hql.append(" and b.id not in (select pdv_id from estudo_pdv where estudo_id = h.id) ");
+		
 		hql.append(" union all ");
 		hql.append(" select lpad(e.ordem,6,0) as roteiroOrdem, ");
 		hql.append(" rpad(e.descricao_roteiro,30,' ') as roteiroDescricao, ");
@@ -503,9 +501,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" rpad(d.descricao_rota,30,' ') ");
 		hql.append(" end as rota, ");
 		hql.append("  ");
-		//hql.append(" 6389563 as 'codigoDistribuidor', ");
 		hql.append("       CAST((select if (d.COD_DISTRIBUIDOR_DINAP != 0,d.COD_DISTRIBUIDOR_DINAP,d.COD_DISTRIBUIDOR_FC) from distribuidor d limit 1) as CHAR) codigoDistribuidor, ");
-		//hql.append(" h.data_lancamento as dataOperacao, "); 
 		hql.append(" DATE_FORMAT(h.data_lancamento,'%d/%m/%Y') as dataOperacao, "); 
 		hql.append(" lpad(numero_cota,5,0) as numeroCota, ");
 		hql.append(" rpad(l.nome,35,' ') as nome, ");
@@ -523,13 +519,14 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" 	   lpad(truncate(mod(EP.REPARTE, j.pacote_padrao),0),10,0) as modQtdeEfetivaPacotePadrao ");
 		hql.append(" from cota a, pdv b, rota_pdv c, rota d, roteiro e, roteirizacao f, box g, estudo h, estudo_cota i, produto_edicao j, produto k, ");
 		hql.append(" 	pessoa l, endereco_pdv m, endereco n, estudo_pdv ep ");
-		hql.append(" where a.id = b.cota_id  ");
+		hql.append(" where 1=1 " );
+		hql.append(" and a.id = b.cota_id  ");
 		hql.append(" and g.id = f.box_id ");
 		hql.append(" and e.roteirizacao_id = f.id ");
 		hql.append(" and ep.estudo_id = h.id ");
 		hql.append(" and ep.pdv_id = b.id ");
 		hql.append(" and d.roteiro_id = e.id ");
-		hql.append(" and c.pdv_id = b.id  ");
+		hql.append(" and c.pdv_id = b.id ");
 		hql.append(" and d.id = c.rota_id ");
 		hql.append(" and i.cota_id = a.id ");
 		hql.append(" and n.id = m.endereco_id ");
@@ -538,19 +535,16 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" and h.id = i.estudo_id ");
 		hql.append(" and k.id = j.produto_id ");
 		hql.append(" and l.id = a.pessoa_id ");
+		hql.append(" and e.id in (:idRoteiro) ");
+		hql.append(" and h.produto_edicao_id = j.id ");
+		hql.append(" and j.id in (:produtoEdicao) ");
+		hql.append(" and h.data_lancamento = :dataLancamento ");
+		hql.append(" and m.principal = true ");
 		
 		if(filtro.getIdRoteiro() != null && !filtro.getIdRoteiro().isEmpty()) {			
 			hql.append(" and e.id in (:idRoteiro) ");		
 		}
 		
-		hql.append(" and h.produto_edicao_id = j.id ");
-		hql.append(" and h.data_lancamento = :dataLancamento ");
-		
-		if(filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()) {
-			hql.append(" and j.id in (:produtoEdicao) ");
-		}
-		
-		hql.append(" AND EP.ESTUDO_ID = e.id ");
 		hql.append(" order by roteiroOrdem, roteiroDescricao, rotaOrdem, rota, numeroCota, nome ");
 		
 		final SQLQuery query =  getSession().createSQLQuery(hql.toString());

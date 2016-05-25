@@ -383,84 +383,80 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				if(estoqueProduto != null) {
 					OrigemItemMovFechamentoFiscalFechamentoCEI oimffdf = new OrigemItemMovFechamentoFiscalFechamentoCEI();
 					
-					if(estoqueProduto.getProdutoEdicao().getId() == 50216) {
-						System.out.println(estoqueProduto.toString() );
-					}
+					int valor = estoqueProduto.getMovimentos().size();
 					
-					int value = estoqueProduto.getMovimentos().size();
-					
-					if(value == 0) {
-						System.out.println(estoqueProduto.toString() );
+					if (valor == 0) {
+						System.out.println(estoqueProduto.getProdutoEdicao().toString());
+					} else {
+						oimffdf.setMovimento(estoqueProduto.getMovimentos().get(0));
 						
-						throw new ValidacaoException(TipoMensagem.ERROR, "errouu.... ");
-					}
-					
-					oimffdf.setMovimento(estoqueProduto.getMovimentos().get(0));
-					
-					//TODO: Ajustar os movimentos fiscais ao fechar a CE Integracao				
-					List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
-					listaOrigemMovsFiscais.add(oimffdf);
-	
-					MovimentoFechamentoFiscal mff = new MovimentoFechamentoFiscalFornecedor();
-					listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalFechamentoCEI());
-					mff.setProdutoEdicao(estoqueProduto.getProdutoEdicao());
-					mff.setTipoDestinatario(TipoDestinatario.FORNECEDOR);
-					mff.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.SAIDA));
-					
-	        		mff.setQtde(BigInteger.valueOf(itemFo.getQtdeVendaApurada()));
-					mff.setNotaFiscalLiberadaEmissao(false);
-					mff.setDesobrigaNotaFiscalDevolucaoSimbolica(true);
-					mff.setQtdeChamadaEncAnterior(BigInteger.ZERO);
-					
-					ProdutoEdicao produtoEdicao = itemFo.getProdutoEdicao();
-					
-					ValoresAplicados valoresAplicados = new ValoresAplicados();
-					
-					// verifica se tem desconto_logistica para produto edicao ou produto se origem for INTERFACE
-					if(produtoEdicao.getOrigem().equals(Origem.INTERFACE)) {
-						if ( itemFo.getProdutoEdicao().getDescontoLogistica()== null && itemFo.getProdutoEdicao().getProduto().getDescontoLogistica() == null ) {
-							LOGGER.error("ERRO. PRODUTO EDICAO ORIGEM INTERFACE SEM DESCONTO LOGISTICA ="
-									+itemFo.getProdutoEdicao().getProduto().getCodigo()
-									+" ed.="+itemFo.getProdutoEdicao().getNumeroEdicao());
-							throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao e Produto sem desconto Logistica ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+
-									                "/"+itemFo.getProdutoEdicao().getNumeroEdicao());
+						//TODO: Ajustar os movimentos fiscais ao fechar a CE Integracao				
+						List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
+						listaOrigemMovsFiscais.add(oimffdf);
+		
+						MovimentoFechamentoFiscal mff = new MovimentoFechamentoFiscalFornecedor();
+						listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalFechamentoCEI());
+						mff.setProdutoEdicao(estoqueProduto.getProdutoEdicao());
+						mff.setTipoDestinatario(TipoDestinatario.FORNECEDOR);
+						mff.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.SAIDA));
+						
+		        		mff.setQtde(BigInteger.valueOf(itemFo.getQtdeVendaApurada()));
+						mff.setNotaFiscalLiberadaEmissao(false);
+						mff.setDesobrigaNotaFiscalDevolucaoSimbolica(true);
+						mff.setQtdeChamadaEncAnterior(BigInteger.ZERO);
+						
+						ProdutoEdicao produtoEdicao = itemFo.getProdutoEdicao();
+						
+						ValoresAplicados valoresAplicados = new ValoresAplicados();
+						
+						// verifica se tem desconto_logistica para produto edicao ou produto se origem for INTERFACE
+						if(produtoEdicao.getOrigem().equals(Origem.INTERFACE)) {
+							if ( itemFo.getProdutoEdicao().getDescontoLogistica()== null && itemFo.getProdutoEdicao().getProduto().getDescontoLogistica() == null ) {
+								LOGGER.error("ERRO. PRODUTO EDICAO ORIGEM INTERFACE SEM DESCONTO LOGISTICA ="
+										+itemFo.getProdutoEdicao().getProduto().getCodigo()
+										+" ed.="+itemFo.getProdutoEdicao().getNumeroEdicao());
+								throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao e Produto sem desconto Logistica ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+
+										                "/"+itemFo.getProdutoEdicao().getNumeroEdicao());
+								
+							}
 							
+							BigDecimal valarDesconto =  (itemFo.getProdutoEdicao().getDescontoLogistica()!= null ?
+									itemFo.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto(): itemFo.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto());
+							
+							valoresAplicados.setValorDesconto(valarDesconto);
+							
+							valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract(estoqueProduto.getProdutoEdicao().getPrecoVenda().multiply(valarDesconto.divide(BigDecimal.valueOf(100)))));	
+							
+						} else if(produtoEdicao.getOrigem().equals(Origem.PRODUTO_SEM_CADASTRO)) {
+							
+							if ( itemFo.getProdutoEdicao().getDescontoLogistica()== null && itemFo.getProdutoEdicao().getProduto().getDescontoLogistica() == null ) {
+								LOGGER.error("ERRO. PRODUTO EDICAO ORIGEM INTERFACE SEM DESCONTO LOGISTICA ="
+										+itemFo.getProdutoEdicao().getProduto().getCodigo()
+										+ " ed.="+itemFo.getProdutoEdicao().getNumeroEdicao());
+								throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao e Produto sem desconto Logistica ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+
+										                "/"+itemFo.getProdutoEdicao().getNumeroEdicao());
+							} 
+							
+							BigDecimal valarDesconto =  (itemFo.getProdutoEdicao().getDescontoLogistica()!= null ?
+									itemFo.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto(): itemFo.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto());
+							
+							valoresAplicados.setValorDesconto(valarDesconto);
+
+							valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract(estoqueProduto.getProdutoEdicao().getPrecoVenda().multiply(valarDesconto.divide(BigDecimal.valueOf(100)))));
+						} else {
+							valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract((itemFo.getProdutoEdicao().getDesconto())).setScale(4,BigDecimal.ROUND_HALF_EVEN));
 						}
 						
-						BigDecimal valarDesconto =  (itemFo.getProdutoEdicao().getDescontoLogistica()!= null ?
-								itemFo.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto(): itemFo.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto());
+						valoresAplicados.setPrecoVenda(estoqueProduto.getProdutoEdicao().getPrecoVenda());
 						
-						valoresAplicados.setValorDesconto(valarDesconto);
+						mff.setValoresAplicados(valoresAplicados);
 						
-						valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract(estoqueProduto.getProdutoEdicao().getPrecoVenda().multiply(valarDesconto.divide(BigDecimal.valueOf(100)))));	
-						
-					} else if(produtoEdicao.getOrigem().equals(Origem.PRODUTO_SEM_CADASTRO)) {
-						
-						if ( itemFo.getProdutoEdicao().getDescontoLogistica()== null && itemFo.getProdutoEdicao().getProduto().getDescontoLogistica() == null ) {
-							LOGGER.error("ERRO. PRODUTO EDICAO ORIGEM INTERFACE SEM DESCONTO LOGISTICA ="
-									+itemFo.getProdutoEdicao().getProduto().getCodigo()
-									+ " ed.="+itemFo.getProdutoEdicao().getNumeroEdicao());
-							throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao e Produto sem desconto Logistica ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+
-									                "/"+itemFo.getProdutoEdicao().getNumeroEdicao());
-						} 
-						
-						BigDecimal valarDesconto =  (itemFo.getProdutoEdicao().getDescontoLogistica()!= null ?
-								itemFo.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto(): itemFo.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto());
-						
-						valoresAplicados.setValorDesconto(valarDesconto);
-
-						valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract(estoqueProduto.getProdutoEdicao().getPrecoVenda().multiply(valarDesconto.divide(BigDecimal.valueOf(100)))));
-					} else {
-						valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract((itemFo.getProdutoEdicao().getDesconto())).setScale(4,BigDecimal.ROUND_HALF_EVEN));
+						((MovimentoFechamentoFiscalFornecedor) mff).setFornecedor(fornecedorService.obterFornecedorPorId(16L));
+						oimffdf.setMovimentoFechamentoFiscal(mff);
+		        		movimentoFechamentoFiscalRepository.adicionar(mff);
 					}
 					
-					valoresAplicados.setPrecoVenda(estoqueProduto.getProdutoEdicao().getPrecoVenda());
 					
-					mff.setValoresAplicados(valoresAplicados);
-					
-					((MovimentoFechamentoFiscalFornecedor) mff).setFornecedor(fornecedorService.obterFornecedorPorId(16L));
-					oimffdf.setMovimentoFechamentoFiscal(mff);
-	        		movimentoFechamentoFiscalRepository.adicionar(mff);
 				} 
         		
 			}
