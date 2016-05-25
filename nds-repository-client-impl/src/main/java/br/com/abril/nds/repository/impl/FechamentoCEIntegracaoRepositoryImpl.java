@@ -121,13 +121,14 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		hql.append("          movimento.ESTOQUE_PRODUTO_ID = ESTOQUE_PROD.ID ");
 		hql.append("             and movimento.TIPO_MOVIMENTO_ID in ( '66','210') ");
 		hql.append("            and movimento.INTEGRADO_COM_CE = false) ");
-
+		/*
 		hql.append("			- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
 		hql.append("					COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
 		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
 		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
 		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0) ");		
 		hql.append("			   )");
+		*/
 		hql.append("			) * ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO"); 
 		hql.append("	end AS valorVenda,");
 		

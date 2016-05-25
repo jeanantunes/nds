@@ -3916,13 +3916,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final StringBuilder sql = new StringBuilder();
         
         sql.append("   select mec from MovimentoEstoqueCota mec   ");
+        sql.append("   join mec.estudoCota e ");
         sql.append("   join mec.cota cota   ");
         sql.append("   join mec.lancamento lancamento   ");
         sql.append("   join mec.tipoMovimento tm   ");
         sql.append("   join mec.produtoEdicao pe   ");
         sql.append("   join pe.produto p   ");
         sql.append("   join p.fornecedores f   ");
-        sql.append("   where mec.estudoCota is null and lancamento.estudo is not null  ");
+        sql.append("   where 1=1 ");
+        //sql.append("   mec.estudoCota is null ");  
+        sql.append("  and lancamento.estudo is not null "); 
         sql.append("   and mec.itemNotaEnvio is null ");
         
         
