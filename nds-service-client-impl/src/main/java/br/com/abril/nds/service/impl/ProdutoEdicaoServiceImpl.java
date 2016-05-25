@@ -621,7 +621,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			
 			boolean indMatrizRecolhimentoConfirmada = lancamentoRepository.existeMatrizRecolhimentoConfirmado(dto.getDataRecolhimentoDistribuidor());
 			
-			if(indMatrizRecolhimentoConfirmada) {
+			if(indMatrizRecolhimentoConfirmada && !FormaComercializacao.CONTA_FIRME.equals(dto.getFormaComercializacao())) {
 				
 	            listaMensagens.add("Escolha outra data de recolhimento. Matriz de recolhimento já confirmada nesta data!");
 			}
