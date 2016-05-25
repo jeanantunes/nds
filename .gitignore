@@ -38,3 +38,4 @@ nds-integration-client/src/main/resources/couchdb.properties
 nds-rollout/*.log
 nds-rollout/logs/*.log
 nfe/nfe/
+Servers/

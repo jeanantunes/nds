@@ -45,6 +45,7 @@ import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Dimensao;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
@@ -572,17 +573,19 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			}      
 		}
 		
-		if(indDataLancamentoAlterada || indDataRecolhimentoAlterada) {
+		if(!FormaComercializacao.CONTA_FIRME.equals(dto.getFormaComercializacao())) {
+			if(indDataLancamentoAlterada || indDataRecolhimentoAlterada) {
 
-			if(dataLancDistribuidor!= null && dataRecDistribuidor != null) {
-				
-				if(dataLancDistribuidor.compareTo(dataRecDistribuidor) >= 0 ) {
+				if(dataLancDistribuidor!= null && dataRecDistribuidor != null) {
 					
-		            listaMensagens.add("Data de recolhimento distribuidor deve ser maior que a data lançamento distribuidor!");
+					if(dataLancDistribuidor.compareTo(dataRecDistribuidor) >= 0 ) {
+						
+			            listaMensagens.add("Data de recolhimento distribuidor deve ser maior que a data lançamento distribuidor!");
+					}
 				}
 			}
 		}
-		
+
 		if(indDataLancamentoAlterada) {
 
 			if(dto.getDataLancamento()!=null) {
@@ -623,11 +626,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	            listaMensagens.add("Escolha outra data de recolhimento. Matriz de recolhimento já confirmada nesta data!");
 			}
 
-
-			if(dataRecDistribuidor != null && dataRecDistribuidor.compareTo(dataOperacao) <= 0 ) {
+			if(!FormaComercializacao.CONTA_FIRME.equals(dto.getFormaComercializacao())) {
 				
-	            listaMensagens.add("Data de recolhimento distribuidor deve ser maior que a data de operação do sistema!");
+				if(dataRecDistribuidor != null && dataRecDistribuidor.compareTo(dataOperacao) <= 0 ) {
+					
+		            listaMensagens.add("Data de recolhimento distribuidor deve ser maior que a data de operação do sistema!");
+				}
+				
 			}
+			
 		}
 
 		if(dto.getId()!=null) {
