@@ -442,7 +442,7 @@ public class MapaAbastecimentoController extends BaseController {
 			case BOX:
 				
 			    if (filtro.getQuebraPorCota()){
-			        paginacao.setSortColumn("nomeProduto");
+			        paginacao.setSortColumn("produtoCota");
 				    dados = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxQuebraPorCota(filtro).entrySet();
 			        
 			        parameters.put("DATA", filtro.getDataLancamento());
