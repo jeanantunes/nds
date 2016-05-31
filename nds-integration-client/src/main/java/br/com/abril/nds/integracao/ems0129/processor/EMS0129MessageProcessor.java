@@ -3,6 +3,7 @@ package br.com.abril.nds.integracao.ems0129.processor;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -19,8 +20,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
+
 import br.com.abril.nds.dto.DetalhesPickingDTO;
+import br.com.abril.nds.dto.DetalhesPickingPorCotaModelo03DTO;
+import br.com.abril.nds.dto.FooterPickingModelo3DTO;
 import br.com.abril.nds.dto.HeaderPickingDTO;
+import br.com.abril.nds.dto.SubHeaderPickingDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -31,6 +37,10 @@ import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking1Trailer;
 import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking2Detalhe;
 import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking2Header;
 import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking2Trailer;
+import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking3Footer;
+import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking3Header;
+import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking3Trailer2;
+import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking3Trailer3;
 import br.com.abril.nds.integracao.ems0129.outbound.InterfaceDetalhesPicking;
 import br.com.abril.nds.integracao.ems0129.route.EMS0129Route;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
@@ -44,8 +54,6 @@ import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.DescontoService;
-
-import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
 @Component
 
@@ -95,12 +103,8 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			processarArquivoPickingModelo2(message, distribuidor);
 
 		} else if (distribuidor.getTipoImpressaoInterfaceLED().equals(TipoImpressaoInterfaceLED.MODELO_3)) {
-
-
-
-				LOGGER.warn(String.format("Leiaute Picking Distribuidor %s nao implementado !",
-						distribuidor.getTipoImpressaoInterfaceLED()));
-
+			
+			processarArquivoPickingModelo3(message, distribuidor);
 			
 		} else {
 			
@@ -154,6 +158,9 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		
 		gerarArquivoPickingModelo2(message, nomeArquivoPickingInterfaceLED);
 	}
+	
+
+
 
 	
 	/**
@@ -267,9 +274,9 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		}
 
 	}
-
 	
-	            /**
+	
+				/**
      * Obtém a data de Lançamento do Distribuidor
      * 
      * @param message
@@ -581,5 +588,282 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	 */
 	public void setMensagemValidacao(String mensagemValidacao) {
 		this.mensagemValidacao = mensagemValidacao;
+	}
+	
+	    /**
+	* Processa geração do arquivo de Picking do Modelo3
+	* 
+	* @param message
+	* @param distribuidor
+	*/
+	private void processarArquivoPickingModelo3(Message message, Distribuidor distribuidor) {
+	
+		String nomeArquivoPickingInterfaceLED = distribuidor.getArquivoInterfaceLedPicking3();
+		
+		if (nomeArquivoPickingInterfaceLED == null) {
+			
+			nomeArquivoPickingInterfaceLED = NOME_ARQUIVO_PICKING_INTERFACE_LED_DEFAULT;
+		}
+		
+		gerarArquivoPickingModelo3(message, nomeArquivoPickingInterfaceLED);
+	}
+	
+	/**
+	 * Gera o arquivo de acordo com o modelo de picking 3
+	 * 
+	 * @param message
+	 * @param nomeArquivoPickingInterfaceLED
+	 */
+	private void gerarArquivoPickingModelo3(Message message, String nomeArquivoPickingInterfaceLED) {
+		
+		try {
+
+			PrintWriter print = new PrintWriter(
+					new FileWriter(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_PICKING_EXPORTACAO.name())	+ 
+							File.separator  + nomeArquivoPickingInterfaceLED), true);
+			
+			Date dataLancamento = getDataLancDistrib(message);
+			
+			List<HeaderPickingDTO> listHeaders = getHeadePickingModulo3(dataLancamento);
+			
+			List<SubHeaderPickingDTO> listaSubHeadePickingModulo3 = getSubHeadePickingModulo3(dataLancamento);
+			
+			if (listHeaders.isEmpty()) {
+
+				String mensagemValidacao = "Nenhum registro encontrado!";
+				
+				this.lancarMensagemValidacao(mensagemValidacao, message);
+			}
+			
+			int cont = 0;
+			for (HeaderPickingDTO headerDTO : listHeaders) {
+				
+				EMS0129Picking3Header linha01Modelo03 = criarHeaderModelo3(headerDTO);
+				
+				print.println(fixedFormatManager.export(linha01Modelo03));
+				
+				List<DetalhesPickingPorCotaModelo03DTO> listaLinha02Modelo03 = getLinha02Modelo03(linha01Modelo03.getCodigoCota(), dataLancamento);
+				
+				for (DetalhesPickingPorCotaModelo03DTO detalhesPickingPorCotaModelo03DTO : listaLinha02Modelo03) {
+					EMS0129Picking3Trailer2 linha02Modelo03 = criarLinha02Modelo03(detalhesPickingPorCotaModelo03DTO);
+					print.println(fixedFormatManager.export(linha02Modelo03));
+				}
+				
+				SubHeaderPickingDTO subHeaderPickingDTO = listaSubHeadePickingModulo3.get(cont);
+				
+				EMS0129Picking3Trailer3 linha03Modelo03 = criarLinha03Modelo03(subHeaderPickingDTO);
+				
+				print.println(fixedFormatManager.export(linha03Modelo03));
+				
+				cont++;
+				
+			}
+			
+			FooterPickingModelo3DTO footerPickingModulo3 = getFooterPickingModulo3(dataLancamento);
+			
+			EMS0129Picking3Footer linhaFooterModelo03 = criarLinhaFooterModelo03(footerPickingModulo3);
+			
+			print.println(fixedFormatManager.export(linhaFooterModelo03));
+			
+			print.flush();
+			print.close();
+
+		} catch (IOException e) {
+
+			String mensagemValidacao = "Erro ao gerar o arquivo. " + e.getMessage();
+			
+			this.lancarMensagemValidacao(mensagemValidacao, message);
+		}
+		
+	}
+	
+	
+
+	@SuppressWarnings("unchecked")
+	private List<HeaderPickingDTO> getHeadePickingModulo3(Date dataLancamento) {
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select '1;' as identificadorLinha ");
+		sql.append(" ,concat(lpad(a.numero_cota,4,0), ';') as numeroCota ");
+		sql.append(" ,a.numero_cota as codigoCota ");
+		sql.append(" ,concat(rpad(bm.RAZAO_SOCIAL,40,' '), ';') as nomeDistribuidor ");
+		sql.append(" ,concat(DATE_FORMAT(l.data_lcto_distribuidor,'%d%m%Y'), ';' ) as dataLancamento ");
+		sql.append(" ,concat(rpad(cn.nome,30,' '), ';') as nomeCota ");
+		sql.append(" ,concat(lpad(bb.codigo,3,'0'), ';') as codigoBox ");
+		sql.append(" ,concat('CONSIGNADO', ';' ) as consignado ");
+		sql.append(" ,concat(rpad(coalesce(cn.cpf,0),11,0), ';' ) as cpf ");
+		sql.append(" ,concat(rpad(coalesce(cn.cnpj,0),14,0),';') as cnpj ");
+		sql.append(" ,concat(lpad(coalesce(trim(cn.INSC_ESTADUAL),0),20,0), ';') as inscricaoEstadual");
+		
+		sql.append(" from cota a, estudo h, estudo_cota i, produto_edicao j, produto k, lancamento l , pessoa bm, pessoa cn, distribuidor dt, box bb ");
+		sql.append(" where i.cota_id = a.id  ");
+		sql.append(" and h.id = i.estudo_id ");
+		sql.append(" and k.id = j.produto_id ");
+		sql.append(" and h.produto_edicao_id = j.id ");
+		sql.append(" and l.PRODUTO_EDICAO_ID = j.id ");
+		sql.append(" and dt.pj_id = bm.id  ");
+		sql.append(" and a.pessoa_id = cn.id ");
+		sql.append(" and bb.id = a.box_id ");
+		sql.append(" and l.status in ('BALANCEADO', 'EXPEDIDO') ");
+		
+		sql.append(" and l.data_lcto_distribuidor = :dataLancamento  ");
+		sql.append(" group by a.numero_cota ; ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataLancamento", dataLancamento);
+		
+		query.addScalar("identificadorLinha", StandardBasicTypes.STRING);
+		query.addScalar("numeroCota", StandardBasicTypes.STRING);
+		query.addScalar("codigoCota", StandardBasicTypes.INTEGER);
+		query.addScalar("nomeDistribuidor", StandardBasicTypes.STRING);
+		query.addScalar("dataLancamento", StandardBasicTypes.STRING);
+		query.addScalar("nomeCota", StandardBasicTypes.STRING);
+		query.addScalar("codigoBox", StandardBasicTypes.STRING );
+		query.addScalar("consignado", StandardBasicTypes.STRING );
+		query.addScalar("cpf", StandardBasicTypes.STRING );
+		query.addScalar("cnpj", StandardBasicTypes.STRING );
+		query.addScalar("inscricaoEstadual", StandardBasicTypes.STRING );
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(HeaderPickingDTO.class));
+		
+		return (List<HeaderPickingDTO>) query.list();
+	}
+	
+	private EMS0129Picking3Header criarHeaderModelo3(HeaderPickingDTO headerDTO) {
+		
+		EMS0129Picking3Header outheader = new EMS0129Picking3Header();
+		
+		outheader.setCodigoCota(headerDTO.getNumeroCota());
+		outheader.setNomeDistribuidor(headerDTO.getNomeDistribuidor());
+		outheader.setNomeCota(headerDTO.getNomeCota());
+		outheader.setCodigoBox(headerDTO.getCodigoBox());
+		outheader.setCpf(headerDTO.getCpf());
+		outheader.setCnpj(headerDTO.getCnpj());
+		outheader.setInscricaoMunicipal(headerDTO.getInscricaoEstadual());
+		outheader.setDataLancamento(headerDTO.getDataLancamento());
+		outheader.setIdentificadorLinha(headerDTO.getIdentificadorLinha());
+		outheader.setConsignado(headerDTO.getConsignado());
+		
+		return outheader;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<DetalhesPickingPorCotaModelo03DTO> getLinha02Modelo03(String numeroCota, Date dataLancamento) {
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select '2;' as identificadorLinha ");
+		sql.append(" ,concat(lpad(a.numero_cota,4,0), ';') as codigoCota  ");
+		sql.append(" ,concat(lpad(l.SEQUENCIA_MATRIZ,3,0), ';') as sequencia  ");
+		sql.append(" ,concat(lpad(k.codigo,8,0), ';') as produto ");
+		sql.append(" ,concat(lpad(j.numero_edicao,4,0), ';') as edicao ");
+		sql.append(" ,concat(rpad(j.nome_comercial,20,' '), ';') as nome  ");
+		sql.append(" ,concat(replace(lpad(truncate(j.PRECO_VENDA,2),11,0),'.',''), ';') as preco ");
+		sql.append(" ,concat(replace(lpad(truncate(j.PRECO_VENDA,2),11,0),'.',''), ';') as precoDesconto ");
+		sql.append(" ,concat('02500', ';' ) as desconto ");
+		sql.append(" ,concat(lpad(truncate(i.QTDE_efetiva,0),6,0), ';') as quantidade ");
+		
+		sql.append(" from cota a, estudo h, estudo_cota i, produto_edicao j, produto k, lancamento l ");
+		sql.append(" where i.cota_id = a.id  ");
+		sql.append(" and h.id = i.estudo_id ");
+		sql.append(" and k.id = j.produto_id ");
+		sql.append(" and h.produto_edicao_id = j.id ");
+		sql.append(" and l.PRODUTO_EDICAO_ID = j.id ");
+		sql.append(" and l.status in ('BALANCEADO', 'EXPEDIDO') ");
+		
+		sql.append(" and l.data_lcto_distribuidor = :dataLancamento ");
+		sql.append(" and a.numero_cota = :codigoCota ;");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataLancamento", dataLancamento);
+		query.setParameter("codigoCota", numeroCota);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(DetalhesPickingPorCotaModelo03DTO.class));
+		
+		return (List<DetalhesPickingPorCotaModelo03DTO>) query.list();
+		
+		
+	}
+	
+	private EMS0129Picking3Trailer2 criarLinha02Modelo03(DetalhesPickingPorCotaModelo03DTO detalhesPickingPorCotaModelo03DTO) {
+		
+		return new EMS0129Picking3Trailer2(detalhesPickingPorCotaModelo03DTO.getIdentificadorLinha(), detalhesPickingPorCotaModelo03DTO.getCodigoCota(), 
+				detalhesPickingPorCotaModelo03DTO.getSequencia(), detalhesPickingPorCotaModelo03DTO.getProduto(),
+				detalhesPickingPorCotaModelo03DTO.getEdicao(), detalhesPickingPorCotaModelo03DTO.getNome(),
+				detalhesPickingPorCotaModelo03DTO.getPreco(), detalhesPickingPorCotaModelo03DTO.getPrecoDesconto(),
+				detalhesPickingPorCotaModelo03DTO.getDesconto(), detalhesPickingPorCotaModelo03DTO.getQuantidade());
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<SubHeaderPickingDTO> getSubHeadePickingModulo3(Date dataLancamento) {
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select '3;' as identificadorLinha ");
+		sql.append(" ,concat(lpad(a.numero_cota,4,0), ';') as codigoCota ");
+		sql.append(" ,concat(replace(lpad(truncate(sum(j.PRECO_VENDA * i.QTDE_efetiva),2),11,0),'.',''), ';' ) as precoTotal ");
+		sql.append(" ,concat(replace(lpad(truncate(sum(j.PRECO_VENDA * i.QTDE_efetiva),2),11,0),'.',''), ';' ) as precoTotalDesconto ");
+		sql.append(" ,concat('0000000000', ';' ) as debito ");
+		sql.append(" ,concat('0000000000', ';' ) as credito ");
+		sql.append(" ,concat(DATE_FORMAT(l.data_lcto_distribuidor,'%d%m%Y'), ';' ) as dataLancamento ");
+		sql.append(" ,concat('0000000000', ';' ) as consignado ");
+		
+		sql.append(" from cota a, estudo h, estudo_cota i, produto_edicao j, produto k, lancamento l  ");
+		sql.append(" where i.cota_id = a.id  ");
+		sql.append(" and h.id = i.estudo_id ");
+		sql.append(" and k.id = j.produto_id ");
+		sql.append(" and h.produto_edicao_id = j.id ");
+		sql.append(" and l.PRODUTO_EDICAO_ID = j.id ");
+		sql.append(" and l.status in ('BALANCEADO', 'EXPEDIDO') ");
+		
+		sql.append(" and l.data_lcto_distribuidor = :dataLancamento  ");
+		sql.append(" group by a.numero_cota ; ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataLancamento", dataLancamento);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(SubHeaderPickingDTO.class));
+		
+		return (List<SubHeaderPickingDTO>) query.list();
+	}
+	
+	private EMS0129Picking3Trailer3 criarLinha03Modelo03(SubHeaderPickingDTO subHeaderPickingDTO) {
+		
+		return new EMS0129Picking3Trailer3(subHeaderPickingDTO.getIdentificadorLinha(), subHeaderPickingDTO.getCodigoCota(), 
+				subHeaderPickingDTO.getPrecoTotal(),
+				subHeaderPickingDTO.getPrecoTotalDesconto(), subHeaderPickingDTO.getDebito(), subHeaderPickingDTO.getCredito(),
+				subHeaderPickingDTO.getDataLancamento(), subHeaderPickingDTO.getConsignado());
+	}
+	
+	private FooterPickingModelo3DTO getFooterPickingModulo3(Date dataLancamento) {
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select '9;' as identificadorLinha ");
+		sql.append(" ,concat(lpad(truncate(count(distinct numero_cota),0),6,0), ';') as numeroTotalCotas ");
+		sql.append(" ,concat(lpad(truncate(coalesce(sum(i.QTDE_efetiva),0),0),6,0), ';') as quantidadeEfetiva ");
+		
+		sql.append(" from cota a, estudo h, estudo_cota i, produto_edicao j, produto k, lancamento l ");
+		sql.append(" where i.cota_id = a.id  ");
+		sql.append(" and h.id = i.estudo_id ");
+		sql.append(" and k.id = j.produto_id ");
+		sql.append(" and h.produto_edicao_id = j.id ");
+		sql.append(" and l.PRODUTO_EDICAO_ID = j.id ");
+		sql.append(" and l.status in ('BALANCEADO', 'EXPEDIDO') ");
+		
+		sql.append(" and l.data_lcto_distribuidor = :dataLancamento  ;");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataLancamento", dataLancamento);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(FooterPickingModelo3DTO.class));
+		
+		return (FooterPickingModelo3DTO) query.uniqueResult();
+	}
+	
+	private EMS0129Picking3Footer criarLinhaFooterModelo03(FooterPickingModelo3DTO footerPickingModulo3) {
+		return new EMS0129Picking3Footer(footerPickingModulo3.getIdentificadorLinha(), footerPickingModulo3.getNumeroTotalCotas(), footerPickingModulo3.getQuantidadeEfetiva());
+		
 	}
 }
