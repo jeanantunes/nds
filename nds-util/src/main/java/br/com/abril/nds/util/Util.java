@@ -323,6 +323,8 @@ public abstract class Util {
     		return String.valueOf(Util.calcularDigito(nossoNumero));
     	} else if(nomeBanco.equals(NomeBanco.CAIXA_ECONOMICA_FEDERAL)) {
     		return String.valueOf(Util.calcularDigito(nossoNumero));
+    	} else if(nomeBanco.equals(NomeBanco.CREDCOMIM)) {
+    		return String.valueOf(Util.calcularDigito(nossoNumero));
     	}
     	
         long primeiroDigito = 0;
