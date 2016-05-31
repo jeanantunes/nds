@@ -206,6 +206,10 @@ public abstract class Util {
             
         case UNIBANCO:
             return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+        
+        case CREDCOMIM:
+            
+            return Util.padLeft(idChamadaEncalheFornecedor.toString(), "0", 17);     
             
         default:
             return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
@@ -296,6 +300,10 @@ public abstract class Util {
             
         case UNIBANCO:
             return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
+        
+        case CREDCOMIM:
+         
+            return Util.padLeft(idDivida.toString(), "0", 17);   
             
         default:
             return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
