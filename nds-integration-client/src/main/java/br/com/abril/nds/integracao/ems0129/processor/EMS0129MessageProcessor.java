@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.commons.io.FileUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
@@ -617,10 +618,14 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	private void gerarArquivoPickingModelo3(Message message, String nomeArquivoPickingInterfaceLED) {
 		
 		try {
+			
+			StringBuilder stringFinal = new StringBuilder();
+			File file = new File("/Users/lazaroJR/Documents/docsnds/ambiente2/parametros_nds/picking/teste.txt");
 
-			PrintWriter print = new PrintWriter(
-					new FileWriter(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_PICKING_EXPORTACAO.name())	+ 
-							File.separator  + nomeArquivoPickingInterfaceLED), true);
+			FileWriter fileWriter = new FileWriter(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_PICKING_EXPORTACAO.name())	+ 
+					File.separator  + nomeArquivoPickingInterfaceLED);
+			
+			//PrintWriter print = new PrintWriter(fileWriter, true);
 			
 			Date dataLancamento = getDataLancDistrib(message);
 			
@@ -640,20 +645,26 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 				
 				EMS0129Picking3Header linha01Modelo03 = criarHeaderModelo3(headerDTO);
 				
-				print.println(fixedFormatManager.export(linha01Modelo03));
+				stringFinal.append(fixedFormatManager.export(linha01Modelo03));
+				stringFinal.append(System.getProperty("line.separator"));
+				//print.println(fixedFormatManager.export(linha01Modelo03));
 				
 				List<DetalhesPickingPorCotaModelo03DTO> listaLinha02Modelo03 = getLinha02Modelo03(linha01Modelo03.getCodigoCota(), dataLancamento);
 				
 				for (DetalhesPickingPorCotaModelo03DTO detalhesPickingPorCotaModelo03DTO : listaLinha02Modelo03) {
 					EMS0129Picking3Trailer2 linha02Modelo03 = criarLinha02Modelo03(detalhesPickingPorCotaModelo03DTO);
-					print.println(fixedFormatManager.export(linha02Modelo03));
+					stringFinal.append(fixedFormatManager.export(linha02Modelo03));
+					stringFinal.append(System.getProperty("line.separator"));
+					//print.println(fixedFormatManager.export(linha02Modelo03));
 				}
 				
 				SubHeaderPickingDTO subHeaderPickingDTO = listaSubHeadePickingModulo3.get(cont);
 				
 				EMS0129Picking3Trailer3 linha03Modelo03 = criarLinha03Modelo03(subHeaderPickingDTO);
 				
-				print.println(fixedFormatManager.export(linha03Modelo03));
+				stringFinal.append(fixedFormatManager.export(linha03Modelo03));
+				stringFinal.append(System.getProperty("line.separator"));
+				//print.println(fixedFormatManager.export(linha03Modelo03));
 				
 				cont++;
 				
@@ -663,10 +674,13 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			
 			EMS0129Picking3Footer linhaFooterModelo03 = criarLinhaFooterModelo03(footerPickingModulo3);
 			
-			print.println(fixedFormatManager.export(linhaFooterModelo03));
+			stringFinal.append(fixedFormatManager.export(linhaFooterModelo03));
+			stringFinal.append(System.getProperty("line.separator"));
+			//print.println(fixedFormatManager.export(linhaFooterModelo03));
 			
-			print.flush();
-			print.close();
+			//print.flush();
+			//print.close();
+			FileUtils.writeStringToFile(file, stringFinal.toString(),"iso-8859-1"); 
 
 		} catch (IOException e) {
 
