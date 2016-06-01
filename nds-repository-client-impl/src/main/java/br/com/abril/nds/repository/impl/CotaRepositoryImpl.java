@@ -2255,7 +2255,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         }
         
         if ("situacaoCadastro".equals(sortName)) {
-            sql.append(" order by  cota_.situacaoCadastro " + sortOrder);
+            sql.append(" order by  situacaoCadastro " + sortOrder);
         }
         
         if ("notaImpressa".equals(sortName)) {
