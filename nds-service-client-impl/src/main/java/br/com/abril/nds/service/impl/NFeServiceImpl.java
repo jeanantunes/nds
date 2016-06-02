@@ -1513,8 +1513,10 @@ public class NFeServiceImpl implements NFeService {
 			
 			List<Long> produtoEdicoesIds = new ArrayList<>();
  			
+			StringBuffer produtos=new StringBuffer("");
 			for (DetalheNotaFiscal detalhe : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
 				produtoEdicoesIds.add(detalhe.getProdutoServico().getProdutoEdicao().getId());
+				produtos.append(detalhe.getProdutoServico().getProdutoEdicao().getProduto().getCodigo()+"-"+detalhe.getProdutoServico().getProdutoEdicao().getNumeroEdicao()+" ");
 			}
 			
 			Cota cota = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota();
@@ -1528,7 +1530,7 @@ public class NFeServiceImpl implements NFeService {
 					notaReferenciada.setNotaFiscalReferenciadaNFE(notaFiscalReferenciadaNFE);
 					
 					if(notaFiscalDTO.getChaveAcesso() == null || notaFiscalDTO.getChaveAcesso().isEmpty()) {
-						throw new ValidacaoException(TipoMensagem.ERROR, String.format("Não é possível gerar NF-e não contem chave de acesso para nota: %s e serie: %s", notaFiscalDTO.getNumero(), notaFiscalDTO.getSerie()));
+						throw new ValidacaoException(TipoMensagem.ERROR, String.format("Não é possível gerar NF-e não contem chave de acesso para nota: %s e serie: %s produtos(%s)", notaFiscalDTO.getNumero(), notaFiscalDTO.getSerie(),produtos.toString()));
 					}
 					
 					notaReferenciada.setChaveAcessoCTe(notaFiscalDTO.getChaveAcesso());
