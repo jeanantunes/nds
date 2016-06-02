@@ -372,7 +372,7 @@ public class ItemNotaFiscalBuilder  {
 		TributoAliquota tributoSimples = tributoAliquota.get("SIMPLES");
 		
 		if(tributoSimples != null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Regime tributario simples não suportado.");
+		//	throw new ValidacaoException(TipoMensagem.ERROR, "Regime tributario simples não suportado.");
 		}
 		
 		TributoAliquota tributoPis = tributoAliquota.get("PIS");
@@ -472,7 +472,7 @@ public class ItemNotaFiscalBuilder  {
 					.append(" / ")
 					.append(produtoServico.getProdutoEdicao().getNumeroEdicao());
 			
-			LOGGER.error(sb.toString() );
+			LOGGER.warn(sb.toString() );
 			// throw new ValidacaoException(TipoMensagem.ERROR, sb.toString());
 		}
 		
