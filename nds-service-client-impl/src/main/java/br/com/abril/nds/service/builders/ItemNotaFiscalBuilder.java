@@ -372,7 +372,7 @@ public class ItemNotaFiscalBuilder  {
 		TributoAliquota tributoSimples = tributoAliquota.get("SIMPLES");
 		
 		if(tributoSimples != null){
-		//	throw new ValidacaoException(TipoMensagem.ERROR, "Regime tributario simples não suportado.");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Regime tributario simples não suportado.");
 		}
 		
 		TributoAliquota tributoPis = tributoAliquota.get("PIS");
