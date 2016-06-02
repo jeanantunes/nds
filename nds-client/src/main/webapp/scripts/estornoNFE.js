@@ -216,15 +216,13 @@ var estornoNFEController  = $.extend(true, {
 	
 	buscar : function() {
 		
-		var parametros = null;
-		
-		parametros = this.param();
+		params = this.param();
 			
 		$(".estornoGrid", estornoNFEController.workspace).flexOptions({
 			preProcess: estornoNFEController.executarPreProcessamento,
 			url: contextPath + "/nfe/estornoNFE/pesquisar",
 			dataType : 'json',
-			params: parametros
+			params: params
 			
 		});
 		
