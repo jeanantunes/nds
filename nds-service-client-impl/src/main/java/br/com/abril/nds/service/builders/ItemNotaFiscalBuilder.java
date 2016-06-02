@@ -628,9 +628,11 @@ public class ItemNotaFiscalBuilder  {
 			BigDecimal precoVenda = movimentoFechamentoFiscal.getProdutoEdicao().getPrecoVenda();
 			BigDecimal precoComDesconto = BigDecimal.ZERO;
 			
-			if(movimentoFechamentoFiscal.getProdutoEdicao().getOrigem().equals(Origem.MANUAL)) {
+			if(!movimentoFechamentoFiscal.getProdutoEdicao().getOrigem().equals(Origem.INTERFACE)) {
 				valorDesconto = movimentoFechamentoFiscal.getProdutoEdicao().getDesconto();
-			} 
+			} else {
+				valorDesconto = ((MovimentoFechamentoFiscalFornecedor) movimentoFechamentoFiscal).getValoresAplicados().getValorDesconto();
+			}
 			
 			precoComDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100))));			
 			valorUnitario = precoComDesconto;
