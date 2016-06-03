@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.SQLQuery;
+
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
@@ -31,6 +33,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
+import br.com.abril.nds.model.cadastro.CanalDistribuicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -43,6 +46,7 @@ import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
+import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
 
@@ -458,4 +462,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
 
 	boolean validarCotaRecebeFornecedor(Long idCota, Long idEdicao);
+
+	boolean validarCotaVarejo(Long idCota);
 }

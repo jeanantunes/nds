@@ -135,7 +135,7 @@ public interface DistribuidorService {
 	 * 
 	 * @return List - Date
 	 */
-	List<Date> obterDatasAposFinalizacaoPrazoRecolhimento(Date dataRecolhimento, Long ...idsFornecedor);
+	List<Date> obterDatasAposFinalizacaoPrazoRecolhimento(Date dataRecolhimento, boolean isOpDiferenciada, Long ...idsFornecedor);
 	
 	/**
 	 * Obtem o dia de recolhimento do distribuidor para a data de Conferencia 

@@ -1086,13 +1086,19 @@ var ConferenciaEncalheCont = $.extend(true, {
 			},
 			select: function(event, ui){
 				
+				var idPE = ui.item.chave.long;
+				
+				if(idPE == undefined){
+					idPE = ui.item.chave.$;
+				}
+				
 				$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/pesquisarProdutoEdicaoPorId",
-					[{name: "idProdutoEdicao", value: ui.item.chave.long}],
+					[{name: "idProdutoEdicao", value: idPE}],
 					function(result2){
 					
 						if (result2){
 							
-							ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe = ui.item.chave.long;
+							ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe = idPE;
 							
 							$("#numEdicaoNovoEncalhe", ConferenciaEncalheCont.workspace).val(result2.numeroEdicao);
 							
