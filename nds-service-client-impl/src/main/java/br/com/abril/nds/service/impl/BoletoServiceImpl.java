@@ -1787,7 +1787,16 @@ public class BoletoServiceImpl implements BoletoService {
         if (corpoBoleto.getContaTipoDeCobranca() == null || corpoBoleto.getContaTipoDeCobranca().isEmpty()){
             corpoBoleto.setContaTipoDeCobranca(FormaCobrancaBoleto.SEM_REGISTRO.name());
         } else {
-        	corpoBoleto.setContaTipoDeCobranca(FormaCobrancaBoleto.COM_REGISTRO.name());
+        	
+        	if(corpoBoleto.getContaTipoDeCobranca().equals(FormaCobrancaBoleto.SEM_REGISTRO.name())) {
+        		 corpoBoleto.setContaTipoDeCobranca(FormaCobrancaBoleto.SEM_REGISTRO.name());
+        	} else {
+        		
+        		corpoBoleto.setContaTipoDeCobranca(FormaCobrancaBoleto.COM_REGISTRO.name());
+        	}
+        	
+        	
+        	
         }
         
         corpoBoleto.setContaAgencia(banco.getAgencia().intValue());
