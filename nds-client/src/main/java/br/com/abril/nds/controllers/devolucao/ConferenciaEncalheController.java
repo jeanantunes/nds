@@ -421,7 +421,7 @@ public class ConferenciaEncalheController extends BaseController {
 	@LogFuncional(value="Conferência de Encalhe [Início da conferência]")
 	public void iniciarConferenciaEncalhe(final Integer numeroCota) {
 
-		LOGGER.warn("LOGFUNCIONAL INICIO CONFERENCIA usuario="+usuarioService.getUsuarioLogado().getLogin()+
+	LOGGER.warn("LOGFUNCIONAL INICIO CONFERENCIA usuario="+usuarioService.getUsuarioLogado().getLogin()+
 				" sessionid="+session.getId()+"  cota="+numeroCota);
 	 Cota cota=null;
 		
@@ -442,12 +442,16 @@ public class ConferenciaEncalheController extends BaseController {
         bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(cota.getNumeroCota(), this.session);
     	
 	 }
+	
+	
+	if(!this.cotaService.isCotaVarejo(cota.getId())){
+		
 		carregarMapaDatasEncalheConferiveis(numeroCota);
 		
 		if(this.conferenciaEncalheService.verificarCotaComConferenciaEncalheFinalizada(numeroCota)) {
-
+			
 			this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").put("IND_REABERTURA", "S").serialize();
-
+			
 		} else {
 			
 			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
@@ -457,7 +461,7 @@ public class ConferenciaEncalheController extends BaseController {
 			if(this.conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota, datas)) {
 				
 				this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();	
-			
+				
 			} else {
 				
 				if(cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacao)){
@@ -472,16 +476,19 @@ public class ConferenciaEncalheController extends BaseController {
 				
 				
 				bloqueioConferenciaEncalheComponent.removerTravaConferenciaCotaUsuario(this.session);
-			
+				
 			}
 		}
+	}else{
+		this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();
+	}
 		
-		this.session.setAttribute(NUMERO_COTA, numeroCota);
-        this.session.setAttribute(COTA, cota);
-        this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
-        
-        LOGGER.warn("INICIO CONFERENCIA COTA BLOQUEADA usuario="+usuarioService.getUsuarioLogado().getLogin()+
-				" sessionid="+session.getId()+"  cota="+numeroCota);
+	this.session.setAttribute(NUMERO_COTA, numeroCota);
+    this.session.setAttribute(COTA, cota);
+    this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
+    
+    LOGGER.warn("INICIO CONFERENCIA COTA BLOQUEADA usuario="+usuarioService.getUsuarioLogado().getLogin()+
+			" sessionid="+session.getId()+"  cota="+numeroCota);
 		
 	}
 	
@@ -1266,27 +1273,42 @@ public class ConferenciaEncalheController extends BaseController {
 			final String codigoBarra,
 			final String qtdExemplares) {
 		
-		if (codigoBarra == null || codigoBarra.trim().isEmpty()) {
-            throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido.");
-		}
-
-		final List<ItemAutoComplete> listaProdutos = 
-				this.conferenciaEncalheService.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(getNumeroCotaFromSession(), codigoBarra); 
-
-		if (listaProdutos == null || listaProdutos.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nehum produto Encontrado.");
-		}
 		
-		if(listaProdutos.size()==1) {
-			
-			Long idProdutoEdicao = (Long) listaProdutos.get(0).getChave();
-			
-			adicionarProdutoEdicaoConferidoDiretamente(idProdutoEdicao, qtdExemplares);
-			
-			return;
-		}
-
+		Cota cota = cotaService.obterPorNumeroDaCota(getNumeroCotaFromSession());
+		
 		Map<String, Object> data = new HashMap<String, Object>();
+		
+		List<ItemAutoComplete> listaProdutos;
+		
+		if(!this.cotaService.isCotaVarejo(cota.getId())){
+			
+			if (codigoBarra == null || codigoBarra.trim().isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido.");
+			}
+			
+			listaProdutos = this.conferenciaEncalheService.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(getNumeroCotaFromSession(), codigoBarra); 
+			
+			if (listaProdutos == null || listaProdutos.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nehum produto Encontrado.");
+			}
+			
+			if(listaProdutos.size()==1) {
+				
+				Long idProdutoEdicao = (Long) listaProdutos.get(0).getChave();
+				
+				adicionarProdutoEdicaoConferidoDiretamente(idProdutoEdicao, qtdExemplares);
+				
+				return;
+			}
+			
+		}else{
+			
+			listaProdutos =  this.conferenciaEncalheService.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_cotaVarejo(codigoBarra);
+			
+			if (listaProdutos == null || listaProdutos.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nehum produto Encontrado.");
+			}
+		}
 		
 		data.put("produtosEdicao", listaProdutos);
 		data.put("qtdExemplares", qtdExemplares);
@@ -2306,7 +2328,7 @@ public class ConferenciaEncalheController extends BaseController {
 	@Post
 	public void autocompletarProdutoPorCodigoNome(final String codigoNomeProduto){
 
-		final List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		
 		final List<ProdutoEdicao> listaProdutoEdicao = this.obterProduto(codigoNomeProduto);
 		
@@ -2320,7 +2342,9 @@ public class ConferenciaEncalheController extends BaseController {
 								null,
 								new Object[]{produtoEdicao.getProduto().getCodigo(), produtoEdicao.getId()}));
 			}
+		}else{
 			
+			listaProdutos = this.conferenciaEncalheService.obterProdutoPorCodigoOuNomeCotaVarejo(codigoNomeProduto.trim());
 			
 		}
 		
@@ -2336,7 +2360,7 @@ public class ConferenciaEncalheController extends BaseController {
 			this.produtoEdicaoService.obterProdutoPorCodigoNomeParaRecolhimento(
 				codigoNomeProduto, getNumeroCotaFromSession(), QUANTIDADE_MAX_REGISTROS, mapaDataCEConferivelDTO);
 		
-		final List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		
 		if (listaProdutoEdicao != null && !listaProdutoEdicao.isEmpty()){
 			
@@ -2349,6 +2373,9 @@ public class ConferenciaEncalheController extends BaseController {
 								new Object[]{produtoEdicao.getProduto().getCodigo(), produtoEdicao.getId()}));
 			}
 			
+		}else{
+			
+			listaProdutos = this.conferenciaEncalheService.obterProdutoPorCodigoOuNomeCotaVarejo(codigoNomeProduto.trim());
 			
 		}
 		

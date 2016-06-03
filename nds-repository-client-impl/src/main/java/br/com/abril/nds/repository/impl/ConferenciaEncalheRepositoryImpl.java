@@ -16,6 +16,8 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
+import br.com.abril.nds.model.cadastro.CanalDistribuicao;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -623,6 +625,71 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 		
 	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_CotaVarejo(final String codigoBarras) {
+		
+		final StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT  ");
+		sql.append("   pe.ID as chave, ");
+		sql.append("   pe.CODIGO_DE_BARRAS as value, ");
+		sql.append("   CONCAT(pe.CODIGO_DE_BARRAS, ' - ', pd.NOME,' - Ed.:', pe.NUMERO_EDICAO) as label ");
+		sql.append(" FROM produto_edicao pe  ");
+		sql.append(" JOIN produto pd ");
+		sql.append("   ON pe.PRODUTO_ID = pd.ID ");
+		sql.append(" JOIN produto_fornecedor pf ");
+		sql.append("   ON pf.PRODUTO_ID = pd.ID ");
+		sql.append(" JOIN fornecedor f ");
+		sql.append("   ON pf.fornecedores_ID = f.ID ");
+		sql.append(" WHERE f.CANAL_DISTRIBUICAO = :canalVarejo ");
+		sql.append(" 	and upper(pe.CODIGO_DE_BARRAS) like upper(:codigoBarras)  ");
+
+		final Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("codigoBarras", codigoBarras + "%" );
+		query.setParameter("canalVarejo", CanalDistribuicao.VAREJO.toString());
+		
+		query.setResultTransformer(Transformers.aliasToBean(ItemAutoComplete.class));
+		
+		return query.list();
+		
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoOuNome_CotaVarejo(String codigoOuNome) {
+		
+		final StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT  ");
+		sql.append("   pe.ID as chave, ");
+		sql.append("   pe.CODIGO_DE_BARRAS as value, ");
+		sql.append("   CONCAT(pe.CODIGO_DE_BARRAS, ' - ', pd.NOME,' - Ed.:', pe.NUMERO_EDICAO) as label ");
+		sql.append(" FROM produto_edicao pe  ");
+		sql.append(" JOIN produto pd ");
+		sql.append("   ON pe.PRODUTO_ID = pd.ID ");
+		sql.append(" JOIN produto_fornecedor pf ");
+		sql.append("   ON pf.PRODUTO_ID = pd.ID ");
+		sql.append(" JOIN fornecedor f ");
+		sql.append("   ON pf.fornecedores_ID = f.ID ");
+		sql.append(" JOIN lancamento l  ");
+		sql.append("   ON l.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" WHERE f.CANAL_DISTRIBUICAO = :canalVarejo ");
+		sql.append(" 	and (pd.nome like :codigoOuNome or pd.CODIGO like :codigoOuNome)  ");
+		sql.append("    and l.STATUS in ('EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO') ");
+
+		final Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("codigoOuNome", codigoOuNome+"%");
+		query.setParameter("canalVarejo", CanalDistribuicao.VAREJO.toString());
+		
+		query.setResultTransformer(Transformers.aliasToBean(ItemAutoComplete.class));
+		
+		return query.list();
+		
+	}
+	
 	
 	/*
 	 * (non-Javadoc)
@@ -889,6 +956,34 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 		
 		BigInteger qtd = (BigInteger) query.uniqueResult();
 		return (boolean) (qtd != null && qtd.longValue() > 0);
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Integer> obterCotasVarejoConferenciaEncalhe(FiltroConsultaEncalheDTO filtro){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select c.numero_cota ");
+		sql.append(" from conferencia_encalhe conf  ");
+		sql.append(" join controle_conferencia_encalhe_cota ccec  ");
+		sql.append("   ON conf.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = ccec.ID ");
+		sql.append(" join cota_fornecedor cf ");
+		sql.append("   ON cf.FORNECEDOR_ID in (select id from fornecedor where CANAL_DISTRIBUICAO = :distribuicaoVarejo) and cf.COTA_ID = ccec.COTA_ID ");
+		sql.append(" join cota c ");
+		sql.append(" ON c.id = cf.COTA_ID ");
+		sql.append(" where conf.DATA BETWEEN :dataDe AND :dataAte  ");
+		sql.append(" group by ccec.COTA_ID ");
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataDe", filtro.getDataRecolhimentoInicial());
+		query.setParameter("dataAte", filtro.getDataRecolhimentoFinal());
+		query.setParameter("distribuicaoVarejo", CanalDistribuicao.VAREJO.toString());
+		
+		
+		return (List<Integer>)query.list();
+		
 	}
 	
 }

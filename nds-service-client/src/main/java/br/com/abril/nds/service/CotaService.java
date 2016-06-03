@@ -460,4 +460,5 @@ public interface CotaService {
 
 	boolean isCotaRecebeFornecedor(Long idProdutoEdicao, Long idCota);
 
+	boolean isCotaVarejo(Long idCota);
 }

@@ -3351,4 +3351,9 @@ public class CotaServiceImpl implements CotaService {
 		return cotaRepository.validarCotaRecebeFornecedor(idCota, idProdutoEdicao);
 	}
 	
+	@Override
+	@Transactional
+	public boolean isCotaVarejo(Long idCota){
+		return cotaRepository.validarCotaVarejo(idCota);
+	}
 }

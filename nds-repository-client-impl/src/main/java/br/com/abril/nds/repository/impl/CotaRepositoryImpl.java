@@ -63,6 +63,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
+import br.com.abril.nds.model.cadastro.CanalDistribuicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -3961,6 +3962,25 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		query.setParameter("produtoEdicaoId", idEdicao);
 		query.setParameter("idCota", idCota);
 		
+		
+		return (BigIntegerUtil.isMaiorQueZero((BigInteger)query.uniqueResult()));
+		
+	}
+	
+	@Override
+	public boolean validarCotaVarejo (Long idCota){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select if(count(cf.FORNECEDOR_ID) > 0, true, false) isVarejo  ");
+		sql.append(" from cota_fornecedor cf  ");
+		sql.append(" where cf.FORNECEDOR_ID in (select id from fornecedor where CANAL_DISTRIBUICAO = :canalDistrib) ");
+		sql.append("   AND cf.COTA_ID = :idCota ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("canalDistrib", CanalDistribuicao.VAREJO.toString());
+		query.setParameter("idCota", idCota);
 		
 		return (BigIntegerUtil.isMaiorQueZero((BigInteger)query.uniqueResult()));
 		

@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.repository.GrupoRepository;
-import br.com.abril.nds.service.impl.ConferenciaEncalheServiceImpl;
+import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @ContextConfiguration(loader = SpringockitoContextLoader.class, locations = "classpath:/applicationContext-test.xml")
@@ -35,7 +35,7 @@ public class ConferenciaEncalheServiceImplTest extends AbstractJUnit4SpringConte
     private GrupoRepository grupoRepository;
     
     @Autowired
-    private ConferenciaEncalheServiceImpl service;
+    private ConferenciaEncalheService service;
     
     @Before
     public void setUp(){

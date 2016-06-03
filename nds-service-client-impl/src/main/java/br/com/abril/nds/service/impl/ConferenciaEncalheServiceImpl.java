@@ -41,6 +41,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.CanalDistribuicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -996,7 +997,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		} else {
 		
-			isDataRecolhimentoValida(dataOperacao, chamadaEncalheCota.getChamadaEncalhe().getDataRecolhimento(), produtoEdicao.getId(), false);
+			if(produtoEdicao.getProduto().getFornecedor().getCanalDistribuicao() != CanalDistribuicao.VAREJO){
+				isDataRecolhimentoValida(dataOperacao, chamadaEncalheCota.getChamadaEncalhe().getDataRecolhimento(), produtoEdicao.getId(), false);
+			}
 			
 		}	
 		
@@ -3707,6 +3710,19 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras, dataOperacao, datasRecolhimentoValidas);
 	}
+	
+	@Override
+	@Transactional
+	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_cotaVarejo(final String codigoBarras) {
+		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_CotaVarejo(codigoBarras);
+	}
+	
+	@Override
+	@Transactional
+	public List<ItemAutoComplete> obterProdutoPorCodigoOuNomeCotaVarejo(final String codigoOuNome) {
+		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoOuNome_CotaVarejo(codigoOuNome);
+	}
+	
 	
     /**
 	* Valida informações basicas antes de iniciar o recolhimento:

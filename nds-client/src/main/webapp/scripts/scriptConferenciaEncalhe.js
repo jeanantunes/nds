@@ -2417,8 +2417,14 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 			select: function(event, ui) {
 				
+				var ultimoIdPE = ui.item.chave.long;
+				
+				if(ultimoIdPE == undefined){
+					ultimoIdPE = ui.item.chave.$;
+				}
+				
 				$("#codProduto", ConferenciaEncalhe.workspace).val(ui.item.chave.string);
-				ConferenciaEncalhe.ultimoIdProdutoEdicao = ui.item.chave.long;
+				ConferenciaEncalhe.ultimoIdProdutoEdicao = ultimoIdPE;
 			},
 			delay : 500,
 		});
