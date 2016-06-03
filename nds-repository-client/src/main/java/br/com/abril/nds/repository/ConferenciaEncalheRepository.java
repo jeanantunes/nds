@@ -75,7 +75,7 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 			List<Date> datasRecolhimento,
 			boolean indFechado,
 			boolean indPostergado,
-			Set<Long> listaIdProdutoEdicao);
+			Set<Long> listaIdProdutoEdicao, boolean isOperacaoDiferenciada);
 	
 	/**
 	 * Obtém o valorTotal de uma operação de conferência de encalhe. Para o calculo do valor

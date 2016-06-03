@@ -481,9 +481,17 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public List<Date> obterDatasAposFinalizacaoPrazoRecolhimento(final Date dataRecolhimento, final Long ...idsFornecedor) {
+	public List<Date> obterDatasAposFinalizacaoPrazoRecolhimento(final Date dataRecolhimento, boolean isOpDiferenciada, final Long ...idsFornecedor) {
 		
 		final ParametrosRecolhimentoDistribuidor parametroRecolhimento = this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
+		
+		if(isOpDiferenciada){
+			parametroRecolhimento.setDiaRecolhimentoPrimeiro(true);
+			parametroRecolhimento.setDiaRecolhimentoSegundo(true);
+			parametroRecolhimento.setDiaRecolhimentoTerceiro(true);
+			parametroRecolhimento.setDiaRecolhimentoQuarto(true);
+			parametroRecolhimento.setDiaRecolhimentoQuinto(true);
+		}
 		
 		final List<Integer> diasSemanaDistribuidorOpera = 
 				this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(OperacaoDistribuidor.RECOLHIMENTO,idsFornecedor);

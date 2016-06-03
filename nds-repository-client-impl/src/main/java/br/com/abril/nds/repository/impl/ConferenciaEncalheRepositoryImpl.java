@@ -384,7 +384,7 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 			List<Date> datasRecolhimento,
 			boolean indFechado,
 			boolean indPostergado,
-			Set<Long> listaIdProdutoEdicao) {
+			Set<Long> listaIdProdutoEdicao, boolean isOpDiferenciada) {
 
 		StringBuffer hql = new StringBuffer();
 		
@@ -470,11 +470,15 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
         
 		hql.append("	WHERE   ");
 		
-		hql.append("    L.STATUS <> :lancamentoFechado AND ");
-		hql.append("	COTA.NUMERO_COTA = :numeroCota AND ");
-		hql.append("	CH_ENCALHE.DATA_RECOLHIMENTO IN (:datasRecolhimento) AND ");
-		hql.append("	CH_ENCALHE_COTA.FECHADO = :indFechado AND	");
-		hql.append("	CH_ENCALHE_COTA.POSTERGADO = :indPostergado 	");
+		hql.append("    L.STATUS <> :lancamentoFechado  ");
+		hql.append("	AND COTA.NUMERO_COTA = :numeroCota  ");
+		hql.append("	AND CH_ENCALHE.DATA_RECOLHIMENTO IN (:datasRecolhimento)  ");
+		
+		if(!isOpDiferenciada){
+			hql.append("	AND CH_ENCALHE_COTA.FECHADO = :indFechado 	");
+			hql.append("	AND CH_ENCALHE_COTA.POSTERGADO = :indPostergado 	");
+		}
+		
 		hql.append("	AND MEC.DATA = (SELECT 	MAX(MEC.DATA) ");
 		hql.append("					FROM    MOVIMENTO_ESTOQUE_COTA MEC, TIPO_MOVIMENTO TIPO_MOV ");
 		hql.append("					WHERE   MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID ");
@@ -523,8 +527,12 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 		query.setParameter("lancamentoFechado", StatusLancamento.FECHADO.name());
 		query.setParameter("numeroCota", numeroCota);
 		query.setParameterList("datasRecolhimento", datasRecolhimento);
-		query.setParameter("indFechado", indFechado);
-		query.setParameter("indPostergado", indPostergado);
+		
+		if(!isOpDiferenciada){
+			query.setParameter("indFechado", indFechado);
+			query.setParameter("indPostergado", indPostergado);
+		}
+		
 		query.setParameterList("grupoMovimentoEstoque", this.grupoMovimentoEstoqueCota());
 		
 		query.setParameterList("statusEmRecolhimento", Arrays.asList(

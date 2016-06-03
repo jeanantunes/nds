@@ -458,4 +458,5 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
 
 	boolean validarCotaRecebeFornecedor(Long idCota, Long idEdicao);
+
 }

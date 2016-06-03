@@ -3965,4 +3965,5 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return (BigIntegerUtil.isMaiorQueZero((BigInteger)query.uniqueResult()));
 		
 	}
+	
 }

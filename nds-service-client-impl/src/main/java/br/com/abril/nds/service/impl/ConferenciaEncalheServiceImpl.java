@@ -417,6 +417,26 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		final List<Integer> diasSemanaDistribuidorOpera = this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(
 				OperacaoDistribuidor.RECOLHIMENTO, idFornecedor);
 		
+		if(indCotaOperacaoDiferenciada){
+			
+			final List<Date> datasAnteriores_opDif = distribuidorService.obterListaDataOperacional(dataOperacao, QUANTIDADE_DIAS_UTEIS, diasSemanaDistribuidorOpera, false);
+			final List<Date> datasPosteriores_opDif = distribuidorService.obterListaDataOperacional(dataOperacao,QUANTIDADE_DIAS_UTEIS, diasSemanaDistribuidorOpera, true);
+			
+			for (Date date : datasPosteriores_opDif) {
+				if(!dataCEConferivel.getListaDataConferivelProdutoNaoParcial().contains(DateUtil.removerTimestamp(date))) {
+					dataCEConferivel.getListaDataConferivelProdutoNaoParcial().add(DateUtil.removerTimestamp(date));
+				}
+			}
+			
+			for (Date date : datasAnteriores_opDif) {
+				if(!dataCEConferivel.getListaDataConferivelProdutoNaoParcial().contains(DateUtil.removerTimestamp(date))) {
+					dataCEConferivel.getListaDataConferivelProdutoNaoParcial().add(DateUtil.removerTimestamp(date));
+				}
+			}
+			
+			return;
+		}
+		
 		final List<Integer> listaDiasRecolheAtrasado = distribuidorService.getListaDiaOrdinalAceitaRecolhimento();
 		
 		carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataOperacao, numeroCota, listaIdFornecedor, indCotaOperacaoDiferenciada);
@@ -429,7 +449,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(datasAnteriores!=null && !datasAnteriores.isEmpty()) {
 			for(final Date dataAnterior : datasAnteriores) {
-				carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataAnterior, numeroCota, listaIdFornecedor, false);
+				carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataAnterior, numeroCota, listaIdFornecedor, indCotaOperacaoDiferenciada);
 			}
 		}
 
@@ -1035,7 +1055,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 		final List<Date> datasRecolhimento = 
-				distribuidorService.obterDatasAposFinalizacaoPrazoRecolhimento(dataPrimeiroRecolhimento,
+				distribuidorService.obterDatasAposFinalizacaoPrazoRecolhimento(dataPrimeiroRecolhimento, indOperacaoDiferenciada,
 																			   this.obterIdsFornecedorDoProduto(produtoEdicao));
 		if(datasRecolhimento == null || datasRecolhimento.isEmpty()){
 			throw new ValidacaoException(
@@ -1119,6 +1139,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
+		final boolean isOperacaoDiferenciada = cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacao); 
+		
 		final boolean indFechado = false;
 		final boolean indPostergado = false;
 		
@@ -1132,7 +1154,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				datasRecolhimento, 
 				indFechado, 
 				indPostergado, 
-				listaIdProdutoEdicao);
+				listaIdProdutoEdicao, isOperacaoDiferenciada);
 		
 		for(final ConferenciaEncalheDTO conferencia : listaConferenciaEncalheContingencia) {
 			final long id = (-1 * (idInicial++));
