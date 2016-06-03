@@ -964,18 +964,22 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
 
+		hql.append(" and mfff.qtde > 0 ");
+		
 		if(!isGroup){
 			if(filtro.isEmissaoPorEditor()) {
 				hql.append(" GROUP BY mfff.fornecedor.id ");
 			} else {				
-				hql.append(" and mfff.qtde > 0 ");
+				// hql.append(" and mfff.qtde > 0 ");
 				hql.append(" GROUP BY mfff.id ");
 			}
+			
 			
 		} else {
 			hql.append(" GROUP BY mfff ");
 		}
 
+		
 		if(!isCount && !isPagination){
 			if(filtro.getPaginacaoVO()!=null && filtro.getPaginacaoVO().getSortOrder() != null && filtro.getPaginacaoVO().getSortColumn() != null) {
 				hql.append(" ORDER BY  ").append(filtro.getPaginacaoVO().getSortColumn()).append(" ").append(filtro.getPaginacaoVO().getSortOrder());

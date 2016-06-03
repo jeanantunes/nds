@@ -17,6 +17,7 @@
 	<name>NDS - Util</name>
 
 	<dependencies>
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -33,9 +34,11 @@
 			<groupId>org.apache.velocity</groupId>
 			<artifactId>velocity</artifactId>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.jrimum</groupId>
-			<artifactId>jrimum-bopepo</artifactId>
+			<artifactId>nds-jbopepo</artifactId>
+			<version>0.2.3-SNAPSHOT</version>
 		</dependency>
 		
 		<dependency>

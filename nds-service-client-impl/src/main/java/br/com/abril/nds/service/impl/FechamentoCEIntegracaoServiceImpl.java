@@ -386,7 +386,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 					int valor = estoqueProduto.getMovimentos().size();
 					
 					if (valor == 0) {
-						System.out.println(estoqueProduto.getProdutoEdicao().toString());
+						throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao sem Movimento Estoque ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+
+				                "/"+itemFo.getProdutoEdicao().getNumeroEdicao());
 					} else {
 						oimffdf.setMovimento(estoqueProduto.getMovimentos().get(0));
 						
@@ -400,7 +401,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 						mff.setTipoDestinatario(TipoDestinatario.FORNECEDOR);
 						mff.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.SAIDA));
 						
-		        		mff.setQtde(BigInteger.valueOf(itemFo.getQtdeVendaApurada()));
+		        		mff.setQtde(BigInteger.valueOf(itemFo.getQtdeEnviada() - itemFo.getQtdeDevolucaoInformada()));
 						mff.setNotaFiscalLiberadaEmissao(false);
 						mff.setDesobrigaNotaFiscalDevolucaoSimbolica(true);
 						mff.setQtdeChamadaEncAnterior(BigInteger.ZERO);
@@ -420,12 +421,12 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 								
 							}
 							
-							BigDecimal valarDesconto =  (itemFo.getProdutoEdicao().getDescontoLogistica()!= null ?
+							BigDecimal valorDesconto =  (itemFo.getProdutoEdicao().getDescontoLogistica()!= null ?
 									itemFo.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto(): itemFo.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto());
 							
-							valoresAplicados.setValorDesconto(valarDesconto);
+							valoresAplicados.setValorDesconto(valorDesconto);
 							
-							valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract(estoqueProduto.getProdutoEdicao().getPrecoVenda().multiply(valarDesconto.divide(BigDecimal.valueOf(100)))));	
+							valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract(estoqueProduto.getProdutoEdicao().getPrecoVenda().multiply(valorDesconto.divide(BigDecimal.valueOf(100)))));	
 							
 						} else if(produtoEdicao.getOrigem().equals(Origem.PRODUTO_SEM_CADASTRO)) {
 							
@@ -437,12 +438,12 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 										                "/"+itemFo.getProdutoEdicao().getNumeroEdicao());
 							} 
 							
-							BigDecimal valarDesconto =  (itemFo.getProdutoEdicao().getDescontoLogistica()!= null ?
+							BigDecimal valorDesconto =  (itemFo.getProdutoEdicao().getDescontoLogistica()!= null ?
 									itemFo.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto(): itemFo.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto());
 							
-							valoresAplicados.setValorDesconto(valarDesconto);
+							valoresAplicados.setValorDesconto(valorDesconto);
 
-							valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract(estoqueProduto.getProdutoEdicao().getPrecoVenda().multiply(valarDesconto.divide(BigDecimal.valueOf(100)))));
+							valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract(estoqueProduto.getProdutoEdicao().getPrecoVenda().multiply(valorDesconto.divide(BigDecimal.valueOf(100)))));
 						} else {
 							valoresAplicados.setPrecoComDesconto(estoqueProduto.getProdutoEdicao().getPrecoVenda().subtract((itemFo.getProdutoEdicao().getDesconto())).setScale(4,BigDecimal.ROUND_HALF_EVEN));
 						}

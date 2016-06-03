@@ -24,7 +24,8 @@ import org.jrimum.domkee.financeiro.banco.febraban.SacadorAvalista;
 import org.jrimum.domkee.financeiro.banco.febraban.TipoDeCobranca;
 import org.jrimum.domkee.financeiro.banco.febraban.TipoDeTitulo;
 import org.jrimum.domkee.financeiro.banco.febraban.Titulo;
-import org.jrimum.domkee.financeiro.banco.febraban.Titulo.Aceite;
+
+import org.jrimum.domkee.financeiro.banco.febraban.Titulo.EnumAceite;
 import org.jrimum.domkee.financeiro.banco.hsbc.TipoIdentificadorCNR;
 
 public class GeradorBoleto {
@@ -132,7 +133,7 @@ public class GeradorBoleto {
         titulo.setDataDoDocumento(corpoBoleto.getTituloDataDoDocumento());
         titulo.setDataDoVencimento(corpoBoleto.getTituloDataDoVencimento());
         titulo.setTipoDeDocumento(TipoDeTitulo.valueOf(corpoBoleto.getTituloTipoDeDocumento()));
-        titulo.setAceite(Aceite.valueOf(corpoBoleto.getTituloAceite()));
+        titulo.setAceite(EnumAceite.A);
         titulo.setDesconto(corpoBoleto.getTituloDesconto());
         titulo.setDeducao(corpoBoleto.getTituloDeducao());
         titulo.setMora(corpoBoleto.getTituloMora());

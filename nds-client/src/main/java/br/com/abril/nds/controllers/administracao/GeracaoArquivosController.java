@@ -900,7 +900,7 @@ public class GeracaoArquivosController extends BaseController {
 	public void gerar(Date dataLctoPrevisto, String operacao,String nomeArquivo) {
 	 try {
 		session.removeAttribute("PATH_VENDA");
-		validarDataDeGeracao(dataLctoPrevisto);
+		//validarDataDeGeracao(dataLctoPrevisto);
 
 		int qtdArquivosGerados = 0;
 		

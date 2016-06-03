@@ -781,7 +781,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		BigInteger qtdPrevistaExistente = chamadaEncalheCota.getQtdePrevista() != null ? chamadaEncalheCota.getQtdePrevista() : BigInteger.ZERO;
 		
 		if (! qtdPrevistaExistente.equals(BigInteger.ZERO)) {
-			LOGGER.error("ATENCAO.INCREMENTANDO QUANTIDADE PREVISTA NA CHAMADA ENCALHE COTA ..COTA.id="+cota.getId() +
+			LOGGER.warn("ATENCAO.INCREMENTANDO QUANTIDADE PREVISTA NA CHAMADA ENCALHE COTA ..COTA.id="+cota.getId() +
 					" chamada encalhe id ="+chamadaEncalhe.getId() +"  QTDE PREVISTA EXISTENTE="+qtdPrevistaExistente +
 					" QTDE PREVISTA A ADICIONAR="+qtdPrevista.intValue());
 		}
