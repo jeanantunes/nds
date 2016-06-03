@@ -65,6 +65,7 @@ import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ChamadaEncalheCotaService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.LancamentoService;
@@ -188,6 +189,9 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Autowired
 	private ConferenciaEncalheSessionScopeAttr conferenciaEncalheSessionScopeAttr;
+	
+	@Autowired
+	private CotaService cotaService;
 	
 	private void preCarregarBoxes() {
 		
@@ -456,10 +460,16 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			} else {
 				
-				this.result.use(CustomMapJson.class)
-				.put("IND_COTA_RECOLHE_NA_DATA", "N").put("msg",
-                        "Cota não possui recolhimento planejado para a data de operação atual.")
-                        .serialize();
+				if(cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacao)){
+					this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "N").put("msg",
+							"Cota com Operação Diferenciada, nenhum recolhimento para a data de operação atual.")
+					.serialize();
+				}else{
+					this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "N").put("msg",
+							"Cota não possui recolhimento planejado para a data de operação atual.")
+					.serialize();
+				}
+				
 				
 				bloqueioConferenciaEncalheComponent.removerTravaConferenciaCotaUsuario(this.session);
 			
