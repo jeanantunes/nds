@@ -1530,7 +1530,16 @@ public class NFeServiceImpl implements NFeService {
 					notaReferenciada.setNotaFiscalReferenciadaNFE(notaFiscalReferenciadaNFE);
 					
 					if(notaFiscalDTO.getChaveAcesso() == null || notaFiscalDTO.getChaveAcesso().isEmpty()) {
-						throw new ValidacaoException(TipoMensagem.ERROR, String.format("Não é possível gerar NF-e não contem chave de acesso para nota: %s e serie: %s produtos(%s)", notaFiscalDTO.getNumero(), notaFiscalDTO.getSerie(),produtos.toString()));
+						String notasSemChave = this.obterNotasSemChave(notaFiscais, tipoDestinatario);
+						if ( notasSemChave == null || notasSemChave.length() == 0 ) {
+							throw new ValidacaoException(TipoMensagem.ERROR, String.format("Não é possível gerar NF-e não contem chave de acesso para nota: %s e serie: %s produtos(%s)", notaFiscalDTO.getNumero(), notaFiscalDTO.getSerie(),produtos.toString()));
+						}
+						else {
+							throw new ValidacaoException(TipoMensagem.ERROR, 
+									String.format("Não é possível gerar NF-e.As seguintes notas não contem chave de acesso </br>%s", notasSemChave));
+						}
+						
+							
 					}
 					
 					notaReferenciada.setChaveAcessoCTe(notaFiscalDTO.getChaveAcesso());
@@ -1566,6 +1575,38 @@ public class NFeServiceImpl implements NFeService {
 
 		}
 		
+	}
+	
+	
+	private String obterNotasSemChave(List<NotaFiscal> notaFiscais, TipoDestinatario tipoDestinatario) {
+		
+	
+		StringBuffer notasSemChave = new StringBuffer("");
+		for (NotaFiscal notaFiscal : notaFiscais) {
+	
+			List<Long> produtoEdicoesIds = new ArrayList<>();
+ 			
+			StringBuffer produtos=new StringBuffer("");
+			for (DetalheNotaFiscal detalhe : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
+				produtoEdicoesIds.add(detalhe.getProdutoServico().getProdutoEdicao().getId());
+				produtos.append(detalhe.getProdutoServico().getProdutoEdicao().getProduto().getCodigo()+"-"+detalhe.getProdutoServico().getProdutoEdicao().getNumeroEdicao()+" ");
+			}
+			
+			Cota cota = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota();
+			List<NotaFiscalDTO> notaFiscalDTOs = this.notaFiscalRepository.obterNotasPelosItensNotas(produtoEdicoesIds, tipoDestinatario, cota);				
+
+			if(notaFiscalDTOs != null ) {
+				for (NotaFiscalDTO notaFiscalDTO : notaFiscalDTOs) {
+					
+						if(notaFiscalDTO.getChaveAcesso() == null || notaFiscalDTO.getChaveAcesso().isEmpty()) {
+						notasSemChave.append(String.format("Nota:%s Serie:%s Produtos:%s </br>",notaFiscalDTO.getNumero(), notaFiscalDTO.getSerie(), produtos.toString()));		
+					}
+				}
+				
+			}
+			
+		}
+		return notasSemChave.toString();
 	}
 	
 	private static void montaChaveAcesso(NotaFiscal notaFiscal) {
