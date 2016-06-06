@@ -137,7 +137,7 @@ public class ItemNotaFiscalBuilder  {
 			}
 			
 			produtoServico = new ProdutoServico();
-			produtoServico.setCodigoBarras(codigoBarras);
+			produtoServico.setCodigoBarras("");
 			produtoServico.setNcm(movimentoEstoque.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getCodigo());
 			produtoServico.setUnidade(movimentoEstoque.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
 			produtoServico.setCodigoProduto(movimentoEstoque.getProdutoEdicao().getProduto().getCodigo());
@@ -602,7 +602,7 @@ public class ItemNotaFiscalBuilder  {
 			}
 			
 			produtoServico = new ProdutoServico();
-			produtoServico.setCodigoBarras(codigoBarras);
+			produtoServico.setCodigoBarras("");
 			produtoServico.setNcm(movimentoFechamentoFiscal.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getCodigo());
 			produtoServico.setUnidade(movimentoFechamentoFiscal.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
 			produtoServico.setCodigoProduto(movimentoFechamentoFiscal.getProdutoEdicao().getProduto().getCodigo());
@@ -631,7 +631,7 @@ public class ItemNotaFiscalBuilder  {
 			if(!movimentoFechamentoFiscal.getProdutoEdicao().getOrigem().equals(Origem.INTERFACE)) {
 				valorDesconto = movimentoFechamentoFiscal.getProdutoEdicao().getDesconto();
 			} else {
-				valorDesconto = ((MovimentoFechamentoFiscalFornecedor) movimentoFechamentoFiscal).getValoresAplicados().getValorDesconto();
+				valorDesconto = movimentoFechamentoFiscal.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto();
 			}
 			
 			precoComDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100))));			
