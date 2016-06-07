@@ -114,8 +114,12 @@ public class GeradorBoleto {
         //CARTEIRA DA CONTA BANCARIA  
         Carteira carteira = new Carteira(corpoBoleto.getContaCarteira());
         //TIPO DE COBRANCA DA CARTEIRA DA CONTA BANCARIA 
-       
-        carteira.setTipoCobranca(TipoDeCobranca.SEM_REGISTRO); 
+        
+        if(corpoBoleto.getContaTipoDeCobranca().equals(TipoDeCobranca.SEM_REGISTRO.name())) {        	
+        	carteira.setTipoCobranca(TipoDeCobranca.SEM_REGISTRO); 
+        } else {
+        	carteira.setTipoCobranca(TipoDeCobranca.COM_REGISTRO); 
+        }
         contaBancaria.setCarteira(carteira);
         
         //TITULO
@@ -180,9 +184,9 @@ public class GeradorBoleto {
 	        boleto.addTextosExtras("txtFcValorCobrado"," ");
 	        boleto.addTextosExtras("txtFcValorDocumento"," ");
         }
-
+        
         return boleto;
-
+        
 	}
 	
 	
