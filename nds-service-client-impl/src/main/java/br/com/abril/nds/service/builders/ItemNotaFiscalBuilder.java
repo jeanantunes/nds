@@ -137,7 +137,7 @@ public class ItemNotaFiscalBuilder  {
 			}
 			
 			produtoServico = new ProdutoServico();
-			produtoServico.setCodigoBarras("");
+			produtoServico.setCodigoBarras(codigoBarras);
 			produtoServico.setNcm(movimentoEstoque.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getCodigo());
 			produtoServico.setUnidade(movimentoEstoque.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
 			produtoServico.setCodigoProduto(movimentoEstoque.getProdutoEdicao().getProduto().getCodigo());
@@ -602,7 +602,7 @@ public class ItemNotaFiscalBuilder  {
 			}
 			
 			produtoServico = new ProdutoServico();
-			produtoServico.setCodigoBarras("");
+			produtoServico.setCodigoBarras(codigoBarras);
 			produtoServico.setNcm(movimentoFechamentoFiscal.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getCodigo());
 			produtoServico.setUnidade(movimentoFechamentoFiscal.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
 			produtoServico.setCodigoProduto(movimentoFechamentoFiscal.getProdutoEdicao().getProduto().getCodigo());
