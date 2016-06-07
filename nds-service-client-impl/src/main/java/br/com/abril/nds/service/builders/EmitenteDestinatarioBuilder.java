@@ -21,6 +21,7 @@ import br.com.abril.nds.model.fiscal.nota.DocumentoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.LocalDestinoOperacao;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.OperacaoConsumidorFinal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoAmbiente;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoaFisica;
@@ -247,6 +248,9 @@ public class EmitenteDestinatarioBuilder {
 			
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setIndicadorDestinatario(1);
 			
+			//FIXME: Ajustar para variavel parametrizada
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setOperacaoConsumidorFinal(OperacaoConsumidorFinal.NAO);
+			
 		} else if (pessoa instanceof PessoaFisica) {			
 			PessoaFisica pessoaFisica = (PessoaFisica) pessoa;
 			
@@ -264,6 +268,9 @@ public class EmitenteDestinatarioBuilder {
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setEmail(pessoaFisica.getEmail());
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setIdPessoaOriginal(pessoaFisica.getId());
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setIndicadorDestinatario(9);
+			
+			//FIXME: Ajustar para variavel parametrizada
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setOperacaoConsumidorFinal(OperacaoConsumidorFinal.CONSUMIDOR_FINAL);
 		} else {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de destinatário não identificado.");
 		}
