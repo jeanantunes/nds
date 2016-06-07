@@ -30,6 +30,8 @@ import org.jrimum.domkee.financeiro.banco.hsbc.TipoIdentificadorCNR;
 
 public class GeradorBoleto {
 	
+	private static final String CAIXA_ECONOMICA_FEDERAL = "151";
+	
 	private CorpoBoleto corpoBoleto;
 	
 	private List<CorpoBoleto> corpoBoletos;
@@ -106,34 +108,49 @@ public class GeradorBoleto {
         	throw new ValidationException("Número do banco não encontrado: "+corpoBoleto.getContaNumeroBanco() +". favor contatar a área de sistemas. - Tabela Cobrança BANCO_ID");
         	
         ContaBancaria contaBancaria = new ContaBancaria(bancoByNumero.create());
-        contaBancaria.setAgencia(new Agencia(corpoBoleto.getContaAgencia(), corpoBoleto.getDigitoAgencia()));
+        contaBancaria.setAgencia(new Agencia(corpoBoleto.getContaAgencia()));
         contaBancaria.setNumeroDaConta(new NumeroDaConta(Integer.valueOf(corpoBoleto.getCodigoCedente()), corpoBoleto.getDigitoCodigoCedente()));
         
         //CARTEIRA DA CONTA BANCARIA  
         Carteira carteira = new Carteira(corpoBoleto.getContaCarteira());
-        //TIPO DE COBRANCA DA CARTEIRA DA CONTA BANCARIA  
-        carteira.setTipoCobranca(TipoDeCobranca.valueOf(corpoBoleto.getContaTipoDeCobranca())); 
+        //TIPO DE COBRANCA DA CARTEIRA DA CONTA BANCARIA 
+       
+        carteira.setTipoCobranca(TipoDeCobranca.SEM_REGISTRO); 
         contaBancaria.setCarteira(carteira);
         
         //TITULO
         Titulo titulo;
+        
         if (sacadorAvalista != null) {
             titulo = new Titulo(contaBancaria, sacado, cedente, sacadorAvalista);
         } else {
         	titulo = new Titulo(contaBancaria, sacado, cedente);
         }
+        
         //PARAMETROS BANCARIOS DO TITULO
         ParametrosBancariosMap parametrosBancarios = new ParametrosBancariosMap();
         parametrosBancarios.adicione(TipoIdentificadorCNR.class.getName(), TipoIdentificadorCNR.valueOf(corpoBoleto.getTituloTipoIdentificadorCNR()));
         titulo.setParametrosBancarios(parametrosBancarios);
-        titulo.setNumeroDoDocumento(corpoBoleto.getTituloNumeroDoDocumento());
+        
+        if(corpoBoleto.getContaNumeroBanco().equals(CAIXA_ECONOMICA_FEDERAL)){
+        	titulo.setNumeroDoDocumento(corpoBoleto.getTituloNossoNumero().substring(8, 17));
+        } else {
+        	titulo.setNumeroDoDocumento(corpoBoleto.getTituloNossoNumero());
+        }
+        
         titulo.setNossoNumero(corpoBoleto.getTituloNossoNumero());
         titulo.setDigitoDoNossoNumero(corpoBoleto.getTituloDigitoDoNossoNumero());
         titulo.setValor(corpoBoleto.getTituloValor());
         titulo.setDataDoDocumento(corpoBoleto.getTituloDataDoDocumento());
         titulo.setDataDoVencimento(corpoBoleto.getTituloDataDoVencimento());
         titulo.setTipoDeDocumento(TipoDeTitulo.valueOf(corpoBoleto.getTituloTipoDeDocumento()));
-        titulo.setAceite(EnumAceite.A);
+                
+        if(corpoBoleto.getTituloAceite().equals(EnumAceite.A)) {
+        	titulo.setAceite(EnumAceite.A);
+        } else {
+        	titulo.setAceite(EnumAceite.N);
+        }
+        
         titulo.setDesconto(corpoBoleto.getTituloDesconto());
         titulo.setDeducao(corpoBoleto.getTituloDeducao());
         titulo.setMora(corpoBoleto.getTituloMora());
