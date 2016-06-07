@@ -22,6 +22,7 @@ import java.util.TreeSet;
 
 import javax.xml.bind.ValidationException;
 
+import org.jrimum.domkee.financeiro.banco.febraban.Titulo.EnumAceite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1793,10 +1794,7 @@ public class BoletoServiceImpl implements BoletoService {
         	} else {
         		
         		corpoBoleto.setContaTipoDeCobranca(FormaCobrancaBoleto.COM_REGISTRO.name());
-        	}
-        	
-        	
-        	
+        	}  	
         }
         
         corpoBoleto.setContaAgencia(banco.getAgencia().intValue());
@@ -1806,14 +1804,24 @@ public class BoletoServiceImpl implements BoletoService {
         
         
         //INFORMACOES DO TITULO
-        corpoBoleto.setTituloNumeroDoDocumento(nossoNumero);
+        corpoBoleto.setTituloNumeroDoDocumento("9125253");
         corpoBoleto.setTituloNossoNumero(nossoNumero);
         
         
         //PARAMETROS ?
         corpoBoleto.setTituloDigitoDoNossoNumero(digitoNossoNumero);
         corpoBoleto.setTituloTipoDeDocumento("DM_DUPLICATA_MERCANTIL");
-        corpoBoleto.setTituloAceite("A");
+        if(corpoBoleto.getTituloAceite() == null) {
+        	corpoBoleto.setTituloAceite("N");
+        } else {
+        	if(corpoBoleto.getTituloAceite().equals(EnumAceite.A)) {
+        		corpoBoleto.setTituloAceite("A");
+        	} else {
+        		corpoBoleto.setTituloAceite("N");
+        	}
+        	
+        }
+        
         corpoBoleto.setTituloTipoIdentificadorCNR("COM_VENCIMENTO");
         
         corpoBoleto.setTituloValor(valorDocumento.setScale(2, RoundingMode.HALF_EVEN));

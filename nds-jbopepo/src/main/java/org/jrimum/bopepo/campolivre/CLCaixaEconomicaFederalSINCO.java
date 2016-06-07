@@ -29,10 +29,13 @@
 
 package org.jrimum.bopepo.campolivre;
 
+import static org.jrimum.vallia.digitoverificador.Modulo.MOD11;
+
 import org.jrimum.domkee.financeiro.banco.febraban.ContaBancaria;
 import org.jrimum.domkee.financeiro.banco.febraban.Titulo;
 import org.jrimum.utilix.text.Field;
 import org.jrimum.utilix.text.Filler;
+import org.jrimum.vallia.digitoverificador.Modulo;
 
 /**
  * <p>
@@ -85,10 +88,25 @@ class CLCaixaEconomicaFederalSINCO extends AbstractCLCaixaEconomicaFederal {
 	private static final long serialVersionUID = -7642075752245778160L;
 	
 	/**
+	 * Constante que indica emissão de boleto pelo cedente. 
+	 */
+	private static final int EMISSAO_CEDENTE = 4;
+	
+	/**
 	 * Quantidade de campos. Tamanho da lista de campos.
 	 */
-	private static final Integer FIELDS_LENGTH = 4;
-
+	private static final Integer FIELDS_LENGTH = 8;
+	
+	/**
+	 * Modalidade de cobrança.
+	 */
+	private static final int COBRANCA_REGISTRADA = 1;
+	
+	/**
+	 * Modalidade de cobrança.
+	 */
+	private static final int COBRANCA_NAO_REGISTRADA = 2;
+	
 	/**
 	 * <p>
 	 * Dado um título, cria um campo livre para o padrão do Banco Caixa Econômica
@@ -98,17 +116,100 @@ class CLCaixaEconomicaFederalSINCO extends AbstractCLCaixaEconomicaFederal {
 	 */
 	CLCaixaEconomicaFederalSINCO(Titulo titulo) {
 		super(FIELDS_LENGTH);
-		
+
 		ContaBancaria conta = titulo.getContaBancaria();
-		
 		String nossoNumero = titulo.getNossoNumero();
-		
-		this.add(new Field<Integer>(1, 1));
-		
+
+		Integer dVCodigoDoCedente = calculeDigitoVerificador(conta.getNumeroDaConta().getCodigoDaConta().toString());
+
 		this.add(new Field<Integer>(conta.getNumeroDaConta().getCodigoDaConta(), 6, Filler.ZERO_LEFT));
+		this.add(new Field<Integer>(dVCodigoDoCedente, 1));
+		this.add(new Field<String>(nossoNumero.substring(2, 5), 3));
 		
-		this.add(new Field<Integer>(9, 1));
-		this.add(new Field<String>(nossoNumero, 17));
+		if(conta.getCarteira().isComRegistro()){
+			
+			this.add(new Field<Integer>(COBRANCA_REGISTRADA, 1));
+			
+		}else{
+			
+			this.add(new Field<Integer>(COBRANCA_NAO_REGISTRADA, 1));
+		}
+
+		this.add(new Field<String>(nossoNumero.substring(3, 6), 3));
+		this.add(new Field<Integer>(EMISSAO_CEDENTE, 1));
+		this.add(new Field<String>(nossoNumero.substring(8, 17), 9));
+
+		this.add(new Field<Integer>(calculeDigitoVerificador(gereCampoLivre()), 1));
+	}
+	
+	/**
+	 * <p>
+	 * Este dígito é calculado através do Módulo 11 com os pesos 2 e 9.
+	 * </p>
+	 * 
+	 * @param numeroParaCalculo
+	 * @return digito
+	 * 
+	 * @since 0.2
+	 */
+	private int calculeDigitoVerificador(String numeroParaCalculo) {
+		
+		int soma = Modulo.calculeSomaSequencialMod11(numeroParaCalculo.toString(), 2, 9);
+
+		int dvCampoLivre;
+		
+		if (soma < MOD11) {
+			
+			dvCampoLivre = MOD11 - soma;
+			
+		} else {
+		
+			int restoDiv11 = soma % MOD11;
+			
+			int subResto = MOD11 - restoDiv11;
+			
+			if (subResto > 9) {
+			
+				dvCampoLivre = 0;
+			
+			} else {
+				
+				dvCampoLivre = subResto;
+			}
+		}
+		
+		return dvCampoLivre;
+	}
+	
+	
+	/**
+	 * <p>
+	 * Gera o número que serve para calcular o digito verificador do campoLivre, que é todo o campo livre menos o dígito verificador.
+	 * </p>
+	 * <p>
+	 * Os campos utilizados são:
+	 * <ul>
+	 * <li>Código do Cedente: 06 posições</li>
+	 * <li>Dígito Verificador do Código do Cedente: 01 posição</li>
+	 * <li>Nosso Número – Seqüência 1: 03 posições</li>
+	 * <li>Constante 1: 01 posição</li>
+	 * <li>Nosso Número – Seqüência 2: 03 posições</li>
+	 * <li>Constante 2: 01 posição</li>
+	 * <li>Nosso Número – Seqüência 3: 09 posições</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param titulo
+	 *            - Título com os dados para geração do campo livre.
+	 * @param dVCodigoDoCedente
+	 *            - Dígito verificador do código do cedente.
+	 * @return String com os dígitos que compõem o campo livro, exceto o dígito verificador.
+	 * 
+	 * @since 0.2
+	 */
+	private String gereCampoLivre() {
+
+		return writeFields();
 	}
 	
 	@Override
