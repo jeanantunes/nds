@@ -20,6 +20,7 @@ import br.com.abril.nds.model.fiscal.nota.CPFDestinatario;
 import br.com.abril.nds.model.fiscal.nota.DocumentoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.LocalDestinoOperacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoAmbiente;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoaFisica;
@@ -74,7 +75,17 @@ public class EmitenteDestinatarioBuilder {
 		//FIXME: Ajustar os campos codigo e nome do pais
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoPais(1058);
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setPais("Brasil");
-
+		
+		String UFEmitente = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getUf();
+		
+	    String UFDestinatario = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().getUf();
+				
+		if(UFEmitente.equals(UFDestinatario)) {
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERNA);
+		} else {
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERESTADUAL);
+		}
+		
 		for (TelefoneCota telefone : cota.getEnderecoPrincipal().getCota().getTelefones()) {
 			
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setDDD(telefone.getTelefone().getDdd());
@@ -109,7 +120,17 @@ public class EmitenteDestinatarioBuilder {
 		//FIXME: Ajustar os campos codigo e nome do pais
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoPais(1058);
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setPais("Brasil");
-
+		
+		String UFEmitente = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getUf();
+		
+	    String UFDestinatario = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().getUf();
+				
+		if(UFEmitente.equals(UFDestinatario)) {
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERNA);
+		} else {
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERESTADUAL);
+		}
+		
 		for (TelefoneFornecedor telefone : fornecedor.getTelefones()) {
 			
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setNumero(telefone.getTelefone().getNumero());
