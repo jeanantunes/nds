@@ -243,9 +243,6 @@ public class NotaFiscalBuilder implements Serializable {
 		}
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setOperacaoConsumidorFinal(OperacaoConsumidorFinal.NAO);
-		
-		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setPresencaConsumidor(PresencaConsumidor.NAO_SE_APLICA);
 		
 		//FIXME: Ajustar para variavel parametrizada
@@ -294,9 +291,6 @@ public class NotaFiscalBuilder implements Serializable {
 		
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe.NORMAL);
-		
-		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setOperacaoConsumidorFinal(OperacaoConsumidorFinal.NAO);
 		
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setPresencaConsumidor(PresencaConsumidor.NAO_SE_APLICA);
