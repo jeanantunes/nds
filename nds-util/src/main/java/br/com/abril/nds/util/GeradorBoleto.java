@@ -30,7 +30,7 @@ import org.jrimum.domkee.financeiro.banco.hsbc.TipoIdentificadorCNR;
 
 public class GeradorBoleto {
 	
-	private static final String CAIXA_ECONOMICA_FEDERAL = "151";
+	private static final String CAIXA_ECONOMICA_FEDERAL = "104";
 	
 	private CorpoBoleto corpoBoleto;
 	
