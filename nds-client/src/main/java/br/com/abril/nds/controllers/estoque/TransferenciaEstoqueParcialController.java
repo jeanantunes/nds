@@ -40,9 +40,17 @@ public class TransferenciaEstoqueParcialController extends BaseController {
 	}
 	
 	@Post
+	public void validarLancamento(String codigoProduto, Long numeroEdicao) {
+		
+		this.transferenciaEstoqueParcialService.temLancamentoOrigemBalanceado(codigoProduto, numeroEdicao);
+		this.result.use(Results.json()).withoutRoot().from(0).serialize();
+			
+	}
+	
+	@Post
 	public void transferir(String codigoProduto, Long numeroEdicaoOrigem, Long numeroEdicaoDestino) {
 		
-		this.transferenciaEstoqueParcialService.transferir(codigoProduto, numeroEdicaoOrigem, numeroEdicaoDestino, super.getUsuarioLogado().getId());
+			this.transferenciaEstoqueParcialService.transferir(codigoProduto, numeroEdicaoOrigem, numeroEdicaoDestino, super.getUsuarioLogado().getId());
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Transferência efetuada com sucesso."), "result").recursive().serialize();
 	}

@@ -631,7 +631,7 @@ public class ItemNotaFiscalBuilder  {
 			if(!movimentoFechamentoFiscal.getProdutoEdicao().getOrigem().equals(Origem.INTERFACE)) {
 				valorDesconto = movimentoFechamentoFiscal.getProdutoEdicao().getDesconto();
 			} else {
-				valorDesconto = ((MovimentoFechamentoFiscalFornecedor) movimentoFechamentoFiscal).getValoresAplicados().getValorDesconto();
+				valorDesconto = movimentoFechamentoFiscal.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto();
 			}
 			
 			precoComDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100))));			

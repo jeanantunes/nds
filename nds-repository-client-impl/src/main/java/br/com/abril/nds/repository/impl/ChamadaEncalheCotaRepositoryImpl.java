@@ -302,7 +302,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		hql.append(" and ce.produto_edicao_id = :idProdutoEdicao ");
 		
-		hql.append(" and ce.data_recolhimento >= :dataOperacao ");
+		hql.append(" and ce.data_recolhimento >= date_add(:dataOperacao , interval -7 DAY) ");
 
 		SQLQuery query = getSession().createSQLQuery(hql.toString());
 		
@@ -330,7 +330,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		hql.append(" where ce.tipo_chamada_encalhe =:tipoChamadaEncalhe ");
 		
-		hql.append(" and ce.data_recolhimento >= :dataOperacao ");
+		hql.append(" and ce.data_recolhimento >= date_add(:dataOperacao , interval -7 DAY) ");
 		
 		hql.append("  group by cec.cota_id ");
 
