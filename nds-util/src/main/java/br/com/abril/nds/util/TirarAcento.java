@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class TirarAcento {
 
-    private static Map<Character, Character> mapCharSubstituir = new HashMap();
+    private static Map<Character, Character> mapCharSubstituir = new HashMap<Character, Character>();
 
     static {
         mapCharSubstituir.put('á', 'a');
