@@ -2239,7 +2239,8 @@ public class CotaServiceImpl implements CotaService {
             else{
                 // Verifica se é edicao da cota
                 if(!cota.getId().equals(idCota)){
-                    throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota não pode ser utilizado.");
+                    throw new ValidacaoException(TipoMensagem.WARNING, 
+                    		"Número da cota("+numeroCota+") não pode ser utilizado, pois ja existe no sistema("+cota.getNumeroCota()+") e não esta INATIVO.");
                 }
             }
             
