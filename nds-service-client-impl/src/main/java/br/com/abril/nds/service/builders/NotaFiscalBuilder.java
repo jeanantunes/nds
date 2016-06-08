@@ -299,9 +299,6 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setVersaoSistemaEmissao(parametrosSistema.get("NFE_INFORMACOES_VERSAO_EMISSOR").getValor());
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERNA);
-		
-		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFormatoImpressao(FormatoImpressao.valueOf(parametrosSistema.get("NFE_INFORMACOES_FORMATO_IMPRESSAO").getValor()));
 		
 		//FIXME: Ajustar para variavel parametrizada

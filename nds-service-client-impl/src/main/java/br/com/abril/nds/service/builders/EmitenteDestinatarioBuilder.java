@@ -77,11 +77,11 @@ public class EmitenteDestinatarioBuilder {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoPais(1058);
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setPais("Brasil");
 		
-		String UFEmitente = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getUf();
+		String ufEmitente = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getUf();
 		
-	    String UFDestinatario = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().getUf();
+	    String ufDestinatario = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().getUf();
 				
-		if(UFEmitente.equals(UFDestinatario)) {
+		if(ufEmitente.equals(ufDestinatario)) {
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERNA);
 		} else {
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERESTADUAL);
