@@ -115,7 +115,6 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.EmailService;
-import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
@@ -134,6 +133,7 @@ import br.com.abril.nds.util.GeradorBoleto;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.NomeBanco;
 import br.com.abril.nds.util.TipoBaixaCobranca;
+import br.com.abril.nds.util.TirarAcento;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro00;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro01;
@@ -152,6 +152,10 @@ import br.com.abril.nds.vo.ValidacaoVO;
 public class BoletoServiceImpl implements BoletoService {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(BoletoServiceImpl.class);
+    
+    private static final String CODIGO_INSCRICAO_FISICA = "01";
+    
+    private static final String CODIGO_INSCRICAO_JURIDICA = "02";
     
     @Autowired
     protected EmailService email;
@@ -3058,7 +3062,7 @@ public class BoletoServiceImpl implements BoletoService {
 			throw new ValidationException("Erro ao Formatar a Data Vencimento / Emissão");
 		}
 		
-		registro01.setValorTitulo(String.valueOf(boleto.getValor()));
+		registro01.setValorTitulo(CurrencyUtil.formatarValor(boleto.getValor()).replace(".", ""));
 		registro01.setNumeroBanco(banco.getNumeroBanco());
 		registro01.setAgencia(String.valueOf(banco.getAgencia()));
 		registro01.setFiller4(" ");
@@ -3087,33 +3091,26 @@ public class BoletoServiceImpl implements BoletoService {
 		Endereco enderecoSacado = cota.getEnderecoPrincipal().getEndereco();
 		
 		//DADOS DO SACADO
-        
-		String codigoInscricaoSacado = null;
-		
         String nomeSacado = null;
         
         String documentoSacado = null;
         
         if (pessoaSacado instanceof PessoaFisica) {
-        	codigoInscricaoSacado = "01";
+        	
             nomeSacado = ((PessoaFisica) pessoaSacado).getNome();
             documentoSacado = ((PessoaFisica) pessoaSacado).getCpf();
+        	registro01.setCodigoInscricaoSacado(CODIGO_INSCRICAO_FISICA);
+
         }
         if (pessoaSacado instanceof PessoaJuridica) {
-        	codigoInscricaoSacado = "02";
+        	registro01.setCodigoInscricaoSacado(CODIGO_INSCRICAO_JURIDICA);
             nomeSacado = ((PessoaJuridica) pessoaSacado).getRazaoSocial();
             documentoSacado = ((PessoaJuridica) pessoaSacado).getCnpj();
         }
         
-        
-        registro01.setCodigoInstrucao(codigoInscricaoSacado);
         registro01.setNumeroCNPJCPF(documentoSacado);
-        
-        if(cota.getNumeroCota() != null && cota.getNumeroCota() > 0) {
-        	nomeSacado = cota.getNumeroCota() + " - " + nomeSacado;
-        } 
-        
-        registro01.setNomeSacado(nomeSacado);
+                
+        registro01.setNomeSacado(TirarAcento.removerAcentuacao(nomeSacado));
         
         this.enderecoSacado(registro01, enderecoSacado, nomeSacado);
 	}

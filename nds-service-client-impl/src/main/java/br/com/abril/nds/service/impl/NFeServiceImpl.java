@@ -1099,7 +1099,11 @@ public class NFeServiceImpl implements NFeService {
 			//notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(6L);
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(Long.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(46, 47)));
 			
-			if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getUf().equals("SP")) {
+			String ufEmitente = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getUf();
+			
+		    String ufDestinatario = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().getUf();
+					
+			if(ufEmitente.equals(ufDestinatario)) {
 				notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERNA);
 			} else {
 				notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERESTADUAL);

@@ -30,7 +30,7 @@ import org.jrimum.domkee.financeiro.banco.hsbc.TipoIdentificadorCNR;
 
 public class GeradorBoleto {
 	
-	private static final String CAIXA_ECONOMICA_FEDERAL = "151";
+	private static final String CAIXA_ECONOMICA_FEDERAL = "104";
 	
 	private CorpoBoleto corpoBoleto;
 	
@@ -108,7 +108,7 @@ public class GeradorBoleto {
         	throw new ValidationException("Número do banco não encontrado: "+corpoBoleto.getContaNumeroBanco() +". favor contatar a área de sistemas. - Tabela Cobrança BANCO_ID");
         	
         ContaBancaria contaBancaria = new ContaBancaria(bancoByNumero.create());
-        contaBancaria.setAgencia(new Agencia(corpoBoleto.getContaAgencia()));
+        contaBancaria.setAgencia(new Agencia(corpoBoleto.getContaAgencia(), corpoBoleto.getDigitoAgencia()));
         contaBancaria.setNumeroDaConta(new NumeroDaConta(Integer.valueOf(corpoBoleto.getCodigoCedente()), corpoBoleto.getDigitoCodigoCedente()));
         
         //CARTEIRA DA CONTA BANCARIA  
