@@ -27,6 +27,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -71,9 +72,16 @@ import br.com.abril.nds.repository.RoteiroRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
+import br.com.abril.nds.service.NFeService;
+import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
+import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.vraptor.view.Results;
 
 @Service
 public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
@@ -136,6 +144,12 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
     
     @Autowired
     private EstudoGeradoRepository estudoGeradoRepository;
+    
+    @Autowired
+    private NFeService nfeService;
+    
+    @Autowired
+    private EmailService emailSerice;
     
     // Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
     // O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
@@ -1371,6 +1385,50 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		}
 		
 		return lisItemNotaEnvios;
+		
+	}
+
+	@Override
+	@Transactional
+	public void enviarEmail(FiltroConsultaNotaEnvioDTO filtro) {
+		
+		List<NotaEnvio> notasEnvio = gerarNotasEnvio(filtro);
+    	
+    	byte[] notaDeCadaCota;
+    	Map<Pessoa, List<NotaEnvio>> mapaDeNotas = new HashMap<>();
+		try {
+			//Agrupar a lista de notas por destinatário
+			for (NotaEnvio notaEnvio : notasEnvio) {
+				
+				Pessoa pessoaDestinatarios = notaEnvio.getDestinatario().getPessoaDestinatarioReferencia();
+				if (mapaDeNotas.containsKey(pessoaDestinatarios)) {
+					List<NotaEnvio> listaDeNotas = mapaDeNotas.get(pessoaDestinatarios);
+					listaDeNotas.add(notaEnvio);
+					mapaDeNotas.put(pessoaDestinatarios, listaDeNotas);
+				} else {
+					List<NotaEnvio> listaDeNotaDeCadaCota = new ArrayList<>();
+					listaDeNotaDeCadaCota.add(notaEnvio);
+					mapaDeNotas.put(pessoaDestinatarios, listaDeNotaDeCadaCota);
+				}
+				
+			}
+			
+			//Enviar a lista de notas para cada destinatário achado no laço acima
+			for (Map.Entry<Pessoa, List<NotaEnvio>> entry : mapaDeNotas.entrySet()) {
+				Pessoa destinatario = entry.getKey();
+				
+				List<NotaEnvio> listaDeNotaEnvioDeUmaCota = entry.getValue();
+				notaDeCadaCota = nfeService.obterNEsPDF(listaDeNotaEnvioDeUmaCota, false, filtro.getIntervaloMovimento());
+				String email = destinatario.getEmail();
+				String[] listaDeDestinatarios = {email};
+				
+				AnexoEmail anexoPDF = new AnexoEmail("nota-envio", notaDeCadaCota, TipoAnexo.PDF);
+				emailSerice.enviar("Nota de envio", "Olá, segue em anexo a nota de envio.", listaDeDestinatarios, anexoPDF);
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
     
