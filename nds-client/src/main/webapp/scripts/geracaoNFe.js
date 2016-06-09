@@ -816,7 +816,7 @@ var geracaoNFeController = $.extend({
 				$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect("disable");
 				$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect("hide");
 				$(".emissaoRegimeEspecial").hide();
-				$(".emissaoEditorDestinacaoEncalhe :input[type='checkbox']").attr('checked', true);
+				$(".emissaoEditorDestinacaoEncalhe :input[type='checkbox']").attr('checked', false);
 				$(".emissaoEditorDestinacaoEncalhe").show();
 			}
 			
@@ -850,13 +850,6 @@ var geracaoNFeController = $.extend({
 				$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect("hide");
 				$(".emissaoRegimeEspecial").hide();
 				
-				if($('#geracaoNfe-filtro-naturezaOperacao').val() == '9' || $('#geracaoNfe-filtro-naturezaOperacao').val() == '36' || $('#geracaoNfe-filtro-naturezaOperacao').val() == '13') {
-					$(".emissaoEditorDestinacaoEncalhe").hide();
-					$(".emissaoEditorDestinacaoEncalhe :input[type='checkbox']").attr('checked', false);
-				} else {
-					$(".emissaoEditorDestinacaoEncalhe").show();
-					$(".emissaoEditorDestinacaoEncalhe :input[type='checkbox']").attr('checked', true);
-				}
 			}
 		});
 	},

@@ -36,7 +36,6 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.NaturezaOperacaoService;
-import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Constantes;
@@ -67,9 +66,6 @@ public class GeracaoNFeController extends BaseController {
 	
 	@Autowired 
 	private NFeService nfeService;
-	
-	@Autowired 
-	private NotaFiscalService notaFiscalService;
 	
 	@Autowired
 	private FornecedorService fornecedorService;
