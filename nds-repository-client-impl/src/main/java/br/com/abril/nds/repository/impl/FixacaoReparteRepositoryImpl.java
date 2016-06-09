@@ -19,6 +19,8 @@ import br.com.abril.nds.dto.verificadorFixacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
@@ -236,7 +238,8 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
     
     @Override
     public FixacaoReparte buscarPorProdutoCotaClassificacao(final Cota cota, final String codigoICD, final TipoClassificacaoProduto classificacaoProduto) {
-        
+       
+    try {
         final StringBuilder sql = new StringBuilder();
         
         sql.append(" from ");
@@ -247,6 +250,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
             sql.append(" and f.classificacaoProdutoEdicao = :classificacaoProduto ");
         }
         
+        
         final Query query  = getSession().createQuery(sql.toString());
         query.setParameter("cotaSelecionada",  cota);
         query.setParameter("codigoICD", codigoICD);
@@ -255,6 +259,11 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
         }
         
         return (FixacaoReparte)query.uniqueResult();
+    } catch ( org.hibernate.NonUniqueResultException nu ) {
+    	  throw new ValidacaoException(TipoMensagem.ERROR, "Fixacao reparte duplicado para cota="+cota.getNumeroCota() +
+    			     " e CODIGO_ICD="+codigoICD);
+    	
+    }
     }
     
     @Override
