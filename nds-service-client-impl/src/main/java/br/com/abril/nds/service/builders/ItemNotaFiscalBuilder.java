@@ -472,7 +472,7 @@ public class ItemNotaFiscalBuilder  {
 					.append(" / ")
 					.append(produtoServico.getProdutoEdicao().getNumeroEdicao());
 			
-			LOGGER.error(sb.toString() );
+			LOGGER.warn(sb.toString() );
 			// throw new ValidacaoException(TipoMensagem.ERROR, sb.toString());
 		}
 		
@@ -628,9 +628,11 @@ public class ItemNotaFiscalBuilder  {
 			BigDecimal precoVenda = movimentoFechamentoFiscal.getProdutoEdicao().getPrecoVenda();
 			BigDecimal precoComDesconto = BigDecimal.ZERO;
 			
-			if(movimentoFechamentoFiscal.getProdutoEdicao().getOrigem().equals(Origem.MANUAL)) {
+			if(!movimentoFechamentoFiscal.getProdutoEdicao().getOrigem().equals(Origem.INTERFACE)) {
 				valorDesconto = movimentoFechamentoFiscal.getProdutoEdicao().getDesconto();
-			} 
+			} else {
+				valorDesconto = movimentoFechamentoFiscal.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto();
+			}
 			
 			precoComDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100))));			
 			valorUnitario = precoComDesconto;

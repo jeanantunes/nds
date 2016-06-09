@@ -63,6 +63,7 @@ import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoEmitente;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.LocalDestinoOperacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoAmbiente;
 import br.com.abril.nds.model.fiscal.nota.InfAdicWrapper;
@@ -1090,13 +1091,23 @@ public class NFeServiceImpl implements NFeService {
 			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, parametrosSistema, naturezaOperacao);
 			
 			EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, cota);
-			
+				
 			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 			
 			montaChaveAcesso(notaFiscal);
 			
 			//notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(6L);
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(Long.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(46, 47)));
+			
+			String ufEmitente = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getUf();
+			
+		    String ufDestinatario = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().getUf();
+					
+			if(ufEmitente.equals(ufDestinatario)) {
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERNA);
+			} else {
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERESTADUAL);
+			}
 			
 			if(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica() == null) {
 				notaFiscal.getNotaFiscalInformacoes().setInformacaoEletronica(new InformacaoEletronica());
@@ -1513,8 +1524,10 @@ public class NFeServiceImpl implements NFeService {
 			
 			List<Long> produtoEdicoesIds = new ArrayList<>();
  			
+			StringBuffer produtos=new StringBuffer("");
 			for (DetalheNotaFiscal detalhe : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
 				produtoEdicoesIds.add(detalhe.getProdutoServico().getProdutoEdicao().getId());
+				produtos.append(detalhe.getProdutoServico().getProdutoEdicao().getProduto().getCodigo()+"-"+detalhe.getProdutoServico().getProdutoEdicao().getNumeroEdicao()+" ");
 			}
 			
 			Cota cota = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota();
@@ -1528,7 +1541,16 @@ public class NFeServiceImpl implements NFeService {
 					notaReferenciada.setNotaFiscalReferenciadaNFE(notaFiscalReferenciadaNFE);
 					
 					if(notaFiscalDTO.getChaveAcesso() == null || notaFiscalDTO.getChaveAcesso().isEmpty()) {
-						throw new ValidacaoException(TipoMensagem.ERROR, String.format("Não é possível gerar NF-e não contem chave de acesso para nota: %s e serie: %s", notaFiscalDTO.getNumero(), notaFiscalDTO.getSerie()));
+						String notasSemChave = this.obterNotasSemChave(notaFiscais, tipoDestinatario);
+						if ( notasSemChave == null || notasSemChave.length() == 0 ) {
+							throw new ValidacaoException(TipoMensagem.ERROR, String.format("Não é possível gerar NF-e não contem chave de acesso para nota: %s e serie: %s produtos(%s)", notaFiscalDTO.getNumero(), notaFiscalDTO.getSerie(),produtos.toString()));
+						}
+						else {
+							throw new ValidacaoException(TipoMensagem.ERROR, 
+									String.format("Não é possível gerar NF-e.As seguintes notas não contem chave de acesso </br>%s", notasSemChave));
+						}
+						
+							
 					}
 					
 					notaReferenciada.setChaveAcessoCTe(notaFiscalDTO.getChaveAcesso());
@@ -1564,6 +1586,38 @@ public class NFeServiceImpl implements NFeService {
 
 		}
 		
+	}
+	
+	
+	private String obterNotasSemChave(List<NotaFiscal> notaFiscais, TipoDestinatario tipoDestinatario) {
+		
+	
+		StringBuffer notasSemChave = new StringBuffer("");
+		for (NotaFiscal notaFiscal : notaFiscais) {
+	
+			List<Long> produtoEdicoesIds = new ArrayList<>();
+ 			
+			StringBuffer produtos=new StringBuffer("");
+			for (DetalheNotaFiscal detalhe : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
+				produtoEdicoesIds.add(detalhe.getProdutoServico().getProdutoEdicao().getId());
+				produtos.append(detalhe.getProdutoServico().getProdutoEdicao().getProduto().getCodigo()+"-"+detalhe.getProdutoServico().getProdutoEdicao().getNumeroEdicao()+" ");
+			}
+			
+			Cota cota = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota();
+			List<NotaFiscalDTO> notaFiscalDTOs = this.notaFiscalRepository.obterNotasPelosItensNotas(produtoEdicoesIds, tipoDestinatario, cota);				
+
+			if(notaFiscalDTOs != null ) {
+				for (NotaFiscalDTO notaFiscalDTO : notaFiscalDTOs) {
+					
+						if(notaFiscalDTO.getChaveAcesso() == null || notaFiscalDTO.getChaveAcesso().isEmpty()) {
+						notasSemChave.append(String.format("Nota:%s Serie:%s Produtos:%s </br>",notaFiscalDTO.getNumero(), notaFiscalDTO.getSerie(), produtos.toString()));		
+					}
+				}
+				
+			}
+			
+		}
+		return notasSemChave.toString();
 	}
 	
 	private static void montaChaveAcesso(NotaFiscal notaFiscal) {

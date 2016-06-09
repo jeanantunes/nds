@@ -185,7 +185,7 @@ public abstract class Util {
             
         case CAIXA_ECONOMICA_FEDERAL:
             // return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
-            return 2  + Util.padLeft(idChamadaEncalheFornecedor.toString(), "0", 16);
+            return 249  + Util.padLeft(idChamadaEncalheFornecedor.toString(), "0", 14);
         case HSBC:
             
             // return Util.padLeft(codSacado + auxData + idMovimentoFinanceiro, "0", 13);
@@ -206,6 +206,10 @@ public abstract class Util {
             
         case UNIBANCO:
             return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+        
+        case CREDCOMIM:
+            
+            return Util.padLeft(idChamadaEncalheFornecedor.toString(), "0", 17);     
             
         default:
             return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
@@ -283,7 +287,7 @@ public abstract class Util {
         case CAIXA_ECONOMICA_FEDERAL:
             //return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
         	 
-        	return carteira  + Util.padLeft(idDivida.toString(), "0", 16);
+        	return 249  + Util.padLeft(idDivida.toString(), "0", 14);
         			
         case HSBC:
             return Util.padLeft(idDivida.toString(), "0", 13);
@@ -296,6 +300,10 @@ public abstract class Util {
             
         case UNIBANCO:
             return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
+        
+        case CREDCOMIM:
+         
+            return Util.padLeft(idDivida.toString(), "0", 17);   
             
         default:
             return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
@@ -314,6 +322,8 @@ public abstract class Util {
     	if(nomeBanco.equals(NomeBanco.BANCO_DO_NORDESTE_DO_BRASIL)) {
     		return String.valueOf(Util.calcularDigito(nossoNumero));
     	} else if(nomeBanco.equals(NomeBanco.CAIXA_ECONOMICA_FEDERAL)) {
+    		return String.valueOf(Util.calcularDigito(nossoNumero));
+    	} else if(nomeBanco.equals(NomeBanco.CREDCOMIM)) {
     		return String.valueOf(Util.calcularDigito(nossoNumero));
     	}
     	

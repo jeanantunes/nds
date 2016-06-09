@@ -160,7 +160,7 @@ public class CobRegEnvTipoRegistro01 extends CobRegBaseDTO {
 	}
 
 	public void setAgenciaCedente(String agenciaCedente) {
-		this.agenciaCedente = agenciaCedente;
+		this.agenciaCedente = StringUtils.leftPad(agenciaCedente, 4, '0');
 	}
 
 	public String getFiller1() {
@@ -176,7 +176,7 @@ public class CobRegEnvTipoRegistro01 extends CobRegBaseDTO {
 	}
 
 	public void setContaCliente(String contaCliente) {
-		this.contaCliente = contaCliente;
+		this.contaCliente = StringUtils.leftPad(contaCliente, 7, '0');
 	}
 
 	public String getDigitoConta() {
@@ -352,7 +352,7 @@ public class CobRegEnvTipoRegistro01 extends CobRegBaseDTO {
 	}
 
 	public void setCodigoInstrucao(String codigoInstrucao) {
-		this.codigoInstrucao = codigoInstrucao;
+		this.codigoInstrucao = StringUtils.leftPad(codigoInstrucao, 4, '0');
 	}
 
 	public String getJurosDia() {
@@ -360,7 +360,7 @@ public class CobRegEnvTipoRegistro01 extends CobRegBaseDTO {
 	}
 
 	public void setJurosDia(String jurosDia) {
-		this.jurosDia = jurosDia;
+		this.jurosDia = StringUtils.leftPad(jurosDia, 13, '0');
 	}
 
 	public String getDataDesconto() {
@@ -392,7 +392,7 @@ public class CobRegEnvTipoRegistro01 extends CobRegBaseDTO {
 	}
 
 	public void setValorAbatimento(String valorAbatimento) {
-		this.valorAbatimento = valorAbatimento;
+		this.valorAbatimento = StringUtils.leftPad(valorAbatimento, 13, '0');
 	}
 
 	public String getCodigoInscricaoSacado() {
@@ -400,7 +400,7 @@ public class CobRegEnvTipoRegistro01 extends CobRegBaseDTO {
 	}
 
 	public void setCodigoInscricaoSacado(String codigoInscricaoSacado) {
-		this.codigoInscricaoSacado = codigoInscricaoSacado;
+		this.codigoInscricaoSacado = StringUtils.leftPad(codigoInscricaoSacado, 2, '0');
 	}
 
 	public String getNumeroCNPJCPF() {
@@ -408,7 +408,7 @@ public class CobRegEnvTipoRegistro01 extends CobRegBaseDTO {
 	}
 
 	public void setNumeroCNPJCPF(String numeroCNPJCPF) {
-		this.numeroCNPJCPF = numeroCNPJCPF;
+		this.numeroCNPJCPF = StringUtils.leftPad(numeroCNPJCPF, 14, '0');
 	}
 
 	public String getNomeSacado() {

@@ -103,7 +103,7 @@ public class CobRegEnvTipoRegistro00 extends CobRegBaseDTO {
 	}
 
 	public void setAgenciaCedente(String agenciaCedente) {
-		this.agenciaCedente = agenciaCedente;
+		this.agenciaCedente = StringUtils.leftPad(agenciaCedente, 4, '0');;
 	}
 
 	public String getFiller() {
@@ -111,7 +111,7 @@ public class CobRegEnvTipoRegistro00 extends CobRegBaseDTO {
 	}
 
 	public void setFiller(String filler) {
-		this.filler = StringUtils.leftPad(filler, 2, '0');;
+		this.filler = StringUtils.leftPad(filler, 2, '0');
 	}
 
 	public String getContaCliente() {
@@ -119,7 +119,7 @@ public class CobRegEnvTipoRegistro00 extends CobRegBaseDTO {
 	}
 
 	public void setContaCliente(String contaCliente) {
-		this.contaCliente = contaCliente;
+		this.contaCliente = StringUtils.leftPad(contaCliente, 7, '0');
 	}
 
 	public String getDigitoConta() {
