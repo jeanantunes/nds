@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
@@ -307,7 +308,7 @@ public class NFeServiceImpl implements NFeService {
 		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
 		parameters.put("IND_EMISSAO_DEPEC", indEmissaoDepec);
 		parameters.put("LOGO_DISTRIBUIDOR", inputStream);
-
+		
 		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
 	
