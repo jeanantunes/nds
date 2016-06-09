@@ -18,5 +18,7 @@ public interface GeracaoNotaEnvioService {
 	public abstract List<NotaEnvio> gerarNotasEnvio(FiltroConsultaNotaEnvioDTO filtro);
 	
 	public abstract void gerarNotaEnvioAtravesNotaFiscal(NotaFiscal notaFiscal);
+	
+	public abstract void enviarEmail(FiltroConsultaNotaEnvioDTO filtro);
 
 }

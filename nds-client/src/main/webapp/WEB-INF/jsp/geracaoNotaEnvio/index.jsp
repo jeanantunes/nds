@@ -21,6 +21,11 @@
 		<div class="area">
 			<div id="geracaoNotaEnvio-fileExport" style="display: none; float:right;">
 				<span class="bt_arq" >
+        			<a id="geracaoNotaEnvio-btnEnviarEmail" isEdicao="true" href="javascript:void(0)" title="Enviar email" >
+        				<img src="${pageContext.request.contextPath}/images/ico_email.png" alt="Enviar email" hspace="5" border="0" />
+        			</a>
+        		</span>
+				<span class="bt_arq" >
 					<a id="geracaoNotaEnvio-btnImprimirXLS" href="javascript:;" title="Gerar Arquivo">
 						<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 					</a>
