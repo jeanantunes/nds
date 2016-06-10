@@ -113,7 +113,9 @@ public abstract class Util {
             final Date dtGeracao,
             final String numeroBanco,
             final Long idFornecedor,
-            final Long idChamadaEncalheFornecedor){
+            final Long idChamadaEncalheFornecedor,
+            final String codigoCedente,
+            final String dvCedente){
         
         long n1;
         final long n2 = 4;
@@ -209,7 +211,7 @@ public abstract class Util {
         
         case CREDCOMIM:
             
-            return Util.padLeft(idChamadaEncalheFornecedor.toString(), "0", 17);     
+            return Util.padLeft(codigoCedente + dvCedente, "0", 8) + Util.padLeft(idChamadaEncalheFornecedor.toString(), "0", 9);     
             
         default:
             return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
@@ -225,7 +227,9 @@ public abstract class Util {
             final Long idDivida,
             final Long agencia,
             final Long contaCorrente,
-            final Integer carteira) {
+            final Integer carteira,
+            final String codigoCedente,
+            final String dvCedente) {
         
         final String codSacado = Util.padLeft(numeroCota.toString(), "0", 5);
         
@@ -303,7 +307,7 @@ public abstract class Util {
         
         case CREDCOMIM:
          
-            return Util.padLeft(idDivida.toString(), "0", 17);   
+            return Util.padLeft(codigoCedente + dvCedente, "0", 8) + Util.padLeft(idDivida.toString(), "0", 9);   
             
         default:
             return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);

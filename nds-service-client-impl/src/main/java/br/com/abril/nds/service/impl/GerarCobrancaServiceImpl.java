@@ -512,7 +512,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					dataOperacao, 
 					banco.getNumeroBanco(), 
 					fornecedor.getId(), 
-					chamadaEncalheFornecedor.getId());
+					chamadaEncalheFornecedor.getId(), 
+					banco.getCodigoCedente(),
+					banco.getDigitoCodigoCedente());
 			
 			boletoDistribuidor = new BoletoDistribuidor();
 			
@@ -1747,7 +1749,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					novaDivida.getId(),
 					banco != null ? banco.getAgencia() : 0,
 					banco != null ? banco.getConta() : 0,
-					banco != null && banco.getCarteira() != null ? banco.getCarteira() : null);
+					banco != null && banco.getCarteira() != null ? banco.getCarteira() : null,
+					banco.getCodigoCedente(), 
+	                banco.getDigitoCodigoCedente());
 			
 			cobranca.setFornecedor(fornecedor);
 			cobranca.setNossoNumero(nossoNumero);

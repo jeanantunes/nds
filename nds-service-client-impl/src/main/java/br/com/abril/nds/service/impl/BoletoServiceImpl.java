@@ -2647,11 +2647,13 @@ public class BoletoServiceImpl implements BoletoService {
         final String nossoNumero = Util.gerarNossoNumero(cota.getNumeroCota(),
                 dataEmissao,
                 banco!=null?banco.getNumeroBanco():"0",
-                        fornecedor != null ? fornecedor.getId() : null,
-                                numeroBancoBoletoAntecipado + bbDTO.getIdBoletoAntecipado(),
-                                banco!=null?banco.getAgencia():0,
-                                        banco!=null?banco.getConta():0,
-                                                banco != null && banco.getCarteira() != null ? banco.getCarteira() : 0);
+                fornecedor != null ? fornecedor.getId() : null,
+                numeroBancoBoletoAntecipado + bbDTO.getIdBoletoAntecipado(),
+                banco!=null?banco.getAgencia():0,
+                banco!=null?banco.getConta():0,
+                banco != null && banco.getCarteira() != null ? banco.getCarteira() : 0,
+                banco.getCodigoCedente(), 
+                banco.getDigitoCodigoCedente());
         
         final String digitoNossoNumero = Util.calcularDigitoVerificador(nossoNumero,
                 banco!=null?banco.getCodigoCedente():"0",
