@@ -252,7 +252,7 @@ abstract class AbstractCampoLivre extends AbstractLineOfFields implements CampoL
 						return AbstractCLCrediComim.create(titulo);		
 					
 					case BANBRB:
-						return AbstractCLCrediComim.create(titulo);		
+						return AbstractCLBancoBRB.create(titulo);		
 						
 					default:
 						/*
