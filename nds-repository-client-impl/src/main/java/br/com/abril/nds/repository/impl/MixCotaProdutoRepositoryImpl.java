@@ -512,13 +512,15 @@ public class MixCotaProdutoRepositoryImpl extends AbstractRepositoryModel<MixCot
 			StringBuilder hql = new StringBuilder();
 			
 			hql.append("select mcp from MixCotaProduto mcp left join mcp.cota left join mcp.tipoClassificacaoProduto ")
-			.append(" where mcp.cota.id = :cotaid and mcp.codigoICD= :codigoICD and mcp.tipoClassificacaoProduto.descricao= :classificacaoProduto");
+			.append(" where mcp.cota.id = :cotaid and mcp.codigoICD= :codigoICD and mcp.tipoClassificacaoProduto.descricao= :classificacaoProduto order by dataHora desc ");
 			
 			Query query = getSession().createQuery(hql.toString());
 			
 			query.setParameter("cotaid", cotaid);
 			query.setParameter("codigoICD", codigoICD);
 			query.setParameter("classificacaoProduto", classificacaoProduto);
+			query.setMaxResults(1);
+	
 			
 			MixCotaProduto uniqueResult = (MixCotaProduto)query.uniqueResult();
 			return uniqueResult;
@@ -535,12 +537,14 @@ public class MixCotaProdutoRepositoryImpl extends AbstractRepositoryModel<MixCot
 	    		" where m.codigoICD = p.codigoICD " +
 	    		" and cota.numeroCota = :numeroCota " +
 	    		" and p.codigo = :codigoProduto " +
-	    		" and t.id = :tipoClassificacaoProduto ";
+	    		" and t.id = :tipoClassificacaoProduto order by dataHora desc ";
 	    
 	    final Query query = this.getSession().createQuery(hql);
 	    query.setParameter("numeroCota", numeroCota);
 	    query.setParameter("codigoProduto", codigoProduto);
 	    query.setParameter("qtd", qtd);
+		query.setMaxResults(1) 	;			  //  para evitar problema quando ha duplicacao de informacao
+	    
 	    query.setParameter("tipoClassificacaoProduto", tipoClassificacaoProduto);
 	    
 	    return query.list().isEmpty() ? false : (boolean) query.uniqueResult();
