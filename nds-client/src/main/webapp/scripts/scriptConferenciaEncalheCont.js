@@ -1426,8 +1426,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 		
 		
-		if ($("#dialog-autenticar-supervisor", ConferenciaEncalheCont.workspace).dialog( "isOpen" ) === true )
-			return;
+		// if ($("#dialog-autenticar-supervisor", ConferenciaEncalheCont.workspace).dialog( "isOpen" ) === true )
+		//	return;
 				
 		
 		if (evt.keyCode == 13 || evt.keyCode == 40) {
