@@ -96,6 +96,10 @@ var geracaoNotaEnvioController = $.extend({
 				return _this.visualizarNE(e);
 			});	
 			
+			$("#geracaoNotaEnvio-btnEnviarEmail").click(function(e){
+				_this.enviarEmail();
+			});
+			
 		},
 		
 		/**
@@ -288,6 +292,23 @@ var geracaoNotaEnvioController = $.extend({
 				
 			});
 			*/
+		},
+		
+		/**
+		 * Envia emails para as cotas que foram filtradas
+		 */
+		enviarEmail : function(){
+			
+			this.confirmDialog = new ConfirmDialog('Confirmar Envio de email?', function() {
+		    	
+				$.postJSON(geracaoNotaEnvioController.path + 'enviarEmail');
+		            
+				return true;
+			    }, function() {
+			    	 
+			 });
+			 this.confirmDialog.open();
+			
 		},
 		
 		/**

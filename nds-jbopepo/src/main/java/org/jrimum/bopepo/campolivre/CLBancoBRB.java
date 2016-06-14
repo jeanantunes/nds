@@ -55,7 +55,7 @@ import org.jrimum.vallia.digitoverificador.Modulo;
  * 
  * @version 0.2
  */
-class CLBancoCrediComim extends AbstractCLCrediComim {
+class CLBancoBRB extends AbstractCLBancoBRB {
 
 	/**
 	 * 
@@ -92,7 +92,7 @@ class CLBancoCrediComim extends AbstractCLCrediComim {
 	 * 
 	 * @since 0.2
 	 */
-	protected CLBancoCrediComim() {
+	protected CLBancoBRB() {
 
 		super(FIELDS_LENGTH);
 	}
@@ -104,7 +104,7 @@ class CLBancoCrediComim extends AbstractCLCrediComim {
 	 * </p>
 	 * @param titulo Título com as informações para geração do campo livre.
 	 */
-	CLBancoCrediComim(Titulo titulo) {
+	CLBancoBRB(Titulo titulo) {
 		super(FIELDS_LENGTH);
 
 		ContaBancaria conta = titulo.getContaBancaria();

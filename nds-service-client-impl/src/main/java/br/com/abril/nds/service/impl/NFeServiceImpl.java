@@ -17,10 +17,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,6 +100,9 @@ import br.com.abril.nds.service.builders.NotaFiscalTransportadorBuilder;
 import br.com.abril.nds.service.builders.NotaFiscalValoresCalculadosBuilder;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
 public class NFeServiceImpl implements NFeService {
@@ -307,7 +306,7 @@ public class NFeServiceImpl implements NFeService {
 		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
 		parameters.put("IND_EMISSAO_DEPEC", indEmissaoDepec);
 		parameters.put("LOGO_DISTRIBUIDOR", inputStream);
-
+		
 		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
 	

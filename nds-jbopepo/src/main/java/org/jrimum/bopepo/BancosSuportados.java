@@ -283,6 +283,15 @@ public enum BancosSuportados implements Serializable{
 	 */
 	CREDCOMIM("085", "09590601000176", "COOPERATIVA DE CREDITO DOS PEQUENOS EMPRESARIOS, MICROEMPRESARIOS E MICROEMPREENDEDORES DE LAGES", "Banco Comercial Cooperativo"),
 	
+	/**
+	 * Tipo enumerado que representa o <strong>Banbrb</strong>, código de
+	 * compensação <strong><tt>070</tt></strong> <a
+	 * href="http://www.bancoob.com.br/">site</a>.
+	 * 
+	 * @since 0.2
+	 */
+	BANBRB("070", " 00000208000100", "BANCO BRB - BANCO DE BRASÍLIA S.A. - BANBRB", "Banco de Brasília S.A"),
+	
 	;
 
 	/**
@@ -333,6 +342,8 @@ public enum BancosSuportados implements Serializable{
 		suportados.put(BANCOOB.codigoDeCompensacaoBACEN, BANCOOB);
 		
 		suportados.put(CREDCOMIM.codigoDeCompensacaoBACEN, CREDCOMIM);
+		
+		suportados.put(BANBRB.codigoDeCompensacaoBACEN, BANBRB);
 	}
 
 	/**

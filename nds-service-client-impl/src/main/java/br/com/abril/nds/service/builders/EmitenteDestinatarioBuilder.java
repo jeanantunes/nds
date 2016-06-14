@@ -153,9 +153,7 @@ public class EmitenteDestinatarioBuilder {
 		
 		if(distribuidor.getJuridica().getInscricaoEstadual() != null && !distribuidor.getJuridica().getInscricaoEstadual().isEmpty()){
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual().trim());			
-		} 
-		
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setIndicadorDestinatario(1);
+		}
 		
 		if(distribuidor.getJuridica().getEnderecos() != null 
 				&& !distribuidor.getJuridica().getEnderecos().isEmpty()) {
@@ -243,10 +241,17 @@ public class EmitenteDestinatarioBuilder {
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setIdPessoaOriginal(pessoaJuridica.getId());
 			
 			if(pessoaJuridica.getInscricaoEstadual() != null && !pessoaJuridica.getInscricaoEstadual().isEmpty()){
-				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual().trim());
+				
+				if(pessoaJuridica.getInscricaoEstadual().equals("0")) {
+					notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setIndicadorDestinatario(9);
+				} else {
+					notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual().trim());
+					notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setIndicadorDestinatario(1);				
+				}	
+			} else {
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setIndicadorDestinatario(9);
 			} 
 			
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setIndicadorDestinatario(1);
 			
 			//FIXME: Ajustar para variavel parametrizada
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setOperacaoConsumidorFinal(OperacaoConsumidorFinal.NAO);
@@ -255,7 +260,6 @@ public class EmitenteDestinatarioBuilder {
 			PessoaFisica pessoaFisica = (PessoaFisica) pessoa;
 			
 			if(!notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getTipoAmbiente().equals(TipoAmbiente.HOMOLOGACAO)) {
-				
 				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setNome(pessoaFisica.getNome().trim());
 			} else {
 				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setNome("NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL");
