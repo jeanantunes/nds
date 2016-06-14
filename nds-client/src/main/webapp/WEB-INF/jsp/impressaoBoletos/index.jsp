@@ -50,7 +50,7 @@
 	</form>
 	
 	<form id="form-confirmar-regerar-cobranca">
-		<div id="dialog-confirmar-regerar-cobranca" title="Regerar Cobrança" style="display: none;">
+		<div id="dialog-confirmar-regerar-cobranca" title="Regerar Cobran&ccedil;a" style="display: none;">
 			<fieldset>
 				<legend>Regerar cobrança?</legend>
 				<p id="msgRegerarCobranca"></p>
@@ -93,7 +93,7 @@
 					</a>
 				</span>
  				<span class="bt_arq">
-       				<a href="javascript:impressaoBoletosController.gerarArquivo()" rel="tipsy" title="Gerar Cobran�a Registrada">
+       				<a href="javascript:impressaoBoletosController.gerarArquivo()" rel="tipsy" title="Gerar Arquivo Cobran&ccedil;a Registrada">
        					<img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif"  hspace="5" border="0" />
        				</a>
        			</span>

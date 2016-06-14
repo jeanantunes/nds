@@ -22,6 +22,7 @@ import java.util.TreeSet;
 
 import javax.xml.bind.ValidationException;
 
+import org.jrimum.domkee.financeiro.banco.febraban.Titulo.EnumAceite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,7 +115,6 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.EmailService;
-import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
@@ -133,6 +133,7 @@ import br.com.abril.nds.util.GeradorBoleto;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.NomeBanco;
 import br.com.abril.nds.util.TipoBaixaCobranca;
+import br.com.abril.nds.util.TirarAcento;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro00;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro01;
@@ -151,6 +152,10 @@ import br.com.abril.nds.vo.ValidacaoVO;
 public class BoletoServiceImpl implements BoletoService {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(BoletoServiceImpl.class);
+    
+    private static final String CODIGO_INSCRICAO_FISICA = "01";
+    
+    private static final String CODIGO_INSCRICAO_JURIDICA = "02";
     
     @Autowired
     protected EmailService email;
@@ -1787,7 +1792,13 @@ public class BoletoServiceImpl implements BoletoService {
         if (corpoBoleto.getContaTipoDeCobranca() == null || corpoBoleto.getContaTipoDeCobranca().isEmpty()){
             corpoBoleto.setContaTipoDeCobranca(FormaCobrancaBoleto.SEM_REGISTRO.name());
         } else {
-        	corpoBoleto.setContaTipoDeCobranca(FormaCobrancaBoleto.COM_REGISTRO.name());
+        	
+        	if(corpoBoleto.getContaTipoDeCobranca().equals(FormaCobrancaBoleto.SEM_REGISTRO.name())) {
+        		 corpoBoleto.setContaTipoDeCobranca(FormaCobrancaBoleto.SEM_REGISTRO.name());
+        	} else {
+        		
+        		corpoBoleto.setContaTipoDeCobranca(FormaCobrancaBoleto.COM_REGISTRO.name());
+        	}  	
         }
         
         corpoBoleto.setContaAgencia(banco.getAgencia().intValue());
@@ -1797,14 +1808,24 @@ public class BoletoServiceImpl implements BoletoService {
         
         
         //INFORMACOES DO TITULO
-        corpoBoleto.setTituloNumeroDoDocumento(nossoNumero);
+        corpoBoleto.setTituloNumeroDoDocumento("9125253");
         corpoBoleto.setTituloNossoNumero(nossoNumero);
         
         
         //PARAMETROS ?
         corpoBoleto.setTituloDigitoDoNossoNumero(digitoNossoNumero);
         corpoBoleto.setTituloTipoDeDocumento("DM_DUPLICATA_MERCANTIL");
-        corpoBoleto.setTituloAceite("A");
+        if(corpoBoleto.getTituloAceite() == null) {
+        	corpoBoleto.setTituloAceite("N");
+        } else {
+        	if(corpoBoleto.getTituloAceite().equals(EnumAceite.A)) {
+        		corpoBoleto.setTituloAceite("A");
+        	} else {
+        		corpoBoleto.setTituloAceite("N");
+        	}
+        	
+        }
+        
         corpoBoleto.setTituloTipoIdentificadorCNR("COM_VENCIMENTO");
         
         corpoBoleto.setTituloValor(valorDocumento.setScale(2, RoundingMode.HALF_EVEN));
@@ -2626,11 +2647,13 @@ public class BoletoServiceImpl implements BoletoService {
         final String nossoNumero = Util.gerarNossoNumero(cota.getNumeroCota(),
                 dataEmissao,
                 banco!=null?banco.getNumeroBanco():"0",
-                        fornecedor != null ? fornecedor.getId() : null,
-                                numeroBancoBoletoAntecipado + bbDTO.getIdBoletoAntecipado(),
-                                banco!=null?banco.getAgencia():0,
-                                        banco!=null?banco.getConta():0,
-                                                banco != null && banco.getCarteira() != null ? banco.getCarteira() : 0);
+                fornecedor != null ? fornecedor.getId() : null,
+                numeroBancoBoletoAntecipado + bbDTO.getIdBoletoAntecipado(),
+                banco!=null?banco.getAgencia():0,
+                banco!=null?banco.getConta():0,
+                banco != null && banco.getCarteira() != null ? banco.getCarteira() : 0,
+                banco.getCodigoCedente(), 
+                banco.getDigitoCodigoCedente());
         
         final String digitoNossoNumero = Util.calcularDigitoVerificador(nossoNumero,
                 banco!=null?banco.getCodigoCedente():"0",
@@ -3041,7 +3064,7 @@ public class BoletoServiceImpl implements BoletoService {
 			throw new ValidationException("Erro ao Formatar a Data Vencimento / Emissão");
 		}
 		
-		registro01.setValorTitulo(String.valueOf(boleto.getValor()));
+		registro01.setValorTitulo(CurrencyUtil.formatarValor(boleto.getValor()).replace(".", ""));
 		registro01.setNumeroBanco(banco.getNumeroBanco());
 		registro01.setAgencia(String.valueOf(banco.getAgencia()));
 		registro01.setFiller4(" ");
@@ -3070,33 +3093,26 @@ public class BoletoServiceImpl implements BoletoService {
 		Endereco enderecoSacado = cota.getEnderecoPrincipal().getEndereco();
 		
 		//DADOS DO SACADO
-        
-		String codigoInscricaoSacado = null;
-		
         String nomeSacado = null;
         
         String documentoSacado = null;
         
         if (pessoaSacado instanceof PessoaFisica) {
-        	codigoInscricaoSacado = "01";
+        	
             nomeSacado = ((PessoaFisica) pessoaSacado).getNome();
             documentoSacado = ((PessoaFisica) pessoaSacado).getCpf();
+        	registro01.setCodigoInscricaoSacado(CODIGO_INSCRICAO_FISICA);
+
         }
         if (pessoaSacado instanceof PessoaJuridica) {
-        	codigoInscricaoSacado = "02";
+        	registro01.setCodigoInscricaoSacado(CODIGO_INSCRICAO_JURIDICA);
             nomeSacado = ((PessoaJuridica) pessoaSacado).getRazaoSocial();
             documentoSacado = ((PessoaJuridica) pessoaSacado).getCnpj();
         }
         
-        
-        registro01.setCodigoInstrucao(codigoInscricaoSacado);
         registro01.setNumeroCNPJCPF(documentoSacado);
-        
-        if(cota.getNumeroCota() != null && cota.getNumeroCota() > 0) {
-        	nomeSacado = cota.getNumeroCota() + " - " + nomeSacado;
-        } 
-        
-        registro01.setNomeSacado(nomeSacado);
+                
+        registro01.setNomeSacado(TirarAcento.removerAcentuacao(nomeSacado));
         
         this.enderecoSacado(registro01, enderecoSacado, nomeSacado);
 	}

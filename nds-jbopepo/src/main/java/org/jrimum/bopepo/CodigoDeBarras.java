@@ -210,6 +210,7 @@ public final class CodigoDeBarras extends AbstractLineOfFields{
 		this.calculateAndSetFatorDeVencimento(titulo.getDataDoVencimento());
 		
 		this.valorNominalDoTitulo.setValue(titulo.getValor().movePointRight(2));
+		
 		this.campoLivre.setValue(campoLivre.write());
 		
 		//Now you can
@@ -239,7 +240,7 @@ public final class CodigoDeBarras extends AbstractLineOfFields{
 
 		// Realizando o cálculo dígito verificador e em seguida armazenando 
 		// a informação no campo "digitoVerificadorGeral".
-		digitoVerificadorGeral.setValue(
+		this.digitoVerificadorGeral.setValue(
 				calculadorDV.calcule(toCalculateDV.toString())
 				);
 

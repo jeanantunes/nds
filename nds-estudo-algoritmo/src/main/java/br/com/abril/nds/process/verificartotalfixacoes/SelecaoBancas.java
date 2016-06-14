@@ -196,6 +196,10 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	    }
 	}
 	
+	if(cotasComHistoricoMap.size() == 0 && estudo.getCotas().isEmpty()){
+		throw new ValidacaoException(TipoMensagem.WARNING, "Após a seleção automática de bancas, não há cotas aptas a receberem reparte. Possíveis causas de exclusão das cotas: não recebem o segmento / não recebem a classificação / não recebem parcial / são alternativas e não possuem mix / não recebem do fornecedor. ");
+	}
+	
 	estudo.setCotas(new LinkedList<>(cotasComHistoricoMap.values()));
     }
 

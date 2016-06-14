@@ -20,7 +20,8 @@ public enum NomeBanco {
 	BANCO_RURAL("453"),
 	BANCO_SICREDI("748"),
 	BANCOOB("756"),
-	CREDCOMIM("085");
+	CREDCOMIM("085"),
+	BANCOBRB("070");
 	
 	private String numeroBanco;
 	

@@ -68,7 +68,7 @@
 					</td>
 					<td><strong>Editor:</strong></td>
 					<td>
-						<select class="habilitarCampoInterface" name="comboEditor" id="comboEditor" style="width:210px;" >
+						<select class="habilitarCampoInterfaceEditor" name="comboEditor" id="comboEditor" style="width:210px;" >
 						</select>
 					</td>
 				</tr>

@@ -194,6 +194,37 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 	      
 		}
 	}
+	
+@Override	
+public void temLancamentoOrigemBalanceado(String codigoProduto, Long numeroEdicaoOrigem) {
+		
+	ProdutoEdicao produtoEdicaoOrigem = 
+			this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
+				codigoProduto, numeroEdicaoOrigem.toString());
+	
+		List<Lancamento> lancamentos = this.lancamentoRepository.obterLancamentosDaEdicao(produtoEdicaoOrigem.getId());
+		
+        if ( lancamentos == null || lancamentos.size() == 0 ) return;
+		for (Lancamento lancamentoOrigem : lancamentos) {
+		    
+			if (    lancamentoOrigem.getStatus() == StatusLancamento.BALANCEADO ||
+					lancamentoOrigem.getStatus() == StatusLancamento.EM_BALANCEAMENTO ||
+					lancamentoOrigem.getStatus() == StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO ||
+					lancamentoOrigem.getStatus() == StatusLancamento.EM_RECOLHIMENTO ||
+					lancamentoOrigem.getStatus() == StatusLancamento.BALANCEADO_RECOLHIMENTO ||
+					lancamentoOrigem.getStatus() == StatusLancamento.EXPEDIDO
+					)  {
+				   throw new ValidacaoException(TipoMensagem.WARNING, "Atencao. Produto Origem tem seu status "+lancamentoOrigem.getStatus().name()+".Se transferido, irá para status FECHADO.");
+				   		
+				    
+
+			}
+	
+		}
+		
+	}
+
+
 
 	private void fecharLancamentoOrigem(ProdutoEdicao produtoEdicaoOrigem) {
 		

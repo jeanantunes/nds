@@ -47,7 +47,7 @@ import org.jrimum.domkee.financeiro.banco.febraban.Titulo;
  * 
  * @version 0.2
  */
-abstract class AbstractCLCrediComim extends AbstractCampoLivre {
+abstract class AbstractCLBancoBRB extends AbstractCampoLivre {
 	
 	/**
 	 *
@@ -61,7 +61,7 @@ abstract class AbstractCLCrediComim extends AbstractCampoLivre {
 	 * 
 	 * @param fieldsLength - Número de campos
 	 */
-	protected AbstractCLCrediComim(Integer fieldsLength) {
+	protected AbstractCLBancoBRB(Integer fieldsLength) {
 		
 		super(fieldsLength);
 	}
@@ -76,12 +76,9 @@ abstract class AbstractCLCrediComim extends AbstractCampoLivre {
 		checkCodigoDoNumeroDaConta(titulo);
 		
 		switch(titulo.getNossoNumero().length()){
-		case NN10:
-			return new CLBancoDoBrasilNN10(titulo);
-		case NN11:
-			return new CLBancoDoBrasilNN11(titulo);
+		
 		case NN17:
-			return new CLBancoCrediComim(titulo);
+			return new CLBancoBRB(titulo);
 			
 		default:
 			throw new NotSupportedCampoLivreException(

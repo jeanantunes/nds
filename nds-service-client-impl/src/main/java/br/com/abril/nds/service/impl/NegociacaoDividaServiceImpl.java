@@ -445,16 +445,17 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                         cobranca.setOriundaNegociacaoAvulsa(true);
                         dividaRepository.adicionar(divida);
                         
-                        String nossoNumero =
-                				Util.gerarNossoNumero(
-                					cota.getNumeroCota(), 
-                					cobranca.getDataEmissao(), 
-                					banco != null ? banco.getNumeroBanco() : "0",
-                					null,
-                					divida.getId(),
-                					banco != null ? banco.getAgencia() : 0,
-                					banco != null ? banco.getConta() : 0,
-                					banco != null && banco.getCarteira() != null ? banco.getCarteira() : null);
+                        String nossoNumero = Util.gerarNossoNumero(
+            					cota.getNumeroCota(), 
+            					cobranca.getDataEmissao(), 
+            					banco != null ? banco.getNumeroBanco() : "0",
+            					null,
+            					divida.getId(),
+            					banco != null ? banco.getAgencia() : 0,
+            					banco != null ? banco.getConta() : 0,
+            					banco != null && banco.getCarteira() != null ? banco.getCarteira() : null,
+    							banco.getCodigoCedente(), 
+    			                banco.getDigitoCodigoCedente());
                 			
             			cobranca.setNossoNumero(nossoNumero);
             			

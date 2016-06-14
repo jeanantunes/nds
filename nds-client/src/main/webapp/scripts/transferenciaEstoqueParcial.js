@@ -31,6 +31,22 @@ var transferenciaEstoqueParcialController = $.extend(true, {
 			data, 
 			function(result) {
 				$("#estoqueProdutoInput", transferenciaEstoqueParcialController.workspace).text(result);
+				$.postJSON(
+						transferenciaEstoqueParcialController.path + "/validarLancamento",
+						data, 
+						function(result) {
+						},
+						function(erro) {
+							if (erro.mensagens) {
+								exibirMensagem(
+									erro.mensagens.tipoMensagem, 
+									erro.mensagens.listaMensagens
+								);
+								
+								
+							}
+						}
+					);
 			},
 			function(erro) {
 				if (erro.mensagens) {
@@ -43,6 +59,8 @@ var transferenciaEstoqueParcialController = $.extend(true, {
 				}
 			}
 		);
+		
+		
 	},
 	
 	transferir : function() {

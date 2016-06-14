@@ -390,6 +390,15 @@ var produtoController = $.extend(true, {
 		
 		
 	},
+	
+habilitarDesabilitarCamposInterfaceEditor : function(habilitar) {
+		
+		$(".habilitarCampoInterfaceEditor", produtoController.workspace).attr('disabled',!habilitar);
+		
+		
+	},
+	
+	
 	habilitarDesabilitarCamposInterface : function(habilitar) {
 		
 		$(".habilitarCampoInterface", produtoController.workspace).attr('disabled',!habilitar);
@@ -418,6 +427,8 @@ var produtoController = $.extend(true, {
 						$("#comboClassifProd", produtoController.workspace).val(result.idTipoClassifProduto);
 
 						produtoController.habilitarDesabilitarCamposInterface(!(result.origem == "INTERFACE"));
+						
+						produtoController.habilitarDesabilitarCamposInterfaceEditor(!(result.origem == "INTERFACE") || result.codigoEditor == 0 );
 						
 						$("#comboFornecedoresCadastro", produtoController.workspace).val(result.codigoFornecedor).disable();
 						$("#comboTipoProdutoCadastro", produtoController.workspace).val(result.codigoTipoProduto);
@@ -573,6 +584,7 @@ var produtoController = $.extend(true, {
 		});
 
 		produtoController.habilitarDesabilitarCamposInterface(true);
+		produtoController.habilitarDesabilitarCamposInterfaceEditor(true);
 		
 		this.carregarNovoProduto(this.limparModalCadastro);
 		

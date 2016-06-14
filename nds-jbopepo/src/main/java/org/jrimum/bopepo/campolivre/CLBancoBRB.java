@@ -1,32 +1,3 @@
-/*
- * Copyright 2008 JRimum Project
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by
- * applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
- * OF ANY KIND, either express or implied. See the License for the specific
- * language governing permissions and limitations under the License.
- * 
- * Created at: 30/03/2008 - 18:09:45
- * 
- * ================================================================================
- * 
- * Direitos autorais 2008 JRimum Project
- * 
- * Licenciado sob a Licença Apache, Versão 2.0 ("LICENÇA"); você não pode usar
- * esse arquivo exceto em conformidade com a esta LICENÇA. Você pode obter uma
- * cópia desta LICENÇA em http://www.apache.org/licenses/LICENSE-2.0 A menos que
- * haja exigência legal ou acordo por escrito, a distribuição de software sob
- * esta LICENÇA se dará “COMO ESTÁ”, SEM GARANTIAS OU CONDIÇÕES DE QUALQUER
- * TIPO, sejam expressas ou tácitas. Veja a LICENÇA para a redação específica a
- * reger permissões e limitações sob esta LICENÇA.
- * 
- * Criado em: 30/03/2008 - 18:09:45
- * 
- */
-
 package org.jrimum.bopepo.campolivre;
 
 import static org.jrimum.vallia.digitoverificador.Modulo.MOD11;
@@ -38,55 +9,59 @@ import org.jrimum.utilix.text.Filler;
 import org.jrimum.vallia.digitoverificador.Modulo;
 
 /**
- * <p>
- * O campo livre para o modelo SINCO segue esta forma:
- * </p>
- * <table border="1" cellpadding="0" cellspacing="0" style="border-collapse:
- * collapse" bordercolor="#111111" width="60%" id="campolivre">
+ * 
+ * O campo livre do Banco do Brasil com o nosso número de 17 dígitos e convênio
+ * de 7 posições deve seguir esta forma:
+ * 
+ * <table border="1" cellpadding="0" cellspacing="0" style="border-collapse: * collapse" bordercolor="#111111" width="60%" id="campolivre">
+ * <tr>
  * <thead>
- * <tr>
- * <td>Posição</td>
- * <td>Tamanho</td>
- * <td>Conteúdo</td>
- * </tr>
+ * <th>Posição</th>
+ * <th>Tamanho</th>
+ * <th>Picture</th>
+ * <th>Conteúdo (terminologia padrão)</th>
+ * <th>Conteúdo (terminologia do banco)</th>
  * </thead>
- * <tbody>
- * <tr>
- * <td>01</td>
- * <td>1</td>
- * <td>Número "1" (valor fixo)</td>
  * </tr>
  * <tr>
- * <td>02-07</td>
+ * <td>20-25</td>
  * <td>6</td>
- * <td>Código do cliente CEDENTE (fornecido pela CAIXA)</td>
+ * <td>9(6)</td>
+ * <td>Constante zeros = "000000"</td>
+ * <td>Constante zeros = "000000"</td>
  * </tr>
  * <tr>
- * <td>08</td>
- * <td>1</td>
- * <td>Número "9" (valor fixo)</td>
- * </tr>
- * <tr>
- * <td>09-25</td>
+ * <td>26-42</td>
  * <td>17</td>
- * <td>Posições livres do "nosso número"</td>
+ * <td>9(17)</td>
+ * <td>Nosso Número (sem dígito) composto pelo número do convênio fornecido pelo
+ * Banco (CCCCCCC) e complemento do Nosso-Número, sem DV (NNNNNNNNNN)</td>
+ * <td>Nosso Número (sem dígito) CCCCCCCNNNNNNNNNN</td>
  * </tr>
- * </tbody>
+ * <tr>
+ * <td>43-44</td>
+ * <td>2</td>
+ * <td>9(2)</td>
+ * <td>Código da carteira</td>
+ * <td>Tipo de Carteira/Modalidade de Cobrança</td>
+ * </tr>
  * </table>
  * 
+ * 
+ * 
  * @author <a href="http://gilmatryx.googlepages.com/">Gilmar P.S.L</a>
- * @author <a href="mailto:misaelbarreto@gmail.com">Misael Barreto</a> 
- * @author <a href="mailto:romulomail@gmail.com">Rômulo Augusto</a>
- * @author <a href="http://www.nordestefomento.com.br">Nordeste Fomento Mercantil</a>
  * 
  * @since 0.2
  * 
  * @version 0.2
  */
-class CLCaixaEconomicaFederalSINCO extends AbstractCLCaixaEconomicaFederal {
+class CLBancoBRB extends AbstractCLBancoBRB {
 
-	private static final long serialVersionUID = -7642075752245778160L;
-	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6997812168875449834L;
+
 	/**
 	 * Constante que indica emissão de boleto pelo cedente. 
 	 */
@@ -107,6 +82,21 @@ class CLCaixaEconomicaFederalSINCO extends AbstractCLCaixaEconomicaFederal {
 	 */
 	private static final int COBRANCA_NAO_REGISTRADA = 2;
 	
+	private static final int FIXO = 0;
+	
+	/**
+	 * <p>
+	 * Cria um campo livre instanciando o número de fields ({@code
+	 * FIELDS_LENGTH}) deste campo.
+	 * </p>
+	 * 
+	 * @since 0.2
+	 */
+	protected CLBancoBRB() {
+
+		super(FIELDS_LENGTH);
+	}
+	
 	/**
 	 * <p>
 	 * Dado um título, cria um campo livre para o padrão do Banco Caixa Econômica
@@ -114,17 +104,19 @@ class CLCaixaEconomicaFederalSINCO extends AbstractCLCaixaEconomicaFederal {
 	 * </p>
 	 * @param titulo Título com as informações para geração do campo livre.
 	 */
-	CLCaixaEconomicaFederalSINCO(Titulo titulo) {
+	CLBancoBRB(Titulo titulo) {
 		super(FIELDS_LENGTH);
 
 		ContaBancaria conta = titulo.getContaBancaria();
 		String nossoNumero = titulo.getNossoNumero();
 
-		Integer dVCodigoDoCedente = calculeDigitoVerificador(conta.getNumeroDaConta().getCodigoDaConta().toString());
+		Integer dVContaCorrente = calculeDigitoVerificador(conta.getNumeroDaConta().getCodigoDaConta().toString());
 
 		this.add(new Field<Integer>(conta.getNumeroDaConta().getCodigoDaConta(), 6, Filler.ZERO_LEFT));
-		this.add(new Field<Integer>(dVCodigoDoCedente, 1));
+		this.add(new Field<Integer>(dVContaCorrente, 1));
 		this.add(new Field<String>(nossoNumero.substring(2, 5), 3));
+		
+		this.add(new Field<Integer>(FIXO, 1));
 		
 		if(conta.getCarteira().isComRegistro()){
 			
@@ -136,10 +128,20 @@ class CLCaixaEconomicaFederalSINCO extends AbstractCLCaixaEconomicaFederal {
 		}
 
 		this.add(new Field<String>(nossoNumero.substring(3, 6), 3));
-		this.add(new Field<Integer>(EMISSAO_CEDENTE, 1));
+		// this.add(new Field<Integer>(EMISSAO_CEDENTE, 1));
 		this.add(new Field<String>(nossoNumero.substring(8, 17), 9));
 
 		this.add(new Field<Integer>(calculeDigitoVerificador(gereCampoLivre()), 1));
+	}
+	
+	@Override
+	protected void checkValues(Titulo titulo) {
+
+		checkNossoNumero(titulo);
+		checkTamanhoDoNossoNumero(titulo, NN17);
+		checkCarteiraNotNull(titulo);
+		//checkCodigoDaCarteira(titulo);
+		checkCodigoDaCarteiraMenorOuIgualQue(titulo, 99);
 	}
 	
 	/**
@@ -211,16 +213,11 @@ class CLCaixaEconomicaFederalSINCO extends AbstractCLCaixaEconomicaFederal {
 
 		return writeFields();
 	}
-	
+
 	@Override
 	protected void addFields(Titulo titulo) {
 		// TODO IMPLEMENTAR
 		throw new UnsupportedOperationException("AINDA NÃO IMPLEMENTADO!");
-	}
-
-	@Override
-	protected void checkValues(Titulo titulo) {
-		// TODO IMPLEMENTAR
-		throw new UnsupportedOperationException("AINDA NÃO IMPLEMENTADO!");
+		
 	}
 }

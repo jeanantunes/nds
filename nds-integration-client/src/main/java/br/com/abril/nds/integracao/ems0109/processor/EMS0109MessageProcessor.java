@@ -460,41 +460,47 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
             
             produto.setNomeComercial(input.getNomePublicacao());
 		}
-		
-		if(produto.getEditor()==null || produto.getEditor().getCodigo()==null){
-			
+		if ( editor != null ) { // so atualiza editor se existe editor valido no cadastro. se nao, deixa editor anterior
+			if(produto.getEditor()==null || produto.getEditor().getCodigo()==null){
+				
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alteração do Editor"
+						+ " de " + " Nulo "
+						+ " para " + (editor != null && editor.getPessoaJuridica() != null ? editor.getPessoaJuridica().getNome():null)
+						+" Produto " + produto.getCodigo());
+				
+				produto.setEditor(editor);
+				
+			} else if (input.getCodigoEditor()!=null 
+					&& input.getCodigoEditor().intValue()!=0 
+					&& !Objects.equal(input.getCodigoEditor(), produto.getEditor().getCodigo())) {
+	
+			 if(produto.getEditor()!=null && produto.getEditor().getPessoaJuridica()!=null){
+	            this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alteração do Editor"
+						+ " de " + produto.getEditor().getPessoaJuridica().getNome()
+						+ " para " + ( editor != null && editor.getPessoaJuridica() != null ? editor.getPessoaJuridica().getNome():" Nulo:Sem pessoa juridica para editor:"+(editor != null ?editor.getId():"nulo"))
+						+" Produto " + produto.getCodigo());
+			 }else{
+	            this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Alteração do Editor"
+						+ " de " + "Nulo"
+						+ " para " + editor.getPessoaJuridica().getNome()
+						+" Produto " + produto.getCodigo());
+	            
+			 }
+			 produto.setEditor(editor);
+			}
+		} else {
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração do Editor"
-					+ " de " + " Nulo "
-					+ " para " + (editor != null && editor.getPessoaJuridica() != null ? editor.getPessoaJuridica().getNome():null)
-					+" Produto " + produto.getCodigo());
-			
-			produto.setEditor(editor);
-			
-		} else if (input.getCodigoEditor()!=null 
-				&& input.getCodigoEditor().intValue()!=0 
-				&& !Objects.equal(input.getCodigoEditor(), produto.getEditor().getCodigo())) {
-
-		 if(produto.getEditor()!=null && produto.getEditor().getPessoaJuridica()!=null){
-            this.ndsiLoggerFactory.getLogger().logInfo(message,
-					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração do Editor"
-					+ " de " + produto.getEditor().getPessoaJuridica().getNome()
-					+ " para " + ( editor != null && editor.getPessoaJuridica() != null ? editor.getPessoaJuridica().getNome():" Nulo:Sem pessoa juridica")
-					+" Produto " + produto.getCodigo());
-		 }else{
-            this.ndsiLoggerFactory.getLogger().logInfo(message,
-					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Alteração do Editor"
-					+ " de " + "Nulo"
-					+ " para " + editor.getPessoaJuridica().getNome()
-					+" Produto " + produto.getCodigo());
-            
-		 }
-		 produto.setEditor(editor);
-		}
+					"Editor não alterado para o produto "+produto.getCodigo()+" pois nao foi encontrado editor n.o "+
+					input.getCodigoEditor() +" no cadastro.");
 		
+		}
 		if(produto.getPeriodicidade()==null || produto.getPeriodicidade()==null){
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
