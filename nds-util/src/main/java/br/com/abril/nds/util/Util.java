@@ -212,6 +212,10 @@ public abstract class Util {
         case CREDCOMIM:
             
             return Util.padLeft(codigoCedente + dvCedente, "0", 8) + Util.padLeft(idChamadaEncalheFornecedor.toString(), "0", 9);     
+         
+        case BANCOBRB:
+            
+            return Util.padLeft(codigoCedente + dvCedente, "0", 8) + Util.padLeft(idChamadaEncalheFornecedor.toString(), "0", 9);         
             
         default:
             return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
@@ -308,6 +312,10 @@ public abstract class Util {
         case CREDCOMIM:
          
             return Util.padLeft(codigoCedente + dvCedente, "0", 8) + Util.padLeft(idDivida.toString(), "0", 9);   
+        
+        case BANCOBRB:
+            
+            return Util.padLeft(codigoCedente + dvCedente, "0", 8) + Util.padLeft(idDivida.toString(), "0", 9); 
             
         default:
             return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
