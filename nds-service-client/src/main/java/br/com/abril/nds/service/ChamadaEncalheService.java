@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.sf.jasperreports.engine.JRException;
 import br.com.abril.nds.dto.BandeirasDTO;
+import br.com.abril.nds.dto.ChamadaEncalheImpressaoWrapper;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.DadosImpressaoEmissaoChamadaEncalhe;
 import br.com.abril.nds.dto.FornecedorDTO;
@@ -61,5 +62,9 @@ public interface ChamadaEncalheService {
 	Long countObterBandeirasDaSemana(Integer semana, Long fornecedor);
 
 	byte[] gerarEmissaoCE(FiltroEmissaoCE filtro) throws JRException, URISyntaxException;
+	
+	List<ChamadaEncalheImpressaoWrapper> gerarListaChamadaEncalheImpressaoWrapper(FiltroEmissaoCE filtro);
+	
+	void enviarEmail(FiltroEmissaoCE filtro);
 	
 }
