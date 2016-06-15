@@ -5,6 +5,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/emissaoCE.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
 
 <style type="text/css">
   .dados, .dadosFiltro{display:none;}
@@ -53,6 +54,12 @@
 					<a a href="javascript:;" onclick="EmissaoCEController.imprimirCEPDF();" id="imprimirCEPDF" rel="tipsy" title="Imprimir CE">
 					<img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0" /></a>
 				</span>
+				
+				<span class="bt_arq" >
+        			<a id="btnEnviarEmail" href="javascript:void(0)" title="Enviar email" >
+        				<img src="${pageContext.request.contextPath}/images/ico_email.png" alt="Enviar email" hspace="5" border="0" />
+        			</a>
+        		</span>
 				
 				<span class="bt_arq">
 					<!-- ARQUIVO EXCEL -->
