@@ -290,7 +290,7 @@ public enum BancosSuportados implements Serializable{
 	 * 
 	 * @since 0.2
 	 */
-	BANBRB("070", " 00000208000100", "BANCO BRB - BANCO DE BRASÍLIA S.A. - BANBRB", "Banco de Brasília S.A"),
+	BANBRB("070", "00000208000100", "BANCO BRB - BANCO DE BRASÍLIA S.A. - BANBRB", "Banco de Brasília S.A"),
 	
 	;
 
