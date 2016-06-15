@@ -1066,15 +1066,11 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			
 			try {
-				//byte[] anexo = this.gerarDocumentoEmissaoCE(lista);
+				byte[] anexo = this.gerarDocumentoEmissaoCE(lista);
 				
-				File file = new File("/Users/lazaroJR/fatura_atual.pdf");
-				InputStream inputStream = new FileInputStream(file); 
-				byte[] bytes = new byte[(int) file.length()];
-				
-				AnexoEmail anexoPDF = new AnexoEmail("nota-envio", bytes, TipoAnexo.PDF);
-				emailSerice.enviar("Nota de envio", "Olá, segue em anexo a nota de envio.", listaDeDestinatarios, anexoPDF);
-			} catch ( AutenticacaoEmailException | FileNotFoundException e) {
+				AnexoEmail anexoPDF = new AnexoEmail("nota-envio", anexo, TipoAnexo.PDF);
+				emailSerice.enviar("Emissão Chamada de Encalhe", "Olá, segue em anexo a chamada de encalhe.", listaDeDestinatarios, anexoPDF);
+			} catch ( AutenticacaoEmailException | JRException | URISyntaxException e) {
 				e.printStackTrace();
 			}
 			
