@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 @Entity
@@ -86,6 +87,10 @@ public class Banco implements Serializable {
 	
 	@Column(name = "VR_MULTA")
 	private BigDecimal vrMulta;
+	
+	@Transient
+	@Column(name = "CONVENIO")
+	private String convenio;
 	
 	public Long getId() {
 		return id;
@@ -246,9 +251,13 @@ public class Banco implements Serializable {
 	public void setVrMulta(BigDecimal vrMulta) {
 		this.vrMulta = vrMulta;
 	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	
+	public String getConvenio() {
+		return convenio;
+	}
+	
+	public void setConvenio(String convenio) {
+		this.convenio = convenio;
 	}
 	
 	@Override

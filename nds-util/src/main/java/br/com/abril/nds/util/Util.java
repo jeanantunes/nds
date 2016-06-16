@@ -32,6 +32,8 @@ public abstract class Util {
     
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     
+    private static final String CODIGO_CAIXA = "249";
+    
     public static boolean isNumeric(final String valor){
         try {
             Double.parseDouble(valor);
@@ -187,7 +189,7 @@ public abstract class Util {
             
         case CAIXA_ECONOMICA_FEDERAL:
             // return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
-            return 249  + Util.padLeft(idChamadaEncalheFornecedor.toString(), "0", 14);
+            return CODIGO_CAIXA  + Util.padLeft(idChamadaEncalheFornecedor.toString(), "0", 14);
         case HSBC:
             
             // return Util.padLeft(codSacado + auxData + idMovimentoFinanceiro, "0", 13);
@@ -295,7 +297,7 @@ public abstract class Util {
         case CAIXA_ECONOMICA_FEDERAL:
             //return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
         	 
-        	return 249  + Util.padLeft(idDivida.toString(), "0", 14);
+        	return CODIGO_CAIXA  + Util.padLeft(idDivida.toString(), "0", 14);
         			
         case HSBC:
             return Util.padLeft(idDivida.toString(), "0", 13);
