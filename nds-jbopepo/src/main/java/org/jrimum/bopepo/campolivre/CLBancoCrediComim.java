@@ -110,10 +110,10 @@ class CLBancoCrediComim extends AbstractCLCrediComim {
 		ContaBancaria conta = titulo.getContaBancaria();
 		String nossoNumero = titulo.getNossoNumero();
 
-		Integer dVContaCorrente = calculeDigitoVerificador(conta.getNumeroDaConta().getCodigoDaConta().toString());
+		Integer dVConvenio = calculeDigitoVerificador("109061");
 
-		this.add(new Field<Integer>(conta.getNumeroDaConta().getCodigoDaConta(), 6, Filler.ZERO_LEFT));
-		this.add(new Field<Integer>(dVContaCorrente, 1));
+		this.add(new Field<Integer>(109061, 6, Filler.ZERO_LEFT));
+		this.add(new Field<Integer>(dVConvenio, 1));
 		this.add(new Field<String>(nossoNumero.substring(2, 5), 3));
 		
 		this.add(new Field<Integer>(FIXO, 1));
