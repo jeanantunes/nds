@@ -389,11 +389,13 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 			
 			sumSaldo = sumSaldo.add((slip.getValorTotalEncalhe().subtract(slip.getValorLiquidoDevido())));
 			
-			sumSaldo = sumSaldo.add(sumDebito);
+			sumSaldo = sumSaldo.subtract(sumDebito);
 
-			sumSaldo = sumSaldo.subtract(sumCredito);
+			sumSaldo = sumSaldo.add(sumCredito);
 			
-			if(sumSaldo.compareTo(BigDecimal.ZERO)>0){
+			int valor = sumSaldo.compareTo(BigDecimal.ZERO);
+			
+			if(valor < 0){
 				parametersSlip.put("CD","D");
 			}else{
 				parametersSlip.put("CD","C");
