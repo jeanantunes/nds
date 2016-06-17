@@ -27,6 +27,7 @@ import br.com.abril.nds.client.vo.NfeVO;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
+import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
 import br.com.abril.nds.dto.NfeImpressaoDTO;
 import br.com.abril.nds.dto.NfeImpressaoWrapper;
 import br.com.abril.nds.dto.NotaFiscalDTO;
@@ -542,6 +543,8 @@ public class NFeServiceImpl implements NFeService {
 		
 		List<Transportador> transportadores = this.transportadorService.buscarTransportadores();
 		
+		ParametroSistema ps = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR);
+		
 		final Map<String, TributoAliquota> tributoRegimeTributario = new HashMap<String, TributoAliquota>();
 		
 		for(final TributoAliquota tributo : distribuidor.getRegimeTributarioTributoAliquota()){
@@ -588,7 +591,7 @@ public class NFeServiceImpl implements NFeService {
 			List<MovimentoEstoque> movimentosEstoque = this.notaFiscalRepository.obterMovimentosEstoqueEditor(filtro); 
 			
 			for (MovimentoEstoque movimentoEstoque : movimentosEstoque) {
-				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoque, tributoRegimeTributario);
+				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoque, tributoRegimeTributario, ps);
 			}
 			
 			List<NotaFiscal> notasFiscaisSubdivididas = subdividirNotasFiscaisPorLimiteItens(parametrosSistema, notaFiscal, naturezaOperacao, distribuidor, transportadores);
@@ -631,6 +634,8 @@ public class NFeServiceImpl implements NFeService {
 			List<Fornecedor> fornecedores) {
 		
 		List<Transportador> transportadores = this.transportadorService.buscarTransportadores();
+		
+		ParametroSistema ps = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR);
 		
 		final Map<String, TributoAliquota> tributoRegimeTributario = new HashMap<String, TributoAliquota>();
 		
@@ -679,7 +684,7 @@ public class NFeServiceImpl implements NFeService {
 				
 			
 			for (MovimentoEstoque movimentoEstoque : movimentosEstoque) {
-				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoque, tributoRegimeTributario);
+				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoque, tributoRegimeTributario, ps);
 			}
 			
 			List<NotaFiscal> notasFiscaisSubdivididas = subdividirNotasFiscaisPorLimiteItens(parametrosSistema, notaFiscal, naturezaOperacao, distribuidor, transportadores);
@@ -883,6 +888,8 @@ public class NFeServiceImpl implements NFeService {
 		
 		List<Transportador> transportadores = this.transportadorService.buscarTransportadores();
 		
+		ParametroSistema ps = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR);
+		
 		final Map<String, TributoAliquota> tributoRegimeTributario = new HashMap<String, TributoAliquota>();
 		
 		for(final TributoAliquota tributo : distribuidor.getRegimeTributarioTributoAliquota()){
@@ -926,7 +933,7 @@ public class NFeServiceImpl implements NFeService {
 			final List<MovimentoFechamentoFiscal> movimentosFechamentosFiscais = this.notaFiscalRepository.obterMovimentosFechamentosFiscaisFornecedor(filtro);
 			
 			for (MovimentoFechamentoFiscal movimentoFechamentoFiscal : movimentosFechamentosFiscais) {
-				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoFechamentoFiscal, tributoRegimeTributario);
+				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoFechamentoFiscal, tributoRegimeTributario, ps);
 			}
 			
 			List<NotaFiscal> notasFiscaisSubdivididas = subdividirNotasFiscaisPorLimiteItens(parametrosSistema, notaFiscal, naturezaOperacao, distribuidor, transportadores);
@@ -979,6 +986,10 @@ public class NFeServiceImpl implements NFeService {
 		}
 		
 		List<NotaFiscal> notasFiscaisSubdivididas = new ArrayList<NotaFiscal>();
+		
+		if (notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal() == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Parâmetro de Limite de Itens por NF-e configurado incorretamente.");
+		}
 		
 		if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > limiteQtdItens) {
 			
@@ -1061,6 +1072,8 @@ public class NFeServiceImpl implements NFeService {
 		
 		final Map<String, TributoAliquota> tributoRegimeTributario = new HashMap<String, TributoAliquota>();
 		
+		ParametroSistema ps = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR);
+		
 		for(final TributoAliquota tributo : distribuidor.getRegimeTributarioTributoAliquota()){
 			tributoRegimeTributario.put(tributo.getNomeTributo(), tributo);
 		}
@@ -1126,6 +1139,12 @@ public class NFeServiceImpl implements NFeService {
 				movimentosFechamentoFiscal.addAll(this.notaFiscalRepository.obterMovimentosFechamentosFiscaisCota(filtro));
 			} else {
 				
+				List<MovimentoEstoqueCota> mecs = this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro);
+				
+				if(mecs == null || mecs.isEmpty()){
+					throw new ValidacaoException(TipoMensagem.ERROR, "ferrou");
+				}
+						
 				movimentosEstoqueCota.addAll(this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro));
 			}
 			
@@ -1133,13 +1152,13 @@ public class NFeServiceImpl implements NFeService {
 				
 				for (final MovimentoFechamentoFiscal movimentoFechamentoFiscal : movimentosFechamentoFiscal) {
 					
-					ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoFechamentoFiscal, tributoAliquota);
+					ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoFechamentoFiscal, tributoAliquota, ps);
 				}
 			} else {
 				
 				for (final MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
 					
-					ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoAliquota);
+					ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoAliquota, ps);
 				}
 			}			
 			
@@ -1186,6 +1205,8 @@ public class NFeServiceImpl implements NFeService {
 		naturezaOperacaoRepository.merge(naturezaOperacao);
 		
 		notaFiscal.setUsuario(usuarioService.getUsuarioLogado());
+		
+		ParametroSistema ps = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR);
 		
 		Map<String, TributoAliquota> tributoAliquota = new HashMap<String, TributoAliquota>();
 		
@@ -1236,13 +1257,13 @@ public class NFeServiceImpl implements NFeService {
 			
 			for (final MovimentoFechamentoFiscal movimentoFechamentoFiscal : movimentosFechamentoFiscal) {
 				
-				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoFechamentoFiscal, tributoAliquota);
+				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoFechamentoFiscal, tributoAliquota, ps);
 			}
 		} else {
 			
 			for (final MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
 				
-				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoAliquota);
+				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoAliquota, ps);
 			}
 		}
 		
@@ -1435,6 +1456,8 @@ public class NFeServiceImpl implements NFeService {
 		
 		List<Transportador> transportadores = this.transportadorService.buscarTransportadores();
 		
+		ParametroSistema ps = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR);
+		
 		final Map<String, TributoAliquota> tributoRegimeTributario = new HashMap<String, TributoAliquota>();
 		
 		for(final TributoAliquota tributo : distribuidor.getRegimeTributarioTributoAliquota()){
@@ -1466,7 +1489,7 @@ public class NFeServiceImpl implements NFeService {
 			filtro.setIdCota(cota.getId());
 			final List<MovimentoEstoqueCota> movimentosEstoqueCota = this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro);
 			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
-				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoRegimeTributario);
+				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoRegimeTributario, ps);
 			}
 			
 			if(notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper() == null) {
