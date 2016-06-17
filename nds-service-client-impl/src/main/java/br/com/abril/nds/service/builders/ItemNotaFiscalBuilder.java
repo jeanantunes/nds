@@ -38,6 +38,7 @@ import br.com.abril.nds.model.fiscal.nota.CofinsWrapper;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ICMS;
 import br.com.abril.nds.model.fiscal.nota.IPI;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
 import br.com.abril.nds.model.fiscal.nota.Impostos;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.OrigemProduto;
@@ -46,6 +47,7 @@ import br.com.abril.nds.model.fiscal.nota.PISWrapper;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.TribIPI;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
 import br.com.abril.nds.util.CurrencyUtil;
 
@@ -53,7 +55,7 @@ public class ItemNotaFiscalBuilder  {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(ItemNotaFiscalBuilder.class);
 
-	public static void montaItemNotaFiscal(NotaFiscal notaFiscal, MovimentoEstoqueCota movimentoEstoqueCota, Map<String, TributoAliquota> tributoAliquota) {
+	public static void montaItemNotaFiscal(NotaFiscal notaFiscal, MovimentoEstoqueCota movimentoEstoqueCota, Map<String, TributoAliquota> tributoAliquota, ParametroSistema ps) {
 
 		DetalheNotaFiscal detalheNotaFiscal = null;
 		if(notaFiscal == null) {
@@ -67,7 +69,7 @@ public class ItemNotaFiscalBuilder  {
 		if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() == 0) {
 			
 			detalheNotaFiscal = new DetalheNotaFiscal();
-			detalheNotaFiscal = montarItem(movimentoEstoqueCota, new DetalheNotaFiscal(), notaFiscal, tributoAliquota);
+			detalheNotaFiscal = montarItem(movimentoEstoqueCota, new DetalheNotaFiscal(), notaFiscal, tributoAliquota, ps);
 			
 		} else {
 			
@@ -89,7 +91,7 @@ public class ItemNotaFiscalBuilder  {
 			if(notFound) {
 				
 				detalheNotaFiscal = new DetalheNotaFiscal();
-				detalheNotaFiscal = montarItem(movimentoEstoqueCota, detalheNotaFiscal, notaFiscal, tributoAliquota);
+				detalheNotaFiscal = montarItem(movimentoEstoqueCota, detalheNotaFiscal, notaFiscal, tributoAliquota, ps);
 				
 			} else {
 				
@@ -97,7 +99,7 @@ public class ItemNotaFiscalBuilder  {
 					
 					if(movimentoEstoqueCota.getProdutoEdicao().getId().equals(dnf.getProdutoServico().getProdutoEdicao().getId())) {
 						
-						montarItem(movimentoEstoqueCota, dnf, notaFiscal, tributoAliquota);
+						montarItem(movimentoEstoqueCota, dnf, notaFiscal, tributoAliquota, ps);
 					}
 					
 				}
@@ -112,7 +114,7 @@ public class ItemNotaFiscalBuilder  {
 		
 	}
 
-	private static DetalheNotaFiscal montarItem(AbstractMovimentoEstoque movimentoEstoque, DetalheNotaFiscal detalheNotaFiscal, NotaFiscal notaFiscal, Map<String, TributoAliquota> tributoAliquota) {
+	private static DetalheNotaFiscal montarItem(AbstractMovimentoEstoque movimentoEstoque, DetalheNotaFiscal detalheNotaFiscal, NotaFiscal notaFiscal, Map<String, TributoAliquota> tributoAliquota, ParametroSistema ps) {
 		
 		ProdutoServico produtoServico = null;
 		String codigoBarras = null;
@@ -121,20 +123,28 @@ public class ItemNotaFiscalBuilder  {
 		
 		if(detalheNotaFiscal.getProdutoServico() == null) {
 			
-			try {
-				
-				if(movimentoEstoque.getProdutoEdicao().getCodigoDeBarras() == null) {
+			if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
+				try {
 					
-					codigoBarras = StringUtils.leftPad("0", 13, '0').substring(0, 13);
-				} else {
+					if(movimentoEstoque.getProdutoEdicao().getCodigoDeBarras() == null) {
+						
+						codigoBarras = StringUtils.leftPad("0", 13, '0').substring(0, 13);
+					} else {
+						
+						String cb = movimentoEstoque.getProdutoEdicao().getCodigoDeBarras();
+						codigoBarras = StringUtils.leftPad(cb, 13, '0').substring(0, 13);
+					}
 					
-					String cb = movimentoEstoque.getProdutoEdicao().getCodigoDeBarras();
-					codigoBarras = StringUtils.leftPad(cb, 13, '0').substring(0, 13);
+				} catch (Exception e) {
+					throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido: "+ movimentoEstoque.getProdutoEdicao().getProduto().getCodigo() +" / "+ movimentoEstoque.getProdutoEdicao().getNumeroEdicao());
 				}
 				
-			} catch (Exception e) {
-				throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido: "+ movimentoEstoque.getProdutoEdicao().getProduto().getCodigo() +" / "+ movimentoEstoque.getProdutoEdicao().getNumeroEdicao());
+			} else {				
+				codigoBarras = "";
 			}
+			
+			
+			
 			
 			produtoServico = new ProdutoServico();
 			produtoServico.setCodigoBarras(codigoBarras);
@@ -500,7 +510,7 @@ public class ItemNotaFiscalBuilder  {
 		produtoServico.setCfop(Integer.valueOf(cfop));
 	}
 
-	public static void montaItemNotaFiscal(NotaFiscal notaFiscal, MovimentoFechamentoFiscal movimentoFechamentoFiscal, Map<String, TributoAliquota> tributoAliquota) {
+	public static void montaItemNotaFiscal(NotaFiscal notaFiscal, MovimentoFechamentoFiscal movimentoFechamentoFiscal, Map<String, TributoAliquota> tributoAliquota, ParametroSistema ps) {
 
 		if(!((movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalCota) || (movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalFornecedor))) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de Movimento Fiscal não suportado!");
@@ -518,7 +528,7 @@ public class ItemNotaFiscalBuilder  {
 		if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() == 0) {
 			
 			detalheNotaFiscal = new DetalheNotaFiscal();
-			detalheNotaFiscal = montarItem(movimentoFechamentoFiscal, new DetalheNotaFiscal(), notaFiscal, tributoAliquota);
+			detalheNotaFiscal = montarItem(movimentoFechamentoFiscal, new DetalheNotaFiscal(), notaFiscal, tributoAliquota, ps);
 			
 		} else {
 			
@@ -554,7 +564,7 @@ public class ItemNotaFiscalBuilder  {
 			if(notFound) {
 				
 				detalheNotaFiscal = new DetalheNotaFiscal();
-				detalheNotaFiscal = montarItem(movimentoFechamentoFiscal, detalheNotaFiscal, notaFiscal, tributoAliquota);
+				detalheNotaFiscal = montarItem(movimentoFechamentoFiscal, detalheNotaFiscal, notaFiscal, tributoAliquota, ps);
 				
 			} else {
 				
@@ -564,7 +574,7 @@ public class ItemNotaFiscalBuilder  {
 						
 						if(movimentoFechamentoFiscal.getProdutoEdicao().getId().equals(dnf.getProdutoServico().getProdutoEdicao().getId())) {
 							
-							montarItem(movimentoFechamentoFiscal, dnf, notaFiscal, tributoAliquota);
+							montarItem(movimentoFechamentoFiscal, dnf, notaFiscal, tributoAliquota, ps);
 						}
 					}
 					
@@ -580,26 +590,31 @@ public class ItemNotaFiscalBuilder  {
 	}
 	
 	private static DetalheNotaFiscal montarItem(MovimentoFechamentoFiscal movimentoFechamentoFiscal,
-			DetalheNotaFiscal detalheNotaFiscal, NotaFiscal notaFiscal, Map<String, TributoAliquota> tributoAliquota) {
+			DetalheNotaFiscal detalheNotaFiscal, NotaFiscal notaFiscal, Map<String, TributoAliquota> tributoAliquota, ParametroSistema ps) {
 		
 		String codigoBarras = null;
 		ProdutoServico produtoServico = null;
 		if(detalheNotaFiscal.getProdutoServico() == null) {
 			
-			try {
-				
-				if(movimentoFechamentoFiscal.getProdutoEdicao().getCodigoDeBarras() == null) {
+			if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
+				try {
 					
-					codigoBarras = StringUtils.leftPad("0", 13, '0').substring(0, 13);
-				} else {
+					if(movimentoFechamentoFiscal.getProdutoEdicao().getCodigoDeBarras() == null) {
+						
+						codigoBarras = StringUtils.leftPad("0", 13, '0').substring(0, 13);
+					} else {
+						
+						String cb = movimentoFechamentoFiscal.getProdutoEdicao().getCodigoDeBarras();
+						codigoBarras = StringUtils.leftPad(cb, 13, '0').substring(0, 13);
+					}
 					
-					String cb = movimentoFechamentoFiscal.getProdutoEdicao().getCodigoDeBarras();
-					codigoBarras = StringUtils.leftPad(cb, 13, '0').substring(0, 13);
+				} catch (Exception e) {
+					throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido: "+ movimentoFechamentoFiscal.getProdutoEdicao().getProduto().getCodigo() +" / "+ movimentoFechamentoFiscal.getProdutoEdicao().getNumeroEdicao());
 				}
-				
-			} catch (Exception e) {
-				throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido: "+ movimentoFechamentoFiscal.getProdutoEdicao().getProduto().getCodigo() +" / "+ movimentoFechamentoFiscal.getProdutoEdicao().getNumeroEdicao());
-			}
+			} else {
+				codigoBarras = "";
+			}	
+			
 			
 			produtoServico = new ProdutoServico();
 			produtoServico.setCodigoBarras(codigoBarras);
@@ -717,7 +732,7 @@ public class ItemNotaFiscalBuilder  {
 		return detalheNotaFiscal;
 	}
 
-	public static void montaItemNotaFiscal(NotaFiscal notaFiscal, MovimentoEstoque movimentoEstoque, Map<String, TributoAliquota> tributoAliquota) {
+	public static void montaItemNotaFiscal(NotaFiscal notaFiscal, MovimentoEstoque movimentoEstoque, Map<String, TributoAliquota> tributoAliquota, ParametroSistema ps) {
 
 		DetalheNotaFiscal detalheNotaFiscal = new DetalheNotaFiscal();
 		if(notaFiscal == null) {
@@ -730,7 +745,7 @@ public class ItemNotaFiscalBuilder  {
 		
 		if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() == 0) {
 			
-			montarItem(movimentoEstoque, detalheNotaFiscal, notaFiscal, tributoAliquota);
+			montarItem(movimentoEstoque, detalheNotaFiscal, notaFiscal, tributoAliquota, ps);
 			
 		} else {
 			
@@ -759,7 +774,7 @@ public class ItemNotaFiscalBuilder  {
 						
 						notFound = false;
 						
-						montarItem(movimentoEstoque, dnf, notaFiscal, tributoAliquota);
+						montarItem(movimentoEstoque, dnf, notaFiscal, tributoAliquota, ps);
 
 					}
 					
@@ -767,7 +782,7 @@ public class ItemNotaFiscalBuilder  {
 				
 				if(notFound) {
 					
-					montarItem(movimentoEstoque, detalheNotaFiscal, notaFiscal, tributoAliquota);
+					montarItem(movimentoEstoque, detalheNotaFiscal, notaFiscal, tributoAliquota, ps);
 					
 				}
 			}
