@@ -27,7 +27,6 @@ import br.com.abril.nds.client.vo.NfeVO;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
-import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
 import br.com.abril.nds.dto.NfeImpressaoDTO;
 import br.com.abril.nds.dto.NfeImpressaoWrapper;
 import br.com.abril.nds.dto.NotaFiscalDTO;
