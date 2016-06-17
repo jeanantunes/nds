@@ -351,39 +351,6 @@ public class ProdutoEdicao implements Serializable {
 	}
 
 	public void setCodigoDeBarras(String codigoDeBarras) {
-		
-		BigInteger codigo = BigInteger.ZERO;
-		
-		if(codigoDeBarras==null || codigoDeBarras.trim().equals("")){
-			codigoDeBarras = "0";
-		}
-		
-		try {
-		
-			codigo = new BigInteger(codigoDeBarras);
-		
-		} catch(NumberFormatException e) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras "+codigoDeBarras+" inválido!");
-		}
-		
-		if (codigoDeBarras != null && !"".equals(codigoDeBarras) && codigo.compareTo(BigInteger.ZERO) > 0){
-			
-			//evita que sejam gravados zeros na frente do código de barras, vide trac 677
-			if (codigoDeBarras.startsWith("0")){
-				
-				int indexUltimoZero = 0;
-				
-				while (codigoDeBarras.charAt(indexUltimoZero) == '0'){
-					indexUltimoZero++;
-				}
-				
-				codigoDeBarras = codigoDeBarras.substring(
-						indexUltimoZero, 
-						codigoDeBarras.length());
-			}
-		}
-		
 		this.codigoDeBarras = codigoDeBarras;
 	}
 	
