@@ -781,8 +781,20 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             parameters.put("idProdutoEdicao", filtro.getIdProdutoEdicao());
         }
         
+        if(filtro.getIdBoxEncalhe() != null) {
+            parameters.put("boxEncalhe", filtro.getIdBoxEncalhe());
+        }
+        
         if(filtro.getIdBox() != null) {
             parameters.put("box", filtro.getIdBox());
+        }
+        
+        if(filtro.getIdRota() != null) {
+            parameters.put("rota", filtro.getIdRota());
+        }
+        
+        if(filtro.getIdRoteiro() != null) {
+            parameters.put("roteiro", filtro.getIdRoteiro());
         }
         
         parameters.put("grupoMovimentoEstoqueEncalhe", GrupoMovimentoEstoque.ENVIO_ENCALHE.name());
@@ -910,8 +922,20 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             parameters.put("idProdutoEdicao", filtro.getIdProdutoEdicao());
         }
 
+        if(filtro.getIdBoxEncalhe() != null) {
+            parameters.put("boxEncalhe", filtro.getIdBoxEncalhe());
+        }
+
         if(filtro.getIdBox() != null) {
             parameters.put("box", filtro.getIdBox());
+        }
+        
+        if(filtro.getIdRota() != null) {
+            parameters.put("rota", filtro.getIdRota());
+        }
+        
+        if(filtro.getIdRoteiro() != null) {
+            parameters.put("roteiro", filtro.getIdRoteiro());
         }
         
         parameters.put("grupoMovimentoEstoqueEncalhe", GrupoMovimentoEstoque.ENVIO_ENCALHE.name());
@@ -1035,12 +1059,23 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sqlTblPrecoVenda.append(" 	MAX(MEC.DATA) AS DATA_REPARTE				");
 		sqlTblPrecoVenda.append(" FROM							");
 		sqlTblPrecoVenda.append(" 	MOVIMENTO_ESTOQUE_COTA MEC  ");
+		if(filtro.getIdBox() != null) {
+			sqlTblPrecoVenda.append(" INNER JOIN COTA COTA ON (COTA.ID = MEC.COTA_ID) ");
+			sqlTblPrecoVenda.append(" INNER JOIN BOX BLANC ON (COTA.BOX_ID = BLANC.ID) ");
+			sqlTblPrecoVenda.append(" INNER JOIN PDV on (PDV.COTA_ID = COTA.ID and PDV.PONTO_PRINCIPAL = true) ");
+			sqlTblPrecoVenda.append(" INNER JOIN ROTA_PDV on (ROTA_PDV.PDV_ID = PDV.ID) ");
+			sqlTblPrecoVenda.append(" INNER JOIN ROTA on (ROTA.ID = ROTA_PDV.ROTA_ID) ");
+			sqlTblPrecoVenda.append(" INNER JOIN ROTEIRO on (ROTEIRO.ID = ROTA.ROTEIRO_ID) ");
+			sqlTblPrecoVenda.append(" INNER JOIN ROTEIRIZACAO on (ROTEIRIZACAO.ID = ROTEIRO.ROTEIRIZACAO_ID) ");
+			sqlTblPrecoVenda.append(" AND (BLANC.ID = ROTEIRIZACAO.BOX_ID) ");
+			
+		}
 		sqlTblPrecoVenda.append(" INNER JOIN                    ");
 		sqlTblPrecoVenda.append(" (SELECT PRODUTO_EDICAO.ID AS ID ");
 		sqlTblPrecoVenda.append(" FROM CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC ");
 		sqlTblPrecoVenda.append(" INNER JOIN CONFERENCIA_ENCALHE ON (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = CCEC.ID) ");
 		
-		if(filtro.getIdBox() != null) {
+		if(filtro.getIdBoxEncalhe() != null) {
 			sqlTblPrecoVenda.append(" INNER JOIN BOX ON  (CCEC.BOX_ID = BOX.ID) ");
         }
 		
@@ -1053,16 +1088,18 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sqlTblPrecoVenda.append(filtro.getIdCota() !=null ? " AND CCEC.COTA_ID = :idCota " : "");
 		sqlTblPrecoVenda.append(filtro.getCodigoProduto() != null ? " AND PRODUTO.CODIGO = :codigoProduto " : "");
 		sqlTblPrecoVenda.append(filtro.getIdProdutoEdicao() != null ? " AND PRODUTO_EDICAO.ID = :idProdutoEdicao " : "");
-		sqlTblPrecoVenda.append(filtro.getIdBox() != null ? " AND BOX.ID = :box " : "");
-		
+		sqlTblPrecoVenda.append(filtro.getIdBoxEncalhe() != null ? " AND BOX.ID = :boxEncalhe " : "");
 		sqlTblPrecoVenda.append(" GROUP BY CONFERENCIA_ENCALHE.PRODUTO_EDICAO_ID) AS EDICAO_ENCALHADA ON  					");
 		sqlTblPrecoVenda.append(" ( MEC.PRODUTO_EDICAO_ID = EDICAO_ENCALHADA.ID AND MEC.TIPO_MOVIMENTO_ID ) ");
 		
 		sqlTblPrecoVenda.append(" INNER JOIN TIPO_MOVIMENTO ON ( TIPO_MOVIMENTO.ID = MEC.TIPO_MOVIMENTO_ID ) ");
 		
 		sqlTblPrecoVenda.append(" WHERE 1=1 ");
+		sqlTblPrecoVenda.append(filtro.getIdBox() != null ? " AND BLANC.CODIGO = :box " : "");
 		// sqlTblPrecoVenda.append(" WHERE TIPO_MOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE in (:grupoMovimentoEstoqueConsignado) ");
 		sqlTblPrecoVenda.append(filtro.getIdCota()!=null ? " AND MEC.COTA_ID = :idCota " : "");
+		sqlTblPrecoVenda.append(filtro.getIdRota() != null ? " AND ROTA.ID = :rota " : "");
+		sqlTblPrecoVenda.append(filtro.getIdRoteiro() != null ? " AND ROTEIRO.ID = :roteiro " : "");
 		sqlTblPrecoVenda.append(" GROUP BY MEC.PRODUTO_EDICAO_ID ");
 		sqlTblPrecoVenda.append(" ) AS PRECO_VENDA_DE_REPARTE ON (MOVIMENTO_ESTOQUE_COTA.PRODUTO_EDICAO_ID = PRECO_VENDA_DE_REPARTE.PRODUTO_EDICAO_ID AND ");
 		sqlTblPrecoVenda.append(" 								MOVIMENTO_ESTOQUE_COTA.DATA = PRECO_VENDA_DE_REPARTE.DATA_REPARTE)                       ");
@@ -1092,7 +1129,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sqlTblReparte.append(" FROM  ");
 		sqlTblReparte.append(" MOVIMENTO_ESTOQUE_COTA MEC	");
-		if(filtro.getIdBox() != null) {
+		
+		if(filtro.getIdBoxEncalhe() != null) {
 			sqlTblReparte.append(" INNER JOIN CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC ON (CCEC.COTA_ID = MEC.COTA_ID)   ");
 			sqlTblReparte.append(" INNER JOIN BOX ON  (CCEC.BOX_ID = BOX.ID) ");
 			sqlTblReparte.append(" INNER JOIN CONFERENCIA_ENCALHE ON (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = CCEC.ID ");
@@ -1103,7 +1141,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sqlTblReparte.append(" FROM CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC ");
 		sqlTblReparte.append(" INNER JOIN CONFERENCIA_ENCALHE ON (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = CCEC.ID)   ");
 		
-		if(filtro.getIdBox() != null) {
+		if(filtro.getIdBoxEncalhe() != null) {
 			sqlTblReparte.append(" INNER JOIN BOX ON  (CCEC.BOX_ID = BOX.ID) ");
         }
 		
@@ -1116,11 +1154,22 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sqlTblReparte.append(filtro.getIdCota() != null ? " AND CCEC.COTA_ID = :idCota " : "");
 		sqlTblReparte.append(filtro.getCodigoProduto() != null ? " AND PRODUTO.CODIGO = :codigoProduto " : "");
 		sqlTblReparte.append(filtro.getIdProdutoEdicao() != null ? " AND PRODUTO_EDICAO.ID = :idProdutoEdicao " : "");
-		sqlTblReparte.append(filtro.getIdBox() != null ? " AND BOX.ID = :box " : "");
+		sqlTblReparte.append(filtro.getIdBoxEncalhe() != null ? " AND BOX.ID = :boxEncalhe " : "");
+		
 		sqlTblReparte.append(" GROUP BY CONFERENCIA_ENCALHE.PRODUTO_EDICAO_ID ");
 		sqlTblReparte.append(" ) AS EDICAO_ENCALHADA ON ( MEC.PRODUTO_EDICAO_ID = EDICAO_ENCALHADA.ID ) ");
 		
 		sqlTblReparte.append(" INNER JOIN cota c on c.id = MEC.COTA_ID ");
+		
+		if(filtro.getIdBox() != null) {
+			sqlTblReparte.append(" INNER JOIN BOX BLANC ON (c.BOX_ID = BLANC.ID) ");
+			sqlTblReparte.append(" INNER JOIN PDV on (PDV.COTA_ID = c.ID and PDV.PONTO_PRINCIPAL = true) ");
+			sqlTblReparte.append(" INNER JOIN ROTA_PDV on (ROTA_PDV.PDV_ID = PDV.ID) ");
+			sqlTblReparte.append(" INNER JOIN ROTA on (ROTA.ID = ROTA_PDV.ROTA_ID) ");
+			sqlTblReparte.append(" INNER JOIN ROTEIRO on (ROTEIRO.ID = ROTA.ROTEIRO_ID) ");
+			sqlTblReparte.append(" INNER JOIN ROTEIRIZACAO on (ROTEIRIZACAO.ID = ROTEIRO.ROTEIRIZACAO_ID) ");
+			sqlTblReparte.append(" AND (BLANC.ID = ROTEIRIZACAO.BOX_ID) ");
+		}
 		
 		sqlTblReparte.append(" INNER JOIN TIPO_MOVIMENTO TM ON (TM.ID = MEC.TIPO_MOVIMENTO_ID) ");
 		
@@ -1148,9 +1197,15 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sqlTblReparte.append(filtro.getIdCota()!=null ? " AND MEC.COTA_ID = :idCota " : "");
 		
-		if(filtro.getIdBox() != null) {
+		sqlTblReparte.append(filtro.getIdBox() != null ? " AND BLANC.CODIGO = :box " : "");
+		
+		sqlTblReparte.append(filtro.getIdRota() != null ? " AND ROTA.ID = :rota " : "");
+		
+		sqlTblReparte.append(filtro.getIdRoteiro() != null ? " AND ROTEIRO.ID = :roteiro " : "");
+		
+		if(filtro.getIdBoxEncalhe() != null) {
 			
-			sqlTblReparte.append(" AND BOX.ID = :box ");
+			sqlTblReparte.append(" AND BOX.ID = :boxEncalhe ");
 			sqlTblReparte.append(" AND CCEC.DATA_OPERACAO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal "); 
 		}
 		
@@ -1195,8 +1250,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    	sql.append(" AND CCEC.COTA_ID = :idCota  ");
 	    }
 		
-		if(filtro.getIdBox() != null) {
-	    	sql.append(" AND BOX.ID = :box  ");
+		if(filtro.getIdBoxEncalhe() != null) {
+	    	sql.append(" AND BOX.ID = :boxEncalhe  ");
 	    }
 	    
 		if(filtro.getCodigoProduto() != null) {
@@ -1303,8 +1358,20 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             parameters.put("idProdutoEdicao", filtro.getIdProdutoEdicao());
         }
         
+        if(filtro.getIdBoxEncalhe() != null) {
+            parameters.put("boxEncalhe", filtro.getIdBoxEncalhe());
+        }
+        
         if(filtro.getIdBox() != null) {
             parameters.put("box", filtro.getIdBox());
+        }
+        
+        if(filtro.getIdRota() != null) {
+            parameters.put("rota", filtro.getIdRota());
+        }
+        
+        if(filtro.getIdRoteiro() != null) {
+            parameters.put("roteiro", filtro.getIdRoteiro());
         }
         
         parameters.put("grupoMovimentoEstoqueEncalhe", GrupoMovimentoEstoque.ENVIO_ENCALHE.name());
@@ -4766,13 +4833,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" 		            AND MEC.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME'");
 			sql.append(" 		    GROUP BY MEC.COTA_ID");
 			sql.append(" ");
-
-
-	        
-		        
-		     
-		        
-		        
+			
 	        return sql;
 	    } 
 }
