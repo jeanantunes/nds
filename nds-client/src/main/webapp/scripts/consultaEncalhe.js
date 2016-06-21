@@ -192,23 +192,17 @@ var ConsultaEncalhe = $
 
 					pesquisar : function() {
 
-						var dataRecolhimentoInicial = $(
-								"#dataRecolhimentoInicial",
-								ConsultaEncalhe.workspace).val();
-						var dataRecolhimentoFinal = $("#dataRecolhimentoFinal",
-								ConsultaEncalhe.workspace).val();
-						var idFornecedor = $("#idFornecedor",
-								ConsultaEncalhe.workspace).val();
-						var numeroCota = $("#consulta-encalhe-cota",
-								ConsultaEncalhe.workspace).val();
-						var codigoProduto = $(
-								"#consulta-encalhe-codigoProduto",
-								ConsultaEncalhe.workspace).val();
-						var idBox = $("#consulta-encalhe-box",
-								ConsultaEncalhe.workspace).val();
-						var numeroEdicao = $("#consulta-encalhe-edicao",
-								ConsultaEncalhe.workspace).val();
-
+						var dataRecolhimentoInicial = $("#dataRecolhimentoInicial", ConsultaEncalhe.workspace).val();
+						var dataRecolhimentoFinal = $("#dataRecolhimentoFinal", ConsultaEncalhe.workspace).val();
+						var idFornecedor = $("#idFornecedor", ConsultaEncalhe.workspace).val();
+						var numeroCota = $("#consulta-encalhe-cota", ConsultaEncalhe.workspace).val();
+						var codigoProduto = $("#consulta-encalhe-codigoProduto", ConsultaEncalhe.workspace).val();
+						var idBoxEncalhe = $("#consulta-encalhe-boxEncalhe", ConsultaEncalhe.workspace).val();
+						var idBox = $("#consulta-encalhe-box", ConsultaEncalhe.workspace).val();
+						var numeroEdicao = $("#consulta-encalhe-edicao", ConsultaEncalhe.workspace).val();
+						var idRota = $("#consulta-encalhe-selectRota", ConsultaEncalhe.workspace).val();
+						var idRoteiro = $("#consulta-encalhe-selectRoteiro", ConsultaEncalhe.workspace).val();
+						
 						var formData = [
 
 						{
@@ -227,12 +221,21 @@ var ConsultaEncalhe = $
 							name : 'codigoProduto',
 							value : codigoProduto
 						}, {
+							name : 'idBoxEncalhe',
+							value : idBoxEncalhe
+						}, {
 							name : 'idBox',
-							value : idBox
+							value : idBox	
 						}, {
 							name : 'numeroEdicao',
 							value : numeroEdicao
-						} ];
+						}, {
+							name : 'idRota',
+							value : idRota
+						}, {
+							name : 'idRoteiro',
+							value : idRoteiro
+						}];
 
 						$("#gridConsultaEncalhe", ConsultaEncalhe.workspace)
 								.flexOptions(
@@ -258,27 +261,25 @@ var ConsultaEncalhe = $
 					gerarSlip : function() {
 					
 						this.confirmDialog = new ConfirmDialog('Confirmar Geracao do Slip ?', function() {
-							var dataRecolhimentoInicial = $(
-									"#dataRecolhimentoInicial",
-									ConsultaEncalhe.workspace).val();
-							var dataRecolhimentoFinal = $(
-									"#dataRecolhimentoFinal",
-									ConsultaEncalhe.workspace).val();
-							var idFornecedor = $("#idFornecedor",
-									ConsultaEncalhe.workspace).val();
-							var numeroCota = $("#consulta-encalhe-cota",
-									ConsultaEncalhe.workspace).val();
-							var boxId = $("#consulta-encalhe-box",
-									ConsultaEncalhe.workspace).val();
-
+							var dataRecolhimentoInicial = $("#dataRecolhimentoInicial", ConsultaEncalhe.workspace).val();
+							var dataRecolhimentoFinal = $("#dataRecolhimentoFinal", ConsultaEncalhe.workspace).val();
+							var idFornecedor = $("#idFornecedor", ConsultaEncalhe.workspace).val();
+							var numeroCota = $("#consulta-encalhe-cota", ConsultaEncalhe.workspace).val();
+							var idBoxEncalhe = $("#consulta-encalhe-boxEncalhe", ConsultaEncalhe.workspace).val();
+							var idBox = $("#consulta-encalhe-box", ConsultaEncalhe.workspace).val();
+							var idRota = $("#consulta-encalhe-selectRota", ConsultaEncalhe.workspace).val();
+							var idRoteiro = $("#consulta-encalhe-selectRoteiro", ConsultaEncalhe.workspace).val();
+							
 							var link = contextPath
 									+ '/devolucao/consultaEncalhe/gerarSlip'
-									+ '?dataRecolhimentoInicial='
-									+ dataRecolhimentoInicial
-									+ '&dataRecolhimentoFinal='
-									+ dataRecolhimentoFinal + '&idFornecedor='
-									+ idFornecedor + '&numeroCota='
-									+ numeroCota + '&idBox=' + boxId;
+									+ '?dataRecolhimentoInicial='+ dataRecolhimentoInicial
+									+ '&dataRecolhimentoFinal='+ dataRecolhimentoFinal 
+									+ '&idFornecedor='+ idFornecedor 
+									+ '&numeroCota='+ numeroCota 
+									+ '&idBoxEncalhe=' + idBoxEncalhe
+									+ '&idBox=' + idBox
+									+ '&idRota=' + idRota
+									+ '&idRoteiro=' + idRoteiro;
 
 							$("#download-iframe", ConsultaEncalhe.workspace)
 									.attr('src', link);
@@ -289,7 +290,138 @@ var ConsultaEncalhe = $
 					    });
 					 this.confirmDialog.open();
 					},
+					
+					/**
+					 * Recarregar combos por Box
+					 */
+			        changeBox : function(){
+						
+			        	var boxDe = $("#consulta-encalhe-box").val();
+			        	
+			        	var boxAte = $("#consulta-encalhe-box").val();
+			        	
+			        	var idRota = $("#consulta-encalhe-selectRota").val();
+			        	
+			        	var idRoteiro = $("#consulta-encalhe-selectRoteiro").val();
+			        	
+			        	var params = [{
+							            name : "codigoBoxDe",
+							            value : boxDe	
+									  },{
+										name : "codigoBoxAte",
+										value : boxAte
+									  }];
+			        	
+			        	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorBox', params, 
+							function(result) {
+			        		
+			        		    var listaRota = result[0];
+			        		    
+			        		    var listaRoteiro = result[1];
+			        		    
+			        		    var listaBox = result[2];
+			        		
+			        		    ConsultaEncalhe.recarregarCombo($("#consulta-encalhe-selectRota", ConsultaEncalhe.workspace), listaRota ,idRota);
+			     		    
+			        		    ConsultaEncalhe.recarregarCombo($("#consulta-encalhe-selectRoteiro", ConsultaEncalhe.workspace), listaRoteiro ,idRoteiro); 
+			        		    
+			        		    ConsultaEncalhe.recarregarCombo($("#consulta-encalhe-box", ConsultaEncalhe.workspace), listaBox ,boxDe);
+			         		    
+			        	    }    
+						);
+					},
+					
+					/**
+					 * Recarregar combos por Rota
+					 */
+			        changeRota : function(){
+			        	
+			            var boxDe = $("#consulta-encalhe-box").val();
+			        	
+			        	var idRota = $("#consulta-encalhe-selectRota").val();
+			        	
+			        	var idRoteiro = $("#consulta-encalhe-selectRoteiro").val();
+			        	
+			        	var params = [{
+							            name : "idRota",
+							            value : idRota	
+									  }];
+					    
+			        	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorRota', params, 
+							function(result) {
+			        		
+			        		    var listaRoteiro = result[0];
+			        		 
+			        		    var listaBox = result[1];
+			        		    
+			        		    var listaRota = result[2];
 
+			        		    ConsultaEncalhe.recarregarCombo($("#consulta-encalhe-box", ConsultaEncalhe.workspace), listaBox ,boxDe);
+			     		    
+			        		    ConsultaEncalhe.recarregarCombo($("#consulta-encalhe-selectRoteiro", ConsultaEncalhe.workspace), listaRoteiro ,idRoteiro); 
+			        		    
+			        		    ConsultaEncalhe.recarregarCombo($("#consulta-encalhe-selectRota", ConsultaEncalhe.workspace), listaRota ,idRota);
+			        	    }    
+						);
+					},
+					
+					/**
+					 * Recarregar combos por Roteiro
+					 */
+			        changeRoteiro : function(){
+			        	
+			            var boxDe = $("#consulta-encalhe-box").val();
+			        	
+			        	var idRota = $("#consulta-encalhe-selectRota").val();
+			        	
+			        	var idRoteiro = $("#consulta-encalhe-selectRoteiro").val();
+			         	
+			         	var params = [{
+			 				            name : "idRoteiro",
+			 				            value : idRoteiro	
+			 						  }];
+			         	
+			         	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorRoteiro', params, 
+							function(result) {
+			        		
+			        		    var listaRota = result[0];
+			        		 
+			        		    var listaBox = result[1];
+			        		    
+			        		    var listaRoteiro = result[2];
+			     		    
+			        		    ConsultaEncalhe.recarregarCombo($("#consulta-encalhe-selectRota", ConsultaEncalhe.workspace), listaRota ,idRota);  
+			        		    
+			        		    ConsultaEncalhe.recarregarCombo($("#consulta-encalhe-box", ConsultaEncalhe.workspace), listaBox ,boxDe);
+			         		    
+			        		    ConsultaEncalhe.recarregarCombo($("#consulta-encalhe-selectRoteiro", ConsultaEncalhe.workspace), listaRoteiro ,idRoteiro); 
+			        	    }    
+						);
+					},
+					
+					/**
+					 * Recarregar combo
+					 */
+					recarregarCombo : function (comboNameComponent, content, valSelected){
+						
+						comboNameComponent.empty();
+
+						comboNameComponent.append(new Option('Selecione...', '', true, true));
+						
+					    $.each(content, function(index, row) {
+						    	
+					    	comboNameComponent.append(new Option(row.value.$, row.key.$, true, true));
+						});
+
+					    if (valSelected) {
+					    	
+					        $(comboNameComponent).val(valSelected);
+					    } else {
+					    	
+					        $(comboNameComponent).val('');
+					    }
+					},
+					
 					popupOutrosValores : function() {
 
 						$("#dialog-outros-valores", ConsultaEncalhe.workspace)
