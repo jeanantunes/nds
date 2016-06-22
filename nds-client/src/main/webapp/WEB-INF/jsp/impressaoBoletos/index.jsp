@@ -173,6 +173,15 @@
 							</select>
 							
 					    </td>
+					    <td>Banco</td>
+					    <td>
+					    	<select name="impressao-boleto-banco" id="impressao-boleto-banco" style="width:160px; float:left; margin-right:5px;">
+						    	<option selected="selected" value="-1">Todos</option>
+						      		<c:forEach var="banco" items="${listaBancos}">
+										<option value="${banco.key}">${banco.value}</option>
+							  		</c:forEach>
+						    </select>
+					    </td>
 					    <td>&nbsp;</td>
 					    <td>
 					    	<span class="bt_novos">
