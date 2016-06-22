@@ -83,6 +83,13 @@ label {
 					</td>
 				</tr>
 				<tr>
+					<td>Conv&ecirc;nio</td>
+					<td>
+						<input maxlength="6" type="text" name="newConvenio" id="newConvenio" style="width: 100px;" /> 
+					</td>
+				</tr>
+				
+				<tr>
 					<td>Carteira:</td>
 					<td>
 					
@@ -187,6 +194,13 @@ label {
 						id="alterDigito" style="width: 26px;" />
 					</td>
 				</tr>
+				<tr>
+					<td>Conv&ecirc;nio</td>
+					<td>
+						<input maxlength="6" type="text" name="alterConvenio" id="alterConvenio" style="width: 100px;" /> 
+					</td>
+				</tr>
+				
 				<tr>
 					<td>Carteira:</td>
 					<td>

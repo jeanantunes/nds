@@ -78,7 +78,71 @@ $(function(){
 				    </select>
 				
 				</td>
+			</tr>
+			<tr>
+				<td>Box Encalhe:</td>
+    			<td width="91">
+					<select id="consulta-encalhe-boxEncalhe" style="width:80px;">
+						<option selected="selected"> </option>	    
+						<c:forEach items="${listaBoxes}" var="boxEncalhe">
+							<option value="${boxEncalhe.key}" >${boxEncalhe.value}</option>
+						</c:forEach>
+					</select>
+				</td>
+    			
+    			<td>Box:</td>
+    			<td width="91">
+					<select id="consulta-encalhe-box" style="width:150px;"  onchange="ConsultaEncalhe.changeBox();">
+						<option selected="selected"> </option>	    
+						<c:forEach items="${listaBox}" var="box">
+							<option value="${box.key}" >${box.value}</option>
+						</c:forEach>
+					</select>
+				</td>
+    		</tr>
+    		<tr>			
+   				<td width="93">Rota:</td>
+   				<td>
+					<select id="consulta-encalhe-selectRota" onchange="ConsultaEncalhe.changeRota();" style="width:150px; font-size:11px!important">
+    					<option value="">Selecione...</option>
+    					<c:forEach items="${rotas}" var="rota">
+							<option value="${rota.key }">${rota.value }</option>
+						</c:forEach>
+   					</select>
+    			</td>
+    			
+    			<td width="91">Roteiro:</td>
+					<td width="215">
+ 	 					<select id="consulta-encalhe-selectRoteiro" onchange="ConsultaEncalhe.changeRoteiro();" style="width:150px; font-size:11px!important">
+     						<option value="">Selecione...</option>
+    						<c:forEach items="${roteiros}" var="roteiro">
+								<option value="${roteiro.key }">${roteiro.value }</option>
+							</c:forEach>
+   						</select>
+   					</td>
+    			</td>
+			</tr>		
+			<tr>	
+				<td width="43">C&oacute;digo:</td>
+				<td width="123" >
+			    	<input type="text" name="consulta-encalhe-codigoProduto" id="consulta-encalhe-codigoProduto"
+						   style="width: 80px; float: left; margin-right: 5px;" maxlength="10"
+						   onkeyup="this.value = this.value.replace(/[^0-9\.]/g,'');"
+						   onchange="ConsultaEncalhe.pesquisarPorCodigoProduto('#consulta-encalhe-codigoProduto', '#consulta-encalhe-produto', '', false,
+								   									   ConsultaEncalhe.pesquisarProdutosSuccessCallBack);" />
+				</td>
+				<td width="55">Produto:</td>
+				<td>
+					<input type="text" name="consulta-encalhe-produto" id="consulta-encalhe-produto" style="width: 222px;" maxlength="255"/>
+				</td>
 				
+				<td>Edi&ccedil;&atilde;o:</td>
+				<td width="90">
+		        	<input type="text" name="consulta-encalhe-edicao" id="consulta-encalhe-edicao" style="width:80px;"/>
+		        </td>
+			</tr>
+			
+			<tr>
 				<td width="25">
 					Cota:
 				</td>
@@ -100,35 +164,6 @@ $(function(){
 		            style="width:130px;"/>
 					
 				</td>
-			</tr>
-			<tr>
-				<td>Box:</td>
-    			<td width="91">
-					<select id="consulta-encalhe-box" style="width:80px;">
-						<option selected="selected"> </option>	    
-						<c:forEach items="${listaBoxes}" var="box">
-							<option value="${box.key}" >${box.value}</option>
-						</c:forEach>
-					</select>
-				</td>	
-				
-				<td width="43">C&oacute;digo:</td>
-				<td width="123" >
-			    	<input type="text" name="consulta-encalhe-codigoProduto" id="consulta-encalhe-codigoProduto"
-						   style="width: 80px; float: left; margin-right: 5px;" maxlength="10"
-						   onkeyup="this.value = this.value.replace(/[^0-9\.]/g,'');"
-						   onchange="ConsultaEncalhe.pesquisarPorCodigoProduto('#consulta-encalhe-codigoProduto', '#consulta-encalhe-produto', '', false,
-								   									   ConsultaEncalhe.pesquisarProdutosSuccessCallBack);" />
-				</td>
-				<td width="55">Produto:</td>
-				<td colspan="2">
-					<input type="text" name="consulta-encalhe-produto" id="consulta-encalhe-produto" style="width: 222px;" maxlength="255"/>
-				</td>
-				
-				<td>Edi&ccedil;&atilde;o:</td>
-				<td width="90">
-		        	<input type="text" name="consulta-encalhe-edicao" id="consulta-encalhe-edicao" style="width:80px;"/>
-		        </td>
 				
 				<td width="107">
 					<span class="bt_novos">

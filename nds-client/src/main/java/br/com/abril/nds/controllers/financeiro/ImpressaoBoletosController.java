@@ -276,13 +276,17 @@ public class ImpressaoBoletosController extends BaseController {
 
 	@Post
 	@Path("/consultar")
-	public void consultarDividas(String dataMovimento, Long box, Long rota, Long roteiro, Integer numCota, TipoCobranca tipoCobranca, String sortorder, String sortname, int page, int rp) {
+	public void consultarDividas(String dataMovimento, Long box, Long rota, Long roteiro, Integer numCota, TipoCobranca tipoCobranca, Long banco, String sortorder, String sortname, int page, int rp) {
 
 		isDataMovimento(dataMovimento);
 
 		Date data = DateUtil.parseDataPTBR(dataMovimento);
+		
+		if (banco == -1) {
+			banco = null;
+		}
 
-		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO(data, box, rota, roteiro, numCota, tipoCobranca);
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO(data, box, rota, roteiro, numCota, tipoCobranca, banco);
 
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 

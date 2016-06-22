@@ -1,6 +1,10 @@
 package br.com.abril.nds.service.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -13,16 +17,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
@@ -60,16 +64,24 @@ import br.com.abril.nds.repository.ImpressaoNFeRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.service.ChamadaEncalheService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.RecolhimentoService;
+import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 /**
  * Classe de implementação referentes a serviços de chamada encalhe. 
@@ -117,7 +129,10 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	
 	@Autowired
 	private NaturezaOperacaoService naturezaOperacaoService;
-
+	
+	 @Autowired
+	 private EmailService emailSerice;
+	
 	@Override
 	@Transactional
 	public List<Integer> obterCotasComOperacaoDiferenciada(FiltroEmissaoCE filtro) {
@@ -840,13 +855,41 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Transactional
 	public byte[] gerarEmissaoCE(FiltroEmissaoCE filtro) throws JRException, URISyntaxException{
 		
-		Date dataOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
-		
 		boolean apresentaCapas = (filtro.getCapa() == null) ? false : filtro.getCapa();
 		
-		DistribuidorDTO distribuidor = distribuidorService.obterDadosEmissao();
-		
 		boolean apresentaCapasPersonalizadas = (filtro.getPersonalizada() == null) ? false : filtro.getPersonalizada();
+		
+		final List<ChamadaEncalheImpressaoWrapper> listaCEWrapper = this.gerarListaChamadaEncalheImpressaoWrapper(filtro);
+		
+		List<CotaEmissaoDTO> lista = chamadaEncalheRepository.obterDadosEmissaoImpressaoChamadasEncalhe(filtro);
+		
+		// paginarListaDeProdutosDasCotasEmissao(lista, filtro.getQtdProdutosPorPagina(), filtro.getQtdMaximaProdutosComTotalizacao());
+		
+		if(apresentaCapas) {
+			
+			if(apresentaCapasPersonalizadas) {
+				
+				paginarListaDeCapasPersonalizadas(lista, filtro.getQtdCapasPorPagina());
+		
+			} else {
+				
+				
+				obterIdsCapasChamadaEncalhe(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte(), filtro.getQtdCapasPorPagina());
+								
+			}
+			
+		}
+       
+		return this.gerarDocumentoEmissaoCE(listaCEWrapper);
+		
+	}
+	
+	@Transactional
+	public List<ChamadaEncalheImpressaoWrapper> gerarListaChamadaEncalheImpressaoWrapper(FiltroEmissaoCE filtro){
+		
+		Date dataOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		DistribuidorDTO distribuidor = distribuidorService.obterDadosEmissao();
 		
 		final List<ChamadaEncalheImpressaoWrapper> listaCEWrapper = new ArrayList<ChamadaEncalheImpressaoWrapper>();
 		
@@ -944,25 +987,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 		}
 		
-		// paginarListaDeProdutosDasCotasEmissao(lista, filtro.getQtdProdutosPorPagina(), filtro.getQtdMaximaProdutosComTotalizacao());
-		
-		if(apresentaCapas) {
-			
-			if(apresentaCapasPersonalizadas) {
-				
-				paginarListaDeCapasPersonalizadas(lista, filtro.getQtdCapasPorPagina());
-		
-			} else {
-				
-				
-				obterIdsCapasChamadaEncalhe(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte(), filtro.getQtdCapasPorPagina());
-								
-			}
-			
-		}
-       
-		return this.gerarDocumentoEmissaoCE(listaCEWrapper);
-		
+		return listaCEWrapper;
 	}
 	
 	private byte[] gerarDocumentoEmissaoCE(final List<ChamadaEncalheImpressaoWrapper> list) throws JRException, URISyntaxException {
@@ -1011,4 +1036,56 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
         
         return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
     }
+
+
+	@Override
+	@Transactional
+	public void enviarEmail(FiltroEmissaoCE filtro) {
+		
+		List<ChamadaEncalheImpressaoWrapper> listaDeCEImpressao = this.gerarListaChamadaEncalheImpressaoWrapper(filtro);
+		
+		Map<Long, List<ChamadaEncalheImpressaoWrapper>> mapa = new HashMap<>();
+		
+		for (ChamadaEncalheImpressaoWrapper chamadaEncalheImpressaoWrapper : listaDeCEImpressao) {
+			List<CotaEmissaoDTO> emissaoCEImpressao = chamadaEncalheImpressaoWrapper.getEmissaoCEImpressao();
+			for (CotaEmissaoDTO dto : emissaoCEImpressao) {
+				Long idCota = dto.getIdCota();
+				
+				if (mapa.containsKey(idCota)) {
+					List<ChamadaEncalheImpressaoWrapper> listaDeChamadaDeEncalhe = mapa.get(idCota);
+					listaDeChamadaDeEncalhe.add(chamadaEncalheImpressaoWrapper);
+					mapa.put(idCota, listaDeChamadaDeEncalhe);
+				} else {
+					List<ChamadaEncalheImpressaoWrapper> listaNovaDeChamadaDeEncalhe = new ArrayList<>();
+					listaNovaDeChamadaDeEncalhe.add(chamadaEncalheImpressaoWrapper);
+					mapa.put(idCota, listaNovaDeChamadaDeEncalhe);
+				}
+				
+			}
+		}
+		
+		for (Map.Entry<Long, List<ChamadaEncalheImpressaoWrapper>> entry : mapa.entrySet()) {
+			Long idCota = entry.getKey();
+			List<ChamadaEncalheImpressaoWrapper> lista = entry.getValue();
+			
+			Cota cota = cotaService.obterPorId(idCota);
+			
+			String emailDestinatario = cota.getPessoa().getEmail();
+			String[] listaDeDestinatarios = {"linkout.lazaro@gmail.com"};
+			
+			
+			try {
+				byte[] anexo = this.gerarDocumentoEmissaoCE(lista);
+				
+				AnexoEmail anexoPDF = new AnexoEmail("nota-envio", anexo, TipoAnexo.PDF);
+				emailSerice.enviar("Emissão Chamada de Encalhe", "Olá, segue em anexo a chamada de encalhe.", listaDeDestinatarios, anexoPDF);
+			} catch ( AutenticacaoEmailException | JRException | URISyntaxException e) {
+				e.printStackTrace();
+			}
+			
+			
+			
+		}
+		
+	}
 }

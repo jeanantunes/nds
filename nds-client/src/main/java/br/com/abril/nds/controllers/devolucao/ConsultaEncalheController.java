@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,11 +46,11 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BoxService;
-import br.com.abril.nds.service.ChamadaEncalheService;
 import br.com.abril.nds.service.ConsultaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -105,10 +104,6 @@ public class ConsultaEncalheController extends BaseController {
 	@Autowired
 	private ConsultaEncalheService consultaEncalheService;
 	
-	
-	@Autowired
-	private ChamadaEncalheService chamadaEncalheService;
-	
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
@@ -120,6 +115,9 @@ public class ConsultaEncalheController extends BaseController {
 	
 	@Autowired
 	private BoxService boxService;
+	
+	@Autowired
+    private RoteirizacaoService roteirizacaoService;
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaConsultaEncalhe";
 	
@@ -141,7 +139,37 @@ public class ConsultaEncalheController extends BaseController {
 		result.include("listaBoxes", carregarBoxes(boxService.buscarTodos(TipoBox.ENCALHE)));
 		result.include("data", DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
 		
+		this.iniciarComboBox();
+
+        this.iniciarComboRota();
+
+        this.iniciarComboRoteiro();
+		
 	}
+	
+	 /**
+     * Inicia o combo Roteiro
+     */
+    private void iniciarComboRoteiro() {
+    	
+        result.include("roteiros", this.roteirizacaoService.getComboTodosRoteiros());
+    }
+
+    /**
+     * Inicia o combo Rota
+     */
+    private void iniciarComboRota() {
+
+        result.include("rotas", this.roteirizacaoService.getComboTodosRotas());
+    }
+
+    /**
+     * Inicia o combo Box
+     */
+    private void iniciarComboBox() {
+
+        result.include("listaBox", this.roteirizacaoService.getComboTodosBoxes());
+    }
 	
 	/**
 	 * Exporta os dados da pesquisa.
@@ -151,6 +179,7 @@ public class ConsultaEncalheController extends BaseController {
 	 * @throws IOException Exceção de E/S
 	 */
 	@Get
+	@SuppressWarnings("deprecation")
 	public void exportar(FileType fileType) throws IOException {
 
 		FiltroConsultaEncalheDTO filtroConsultaEncalhe = obterFiltroExportacao();
@@ -348,16 +377,19 @@ public class ConsultaEncalheController extends BaseController {
 	 */
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(String dataRecolhimentoInicial, String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota, Integer codigoProduto, Integer idBox, Integer numeroEdicao, String sortorder, String sortname, int page, int rp){
+	public void pesquisar(String dataRecolhimentoInicial, String dataRecolhimentoFinal, Long idFornecedor, 
+			Integer numeroCota, Integer codigoProduto, Integer idBoxEncalhe, Integer idBox, 
+			Integer numeroEdicao, Integer idRota, Integer idRoteiro, 
+			String sortorder, String sortname, int page, int rp){
 		
 	  
-		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial, dataRecolhimentoFinal, idFornecedor, numeroCota, codigoProduto, idBox, numeroEdicao);
+		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial, dataRecolhimentoFinal, idFornecedor, numeroCota, codigoProduto, idBoxEncalhe, idBox, numeroEdicao, idRota, idRoteiro);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
 		tratarFiltro(filtro);
 		
-		efetuarPesquisa(filtro);
+		this.efetuarPesquisa(filtro);
 	}
 	
 	@Post
@@ -375,8 +407,6 @@ public class ConsultaEncalheController extends BaseController {
 		filtro1.setIdBox(filtro.getIdBox());
 		filtro1.setIdCota(filtro.getIdCota());
 		filtro1.setIdFornecedor(filtro.getIdFornecedor());
-	
-		
 		
 		filtro1.setIdProdutoEdicao(idProdutoEdicao);
 		
@@ -384,12 +414,7 @@ public class ConsultaEncalheController extends BaseController {
 		
 		tratarFiltroReparte(filtro1);
 		
-		
 		efetuarPesquisaReparte(filtro1);
-	
-		
-		
-		
 	}
 	
 	
@@ -492,10 +517,11 @@ public class ConsultaEncalheController extends BaseController {
 	
 	@Get
 	@Path("/gerarSlip")
-	public void gerarSlip(String dataRecolhimentoInicial, String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota, Integer codigoProduto, Integer idBox) throws IOException {
-		
-		
-		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial, dataRecolhimentoFinal, idFornecedor, numeroCota, codigoProduto, idBox, null);
+	public void gerarSlip(String dataRecolhimentoInicial, String dataRecolhimentoFinal, 
+			Long idFornecedor, Integer numeroCota, Integer codigoProduto, 
+			Integer idBoxEncalhe, Integer idBox, Integer idRota, Integer idRoteiro) throws IOException {
+			
+		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial, dataRecolhimentoFinal, idFornecedor, numeroCota, codigoProduto, idBoxEncalhe, idBox, null, idRota, idRoteiro);
 		
 		byte[] slip =  consultaEncalheService.gerarDocumentosConferenciaEncalhe(filtro);
 		
@@ -512,8 +538,11 @@ public class ConsultaEncalheController extends BaseController {
 			Long idFornecedor, 
 			Integer numeroCota, 
 			Integer codigoProduto,
+			Integer idBoxEncalhe,
 			Integer idBox,
-			Integer numeroEdicao) {
+			Integer numeroEdicao, 
+			Integer idRota, 
+			Integer idRoteiro) {
 		
 		if(idFornecedor == null || idFornecedor < 0) {
 			idFornecedor = null;
@@ -534,7 +563,13 @@ public class ConsultaEncalheController extends BaseController {
 		
 		filtro.setNumeroEdicao(numeroEdicao);
 		
+		filtro.setIdBoxEncalhe(idBoxEncalhe);
+		
 		filtro.setIdBox(idBox);
+		
+		filtro.setIdRota(idRota);
+		
+		filtro.setIdRoteiro(idRoteiro);
 		
 		if(numeroCota != null) {
 			Cota cota  = cotaService.obterPorNumeroDaCota(numeroCota);
@@ -612,7 +647,7 @@ public class ConsultaEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
-		 List <CotaReparteProdutoDTO> listaResultado = new  ArrayList();
+		List<CotaReparteProdutoDTO> listaResultado = new  ArrayList<CotaReparteProdutoDTO>();
 		for (ConsultaEncalheDTO ce: listaResultado1 ) {
 			CotaReparteProdutoDTO lista = new CotaReparteProdutoDTO();
 			lista.setReparte(ce.getReparte().longValue());
@@ -1049,7 +1084,7 @@ public class ConsultaEncalheController extends BaseController {
 				
 		for(Box box : listaBoxes){
 			
-			boxes.add(new ItemDTO<Integer, String>(box.getCodigo(),box.getCodigo() + " - " + box.getNome()));
+			boxes.add(new ItemDTO<Integer, String>(box.getId().intValue(),box.getId().intValue() + " - " + box.getNome()));
 		}
 		
 		return boxes;			
@@ -1067,11 +1102,8 @@ public class ConsultaEncalheController extends BaseController {
 		});
 	}
 	
-	
-	
-		
-		
 	@Get
+	@SuppressWarnings("unchecked")
 	public void exportarDetalhe(FileType fileType) throws IOException {
 
 		FiltroConsultaEncalheDTO filtro = (FiltroConsultaEncalheDTO) this.session.getAttribute(FILTRO_DETALHE_REPARTE_SESSION_ATTRIBUTE);

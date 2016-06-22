@@ -128,6 +128,7 @@ public class BancoServiceImpl implements BancoService {
 			bancoVO.setInstrucoes2(banco.getInstrucoes2());
 			bancoVO.setInstrucoes3(banco.getInstrucoes3());
 			bancoVO.setInstrucoes4(banco.getInstrucoes4());
+			bancoVO.setConvenio(banco.getConvenio());
 		}
 		
 		return bancoVO; 

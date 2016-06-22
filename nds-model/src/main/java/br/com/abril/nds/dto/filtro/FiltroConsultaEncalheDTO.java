@@ -32,13 +32,13 @@ public class FiltroConsultaEncalheDTO {
 	
 	private Integer idBox;
 	
+	private Integer idBoxEncalhe;
 	
 	@Export(label="Produto")
 	private Integer codigoProduto;
 	
 	@Export(label="Edicao")
 	private Integer numeroEdicao;
-
 	
 	private Long idProduto;
 	
@@ -49,6 +49,10 @@ public class FiltroConsultaEncalheDTO {
 	private OrdenacaoColuna ordenacaoColuna;
 	
 	private boolean desconsiderarCotaAVista;
+	
+	private Integer idRota;
+	
+	private Integer idRoteiro;
 	
 	public FiltroConsultaEncalheDTO() {
 	    
@@ -276,9 +280,17 @@ public class FiltroConsultaEncalheDTO {
 	public Integer getIdBox() {
 		return idBox;
 	}
-
+	
 	public void setIdBox(Integer idBox) {
 		this.idBox = idBox;
+	}
+	
+	public Integer getIdBoxEncalhe() {
+		return idBoxEncalhe;
+	}
+
+	public void setIdBoxEncalhe(Integer idBoxEncalhe) {
+		this.idBoxEncalhe = idBoxEncalhe;
 	}
 
 	public Integer getNumeroEdicao() {
@@ -311,6 +323,22 @@ public class FiltroConsultaEncalheDTO {
 
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
+	}
+	
+	public Integer getIdRota() {
+		return idRota;
+	}
+
+	public void setIdRota(Integer idRota) {
+		this.idRota = idRota;
+	}
+
+	public Integer getIdRoteiro() {
+		return idRoteiro;
+	}
+
+	public void setIdRoteiro(Integer idRoteiro) {
+		this.idRoteiro = idRoteiro;
 	}
 
 	@Override
