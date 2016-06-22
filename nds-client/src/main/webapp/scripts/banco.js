@@ -83,6 +83,7 @@ var bancoController = $.extend(true, {
 			$("#newConta", this.workspace).numeric();	
 			//$("#newDigito", this.workspace).numeric();
 			$("#newCarteira", this.workspace).numeric();
+			$("#newConvenio", this.workspace).numeric();
 			
 			$("#alterNumero", this.workspace).numeric();	
 			$("#alterAgencia", this.workspace).numeric();	
@@ -91,6 +92,7 @@ var bancoController = $.extend(true, {
 			$("#alterJuros", this.workspace).numeric();	
 			$("#alterMulta", this.workspace).numeric();
 			$("#alterVrMulta", this.workspace).numeric();
+			$("#alterConvenio", this.workspace).numeric();
 			
 			$("#nome", this.workspace).autocomplete({source: []});
 			
@@ -351,8 +353,8 @@ var bancoController = $.extend(true, {
 					 instrucoes1 	: $("#newInstrucoes1", this.workspace).val(),
 					 instrucoes2 	: $("#newInstrucoes2", this.workspace).val(),
 					 instrucoes3 	: $("#newInstrucoes3", this.workspace).val(),
-					 instrucoes4 	: $("#newInstrucoes4", this.workspace).val()
-			
+					 instrucoes4 	: $("#newInstrucoes4", this.workspace).val(),
+					 convenio   	: $("#newConvenio", this.workspace).val()
 			};
 
 			$.postJSON(contextPath + "/banco/novoBanco",param,
@@ -393,7 +395,8 @@ var bancoController = $.extend(true, {
 					 instrucoes1 : $("#alterInstrucoes1", this.workspace).val(),
 					 instrucoes2 : $("#alterInstrucoes2", this.workspace).val(),
 					 instrucoes3 : $("#alterInstrucoes3", this.workspace).val(),
-					 instrucoes4 : $("#alterInstrucoes4", this.workspace).val()};
+					 instrucoes4 : $("#alterInstrucoes4", this.workspace).val(),
+					 convenio    : $("#alterConvenio", this.workspace).val()};
 
 			$.postJSON(contextPath + "/banco/alteraBanco", param,
 					   function(result) {
@@ -444,6 +447,7 @@ var bancoController = $.extend(true, {
 			$("#alterInstrucoes2", this.workspace).val(resultado.instrucoes2);
 			$("#alterInstrucoes3", this.workspace).val(resultado.instrucoes3);
 			$("#alterInstrucoes4", this.workspace).val(resultado.instrucoes4);
+			$("#alterConvenio", this.workspace).val(resultado.convenio);
 			
 			$('#alterPessoasCedente', this.workspace).empty().append('<option value="-1" selected>Selecione...</option>');
 			$.postJSON(contextPath + "/banco/obterPessoasDisponiveisParaCedente",
@@ -501,6 +505,7 @@ var bancoController = $.extend(true, {
 			$("#newInstrucoes2", this.workspace).val("");
 			$("#newInstrucoes3", this.workspace).val("");
 			$("#newInstrucoes4", this.workspace).val("");
+			$("#newConvenio", this.workspace).val("");
 		}, 
 	    
 	    limparMulta : function(){

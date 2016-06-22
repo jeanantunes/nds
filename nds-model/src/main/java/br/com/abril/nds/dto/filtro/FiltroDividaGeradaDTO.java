@@ -52,7 +52,7 @@ public class FiltroDividaGeradaDTO implements Serializable {
 	
 	public FiltroDividaGeradaDTO() {}
 	
-	public FiltroDividaGeradaDTO(Date dataMovimento, Long idBox , Long idRota, Long idRoteiro,Integer numeroCota,TipoCobranca tipoCobranca ) {
+	public FiltroDividaGeradaDTO(Date dataMovimento, Long idBox , Long idRota, Long idRoteiro,Integer numeroCota,TipoCobranca tipoCobranca, Long idBanco ) {
 		
 		this.dataMovimento = dataMovimento;
 		this.numeroCota = numeroCota;
@@ -60,6 +60,7 @@ public class FiltroDividaGeradaDTO implements Serializable {
 		this.idRota = idRota;
 		this.idRoteiro = idRoteiro;
 		this.idBox = idBox;
+		this.idBanco = idBanco;
 	}
 	
 	public enum ColunaOrdenacao {

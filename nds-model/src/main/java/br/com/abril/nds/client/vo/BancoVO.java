@@ -44,6 +44,8 @@ public class BancoVO {
     
     String instrucoes4;
     
+    String convenio;
+    
     public BancoVO() {
     	
     }
@@ -52,7 +54,7 @@ public class BancoVO {
 			String codigoCedente, Long agencia, String digitoAgencia,
 			Long conta, String digito, String apelido, Integer carteira,
 			BigDecimal juros, boolean ativo, BigDecimal multa,
-			BigDecimal vrMulta, String instrucoes1, String instrucoes2, String instrucoes3, String instrucoes4) {
+			BigDecimal vrMulta, String instrucoes1, String instrucoes2, String instrucoes3, String instrucoes4, String convenio) {
 		super();
 		this.idBanco = idBanco;
 		this.numero = numero;
@@ -72,6 +74,7 @@ public class BancoVO {
 		this.instrucoes2 = instrucoes2;
 		this.instrucoes3 = instrucoes3;
 		this.instrucoes4 = instrucoes4;
+		this.convenio = convenio;
 	}
 
 
@@ -242,7 +245,14 @@ public class BancoVO {
 	public void setInstrucoes4(String instrucoes4) {
 		this.instrucoes4 = instrucoes4;
 	}
+	
+	public String getConvenio() {
+		return convenio;
+	}
 
+	public void setConvenio(String convenio) {
+		this.convenio = convenio;
+	}
 
 	@Override
 	public int hashCode() {

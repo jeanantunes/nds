@@ -571,4 +571,13 @@ public class EmissaoCEController extends BaseController {
 		return filtro;
 	}
 	
+	@Post
+	public void enviarEmail(FiltroEmissaoCE filtro) {
+		
+		chamadaEncalheService.enviarEmail(filtro);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Email enviado com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
+		
+	}
+	
 }

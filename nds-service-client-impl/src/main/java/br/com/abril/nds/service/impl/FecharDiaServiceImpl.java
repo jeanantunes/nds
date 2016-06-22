@@ -1096,7 +1096,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		distribuidorRepository.alterar(distribuidor);
 		
-		LOGGER.info("DATA DE OPERAÇÃO DO DISTRIBUIDRO ALTERADA");
+		LOGGER.warn("DATA DE OPERAÇÃO DO DISTRIBUIDRO ALTERADA");
 		
 		return novaData;
 	}
@@ -1749,37 +1749,37 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Override
 	public FechamentoDiarioDTO processarFechamentoDoDia(Usuario usuario, Date dataFechamento){
 		
-		LOGGER.info("FECHAMENTO DIARIO - ATUALIZADO DESCONTO LOGISTICA");
+		LOGGER.warn("FECHAMENTO DIARIO - ATUALIZADO DESCONTO LOGISTICA");
 		
 		processarControleDeAprovacao();
 
-		LOGGER.info("FECHAMENTO DIARIO - PROCESSO CONTROLE DE APROVACAO CONCLUIDO");
+		LOGGER.warn("FECHAMENTO DIARIO - PROCESSO CONTROLE DE APROVACAO CONCLUIDO");
 		
 		try {
 
 			FechamentoDiarioDTO fechamentoDiarioDTO = salvarResumoFechamentoDiario(usuario, dataFechamento);
 
-			LOGGER.info("FECHAMENTO DIARIO - SALVO RESUMO FECHAMENTO DIARIO");
+			LOGGER.warn("FECHAMENTO DIARIO - SALVO RESUMO FECHAMENTO DIARIO");
 			
 			atualizarHistoricoEstoqueProduto(dataFechamento);
 
-			LOGGER.info("FECHAMENTO DIARIO - ATUALIZADO HISTORICO ESTOQUE PRODUTO ");
+			LOGGER.warn("FECHAMENTO DIARIO - ATUALIZADO HISTORICO ESTOQUE PRODUTO ");
 			
 			this.processarLancamentosRecolhimento(usuario);
 
-			LOGGER.info("FECHAMENTO DIARIO - PROCESSADOS LANCAMENTO RECOLHIMENTO");
+			LOGGER.warn("FECHAMENTO DIARIO - PROCESSADOS LANCAMENTO RECOLHIMENTO");
 			
 			processarDividasNaoPagas(usuario, dataFechamento);
 			
-			LOGGER.info("FECHAMENTO DIARIO - PROCESSADA DIVIDAS NAO PAGAS");
+			LOGGER.warn("FECHAMENTO DIARIO - PROCESSADA DIVIDAS NAO PAGAS");
 			
 			fixacaoReparteService.verificarFixacao(dataFechamento);
 			
-			LOGGER.info("FECHAMENTO DIARIO - PROCESSADA DEBITOS COTAS TAXA DE ENTREGA");
+			LOGGER.warn("FECHAMENTO DIARIO - PROCESSADA DEBITOS COTAS TAXA DE ENTREGA");
 			
 			processarDebitosCotaTaxasEntrega(dataFechamento);
 			
-			LOGGER.info("FECHAMENTO DIARIO - LIMPEZA DO DIRETORIO DE ARQUIVOS REPARTE/ENCALHE");
+			LOGGER.warn("FECHAMENTO DIARIO - LIMPEZA DO DIRETORIO DE ARQUIVOS REPARTE/ENCALHE");
 			
 			limparDiretorioArquivosIPV();
 			
@@ -1859,7 +1859,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
 		
-		LOGGER.info("Data de Operação após alteração no distribuidor: " + dataOperacao);
+		LOGGER.warn("Data de Operação após alteração no distribuidor: " + dataOperacao);
 		
 		this.processarLancamentosEmRecolhimento(dataOperacao, usuario);
 		
@@ -1882,7 +1882,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			
 			ProdutoEdicao produtoEdicao = lancamento.getProdutoEdicao();
 			
-			LOGGER.info(String.format("Lançamento alterado para \"EM_RECOLHIMENTO\": %s, Cod.: %s, Ed.: %s", 
+			LOGGER.warn(String.format("Lançamento alterado para \"EM_RECOLHIMENTO\": %s, Cod.: %s, Ed.: %s", 
 					produtoEdicao.getNomeComercial(), 
 					produtoEdicao.getProduto().getCodigo(), 
 					produtoEdicao.getNumeroEdicao()));
