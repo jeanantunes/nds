@@ -40,6 +40,10 @@ public class FiltroConsultaConsignadoCotaDTO implements Serializable {
     	
 	private ColunaOrdenacaoConsultaConsignadoCota ordenacaoColuna;
 	
+	private boolean isCotaAvista;
+	
+	private boolean isCotaDevolveEncalhe;
+	
 	public FiltroConsultaConsignadoCotaDTO() {
 		
 	}
@@ -238,6 +242,21 @@ public class FiltroConsultaConsignadoCotaDTO implements Serializable {
 	public void setDataOperacao(Date dataOperacao) {
 		this.dataOperacao = dataOperacao;
 	}
-	
+
+	public boolean isCotaAvista() {
+		return isCotaAvista;
+	}
+
+	public void setCotaAvista(boolean isCotaAvista) {
+		this.isCotaAvista = isCotaAvista;
+	}
+
+	public boolean isCotaDevolveEncalhe() {
+		return isCotaDevolveEncalhe;
+	}
+
+	public void setCotaDevolveEncalhe(boolean isCotaDevolveEncalhe) {
+		this.isCotaDevolveEncalhe = isCotaDevolveEncalhe;
+	}
 	
 }
