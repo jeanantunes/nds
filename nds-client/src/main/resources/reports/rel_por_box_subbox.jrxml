@@ -122,7 +122,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($F{value}.intValue()<20000)?$F{value}:" "]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($F{key}.intValue()<= 0 || $F{value}.intValue() == (20000)
+|| $F{value}.intValue() == (40000)
+|| $F{value}.intValue() == (60000)
+|| $F{value}.intValue() == (80000)) ? " " : $F{value}.intValue()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement style="rel_stext_centralizado" mode="Opaque" x="0" y="0" width="51" height="20" backcolor="#FFFFFF" uuid="7a3755b9-7da6-43b8-b6cf-d23158138b2c"/>
