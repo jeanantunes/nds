@@ -15,11 +15,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.datatype.DatatypeConstants;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -894,6 +898,20 @@ public abstract class Util {
         } 
         
         return dataFormatada;  
-    } 
+    }
     
+    public static String retornaDataNfe(Date dataASerFormatada) {
+        GregorianCalendar calendar = new GregorianCalendar();  
+        calendar.setTime(dataASerFormatada);  
+        XMLGregorianCalendar xmlCalendar = null;
+        try {
+            xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
+            xmlCalendar.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
+        
+            return(xmlCalendar.toString());
+        } catch (Exception ex) {
+        	ex.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -70,25 +70,40 @@ public class NFeGerarTxt {
 	            b.append("B|")
 	                    .append(ide.getCodigoUf()).append("|")
 	                    .append(ide.getCodigoNF()).append("|")
-	                    .append(ide.getNaturezaOperacao().getDescricao()).append("|")
-	                    .append(ide.getFormaPagamento()).append("|")
+	                    .append(ide.getNaturezaOperacao().getDescricao()).append("|");
+	                    
+	                    String indPag = null;
+	                    
+	                    if(ide.getFormaPagamento().equals("A_VISTA")) {
+	                    	indPag = "0";
+	                    } else if(ide.getFormaPagamento().equals("A_PRAZO")) {
+	                    	indPag = "1";
+	                    }  else {
+	                    	indPag = "2";
+	                    }
+	                    
+	                    b.append(indPag).append("|")
 	                    .append(ide.getModeloDocumentoFiscal()).append("|")
 	                    .append(ide.getSerie()).append("|")
 	                    .append(ide.getNumeroDocumentoFiscal()).append("|")
-	                    .append(Util.formataData(ide.getDataEmissao())).append("|")
+	                    .append(Util.retornaDataNfe(ide.getDataEmissao())).append("|")
 	                    .append(ide.getDataSaidaEntrada()).append("|")
 	                    .append(ide.getHoraSaidaEntrada()).append("|")
 	                    .append(ide.getTipoOperacao().getTipoOperacaoNumerico()).append("|")
 	                    .append(ide.getCodigoMunicipio()).append("|")
-	                    .append(ide.getProcessoEmissao()).append("|")
-	                    .append(ide.getTipoEmissao()).append("|")
+	                    .append(ide.getFormatoImpressao().getIntValue()).append("|")
+	                    .append(ide.getTipoEmissao().getIntValue()).append("|")
 	                    .append(ide.getDigitoVerificadorChaveAcesso()).append("|")
-	                    .append(ide.getTipoAmbiente()).append("|")
-	                    .append(ide.getFinalidadeEmissaoNFe()).append("|")
-	                    .append(ide.getProcessoEmissao()).append("|")
-	                    .append(ide.getVersaoSistemaEmissao()).append("|")
+	                    .append(ide.getTipoAmbiente().getIntValue()).append("|")
+	                    .append(ide.getFinalidadeEmissaoNFe().getIntValue()).append("|")
+	                    .append("").append("|")
+	                    .append("").append("|")
+	                    .append(ide.getProcessoEmissao().getIntValue()).append("|")
+	                    .append("3.1.0").append("|")
 	                    .append(ide.getDataEntradaContigencia()).append("|")
-	                    .append(ide.getJustificativaEntradaContigencia()).append(System.getProperty("line.separator"));
+	                    .append(ide.getJustificativaEntradaContigencia())
+	                    .append("|")
+	                    .append(System.getProperty("line.separator"));
 	            return b.toString();
 	        } catch (Exception e) {
 	        	throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao lançar informações de identificação da nota ao arquivo texto.");
@@ -109,7 +124,7 @@ public class NFeGerarTxt {
 	                    .append(emit.getInscricaoEstadualSubstituto()).append("|")
 	                    .append(emit.getInscricaoMunicipal()).append("|")
 	                    .append(emit.getCnae()).append("|")
-	                    .append(emit.getRegimeTributario()).append(System.getProperty("line.separator"));
+	                    .append(emit.getRegimeTributario().getIntValue()).append(System.getProperty("line.separator"));
 
 	            if (emit.getDocumento().getDocumento() != null && !emit.getDocumento().getDocumento().isEmpty()) {
 	                c.append("C02|").append(emit.getDocumento().getDocumento()).append("|").append(System.getProperty("line.separator"));
@@ -128,7 +143,8 @@ public class NFeGerarTxt {
 	                    .append(emit.getEndereco().getCep()).append("|")
 	                    .append(emit.getEndereco().getCodigoPais()).append("|")
 	                    .append(emit.getEndereco().getPais()).append("|")
-	                    .append(emit.getTelefone().getNumero()).append(System.getProperty("line.separator"));
+	                    .append(emit.getTelefone().getNumero())
+	                    .append("|").append(System.getProperty("line.separator"));
 	            return c.toString();
 	        } catch (Exception e) {
 	        	throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao lançar informações do emitente ao arquivo texto. ");
@@ -143,9 +159,10 @@ public class NFeGerarTxt {
 	            StringBuilder e = new StringBuilder();
 	            e.append("E|")
 	                    .append(dest.getNome()).append("|")
-	                    .append(dest.getInscricaoEstadual()).append("|")
-	                    .append(dest.getInscricaoSuframa()).append("|")
-	                    .append(dest.getEmail()).append("|")
+	                    .append(dest.getInscricaoEstadual() == null ? "2" : dest.getInscricaoEstadual()).append("|")
+	                    .append(dest.getInscricaoSuframa() == null ? "" : dest.getInscricaoSuframa()).append("|")
+	                    .append("").append("|")
+	                    .append("").append("|")
 	                    .append(System.getProperty("line.separator"));
 
 	            if (dest.getDocumento() != null && !dest.getDocumento().getDocumento().isEmpty()) {
@@ -288,7 +305,7 @@ public class NFeGerarTxt {
 	                    || det.getImpostos().getIcms().getCst().equals("41")
 	                    || det.getImpostos().getIcms().getCst().equals("50")) {
 	                m.append("N06|")
-	                        .append(det.getImpostos().getIcms().getOrigem()).append("|")
+	                        .append(det.getImpostos().getIcms().getOrigem().getId()).append("|")
 	                        .append(det.getImpostos().getIcms().getCst()).append("|")
 	                        .append(det.getImpostos().getIcms().getValor()).append("|")
 	                        .append(det.getImpostos().getIcms().getMotivoDesoneracao()).append(System.getProperty("line.separator"));
