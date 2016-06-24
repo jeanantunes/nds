@@ -216,7 +216,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         .append("  and c1.id = ").append(paramIdCota)
         
-        .append("  and l.dataRecolhimentoDistribuidor <= :data")
+        .append("  and l.dataLancamentoDistribuidor <= :data")
         
         .append("  and mecF is null ");
         
