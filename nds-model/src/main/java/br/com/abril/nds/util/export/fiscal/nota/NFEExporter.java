@@ -302,7 +302,7 @@ public class NFEExporter {
      * Adiciona valores padrões no documento.
      */
 	private void addCamposDefault() {				
-		CampoSecao versao = new CampoSecao(TipoSecao.A,  0, "2.00");
+		CampoSecao versao = new CampoSecao(TipoSecao.A,  0, "3.10");
 		addCampoSecao(versao);
 		CampoSecao modeloDocuemtno = new CampoSecao(TipoSecao.B,  4, "55");
 		addCampoSecao(modeloDocuemtno);

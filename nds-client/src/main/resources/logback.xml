@@ -62,10 +62,12 @@
       <smtpHost>smtp3.treelog.com.br</smtpHost>
        <smtpPort>25</smtpPort>
       <from>novodistrib@dgb.com.br</from>
-      <to>odemir.olivatti_INFO@abril.com.br</to>
+    
+       <to>odemir.olivatti_vector@abril.com.br</to>
+    
       <username>teste</username>
     <password>rTZ0PAtThz</password>
-      <subject>ERRO NDS SERVIDOR=%property{HOSTNAME} %m APLICACAO %property{catalina.base} </subject>
+      <subject>ERRO NDS SERVIDOR=%property{HOSTNAME} %property{SSH_CONNECTION} %m APLICACAO %property{catalina.base} </subject>
       <layout class="ch.qos.logback.classic.PatternLayout">
       <pattern>%date %-5level %logger - %message%n</pattern>
     </layout> 

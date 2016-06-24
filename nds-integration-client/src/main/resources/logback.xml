@@ -15,7 +15,7 @@
       <smtpHost>smtp3.treelog.com.br</smtpHost>
        <smtpPort>25</smtpPort>
       <from>novodistrib@dgb.com.br</from>
-      <to>odemir.olivatti_INFO@abril.com.br</to>
+      <to>odemir.olivatti_VECTOR@abril.com.br</to>
       <username>teste</username>
     <password>rTZ0PAtThz</password>
       <subject>ERRO NDS SERVIDOR=%property{HOSTNAME} INTEGRACAO CLIENT </subject>
