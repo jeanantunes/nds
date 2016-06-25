@@ -881,7 +881,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("        PESSOA pessoa                                       ");
         sql.append("            on cota.PESSOA_ID=pessoa.ID                     ");
         
-        sql.append("            and ( cota.TIPO_COTA <> :tipoCotaAVista OR cota.DEVOLVE_ENCALHE = true ) ");
+        sql.append("            and cota.TIPO_COTA <> :tipoCotaAVista ");
         
         sql.append("	inner join                                              ");
         sql.append("        BOX box                                             ");
@@ -1801,7 +1801,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("        PESSOA pessoa                                       ");
         sql.append("            on cota.PESSOA_ID=pessoa.ID                     ");
         
-        sql.append("            and ( cota.TIPO_COTA <> :tipoCotaAVista OR cota.DEVOLVE_ENCALHE = true ) ");
+        sql.append("            and cota.TIPO_COTA <> :tipoCotaAVista ");
         
         sql.append("	inner join                                              ");
         sql.append("        BOX box                                             ");
