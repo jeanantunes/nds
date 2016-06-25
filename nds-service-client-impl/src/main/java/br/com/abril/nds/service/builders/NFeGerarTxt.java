@@ -15,7 +15,6 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoValoresTotais;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalFatura;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalValorCalculado;
-import br.com.abril.nds.model.fiscal.notafiscal.ValoresCalculadosWrapper;
 import br.com.abril.nds.util.Util;
 
 @Component
