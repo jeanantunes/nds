@@ -78,8 +78,7 @@ public class NFeGerarTxt {
 	                    .append(ide.getSerie()).append("|")
 	                    .append(ide.getNumeroDocumentoFiscal()).append("|")
 	                    .append(Util.retornaDataNfe(ide.getDataEmissao())).append("|")
-	                    .append(ide.getDataSaidaEntrada()).append("|")
-	                    .append(ide.getHoraSaidaEntrada()).append("|")
+	                    .append(ide.getDataSaidaEntrada()).append(ide.getHoraSaidaEntrada()).append("|")
 	                    .append(ide.getTipoOperacao().getTipoOperacaoNumerico()).append("|")
 	                    .append(ide.getLocalDestinoOperacao().getIntValue()).append("|")
 	                    .append(ide.getCodigoMunicipio()).append("|")
@@ -95,8 +94,7 @@ public class NFeGerarTxt {
 	                    .append(ide.getProcessoEmissao().getIntValue()).append("|")
 	                    .append("3.1.0").append("|")
 	                    .append(ide.getDataEntradaContigencia()).append("|")
-	                    .append(ide.getJustificativaEntradaContigencia())
-	                    .append("|")
+	                    .append(ide.getJustificativaEntradaContigencia()).append("|")
 	                    .append(System.getProperty("line.separator"));
 	            return b.toString();
 	        } catch (Exception e) {
@@ -166,8 +164,10 @@ public class NFeGerarTxt {
 	            StringBuilder e = new StringBuilder();
 	            e.append("E|")
 	                    .append(dest.getNome()).append("|")
-	                    .append(dest.getInscricaoEstadual() == null ? "2" : dest.getInscricaoEstadual()).append("|")
+	                    .append(dest.getIndicadorDestinatario() == 0 ? 2 : dest.getIndicadorDestinatario()).append("|")
+	                    .append(dest.getInscricaoEstadual()).append("|")
 	                    .append(dest.getInscricaoSuframa() == null ? "" : dest.getInscricaoSuframa()).append("|")
+	                    .append("").append("|")
 	                    .append("").append("|")
 	                    .append("").append("|")
 	                    .append(System.getProperty("line.separator"));
