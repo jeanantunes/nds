@@ -55,7 +55,7 @@ import org.jrimum.vallia.digitoverificador.Modulo;
  * 
  * @version 0.2
  */
-class CLBancoCrediComim extends AbstractCLCrediComim {
+class CLBancoBRB extends AbstractCLBancoBRB {
 
 	/**
 	 * 
@@ -92,7 +92,7 @@ class CLBancoCrediComim extends AbstractCLCrediComim {
 	 * 
 	 * @since 0.2
 	 */
-	protected CLBancoCrediComim() {
+	protected CLBancoBRB() {
 
 		super(FIELDS_LENGTH);
 	}
@@ -104,16 +104,16 @@ class CLBancoCrediComim extends AbstractCLCrediComim {
 	 * </p>
 	 * @param titulo Título com as informações para geração do campo livre.
 	 */
-	CLBancoCrediComim(Titulo titulo) {
+	CLBancoBRB(Titulo titulo) {
 		super(FIELDS_LENGTH);
 
 		ContaBancaria conta = titulo.getContaBancaria();
 		String nossoNumero = titulo.getNossoNumero();
 
-		Integer dVConvenio = calculeDigitoVerificador("109061");
+		Integer dVContaCorrente = calculeDigitoVerificador(conta.getNumeroDaConta().getCodigoDaConta().toString());
 
-		this.add(new Field<Integer>(109061, 6, Filler.ZERO_LEFT));
-		this.add(new Field<Integer>(dVConvenio, 1));
+		this.add(new Field<Integer>(conta.getNumeroDaConta().getCodigoDaConta(), 6, Filler.ZERO_LEFT));
+		this.add(new Field<Integer>(dVContaCorrente, 1));
 		this.add(new Field<String>(nossoNumero.substring(2, 5), 3));
 		
 		this.add(new Field<Integer>(FIXO, 1));

@@ -203,57 +203,25 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		
 		StringBuffer sql = new StringBuffer();
 
-		sql.append("	select	");
-
-		sql.append("	DISTINCT(COTA.NUMERO_COTA)	as numCota ");
-		
-		sql.append("	from	");
-
-		sql.append("	CHAMADA_ENCALHE  ");
-		
-		sql.append("	inner join CHAMADA_ENCALHE_COTA on ");
-		sql.append("	( CHAMADA_ENCALHE.ID = CHAMADA_ENCALHE_COTA.CHAMADA_ENCALHE_ID ) ");
- 		
-		sql.append("	inner join PRODUTO_EDICAO on ");
-		sql.append("	( PRODUTO_EDICAO.ID = CHAMADA_ENCALHE.PRODUTO_EDICAO_ID ) ");
-		
-		sql.append("	inner join PRODUTO on ");
-		sql.append("	( PRODUTO_EDICAO.PRODUTO_ID = PRODUTO.ID ) ");
-		
-		sql.append("	inner join PRODUTO_FORNECEDOR on ");
-		sql.append("	( PRODUTO_FORNECEDOR.PRODUTO_ID = PRODUTO.ID ) ");
-		
-		sql.append("	inner join FORNECEDOR on ");
-		sql.append("	( PRODUTO_FORNECEDOR.FORNECEDORES_ID = FORNECEDOR.ID ) ");
-		
-		sql.append("	inner join PESSOA on                   	");
-		sql.append("	( PESSOA.ID = FORNECEDOR.JURIDICA_ID )	");
-		
-		sql.append("	inner join CONTROLE_CONFERENCIA_ENCALHE_COTA CONTROLE_CONF_ENC_COTA on ");
-		sql.append("	( CONTROLE_CONF_ENC_COTA.DATA_OPERACAO = CHAMADA_ENCALHE.DATA_RECOLHIMENTO 	");
-		sql.append("	AND  CONTROLE_CONF_ENC_COTA.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID ) ");
-		
-		sql.append("	inner join COTA on ");
-		sql.append("	( COTA.ID = CHAMADA_ENCALHE_COTA.COTA_ID) ");
-		
-
+		sql.append("	select DISTINCT(COTA.NUMERO_COTA)	as numCota ");
+		sql.append("	from CHAMADA_ENCALHE ");
+		sql.append("	inner join CHAMADA_ENCALHE_COTA on ( CHAMADA_ENCALHE.ID = CHAMADA_ENCALHE_COTA.CHAMADA_ENCALHE_ID ) ");
+		sql.append("	inner join PRODUTO_EDICAO on ( PRODUTO_EDICAO.ID = CHAMADA_ENCALHE.PRODUTO_EDICAO_ID ) ");
+		sql.append("	inner join PRODUTO on ( PRODUTO_EDICAO.PRODUTO_ID = PRODUTO.ID ) ");
+		sql.append("	inner join PRODUTO_FORNECEDOR on ( PRODUTO_FORNECEDOR.PRODUTO_ID = PRODUTO.ID ) ");
+		sql.append("	inner join FORNECEDOR on ( PRODUTO_FORNECEDOR.FORNECEDORES_ID = FORNECEDOR.ID ) ");
+		sql.append("	inner join PESSOA on ( PESSOA.ID = FORNECEDOR.JURIDICA_ID )	");
+		sql.append("	inner join CONTROLE_CONFERENCIA_ENCALHE_COTA CONTROLE_CONF_ENC_COTA on CONTROLE_CONF_ENC_COTA.DATA_OPERACAO = CHAMADA_ENCALHE.DATA_RECOLHIMENTO ");
+		sql.append("	AND  (CONTROLE_CONF_ENC_COTA.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID ) ");
+		sql.append("	inner join COTA on ( COTA.ID = CHAMADA_ENCALHE_COTA.COTA_ID ) ");
 		sql.append("	inner join PDV on (PDV.COTA_ID = COTA.ID and PDV.PONTO_PRINCIPAL = true) ");
-		
 		sql.append("	inner join ROTA_PDV on (ROTA_PDV.PDV_ID = PDV.ID) ");
-		
 		sql.append("	inner join ROTA on (ROTA.ID = ROTA_PDV.ROTA_ID) ");
-		
 		sql.append("	inner join ROTEIRO on (ROTEIRO.ID = ROTA.ROTEIRO_ID) ");
-		
 		sql.append("	inner join ROTEIRIZACAO on (ROTEIRIZACAO.ID = ROTEIRO.ROTEIRIZACAO_ID) ");
-		
 		sql.append("	inner join BOX on (BOX.ID = ROTEIRIZACAO.BOX_ID) ");
-		
-
-		sql.append("	where	");
-		
-		sql.append("	(CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal) ");
-		
+		sql.append("	where 1=1 ");
+		sql.append("	AND (CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal) ");
 		sql.append("	AND CHAMADA_ENCALHE_COTA.POSTERGADO = :isPostergado ");
 		
 		if(filtro.getIdCota()!=null) {
@@ -264,13 +232,23 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 			sql.append(" and FORNECEDOR.ID =  :idFornecedor ");
 		}
 		
-		if(filtro.getIdBox() != null) {
-			sql.append(" and BOX.CODIGO =  :idBox ");
+		if(filtro.getIdBoxEncalhe() != null) {
+			sql.append(" and CONTROLE_CONF_ENC_COTA.BOX_ID =  :idBoxEncalhe ");
 		}
 
-		sql.append(" ORDER BY BOX.CODIGO, ROTEIRO.ordem, ROTA.ordem, ROTA_PDV.ORDEM, COTA.NUMERO_COTA,  ROTA.DESCRICAO_ROTA ");
+		if(filtro.getIdBox() != null) {
+			sql.append(" and BOX.CODIGO = :idBox ");
+		}
 		
-		//sql.append("	ORDER BY BOX.CODIGO, ROTEIRO.ORDEM, ROTA.ORDEM, ROTA_PDV.ORDEM  ");
+		if(filtro.getIdRota() != null) {
+			sql.append(" and ROTA.ID = :idRota ");
+		}
+		
+		if(filtro.getIdRoteiro() != null) {
+			sql.append(" and ROTEIRO.ID = :idRoteiro ");
+		}
+		
+		sql.append(" ORDER BY ROTEIRO.ordem, ROTA.ordem, ROTA_PDV.ORDEM, BOX.CODIGO, COTA.NUMERO_COTA, ROTA.DESCRICAO_ROTA ");
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
@@ -283,8 +261,20 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 			parameters.put("idFornecedor", filtro.getIdFornecedor());
 		}
 		
+		if(filtro.getIdBoxEncalhe() != null) {
+			parameters.put("idBoxEncalhe", filtro.getIdBoxEncalhe());
+		}
+		
 		if(filtro.getIdBox() != null) {
 			parameters.put("idBox", filtro.getIdBox());
+		}
+		
+		if(filtro.getIdRota() != null) {
+			parameters.put("idRota", filtro.getIdRota());
+		}
+		
+		if(filtro.getIdRoteiro() != null) {
+			parameters.put("idRoteiro", filtro.getIdRoteiro());
 		}
 		
 		parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
@@ -300,41 +290,20 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 	public List<ControleConferenciaEncalheCota> obterControleConferenciaEncalheCotaPorFiltro(FiltroConsultaEncalheDTO filtro) {
 				
 		StringBuffer sql = new StringBuffer();
-
 		sql.append("	select	");
-
 		sql.append("	CONTROLE_CONF_ENC_COTA ");
-		
 		sql.append("	from	");
-
 		sql.append("	CHAMADA_ENCALHE  ");
-		
-		sql.append("	inner join CHAMADA_ENCALHE_COTA on ");
-		sql.append("	( CHAMADA_ENCALHE.ID = CHAMADA_ENCALHE_COTA.CHAMADA_ENCALHE_ID ) ");
- 		
-		sql.append("	inner join PRODUTO_EDICAO on ");
-		sql.append("	( PRODUTO_EDICAO.ID = CHAMADA_ENCALHE.PRODUTO_EDICAO_ID ) ");
-		
-		sql.append("	inner join PRODUTO on ");
-		sql.append("	( PRODUTO_EDICAO.PRODUTO_ID = PRODUTO.ID ) ");
-		
-		sql.append("	inner join PRODUTO_FORNECEDOR on ");
-		sql.append("	( PRODUTO_FORNECEDOR.PRODUTO_ID = PRODUTO.ID ) ");
-		
-		sql.append("	inner join FORNECEDOR on ");
-		sql.append("	( PRODUTO_FORNECEDOR.FORNECEDORES_ID = FORNECEDOR.ID ) ");
-		
-		sql.append("	inner join PESSOA on                   	");
-		sql.append("	( PESSOA.ID = FORNECEDOR.JURIDICA_ID )	");
-		
-		sql.append("	inner join CONTROLE_CONFERENCIA_ENCALHE_COTA CONTROLE_CONF_ENC_COTA on ");
-		sql.append("	( CONTROLE_CONF_ENC_COTA.DATA_OPERACAO = CHAMADA_ENCALHE.DATA_RECOLHIMENTO 	");
+		sql.append("	inner join CHAMADA_ENCALHE_COTA on ( CHAMADA_ENCALHE.ID = CHAMADA_ENCALHE_COTA.CHAMADA_ENCALHE_ID ) ");
+		sql.append("	inner join PRODUTO_EDICAO on ( PRODUTO_EDICAO.ID = CHAMADA_ENCALHE.PRODUTO_EDICAO_ID ) ");
+		sql.append("	inner join PRODUTO on ( PRODUTO_EDICAO.PRODUTO_ID = PRODUTO.ID ) ");
+		sql.append("	inner join PRODUTO_FORNECEDOR on ( PRODUTO_FORNECEDOR.PRODUTO_ID = PRODUTO.ID ) ");
+		sql.append("	inner join FORNECEDOR on ( PRODUTO_FORNECEDOR.FORNECEDORES_ID = FORNECEDOR.ID ) ");
+		sql.append("	inner join PESSOA on ( PESSOA.ID = FORNECEDOR.JURIDICA_ID )	");
+		sql.append("	inner join CONTROLE_CONFERENCIA_ENCALHE_COTA CONTROLE_CONF_ENC_COTA on ( CONTROLE_CONF_ENC_COTA.DATA_OPERACAO = CHAMADA_ENCALHE.DATA_RECOLHIMENTO ");
 		sql.append("	AND  CONTROLE_CONF_ENC_COTA.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID ) ");
-		
-		sql.append("	where	");
-		
+		sql.append("	WHERE ");
 		sql.append("	(CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal) ");
-		
 		sql.append("	AND CHAMADA_ENCALHE_COTA.FECHADO = :isPostergado ");
 		
 		if(filtro.getIdCota()!=null) {

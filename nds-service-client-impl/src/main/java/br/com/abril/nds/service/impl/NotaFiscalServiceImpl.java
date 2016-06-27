@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -39,7 +40,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
@@ -58,10 +58,10 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DestinoEncalhe;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal.DistribuidorGrupoNotaFiscal;
-import br.com.abril.nds.model.cadastro.DestinoEncalhe;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -122,11 +122,13 @@ import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.TributacaoService;
+import br.com.abril.nds.service.builders.NFeGerarTxt;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.service.xml.nfe.signature.SignatureHandler;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.export.fiscal.nota.NFEExporter;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.inf.portalfiscal.nfe.util.Util;
@@ -615,10 +617,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Transactional
 	public synchronized void exportarNotasFiscais(List<NotaFiscal> notasFiscaisParaExportacao) throws FileNotFoundException, IOException {
 
-		// String dados = "";
+		StringBuilder dados = null;
 
 		try {
-
 			this.gerarArquivoNota(notasFiscaisParaExportacao);
 
 		} catch (Exception e) {
@@ -644,42 +645,54 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			LOGGER.error("Falha ao gerar arquivo de exportação: ", e);
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Falha ao gerar arquivo de exportação: " + e.getMessage()));
 		}
-
-		ParametroSistema pathNFEExportacao = this.parametroSistemaService
-				.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO);
-
-		if (pathNFEExportacao == null) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Informe o diretório de exportação das notas na tela de parametros do sistema"));
+		
+		
+		for (NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
+			
+			try {
+				dados = NFeGerarTxt.gerarNfeTxt(notaFiscal);
+			} catch (Exception e) {
+				throw new ValidacaoException(TipoMensagem.ERROR, "Erro fatal ao gerar aqrquivo TXT: ");
+			}
+			this.arquivoNotasTXT(dados.toString());
 		}
-
-		/*
-		 * File diretorioExportacaoNFE = new File(pathNFEExportacao.getValor());
-		 * 
-		 * if (!diretorioExportacaoNFE.isDirectory()) { throw new
-		 * FileNotFoundException( "O diretório["+pathNFEExportacao.getValor()+
-		 * "] de exportação parametrizado não é válido!"); } Long time = new
-		 * Date().getTime(); File notaExportacao = new
-		 * File(diretorioExportacaoNFE + File.separator + new
-		 * File("NFeExportacao" + time + ".txt"));
-		 * 
-		 * FileWriter fileWriter;
-		 * 
-		 * fileWriter = new FileWriter(notaExportacao);
-		 * 
-		 * BufferedWriter buffer = new BufferedWriter(fileWriter);
-		 * 
-		 * buffer.write(dados);
-		 * 
-		 * buffer.close();
-		 */
-
+		
+		
 		for (NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
 			this.enviarNotaFiscal(notaFiscal.getId());
 		}
 	}
 
-	private String gerarArquivoNota(List<NotaFiscal> notasFiscaisParaExportacao)
-			throws Exception {
+	private void arquivoNotasTXT(String dados) throws FileNotFoundException, IOException {
+		
+		ParametroSistema pathNFEExportacao = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO_TXT);
+
+		if (pathNFEExportacao == null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Informe o diretório de exportação das notas na tela de parametros do sistema"));
+		}
+
+		File diretorioExportacaoNFE = new File(pathNFEExportacao.getValor());
+		
+		if (!diretorioExportacaoNFE.isDirectory()) { 
+			throw new FileNotFoundException( "O diretório["+pathNFEExportacao.getValor()+ "] de exportação parametrizado não é válido!"); 
+		}
+		
+		Long time = new Date().getTime(); 
+		
+		File notaExportacao = new File(diretorioExportacaoNFE + File.separator + new File("NFeExportacao" + time + ".txt"));
+		 
+		FileWriter fileWriter;
+		 
+		fileWriter = new FileWriter(notaExportacao);
+		 
+		BufferedWriter buffer = new BufferedWriter(fileWriter);
+		 
+		buffer.write(dados);
+		 
+	 	buffer.close();
+	}
+
+	private String gerarArquivoNota(List<NotaFiscal> notasFiscaisParaExportacao) throws Exception {
 
 		StringBuilder sBuilder = new StringBuilder();
 
@@ -823,6 +836,25 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return "NOTA FISCAL|" + notasFiscaisParaExportacao.size() + "|\n" + sBuilder.toString();
 	}
 
+	private String gerarArquivoNotaTXT(List<NotaFiscal> notasFiscaisParaExportacao)  throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+
+		StringBuilder sBuilder = new StringBuilder();
+
+		NFEExporter nfeExporter = new NFEExporter();
+
+		for (NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
+
+			nfeExporter.clear();
+			
+			nfeExporter.execute(notaFiscal);
+			
+			String s = nfeExporter.gerarArquivo();
+			sBuilder.append(s);
+		}
+
+		  return "NOTA FISCAL|" + notasFiscaisParaExportacao.size() + "|\n" + sBuilder.toString();
+	 }
+	
 	// passa-se o file a ser re-formatado como string
 	public void ajustaXml(File file) throws Exception {
 		FileReader reader = new FileReader(file);

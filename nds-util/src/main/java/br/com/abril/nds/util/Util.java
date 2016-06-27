@@ -15,11 +15,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.datatype.DatatypeConstants;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -31,6 +35,8 @@ public abstract class Util {
     private static final Logger LOGGER = LoggerFactory.getLogger(Util.class);
     
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    
+    private static final String CODIGO_CAIXA = "249";
     
     public static boolean isNumeric(final String valor){
         try {
@@ -187,7 +193,7 @@ public abstract class Util {
             
         case CAIXA_ECONOMICA_FEDERAL:
             // return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
-            return 249  + Util.padLeft(idChamadaEncalheFornecedor.toString(), "0", 14);
+            return CODIGO_CAIXA  + Util.padLeft(idChamadaEncalheFornecedor.toString(), "0", 14);
         case HSBC:
             
             // return Util.padLeft(codSacado + auxData + idMovimentoFinanceiro, "0", 13);
@@ -212,6 +218,10 @@ public abstract class Util {
         case CREDCOMIM:
             
             return Util.padLeft(codigoCedente + dvCedente, "0", 8) + Util.padLeft(idChamadaEncalheFornecedor.toString(), "0", 9);     
+         
+        case BANCOBRB:
+            
+            return Util.padLeft(codigoCedente + dvCedente, "0", 8) + Util.padLeft(idChamadaEncalheFornecedor.toString(), "0", 9);         
             
         default:
             return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
@@ -291,7 +301,7 @@ public abstract class Util {
         case CAIXA_ECONOMICA_FEDERAL:
             //return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
         	 
-        	return 249  + Util.padLeft(idDivida.toString(), "0", 14);
+        	return CODIGO_CAIXA  + Util.padLeft(idDivida.toString(), "0", 14);
         			
         case HSBC:
             return Util.padLeft(idDivida.toString(), "0", 13);
@@ -308,6 +318,10 @@ public abstract class Util {
         case CREDCOMIM:
          
             return Util.padLeft(codigoCedente + dvCedente, "0", 8) + Util.padLeft(idDivida.toString(), "0", 9);   
+        
+        case BANCOBRB:
+            
+            return Util.padLeft(codigoCedente + dvCedente, "0", 8) + Util.padLeft(idDivida.toString(), "0", 9); 
             
         default:
             return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
@@ -884,6 +898,20 @@ public abstract class Util {
         } 
         
         return dataFormatada;  
-    } 
+    }
     
+    public static String retornaDataNfe(Date dataASerFormatada) {
+        GregorianCalendar calendar = new GregorianCalendar();  
+        calendar.setTime(dataASerFormatada);  
+        XMLGregorianCalendar xmlCalendar = null;
+        try {
+            xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
+            xmlCalendar.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
+        
+            return(xmlCalendar.toString());
+        } catch (Exception ex) {
+        	ex.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -173,7 +173,8 @@ var impressaoBoletosController = $.extend(true, {
 			             {name:"rota",value:$("#rota", impressaoBoletosController.workspace).val()},
 			             {name:"roteiro",value:$("#roteiro", impressaoBoletosController.workspace).val()},
 			             {name:"numCota",value:$("#impressao-boleto-numCota", impressaoBoletosController.workspace).val()},
-			             {name:"tipoCobranca",value:$("#tipoCobranca", impressaoBoletosController.workspace).val()}
+			             {name:"tipoCobranca",value:$("#tipoCobranca", impressaoBoletosController.workspace).val()},
+			             {name:"banco",value:$("#impressao-boleto-banco", impressaoBoletosController.workspace).val()}
 			            ];
 		return formData;
 	},

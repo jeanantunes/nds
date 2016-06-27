@@ -37,6 +37,11 @@ var EmissaoCEController = $.extend(true, {
 			
 			_this.obterDadosImpressaoBoletosEmBranco(true);
 		});
+        
+        $("#btnEnviarEmail").click(function(){
+			
+			_this.enviarEmail();
+		});
 		
 		this.inicializarGrids();
 	},
@@ -141,6 +146,24 @@ var EmissaoCEController = $.extend(true, {
 				}	
 			}
 		});
+		
+	},
+	
+	enviarEmail : function(){
+		
+		var data = this.getFiltro();
+		
+		
+		
+		this.confirmDialog = new ConfirmDialog('Confirmar Envio de email?', function() {
+	    	
+			$.postJSON(contextPath + "/emissaoCE/enviarEmail", data);
+	            
+			return true;
+		    }, function() {
+		    	 
+		 });
+		 this.confirmDialog.open();
 		
 	},
 	
