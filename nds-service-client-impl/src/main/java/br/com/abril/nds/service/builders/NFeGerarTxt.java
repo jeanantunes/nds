@@ -71,15 +71,7 @@ public class NFeGerarTxt {
 	                    .append(ide.getCodigoNF()).append("|")
 	                    .append(ide.getNaturezaOperacao().getDescricao()).append("|");
 	                    
-	                    String indPag = null;
-	                    
-	                    if(ide.getFormaPagamento().equals("A_VISTA")) {
-	                    	indPag = "0";
-	                    } else if(ide.getFormaPagamento().equals("A_PRAZO")) {
-	                    	indPag = "1";
-	                    }  else {
-	                    	indPag = "2";
-	                    }
+	                    String indPag = recuperarIndPag(ide);
 	                    
 	                    b.append(indPag).append("|")
 	                    .append(ide.getModeloDocumentoFiscal()).append("|")
@@ -89,13 +81,16 @@ public class NFeGerarTxt {
 	                    .append(ide.getDataSaidaEntrada()).append("|")
 	                    .append(ide.getHoraSaidaEntrada()).append("|")
 	                    .append(ide.getTipoOperacao().getTipoOperacaoNumerico()).append("|")
+	                    .append(ide.getLocalDestinoOperacao().getIntValue()).append("|")
 	                    .append(ide.getCodigoMunicipio()).append("|")
 	                    .append(ide.getFormatoImpressao().getIntValue()).append("|")
 	                    .append(ide.getTipoEmissao().getIntValue()).append("|")
 	                    .append(ide.getDigitoVerificadorChaveAcesso()).append("|")
 	                    .append(ide.getTipoAmbiente().getIntValue()).append("|")
 	                    .append(ide.getFinalidadeEmissaoNFe().getIntValue()).append("|")
-	                    .append("").append("|")
+	                    //ind final
+	                    .append(ide.getOperacaoConsumidorFinal().getIntValue()).append("|")
+	                    // indPress
 	                    .append("").append("|")
 	                    .append(ide.getProcessoEmissao().getIntValue()).append("|")
 	                    .append("3.1.0").append("|")
@@ -108,6 +103,19 @@ public class NFeGerarTxt {
 	        	throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao lançar informações de identificação da nota ao arquivo texto.");
 	        }
 	    }
+
+		private static String recuperarIndPag(Identificacao ide) {
+			String indPag = null;
+			
+			if(ide.getFormaPagamento().equals("A_VISTA")) {
+				indPag = "0";
+			} else if(ide.getFormaPagamento().equals("A_PRAZO")) {
+				indPag = "1";
+			}  else {
+				indPag = "2";
+			}
+			return indPag;
+		}
 
 	    /**
 	     * C - Identificação do Emitente da Nota Fiscal eletrônica
