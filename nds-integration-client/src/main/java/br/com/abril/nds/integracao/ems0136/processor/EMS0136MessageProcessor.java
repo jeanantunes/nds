@@ -620,7 +620,6 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 		}
 	}
 	
-	
 	// Caso tenha lancamentos_parcial com mais de um periodo com tipo FINAL, ajustar  para ter PARCIAL e um FINAL
 	private void atualizarLancamentosComMaisdeUmPeriodoFinal() {
 		LOGGER.warn("ATUALIZANDO LANCAMENTOPARCIAL COM MAIS DE UM PERIODO COM TIPO FINAL");
