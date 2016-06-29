@@ -1073,6 +1073,11 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			String emailDestinatario = cota.getPessoa().getEmail() != null ? cota.getPessoa().getEmail() : "romulo.amendola@infoa2.com.br";
 			String[] listaDeDestinatarios = {emailDestinatario};
 			
+//			try {
+//				emailSerice.enviar("Emissão Chamada de Encalhe", "Olá, segue em anexo a chamada de encalhe."+cota.getNumeroCota()+lista.size(), listaDeDestinatarios);
+//			} catch (AutenticacaoEmailException e) {
+//				e.printStackTrace();
+//			}
 			
 			try {
 				byte[] anexo = this.gerarDocumentoEmissaoCE(lista);
@@ -1082,9 +1087,6 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			} catch ( AutenticacaoEmailException | JRException | URISyntaxException e) {
 				e.printStackTrace();
 			}
-			
-			
-			
 		}
 		
 	}

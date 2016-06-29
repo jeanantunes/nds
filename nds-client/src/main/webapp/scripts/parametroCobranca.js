@@ -915,7 +915,7 @@ var parametroCobrancaController = $.extend(true,
 			        	$("#parametro-cobranca-numeroCota", parametroCobrancaController.workspace).val("");
 			        	$("#parametro-cobranca-nomeCota", parametroCobrancaController.workspace).val("");
 			        	parametroCobrancaController.exibirModalNovaUnificacao();
-			        	parametroCobrancaController.adicionarLinhaCota();
+			        	parametroCobrancaController.adicionarLinhaCota(-1);
 			        }
 				}],
 				form: $("#dialog_cota_unificacao", this.workspace).parent("form")
@@ -1003,7 +1003,7 @@ var parametroCobrancaController = $.extend(true,
 			var cotaValida = true;
 			$.each($(".numCota", parametroCobrancaController.workspace), function(i, campo){
 				
-				if (campo.value == numeroCota && campo.id != "numeroCota_" + index){
+				if (campo.value == numeroCota && campo.id != "parametro-cobranca-numeroCota" + index){
 					
 					exibirMensagem('WARNING', ['Cota '+ campo.value +' já escolhida.']);
 					cotaValida = false;
@@ -1048,31 +1048,26 @@ var parametroCobrancaController = $.extend(true,
 		
 		adicionarLinhaCota : function(indexAnterior){
 			
-			if ($("#parametro-cobranca-numeroCota"+indexAnterior, parametroCobrancaController.workspace).val() == "" ||
-					$("#parametro-cobranca-nomeCota"+indexAnterior, parametroCobrancaController.workspace).val() == ""){
+			
+			if ( indexAnterior === "") return;
+			if ($("#parametro-cobranca-numeroCota"+indexAnterior+1, parametroCobrancaController.workspace).length >0  ||
+					$("#parametro-cobranca-nomeCota"+indexAnterior+1, parametroCobrancaController.workspace).length > 0 ){
 				
 				return;
 			}
 			
-			if (indexAnterior === ""){
-				indexAnterior = -1;
-			}
 			
-			if (!indexAnterior && indexAnterior != 0){
-				indexAnterior = 0;
-			} else {
-				indexAnterior += 1;
-			}
 			
-			if ($("#parametro-cobranca-numeroCota"+indexAnterior, parametroCobrancaController.workspace)[0]){
-				return;
-			}
+			
+			
+			
+			indexAnterior++;
 			
 			var template = '<tr class="addCota"><td style="width: 10%;">'+
-				'<input type="text" class="numCota" id="numeroCota_'+ indexAnterior +'" style="width: 40px;"'+
+				'<input type="text" class="numCota" id="parametro-cobranca-numeroCota'+ indexAnterior +'" style="width: 40px;"'+
 				'onchange="parametroCobrancaController.buscarCotaPorNumero('+ indexAnterior +')"/>'+
 				'</td><td>'+
-				'<input type="text" id="nomeCota_'+ indexAnterior +'" style="width: 475px;"'+
+				'<input type="text" id="parametro-cobranca-nomeCota'+ indexAnterior +'" style="width: 475px;"'+
 				'onkeyup="parametroCobrancaController.onkeyupCampoNome('+ indexAnterior +')"' +
 				'onblur="parametroCobrancaController.onblurCampoNome('+ indexAnterior +')"'+
 				'/></td></tr>';
@@ -1091,11 +1086,14 @@ var parametroCobrancaController = $.extend(true,
 		
 		onblurCampoNome : function(index){
 			
-			parametroCobrancaController.adicionarLinhaCota(index);
+		
 			
 			if ($("#parametro-cobranca-numeroCota" + index, parametroCobrancaController.workspace).val() == ""){
 				pesquisaCota.pesquisarPorNomeCota("#parametro-cobranca-numeroCota" + index, "#parametro-cobranca-nomeCota" + index);
 			}
+			
+			if ($("#parametro-cobranca-numeroCota" + index, parametroCobrancaController.workspace).val() != "" ) 
+					parametroCobrancaController.adicionarLinhaCota(index);
 		},
 		
 		limparCamposCentralizacaoCotas : function(){
@@ -1139,9 +1137,9 @@ var parametroCobrancaController = $.extend(true,
 							$("#parametro-cobranca-nomeCota", parametroCobrancaController.workspace).attr("readonly", "readonly");
 						} else {
 							
-							parametroCobrancaController.adicionarLinhaCota(index-1);
-							$("#parametro-cobranca-numeroCota" + index, parametroCobrancaController.workspace).val(row.numero);
-							$("#parametro-cobranca-nomeCota" + index, parametroCobrancaController.workspace).val(row.nome);
+							parametroCobrancaController.adicionarLinhaCota(index);
+							$("#parametro-cobranca-numeroCota" + index+1, parametroCobrancaController.workspace).val(row.numero);
+							$("#parametro-cobranca-nomeCota" + index+1, parametroCobrancaController.workspace).val(row.nome);
 						}
 					});
 					

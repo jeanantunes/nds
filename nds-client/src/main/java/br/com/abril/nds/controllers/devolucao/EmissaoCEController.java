@@ -500,7 +500,6 @@ public class EmissaoCEController extends BaseController {
 	 * 
 	 * @throws IOException Exceção de E/S
 	 */
-	@SuppressWarnings("deprecation")
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		
@@ -513,8 +512,7 @@ public class EmissaoCEController extends BaseController {
 			lista = new ArrayList<CotaEmissaoDTO>();
 		}
 		
-		FileExporter.to("emissao_ce", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-				lista, CotaEmissaoDTO.class, this.httpResponse);
+		FileExporter.to("emissao_ce", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, lista, CotaEmissaoDTO.class, this.httpResponse);
 		
 		result.nothing();
 	}
