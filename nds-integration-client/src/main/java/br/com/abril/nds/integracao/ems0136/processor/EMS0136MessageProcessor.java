@@ -133,8 +133,9 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 
 		LancamentoHelper helper = this.tratarLancamentosExistentes(produtoEdicao, input);
 		
-		if (helper.getLancamentosManter().isEmpty() && !this.validarDatasLancamento(input.getDataLancamento(), input.getDataRecolhimento())) {
-			
+		if (helper.getLancamentosManter().isEmpty() && !this.validarDatasLancamento(input.getDataLancamento(), input.getDataRecolhimento(),message)) {
+			this.ndsiLoggerFactory.getLogger().logWarning(
+					message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Lancamento/Periodo nao alterado.Foi mantido o lancamento original sem alteracao pois nao tem lancamento a manter e peb menor que minimo ou data de recolhimento acima da data de operacao ");
 			return;
 		}
 
@@ -274,6 +275,10 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 			
 			lancamentosDaEdicao.removeAll(helper.getLancamentosRemover());
 		}
+		
+		
+		
+	
 
 		return helper;
 	}
@@ -343,7 +348,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 			
 			 this.ndsiLoggerFactory.getLogger().logWarning(message,
 			 		 EventoExecucaoEnum.INF_DADO_ALTERADO,
-					 "Alteração da Data Lcto Distribuidor (Arquivo)"
+					 "Recalculando data de Lancamento (Arquivo)"
 							+" de "+ DateUtil.formatarDataPTBR(dataOriginal)
 							+" para "+ DateUtil.formatarDataPTBR(dataSugerida)
 							+" Produto "+ produtoEdicao.getProduto().getCodigo()
@@ -357,7 +362,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 			
 			 this.ndsiLoggerFactory.getLogger().logWarning(message,
 			 		 EventoExecucaoEnum.INF_DADO_ALTERADO,
-					 "Alteração da Data Recolhimento (Arquivo)"
+					 "Recalculando data de Recolhimento (Arquivo)"
 							+" de "+ DateUtil.formatarDataPTBR(dataRecolhimentoOriginal)
 							+" para "+ DateUtil.formatarDataPTBR(dataRecolhimentoSugerida)
 							+" Produto "+ produtoEdicao.getProduto().getCodigo()
@@ -371,14 +376,17 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 		
 	}
 	
-	private boolean validarDatasLancamento(Date dataLancamento, Date dataRecolhimento) {
+	private boolean validarDatasLancamento(Date dataLancamento, Date dataRecolhimento,Message message) {
 		
 		if (DateUtil.obterDiferencaDias(dataLancamento, dataRecolhimento) < PEB_MINIMA) {
-			
+			this.ndsiLoggerFactory.getLogger().logWarning(
+					message, EventoExecucaoEnum.INF_DADO_ALTERADO, "PEB CALCULADA ("+DateUtil.obterDiferencaDias(dataLancamento, dataRecolhimento)+") MENOR QUE PEB_MINIMA ("+PEB_MINIMA+")! ");
 			return false;
 
 		} else if (DateUtil.isDataInicialMaiorDataFinal(this.distribuidorService.obterDataOperacaoDistribuidor(), dataRecolhimento)) {
-
+			this.ndsiLoggerFactory.getLogger().logWarning(
+					message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Data de recolhimento ("+dataRecolhimento+") menor que data de operacao ("+this.distribuidorService.obterDataOperacaoDistribuidor()+")! ");
+			
 			return false;
 		}
 
@@ -543,7 +551,16 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 	
 	private void remove(Set<Lancamento> lancamentos) {
 		
+		
 		for (Lancamento lancamento : lancamentos) {
+		try {
+		  LOGGER.warn("REMOVENDO LANCAMENTO: "+lancamento.getNumeroLancamento()+" "+lancamento.getDataLancamentoDistribuidor()+" "+lancamento.getDataRecolhimentoDistribuidor()+" reparte="+lancamento.getReparte()+
+				  " plp="+lancamento.getPeriodoLancamentoParcial()+"  produto="+lancamento.getProdutoEdicao().getProduto().getCodigo()+
+				  " edicao="+lancamento.getProdutoEdicao().getNumeroEdicao());
+		} catch ( Exception e){
+			LOGGER.error("ERRO LANCAMENTO "+lancamento.getId());
+		}
+			
 			this.getSessionIcd().delete(lancamento);
 			if (lancamento.getPeriodoLancamentoParcial() != null) {
 				this.getSessionIcd().delete(lancamento.getPeriodoLancamentoParcial());

@@ -71,43 +71,49 @@ public class NFeGerarTxt {
 	                    .append(ide.getCodigoNF()).append("|")
 	                    .append(ide.getNaturezaOperacao().getDescricao()).append("|");
 	                    
-	                    String indPag = null;
-	                    
-	                    if(ide.getFormaPagamento().equals("A_VISTA")) {
-	                    	indPag = "0";
-	                    } else if(ide.getFormaPagamento().equals("A_PRAZO")) {
-	                    	indPag = "1";
-	                    }  else {
-	                    	indPag = "2";
-	                    }
+	                    String indPag = recuperarIndPag(ide);
 	                    
 	                    b.append(indPag).append("|")
 	                    .append(ide.getModeloDocumentoFiscal()).append("|")
 	                    .append(ide.getSerie()).append("|")
 	                    .append(ide.getNumeroDocumentoFiscal()).append("|")
 	                    .append(Util.retornaDataNfe(ide.getDataEmissao())).append("|")
-	                    .append(ide.getDataSaidaEntrada()).append("|")
-	                    .append(ide.getHoraSaidaEntrada()).append("|")
+	                    .append(ide.getDataSaidaEntrada()).append(ide.getHoraSaidaEntrada()).append("|")
 	                    .append(ide.getTipoOperacao().getTipoOperacaoNumerico()).append("|")
+	                    .append(ide.getLocalDestinoOperacao().getIntValue()).append("|")
 	                    .append(ide.getCodigoMunicipio()).append("|")
 	                    .append(ide.getFormatoImpressao().getIntValue()).append("|")
 	                    .append(ide.getTipoEmissao().getIntValue()).append("|")
 	                    .append(ide.getDigitoVerificadorChaveAcesso()).append("|")
 	                    .append(ide.getTipoAmbiente().getIntValue()).append("|")
 	                    .append(ide.getFinalidadeEmissaoNFe().getIntValue()).append("|")
-	                    .append("").append("|")
+	                    //ind final
+	                    .append(ide.getOperacaoConsumidorFinal().getIntValue()).append("|")
+	                    // indPress
 	                    .append("").append("|")
 	                    .append(ide.getProcessoEmissao().getIntValue()).append("|")
 	                    .append("3.1.0").append("|")
 	                    .append(ide.getDataEntradaContigencia()).append("|")
-	                    .append(ide.getJustificativaEntradaContigencia())
-	                    .append("|")
+	                    .append(ide.getJustificativaEntradaContigencia()).append("|")
 	                    .append(System.getProperty("line.separator"));
 	            return b.toString();
 	        } catch (Exception e) {
 	        	throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao lançar informações de identificação da nota ao arquivo texto.");
 	        }
 	    }
+
+		private static String recuperarIndPag(Identificacao ide) {
+			String indPag = null;
+			
+			if(ide.getFormaPagamento().equals("A_VISTA")) {
+				indPag = "0";
+			} else if(ide.getFormaPagamento().equals("A_PRAZO")) {
+				indPag = "1";
+			}  else {
+				indPag = "2";
+			}
+			return indPag;
+		}
 
 	    /**
 	     * C - Identificação do Emitente da Nota Fiscal eletrônica
@@ -158,8 +164,10 @@ public class NFeGerarTxt {
 	            StringBuilder e = new StringBuilder();
 	            e.append("E|")
 	                    .append(dest.getNome()).append("|")
-	                    .append(dest.getInscricaoEstadual() == null ? "2" : dest.getInscricaoEstadual()).append("|")
+	                    .append(dest.getIndicadorDestinatario() == 0 ? 2 : dest.getIndicadorDestinatario()).append("|")
+	                    .append(dest.getInscricaoEstadual()).append("|")
 	                    .append(dest.getInscricaoSuframa() == null ? "" : dest.getInscricaoSuframa()).append("|")
+	                    .append("").append("|")
 	                    .append("").append("|")
 	                    .append("").append("|")
 	                    .append(System.getProperty("line.separator"));

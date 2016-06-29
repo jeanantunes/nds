@@ -41,6 +41,12 @@ public class ParametroCobrancaCota implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "FORNECEDOR_ID")
 	private Fornecedor fornecedorPadrao;
+	
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name="COTA_ID")
+	private Cota cota;
+	
 
 	public Long getId() {
 		return id;
@@ -80,5 +86,19 @@ public class ParametroCobrancaCota implements Serializable {
 
 	public void setUnificaCobranca(Boolean unificaCobranca) {
 		this.unificaCobranca = unificaCobranca;
+	}
+	
+	/**
+	 * @return the cota
+	 */
+	public Cota getCota() {
+		return cota;
+	}
+
+	/**
+	 * @param cota the cota to set
+	 */
+	public void setCota(Cota cota) {
+		this.cota = cota;
 	}
 }
