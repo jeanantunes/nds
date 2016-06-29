@@ -226,7 +226,7 @@
 			      		maxlength="255"
 			      		style="width:250px;"
 			      		onkeyup="pesquisaCotaDebitoCreditoCota.autoCompletarPorNome('#nomeCota');" 
-			      		onblur="pesquisaCotaDebitoCreditoCota.pesquisarPorNomeCota('#numeroCota', '#nomeCota');" />
+			      		onchange="pesquisaCotaDebitoCreditoCota.pesquisarPorNomeCota('#numeroCota', '#nomeCota');" />
 			</td>
 		    
 		    <td width="114">Tipo de Lançamento:</td>
