@@ -961,8 +961,15 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         
         final Map<Long, List<MovimentoEstoqueCota>> mapMovimentoEstoqueCota = this.obterMapMovimentoEstoqueCota(idCotas, filtro);
         
+        
+        if(filtro.isImpressao()){
+        	if(distribuidor != null){
+        		
+        	}
+        }
+        
         for (final Long idCota : idCotas) {
-            
+        	
             this.getNotaEnvioCota(distribuidor.getJuridica(),
                     idCota,
                     filtro,

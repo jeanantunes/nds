@@ -217,6 +217,8 @@ public class GeracaoNotaEnvioController extends BaseController {
     private byte[] getNotas() throws Exception{
 
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+		
+		filtro.setImpressao(true);
 	
 		List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro);
 	
@@ -364,6 +366,8 @@ public class GeracaoNotaEnvioController extends BaseController {
     public void enviarEmail() {
     	
     	FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+    	
+    	filtro.setEnvioEmail(true);
     	
 		try {
 			ValidacaoException mensagemValidacao = geracaoNotaEnvioService.enviarEmail(filtro);

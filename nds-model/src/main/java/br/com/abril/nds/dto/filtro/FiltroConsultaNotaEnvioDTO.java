@@ -39,6 +39,12 @@ public class FiltroConsultaNotaEnvioDTO  implements Serializable{
 	
 	private boolean filtroRoteiroEspecial;
 	
+	
+	private boolean isImpressao;
+	
+	private boolean isEnvioEmail;
+	
+	
 	/**
 	 * @return the dataEmissao
 	 */
@@ -190,4 +196,22 @@ public class FiltroConsultaNotaEnvioDTO  implements Serializable{
 	public void setFiltroRoteiroEspecial(boolean filtroRoteiroEspecial) {
 		this.filtroRoteiroEspecial = filtroRoteiroEspecial;
 	}
+
+	public boolean isImpressao() {
+		return isImpressao;
+	}
+
+	public void setImpressao(boolean isImpressao) {
+		this.isImpressao = isImpressao;
+	}
+
+	public boolean isEnvioEmail() {
+		return isEnvioEmail;
+	}
+
+	public void setEnvioEmail(boolean isEnvioEmail) {
+		this.isEnvioEmail = isEnvioEmail;
+	}
+	
+	
 }
