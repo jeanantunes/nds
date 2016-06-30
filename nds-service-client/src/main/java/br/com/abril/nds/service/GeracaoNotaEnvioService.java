@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 
@@ -19,6 +20,6 @@ public interface GeracaoNotaEnvioService {
 	
 	public abstract void gerarNotaEnvioAtravesNotaFiscal(NotaFiscal notaFiscal);
 	
-	public abstract void enviarEmail(FiltroConsultaNotaEnvioDTO filtro);
+	public abstract ValidacaoException enviarEmail(FiltroConsultaNotaEnvioDTO filtro);
 
 }
