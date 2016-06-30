@@ -90,7 +90,7 @@ public class NFeGerarTxt {
 	                    //ind final
 	                    .append(ide.getOperacaoConsumidorFinal().getIntValue()).append("|")
 	                    // indPress
-	                    .append("").append("|")
+	                    .append(ide.getPresencaConsumidor().getIntValue()).append("|")
 	                    .append(ide.getProcessoEmissao().getIntValue()).append("|")
 	                    .append("3.1.0").append("|")
 	                    .append(ide.getDataEntradaContigencia()).append("|")
@@ -129,7 +129,7 @@ public class NFeGerarTxt {
 	                    .append(emit.getInscricaoEstadualSubstituto()).append("|")
 	                    .append(emit.getInscricaoMunicipal()).append("|")
 	                    .append(emit.getCnae()).append("|")
-	                    .append(emit.getRegimeTributario().getIntValue()).append(System.getProperty("line.separator"));
+	                    .append(emit.getRegimeTributario().getIntValue()).append("|").append(System.getProperty("line.separator"));
 
 	            if (emit.getDocumento().getDocumento() != null && !emit.getDocumento().getDocumento().isEmpty()) {
 	                c.append("C02|").append(emit.getDocumento().getDocumento()).append("|").append(System.getProperty("line.separator"));
@@ -525,20 +525,22 @@ public class NFeGerarTxt {
 
 	            if (total != null && total.getValoresCalculados() != null) {
 	                w.append("W02|")
+	                		.append(total.getValoresCalculados().getValorBaseICMS()).append("|")
 	                        .append(total.getValoresCalculados().getValorICMS()).append("|")
-	                        .append(total.getValoresCalculados().getValorICMS()).append("|")
+	                        .append(total.getValoresCalculados().getvICMSDeson()).append("|")
 	                        .append(total.getValoresCalculados().getValorBaseICMS()).append("|")
-	                        .append(total.getValoresCalculados().getValorSeguro()).append("|")
+	                        .append(total.getValoresCalculados().getValorBaseICMSSubstituto()).append("|")
 	                        .append(total.getValoresCalculados().getValorProdutos()).append("|")
 	                        .append(total.getValoresCalculados().getValorFrete()).append("|")
 	                        .append(total.getValoresCalculados().getValorSeguro()).append("|")
 	                        .append(total.getValoresCalculados().getValorDesconto()).append("|")
-	                        .append(total.getValoresCalculados().getValorOutro()).append("|")
+	                        .append(total.getValoresCalculados().getValorImpostoImportacao()).append("|")
 	                        .append(total.getValoresCalculados().getValorIPI()).append("|")
 	                        .append(total.getValoresCalculados().getValorPIS()).append("|")
 	                        .append(total.getValoresCalculados().getValorCOFINS()).append("|")
 	                        .append(total.getValoresCalculados().getValorOutro()).append("|")
-	                        .append(total.getValoresCalculados().getValorNF()).append(System.getProperty("line.separator"));
+	                        .append(total.getValoresCalculados().getValorNF()).append("|")
+	                        .append(total.getValoresCalculados().getValorOutro()).append("|").append(System.getProperty("line.separator"));
 	            }
 	            
 	            InformacaoValoresTotais totalSSQN =  notafiscal.getNotaFiscalInformacoes().getInformacaoValoresTotais();
