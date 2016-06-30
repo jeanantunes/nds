@@ -77,11 +77,8 @@ import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.util.AnexoEmail;
-import br.com.abril.nds.util.Constantes;
-import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
-import br.com.abril.nds.vo.ValidacaoVO;
-import br.com.caelum.vraptor.view.Results;
+import br.com.abril.nds.util.Intervalo;
 
 @Service
 public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
@@ -1390,10 +1387,12 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 	@Override
 	@Transactional
-	public void enviarEmail(FiltroConsultaNotaEnvioDTO filtro) {
+	public ValidacaoException enviarEmail(FiltroConsultaNotaEnvioDTO filtro) {
 		
 		List<NotaEnvio> notasEnvio = gerarNotasEnvio(filtro);
     	
+		List<Integer> numeroCotasSemEmail = new ArrayList<>();
+		
     	byte[] notaDeCadaCota;
     	Map<Pessoa, List<NotaEnvio>> mapaDeNotas = new HashMap<>();
 		try {
@@ -1401,6 +1400,15 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			for (NotaEnvio notaEnvio : notasEnvio) {
 				
 				Pessoa pessoaDestinatarios = notaEnvio.getDestinatario().getPessoaDestinatarioReferencia();
+				
+				if(pessoaDestinatarios.getEmail() == null){
+					
+					if(!numeroCotasSemEmail.contains(notaEnvio.getDestinatario().getNumeroCota())){
+						numeroCotasSemEmail.add(notaEnvio.getDestinatario().getNumeroCota());	
+					}
+					
+				}
+				
 				if (mapaDeNotas.containsKey(pessoaDestinatarios)) {
 					List<NotaEnvio> listaDeNotas = mapaDeNotas.get(pessoaDestinatarios);
 					listaDeNotas.add(notaEnvio);
@@ -1419,6 +1427,11 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				
 				List<NotaEnvio> listaDeNotaEnvioDeUmaCota = entry.getValue();
 				notaDeCadaCota = nfeService.obterNEsPDF(listaDeNotaEnvioDeUmaCota, false, filtro.getIntervaloMovimento());
+				
+				if(destinatario.getEmail() == null){
+					continue;
+				}
+				
 				String email = destinatario.getEmail();
 				String[] listaDeDestinatarios = {email};
 				
@@ -1426,10 +1439,26 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				emailSerice.enviar("Nota de envio", "Olá, segue em anexo a nota de envio.", listaDeDestinatarios, anexoPDF);
 				
 			}
-		} catch (Exception e) {
+			
+			if(!numeroCotasSemEmail.isEmpty()){
+				String numeroCotas = "";
+				
+				for (Integer numCota : numeroCotasSemEmail) {
+					if(numeroCotas.isEmpty()){
+						numeroCotas = ""+numCota;
+					}else{
+						numeroCotas = numeroCotas+", "+numCota;
+					}
+				}
+				
+				return new ValidacaoException(TipoMensagem.WARNING, "E-mail enviado com sucesso. Porém as cotas: " + numeroCotas + " não possuem e-mail cadastrado.");
+			}
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 		
+		return new ValidacaoException(TipoMensagem.SUCCESS, "Email enviado com sucesso.");
 	}
     
 }
