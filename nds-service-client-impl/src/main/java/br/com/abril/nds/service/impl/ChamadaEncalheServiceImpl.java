@@ -1062,7 +1062,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			Cota cota = cotaService.obterPorId(idCota);
 			
 			String emailDestinatario = cota.getPessoa().getEmail();
-			String[] listaDeDestinatarios = {"linkout.lazaro@gmail.com"};
+			String[] listaDeDestinatarios = {emailDestinatario};
 			
 			
 			try {
