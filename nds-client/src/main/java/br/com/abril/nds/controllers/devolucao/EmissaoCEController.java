@@ -577,7 +577,7 @@ public class EmissaoCEController extends BaseController {
 		String numeroCotas = chamadaEncalheService.enviarEmail(filtro);
 		
 		if (numeroCotas != null && !numeroCotas.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.SUCCESS, "E-mail enviado com sucesso. Porém as cotas: " + numeroCotas + " não possuem e-mail cadastrado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "E-mail enviado com sucesso. Porém as cotas: " + numeroCotas + " não possuem e-mail cadastrado.");
 		}
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Email enviado com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
