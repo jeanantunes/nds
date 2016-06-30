@@ -15,6 +15,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -24,6 +25,7 @@ import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -67,6 +69,9 @@ public class MovimentoFinanceiroCotaController extends BaseController{
 	@Autowired
 	private LancamentoService lancamentoService;
 	
+    @Autowired
+    private ProdutoEdicaoService produtoEdicaoService;
+	
 	@Path("/")
 	public void index(){
 		
@@ -91,13 +96,13 @@ public class MovimentoFinanceiroCotaController extends BaseController{
 		
 		if (lcto!=null && !lcto.isEmpty()){
 			
-			 throw new ValidacaoException(TipoMensagem.WARNING, "Expedição pendente de Confirmação !");
+			 //throw new ValidacaoException(TipoMensagem.WARNING, "Expedição pendente de Confirmação !");
 		}
 	}
 
 	@Post
 	@Path("/buscarCotas")
-	public void buscaDividasBaixadas(Integer numeroCota,
+	public void buscaDividasBaixadas(Integer numeroCota, String codigoProduto, String numeroEdicao,
 					                 String sortorder, 
 					                 String sortname,
 					                 int page, 
@@ -107,7 +112,20 @@ public class MovimentoFinanceiroCotaController extends BaseController{
 
 		this.verificaLiberacaoProcessamentoFinanceiro(data);
 		
-		List<ProcessamentoFinanceiroCotaVO> processamentoFinanceiroCotaVO = this.movimentoFinanceiroCotaService.obterProcessamentoFinanceiroCota(numeroCota, 
+		ProdutoEdicao produtoEdicao = null;
+        
+        if(codigoProduto != null && numeroEdicao != null) {
+        	
+        	 produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
+             
+             if(produtoEdicao == null) {
+             	throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição não encontrado !");
+             }
+        	
+        }
+		
+		List<ProcessamentoFinanceiroCotaVO> processamentoFinanceiroCotaVO = this.movimentoFinanceiroCotaService.obterProcessamentoFinanceiroCota(numeroCota,
+																																				 produtoEdicao,
 				                                                                                                                                 data, 
 				                                                                                                                                 sortorder, 
 				                                                                                                                                 sortname,
@@ -120,7 +138,7 @@ public class MovimentoFinanceiroCotaController extends BaseController{
                     + DateUtil.formatarDataPTBR(data) + "].");
 		}
 		
-		int qtdRegistros = this.movimentoFinanceiroCotaService.obterQuantidadeProcessamentoFinanceiroCota(numeroCota, data);
+		int qtdRegistros = this.movimentoFinanceiroCotaService.obterQuantidadeProcessamentoFinanceiroCota(numeroCota, produtoEdicao);
 			
 		TableModel<CellModelKeyValue<ProcessamentoFinanceiroCotaVO>> tableModel = new TableModel<CellModelKeyValue<ProcessamentoFinanceiroCotaVO>>();
 			

@@ -40,6 +40,7 @@ import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -1249,7 +1250,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	 * @return Long
 	 */
 	@Override
-	public Long obterQuantidadeProcessamentoFinanceiroCota(Integer numeroCota){
+	public Long obterQuantidadeProcessamentoFinanceiroCota(Integer numeroCota, ProdutoEdicao produtoEdicao){
 	    
 	    StringBuilder hql = new StringBuilder("select ");
 	    
@@ -1271,7 +1272,13 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	      query.setParameter("numeroCota", numeroCota);
 	    }
 	    
-	    query.setParameter("tipoCota", TipoCota.A_VISTA);
+	    if (produtoEdicao != null) {
+	    	query.setParameter("tipoCota", TipoCota.CONSIGNADO);
+	    } else {
+	    	query.setParameter("tipoCota", TipoCota.CONSIGNADO);
+	    }
+	    
+	    
 	    
 	    return (Long) query.uniqueResult();
 	}
@@ -1392,7 +1399,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProcessamentoFinanceiroCotaDTO> obterProcessamentoFinanceiroCota(Integer numeroCota,
+	public List<ProcessamentoFinanceiroCotaDTO> obterProcessamentoFinanceiroCota(Integer numeroCota, ProdutoEdicao produtoEdicao,
 			                                                                     Date data,
 	                                                                             String sortorder, 
 	                                                                             String sortname,
@@ -1508,7 +1515,11 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	
 	         .append(") *(-1) as saldo  ")
 
-	       .append(" from Cota c ")
+	       .append(" from MovimentoEstoqueCota moviEsqCota ")
+	       
+	       .append(" join moviEsqCota.cota  c ")
+	       
+	       .append(" join moviEsqCota.produtoEdicao  prodEdic ")
 	       
 	       .append(" join c.pessoa p ")
 	       
@@ -1518,6 +1529,14 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	      
 	        hql.append(" and c.numeroCota = :numeroCota ");
 	    }
+	    
+	    if (produtoEdicao != null){
+	    	
+	    	hql.append(" and prodEdic.id = :produtoEdicaoId ");
+	    	
+	    }
+	    
+	    hql.append("  and moviEsqCota.data <= :data");
 	
 	    if (sortname != null){
 	      
@@ -1535,7 +1554,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	    
 	    query.setMaxResults(maxResults);
 	    
-        this.setParametrosProcessamentoFinanceiroCota(query, numeroCota, data);
+        this.setParametrosProcessamentoFinanceiroCota(query, numeroCota, data, produtoEdicao);
 	
 	    query.setResultTransformer(new AliasToBeanResultTransformer(ProcessamentoFinanceiroCotaDTO.class));
 	    
@@ -1796,7 +1815,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	   
 	   Query query = this.getSession().createQuery(hql.toString());
 	   
-       this.setParametrosProcessamentoFinanceiroCota(query, numeroCota, data);	
+       this.setParametrosProcessamentoFinanceiroCota(query, numeroCota, data, null);	
 	   
 	   return (BigDecimal) query.uniqueResult();
 	}	
@@ -1806,15 +1825,28 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	 * @param query
 	 * @param numeroCota
 	 * @param data
+	 * @param produtoEdicao 
 	 */
-	private void setParametrosProcessamentoFinanceiroCota(Query query, Integer numeroCota, Date data){
+	private void setParametrosProcessamentoFinanceiroCota(Query query, Integer numeroCota, Date data, ProdutoEdicao produtoEdicao){
 		
 	    if (numeroCota != null){
 		      
 	        query.setParameter("numeroCota", numeroCota);
 	    }
 	    
-	    query.setParameter("tipoCota", TipoCota.A_VISTA);
+	    if (produtoEdicao != null){
+	    	
+	    	query.setParameter("produtoEdicaoId", produtoEdicao.getId());
+	    	
+	    	query.setParameter("tipoCota", TipoCota.CONSIGNADO);
+	    	
+	    } else {
+	    	
+	    	query.setParameter("tipoCota", TipoCota.A_VISTA);
+	    	
+	    }
+	    
+	    
 
 	    query.setParameter("formaComercializacaoProduto", FormaComercializacao.CONTA_FIRME);
 
