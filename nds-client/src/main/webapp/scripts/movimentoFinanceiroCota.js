@@ -19,7 +19,7 @@ var movimentoFinanceiroCotaController = $.extend(true, {
 		
 		movimentoFinanceiroCotaController.iniciarGridCotasAVista();
 		
-		movimentoFinanceiroCotaController.buscarCotas();
+		//movimentoFinanceiroCotaController.buscarCotas();
 	},
 	
 	iniciarGridCotasAVista : function() {
@@ -162,11 +162,15 @@ var movimentoFinanceiroCotaController = $.extend(true, {
     buscarCotas : function(){
 		
 		var numeroCota = $("#filtroNumCota", movimentoFinanceiroCotaController.workspace).val();
+		var codigoProduto = $("#processamentoFinanceiro-codigoProdutoEd", movimentoFinanceiroCotaController.workspace).val();
+		var numeroEdicao = $("#processamentoFinanceiro-numEdicaoEd", movimentoFinanceiroCotaController.workspace).val();
 					
 		$(".gridCotas", movimentoFinanceiroCotaController.workspace).flexOptions({
 			url: contextPath + "/financeiro/movimentoFinanceiroCota/buscarCotas",
 			params: [
-			         {name:'numeroCota', value: numeroCota}
+			         {name:'numeroCota', value: numeroCota},
+			         {name:'codigoProduto', value: codigoProduto},
+			         {name:'numeroEdicao', value: numeroEdicao}
 			        ] ,
 			        newp: 1
 		});
