@@ -8,6 +8,7 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 
 	<script type="text/javascript">
 	
@@ -17,6 +18,26 @@
 		
 			movimentoFinanceiroCotaController.init();
 		});
+		
+		var pesquisaProduto = new PesquisaProduto(movimentoFinanceiroCotaController.workspace);
+		
+		$('#processsamentoFinanceiroTableFiltroCota').hide();
+		$('#processsamentoFinanceiroTableFiltroProduto').hide();
+		
+		function filtroPorCota(){
+			$('#processsamentoFinanceiroTableFiltroCota').show();
+			$('#processsamentoFinanceiroTableFiltroProduto').hide();
+			$("#processamentoFinanceiro-codigoProdutoEd").val("");
+			$("#processamentoFinanceiro-nomeProdutoEd").val("");
+			$("#processamentoFinanceiro-numEdicaoEd").val("");
+		}
+
+		function filtroPorProduto(){
+			$('#processsamentoFinanceiroTableFiltroCota').hide();
+			$('#processsamentoFinanceiroTableFiltroProduto').show();
+			$("#filtroNumCota").val("");
+			$("#descricaoCota").val("");
+		}
 		
 	</script>
 	
@@ -61,43 +82,73 @@
 		
 		<!-- BAIXA MANUAL -->
 		
-		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro" id="tableFiltroCota">
+		<table width="200" border="0" class="filtro" id="processsamentoFinanceiroTableFiltro">
+			<tr>
+	            <td style="width: 10px;"><input type="radio" name="filtroPrincipalRadio" id="radio"  value="Cota" onclick="filtroPorCota();" /></td>
+	            <td style="width: 10px;" ><label >Cota</label></td>
+	            <td style="width: 10px;"><input type="radio" name="filtroPrincipalRadio" id="radio2" value="Produto" onclick="filtroPorProduto()" /></td>
+	            <td style="width: 10px;"><label >Produto</label></td>
+            </tr>
+		</table>
+		
+		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro" id="processsamentoFinanceiroTableFiltroCota">
             <tr>
-				<td width="20">Cota:</td>
-                
-                <td style="width: 108px; ">
-	                <input name="filtroNumCota" 
-	             	       id="filtroNumCota" 
-	             		   type="text"
-	             		   maxlength="11"
-	             		   style="width: 80px; 
-	             		   float:left; 
-	             		   margin-right:5px;"
-	             		   onchange="pesquisaCota.pesquisarPorNumeroCota('#filtroNumCota', '#descricaoCota');" />
+					<td width="20">Cota:</td>
+	                
+	                <td style="width: 108px; ">
+		                <input name="filtroNumCota" 
+		             	       id="filtroNumCota" 
+		             		   type="text"
+		             		   maxlength="11"
+		             		   style="width: 80px; 
+		             		   float:left; 
+		             		   margin-right:5px;"
+		             		   onchange="pesquisaCota.pesquisarPorNumeroCota('#filtroNumCota', '#descricaoCota');" />
+					</td>
+					
+					<td width="30">Nome:</td>
+	             	
+	             	<td width="150" style="width: 348px; ">
+			        	<input name="descricaoCota" 
+			      		 	   id="descricaoCota" 
+			      		 	   type="text"
+			      		 	   class="nome_jornaleiro" 
+			      		 	   maxlength="255"
+			      		 	   style="width: 322px;"
+			      		 	   onkeyup="pesquisaCota.autoCompletarPorNome('#descricaoCota');" 
+			      		 	   onblur="pesquisaCota.pesquisarPorNomeCota('#filtroNumCota', '#descricaoCota');" />
+			        </td>
+			        <td width="30">
+				    <span class="bt_pesquisar">
+				        <a href="javascript:;" onclick="movimentoFinanceiroCotaController.buscarCotas();"></a>
+				    </span>
 				</td>
-				
-				<td width="30">Nome:</td>
-             	
-             	<td width="150" style="width: 348px; ">
-		        	<input name="descricaoCota" 
-		      		 	   id="descricaoCota" 
-		      		 	   type="text"
-		      		 	   class="nome_jornaleiro" 
-		      		 	   maxlength="255"
-		      		 	   style="width: 322px;"
-		      		 	   onkeyup="pesquisaCota.autoCompletarPorNome('#descricaoCota');" 
-		      		 	   onblur="pesquisaCota.pesquisarPorNomeCota('#filtroNumCota', '#descricaoCota');" />
-		        </td>
+			</tr>
+		</table>
+		
+		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro" id="processsamentoFinanceiroTableFiltroProduto">
+            <tr>
+			    	<td width="129">Código:</td>
+			        <td>
+						<input id="processamentoFinanceiro-codigoProdutoEd" name="textfield2" type="text" style="width:80px;" value="" onchange="pesquisaProduto.pesquisarPorCodigoProduto('#processamentoFinanceiro-codigoProdutoEd','#processamentoFinanceiro-nomeProdutoEd',false,undefined,undefined )"/ />
+					</td>
+			    	<td>Produto:</td>
+			        <td>
+						<input id="processamentoFinanceiro-nomeProdutoEd" name="textfield7" type="text" style="width:250px;" value="" />
+					</td>
+			        <td>Edição:</td>
+			        <td><input id="processamentoFinanceiro-numEdicaoEd" name="textfield" type="text" style="width:80px;" value="" /></td>
 				
 				<td width="30">
 				    <span class="bt_pesquisar">
 				        <a href="javascript:;" onclick="movimentoFinanceiroCotaController.buscarCotas();"></a>
 				    </span>
 				</td>
-				
-			</tr>
-        </table>
-        
+            
+            </tr>
+		</table>
+
+		        
         <!--  -->
         
 	</fieldset>

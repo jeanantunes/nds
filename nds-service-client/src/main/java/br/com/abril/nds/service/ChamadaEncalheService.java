@@ -65,6 +65,6 @@ public interface ChamadaEncalheService {
 	
 	List<ChamadaEncalheImpressaoWrapper> gerarListaChamadaEncalheImpressaoWrapper(FiltroEmissaoCE filtro);
 	
-	void enviarEmail(FiltroEmissaoCE filtro);
+	String enviarEmail(FiltroEmissaoCE filtro);
 	
 }

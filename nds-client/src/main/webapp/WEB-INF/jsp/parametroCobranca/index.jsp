@@ -354,7 +354,7 @@
 		  					onchange="parametroCobrancaController.buscarCotaPorNumero('')"/>
 		  			</td>
 		  			<td>
-		  				<input type="text" id="nomeCota_" style="width: 495px;" 
+		  				<input type="text"  id="parametro-cobranca-nomeCota" style="width: 495px;" 
 		  					onkeyup="parametroCobrancaController.onkeyupCampoNome('');" 
 		  					onblur="parametroCobrancaController.onblurCampoNome('');"/>
 		  			</td>

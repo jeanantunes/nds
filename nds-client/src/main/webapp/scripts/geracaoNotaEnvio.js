@@ -301,7 +301,14 @@ var geracaoNotaEnvioController = $.extend({
 			
 			this.confirmDialog = new ConfirmDialog('Confirmar Envio de email?', function() {
 		    	
-				$.postJSON(geracaoNotaEnvioController.path + 'enviarEmail');
+				$.postJSON(geracaoNotaEnvioController.path + 'enviarEmail'), function(data){
+					var tipoMensagem = data.tipoMensagem;
+					var listaMensagens = data.listaMensagens;
+					
+					if (tipoMensagem && listaMensagens) {
+						exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+					}
+				};
 		            
 				return true;
 			    }, function() {
