@@ -96,7 +96,7 @@ public class MovimentoFinanceiroCotaController extends BaseController{
 		
 		if (lcto!=null && !lcto.isEmpty()){
 			
-			 //throw new ValidacaoException(TipoMensagem.WARNING, "Expedição pendente de Confirmação !");
+			 throw new ValidacaoException(TipoMensagem.WARNING, "Expedição pendente de Confirmação !");
 		}
 	}
 
