@@ -27,11 +27,16 @@
 		function filtroPorCota(){
 			$('#processsamentoFinanceiroTableFiltroCota').show();
 			$('#processsamentoFinanceiroTableFiltroProduto').hide();
+			$("#processamentoFinanceiro-codigoProdutoEd").val("");
+			$("#processamentoFinanceiro-nomeProdutoEd").val("");
+			$("#processamentoFinanceiro-numEdicaoEd").val("");
 		}
 
 		function filtroPorProduto(){
 			$('#processsamentoFinanceiroTableFiltroCota').hide();
 			$('#processsamentoFinanceiroTableFiltroProduto').show();
+			$("#filtroNumCota").val("");
+			$("#descricaoCota").val("");
 		}
 		
 	</script>

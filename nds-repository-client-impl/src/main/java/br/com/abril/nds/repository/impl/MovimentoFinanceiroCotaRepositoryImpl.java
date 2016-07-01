@@ -1275,7 +1275,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	    if (produtoEdicao != null) {
 	    	query.setParameter("tipoCota", TipoCota.CONSIGNADO);
 	    } else {
-	    	query.setParameter("tipoCota", TipoCota.CONSIGNADO);
+	    	query.setParameter("tipoCota", TipoCota.A_VISTA);
 	    }
 	    
 	    
