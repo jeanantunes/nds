@@ -217,6 +217,31 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 	},
 	
+	confirmarConferencia: function() {
+		if(!permissaoAlteracao){
+			exibirAcessoNegado();
+			return;
+		}
+		if (!ConferenciaEncalheCont.modalAberta) {
+
+			if(document.activeElement != undefined && document.activeElement.id != undefined && document.activeElement.id.indexOf('qtdExemplaresGrid_') > -1) {
+				elNdx = $(document.activeElement).attr('elIndex');
+				$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
+				ConferenciaEncalheCont.verificarPermissaoSuperVisor(elNdx, 'keydown.finalizarConferencia');
+				return;
+			}
+			
+			ConferenciaEncalheCont.processandoConferenciaEncalhe = true;
+			
+			$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
+			
+			setTimeout(function() {
+				ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.verificarCobrancaGerada);
+			}, 1000);
+		};
+		
+	},
+	
 	pesquisarCota : function(){
 		
 		var numeroCotaDipopnivelPesquisa = $("#contingencia-numeroCota",ConferenciaEncalheCont.workspace).attr('readonly');
