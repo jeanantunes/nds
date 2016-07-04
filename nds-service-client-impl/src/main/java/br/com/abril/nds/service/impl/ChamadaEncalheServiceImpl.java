@@ -1,10 +1,6 @@
 package br.com.abril.nds.service.impl;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -22,11 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfWriter;
 
 import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
@@ -1031,7 +1022,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 
 	@Override
 	@Transactional
-	public void enviarEmail(FiltroEmissaoCE filtro) {
+	public String enviarEmail(FiltroEmissaoCE filtro) {
 		
 		List<ChamadaEncalheImpressaoWrapper> listaDeCEImpressao = this.gerarListaChamadaEncalheImpressaoWrapper(filtro);
 		
@@ -1055,28 +1046,35 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			}
 		}
 		
+		StringBuilder numeroCotas = new StringBuilder();
+		
 		for (Map.Entry<Long, List<ChamadaEncalheImpressaoWrapper>> entry : mapa.entrySet()) {
 			Long idCota = entry.getKey();
 			List<ChamadaEncalheImpressaoWrapper> lista = entry.getValue();
 			
 			Cota cota = cotaService.obterPorId(idCota);
 			
-			String emailDestinatario = cota.getPessoa().getEmail();
-			String[] listaDeDestinatarios = {"linkout.lazaro@gmail.com"};
-			
-			
-			try {
-				byte[] anexo = this.gerarDocumentoEmissaoCE(lista);
+			if (cota.getPessoa().getEmail() == null) {
+				numeroCotas.append(cota.getNumeroCota().toString() + ",");
+			} else {
 				
-				AnexoEmail anexoPDF = new AnexoEmail("nota-envio", anexo, TipoAnexo.PDF);
-				emailSerice.enviar("Emissão Chamada de Encalhe", "Olá, segue em anexo a chamada de encalhe.", listaDeDestinatarios, anexoPDF);
-			} catch ( AutenticacaoEmailException | JRException | URISyntaxException e) {
-				e.printStackTrace();
+				String emailDestinatario = cota.getPessoa().getEmail();
+				String[] listaDeDestinatarios = {emailDestinatario};
+				
+				
+				try {
+					byte[] anexo = this.gerarDocumentoEmissaoCE(lista);
+					
+					AnexoEmail anexoPDF = new AnexoEmail("nota-envio", anexo, TipoAnexo.PDF);
+					emailSerice.enviar("Emissão Chamada de Encalhe", "Olá, segue em anexo a chamada de encalhe.", listaDeDestinatarios, anexoPDF);
+				} catch ( AutenticacaoEmailException | JRException | URISyntaxException e) {
+					e.printStackTrace();
+				}
+				
 			}
-			
-			
-			
 		}
+		
+		return numeroCotas.toString();
 		
 	}
 }

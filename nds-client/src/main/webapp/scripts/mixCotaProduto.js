@@ -926,11 +926,11 @@ var mixCotaProdutoController = $.extend(true, {
 										  });
 								 list.push({
 										  name : "listaNovosMixProduto["+idx+"].reparteMinimo" , 
-										  value : $("#repMinimo"+idx).val()
+										  value : $("#repMinimoProduto"+idx).val()
 										  });
 								 list.push({
 										  name : "listaNovosMixProduto["+idx+"].reparteMaximo" , 
-										  value : $("#repMaximo"+idx).val()
+										  value : $("#repMaximoProduto"+idx).val()
 										  });
 								 list.push({
 									  name : "listaNovosMixProduto["+idx+"].classificacaoProduto" , 
@@ -1014,8 +1014,8 @@ var mixCotaProdutoController = $.extend(true, {
 			
 			$(inputList[0]).attr("id","numeroCotaModal"+idx);
 			$(inputList[1]).attr("id","cotaModal"+idx);
-			$(inputList[2]).attr("id","repMinimo"+idx);
-			$(inputList[3]).attr("id","repMaximo"+idx);
+			$(inputList[2]).attr("id","repMinimoProduto"+idx);
+			$(inputList[3]).attr("id","repMaximoProduto"+idx);
 			
 		});
 	},
@@ -1270,6 +1270,7 @@ var mixCotaProdutoController = $.extend(true, {
 	
 	//Funcao que realiza pesquisa de mix por produto
 	pesquisarPorProduto:function(){
+
 		mixCotaProdutoController.exibeGridProduto();
 		$(".mixProdutosGrid").flexOptions({
 			url: contextPath + "/distribuicao/mixCotaProduto/pesquisarPorProduto",
@@ -1283,6 +1284,7 @@ var mixCotaProdutoController = $.extend(true, {
 	
 	//Funcao que realiza pesquisa de fixações por cota
 	pesquisarPorCota:function(){
+	
 		mixCotaProdutoController.exibeGridCota();
 		$(".mixCotasGrid").flexOptions({
 			url: contextPath + "/distribuicao/mixCotaProduto/pesquisarPorCota",
