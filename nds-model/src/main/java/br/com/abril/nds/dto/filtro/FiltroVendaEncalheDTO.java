@@ -188,7 +188,15 @@ public class FiltroVendaEncalheDTO implements Serializable {
 	public void setNomeCota(String nomeCota) {
 		this.nomeCota = nomeCota;
 	}
+	
+	public Date getHorarioVenda() {
+		return horarioVenda;
+	}
 
+	public void setHorarioVenda(Date horarioVenda) {
+		this.horarioVenda = horarioVenda;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -256,13 +264,5 @@ public class FiltroVendaEncalheDTO implements Serializable {
 		if (tipoVendaEncalhe != other.tipoVendaEncalhe)
 			return false;
 		return true;
-	}
-
-	public Date getHorarioVenda() {
-		return horarioVenda;
-	}
-
-	public void setHorarioVenda(Date horarioVenda) {
-		this.horarioVenda = horarioVenda;
 	}
 }
