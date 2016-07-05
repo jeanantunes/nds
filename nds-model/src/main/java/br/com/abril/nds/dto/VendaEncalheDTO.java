@@ -62,6 +62,10 @@ public class VendaEncalheDTO implements Serializable {
 	
 	private Date horarioVenda;
 	
+	private FormaComercializacao formaComercializacao;
+	
+	private String comercializacao;
+	
 	private boolean produtoContaFirme;
 	
 	public boolean isProdutoContaFirme() {
@@ -331,7 +335,21 @@ public class VendaEncalheDTO implements Serializable {
 	public void setHorarioVenda(Date horarioVenda) {
 		this.horarioVenda = horarioVenda;
 	}
-	
-	
-	
+
+	public FormaComercializacao getFormaComercializacao() {
+		return formaComercializacao;
+	}
+
+	public void setFormaComercializacao(FormaComercializacao formaComercializacao) {
+		this.formaComercializacao = formaComercializacao;
+		this.comercializacao = formaComercializacao.name();
+	}
+
+	public String getComercializacao() {
+		return formaComercializacao.name();
+	}
+
+	public void setComercializacao(String comercializacao) {
+		this.comercializacao = formaComercializacao.name();
+	}
 }

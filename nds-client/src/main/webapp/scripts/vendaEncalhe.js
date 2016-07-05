@@ -1249,7 +1249,7 @@ $(function() {
 		}, {
 			display : 'Cota',
 			name : 'numeroCota',
-			width : 50,
+			width : 40,
 			sortable : true,
 			align : 'left'
 		}, {
@@ -1303,6 +1303,12 @@ $(function() {
 		}, {
 			display : 'Usuário',
 			name : 'nomeUsuario',
+			width : 70,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Forma Venda',
+			name : 'comercializacao',
 			width : 70,
 			sortable : true,
 			align : 'left'
