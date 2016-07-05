@@ -1536,8 +1536,12 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	    	
 	    }
 	    
+	    hql.append("  and moviEsqCota.statusEstoqueFinanceiro = 'FINANCEIRO_NAO_PROCESSADO' ");
+	    
 	    hql.append("  and moviEsqCota.data <= :data");
 	
+	    hql.append("  group by c.id ");
+	    
 	    if (sortname != null){
 	      
 	        hql.append(" order by ").append(sortname);
