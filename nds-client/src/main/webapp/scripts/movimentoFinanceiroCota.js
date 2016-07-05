@@ -20,7 +20,7 @@ var movimentoFinanceiroCotaController = $.extend(true, {
 		movimentoFinanceiroCotaController.iniciarGridCotasAVista();
 		
 		//Era chamado essa função assim que carregava a tela, mas como agora vai ter filtros não será mais necessário chama-lá aqui.
-		//movimentoFinanceiroCotaController.buscarCotas();
+		movimentoFinanceiroCotaController.buscarCotas();
 	},
 	
 	iniciarGridCotasAVista : function() {
