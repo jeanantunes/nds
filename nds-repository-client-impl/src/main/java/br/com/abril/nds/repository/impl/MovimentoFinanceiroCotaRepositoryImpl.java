@@ -1814,9 +1814,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	        query.setParameter("numeroCota", numeroCota);
 	    }
 	    
-	    //TODO tipoCota == A vista
-	    
-	    query.setParameter("tipoCota", TipoCota.CONSIGNADO);
+	    query.setParameter("tipoCota", TipoCota.A_VISTA);
 
 	    query.setParameter("formaComercializacaoProduto", FormaComercializacao.CONTA_FIRME);
 

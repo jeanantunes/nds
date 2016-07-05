@@ -34,12 +34,14 @@ import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
+import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
@@ -837,6 +839,12 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Transactional
 	public byte[] gerarEmissaoCE(FiltroEmissaoCE filtro) throws JRException, URISyntaxException{
 		
+		Distribuidor distrib = distribuidorService.obter();
+		
+		if(!distribuidorService.verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(distrib, TipoParametrosDistribuidorEmissaoDocumento.CHAMADA_ENCALHE)){
+			throw new ValidacaoException(TipoMensagem.ERROR, "CE não podem ser impressas, distribuidor não aceita impressão deste documento.");
+		}
+		
 		boolean apresentaCapas = (filtro.getCapa() == null) ? false : filtro.getCapa();
 		
 		boolean apresentaCapasPersonalizadas = (filtro.getPersonalizada() == null) ? false : filtro.getPersonalizada();
@@ -869,9 +877,9 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Transactional
 	public List<ChamadaEncalheImpressaoWrapper> gerarListaChamadaEncalheImpressaoWrapper(FiltroEmissaoCE filtro){
 		
-		Date dataOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
-		
 		DistribuidorDTO distribuidor = distribuidorService.obterDadosEmissao();
+		
+		Date dataOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
 		
 		final List<ChamadaEncalheImpressaoWrapper> listaCEWrapper = new ArrayList<ChamadaEncalheImpressaoWrapper>();
 		
@@ -1022,7 +1030,13 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 
 	@Override
 	@Transactional
-	public String enviarEmail(FiltroEmissaoCE filtro) {
+	public void enviarEmail(FiltroEmissaoCE filtro) {
+		
+		Distribuidor distrib = distribuidorService.obter();
+		
+		if(!distribuidorService.verificarParametroDistribuidorEmissaoDocumentosEmailCheck(distrib, TipoParametrosDistribuidorEmissaoDocumento.CHAMADA_ENCALHE)){
+			throw new ValidacaoException(TipoMensagem.ERROR, "CE não podem ser enviadas por e-mail, distribuidor não aceita o envio deste documento.");
+		}
 		
 		List<ChamadaEncalheImpressaoWrapper> listaDeCEImpressao = this.gerarListaChamadaEncalheImpressaoWrapper(filtro);
 		
@@ -1046,7 +1060,8 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			}
 		}
 		
-		StringBuilder numeroCotas = new StringBuilder();
+		String numeroCotasSemEmail = "";
+		String numeroCotasNaoRecebemEmail = "";
 		
 		for (Map.Entry<Long, List<ChamadaEncalheImpressaoWrapper>> entry : mapa.entrySet()) {
 			Long idCota = entry.getKey();
@@ -1054,27 +1069,51 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			Cota cota = cotaService.obterPorId(idCota);
 			
-			if (cota.getPessoa().getEmail() == null) {
-				numeroCotas.append(cota.getNumeroCota().toString() + ",");
-			} else {
-				
-				String emailDestinatario = cota.getPessoa().getEmail();
-				String[] listaDeDestinatarios = {emailDestinatario};
-				
-				
-				try {
-					byte[] anexo = this.gerarDocumentoEmissaoCE(lista);
-					
-					AnexoEmail anexoPDF = new AnexoEmail("nota-envio", anexo, TipoAnexo.PDF);
-					emailSerice.enviar("Emissão Chamada de Encalhe", "Olá, segue em anexo a chamada de encalhe.", listaDeDestinatarios, anexoPDF);
-				} catch ( AutenticacaoEmailException | JRException | URISyntaxException e) {
-					e.printStackTrace();
+			if (cota.getParametroDistribuicao().getChamadaEncalheEmail() == null || !cota.getParametroDistribuicao().getChamadaEncalheEmail()) {
+				if(numeroCotasNaoRecebemEmail.isEmpty()){
+					numeroCotasNaoRecebemEmail = cota.getNumeroCota().toString();
+				}else{
+					numeroCotasNaoRecebemEmail += ", "+ cota.getNumeroCota().toString();
 				}
+				continue;
+			} 
+			
+			if (cota.getPessoa().getEmail() == null) {
+				if(numeroCotasSemEmail.isEmpty()){
+					numeroCotasSemEmail = cota.getNumeroCota().toString();
+				}else{
+					numeroCotasSemEmail +=", "+ cota.getNumeroCota().toString();
+				}
+				continue;
+			} 
+
+			String emailDestinatario = cota.getPessoa().getEmail();
+			String[] listaDeDestinatarios = {emailDestinatario};
+			
+			try {
+				byte[] anexo = this.gerarDocumentoEmissaoCE(lista);
 				
+				AnexoEmail anexoPDF = new AnexoEmail("nota-envio", anexo, TipoAnexo.PDF);
+				emailSerice.enviar("Emissão Chamada de Encalhe", "Olá, segue em anexo a chamada de encalhe.", listaDeDestinatarios, anexoPDF);
+			} catch ( AutenticacaoEmailException | JRException | URISyntaxException e) {
+				e.printStackTrace();
 			}
 		}
 		
-		return numeroCotas.toString();
+		String mensagem = "";
+		
+		if (!numeroCotasSemEmail.isEmpty()) {
+			mensagem = "E-mail enviado com sucesso.\n As cotas abaixo não possuem e-mail cadastrado: \n "+ numeroCotasSemEmail +"\n";
+			mensagem += "-------------------------- \n";
+		}
+		
+		if(!numeroCotasNaoRecebemEmail.isEmpty()){
+			mensagem += "As Cotas abaixo não recebem e-mail: \n"+ numeroCotasNaoRecebemEmail;
+		}
+		
+		if(!mensagem.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, mensagem);
+		}
 		
 	}
 }

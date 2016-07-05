@@ -36,6 +36,7 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
+import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
@@ -76,6 +77,7 @@ import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.service.NFeService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.Intervalo;
@@ -147,6 +149,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
     
     @Autowired
     private EmailService emailSerice;
+    
+    @Autowired
+    private DistribuidorService distribuidorService;
     
     // Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
     // O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
@@ -796,6 +801,18 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + idCota + " não encontrada!");
         }
         
+        if(filtro.isImpressao()){
+        	if(!cota.getParametroDistribuicao().getNotaEnvioImpresso()){
+        		return;
+        	}
+        }
+        
+        if(filtro.isEnvioEmail()){
+        	if(!cota.getParametroDistribuicao().getNotaEnvioEmail()){
+        		return;
+        	}
+        }
+        
         final IdentificacaoDestinatario destinatarioAtualizado = this.obterDestinatarioAtualizado(cota, filtro.getIdRota(), filtro.getIntervaloMovimento());
         
         if (destinatarioAtualizado == null) {
@@ -949,6 +966,18 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         
         final Distribuidor distribuidor = distribuidorRepository.obter();
         
+        if(filtro.isImpressao()){
+        	if(!distribuidorService.verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(distribuidor, TipoParametrosDistribuidorEmissaoDocumento.NOTA_ENVIO)){
+        		throw new ValidacaoException(TipoMensagem.ERROR, "Notas de envio não podem ser impressas, distribuidor não aceita impressão deste documento.");
+        	}
+        }
+        
+        if(filtro.isEnvioEmail()){
+        	if(!distribuidorService.verificarParametroDistribuidorEmissaoDocumentosEmailCheck(distribuidor, TipoParametrosDistribuidorEmissaoDocumento.NOTA_ENVIO)){
+        		throw new ValidacaoException(TipoMensagem.ERROR, "Notas de envio não podem ser enviadas por e-mail, distribuidor não aceita o envio deste documento.");
+        	}
+        }
+        
         final TelefoneDistribuidor telefoneDistribuidor = distribuidorRepository.obterTelefonePrincipal();
         
         final List<EstudoCota> listaEstudosCotas = estudoCotaRepository.obterEstudosCotaParaNotaEnvio(idCotas, filtro.getIntervaloMovimento(), filtro.getIdFornecedores(), filtro.getExibirNotasEnvio());
@@ -960,13 +989,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao();
         
         final Map<Long, List<MovimentoEstoqueCota>> mapMovimentoEstoqueCota = this.obterMapMovimentoEstoqueCota(idCotas, filtro);
-        
-        
-        if(filtro.isImpressao()){
-        	if(distribuidor != null){
-        		
-        	}
-        }
         
         for (final Long idCota : idCotas) {
         	
@@ -1396,13 +1418,14 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Transactional
 	public ValidacaoException enviarEmail(FiltroConsultaNotaEnvioDTO filtro) {
 		
-		List<NotaEnvio> notasEnvio = gerarNotasEnvio(filtro);
-    	
 		List<Integer> numeroCotasSemEmail = new ArrayList<>();
 		
-    	byte[] notaDeCadaCota;
-    	Map<Pessoa, List<NotaEnvio>> mapaDeNotas = new HashMap<>();
+		byte[] notaDeCadaCota;
+		
+		Map<Pessoa, List<NotaEnvio>> mapaDeNotas = new HashMap<>();
+		
 		try {
+			List<NotaEnvio> notasEnvio = gerarNotasEnvio(filtro);
 			//Agrupar a lista de notas por destinatário
 			for (NotaEnvio notaEnvio : notasEnvio) {
 				
@@ -1460,6 +1483,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				
 				return new ValidacaoException(TipoMensagem.WARNING, "E-mail enviado com sucesso. Porém as cotas: " + numeroCotas + " não possuem e-mail cadastrado.");
 			}
+		}catch (ValidacaoException e) {
+			e.printStackTrace();
+			return new ValidacaoException(e.getValidacao().getTipoMensagem(), e.getValidacao().getListaMensagens());
 		}
 		catch (Exception e) {
 			e.printStackTrace();

@@ -408,6 +408,7 @@ public class EmissaoCEController extends BaseController {
         } catch (ValidacaoException e) {
             LOGGER.error("Erro de validação ao gerar arquivos de chamada de encalhe: " + e.getMessage(), e);
             result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
+            throw new ValidacaoException(e.getValidacao().getTipoMensagem(), e.getValidacao().getListaMensagens());
         } catch (Exception e) {
             LOGGER.error("Erro ao gerar arquivo(s) de chamada(s) de encalhe(s): " + e.getMessage(), e);
             result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()), Constantes.PARAM_MSGS).recursive().serialize();
@@ -574,11 +575,7 @@ public class EmissaoCEController extends BaseController {
 	@Post
 	public void enviarEmail(FiltroEmissaoCE filtro) {
 		
-		String numeroCotas = chamadaEncalheService.enviarEmail(filtro);
-		
-		if (numeroCotas != null && !numeroCotas.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "E-mail enviado com sucesso. Porém as cotas: " + numeroCotas + " não possuem e-mail cadastrado.");
-		}
+		chamadaEncalheService.enviarEmail(filtro);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Email enviado com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
 		
