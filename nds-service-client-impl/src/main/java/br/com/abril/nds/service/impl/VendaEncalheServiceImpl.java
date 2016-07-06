@@ -1534,6 +1534,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				vendaEncalheDTO.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
 				vendaEncalheDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
 				vendaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
+				vendaEncalheDTO.setFormaComercializacao(this.obterFormaComercializacaoVenda(produtoEdicao, tipoVendaEncalhe, produtoComFormaComercializacaoContaFirme));
 				
 				Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 				
