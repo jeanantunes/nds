@@ -63,6 +63,8 @@ public class VendaEncalheVO implements Serializable {
 	
 	private FormaComercializacao formaComercializacao;
 	
+	private String comercializacao;
+	
 	private boolean produtoContaFirme;
 	
 	public boolean isProdutoContaFirme() {
@@ -324,6 +326,12 @@ public class VendaEncalheVO implements Serializable {
 	public void setNomeUsuario(String nomeUsuario) {
 		this.nomeUsuario = nomeUsuario;
 	}
-	
-	
+
+	public String getComercializacao() {
+		return comercializacao;
+	}
+
+	public void setComercializacao(String comercializacao) {
+		this.comercializacao = comercializacao;
+	}
 }
