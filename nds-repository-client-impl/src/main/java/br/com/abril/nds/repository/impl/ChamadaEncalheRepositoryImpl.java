@@ -739,7 +739,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		.append(" where mec.produto_edicao_id = produtoedi5_.id                                                 ")
 		.append(" and mec.cota_id = chamadaenc0_.cota_id                                                        ")
 		.append(" and tm.grupo_movimento_estoque <> 'ENVIO_ENCALHE'                                             ")
-		.append(" and mec.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME'                                                ")
+		// .append(" and mec.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME'                                                ")
+		.append(" and ((mec.FORMA_COMERCIALIZACAO = 'CONTA_FIRME' and c.tipo_cota = 'A_VISTA' and c.devolve_encalhe) or mec.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME') " )
+		
 		.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null                                                ");
 		
 		if(filtro.getDtRecolhimentoDe() != null) {
