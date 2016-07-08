@@ -369,11 +369,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         	cotas.remove(null);
         	Collections.sort(cotas);
         	for(Long numCota : cotas) {
-        		
-        		cotasComProblemas.append(numCota).append(" / ");
+        		if ( numCota != null )
+        		  cotasComProblemas.append(numCota).append(" / ");
         	}
-        	cotasComProblemas.replace(cotasComProblemas.length()-3, cotasComProblemas.length(), "");
-        	throw new ValidacaoException(TipoMensagem.ERROR, String.format("Erro ao obter Forma de Cobrança para Cota/Fornecedor: %s", cotasComProblemas.toString()));
+        	// cotasComProblemas.replace(cotasComProblemas.length()-3, cotasComProblemas.length(), "");
+        	if ( cotasComProblemas.length() > 0 )
+        	  throw new ValidacaoException(TipoMensagem.ERROR, String.format("Erro ao obter Forma de Cobrança para Cota/Fornecedor: %s", cotasComProblemas.toString()));
         }
 	}
 
