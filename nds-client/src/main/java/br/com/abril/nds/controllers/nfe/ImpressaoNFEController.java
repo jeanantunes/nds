@@ -5,9 +5,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,17 +29,14 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ImpressaoNFEService;
-import br.com.abril.nds.service.NFeService;
-import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
-import br.com.abril.nds.service.RoteiroService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -59,26 +54,14 @@ import br.com.caelum.vraptor.view.Results;
 public class ImpressaoNFEController extends BaseController {
 
 	@Autowired
-	private HttpSession session;
-
-	@Autowired
-	private HttpServletRequest httpRequest;
-
-	@Autowired
 	private HttpServletResponse httpResponse;
 
 	@Autowired
 	private FornecedorService fornecedorService;
 	
 	@Autowired
-	private NFeService nfeService; 
-
-	@Autowired
 	private ImpressaoNFEService impressaoNFEService;
 
-	@Autowired
-	private RoteiroService roteiroService;
-	
 	@Autowired
 	private RoteirizacaoService roteirizacaoService;
 
@@ -88,9 +71,6 @@ public class ImpressaoNFEController extends BaseController {
 	@Autowired
 	private Result result;
 
-	@Autowired 
-	private NotaFiscalService notaFiscalService;
-	
 	@Autowired
 	private EmailService emailSerice;
 	
@@ -321,16 +301,19 @@ public class ImpressaoNFEController extends BaseController {
 			filtro.setNumerosNotas(nota);
 			cont++;
 			
+			if(cota.getParametrosCotaNotaFiscalEletronica() == null || cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() == null){
+				mensagens.add("[Erro ao enviar email para a cota: " + cota.getNumeroCota() + "]");
+				continue;
+			}
+			
+			String[] listaDeDestinatarios = {cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica()};
+
 			byte[] report = this.impressaoNFEService.imprimirNFe(filtro);
 			
 			AnexoEmail anexoPDF = new AnexoEmail("impressao-nfe", report, TipoAnexo.PDF);
-			
-			String destinatario = cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica();
-			 
-	    	String[] listaDeDestinatarios = {"linkout.lazaro@gmail.com"};
 	    	
 	    	try {
-				emailSerice.enviar("Geração NF-e", "Olá, segue em anexo a NF-e.", listaDeDestinatarios, anexoPDF);
+				emailSerice.enviar("[NDS] - Geração NF-e", "Olá, segue em anexo a NF-e.", listaDeDestinatarios, anexoPDF);
 				
 			} catch (AutenticacaoEmailException e) {
 				mensagens.add("[Erro ao enviar email para a cota: " + cota.getNumeroCota() + "]");
