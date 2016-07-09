@@ -54,6 +54,8 @@ public class FiltroConsultaEncalheDTO {
 	
 	private Integer idRoteiro;
 	
+	private boolean isDistribEnviaEmail;
+	
 	public FiltroConsultaEncalheDTO() {
 	    
 	}
@@ -339,6 +341,14 @@ public class FiltroConsultaEncalheDTO {
 
 	public void setIdRoteiro(Integer idRoteiro) {
 		this.idRoteiro = idRoteiro;
+	}
+	
+	public boolean isDistribEnviaEmail() {
+		return isDistribEnviaEmail;
+	}
+
+	public void setDistribEnviaEmail(boolean isDistribEnviaEmail) {
+		this.isDistribEnviaEmail = isDistribEnviaEmail;
 	}
 
 	@Override

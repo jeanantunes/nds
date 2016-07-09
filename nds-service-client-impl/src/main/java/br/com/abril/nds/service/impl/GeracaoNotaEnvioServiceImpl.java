@@ -57,28 +57,21 @@ import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 import br.com.abril.nds.repository.CotaAusenteRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
-import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
-import br.com.abril.nds.repository.EstudoGeradoRepository;
-import br.com.abril.nds.repository.FuroProdutoRepository;
-import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaEnvioRepository;
-import br.com.abril.nds.repository.PdvRepository;
-import br.com.abril.nds.repository.PessoaRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.RoteiroRepository;
-import br.com.abril.nds.repository.TelefoneCotaRepository;
-import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.EmailService;
-import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.service.NFeService;
+import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.Util;
 
 @Service
 public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
@@ -92,34 +85,16 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
     private DistribuidorRepository distribuidorRepository;
     
     @Autowired
-    private PessoaRepository pessoaRepository;
-    
-    @Autowired
     private DescontoService descontoService;
     
     @Autowired
-    private TelefoneRepository telefoneRepository;
-    
-    @Autowired
-    private EnderecoRepository enderecoRepository;
-    
-    @Autowired
-    private TelefoneCotaRepository telefoneCotaRepository;
-    
-    @Autowired
     private NotaEnvioRepository notaEnvioRepository;
-    
-    @Autowired
-    private ItemNotaEnvioRepository itemNotaEnvioRepository;
     
     @Autowired
     private RotaRepository rotaRepository;
     
     @Autowired
     private EstudoCotaRepository estudoCotaRepository;
-    
-    @Autowired
-    private PdvRepository pdvRepository;
     
     @Autowired
     private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
@@ -132,15 +107,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
     
     @Autowired
     private RoteiroRepository roteiroRepository;
-    
-    @Autowired
-    private FuroProdutoRepository furoProdutoRepository;
-    
-    @Autowired
-    private EstudoService estudoService;
-    
-    @Autowired
-    private EstudoGeradoRepository estudoGeradoRepository;
     
     @Autowired
     private NFeService nfeService;
@@ -796,6 +762,18 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + idCota + " não encontrada!");
         }
         
+        if(filtro.isImpressao()){
+        	if(!Util.validarBoolean(cota.getParametroDistribuicao().getNotaEnvioImpresso())){
+        		return;
+        	}
+        }
+        
+        if(filtro.isEnvioEmail()){
+        	if(!Util.validarBoolean(cota.getParametroDistribuicao().getNotaEnvioEmail())){
+        		return;
+        	}
+        }
+        
         final IdentificacaoDestinatario destinatarioAtualizado = this.obterDestinatarioAtualizado(cota, filtro.getIdRota(), filtro.getIntervaloMovimento());
         
         if (destinatarioAtualizado == null) {
@@ -962,7 +940,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         final Map<Long, List<MovimentoEstoqueCota>> mapMovimentoEstoqueCota = this.obterMapMovimentoEstoqueCota(idCotas, filtro);
         
         for (final Long idCota : idCotas) {
-            
+        	
             this.getNotaEnvioCota(distribuidor.getJuridica(),
                     idCota,
                     filtro,
@@ -1227,7 +1205,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
     @Transactional
     public List<NotaEnvio> gerarNotasEnvio(final FiltroConsultaNotaEnvioDTO filtro) {
         
-        List<NotaEnvio> listaNotaEnvio = null;
+        List<NotaEnvio> listaNotaEnvio = null; 
         
         if (TRAVA_GERACAO_NE.get("neCotasSendoGeradas") != null) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Notas de envio sendo geradas por outro usuário, tente novamente mais tarde.");
@@ -1239,15 +1217,62 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             
             final List<Long> listaIdCotas = this.getIdsCotaIntervalo(filtro);
             
-            final List<Long> idCotasAusentes = cotaAusenteRepository.obterIdsCotasAusentesNoPeriodo(filtro.getIntervaloMovimento());
+            final List<Long> listaIdCotasImpressaoEnvioEmail = new ArrayList<>();
             
-            if (idCotasAusentes != null) {
-                listaIdCotas.removeAll(idCotasAusentes);
+            final List<Long> idCotasCotasParaRemocaoCotasAusentesOuNao = cotaAusenteRepository.obterIdsCotasAusentesNoPeriodo(filtro.getIntervaloMovimento());
+            
+            if(filtro.getIntervaloCota().getDe() == null && filtro.getIntervaloCota().getAte() == null){
+            	for (Long cotaId : listaIdCotas) {
+            		Cota cota = this.cotaRepository.buscarPorId(cotaId);
+            		
+            		if(filtro.isImpressao()){
+            			if(cota.getParametroDistribuicao().getUtilizaDocsParametrosDistribuidor()){
+            				if(filtro.isDistribEnviaEmail()){
+            					listaIdCotasImpressaoEnvioEmail.add(cotaId);
+            				}
+            			}else{
+            				if(!Util.validarBoolean(cota.getParametroDistribuicao().getNotaEnvioImpresso())){
+            					idCotasCotasParaRemocaoCotasAusentesOuNao.add(cotaId);
+            				}else{
+            					if(Util.validarBoolean(cota.getParametroDistribuicao().getNotaEnvioEmail())){
+            						listaIdCotasImpressaoEnvioEmail.add(cotaId);
+            					}
+            				}
+            			}
+            		}else{
+            			if(filtro.isEnvioEmail()){
+            				if(!cota.getParametroDistribuicao().getUtilizaDocsParametrosDistribuidor()){
+            					if(!Util.validarBoolean(cota.getParametroDistribuicao().getNotaEnvioEmail())){
+            						idCotasCotasParaRemocaoCotasAusentesOuNao.add(cotaId);
+            					}
+            				}
+            			}
+            		}
+            	}
+            }
+            
+            if (idCotasCotasParaRemocaoCotasAusentesOuNao != null) {
+                listaIdCotas.removeAll(idCotasCotasParaRemocaoCotasAusentesOuNao);
             }
             
             this.validarRoteirizacaoCota(filtro, listaIdCotas);
             
             listaNotaEnvio = this.gerar(listaIdCotas, filtro, null, null, null);
+            
+            
+            if(filtro.isImpressao() && !listaIdCotasImpressaoEnvioEmail.isEmpty()){
+            	List<NotaEnvio> listaNotaEnvioImpressaoEmail = this.gerar(listaIdCotasImpressaoEnvioEmail, filtro, null, null, null);
+            	
+    			Map<Pessoa, List<NotaEnvio>> mapaDeNotas = agruparNotasPorDestinatario(null, listaNotaEnvioImpressaoEmail);
+    			
+    			try {
+					enviarNotasParaCadaCota(filtro, mapaDeNotas);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            	
+            }
+            
         } finally {
             TRAVA_GERACAO_NE.remove("neCotasSendoGeradas");
         }
@@ -1389,56 +1414,16 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Transactional
 	public ValidacaoException enviarEmail(FiltroConsultaNotaEnvioDTO filtro) {
 		
-		List<NotaEnvio> notasEnvio = gerarNotasEnvio(filtro);
-    	
 		List<Integer> numeroCotasSemEmail = new ArrayList<>();
 		
-    	byte[] notaDeCadaCota;
-    	Map<Pessoa, List<NotaEnvio>> mapaDeNotas = new HashMap<>();
 		try {
+			List<NotaEnvio> notasEnvio = gerarNotasEnvio(filtro);
+			
 			//Agrupar a lista de notas por destinatário
-			for (NotaEnvio notaEnvio : notasEnvio) {
-				
-				Pessoa pessoaDestinatarios = notaEnvio.getDestinatario().getPessoaDestinatarioReferencia();
-				
-				if(pessoaDestinatarios.getEmail() == null){
-					
-					if(!numeroCotasSemEmail.contains(notaEnvio.getDestinatario().getNumeroCota())){
-						numeroCotasSemEmail.add(notaEnvio.getDestinatario().getNumeroCota());	
-					}
-					
-				}
-				
-				if (mapaDeNotas.containsKey(pessoaDestinatarios)) {
-					List<NotaEnvio> listaDeNotas = mapaDeNotas.get(pessoaDestinatarios);
-					listaDeNotas.add(notaEnvio);
-					mapaDeNotas.put(pessoaDestinatarios, listaDeNotas);
-				} else {
-					List<NotaEnvio> listaDeNotaDeCadaCota = new ArrayList<>();
-					listaDeNotaDeCadaCota.add(notaEnvio);
-					mapaDeNotas.put(pessoaDestinatarios, listaDeNotaDeCadaCota);
-				}
-				
-			}
+			Map<Pessoa, List<NotaEnvio>> mapaDeNotas = agruparNotasPorDestinatario(numeroCotasSemEmail, notasEnvio);
 			
 			//Enviar a lista de notas para cada destinatário achado no laço acima
-			for (Map.Entry<Pessoa, List<NotaEnvio>> entry : mapaDeNotas.entrySet()) {
-				Pessoa destinatario = entry.getKey();
-				
-				List<NotaEnvio> listaDeNotaEnvioDeUmaCota = entry.getValue();
-				notaDeCadaCota = nfeService.obterNEsPDF(listaDeNotaEnvioDeUmaCota, false, filtro.getIntervaloMovimento());
-				
-				if(destinatario.getEmail() == null){
-					continue;
-				}
-				
-				String email = destinatario.getEmail();
-				String[] listaDeDestinatarios = {email};
-				
-				AnexoEmail anexoPDF = new AnexoEmail("nota-envio", notaDeCadaCota, TipoAnexo.PDF);
-				emailSerice.enviar("Nota de envio", "Olá, segue em anexo a nota de envio.", listaDeDestinatarios, anexoPDF);
-				
-			}
+			enviarNotasParaCadaCota(filtro, mapaDeNotas);
 			
 			if(!numeroCotasSemEmail.isEmpty()){
 				String numeroCotas = "";
@@ -1453,12 +1438,67 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				
 				return new ValidacaoException(TipoMensagem.WARNING, "E-mail enviado com sucesso. Porém as cotas: " + numeroCotas + " não possuem e-mail cadastrado.");
 			}
+		}catch (ValidacaoException e) {
+			e.printStackTrace();
+			return new ValidacaoException(e.getValidacao().getTipoMensagem(), e.getValidacao().getListaMensagens());
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		return new ValidacaoException(TipoMensagem.SUCCESS, "Email enviado com sucesso.");
+	}
+
+	private void enviarNotasParaCadaCota(FiltroConsultaNotaEnvioDTO filtro, Map<Pessoa, List<NotaEnvio>> mapaDeNotas)throws Exception, AutenticacaoEmailException {
+		
+		byte[] notaDeCadaCota;
+		
+		for (Map.Entry<Pessoa, List<NotaEnvio>> entry : mapaDeNotas.entrySet()) {
+			Pessoa destinatario = entry.getKey();
+			
+			List<NotaEnvio> listaDeNotaEnvioDeUmaCota = entry.getValue();
+			notaDeCadaCota = nfeService.obterNEsPDF(listaDeNotaEnvioDeUmaCota, false, filtro.getIntervaloMovimento());
+			
+			if(destinatario.getEmail() == null){
+				continue;
+			}
+			
+			String[] listaDeDestinatarios = {destinatario.getEmail()};
+			
+			AnexoEmail anexoPDF = new AnexoEmail("nota-envio", notaDeCadaCota, TipoAnexo.PDF);
+			emailSerice.enviar("Nota de envio", "Olá, segue em anexo a nota de envio.", listaDeDestinatarios, anexoPDF);
+			
+		}
+	}
+
+	private Map<Pessoa, List<NotaEnvio>> agruparNotasPorDestinatario(List<Integer> numeroCotasSemEmail,  List<NotaEnvio> notasEnvio) {
+		
+		Map<Pessoa, List<NotaEnvio>> mapaDeNotas = new HashMap<>();
+		
+		for (NotaEnvio notaEnvio : notasEnvio) {
+			
+			Pessoa pessoaDestinatarios = notaEnvio.getDestinatario().getPessoaDestinatarioReferencia();
+			
+			if(pessoaDestinatarios.getEmail() == null && numeroCotasSemEmail != null){
+				
+				if(!numeroCotasSemEmail.contains(notaEnvio.getDestinatario().getNumeroCota())){
+					numeroCotasSemEmail.add(notaEnvio.getDestinatario().getNumeroCota());	
+				}
+				
+				continue;
+			}
+			
+			if (mapaDeNotas.containsKey(pessoaDestinatarios)) {
+				List<NotaEnvio> listaDeNotas = mapaDeNotas.get(pessoaDestinatarios);
+				listaDeNotas.add(notaEnvio);
+				mapaDeNotas.put(pessoaDestinatarios, listaDeNotas);
+			} else {
+				List<NotaEnvio> listaDeNotaDeCadaCota = new ArrayList<>();
+				listaDeNotaDeCadaCota.add(notaEnvio);
+				mapaDeNotas.put(pessoaDestinatarios, listaDeNotaDeCadaCota);
+			}
+		}
+		return mapaDeNotas;
 	}
     
 }

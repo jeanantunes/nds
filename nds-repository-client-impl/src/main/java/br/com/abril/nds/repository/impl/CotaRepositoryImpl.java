@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.CotaVO;
+import br.com.abril.nds.client.vo.baixaboleto.TipoEmissaoDocumento;
 import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoXLSDTO;
@@ -3961,6 +3962,77 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		query.setParameter("produtoEdicaoId", idEdicao);
 		query.setParameter("idCota", idCota);
 		
+		
+		return (BigIntegerUtil.isMaiorQueZero((BigInteger)query.uniqueResult()));
+		
+	}
+	
+	@Override
+	public boolean isCotaParametro(Long idCota, Integer numeroCota, TipoEmissaoDocumento tipoDoc){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select c.id ");
+		sql.append(" from cota c  ");
+		sql.append(" where 1 = 1 ");
+		
+		if(idCota != null){
+			sql.append(" and c.id = :idCota ");
+		}
+
+		if(numeroCota != null){
+			sql.append(" and c.numero_cota = :numCota ");
+		}
+		
+		if(tipoDoc.equals(TipoEmissaoDocumento.IMPRESSAO_SLIP)){
+			sql.append(" and (c.SLIP_IMPRESSO = true or c.UTILIZA_DOCS_PARAMETRO_DISTRIB = true) ");
+		}
+		
+		if(tipoDoc.equals(TipoEmissaoDocumento.EMAIL_SLIP)){
+			sql.append(" and (c.SLIP_EMAIL = true or c.UTILIZA_DOCS_PARAMETRO_DISTRIB = true) ");
+		}
+		
+		if(tipoDoc.equals(TipoEmissaoDocumento.IMPRESSAO_BOLETO_RECIBO)){
+			sql.append(" and (c.BOLETO_IMPRESSO = true or c.RECIBO_IMPRESSO = true or c.UTILIZA_DOCS_PARAMETRO_DISTRIB = true) ");
+		}
+		
+		if(tipoDoc.equals(TipoEmissaoDocumento.EMAIL_BOLETO_RECIBO)){
+			sql.append(" and (c.BOLETO_EMAIL = true or c.RECIBO_EMAIL = true or c.UTILIZA_DOCS_PARAMETRO_DISTRIB = true) ");
+		}
+		
+		if(tipoDoc.equals(TipoEmissaoDocumento.IMPRESSAO_BOLETO_SLIP)){
+			sql.append(" and (c.BOLETO_SLIP_IMPRESSO = true or c.UTILIZA_DOCS_PARAMETRO_DISTRIB = true) ");
+		}
+		
+		if(tipoDoc.equals(TipoEmissaoDocumento.EMAIL_BOLETO_SLIP)){
+			sql.append(" and (c.BOLETO_SLIP_EMAIL = true or c.UTILIZA_DOCS_PARAMETRO_DISTRIB = true) ");
+		}
+		
+		if(tipoDoc.equals(TipoEmissaoDocumento.IMPRESSAO_NOTA_ENVIO)){
+			sql.append(" and (c.NOTA_ENVIO_IMPRESSO = true or c.UTILIZA_DOCS_PARAMETRO_DISTRIB = true) ");
+		}
+		
+		if(tipoDoc.equals(TipoEmissaoDocumento.EMAIL_NOTA_ENVIO)){
+			sql.append(" and (c.NOTA_ENVIO_EMAIL = true or c.UTILIZA_DOCS_PARAMETRO_DISTRIB = true) ");
+		}
+		
+		if(tipoDoc.equals(TipoEmissaoDocumento.IMPRESSAO_CHAMADA_ENCALHE)){
+			sql.append(" and (c.CHAMADA_ENCALHE_IMPRESSO = true or c.UTILIZA_DOCS_PARAMETRO_DISTRIB = true) ");
+		}
+		
+		if(tipoDoc.equals(TipoEmissaoDocumento.EMAIL_CHAMADA_ENCALHE)){
+			sql.append(" and (c.CHAMADA_ENCALHE_EMAIL = true or c.UTILIZA_DOCS_PARAMETRO_DISTRIB = true) ");
+		}
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		if(idCota != null){
+			query.setParameter("idCota", idCota);
+		}
+
+		if(numeroCota != null){
+			query.setParameter("numCota", numeroCota); 
+		}
 		
 		return (BigIntegerUtil.isMaiorQueZero((BigInteger)query.uniqueResult()));
 		

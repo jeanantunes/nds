@@ -914,4 +914,12 @@ public abstract class Util {
         }
         return null;
     }
+    
+    public static boolean validarBoolean(Boolean booleanWrapper){
+    	if(booleanWrapper == null || booleanWrapper == false){
+    		return false;
+    	}else{
+    		return true;
+    	}
+    }
 }
