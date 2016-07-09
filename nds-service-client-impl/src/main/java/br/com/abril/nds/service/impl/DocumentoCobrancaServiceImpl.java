@@ -74,6 +74,7 @@ import br.com.abril.nds.repository.SlipRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ControleNumeracaoSlipService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
@@ -83,6 +84,7 @@ import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -149,6 +151,9 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     
     @Autowired
     private SlipRepository slipRepository;
+    
+    @Autowired
+    private CotaService cotaService;
     
     /**
      * BOLETO/COBRANCA
@@ -238,7 +243,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         
         final String razaoSocialDistrib = this.distribuidorService.obterRazaoSocialDistribuidor();
         
-        List<Integer> listaCotas = new ArrayList<>();
+//        List<Integer> listaCotas = new ArrayList<>();
         
         try {
             
@@ -1411,7 +1416,24 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
             
             path = url.toURI().getPath();
             
-            return  JasperRunManager.runReportToPdf(path, slipDTO.getParametersSlip(), jrDataSource);
+            byte[] slip = JasperRunManager.runReportToPdf(path, slipDTO.getParametersSlip(), jrDataSource);
+            
+            Cota cota = cotaService.obterPorNumeroDaCota(slipDTO.getNumeroCota());
+            
+            if(cota.getParametroDistribuicao().getSlipEmail() != null && cota.getParametroDistribuicao().getSlipEmail() == true){
+            	if(cota.getPessoa().getEmail() != null){
+        			String[] listaDeDestinatarios = {cota.getPessoa().getEmail()};
+        			
+        			try {
+        				AnexoEmail anexoPDF = new AnexoEmail("nota-envio", slip, TipoAnexo.PDF);
+        				emailService.enviar("Emissão de Slip", "Olá, o documento de SLIP segue anexo.", listaDeDestinatarios, anexoPDF);
+        			} catch ( AutenticacaoEmailException e) {
+        				e.printStackTrace();
+        			}
+            	}
+            }
+            
+            return slip;
             
         } catch (final JRException e) {
             LOGGER.error("Não foi possível gerar relatório Slip", e);
@@ -1577,11 +1599,8 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     				}
     				
     			}else{
-    				
     				buscarSlipCotaAusente(arquivos, dataDe, dataAte, incluirNumeroSlip, numCotaSlip);
-    				
     			}
-    			
     		}
         }
     }

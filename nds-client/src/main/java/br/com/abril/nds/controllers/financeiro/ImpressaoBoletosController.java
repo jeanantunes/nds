@@ -30,6 +30,7 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.BancoService;
@@ -278,6 +279,16 @@ public class ImpressaoBoletosController extends BaseController {
 	@Path("/consultar")
 	public void consultarDividas(String dataMovimento, Long box, Long rota, Long roteiro, Integer numCota, TipoCobranca tipoCobranca, Long banco, String sortorder, String sortname, int page, int rp) {
 
+		FiltroDividaGeradaDTO filtro = validarFiltroConsulta(dataMovimento, box, rota, roteiro, numCota, tipoCobranca, banco);
+
+		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
+
+		tratarFiltro(filtro);
+
+		efetuarConsulta(filtro);
+	}
+
+	private FiltroDividaGeradaDTO validarFiltroConsulta(String dataMovimento, Long box, Long rota, Long roteiro, Integer numCota, TipoCobranca tipoCobranca, Long banco) {
 		isDataMovimento(dataMovimento);
 
 		Date data = DateUtil.parseDataPTBR(dataMovimento);
@@ -287,12 +298,8 @@ public class ImpressaoBoletosController extends BaseController {
 		}
 
 		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO(data, box, rota, roteiro, numCota, tipoCobranca, banco);
-
-		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
-
-		tratarFiltro(filtro);
-
-		efetuarConsulta(filtro);
+		
+		return filtro;
 	}
 
 	/**
@@ -320,7 +327,7 @@ public class ImpressaoBoletosController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrado nenhum registro para ser exportado." );
 		}
 		
-		FileExporter.to("divida-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, listaDividasGeradas, GeraDividaDTO.class, this.httpResponse);
+		FileExporter.to("divida-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, listaDividasGeradas, GeraDividaDTO.class, this.httpResponse);
 	}
 
 	/*
@@ -505,7 +512,13 @@ public class ImpressaoBoletosController extends BaseController {
 	@Path("/validarImpressaoDividas")
 	public void validarImpressaoDividaEmMassa(String tipoImpressao) throws Exception {
 
+		if(!distribuidorService.verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(null, TipoParametrosDistribuidorEmissaoDocumento.BOLETO_SLIP)){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Boletos e Slip's não podem ser impressos, distribuidor não aceita a impressão destes documentos.");
+		}
+
 		FiltroDividaGeradaDTO filtro = obterFiltroExportacao();
+		
+		filtro.setDistribEnviaEmail(distribuidorService.verificarParametroDistribuidorEmissaoDocumentosEmailCheck(null, TipoParametrosDistribuidorEmissaoDocumento.BOLETO_SLIP));
 
 		TipoCobranca tipoCobranca = filtro.getTipoCobranca();
 
@@ -517,27 +530,30 @@ public class ImpressaoBoletosController extends BaseController {
 
 			message = "Não foi encontrado Boleto para impressão.";
 
-			if (tipoCobranca != null
-					&& !TipoCobranca.BOLETO.equals(filtro.getTipoCobranca())) {
-				throw new ValidacaoException(TipoMensagem.WARNING, message);
+			if (tipoCobranca != null && !TipoCobranca.BOLETO.equals(filtro.getTipoCobranca())) {
+				throw new ValidacaoException(TipoMensagem.ERROR, message);
 			}
 
 			filtro.setTipoCobranca(TipoCobranca.BOLETO);
 		} else {
 			if (TipoCobranca.BOLETO.equals(filtro.getTipoCobranca())) {
-				throw new ValidacaoException(TipoMensagem.WARNING, message);
+				throw new ValidacaoException(TipoMensagem.ERROR, message);
 			}
 		}
 
 		arquivo = dividaService.gerarArquivoImpressao(filtro, "BOLETO_SLIP".equals(tipoImpressao));
 
 		if (arquivo == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, message);
+			throw new ValidacaoException(TipoMensagem.ERROR, message);
 		}
 
 		filtro.setTipoCobranca(tipoCobranca);
 
 		session.setAttribute(DIVIDA_SESSION_ATTRIBUTE, arquivo);
+		
+		if(!filtro.getMensagemValidacaoImpressao().isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, filtro.getMensagemValidacaoImpressao());
+		}
 
 		result.use(Results.json()).from(tipoImpressao, "result").serialize();
 	}
@@ -560,7 +576,7 @@ public class ImpressaoBoletosController extends BaseController {
 	public void imprimirBoletosEmMassa() throws Exception {
 
 		byte[] arquivo = (byte[]) session.getAttribute(DIVIDA_SESSION_ATTRIBUTE);
-
+		
 		imprimirDividas(arquivo, BOLETO);
 
 		session.setAttribute(DIVIDA_SESSION_ATTRIBUTE, null);
@@ -682,4 +698,72 @@ public class ImpressaoBoletosController extends BaseController {
 		}
 		
 	}
+	
+//	@Post
+//	@Path("/enviarDividasPorEmail")
+//	@Rules(Permissao.ROLE_FINANCEIRO_IMPRESSAO_BOLETOS_ALTERACAO)
+//	public void enviarDividasPorEmail(String dataMovimento, Long box, Long rota, Long roteiro, Integer numCota, TipoCobranca tipoCobranca, Long banco, String sortorder, String sortname, int page, int rp) throws Exception {
+//
+//		if(!distribuidorService.verificarParametroDistribuidorEmissaoDocumentosEmailCheck(null, TipoParametrosDistribuidorEmissaoDocumento.BOLETO_SLIP)){
+//			throw new ValidacaoException(TipoMensagem.ERROR, "Boletos e Slip's não podem ser enviados por e-mail, distribuidor não aceita o envio deste documento.");
+//		}		
+//		
+//		FiltroDividaGeradaDTO filtro = validarFiltroConsulta(dataMovimento, box, rota, roteiro, numCota, tipoCobranca, banco);
+//		
+//		List<GeraDividaDTO> listaDividasGeradas = dividaService.obterDividasGeradas(filtro);
+//
+//		if (listaDividasGeradas == null || listaDividasGeradas.isEmpty()) {
+//			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+//		}
+//		
+//		String numeroCotasSemEmail = "";
+//		String numeroCotasNaoRecebemEmail = "";
+//		
+//		for (GeraDividaDTO dto : listaDividasGeradas) {
+//			
+//			Cota cota = cotaService.obterPorId(dto.getIdCota());
+//			
+//			if (cota.getParametroDistribuicao().getBoletoSlipEmail() == null || !cota.getParametroDistribuicao().getBoletoSlipEmail()) {
+//				if(numeroCotasNaoRecebemEmail.isEmpty()){
+//					numeroCotasNaoRecebemEmail = cota.getNumeroCota().toString();
+//				}else{
+//					numeroCotasNaoRecebemEmail += ", "+ cota.getNumeroCota().toString();
+//				}
+//				continue;
+//			} 
+//			
+//			if (cota.getPessoa().getEmail() == null) {
+//				if(numeroCotasSemEmail.isEmpty()){
+//					numeroCotasSemEmail = cota.getNumeroCota().toString();
+//				}else{
+//					numeroCotasSemEmail +=", "+ cota.getNumeroCota().toString();
+//				}
+//				continue;
+//			} 
+//			
+//			
+//			dividaService.enviarArquivoPorEmail(dto.getNossoNumero());
+//		}
+//		
+//		String mensagem = "";
+//		
+//		if (!numeroCotasSemEmail.isEmpty()) {
+//			mensagem = "E-mail enviado com sucesso.\n As cotas abaixo não possuem e-mail cadastrado: \n "+ numeroCotasSemEmail +"\n";
+//			mensagem += "-------------------------- \n";
+//		}
+//		
+//		if(!numeroCotasNaoRecebemEmail.isEmpty()){
+//			mensagem += "As Cotas abaixo não recebem e-mail: \n"+ numeroCotasNaoRecebemEmail;
+//		}
+//		
+//		if(!mensagem.isEmpty()){
+//			throw new ValidacaoException(TipoMensagem.WARNING, mensagem);
+//		}
+//		
+//		result.use(Results.nothing());
+//
+//		throw new ValidacaoException(TipoMensagem.SUCCESS, "Dividas enviadas com sucesso.");
+//
+//	}
+	
 }

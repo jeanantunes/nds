@@ -808,6 +808,10 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Transactional
 	public boolean verificarParametroDistribuidorEmissaoDocumentosEmailCheck(Distribuidor distribuidor, TipoParametrosDistribuidorEmissaoDocumento tipoDoc){
 		
+		if(distribuidor == null){
+			distribuidor = this.obter();
+		}
+		
 		ParametrosDistribuidorEmissaoDocumento parametroCorreto = getParametroCorreto(distribuidor, tipoDoc);
 		
 		if(parametroCorreto != null){
@@ -820,6 +824,10 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Override
 	@Transactional
 	public boolean verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(Distribuidor distribuidor, TipoParametrosDistribuidorEmissaoDocumento tipoDoc){
+		
+		if(distribuidor == null){
+			distribuidor = this.obter();
+		}
 		
 		ParametrosDistribuidorEmissaoDocumento parametroCorreto = getParametroCorreto(distribuidor, tipoDoc);
 		

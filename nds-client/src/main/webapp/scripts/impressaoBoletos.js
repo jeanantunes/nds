@@ -218,17 +218,50 @@ var impressaoBoletosController = $.extend(true, {
 	imprimirDividas:function(tipoImpressao){
 		
 		$.postJSON(contextPath + "/financeiro/impressaoBoletos/validarImpressaoDividas",
-				[{name:"tipoImpressao",value:tipoImpressao}], function(result){
+				[{name:"tipoImpressao",value:tipoImpressao}], 
+				function(result){
+					$("#impressosGrid", impressaoBoletosController.workspace).flexOptions({
+						url: contextPath + "/financeiro/impressaoBoletos/consultar",
+						params: impressaoBoletosController.formData(),newp: 1,
+						onSuccess:impressaoBoletosController.renderizarArquivos(result)
+					});	
 			
-			$("#impressosGrid", impressaoBoletosController.workspace).flexOptions({
-				url: contextPath + "/financeiro/impressaoBoletos/consultar",
-				params: impressaoBoletosController.formData(),newp: 1,
-				onSuccess:impressaoBoletosController.renderizarArquivos(result)
-			});	
-			
-			$("#impressosGrid", impressaoBoletosController.workspace).flexReload();
-		});
+					$("#impressosGrid", impressaoBoletosController.workspace).flexReload();
+				},
+				function(result){
+					if(result != undefined && result.mensagens != undefined && result.mensagens.tipoMensagem == "WARNING"){
+						$("#impressosGrid", impressaoBoletosController.workspace).flexOptions({
+							url: contextPath + "/financeiro/impressaoBoletos/consultar",
+							params: impressaoBoletosController.formData(),newp: 1,
+							onSuccess:impressaoBoletosController.renderizarArquivos(result)
+						});	
+				
+						$("#impressosGrid", impressaoBoletosController.workspace).flexReload();
+					}
+				});
 	},
+	
+//	enviarEmailDividas:function(tipoImpressao){
+//		
+//		/*
+//		 * $("#impressosGrid", impressaoBoletosController.workspace).flexOptions({
+//				url: contextPath + "/financeiro/impressaoBoletos/consultar",
+//				params: impressaoBoletosController.formData(),
+//				newp: 1,
+//				sortname : "numeroCota",
+//				sortorder : "asc",
+//			});
+//		 */
+//		
+//		$.postJSON(contextPath + "/financeiro/impressaoBoletos/enviarDividasPorEmail",
+//				impressaoBoletosController.formData(), 
+//				function(result){
+//					// success
+//				},
+//				function(result){
+//					// error
+//				});
+//	},
 	
 	renderizarArquivos:function(result){
 		
@@ -316,7 +349,7 @@ var impressaoBoletosController = $.extend(true, {
 		params.push({name: 'filtro.idBanco', value: banco});
 		
     	$.fileDownload(path, {
-			httpMethod : "POST",
+    		httpMethod : "POST",
 			data : params,
 			successCallback: function(result) {
 				if (result.mensagens) {

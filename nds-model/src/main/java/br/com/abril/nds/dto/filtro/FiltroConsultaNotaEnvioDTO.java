@@ -44,6 +44,8 @@ public class FiltroConsultaNotaEnvioDTO  implements Serializable{
 	
 	private boolean isEnvioEmail;
 	
+	private boolean isDistribEnviaEmail;
+	
 	
 	/**
 	 * @return the dataEmissao
@@ -212,6 +214,13 @@ public class FiltroConsultaNotaEnvioDTO  implements Serializable{
 	public void setEnvioEmail(boolean isEnvioEmail) {
 		this.isEnvioEmail = isEnvioEmail;
 	}
-	
+
+	public boolean isDistribEnviaEmail() {
+		return isDistribEnviaEmail;
+	}
+
+	public void setDistribEnviaEmail(boolean isDistribEnviaEmail) {
+		this.isDistribEnviaEmail = isDistribEnviaEmail;
+	}
 	
 }

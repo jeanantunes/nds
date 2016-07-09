@@ -45,6 +45,7 @@ public class DistribuicaoDTO implements Serializable  {
 	private Boolean boletoSlipEmail;
 	private Boolean reciboImpresso;
 	private Boolean reciboEmail;
+	private Boolean utilizaParametrosDocsDistribuidor;
 	private String gerenteComercial;
 	private Boolean utilizaProcuracao;
 	private Boolean procuracaoRecebida;
@@ -625,6 +626,12 @@ public class DistribuicaoDTO implements Serializable  {
 	public void setDiaSemanaCobranca(DiaSemana diaSemanaCobranca) {
 		this.diaSemanaCobranca = diaSemanaCobranca;
 	}
-	
-	
+
+	public Boolean getUtilizaParametrosDocsDistribuidor() {
+		return utilizaParametrosDocsDistribuidor;
+	}
+
+	public void setUtilizaParametrosDocsDistribuidor(Boolean utilizaParametrosDocsDistribuidor) {
+		this.utilizaParametrosDocsDistribuidor = utilizaParametrosDocsDistribuidor;
+	}
 }

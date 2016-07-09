@@ -7,6 +7,7 @@ import java.util.List;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 @Exportable
 public class FiltroEmissaoCE implements Serializable {
@@ -38,6 +39,11 @@ public class FiltroEmissaoCE implements Serializable {
 	private List<Long> fornecedores;
 	private String colunaOrdenacao;
 	private String ordenacao;
+	
+	private boolean isImpressao;
+	private boolean isEnvioEmail;
+	private boolean isDistribEnviaEmail;
+	private ValidacaoVO validacao;
 	
 	/**
 	 * Quantidade de produtos por página
@@ -309,6 +315,32 @@ public class FiltroEmissaoCE implements Serializable {
 	public void setCotasOperacaoDiferenciada(List<Integer> cotasOperacaoDiferenciada) {
 		this.cotasOperacaoDiferenciada = cotasOperacaoDiferenciada;
 	}
+	public boolean isImpressao() {
+		return isImpressao;
+	}
+	public void setImpressao(boolean isImpressao) {
+		this.isImpressao = isImpressao;
+	}
+	public boolean isEnvioEmail() {
+		return isEnvioEmail;
+	}
+	public void setEnvioEmail(boolean isEnvioEmail) {
+		this.isEnvioEmail = isEnvioEmail;
+	}
+	public ValidacaoVO getValidacao() {
+		return validacao;
+	}
+	public void setValidacao(ValidacaoVO validacao) {
+		this.validacao = validacao;
+	}
+	public boolean isDistribEnviaEmail() {
+		return isDistribEnviaEmail;
+	}
+	public void setDistribEnviaEmail(boolean isDistribEnviaEmail) {
+		this.isDistribEnviaEmail = isDistribEnviaEmail;
+	}
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
