@@ -44,6 +44,13 @@
 							<td width="120" bgcolor="#F8F8F8"><strong>F6</strong>-Nova Nota Fiscal</td>
 							<td width="62" bgcolor="#F8F8F8"><strong>F8</strong>-Salvar</td>
 							<td width="137" bgcolor="#F8F8F8"><strong>F9</strong>-Finalizar Conferência</td>
+							<td width="80">
+								<span class="bt_novos">
+									<a href="javascript:;" onclick="ConferenciaEncalheCont.confirmarConferencia()" rel="tipsy" title="Confirmar Conferencia de Encalhe">
+										<img src="${pageContext.request.contextPath}/images/bt_check.gif" alt="Incluir" width="22" height="22" border="0" />
+									</a>
+								</span>
+							</td>
 						</tr>
 					</table>
 				</fieldset>

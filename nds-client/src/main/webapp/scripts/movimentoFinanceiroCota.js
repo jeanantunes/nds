@@ -19,6 +19,7 @@ var movimentoFinanceiroCotaController = $.extend(true, {
 		
 		movimentoFinanceiroCotaController.iniciarGridCotasAVista();
 		
+		//Era chamado essa função assim que carregava a tela, mas como agora vai ter filtros não será mais necessário chama-lá aqui.
 		movimentoFinanceiroCotaController.buscarCotas();
 	},
 	
@@ -162,11 +163,15 @@ var movimentoFinanceiroCotaController = $.extend(true, {
     buscarCotas : function(){
 		
 		var numeroCota = $("#filtroNumCota", movimentoFinanceiroCotaController.workspace).val();
+		var codigoProduto = $("#processamentoFinanceiro-codigoProdutoEd", movimentoFinanceiroCotaController.workspace).val();
+		var numeroEdicao = $("#processamentoFinanceiro-numEdicaoEd", movimentoFinanceiroCotaController.workspace).val();
 					
 		$(".gridCotas", movimentoFinanceiroCotaController.workspace).flexOptions({
 			url: contextPath + "/financeiro/movimentoFinanceiroCota/buscarCotas",
 			params: [
-			         {name:'numeroCota', value: numeroCota}
+			         {name:'numeroCota', value: numeroCota},
+			         {name:'codigoProduto', value: codigoProduto},
+			         {name:'numeroEdicao', value: numeroEdicao}
 			        ] ,
 			        newp: 1
 		});

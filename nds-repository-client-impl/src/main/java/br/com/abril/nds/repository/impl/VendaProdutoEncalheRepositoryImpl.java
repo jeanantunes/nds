@@ -150,6 +150,7 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 			.append(" venda.valoresAplicados.precoComDesconto as precoDesconto,")
 			.append(" venda.valorTotalVenda as valoTotalProduto ,")
 			.append(" venda.qntProduto as qntProduto, ")
+			.append(" venda.tipoComercializacaoVenda as formaComercializacao, ")
 			.append(" usuario as usuario ");
 		}
 	

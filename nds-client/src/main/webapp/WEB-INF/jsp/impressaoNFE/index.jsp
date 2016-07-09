@@ -4,6 +4,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.br.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script type="text/javascript" src="scripts/impressaoNfe.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
 
 <script language="javascript" type="text/javascript">
 	$(function() {
@@ -17,6 +18,12 @@
 
 <div class="areaBts">
 	<div class="area">
+		
+		<span class="bt_arq" >
+        			<a href="javascript:void(0)" id="impressaoNfe-btnEnviarEmail" title="Enviar email" onclick="impressaoNfeController.enviarEmail('PDF');" >
+        				<img src="${pageContext.request.contextPath}/images/ico_email.png" alt="Enviar email" hspace="5" border="0" />
+        			</a>
+        		</span>
 
         <span class="bt_arq"><a href="javascript:;" id="impressaoNfe-btnImprimirXLS" title="Gerar Arquivo" onclick="impressaoNfeController.imprimir('XLS');" rel="bandeira"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
 
