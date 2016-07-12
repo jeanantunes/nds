@@ -145,6 +145,10 @@ public class ConsultaEncalheController extends BaseController {
         this.iniciarComboRota();
 
         this.iniciarComboRoteiro();
+        
+        //this.isDistribGeraSlip();
+        boolean isRecebe = distribuidorService.verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(null, TipoParametrosDistribuidorEmissaoDocumento.SLIP);
+		result.include("isDistribGeraSlip", isRecebe);
 		
 	}
 	
@@ -516,6 +520,12 @@ public class ConsultaEncalheController extends BaseController {
 		
 	}
 	
+	
+	private void isDistribGeraSlip() {
+		boolean isRecebe = distribuidorService.verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(null, TipoParametrosDistribuidorEmissaoDocumento.SLIP);
+		result.include("isDistribGeraSlip", isRecebe);
+	}
+	
 	@Get
 	@Path("/gerarSlip")
 	public void gerarSlip(String dataRecolhimentoInicial, String dataRecolhimentoFinal, 
@@ -523,10 +533,6 @@ public class ConsultaEncalheController extends BaseController {
 			Integer idBoxEncalhe, Integer idBox, Integer idRota, Integer idRoteiro) throws IOException {
 			
 		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial, dataRecolhimentoFinal, idFornecedor, numeroCota, codigoProduto, idBoxEncalhe, idBox, null, idRota, idRoteiro);
-		
-		if(!distribuidorService.verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(null, TipoParametrosDistribuidorEmissaoDocumento.SLIP)){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Slip's não podem ser impressos, distribuidor não aceita a impressão destes documentos.");
-		}
 		
 		filtro.setDistribEnviaEmail(distribuidorService.verificarParametroDistribuidorEmissaoDocumentosEmailCheck(null, TipoParametrosDistribuidorEmissaoDocumento.SLIP));
 		

@@ -234,14 +234,14 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 				if(filtro.getNumCota() == null){
 					if(cota.getParametroDistribuicao().getUtilizaDocsParametrosDistribuidor()){
 						if(filtro.isDistribEnviaEmail()){
-							enviarSlipPorEmail(filtro, arquivos, numCota, cota);
+							enviarSlipPorEmail(filtro, cota);
 						}
 					}else{
 						if(!Util.validarBoolean(cota.getParametroDistribuicao().getSlipImpresso())){
 							numeroCotasExclusao.add(numCota);
 						}else{
 							if(Util.validarBoolean(cota.getParametroDistribuicao().getSlipEmail())){
-								enviarSlipPorEmail(filtro, arquivos, numCota, cota);
+								enviarSlipPorEmail(filtro, cota);
 							}
 						}
 					}
@@ -268,24 +268,29 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 	}
 
 
-	private void enviarSlipPorEmail(FiltroConsultaEncalheDTO filtro, List<byte[]> arquivos, Integer numCota, Cota cota){
+	private void enviarSlipPorEmail(FiltroConsultaEncalheDTO filtro, Cota cota){
+		
 		List<byte[]> arquivosCota = new ArrayList<byte[]>();
 		
 		List<Integer> numeroCotaList = new ArrayList<>();
-		numeroCotaList.add(numCota);
+		numeroCotaList.add(cota.getNumeroCota());
 		
 		this.documentoCobrancaService.gerarSlipCobranca(arquivosCota, numeroCotaList, filtro.getDataRecolhimentoInicial(), filtro.getDataRecolhimentoFinal(), false, TipoArquivo.PDF);
 		
 		byte[] retornoArquivoCota = null; 
 		
-		if (arquivos.size() == 1) {
-			
-			retornoArquivoCota = arquivos.get(0);
+		retornoArquivoCota = arquivosCota.size() > 1 ? retornoArquivoCota = PDFUtil.mergePDFs(arquivosCota) : arquivosCota.get(0);
 		
-		} else if (arquivos.size() > 1) {
+		/*
+		if (arquivosCota.size() == 1) {
+			
+			retornoArquivoCota = arquivosCota.get(0);
+		
+		} else if (arquivosCota.size() > 1) {
 
-			retornoArquivoCota = PDFUtil.mergePDFs(arquivos);
+			retornoArquivoCota = PDFUtil.mergePDFs(arquivosCota);
 		}
+		*/
 		
 		String[] listaDeDestinatarios = {cota.getPessoa().getEmail()};
 		AnexoEmail anexoPDF = new AnexoEmail("nota-envio", retornoArquivoCota, TipoAnexo.PDF);
