@@ -259,36 +259,40 @@ var ConsultaEncalhe = $
 					},
 
 					gerarSlip : function() {
-					
-						this.confirmDialog = new ConfirmDialog('Confirmar Geracao do Slip ?', function() {
-							var dataRecolhimentoInicial = $("#dataRecolhimentoInicial", ConsultaEncalhe.workspace).val();
-							var dataRecolhimentoFinal = $("#dataRecolhimentoFinal", ConsultaEncalhe.workspace).val();
-							var idFornecedor = $("#idFornecedor", ConsultaEncalhe.workspace).val();
-							var numeroCota = $("#consulta-encalhe-cota", ConsultaEncalhe.workspace).val();
-							var idBoxEncalhe = $("#consulta-encalhe-boxEncalhe", ConsultaEncalhe.workspace).val();
-							var idBox = $("#consulta-encalhe-box", ConsultaEncalhe.workspace).val();
-							var idRota = $("#consulta-encalhe-selectRota", ConsultaEncalhe.workspace).val();
-							var idRoteiro = $("#consulta-encalhe-selectRoteiro", ConsultaEncalhe.workspace).val();
+						
+						if($("#isDistribImprimeSlip", ConsultaEncalhe.workspace).val() == "true"){
 							
-							var link = contextPath
-									+ '/devolucao/consultaEncalhe/gerarSlip'
-									+ '?dataRecolhimentoInicial='+ dataRecolhimentoInicial
-									+ '&dataRecolhimentoFinal='+ dataRecolhimentoFinal 
-									+ '&idFornecedor='+ idFornecedor 
-									+ '&numeroCota='+ numeroCota 
-									+ '&idBoxEncalhe=' + idBoxEncalhe
-									+ '&idBox=' + idBox
-									+ '&idRota=' + idRota
-									+ '&idRoteiro=' + idRoteiro;
-
-							$("#download-iframe", ConsultaEncalhe.workspace)
-									.attr('src', link);
-						return true;
-
-						},function() {
-					    	 
-					    });
-					 this.confirmDialog.open();
+							this.confirmDialog = new ConfirmDialog('Confirmar Geracao do Slip ?', function() {
+								
+								var dataRecolhimentoInicial = $("#dataRecolhimentoInicial", ConsultaEncalhe.workspace).val();
+								var dataRecolhimentoFinal = $("#dataRecolhimentoFinal", ConsultaEncalhe.workspace).val();
+								var idFornecedor = $("#idFornecedor", ConsultaEncalhe.workspace).val();
+								var numeroCota = $("#consulta-encalhe-cota", ConsultaEncalhe.workspace).val();
+								var idBoxEncalhe = $("#consulta-encalhe-boxEncalhe", ConsultaEncalhe.workspace).val();
+								var idBox = $("#consulta-encalhe-box", ConsultaEncalhe.workspace).val();
+								var idRota = $("#consulta-encalhe-selectRota", ConsultaEncalhe.workspace).val();
+								var idRoteiro = $("#consulta-encalhe-selectRoteiro", ConsultaEncalhe.workspace).val();
+								
+								var link = contextPath
+								+ '/devolucao/consultaEncalhe/gerarSlip'
+								+ '?dataRecolhimentoInicial='+ dataRecolhimentoInicial
+								+ '&dataRecolhimentoFinal='+ dataRecolhimentoFinal 
+								+ '&idFornecedor='+ idFornecedor 
+								+ '&numeroCota='+ numeroCota 
+								+ '&idBoxEncalhe=' + idBoxEncalhe
+								+ '&idBox=' + idBox
+								+ '&idRota=' + idRota
+								+ '&idRoteiro=' + idRoteiro;
+								
+								$("#download-iframe", ConsultaEncalhe.workspace).attr('src', link);
+								return true;
+							},function() {
+								
+							});
+							this.confirmDialog.open();
+						}else{
+							exibirMensagem("WARNING", ["Slip's não podem ser impressos, distribuidor não aceita a impressão destes documentos."]);
+						}
 					},
 					
 					/**
@@ -963,4 +967,4 @@ var ConsultaEncalhe = $
 					}
 
 				}, BaseController);
-// @ sourceURL=consultaEncalhe.js
+//@ sourceURL=consultaEncalhe.js

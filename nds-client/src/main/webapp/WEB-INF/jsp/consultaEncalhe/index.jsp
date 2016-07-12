@@ -170,6 +170,11 @@ $(function(){
 						<a href="javascript:;" onclick="ConsultaEncalhe.pesquisar()"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
 					</span>
 				</td>
+				
+				<td width="113">
+					<input type="text" value="${isDistribGeraSlip}" id="isDistribImprimeSlip" style="width: 80px; float: left; margin-right: 5px; display: none;" />
+				</td>
+				
 			</tr>	
 		</table>
 	</fieldset>

@@ -761,7 +761,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             
             throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + idCota + " não encontrada!");
         }
-        
+        /*
         if(filtro.isImpressao()){
         	if(!Util.validarBoolean(cota.getParametroDistribuicao().getNotaEnvioImpresso())){
         		return;
@@ -773,6 +773,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         		return;
         	}
         }
+        */
         
         final IdentificacaoDestinatario destinatarioAtualizado = this.obterDestinatarioAtualizado(cota, filtro.getIdRota(), filtro.getIntervaloMovimento());
         
