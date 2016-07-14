@@ -107,6 +107,10 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			
 			processarArquivoPickingModelo3(message, distribuidor);
 			
+		} else if (distribuidor.getTipoImpressaoInterfaceLED().equals(TipoImpressaoInterfaceLED.MODELO_4)) {
+			
+			processarArquivoPickingModelo4(message, distribuidor);
+			
 		} else {
 			
 			String mensagemValidacao = "Leiaute Picking Invalido.";
@@ -123,8 +127,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
      * @param message
      * @param distribuidor
      */
-	private void processarArquivoPickingModelo1(Message message,
-			Distribuidor distribuidor) {
+	private void processarArquivoPickingModelo1(Message message, Distribuidor distribuidor) {
 		
 		String nomeArquivoPickingInterfaceLED = distribuidor.getArquivoInterfaceLedPicking1();
 		
@@ -160,9 +163,93 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		gerarArquivoPickingModelo2(message, nomeArquivoPickingInterfaceLED);
 	}
 	
+	
+	private void processarArquivoPickingModelo4(Message message, Distribuidor distribuidor) {
+		
+		String nomeArquivoPickingInterfaceLED = distribuidor.getArquivoInterfaceLedPicking4();
+		
+		if (nomeArquivoPickingInterfaceLED == null) {
+			
+			nomeArquivoPickingInterfaceLED = NOME_ARQUIVO_PICKING_INTERFACE_LED_DEFAULT;
+		}
+		
+		nomeArquivoPickingInterfaceLED = String.format("%1$s-%2$s", nomeArquivoPickingInterfaceLED, dateFormat.format(new Date()) );;
+		
+		gerarArquivoPickingModelo4(message, nomeArquivoPickingInterfaceLED);
+	}
+	
+	
+	private void gerarArquivoPickingModelo4(Message message, String nomeArquivoPickingInterfaceLED) {
 
+		try {
 
+			FileWriter fileWriter = new FileWriter(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_PICKING_EXPORTACAO.name())	+ 
+					File.separator  + nomeArquivoPickingInterfaceLED);
+			
+			PrintWriter print = new PrintWriter(fileWriter, true);
+			
+			Date dataLancamento = getDataLancDistrib(message);
+			
+			// LINHA 01 - OK
+			List<HeaderPickingDTO> listHeaders = getHeadePickingModulo3(dataLancamento);
+			
+			// LINHA 03 - OK
+			List<SubHeaderPickingDTO> listaSubHeadePickingModelo4 = getSubHeaderPickingModulo3(dataLancamento);
+			
+			if (listHeaders.isEmpty()) {
 
+				String mensagemValidacao = "Nenhum registro encontrado!";
+				
+				this.lancarMensagemValidacao(mensagemValidacao, message);
+			}
+			
+			int cont = 0;
+			for (HeaderPickingDTO headerDTO : listHeaders) {
+				
+				EMS0129Picking3Header linha01Modelo04 = criarHeaderModelo3(headerDTO);
+				
+				print.println(fixedFormatManager.export(linha01Modelo04) + "\r");
+				
+				// LINHA 02 - OK
+				List<DetalhesPickingPorCotaModelo03DTO> listaLinha02Modelo04 = getLinha02Modelo03(linha01Modelo04.getCodigoCota(), dataLancamento);
+				
+				for (DetalhesPickingPorCotaModelo03DTO detalhesPickingPorCotaModelo03DTO : listaLinha02Modelo04) {
+					EMS0129Picking3Trailer2 linha02Modelo03 = criarLinha02Modelo03(detalhesPickingPorCotaModelo03DTO);
+					print.println(fixedFormatManager.export(linha02Modelo03) + "\r");
+				}
+				
+				SubHeaderPickingDTO subHeaderPickingDTO = listaSubHeadePickingModelo4.get(cont);
+				
+				subHeaderPickingDTO.setCredito(""+listaSubHeadePickingModelo4.size());
+				subHeaderPickingDTO.setDebito(""+listaSubHeadePickingModelo4.size());
+				subHeaderPickingDTO.setConsignado("");
+				
+				EMS0129Picking3Trailer3 linha03Modelo04 = criarLinha03Modelo03(subHeaderPickingDTO);
+				
+				print.println(fixedFormatManager.export(linha03Modelo04) + "\r");
+				
+				cont++;
+				
+			}
+			
+			// linha 9 fora do layout 04
+			// FooterPickingModelo3DTO footerPickingModulo3 = getFooterPickingModulo3(dataLancamento);
+			
+			// EMS0129Picking3Footer linhaFooterModelo03 = criarLinhaFooterModelo03(footerPickingModulo3);
+			
+			// print.println(fixedFormatManager.export(linhaFooterModelo03) + "\r");
+			
+			print.flush();
+			print.close();
+
+		} catch (IOException e) {
+
+			String mensagemValidacao = "Erro ao gerar o arquivo. " + e.getMessage();
+			
+			this.lancarMensagemValidacao(mensagemValidacao, message);
+		}
+
+	}
 	
 	/**
 	 * Gera o arquivo de acordo com o modelo de pickin 1
@@ -620,7 +707,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		try {
 			
 			//StringBuilder stringFinal = new StringBuilder();
-			File file = new File("/Users/lazaroJR/Documents/docsnds/ambiente2/parametros_nds/picking/teste.txt");
+			//File file = new File("/Users/lazaroJR/Documents/docsnds/ambiente2/parametros_nds/picking/teste.txt");
 
 			FileWriter fileWriter = new FileWriter(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_PICKING_EXPORTACAO.name())	+ 
 					File.separator  + nomeArquivoPickingInterfaceLED);
@@ -631,7 +718,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			
 			List<HeaderPickingDTO> listHeaders = getHeadePickingModulo3(dataLancamento);
 			
-			List<SubHeaderPickingDTO> listaSubHeadePickingModulo3 = getSubHeadePickingModulo3(dataLancamento);
+			List<SubHeaderPickingDTO> listaSubHeadePickingModulo3 = getSubHeaderPickingModulo3(dataLancamento);
 			
 			if (listHeaders.isEmpty()) {
 
@@ -681,36 +768,40 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		}
 		
 	}
-	
-	
 
 	@SuppressWarnings("unchecked")
 	private List<HeaderPickingDTO> getHeadePickingModulo3(Date dataLancamento) {
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select '1;' as identificadorLinha ");
-		sql.append(" ,concat(lpad(a.numero_cota,4,0), ';') as numeroCota ");
-		sql.append(" ,a.numero_cota as codigoCota ");
-		sql.append(" ,concat(rpad(bm.RAZAO_SOCIAL,40,' '), ';') as nomeDistribuidor ");
-		sql.append(" ,concat(DATE_FORMAT(l.data_lcto_distribuidor,'%d%m%Y'), ';' ) as dataLancamento ");
-		sql.append(" ,concat(rpad(cn.nome,30,' '), ';') as nomeCota ");
-		sql.append(" ,concat(lpad(bb.codigo,3,'0'), ';') as codigoBox ");
-		sql.append(" ,concat('CONSIGNADO', ';' ) as consignado ");
-		sql.append(" ,concat(rpad(coalesce(cn.cpf,0),11,0), ';' ) as cpf ");
-		sql.append(" ,concat(rpad(coalesce(cn.cnpj,0),14,0),';') as cnpj ");
-		sql.append(" ,concat(lpad(coalesce(trim(cn.INSC_ESTADUAL),0),20,0), ';') as inscricaoEstadual");
 		
-		sql.append(" from cota a, estudo h, estudo_cota i, produto_edicao j, produto k, lancamento l , pessoa bm, pessoa cn, distribuidor dt, box bb ");
-		sql.append(" where i.cota_id = a.id  ");
-		sql.append(" and h.id = i.estudo_id ");
-		sql.append(" and k.id = j.produto_id ");
-		sql.append(" and h.produto_edicao_id = j.id ");
-		sql.append(" and l.PRODUTO_EDICAO_ID = j.id ");
-		sql.append(" and dt.pj_id = bm.id  ");
-		sql.append(" and a.pessoa_id = cn.id ");
-		sql.append(" and bb.id = a.box_id ");
-		sql.append(" and l.status in ('BALANCEADO', 'EXPEDIDO') ");
+		sql.append(" select '1;' as identificadorLinha,  ");
+		sql.append(" 		concat(lpad(a.numero_cota,4,0), ';') as numeroCota, ");
+		sql.append("        a.numero_cota as codigoCota, ");
+		sql.append("        concat(rpad((select bm.RAZAO_SOCIAL from distribuidor dt join pessoa bm ON dt.PJ_ID = bm.ID),40,' '), ';') as nomeDistribuidor, ");
+		sql.append("        concat(DATE_FORMAT(l.data_lcto_distribuidor,'%d%m%Y'), ';' ) as dataLancamento, ");
+		sql.append("        concat(rpad(cn.nome,30,' '), ';') as nomeCota, ");
+		sql.append("        concat(lpad(bb.codigo,3,'0'), ';') as codigoBox, ");
+		sql.append("        concat(k.FORMA_COMERCIALIZACAO, ';' ) as consignado, ");
+		sql.append("        concat(rpad(coalesce(cn.cpf,0),11,0), ';' ) as cpf, ");
+		sql.append("        concat(rpad(coalesce(cn.cnpj,0),14,0),';') as cnpj, ");
+		sql.append("        concat(lpad(coalesce(trim(cn.INSC_ESTADUAL),0),20,0), ';') as inscricaoEstadual ");
+		sql.append("     from cota a ");
+		sql.append("     join estudo_cota i ");
+		sql.append("       on i.COTA_ID = a.ID ");
+		sql.append("     join estudo h ");
+		sql.append("       on i.ESTUDO_ID = h.ID ");
+		sql.append("     join produto_edicao j ");
+		sql.append("       on h.PRODUTO_EDICAO_ID = j.ID ");
+		sql.append("     join produto k ");
+		sql.append("       on j.PRODUTO_ID = k.ID ");
+		sql.append("     join lancamento l  ");
+		sql.append("       on l.ESTUDO_ID = h.ID ");
+		sql.append("     join pessoa cn ");
+		sql.append("       on a.PESSOA_ID = cn.ID ");
+		sql.append("     join box bb ");
+		sql.append("       on a.BOX_ID = bb.ID ");
 		
+		sql.append(" where l.status in ('BALANCEADO', 'EXPEDIDO') ");
 		sql.append(" and l.data_lcto_distribuidor = :dataLancamento  ");
 		sql.append(" group by a.numero_cota ; ");
 		
@@ -801,12 +892,12 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<SubHeaderPickingDTO> getSubHeadePickingModulo3(Date dataLancamento) {
+	private List<SubHeaderPickingDTO> getSubHeaderPickingModulo3(Date dataLancamento) {
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select '3;' as identificadorLinha ");
 		sql.append(" ,concat(lpad(a.numero_cota,4,0), ';') as codigoCota ");
-		sql.append(" ,concat(replace(lpad(truncate(sum(j.PRECO_VENDA * i.QTDE_efetiva),2),11,0),'.',''), ';' ) as precoTotal ");
+		sql.append(" ,concat(replace(lpad(truncate(sum(j.PRECO_CUSTO * i.QTDE_efetiva),2),11,0),'.',''), ';' ) as precoTotal ");
 		sql.append(" ,concat(replace(lpad(truncate(sum(j.PRECO_VENDA * i.QTDE_efetiva),2),11,0),'.',''), ';' ) as precoTotalDesconto ");
 		sql.append(" ,concat('0000000000', ';' ) as debito ");
 		sql.append(" ,concat('0000000000', ';' ) as credito ");

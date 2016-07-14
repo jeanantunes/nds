@@ -134,6 +134,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.nomeArquivoInterfaceLED1', value: $('#nomeArquivoInterfaceLED1', this.workspace).val()},
 			{name:'parametrosDistribuidor.nomeArquivoInterfaceLED2', value: $('#nomeArquivoInterfaceLED2', this.workspace).val()},
 			{name:'parametrosDistribuidor.nomeArquivoInterfaceLED3', value: $('#nomeArquivoInterfaceLED3', this.workspace).val()},
+			{name:'parametrosDistribuidor.nomeArquivoInterfaceLED4', value: $('#nomeArquivoInterfaceLED4', this.workspace).val()},
 			{name:'parametrosDistribuidor.impressaoNECADANFE', value: $("input[name='impressaoNECADANFE']:checked", this.workspace).val()},
 			{name:'parametrosDistribuidor.impressaoCE', value: $("input[name='impressaoCE']:checked", this.workspace).val()},
 			{name:'parametrosDistribuidor.utilizaContratoComCotas', value: $('#utilizaContratoComCotas', this.workspace).is(':checked')},
@@ -704,9 +705,11 @@ var parametrosDistribuidorController = $.extend(true, {
 		} else if ($("#_parametrosDistribuidorimpressaoInterfaceLED", this.workspace).val() == "MODELO_2") {
 			
 			$("#interfaceLEDMODELO2", this.workspace).check();
-		} else {
+		} else if ($("#_parametrosDistribuidorimpressaoInterfaceLED", this.workspace).val() == "MODELO_3") {
 			
 			$("#interfaceLEDMODELO3", this.workspace).check();
+		}else{
+			$("#interfaceLEDMODELO4", this.workspace).check();
 		}
 		
 		$("#cnpj", this.workspace).mask("99.999.999/9999-99");
