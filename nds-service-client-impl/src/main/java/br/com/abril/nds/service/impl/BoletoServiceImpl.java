@@ -1818,11 +1818,13 @@ public class BoletoServiceImpl implements BoletoService {
         if(corpoBoleto.getTituloAceite() == null) {
         	corpoBoleto.setTituloAceite("N");
         } else {
+        	/*
         	if(corpoBoleto.getTituloAceite().equals(EnumAceite.A)) {
         		corpoBoleto.setTituloAceite("A");
         	} else {
         		corpoBoleto.setTituloAceite("N");
         	}
+        	*/
         	
         }
         
