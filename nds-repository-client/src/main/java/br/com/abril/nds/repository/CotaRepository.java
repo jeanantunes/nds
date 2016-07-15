@@ -465,4 +465,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
 
 	boolean isCotaParametro(Long idCota, Integer numeroCota, TipoEmissaoDocumento tipoDoc);
+
+
+	List<Integer> buscarNumeroCotasPorEnderecoLED(Integer enderecoLED);
 }
