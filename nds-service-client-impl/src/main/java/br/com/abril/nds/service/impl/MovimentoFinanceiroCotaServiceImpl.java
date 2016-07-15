@@ -63,6 +63,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.strategy.importacao.input.HistoricoFinanceiroInput;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -726,9 +727,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
      */
     @Transactional
     @Override
-    public int obterQuantidadeProcessamentoFinanceiroCota(final Integer numeroCota, final Date data) {
+    public int obterQuantidadeProcessamentoFinanceiroCota(final Integer numeroCota, final ProdutoEdicao produtoEdicao) {
         
-        return movimentoFinanceiroCotaRepository.obterQuantidadeProcessamentoFinanceiroCota(numeroCota).intValue();
+        return movimentoFinanceiroCotaRepository.obterQuantidadeProcessamentoFinanceiroCota(numeroCota, produtoEdicao).intValue();
     }
     
     /**
@@ -745,14 +746,14 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
      */
     @Transactional
     @Override
-    public List<ProcessamentoFinanceiroCotaVO> obterProcessamentoFinanceiroCota(final Integer numeroCota,
+    public List<ProcessamentoFinanceiroCotaVO> obterProcessamentoFinanceiroCota(final Integer numeroCota, ProdutoEdicao produtoEdicao,
             final Date data, final String sortorder, final String sortname, final int initialResult,
             final int maxResults) {
         
         final List<ProcessamentoFinanceiroCotaVO> processamentoFinanceiroVO = new ArrayList<ProcessamentoFinanceiroCotaVO>();
         
         final List<ProcessamentoFinanceiroCotaDTO> informacoesProcessamentoFinanceiroCota = movimentoFinanceiroCotaRepository
-                .obterProcessamentoFinanceiroCota(numeroCota, data, sortorder, sortname, initialResult, maxResults);
+                .obterProcessamentoFinanceiroCota(numeroCota, produtoEdicao, data, sortorder, sortname, initialResult, maxResults);
         
         for (final ProcessamentoFinanceiroCotaDTO item : informacoesProcessamentoFinanceiroCota) {
             

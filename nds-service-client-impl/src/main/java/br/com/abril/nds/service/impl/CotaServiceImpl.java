@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
+import br.com.abril.nds.client.vo.baixaboleto.TipoEmissaoDocumento;
 import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoXLSDTO;
@@ -1026,6 +1027,8 @@ public class CotaServiceImpl implements CotaService {
             dto.setReciboEmail(parametroDistribuicaoCota.getReciboEmail());
         }
         
+        dto.setUtilizaParametrosDocsDistribuidor(parametroDistribuicaoCota.getUtilizaDocsParametrosDistribuidor());
+        
         if(!qtdePDVAutomatico) {
             dto.setQtdePDV(parametroDistribuicaoCota.getQtdePDV());
         }
@@ -1112,6 +1115,10 @@ public class CotaServiceImpl implements CotaService {
         parametros.setTermoAdesaoRecebido(dto.getTermoAdesaoRecebido());
         parametros.setUtilizaProcuracao(dto.getUtilizaProcuracao());
         parametros.setProcuracaoRecebida(dto.getProcuracaoRecebida());
+        
+        if(dto.getUtilizaParametrosDocsDistribuidor() != null){
+        	parametros.setUtilizaDocsParametrosDistribuidor(dto.getUtilizaParametrosDocsDistribuidor());
+        }
         
         if (dto.getInicioPeriodoCarencia() != null) {
             parametros.setInicioPeriodoCarencia(DateUtil.parseDataPTBR(dto.getInicioPeriodoCarencia()));
@@ -3356,5 +3363,12 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional
 	public boolean isCotaVarejo(Long idCota){
 		return cotaRepository.validarCotaVarejo(idCota);
+
+	}
+	
+	@Override
+	@Transactional
+	public boolean isCotaParametro(Long idCota, Integer numCota, TipoEmissaoDocumento tipoDoc){
+		return cotaRepository.isCotaParametro(idCota, numCota, tipoDoc);
 	}
 }

@@ -328,6 +328,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosDistribuidor.setNomeArquivoInterfaceLED1(distribuidor.getArquivoInterfaceLedPicking1());
 		parametrosDistribuidor.setNomeArquivoInterfaceLED2(distribuidor.getArquivoInterfaceLedPicking2());
 		parametrosDistribuidor.setNomeArquivoInterfaceLED3(distribuidor.getArquivoInterfaceLedPicking3());
+		parametrosDistribuidor.setNomeArquivoInterfaceLED4(distribuidor.getArquivoInterfaceLedPicking4());
 		
 		// Impressão Interface LED
 		if (distribuidor.getTipoImpressaoInterfaceLED() != null)
@@ -813,9 +814,10 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			distribuidor.setTipoImpressaoInterfaceLED(null);
 		}
 		
-		distribuidor.setArquivoInterfaceLedPicking1(parametrosDistribuidor.getNomeArquivoInterfaceLED1());;
-		distribuidor.setArquivoInterfaceLedPicking2(parametrosDistribuidor.getNomeArquivoInterfaceLED2());;
-		distribuidor.setArquivoInterfaceLedPicking3(parametrosDistribuidor.getNomeArquivoInterfaceLED3());;
+		distribuidor.setArquivoInterfaceLedPicking1(parametrosDistribuidor.getNomeArquivoInterfaceLED1());
+		distribuidor.setArquivoInterfaceLedPicking2(parametrosDistribuidor.getNomeArquivoInterfaceLED2());
+		distribuidor.setArquivoInterfaceLedPicking3(parametrosDistribuidor.getNomeArquivoInterfaceLED3());
+		distribuidor.setArquivoInterfaceLedPicking4(parametrosDistribuidor.getNomeArquivoInterfaceLED4());
 		
 		distribuidor.setPararAcumuloDividas(parametrosDistribuidor.isPararAcumuloDividas());
 

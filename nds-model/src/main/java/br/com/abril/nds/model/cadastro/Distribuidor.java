@@ -261,6 +261,9 @@ public class Distribuidor {
 	@Column(name = "ARQUIVO_INTERFACE_LED_PICKING_3")
 	private String arquivoInterfaceLedPicking3;
 	
+	@Column(name = "ARQUIVO_INTERFACE_LED_PICKING_4")
+	private String arquivoInterfaceLedPicking4;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_NE_NECA_DANFE", nullable = true)
 	private TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE;	
@@ -1389,6 +1392,14 @@ public class Distribuidor {
 
 	public void setLiberarTranferenciaParcial(boolean liberarTranferenciaParcial) {
 		this.liberarTranferenciaParcial = liberarTranferenciaParcial;
+	}
+	
+	public String getArquivoInterfaceLedPicking4() {
+		return arquivoInterfaceLedPicking4;
+	}
+
+	public void setArquivoInterfaceLedPicking4(String arquivoInterfaceLedPicking4) {
+		this.arquivoInterfaceLedPicking4 = arquivoInterfaceLedPicking4;
 	}
 
 	@Override

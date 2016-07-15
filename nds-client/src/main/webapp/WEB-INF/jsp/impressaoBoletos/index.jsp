@@ -80,6 +80,13 @@
 							<img src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0" />
 						</a>
 					</span>
+					<!-- 
+					<span class="bt_novos">
+						<a isEdicao="true" href="javascript:impressaoBoletosController.enviarEmailDividas('BOLETO_SLIP')" rel="tipsy" title="Enviar e-mail Boletos e Slips">
+							<img src="${pageContext.request.contextPath}/images/ico_email.png" hspace="5" border="0" />
+						</a>
+					</span>
+					 -->
 				</div>
  					
 				<span class="bt_arq">

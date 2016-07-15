@@ -415,6 +415,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		param.add(false);
 	}
 	
+	@SuppressWarnings("unused")
 	private void setQtdExamplaresVlrTotalCe(FiltroEmissaoCE filtro, CotaEmissaoDTO dto, boolean postergado) {
 		CotaEmissaoDTO ret = getTotalQtdeValorPrevistaDaEmissaoCE(filtro, dto.getIdCota(), postergado);
 		if(ret != null){
@@ -670,6 +671,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		return query.list();
 	}
 	
+	@SuppressWarnings("unused")
 	private String obterSubHqlQtdeReparte(FiltroEmissaoCE filtro) {
 		
 	StringBuffer hql = new StringBuffer();
@@ -742,8 +744,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		.append(" where mec.produto_edicao_id = produtoedi5_.id                                                 ")
 		.append(" and mec.cota_id = chamadaenc0_.cota_id                                                        ")
 		.append(" and tm.grupo_movimento_estoque <> 'ENVIO_ENCALHE'                                             ")
-//		.append(" and mec.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME'                                                ")
-		.append(" AND (mec.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME' OR cota4_.DEVOLVE_ENCALHE = true) ")
+		// .append(" and mec.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME'                                                ")
+		.append(" and ((mec.FORMA_COMERCIALIZACAO = 'CONTA_FIRME' and c.tipo_cota = 'A_VISTA' and c.devolve_encalhe) or mec.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME') " )
 		.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null                                                ");
 		
 		if(filtro.getDtRecolhimentoDe() != null) {

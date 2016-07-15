@@ -301,7 +301,14 @@ var geracaoNotaEnvioController = $.extend({
 			
 			this.confirmDialog = new ConfirmDialog('Confirmar Envio de email?', function() {
 		    	
-				$.postJSON(geracaoNotaEnvioController.path + 'enviarEmail');
+				$.postJSON(geracaoNotaEnvioController.path + 'enviarEmail'), function(data){
+					var tipoMensagem = data.tipoMensagem;
+					var listaMensagens = data.listaMensagens;
+					
+					if (tipoMensagem && listaMensagens) {
+						exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+					}
+				};
 		            
 				return true;
 			    }, function() {
@@ -363,21 +370,22 @@ var geracaoNotaEnvioController = $.extend({
 
 		            $.fileDownload(path, {
 		                httpMethod : "POST",
-		                failCallback : function(responseHtml, url) {
-		                	var response = responseHtml; 
-		                	if(responseHtml){
-		                		var data =  $.parseJSON($(responseHtml).html());                   	 
-		                   	    exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
-		                	} else {
-		                		exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA! " + response]);
-		                	}
-//		                	document.location = responseHtml;
-//		                	if(responseHtml){
-//		                		var data =  $.parseJSON($(responseHtml).html());                   	 
-//		                   	    exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
-//		                	}else{
-//		                		exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA! " + responseHtml]);
-//		                	}
+		                failCallback : function(result) {
+							
+							result = $.parseJSON($(result).text());
+							
+							if(result != undefined && result.mensagens) {
+								
+								result = result.mensagens;
+								var tipoMensagem = result.tipoMensagem;
+								var listaMensagens = result.listaMensagens;
+								
+								if (tipoMensagem && listaMensagens) {
+									exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+								}
+							}else{
+								exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA! Verifique também os parametros do distribuidor para impressão de documentos"]);
+							}
 		                    
 		                },
 		                successCallback : function() {

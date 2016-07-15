@@ -5,9 +5,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,6 +17,7 @@ import br.com.abril.nds.dto.ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -26,13 +25,15 @@ import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ImpressaoNFEService;
-import br.com.abril.nds.service.NFeService;
-import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
-import br.com.abril.nds.service.RoteiroService;
+import br.com.abril.nds.service.exception.AutenticacaoEmailException;
+import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
@@ -53,26 +54,14 @@ import br.com.caelum.vraptor.view.Results;
 public class ImpressaoNFEController extends BaseController {
 
 	@Autowired
-	private HttpSession session;
-
-	@Autowired
-	private HttpServletRequest httpRequest;
-
-	@Autowired
 	private HttpServletResponse httpResponse;
 
 	@Autowired
 	private FornecedorService fornecedorService;
 	
 	@Autowired
-	private NFeService nfeService; 
-
-	@Autowired
 	private ImpressaoNFEService impressaoNFEService;
 
-	@Autowired
-	private RoteiroService roteiroService;
-	
 	@Autowired
 	private RoteirizacaoService roteirizacaoService;
 
@@ -82,8 +71,11 @@ public class ImpressaoNFEController extends BaseController {
 	@Autowired
 	private Result result;
 
-	@Autowired 
-	private NotaFiscalService notaFiscalService;
+	@Autowired
+	private EmailService emailSerice;
+	
+	@Autowired
+	private CotaService cotaService;
 	
 	@Path("/")
 	public void index() {
@@ -281,6 +273,59 @@ public class ImpressaoNFEController extends BaseController {
         }
 		
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Arquivo gerado com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	@Post
+	public void enviarEmail(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname) {
+		
+		if(filtro.getNumerosNotas() == null) {
+			
+			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Devem ser informadas as cotas para impressão.");
+			throw new ValidacaoException(validacaoVO);
+		}
+		
+		
+		List<Integer> listaDeNumerosDeCota = filtro.getCotasDasNotasJaFiltradas();
+		
+		List<Long> listaDosNumerosDasNotas = filtro.getNumerosNotas();
+		
+		int cont = 0;
+		
+		List<String> mensagens  = new ArrayList<>();
+		
+		for (Integer numeroCota : listaDeNumerosDeCota) {
+			Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+			
+			List<Long> nota = new ArrayList<>();
+			nota.add(listaDosNumerosDasNotas.get(cont));
+			filtro.setNumerosNotas(nota);
+			cont++;
+			
+			if(cota.getParametrosCotaNotaFiscalEletronica() == null || cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() == null){
+				mensagens.add("[Erro ao enviar email para a cota: " + cota.getNumeroCota() + "]");
+				continue;
+			}
+			
+			String[] listaDeDestinatarios = {cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica()};
+
+			byte[] report = this.impressaoNFEService.imprimirNFe(filtro);
+			
+			AnexoEmail anexoPDF = new AnexoEmail("impressao-nfe", report, TipoAnexo.PDF);
+	    	
+	    	try {
+				emailSerice.enviar("[NDS] - Geração NF-e", "Olá, segue em anexo a NF-e.", listaDeDestinatarios, anexoPDF);
+				
+			} catch (AutenticacaoEmailException e) {
+				mensagens.add("[Erro ao enviar email para a cota: " + cota.getNumeroCota() + "]");
+			}
+		}
+		
+		if (mensagens.isEmpty()) {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Email enviado com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
+		}else{
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+		}
+		
 	}
 	
 	/**

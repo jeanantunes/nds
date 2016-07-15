@@ -330,7 +330,7 @@ public abstract class Util {
     
     public static String calcularDigitoVerificador(String nossoNumero, final String codigoCedente, final Date dataVencimento, final String numeroBanco) {
         
-    	if (nossoNumero == null || codigoCedente == null || dataVencimento == null) {
+    	if (nossoNumero == null || codigoCedente == null || dataVencimento == null || numeroBanco == null) {
             
             return null;
         }
@@ -913,5 +913,13 @@ public abstract class Util {
         	ex.printStackTrace();
         }
         return null;
+    }
+    
+    public static boolean validarBoolean(Boolean booleanWrapper){
+    	if(booleanWrapper == null || booleanWrapper == false){
+    		return false;
+    	}else{
+    		return true;
+    	}
     }
 }

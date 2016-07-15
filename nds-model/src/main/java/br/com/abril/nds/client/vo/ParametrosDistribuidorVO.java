@@ -98,6 +98,8 @@ public class ParametrosDistribuidorVO {
     private String nomeArquivoInterfaceLED2;
     
     private String nomeArquivoInterfaceLED3;
+    
+    private String nomeArquivoInterfaceLED4;
 
     // Frame Impressão NECA / DANFE
     // MODELO_1, MODELO_2 ou DANFE
@@ -1422,6 +1424,14 @@ public class ParametrosDistribuidorVO {
 
 	public void setInfoReparteComplementar(boolean infoReparteComplementar) {
 		this.infoReparteComplementar = infoReparteComplementar;
+	}
+
+	public String getNomeArquivoInterfaceLED4() {
+		return nomeArquivoInterfaceLED4;
+	}
+
+	public void setNomeArquivoInterfaceLED4(String nomeArquivoInterfaceLED4) {
+		this.nomeArquivoInterfaceLED4 = nomeArquivoInterfaceLED4;
 	} 
 	
 }

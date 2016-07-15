@@ -25,6 +25,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -33,6 +34,7 @@ import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
+import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
@@ -808,5 +810,56 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 			return null;  
 		}
 		
+	}
+	
+	@Override
+	@Transactional
+	public boolean verificarParametroDistribuidorEmissaoDocumentosEmailCheck(Distribuidor distribuidor, TipoParametrosDistribuidorEmissaoDocumento tipoDoc){
+		
+		if(distribuidor == null){
+			distribuidor = this.obter();
+		}
+		
+		ParametrosDistribuidorEmissaoDocumento parametroCorreto = getParametroCorreto(distribuidor, tipoDoc);
+		
+		if(parametroCorreto != null){
+			return parametroCorreto.isUtilizaEmail();
+		}else{
+			return false;
+		}
+	}
+	
+	@Override
+	@Transactional
+	public boolean verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(Distribuidor distribuidor, TipoParametrosDistribuidorEmissaoDocumento tipoDoc){
+		
+		if(distribuidor == null){
+			distribuidor = this.obter();
+		}
+		
+		ParametrosDistribuidorEmissaoDocumento parametroCorreto = getParametroCorreto(distribuidor, tipoDoc);
+		
+		if(parametroCorreto != null){
+			return parametroCorreto.isUtilizaImpressao();
+		}else{
+			return false;
+		}
+	}
+
+	private ParametrosDistribuidorEmissaoDocumento getParametroCorreto(Distribuidor distribuidor, TipoParametrosDistribuidorEmissaoDocumento tipoDoc) {
+		if(distribuidor == null){
+			distribuidor = this.obter();
+		}
+		
+		List<ParametrosDistribuidorEmissaoDocumento> parametros = distribuidor.getParametrosDistribuidorEmissaoDocumentos();
+		
+		ParametrosDistribuidorEmissaoDocumento parametroCorreto = null;
+		
+		for (ParametrosDistribuidorEmissaoDocumento parametro : parametros) {
+			if(parametro.getTipoParametrosDistribuidorEmissaoDocumento().equals(tipoDoc)){
+				parametroCorreto = parametro;
+			}
+		}
+		return parametroCorreto;
 	}
 }

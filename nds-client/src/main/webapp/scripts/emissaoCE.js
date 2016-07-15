@@ -137,13 +137,12 @@ var EmissaoCEController = $.extend(true, {
             failCallback: function(result) {
 	
         		res = $.parseJSON($(result).text());
-        		if ((typeof res != "undefined") && (typeof res.mensagens != "undefined")) {
-        			
-					exibirMensagem(
-							res.mensagens.tipoMensagem, 
-							res.mensagens.listaMensagens
-					);
+        		if (res != undefined && (typeof res.mensagens != undefined)) {
+					exibirMensagem(res.mensagens.tipoMensagem, res.mensagens.listaMensagens);
+				}else{
+					exibirMensagem("WARNING", ["Erro ao imprimir CE. Verifique também os parametros do distribuidor para impressão de documentos"]);
 				}	
+        		
 			}
 		});
 		

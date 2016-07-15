@@ -11,6 +11,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.DistribuidorGridDistribuicao;
+import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
@@ -18,6 +19,7 @@ import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
+import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 
@@ -184,4 +186,8 @@ public interface DistribuidorService {
     Integer obterNumeroSemana(Date data);
 
 	DistribuidorGridDistribuicao obterGridDistribuicaoDistribuidor();
+
+	boolean verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(Distribuidor distribuidor, TipoParametrosDistribuidorEmissaoDocumento tipoDoc);
+
+	boolean verificarParametroDistribuidorEmissaoDocumentosEmailCheck(Distribuidor distribuidor, TipoParametrosDistribuidorEmissaoDocumento tipoDoc);
 }

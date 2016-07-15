@@ -69,6 +69,8 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 	
 	private Long numeroNotaAte;
 	
+	private List<Integer> cotasDasNotasJaFiltradas;
+	
 	public enum ColunaOrdenacaoImpressaoNFE {
 
 		COTA("cota");
@@ -416,6 +418,14 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 
 	public void setNumeroNotaAte(Long numeroNotaAte) {
 		this.numeroNotaAte = numeroNotaAte;
+	}
+
+	public List<Integer> getCotasDasNotasJaFiltradas() {
+		return cotasDasNotasJaFiltradas;
+	}
+
+	public void setCotasDasNotasJaFiltradas(List<Integer> cotasDasNotasJaFiltradas) {
+		this.cotasDasNotasJaFiltradas = cotasDasNotasJaFiltradas;
 	}
 	
 }

@@ -505,7 +505,8 @@ public class VendaEncalheController extends BaseController {
 		vendaEncalheVO.setTipoVenda(dto.getTipoVendaEncalhe());
 		vendaEncalheVO.setFormaComercializacao(dto.getFormaVenda());
 		vendaEncalheVO.setProdutoContaFirme(dto.isProdutoContaFirme());
-	
+		vendaEncalheVO.setComercializacao(dto.getComercializacao());
+		
 		return vendaEncalheVO;
 	}
 	private String tratarValor(Object valor){

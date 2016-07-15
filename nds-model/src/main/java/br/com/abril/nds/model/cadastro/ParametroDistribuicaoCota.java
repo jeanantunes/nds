@@ -78,6 +78,9 @@ public class ParametroDistribuicaoCota implements Serializable {
 	
 	@Column(name = "RECIBO_EMAIL", nullable = true)
 	private Boolean reciboEmail;
+	
+	@Column(name = "UTILIZA_DOCS_PARAMETRO_DISTRIB", nullable = false, columnDefinition = "boolean default true")
+	private Boolean utilizaDocsParametrosDistribuidor = true;
 
 	@Column(name = "UTILIZA_TERMO_ADESAO")
     private Boolean utilizaTermoAdesao;
@@ -467,6 +470,14 @@ public class ParametroDistribuicaoCota implements Serializable {
 	 */
 	public void setRecebeComplementar(Boolean recebeComplementar) {
 		this.recebeComplementar = recebeComplementar;
+	}
+
+	public Boolean getUtilizaDocsParametrosDistribuidor() {
+		return utilizaDocsParametrosDistribuidor;
+	}
+
+	public void setUtilizaDocsParametrosDistribuidor(Boolean utilizaDocsParametrosDistribuidor) {
+		this.utilizaDocsParametrosDistribuidor = utilizaDocsParametrosDistribuidor;
 	}
 	
 	

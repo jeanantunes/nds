@@ -15,6 +15,8 @@ var impressaoNfeController = $.extend(true, {
 	
 	filtroNotasImprimirNFe : [],
 	
+	filtroCotasImprimirNFe : [],
+	
 	paginaAtualPesquisarGrid : 1,
 	
 	totalRegistros : 0,
@@ -391,7 +393,7 @@ var impressaoNfeController = $.extend(true, {
 			else
 				this.cell.notaImpressa = '';
 
-			this.cell.sel = '<input type="checkbox" name="imprimirNFe" id="imprimirNFe_'+ this.cell.idNota +'" value="'+ this.cell.idNota + '" onclick="impressaoNfeController.adicionarAsNFesAImprimir(this.checked, '+ this.cell.idNota +')" />';
+			this.cell.sel = '<input type="checkbox" name="imprimirNFe" id="imprimirNFe_'+ this.cell.idNota +'" value="'+ this.cell.idNota + '" onclick="impressaoNfeController.adicionarAsNFesAImprimir(this.checked, '+ this.cell.idNota +'); impressaoNfeController.adicionarAsCotasAImprimir(this.checked, '+ this.cell.idCota +')" />';
 		});
 
 		$(".grids", impressaoNfeController.workspace).show();
@@ -484,6 +486,62 @@ var impressaoNfeController = $.extend(true, {
 			
 		}
 		$('#preparing-file-modal').dialog('close');
+	},
+	
+	enviarEmail : function(fileType){
+		
+		params = [];
+		
+		params = [ 	{name:'filtro.idNaturezaOperacao', value:$('#impressaoNfe-filtro-naturezaOperacao', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataEmissaoInicial', value:$('#impressaoNfe-dataEmissaoInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataEmissaoFinal', value:$('#impressaoNfe-dataEmissaoFinal', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataEmissao', value:$('#impressaoNfe-filtro-dataEmissao', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idRoteiro', value:$('#impressaoNfe-filtro-idRoteiro option:selected', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idRota', value:$('#impressaoNfe-filtro-idRota option:selected', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idCotaInicial', value:$('#impressaoNfe-filtro-idCotaInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idCotaFinal', value:$('#impressaoNfe-filtro-idCotaInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idBoxInicial', value:$('#impressaoNfe-filtro-inputIntervaloBoxDe', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idBoxFinal', value:$('#impressaoNfe-filtro-inputIntervaloBoxAte', impressaoNfeController.workspace).val()}
+		           	];
+		
+		
+		params.push({
+				'name' : 'fileType',
+				'value' : fileType
+			});
+		
+		for(var i=0; i < impressaoNfeController.filtroNotasImprimirNFe.length; i++) {
+			params.push({
+				'name' : 'filtro.numerosNotas[]',
+				'value' : impressaoNfeController.filtroNotasImprimirNFe[i]
+			});
+		}
+		
+		for(var i=0; i < impressaoNfeController.filtroCotasImprimirNFe.length; i++) {
+			params.push({
+				'name' : 'filtro.cotasDasNotasJaFiltradas[]',
+				'value' : impressaoNfeController.filtroCotasImprimirNFe[i]
+			});
+		}
+		
+		this.confirmDialog = new ConfirmDialog('Confirmar Envio de email?', function() {
+	    	
+			$.postJSON(impressaoNfeController.path + 'enviarEmail', params), function(data){
+				var tipoMensagem = data.tipoMensagem;
+				var listaMensagens = data.listaMensagens;
+				
+				if (tipoMensagem && listaMensagens) {
+					exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+				}
+			};
+	            
+			return true;
+		    }, function() {
+		    	 
+		 });
+		 this.confirmDialog.open();
+		
+			
 	},
 	
 	/**
@@ -669,6 +727,49 @@ var impressaoNfeController = $.extend(true, {
 		}
 		
 		impressaoNfeController.filtroNotasImprimirNFe.sort();
+	},
+	
+	adicionarAsCotasAImprimir : function(checked, idCota) {
+		
+		//Verifica se ainda esta na mesma pagina, se nao, atualiza a pagina atual e limpa as cotas selecionadas na pagina anterior
+		var tipoDestinatario = $("input[name='tipoDestinatario']:checked").val();
+		
+		if(tipoDestinatario == "FORNECEDOR") {
+			if(impressaoNfeController.paginaAtualPesquisarGrid != $(".impressaoGridFornecedor").flexGetPageNumber()) {
+				impressaoNfeController.paginaAtualPesquisarGrid = $(".impressaoGridFornecedor").flexGetPageNumber();
+				impressaoNfeController.filtroCotasImprimirNFe = [];
+			}
+		} else {			
+			if(impressaoNfeController.paginaAtualPesquisarGrid != $(".impressaoGrid").flexGetPageNumber()) {
+				impressaoNfeController.paginaAtualPesquisarGrid = $(".impressaoGrid").flexGetPageNumber();
+				impressaoNfeController.filtroCotasImprimirNFe = [];
+			}
+		} 
+		
+		
+		arrayOrdenado = impressaoNfeController.filtroCotasImprimirNFe.sort();
+		
+		inserirIdCota = true;
+		
+		if(checked) {
+			if(impressaoNfeController.filtroCotasImprimirNFe.length > 1) {
+				for (var i = 0; i < arrayOrdenado.length; i++) {
+				    if (arrayOrdenado[i] == idCota) {
+				    	inserirIdCota = false;
+				    }
+				}
+				if(inserirIdCota)
+					impressaoNfeController.filtroCotasImprimirNFe.push(idCota);
+			} else {
+				if(impressaoNfeController.filtroCotasImprimirNFe[0] != idCota);
+					impressaoNfeController.filtroCotasImprimirNFe.push(idCota);
+			}
+			
+		} else {
+			impressaoNfeController.filtroCotasImprimirNFe.removeByValue(idCota);
+		}
+		
+		impressaoNfeController.filtroCotasImprimirNFe.sort();
 	},
 	
 

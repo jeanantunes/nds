@@ -1750,14 +1750,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					banco != null ? banco.getAgencia() : 0,
 					banco != null ? banco.getConta() : 0,
 					banco != null && banco.getCarteira() != null ? banco.getCarteira() : null,
-					banco.getCodigoCedente(), 
-	                banco.getDigitoCodigoCedente());
+					banco != null && banco.getCodigoCedente() != null ? banco.getCodigoCedente() : null, 
+					banco != null && banco.getDigitoCodigoCedente() != null ? banco.getDigitoCodigoCedente() : null);
 			
 			cobranca.setFornecedor(fornecedor);
 			cobranca.setNossoNumero(nossoNumero);
 			
 			String digitoVerificador =
-				Util.calcularDigitoVerificador(nossoNumero, banco != null ? banco.getCodigoCedente() : "0", cobranca.getDataVencimento(), banco.getNumeroBanco());
+				Util.calcularDigitoVerificador(nossoNumero, banco != null ? banco.getCodigoCedente() : "0", cobranca.getDataVencimento(), banco != null ? banco.getNumeroBanco() : null);
 			
 			cobranca.setDigitoNossoNumero(digitoVerificador);
 			

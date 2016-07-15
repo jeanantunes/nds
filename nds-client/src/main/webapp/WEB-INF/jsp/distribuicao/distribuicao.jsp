@@ -400,6 +400,15 @@
 						</td>
      					</tr>
    				</table>
+   				
+   				<table width="373" border="0" cellspacing="1" cellpadding="0" style="padding-top: 30px;">
+   					<tr>
+						<td>Cota utiliza os parametros do distribuidor: 
+							<input id="${param.tela}cotaUtilizaParametrosDistrib" type="checkbox" name="isCotaUtilizaParametrosDistrib" checked="checked" style="width: 50px;">
+						</td>
+   					</tr>
+           		</table>
+   				
 			</fieldset>	
 
 		

@@ -368,7 +368,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:tipoMovimentoEstorno) ");
 		sql.append(" AND LCTO.STATUS not in ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')");
 		
-		sql.append(" and MEC.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME' ");
+		//sql.append(" and MEC.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME' ");
+		sql.append(" and ((MEC.FORMA_COMERCIALIZACAO = 'CONTA_FIRME' and C.tipo_cota = 'A_VISTA' and C.devolve_encalhe) or MEC.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME') " );
 		
 		if(filtro.getIdFornecedor()!=null) {
 		
@@ -637,7 +638,9 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:tipoMovimentoEstorno) ");
 		sql.append(" AND LCTO.STATUS not in ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')");
 		
-		sql.append(" and MEC.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME' ");
+		//sql.append(" and MEC.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME' ");
+		
+		sql.append(" and ((MEC.FORMA_COMERCIALIZACAO = 'CONTA_FIRME' and C.tipo_cota = 'A_VISTA' and C.devolve_encalhe) or MEC.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME') " );
 		
 		if(filtro.getIdFornecedor()!=null) {
 		

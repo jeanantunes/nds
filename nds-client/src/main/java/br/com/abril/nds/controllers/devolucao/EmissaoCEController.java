@@ -34,6 +34,7 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
+import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -383,10 +384,18 @@ public class EmissaoCEController extends BaseController {
 
 	public void imprimirCEPDF(FiltroEmissaoCE filtro) {
         
+		if(!distribuidorService.verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(null, TipoParametrosDistribuidorEmissaoDocumento.CHAMADA_ENCALHE)){
+			throw new ValidacaoException(TipoMensagem.ERROR, "CE não podem ser impressas, distribuidor não aceita impressão deste documento.");
+		}
+		
+		filtro.setDistribEnviaEmail(this.distribuidorService.verificarParametroDistribuidorEmissaoDocumentosEmailCheck(null, TipoParametrosDistribuidorEmissaoDocumento.CHAMADA_ENCALHE));
+		
 	    byte[] cesGeradas = null;
 	    
 	    try {
             
+	    	filtro.setImpressao(true);
+	    	
             cesGeradas = this.chamadaEncalheService.gerarEmissaoCE(filtro);
     
             if (cesGeradas != null) {
@@ -403,11 +412,16 @@ public class EmissaoCEController extends BaseController {
         
                 httpResponse.getOutputStream().close();
         
-                result.use(Results.nothing());
+//                if(filtro.getValidacao() != null){
+//                	result.use(Results.json()).from(filtro.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
+//                }else{
+//                	result.use(Results.nothing());
+//                }
             }
         } catch (ValidacaoException e) {
             LOGGER.error("Erro de validação ao gerar arquivos de chamada de encalhe: " + e.getMessage(), e);
             result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
+            throw new ValidacaoException(e.getValidacao().getTipoMensagem(), e.getValidacao().getListaMensagens());
         } catch (Exception e) {
             LOGGER.error("Erro ao gerar arquivo(s) de chamada(s) de encalhe(s): " + e.getMessage(), e);
             result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()), Constantes.PARAM_MSGS).recursive().serialize();
@@ -572,6 +586,7 @@ public class EmissaoCEController extends BaseController {
 	@Post
 	public void enviarEmail(FiltroEmissaoCE filtro) {
 		
+		filtro.setEnvioEmail(true);
 		chamadaEncalheService.enviarEmail(filtro);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Email enviado com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();

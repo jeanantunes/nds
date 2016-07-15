@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -13,14 +14,17 @@ import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
+import br.com.abril.nds.util.Util;
 
 @Service
 public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
@@ -31,7 +35,6 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 	@Autowired
 	private DocumentoCobrancaService documentoCobrancaService;
 	
-	
 	@Autowired
 	private GerarCobrancaService gerarCobrancaService;
 	
@@ -40,6 +43,9 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 	
 	@Autowired
 	private PoliticaCobrancaRepository politicaCobrancaRepository;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
 	
 	@Transactional
 	@Override
@@ -59,13 +65,14 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
     	    
     	    if (qtdCotasAusentes != null && qtdCotasAusentes > 0){
     	        
-    	        throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível gerar a impressão. Ainda existem cotas pendentes de geração de cobrança.");
+    	        throw new ValidacaoException(TipoMensagem.ERROR, "Não é possível gerar a impressão. Ainda existem cotas pendentes de geração de cobrança.");
     	    }
 	    }
 	    
 		filtro.setColunaOrdenacao(FiltroDividaGeradaDTO.ColunaOrdenacao.ROTEIRIZACAO);
 		
 		List<GeraDividaDTO> dividas = null;
+		List<GeraDividaDTO> dividasImpressao_EnvioEmail = new ArrayList<>();
 		
 		if( TipoCobranca.BOLETO.equals(filtro.getTipoCobranca())){
 			dividas = dividaRepository.obterDividasGeradas(filtro);
@@ -73,8 +80,57 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 			dividas = dividaRepository.obterDividasGeradasSemBoleto(filtro);
 		}
 		
-		if(dividas.isEmpty())
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não há dívidas a serem impressas.");
+		if(dividas.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não há dívidas a serem impressas.");
+		}
+		
+//		String numeroCotasSemEmail = "";
+		String numeroCotasNaoRecebemEmail = "";
+		
+		for (GeraDividaDTO dto : dividas) {
+			
+			Cota cota = cotaRepository.buscarCotaPorID(dto.getIdCota());
+			
+			if(filtro.getNumeroCota() == null){
+				if(cota.getParametroDistribuicao().getUtilizaDocsParametrosDistribuidor()){
+					if(filtro.isDistribEnviaEmail()){
+						dividasImpressao_EnvioEmail.add(dto);
+    				}
+				}else{
+					if((!Util.validarBoolean(cota.getParametroDistribuicao().getBoletoImpresso())) || (!Util.validarBoolean(cota.getParametroDistribuicao().getReciboImpresso()))){
+						if(numeroCotasNaoRecebemEmail.isEmpty()){
+							numeroCotasNaoRecebemEmail = cota.getNumeroCota().toString();
+						}else{
+							numeroCotasNaoRecebemEmail += ", "+ cota.getNumeroCota().toString();
+						}
+						continue;
+    				}else{
+    					if((Util.validarBoolean(cota.getParametroDistribuicao().getBoletoEmail())) || (Util.validarBoolean(cota.getParametroDistribuicao().getReciboEmail()))){
+    						dividasImpressao_EnvioEmail.add(dto);
+    					}
+    				}
+				}
+			}
+		}
+		
+		if(!dividasImpressao_EnvioEmail.isEmpty()){
+			for (GeraDividaDTO dividaDTO : dividasImpressao_EnvioEmail) {
+				enviarArquivoPorEmail(dividaDTO.getNossoNumero());
+			}
+		}
+		
+		String mensagem = "";
+		
+//		if (!numeroCotasSemEmail.isEmpty()) {
+//			mensagem = "E-mail enviado com sucesso.\n As cotas abaixo não possuem e-mail cadastrado: \n "+ numeroCotasSemEmail +"\n";
+//			mensagem += "-------------------------- \n";
+//		}
+		
+		if(!numeroCotasNaoRecebemEmail.isEmpty()){
+			mensagem += "As Cotas abaixo não recebem e-mail: \n"+ numeroCotasNaoRecebemEmail;
+		}
+		
+		filtro.setMensagemValidacaoImpressao(mensagem);
 		
 		final List<PoliticaCobranca> politicasCobranca = politicaCobrancaRepository.obterPoliticasCobranca(Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO));
 		

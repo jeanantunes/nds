@@ -14,6 +14,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
@@ -182,7 +183,7 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
     * @param numeroCota
     * @return Long
     */
-    Long obterQuantidadeProcessamentoFinanceiroCota(Integer numeroCota);
+    Long obterQuantidadeProcessamentoFinanceiroCota(Integer numeroCota, ProdutoEdicao produtoEdicao);
 	
    /**
     * Obtem Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
@@ -194,7 +195,7 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
     * @param maxResults
     * @return List<ProcessamentoFinanceiroCotaDTO>
     */
-    List<ProcessamentoFinanceiroCotaDTO> obterProcessamentoFinanceiroCota(Integer numeroCota,
+    List<ProcessamentoFinanceiroCotaDTO> obterProcessamentoFinanceiroCota(Integer numeroCota, ProdutoEdicao produtoEdicao, 
     		                                                              Date data,
 	                                                                      String sortorder, 
 	                                                                      String sortname,
