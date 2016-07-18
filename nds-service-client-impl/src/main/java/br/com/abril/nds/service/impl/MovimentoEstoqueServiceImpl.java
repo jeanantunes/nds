@@ -286,7 +286,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             if(!formaCobrancaValida) {
             	Cota cota = this.cotaRepository.buscarPorId(estudoCota.getIdCota());
-            	LOGGER.error("Erro ao obter Forma de Cobrança para Cota/Fornecedor.");
+            	LOGGER.error("Erro ao obter Forma de Cobrança para Cota/Fornecedor."+estudoCota.getIdCota());
             	throw new ValidacaoException(TipoMensagem.ERROR, String.format("Erro ao obter Forma de Cobrança para Cota/Fornecedor: %s", cota.getNumeroCota()));
             }
             
@@ -372,8 +372,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         		if ( numCota != null )
         		  cotasComProblemas.append(numCota).append(" / ");
         	}
-        	// cotasComProblemas.replace(cotasComProblemas.length()-3, cotasComProblemas.length(), "");
-        	if ( cotasComProblemas.length() > 0 )
+        	//  cotasComProblemas.replace(cotasComProblemas.length()-3, cotasComProblemas.length(), "");
+        	if ( cotasComProblemas.length() > 0 ) 
         	  throw new ValidacaoException(TipoMensagem.ERROR, String.format("Erro ao obter Forma de Cobrança para Cota/Fornecedor: %s", cotasComProblemas.toString()));
         }
 	}
