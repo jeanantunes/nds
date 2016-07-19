@@ -148,7 +148,10 @@ public class FTFServiceImpl implements FTFService {
 			ftfEnvTipoRegistro03.setCnpjEmpresaEmissora(ftfTipoRegistro02.getCnpjEmpresaEmissora());
 			ftfEnvTipoRegistro03.setCodLocal(ftfTipoRegistro02.getCodLocal());
 			ftfEnvTipoRegistro03.setNumeroDocOrigem(ftfTipoRegistro02.getNumeroDocOrigem());
+			ftfEnvTipoRegistro03.setNumItemPedido(ftfTipoRegistro02.getNumItemPedido());
+			ftfEnvTipoRegistro03.setCodSetorialCRP("000000");
 			ftfEnvTipoRegistro03.setTipoPedido(ftfTipoRegistro02.getTipoPedido());
+			
 
 			listaEnvTipoRegistro03.add(ftfEnvTipoRegistro03);
 
@@ -317,9 +320,6 @@ public class FTFServiceImpl implements FTFService {
 		boolean valid = false;
 		//		String testedCpnj = "68252618000182";
 		// validar as pessoas no CRP
-		
-		if(true)
-			return true;
 		
 		PessoaDto wsResponse = pessoaCRPService.obterDadosFiscais(getCodTipoDocFrom(cpfCnpj), cpfCnpj);
 		PessoaType pessoaCRP = wsResponse.getPessoa();
