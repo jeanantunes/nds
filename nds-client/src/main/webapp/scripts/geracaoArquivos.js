@@ -139,7 +139,11 @@ if($("#tipoArquivo", this.workspace).val() == "VENDA") {
 				},
 				function(result) {
 					$("#resultado", this.workspace).show();
-					$("#qtdArquivosGerados", this.workspace).html(0);
+					if(result.mensagens.listaMensagens[0].match("endereço LED")){
+						$("#qtdArquivosGerados", this.workspace).html(1);
+					}else{
+						$("#qtdArquivosGerados", this.workspace).html(0);
+					}
 				}
 		);
 	} else 

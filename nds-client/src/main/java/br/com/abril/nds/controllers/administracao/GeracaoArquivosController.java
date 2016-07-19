@@ -923,8 +923,8 @@ public class GeracaoArquivosController extends BaseController {
 			} catch ( Exception ee ) {
 				LOGGER.error("ERRO GERANDO arquivo de reparte",ee);
 				throw new ValidacaoException(TipoMensagem.ERROR, ee.getMessage());
-				
 			}
+			
 			if(qtdArquivosGerados > 0) {
 				
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
