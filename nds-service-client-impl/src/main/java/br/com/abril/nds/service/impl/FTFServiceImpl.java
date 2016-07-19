@@ -149,7 +149,8 @@ public class FTFServiceImpl implements FTFService {
 			ftfEnvTipoRegistro03.setCodLocal(ftfTipoRegistro02.getCodLocal());
 			ftfEnvTipoRegistro03.setNumeroDocOrigem(ftfTipoRegistro02.getNumeroDocOrigem());
 			ftfEnvTipoRegistro03.setTipoPedido(ftfTipoRegistro02.getTipoPedido());
-
+			ftfEnvTipoRegistro03.setCodSetorialCRP(ftfTipoRegistro02.getCentroLucroCorporativo());
+			
 			listaEnvTipoRegistro03.add(ftfEnvTipoRegistro03);
 
 		}
