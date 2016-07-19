@@ -98,7 +98,9 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	private String origemMercadoria;
 
 	 * 
-	*/ 	
+	*/ 
+	private String centroLucroCorporativo;
+	
 	public String getTipoRegistro() {
 		return tipoRegistro;
 	}
@@ -309,5 +311,13 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 
 	public void setCodEanProduto(String codEanProduto) {
 		this.codEanProduto = codEanProduto;
+	}
+
+	public String getCentroLucroCorporativo() {
+		return centroLucroCorporativo;
+	}
+
+	public void setCentroLucroCorporativo(String centroLucroCorporativo) {
+		this.centroLucroCorporativo = centroLucroCorporativo;
 	}
 }

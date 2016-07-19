@@ -80,7 +80,7 @@ public class EMS0126MessageProcessor extends AbstractRepository implements
 				
 				
 				if(produtoEdicao.getCodigoDeBarras() ==null || produtoEdicao.getCodigoDeBarras().trim().equals("")){
-					produtoEdicao.setCodigoDeBarras("");
+					produtoEdicao.setCodigoDeBarras("0");
 				}
 				
 				if(new BigInteger(input.getCodigoBarras()).longValue() >0 && new BigInteger(produtoEdicao.getCodigoDeBarras()).longValue()!= new BigInteger(input.getCodigoBarras()).longValue()){
