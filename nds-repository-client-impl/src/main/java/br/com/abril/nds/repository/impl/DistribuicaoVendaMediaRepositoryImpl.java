@@ -256,7 +256,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		}
    		
    		sql.append(" group by pe.id, plp.numero_periodo ");
-   		sql.append(" ) T GROUP BY T.id ");
+   		sql.append(" ) T GROUP BY T.id,T.periodo ");
    		sql.append(ordenarConsulta(filtro));
    		
    		SQLQuery query = getSession().createSQLQuery(sql.toString());
