@@ -3,16 +3,16 @@ package br.com.abril.nds.integracao.ems0129.processor;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.apache.commons.io.FileUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
@@ -23,10 +23,13 @@ import org.springframework.stereotype.Component;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
+import br.com.abril.icd.axis.util.Constantes;
+import br.com.abril.icd.axis.util.DateUtil;
 import br.com.abril.nds.dto.DetalhesPickingDTO;
 import br.com.abril.nds.dto.DetalhesPickingPorCotaModelo03DTO;
 import br.com.abril.nds.dto.FooterPickingModelo3DTO;
 import br.com.abril.nds.dto.HeaderPickingDTO;
+import br.com.abril.nds.dto.PickingLEDFullDTO;
 import br.com.abril.nds.dto.SubHeaderPickingDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
@@ -53,8 +56,7 @@ import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
-import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.LedModelo4IntegracaoService;
 
 @Component
 
@@ -74,11 +76,8 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	private DistribuidorRepository distribuidorRepository;
 	
 	@Autowired
-	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	private LedModelo4IntegracaoService ledModelo4IntegracaoService;
 	
-	@Autowired
-	private DescontoService descontoService;
-
 	private String mensagemValidacao;
 	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
@@ -170,10 +169,14 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		
 		if (nomeArquivoPickingInterfaceLED == null) {
 			
-			nomeArquivoPickingInterfaceLED = NOME_ARQUIVO_PICKING_INTERFACE_LED_DEFAULT;
+			nomeArquivoPickingInterfaceLED = "PICKING4";
+		}else{
+			nomeArquivoPickingInterfaceLED = nomeArquivoPickingInterfaceLED.substring(0, (nomeArquivoPickingInterfaceLED.length() - 4));
 		}
 		
-		nomeArquivoPickingInterfaceLED = String.format("%1$s-%2$s", nomeArquivoPickingInterfaceLED, dateFormat.format(new Date()) );;
+		String dataFormatada = DateUtil.formatarData(Calendar.getInstance().getTime(), Constantes.DATE_TIME_PT_BR_FOR_FILE).toString();
+		
+		nomeArquivoPickingInterfaceLED += "-"+dataFormatada+".TXT";
 		
 		gerarArquivoPickingModelo4(message, nomeArquivoPickingInterfaceLED);
 	}
@@ -190,11 +193,13 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			
 			Date dataLancamento = getDataLancDistrib(message);
 			
+			List<PickingLEDFullDTO> registros = new ArrayList<>();
+			
 			// LINHA 01 - OK
 			List<HeaderPickingDTO> listHeaders = getHeadePickingModulo3(dataLancamento);
 			
 			// LINHA 03 - OK
-			List<SubHeaderPickingDTO> listaSubHeadePickingModelo4 = getSubHeaderPickingModulo3(dataLancamento);
+			List<SubHeaderPickingDTO> listaSubHeadePickingModelo4 = getSubHeaderPickingModulo3(dataLancamento, true);
 			
 			if (listHeaders.isEmpty()) {
 
@@ -204,6 +209,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			}
 			
 			int cont = 0;
+			String cotasSemEnderecoLED = "";
 			for (HeaderPickingDTO headerDTO : listHeaders) {
 				
 				EMS0129Picking3Header linha01Modelo04 = criarHeaderModelo3(headerDTO);
@@ -222,25 +228,33 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 				
 				subHeaderPickingDTO.setCredito(""+listaSubHeadePickingModelo4.size());
 				subHeaderPickingDTO.setDebito(""+listaSubHeadePickingModelo4.size());
-				subHeaderPickingDTO.setConsignado("");
+				//subHeaderPickingDTO.setConsignado("");
 				
 				EMS0129Picking3Trailer3 linha03Modelo04 = criarLinha03Modelo03(subHeaderPickingDTO);
 				
 				print.println(fixedFormatManager.export(linha03Modelo04) + "\r");
 				
 				cont++;
-				
+				if(subHeaderPickingDTO.getConsignado() != null){
+					registros.add(this.popularRegistrosLED(headerDTO, listaLinha02Modelo04, subHeaderPickingDTO));
+				}else{
+					if(cotasSemEnderecoLED.isEmpty()){
+						cotasSemEnderecoLED += headerDTO.getCodigoCota();
+					}else{
+						cotasSemEnderecoLED += ", "+headerDTO.getCodigoCota();
+					}
+				}
 			}
-			
-			// linha 9 fora do layout 04
-			// FooterPickingModelo3DTO footerPickingModulo3 = getFooterPickingModulo3(dataLancamento);
-			
-			// EMS0129Picking3Footer linhaFooterModelo03 = criarLinhaFooterModelo03(footerPickingModulo3);
-			
-			// print.println(fixedFormatManager.export(linhaFooterModelo03) + "\r");
 			
 			print.flush();
 			print.close();
+			
+			this.ledModelo4IntegracaoService.exportarPickingLED(registros);
+			
+			if(!cotasSemEnderecoLED.isEmpty()){
+				String mensagemValidacao = "As seguintes cotas não possuem endereço LED cadastrado: "+cotasSemEnderecoLED;
+				this.lancarMensagemValidacao(mensagemValidacao, message);
+			}
 
 		} catch (IOException e) {
 
@@ -249,6 +263,35 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			this.lancarMensagemValidacao(mensagemValidacao, message);
 		}
 
+	}
+	
+	private PickingLEDFullDTO popularRegistrosLED(HeaderPickingDTO headerDTO, List<DetalhesPickingPorCotaModelo03DTO> listaLinha02Modelo04, SubHeaderPickingDTO subHeaderPickingDTO){
+		
+		PickingLEDFullDTO dto = new PickingLEDFullDTO();
+		
+		dto.setIdentificadorLinha1(headerDTO.getIdentificadorLinha());
+		dto.setCodigoCotaLinha1(headerDTO.getCodigoCota().toString());
+		dto.setNomeDistribuidor(headerDTO.getNomeDistribuidor());
+		dto.setNomeCota(headerDTO.getNomeCota());
+		dto.setCodigoBox(headerDTO.getCodigoBox());
+		dto.setTipoOperacao(headerDTO.getConsignado());
+		dto.setCpf(headerDTO.getCpf());
+		dto.setCnpj(headerDTO.getCnpj());
+		dto.setInscricaoMunicipal(headerDTO.getInscricaoEstadual());
+		dto.setDataLancamento(headerDTO.getDataLancamento());
+		
+		dto.setListTrailer2(listaLinha02Modelo04);
+		
+		dto.setIdentificadorLinha3(subHeaderPickingDTO.getIdentificadorLinha());
+		dto.setCodigoCotaLinha3(subHeaderPickingDTO.getCodigoCota());
+		dto.setPrecoTotal(subHeaderPickingDTO.getPrecoTotal());
+		dto.setPrecoTotalDesconto(subHeaderPickingDTO.getPrecoTotalDesconto());
+		dto.setObservacoes01(subHeaderPickingDTO.getCredito());
+		dto.setObservacoes02(subHeaderPickingDTO.getDebito());
+		dto.setDataLancamentoLinha3(subHeaderPickingDTO.getDataLancamento());
+		dto.setEnderecoLED(subHeaderPickingDTO.getConsignado());
+		
+		return dto;
 	}
 	
 	/**
@@ -718,7 +761,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			
 			List<HeaderPickingDTO> listHeaders = getHeadePickingModulo3(dataLancamento);
 			
-			List<SubHeaderPickingDTO> listaSubHeadePickingModulo3 = getSubHeaderPickingModulo3(dataLancamento);
+			List<SubHeaderPickingDTO> listaSubHeadePickingModulo3 = getSubHeaderPickingModulo3(dataLancamento, false);
 			
 			if (listHeaders.isEmpty()) {
 
@@ -892,7 +935,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<SubHeaderPickingDTO> getSubHeaderPickingModulo3(Date dataLancamento) {
+	private List<SubHeaderPickingDTO> getSubHeaderPickingModulo3(Date dataLancamento, boolean isModelo4) {
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select '3;' as identificadorLinha ");
@@ -902,7 +945,12 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		sql.append(" ,concat('0000000000', ';' ) as debito ");
 		sql.append(" ,concat('0000000000', ';' ) as credito ");
 		sql.append(" ,concat(DATE_FORMAT(l.data_lcto_distribuidor,'%d%m%Y'), ';' ) as dataLancamento ");
-		sql.append(" ,concat('0000000000', ';' ) as consignado ");
+		
+		if(isModelo4){
+			sql.append(" ,concat(a.ENDERECO_LED, ';' ) as consignado ");
+		}else{
+			sql.append(" ,concat('0000000000', ';' ) as consignado ");
+		}
 		
 		sql.append(" from cota a, estudo h, estudo_cota i, produto_edicao j, produto k, lancamento l  ");
 		sql.append(" where i.cota_id = a.id  ");
