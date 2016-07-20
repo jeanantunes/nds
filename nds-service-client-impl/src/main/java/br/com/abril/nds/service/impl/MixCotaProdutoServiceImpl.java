@@ -450,6 +450,12 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			Produto prd = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoICD());
 			TipoSegmentoProduto tipoSegProd = prd.getTipoSegmentoProduto();
 			
+			if(tipoSegProd == null ) {
+				mensagens.add("Produto ["+prd.getCodigo()+"/"+prd.getNomeComercial()+"]: sem Tipo Segmento, ajuste-o no Cadastro de Produto.");
+				mixCotaProdutoDTO.setItemValido(false);
+				continue;
+			}
+			
 			if(!produtoService.isIcdValido(prd.getCodigoICD())){
 				mensagens.add("Produto ["+prd.getNomeComercial()+"]: Código ICD inválido, ajuste-o no Cadastro de Produto.");
 				mixCotaProdutoDTO.setItemValido(false);
@@ -459,7 +465,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			if(obterSegmentosNaoRecebidosCadastradosNaCota==null || obterSegmentosNaoRecebidosCadastradosNaCota.isEmpty()){
 				mixCotaProdutoDTO.setItemValido(Boolean.TRUE);
 			}else{
-				
+				// Xitão pergunta um Estag quem fez esse codigo....???
 				loopSeg:for (SegmentoNaoRecebeCotaDTO seg : obterSegmentosNaoRecebidosCadastradosNaCota) {
 					if(seg.getNomeSegmento().equals(tipoSegProd.getDescricao())){
 						
