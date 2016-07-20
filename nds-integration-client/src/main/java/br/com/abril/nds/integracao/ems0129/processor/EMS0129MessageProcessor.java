@@ -249,7 +249,9 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			print.flush();
 			print.close();
 			
-			this.ledModelo4IntegracaoService.exportarPickingLED(registros);
+			Date data = (Date) message.getHeader().get("DATA_LCTO_DISTRIB");
+			
+			this.ledModelo4IntegracaoService.exportarPickingLED(registros, data);
 			
 			if(!cotasSemEnderecoLED.isEmpty()){
 				String mensagemValidacao = "As seguintes cotas não possuem endereço LED cadastrado: "+cotasSemEnderecoLED;

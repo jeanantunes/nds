@@ -1,9 +1,7 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-
-import javax.annotation.PostConstruct;
 
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
@@ -22,40 +20,49 @@ import br.com.abril.icd.axis.util.DateUtil;
 import br.com.abril.nds.dto.PickingLEDFullDTO;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.service.LedModelo4IntegracaoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @Service
 public class LedModelo4IntegracaoServiceImpl implements LedModelo4IntegracaoService{
-	
-	private static final String DB_NAME = "picking_led";
 	
 	@Autowired
 	private CouchDbProperties couchDbProperties;
 	
 	private CouchDbClient couchDbClient;
 	
-	@PostConstruct
-	public void initCouchDbClient() {
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	private String db_name = "picking_led";
+	
+	public CouchDbClient getCouchDB_Client(){
+		
+		db_name += "_db_"+String.format("%08d",Integer.parseInt(distribuidorService.obter().getCodigoDistribuidorDinap())<=0?
+				 							   Integer.parseInt(distribuidorService.obter().getCodigoDistribuidorFC())
+			 							   	  :Integer.parseInt(distribuidorService.obter().getCodigoDistribuidorDinap()));
 		
 		org.lightcouch.CouchDbProperties properties = new org.lightcouch.CouchDbProperties()
-			.setDbName(DB_NAME)
-			.setCreateDbIfNotExist(true)
-			.setProtocol(couchDbProperties.getProtocol())
-			.setHost(couchDbProperties.getHost())
-			.setPort(couchDbProperties.getPort())
-			.setUsername(couchDbProperties.getUsername())
-			.setPassword(couchDbProperties.getPassword())
-			.setMaxConnections(100)
-			.setConnectionTimeout(500);
-	
-		this.couchDbClient = new CouchDbClient(properties);
-
+				.setDbName(db_name)
+				.setCreateDbIfNotExist(true)
+				.setProtocol(couchDbProperties.getProtocol())
+				.setHost(couchDbProperties.getHost())
+				.setPort(couchDbProperties.getPort())
+				.setUsername(couchDbProperties.getUsername())
+				.setPassword(couchDbProperties.getPassword())
+				.setMaxConnections(100)
+				.setConnectionTimeout(500);
+		
+			return new CouchDbClient(properties);
+			
 	}
 	
 	@Override
 	@Transactional
-	public void exportarPickingLED(List<PickingLEDFullDTO> registros){
+	public void exportarPickingLED(List<PickingLEDFullDTO> registros, Date dataParametroParaExtracao){
 		Gson gson = new Gson();
 		JsonArray jA = new JsonArray();
+		
+		this.couchDbClient = getCouchDB_Client();
 		
 		for (PickingLEDFullDTO registro : registros) {
 			JsonElement jElement = new JsonParser().parse(gson.toJson(registro)); 
@@ -64,7 +71,7 @@ public class LedModelo4IntegracaoServiceImpl implements LedModelo4IntegracaoServ
 		
 		JsonObject json = new JsonObject();
 		
-		String dataFormatada = DateUtil.formatarData(Calendar.getInstance().getTime(), Constantes.DATE_PATTERN_PT_BR_COUCH).toString();
+		String dataFormatada = DateUtil.formatarData(dataParametroParaExtracao, Constantes.DATE_PATTERN_PT_BR_COUCH).toString();
 
 		String docName = "pickingLed_"+dataFormatada;
 		
@@ -83,64 +90,5 @@ public class LedModelo4IntegracaoServiceImpl implements LedModelo4IntegracaoServ
 		this.couchDbClient.save(json); 
 		
 	}
-	
-	/*
-	 * 
-	@Transactional
-	@Override
-	public String importarCotas(){
-
-		Date dataOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
-		
-		String dataFormatada = DateUtil.formatarData(dataOperacaoDistribuidor, Constantes.DATE_PATTERN_PT_BR_FOR_FILE);
-		
-		String docName = "cotasExportadas_"+dataFormatada;
-		JsonObject jsonDoc = new JsonObject();
-		
-		try {
-			jsonDoc = couchDbClient.find(JsonObject.class, docName);
-		} catch (NoDocumentException e) {
-
-		}
-		
-		if(jsonDoc == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não há cotas para importação.");
-		}
-		
-		Gson gson = new Gson();
-
-		JsonArray jaCotas = jsonDoc.getAsJsonArray(dataFormatada);
-		
-		List<CotaImportadaConsolidador> cotas = new ArrayList<>(); 
-		
-		if(jaCotas == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não há cotas para importação.");
-		}
-		
-		for (JsonElement jsonElement : jaCotas) {
-			CotaImportadaConsolidador cota = gson.fromJson(jsonElement, CotaImportadaConsolidador.class);
-			cotas.add(cota);
-		}
-		
-		// Refatorar para update/insert 
-		/*
-		 * INSERT INTO table (id, name, age) VALUES(1, "A", 19) ON DUPLICATE KEY UPDATE    
-			name=VALUES(name), age=VALUES(age)
-		 */
-	/*
-		if(!cotas.isEmpty() && cotas.size() > 1){
-			this.consolidadorCotaRepositoy.deletarCotasImportadas();
-
-			for (CotaImportadaConsolidador cota : cotas) {
-				this.consolidadorCotaRepositoy.adicionar(cota);
-			}
-		}else{
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não há cotas para importação.");
-		}
-		
-		return cotas.size() + " - Cotas importadas com sucesso!";
-	}
-	 */
-
 	
 }
