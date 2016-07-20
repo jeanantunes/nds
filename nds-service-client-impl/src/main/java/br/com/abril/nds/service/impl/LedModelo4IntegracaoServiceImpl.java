@@ -59,6 +59,7 @@ public class LedModelo4IntegracaoServiceImpl implements LedModelo4IntegracaoServ
 	@Override
 	@Transactional
 	public void exportarPickingLED(List<PickingLEDFullDTO> registros, Date dataParametroParaExtracao){
+
 		Gson gson = new Gson();
 		JsonArray jA = new JsonArray();
 		
