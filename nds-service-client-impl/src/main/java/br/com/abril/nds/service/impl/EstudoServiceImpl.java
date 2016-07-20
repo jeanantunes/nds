@@ -159,8 +159,9 @@ public class EstudoServiceImpl implements EstudoService {
 			final Integer reparte = lancamentoService.obterRepartePromocionalEdicao(codigoProduto, numeroEdicao);
 			analiseDTO.setQtdRepartePromocional(BigIntegerUtil.valueOfInteger(reparte));
 		}
-		
-		analiseDTO.setAbrangenciaEstudo(analiseParcialService.calcularPercentualAbrangencia(estudoId));
+	
+	if (analiseDTO.getAbrangenciaEstudo() == null )
+		analiseDTO.setAbrangenciaEstudo(analiseParcialService.calcularPercentualAbrangencia(estudoId));  
 		
 		return analiseDTO;
 	}
