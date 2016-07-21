@@ -26,7 +26,7 @@ $(function() {
 <div class="area">
 	
 		<div class="box_home saudacao">
-		   	<img src="${pageContext.request.contextPath}/images/logo_sistema.png" alt="Novo Distrib" class="logoHome" />
+		   	<img src="${pageContext.request.contextPath}/images/logo_sistema_new.png" alt="Novo Distrib" class="logoHome" />
 		
 		    <h1>Seja bem-vindo ao NDS</h1>
 		    
