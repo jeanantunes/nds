@@ -36,17 +36,14 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <input:hidden id="logout_true" name="logout_true" />
   <tr >
-    <td align="center" ><img src="images/logo_sistema.png" width="110" height="70" border="0" alt="Treelog"  /></td>
-  </tr>
-  <tr>
-    <td>&nbsp;</td>
+    <td align="center" ><img src="images/Logo_Total_Express.png" border="0" alt="Treelog"  /></td>
   </tr>
   <tr>
     <td style="padding-bottom:5px;">&nbsp;
       <div class="bg_login">
         <table width="549"  align="center" cellpadding="0" cellspacing="0">
           <tr  >
-            <td width="28%"  height="140px" align="right"  ><img src="images/logo_nds1.png" width="270" height="144" alt="NDS - Sistem TREELOG"  /></td>
+            <td width="28%"  height="140px" align="right"  ><img src="images/logo_nds1_new.png" width="270" height="144" alt="NDS - Sistem TREELOG"  /></td>
             <td width="65%" style="border:1px solid #d6d6d6; background:#FFF;"><table width="70%"  align="center" cellpadding="2" cellspacing="2" id="tabLogin">
               <tr>
                 <td>&nbsp;</td>
