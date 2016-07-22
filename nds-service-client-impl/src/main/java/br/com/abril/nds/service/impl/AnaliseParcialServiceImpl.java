@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,10 +59,13 @@ import br.com.abril.nds.service.RepartePdvService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import ch.qos.logback.classic.Logger;
 
 @Service
 public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
+	  
+	  
     private static final int QTDE_PARCIAIS_BASE = 3;
 
     @Autowired
@@ -121,6 +125,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	
     	List<AnaliseParcialDTO> lista = analiseParcialRepository.buscaAnaliseParcialPorEstudo(queryDTO);
     	
+    	List<AnaliseParcialDTO> lista1 = new ArrayList<AnaliseParcialDTO> ();
+    	
     	List<AnaliseParcialExportXLSDTO> listaXLS = new ArrayList<>();
     	
 		BigInteger total_qtdCotas = BigInteger.ZERO;
@@ -163,9 +169,18 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 EdicoesProdutosDTO edicoesProdutosAcumulado = this.getReparteVendaAcumulado(edicoesProdutoPorCota);
                 
                 if (edicoesProdutosAcumulado != null) {
+                if(queryDTO.possuiOrdenacaoPlusFiltro() && queryDTO.possuiPercentualDeVenda() ){
+                	          
+                	int pct = edicoesProdutosAcumulado.getVenda().intValue()*100/ ( edicoesProdutosAcumulado.getReparte().intValue() > 0?edicoesProdutosAcumulado.getReparte().intValue():1) ;
+                	if ( (pct >=  queryDTO.getFilterSortFrom() && pct <=  queryDTO.getFilterSortTo()))
+                	   lista1.add(item);
+                	else
+                		continue;
+                }
+                else lista1.add(item);
                 
                     temp.add(edicoesProdutosAcumulado);
-                }
+                } 
                 
                 item.setEdicoesBase(temp);
                 
@@ -185,6 +200,9 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
    
                 total_qtdCotas = BigIntegerUtil.soma(total_qtdCotas, BigInteger.ONE);
                 
+            }
+            if(queryDTO.possuiOrdenacaoPlusFiltro() && queryDTO.possuiPercentualDeVenda() ){
+                lista = lista1;
             }
             
         } else {
@@ -843,7 +861,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	for (EstudoCotaGerado estudoCota : estudoGerado.getEstudoCotas()) {
     		
     		if(BigIntegerUtil.isMenorQueZero(estudoCota.getReparte())){
-    			
+    		    System.err.println("ERRO. ESTUDO COTA GERADO COM VALOR NEGATIVO cota="+estudoCota.getCota().getNumeroCota()+
+    		    		"  qtde="+estudoCota.getReparte());
     			validacao = new ValidacaoException(TipoMensagem.WARNING,"Há cota(s) com reparte(s) negativo(s), por favor ajustá-la(s)! Cota=" +
     			estudoCota.getCota().getNumeroCota() + " ");
     			return validacao;
@@ -862,7 +881,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     		
     	} 
     	
-    	System.out.println("count: "+ count);
+    	System.out.println("count: "+ count+ " sum(estudo_cota_gerado.reparte)="+sumReparteCotas.longValue()+ 
+    			"  sum(estudo_cota_gerado.qtde_efetivas_cota)="+sumQtdEfetivaCotas.longValue());
     	
     	if((reparteFisicoOuPrevisto != null)&&(estudoGerado.getQtdeReparte().compareTo(reparteFisicoOuPrevisto.toBigInteger()) > 0)) {
     		validacao =  new ValidacaoException(TipoMensagem.WARNING,"O reparte distribuido é maior que estoque disponível!");
@@ -870,7 +890,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	}
     	
     	if((estudoGerado.getSobra() != null) && estudoGerado.getSobra().compareTo(BigInteger.ZERO) != 0){
-    		validacao =  new ValidacaoException(TipoMensagem.WARNING,"Não é possível liberar estudo com saldo de reparte.Sobra("+estudoGerado.getSobra()+")  != 0");
+    		validacao =  new ValidacaoException(TipoMensagem.WARNING,"Não é possível liberar estudo com saldo de reparte.Sobra("+estudoGerado.getSobra()+")!=0");
     		return validacao;
     	}
     	

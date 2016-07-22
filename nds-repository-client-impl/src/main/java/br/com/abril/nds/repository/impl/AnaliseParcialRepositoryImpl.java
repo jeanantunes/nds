@@ -934,7 +934,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append("       AND tm.GRUPO_MOVIMENTO_ESTOQUE <> 'ENVIO_ENCALHE' ");
     	sql.append("       AND mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
 
-    	sql.append(" GROUP BY mec.cota_id, mec.produto_edicao_id)T group by T.cotaID) tt  ");
+    	sql.append(" GROUP BY mec.cota_id, mec.produto_edicao_id, mec.lancamento_id)T group by T.cotaID) tt  ");
     	sql.append("     where tt.percVenda BETWEEN :de AND :ate ");
     	
     	SQLQuery query = getSession().createSQLQuery(sql.toString());
