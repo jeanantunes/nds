@@ -6,6 +6,10 @@ import gnu.io.SerialPort;
 import java.io.OutputStream;
 
 public class PortaCom {
+	
+	//================================================================================
+    // Properties
+    //================================================================================
 	public String Dadoslidos;
 	public int nodeBytes;
 	private int baudrate;
@@ -17,12 +21,34 @@ public class PortaCom {
 	private boolean PortaOK;
 	private String NomePorta;
 
+	//================================================================================
+    // Constructors
+    //================================================================================
+	/**
+	* @description Metodo construtor
+	* @author André W da Silva
+	* @date 19/07/2016
+	* @access Privado
+	* @param String Nome da Porta COM. 
+	* @param int Baudrate da Porta COM.
+	* @param int Timeout para a Porta COM.
+	* @return nenhum
+	*/
 	public PortaCom(String p, int b, int t) {
 		this.NomePorta = p;
 		this.baudrate = b;
 		this.timeout = t;
 	}
 
+	//================================================================================
+    // Methods
+    //================================================================================
+	/**
+	* @description Obter ID da Porta Serial COM
+	* @author André W da Silva
+	* @date 19/07/2016
+	* @access Public
+	*/
 	public void ObterIdDaPorta() {
 
 		try {
@@ -41,6 +67,12 @@ public class PortaCom {
 
 	}
 
+	/**
+	* @description Abre como comunicacao com a porta Serial COM
+	* @author André W da Silva
+	* @date 19/07/2016
+	* @access Publico
+	*/
 	public void AbrirPorta() {
 		try {
 			porta = (SerialPort) cp.open("SerialPort", timeout);
@@ -55,7 +87,14 @@ public class PortaCom {
 			System.exit(1);
 		}
 	}
-
+	
+	/**
+	* @description Envia o comando em bytes para a Serial COM
+	* @author André W da Silva
+	* @date 19/07/2016
+	* @access Public
+	* @param String msg - comando para a porta
+	*/
 	public void EnviarComando(String msg) {
 		try {
 			saida = porta.getOutputStream();
@@ -76,6 +115,12 @@ public class PortaCom {
 		}
 	}
 
+	/**
+	* @description Fecha a comunicacao com a porta Serial COM
+	* @author André W da Silva
+	* @date 19/07/2016
+	* @access Public
+	*/
 	public void FecharCom() {
 		try {
 			porta.close();
@@ -85,10 +130,24 @@ public class PortaCom {
 		}
 	}
 
+	/**
+	* @description Metodo de acesso para obter o nomen da Porta COM
+	* @author André W da Silva
+	* @date 19/07/2016
+	* @access Public
+	* @return String - nome da porta
+	*/
 	public String obterNomePorta() {
 		return NomePorta;
 	}
 
+	/**
+	* @description Metodo de acesso para obter o Baudrate da Porta COM
+	* @author André W da Silva
+	* @date 19/07/2016
+	* @access Public
+	* @return int - baudrate da porta
+	*/
 	public int obterBaudrate() {
 		return baudrate;
 	}

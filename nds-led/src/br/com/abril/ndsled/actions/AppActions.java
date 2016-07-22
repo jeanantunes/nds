@@ -1,11 +1,18 @@
 package br.com.abril.ndsled.actions;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream.GetField;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.CouchDbProperties;
@@ -18,174 +25,175 @@ import com.google.gson.JsonObject;
 
 import br.com.abril.ndsled.exceptions.CarregarLancamentoException;
 import br.com.abril.ndsled.modelo.DetalhesPickingPorCotaModelo04DTO;
+import br.com.abril.ndsled.modelo.Cota;
 import br.com.abril.ndsled.modelo.Lancamento;
 import br.com.abril.ndsled.modelo.PickingLEDFullDTO;
 
+/**
+ * Classe com Metodos Statics para realizar acoes.
+ * 
+ * @author t40080
+ * @since 19/07/2016
+ * 
+ */
 public class AppActions {
-	
-	private static final String DB_NAME = "picking_led";
-	
-	private CouchDbClient couchDbClient;
-	
-	private CouchDbProperties properties = new CouchDbProperties()
-			  .setDbName(DB_NAME)
-			  .setCreateDbIfNotExist(true)
-			  .setProtocol("https")
-			  .setHost("localhost")
-			  .setPort(5984)
-			  .setUsername("admin")
-			  .setPassword("admin")
-			  .setMaxConnections(100)
-			  .setConnectionTimeout(500);
 
-	//TODO main TEST - EXCLUIR APÓS TESTES
-	public static void main(String[] args) {
-		
-		CouchDbProperties properties = new CouchDbProperties()
-				  .setDbName(DB_NAME)
-				  .setCreateDbIfNotExist(true)
-				  .setProtocol("http")
-				  .setHost("localhost")
-				  .setPort(5984)
-				  .setUsername("admin")
-				  .setPassword("admin")
-				  .setMaxConnections(100)
-				  .setConnectionTimeout(5000);
-		
-		CouchDbClient couchDbClient = new CouchDbClient(properties);
-		
+	// TODO main TEST - EXCLUIR APÓS TESTES
+	/*
+	 * public static void main(String[] args) {
+	 * 
+	 * CouchDbProperties properties = new CouchDbProperties()
+	 * .setDbName(DB_NAME) .setCreateDbIfNotExist(true) .setProtocol("http")
+	 * .setHost("localhost") .setPort(5984) .setUsername("admin")
+	 * .setPassword("admin") .setMaxConnections(100)
+	 * .setConnectionTimeout(5000);
+	 * 
+	 * CouchDbClient couchDbClient = new CouchDbClient(properties);
+	 * 
+	 * List<PickingLEDFullDTO> registros = new ArrayList<PickingLEDFullDTO>();
+	 * 
+	 * String dataFormatada = new
+	 * SimpleDateFormat("ddMMyyyy").format(Calendar.getInstance().getTime());
+	 * 
+	 * String docName = "pickingLed_"+dataFormatada;
+	 * 
+	 * JsonObject jsonDoc = new JsonObject();
+	 * 
+	 * try { jsonDoc = couchDbClient.find(JsonObject.class, docName); } catch
+	 * (NoDocumentException e) {
+	 * 
+	 * }
+	 * 
+	 * if(jsonDoc != null){
+	 * 
+	 * Gson gson = new Gson();
+	 * 
+	 * JsonArray jaCotas = jsonDoc.getAsJsonArray(dataFormatada);
+	 * 
+	 * for (JsonElement jsonElement : jaCotas) { PickingLEDFullDTO
+	 * registroArquivo = gson.fromJson(jsonElement, PickingLEDFullDTO.class);
+	 * registros.add(registroArquivo); }
+	 * 
+	 * }
+	 * 
+	 * for (PickingLEDFullDTO det : registros) {
+	 * System.out.println(det.toString());
+	 * System.out.println(det.getEnderecoLED());
+	 * System.out.println(det.getObservacoes02()); }
+	 * 
+	 * }
+	 */
+	// TODO FIM
+
+	/**
+	 * Metodo para carregar o Lancamento por data do CouchDB
+	 * 
+	 * @param date
+	 * @return List Lancamento
+	 * @throws CarregarLancamentoException
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public static List<Lancamento> carregarLancamento(Date date)
+			throws CarregarLancamentoException, FileNotFoundException,
+			IOException, Exception {
+
+		Properties props = loadProperties(new FileInputStream(
+				"conf/couchdb.properties"));
+
+		CouchDbProperties couchDbProperties = new CouchDbProperties()
+				.setDbName(props.getProperty("couchdb.dbname"))
+				.setCreateDbIfNotExist(true)
+				.setProtocol(props.getProperty("couchdb.protocol"))
+				.setHost(props.getProperty("couchdb.host"))
+				.setPort(Integer.parseInt(props.getProperty("couchdb.port")))
+				.setUsername(props.getProperty("couchdb.username"))
+				.setPassword(props.getProperty("couchdb.password"))
+				.setMaxConnections(100).setConnectionTimeout(5000);
+
+		CouchDbClient couchDbClient = new CouchDbClient(couchDbProperties);
+
 		List<PickingLEDFullDTO> registros = new ArrayList<PickingLEDFullDTO>();
-		
-		String dataFormatada = new SimpleDateFormat("ddMMyyyy").format(Calendar.getInstance().getTime()); 
-
-		String docName = "pickingLed_"+dataFormatada;
-		
+		String dataFormatada = new SimpleDateFormat("ddMMyyyy").format(date);
+		String docName = "pickingLed_" + dataFormatada;
 		JsonObject jsonDoc = new JsonObject();
-		
+
 		try {
 			jsonDoc = couchDbClient.find(JsonObject.class, docName);
 		} catch (NoDocumentException e) {
-
+			throw new CarregarLancamentoException("Lançamento não encontrado para essa Data.");
 		}
-		
-		if(jsonDoc != null){
-			
-			Gson gson = new Gson();
 
+		if (jsonDoc != null) {
+			Gson gson = new Gson();
 			JsonArray jaCotas = jsonDoc.getAsJsonArray(dataFormatada);
-			
 			for (JsonElement jsonElement : jaCotas) {
-				PickingLEDFullDTO registroArquivo = gson.fromJson(jsonElement, PickingLEDFullDTO.class);
+				PickingLEDFullDTO registroArquivo = gson
+						.fromJson(jsonElement,
+								PickingLEDFullDTO.class);
 				registros.add(registroArquivo);
 			}
-		
 		}
-		
+
+		List<Lancamento> lancamentos = new ArrayList<Lancamento>();
 		for (PickingLEDFullDTO det : registros) {
 			System.out.println(det.toString());
+			System.out.println(det.getCodigoCotaLinha1());
 			System.out.println(det.getEnderecoLED());
-			System.out.println(det.getObservacoes02());
+			
+			List<DetalhesPickingPorCotaModelo04DTO> det1 = det.getListTrailer2();
+			
+			for(DetalhesPickingPorCotaModelo04DTO item : det1){
+				Lancamento lancamento = new Lancamento();
+				lancamento.setCodigoCota(new Integer(det.getCodigoCotaLinha1().replace(";", "")));
+				lancamento.setCodigoProduto(new Integer(item.getProduto().replace(";", "")));
+				lancamento.setDataLacamento(new SimpleDateFormat("ddMMyyyy").parse(det.getDataLancamento().replace(";", "")));
+				//lancamento.setDesconto(new BigDecimal(item.getPrecoDesconto()));
+				lancamento.setEdicaoProduto(new Integer(item.getEdicao().replace(";", "")));
+				lancamento.setNomeProduto(item.getNome().replace(";", ""));
+				//lancamento.setPrecoCapa(new BigDecimal(14.99));
+				//lancamento.setPrecoCusto(new BigDecimal(14.99));
+				lancamento.setQuantidadeReparte(new Integer(item.getQuantidade().replace(";", "")));
+				lancamento.setCodigoLed(new Integer(det.getEnderecoLED().replace(";", "")));
+				lancamentos.add(lancamento);
+			}
+			
+			
 		}
-		
-	}
-	//TODO FIM
-	
-	public List<Lancamento> carregarLancamento(Date date) throws CarregarLancamentoException {
-		// Aqui vai ter uma chamada para o metodo que vai fazer a comunicacao
-		// com o couch.
-
-		// dados importados via couch
-		List<DetalhesPickingPorCotaModelo04DTO> listDadosImportadosViaCouchDb = importarPickingLED();
-		
-		List<Lancamento> lancamentos = new ArrayList<Lancamento>();
-
-		Lancamento lancamento = new Lancamento();
-		lancamento.setCodigoCota(1);
-		lancamento.setCodigoProduto(552);
-		lancamento.setDataLacamento(new java.sql.Date(2016, 04, 01));
-		lancamento.setDesconto(new BigDecimal(0));
-		lancamento.setEdicaoProduto(1);
-		lancamento.setNomeProduto("Veja");
-		lancamento.setPrecoCapa(new BigDecimal(14.99));
-		lancamento.setPrecoCusto(new BigDecimal(14.99));
-		lancamento.setQuantidadeReparte(10);
-		lancamento.setCodigoLed(2);
-		lancamentos.add(lancamento);
-
-		lancamento = new Lancamento();
-		lancamento.setCodigoCota(2);
-		lancamento.setCodigoProduto(552);
-		lancamento.setDataLacamento(new java.sql.Date(2016, 04, 01));
-		lancamento.setDesconto(new BigDecimal(0));
-		lancamento.setEdicaoProduto(1);
-		lancamento.setNomeProduto("Veja");
-		lancamento.setPrecoCapa(new BigDecimal(14.99));
-		lancamento.setPrecoCusto(new BigDecimal(14.99));
-		lancamento.setQuantidadeReparte(7);
-		lancamento.setCodigoLed(49);
-		lancamentos.add(lancamento);
-
-		lancamento = new Lancamento();
-		lancamento.setCodigoCota(1);
-		lancamento.setCodigoProduto(111222);
-		lancamento.setDataLacamento(new java.sql.Date(2016, 04, 01));
-		lancamento.setDesconto(new BigDecimal(0));
-		lancamento.setEdicaoProduto(1);
-		lancamento.setNomeProduto("Avengers");
-		lancamento.setPrecoCapa(new BigDecimal(14.99));
-		lancamento.setPrecoCusto(new BigDecimal(14.99));
-		lancamento.setQuantidadeReparte(25);
-		lancamento.setCodigoLed(2);
-		lancamentos.add(lancamento);
-
-		lancamento = new Lancamento();
-		lancamento.setCodigoCota(2);
-		lancamento.setCodigoProduto(111222);
-		lancamento.setDataLacamento(new java.sql.Date(2016, 04, 01));
-		lancamento.setDesconto(new BigDecimal(0));
-		lancamento.setEdicaoProduto(1);
-		lancamento.setNomeProduto("Avengers");
-		lancamento.setPrecoCapa(new BigDecimal(4.99));
-		lancamento.setPrecoCusto(new BigDecimal(4.99));
-		lancamento.setQuantidadeReparte(50);
-		lancamento.setCodigoLed(49);
-		lancamentos.add(lancamento);
 
 		return lancamentos;
 
 	}
-	
-	public List<DetalhesPickingPorCotaModelo04DTO> importarPickingLED(){
-		
-		this.couchDbClient = new CouchDbClient(properties);
-		
-		List<DetalhesPickingPorCotaModelo04DTO> registros = new ArrayList<DetalhesPickingPorCotaModelo04DTO>();
-		
-		String dataFormatada = new SimpleDateFormat("ddMMyyyy").format(Calendar.getInstance().getTime()); 
 
-		String docName = "pickingLed_"+dataFormatada;
-		
-		JsonObject jsonDoc = new JsonObject();
-		
-		try {
-			jsonDoc = couchDbClient.find(JsonObject.class, docName);
-		} catch (NoDocumentException e) {
-
-		}
-		
-		if(jsonDoc != null){
-			
-			Gson gson = new Gson();
-
-			JsonArray jaCotas = jsonDoc.getAsJsonArray(dataFormatada);
-			
-			for (JsonElement jsonElement : jaCotas) {
-				DetalhesPickingPorCotaModelo04DTO registroArquivo = gson.fromJson(jsonElement, DetalhesPickingPorCotaModelo04DTO.class);
-				registros.add(registroArquivo);
-			}
-		
-		}
-		return registros;
+	/**
+	 * Metodo Util para carregar uma arquivo de Properties
+	 * 
+	 * @param in Espera uma arquivo .properties
+	 * @return Properties
+	 * @throws IOException
+	 */
+	private static Properties loadProperties(InputStream in) throws IOException {
+		Properties props = new Properties();
+		props.load(in);
+		in.close();
+		return props;
 	}
 
+
+	/**
+	 * Metodo usado para verificar cota sem led.
+	 * @param cotas
+	 * @return boolean
+	 */
+	public static boolean verificarCotaSemLed(List<Cota> cotas) {
+		Iterator<Cota> iCotas = cotas.iterator();
+		boolean retorno = false;
+		while (iCotas.hasNext()) {
+			if(iCotas.next().getCodLed() == 0){
+				retorno = true;
+				break;
+			}
+		}
+		return retorno;
+	}
 }
