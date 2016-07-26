@@ -303,6 +303,8 @@ public class Janela {
 		
 		pckDataLancamento.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				limparLeds();
+				
 				carregarLancamento((Date) pckDataLancamento.getModel()
 						.getValue());
 			}
@@ -313,6 +315,9 @@ public class Janela {
 				enviarLed();
 			}
 		});
+		
+		
+		desabilitarObjetosView();
 	}
 
 	/**
@@ -487,22 +492,12 @@ public class Janela {
 	
 	private void enviarLed(){
 		
+		limparLeds();
+		
 		PortaCom pCom = new PortaCom(cbxPortaSerial
 				.getSelectedItem().toString(), 9600, 0);
 		pCom.ObterIdDaPorta();
 		pCom.AbrirPorta();
-		
-		Iterator<Cota> cotaIterator = lstCotas.iterator();
-		while(cotaIterator.hasNext()){
-			String codLed = String.format("%04d", cotaIterator.next().getCodLed());
-			pCom.EnviarComando("p"+codLed+"0000");
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 		
 		Produto produtoSelecionado = (Produto) cbxListaProdutos
 				.getSelectedItem();
@@ -523,5 +518,30 @@ public class Janela {
 		}
 		
 		pCom.FecharCom();
+	}
+	
+	private void limparLeds(){
+
+		if(lstCotas != null){
+			PortaCom portaCom = new PortaCom(cbxPortaSerial
+					.getSelectedItem().toString(), 9600, 0);
+			portaCom.ObterIdDaPorta();
+			portaCom.AbrirPorta();
+			Iterator<Cota> cotaIterator = lstCotas.iterator();
+			while(cotaIterator.hasNext()){
+				String codLed = String.format("%04d", cotaIterator.next().getCodLed());
+				portaCom.EnviarComando("p"+codLed+"0000");
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			portaCom.FecharCom();
+		}
+		
+		
+		
 	}
 }
