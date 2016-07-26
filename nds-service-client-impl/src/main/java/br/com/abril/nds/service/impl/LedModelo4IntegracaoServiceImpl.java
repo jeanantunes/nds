@@ -33,9 +33,8 @@ public class LedModelo4IntegracaoServiceImpl implements LedModelo4IntegracaoServ
 	@Autowired
 	private DistribuidorService distribuidorService;
 	
-	private String db_name = "picking_led";
-	
 	public CouchDbClient getCouchDB_Client(){
+		String db_name = "picking_led";
 		
 		db_name += "_db_"+String.format("%08d",Integer.parseInt(distribuidorService.obter().getCodigoDistribuidorDinap())<=0?
 				 							   Integer.parseInt(distribuidorService.obter().getCodigoDistribuidorFC())
