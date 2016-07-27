@@ -138,8 +138,10 @@ public class MovimentoFinanceiroCotaController extends BaseController{
                     + DateUtil.formatarDataPTBR(data) + "].");
 		}
 		
-		int qtdRegistros = this.movimentoFinanceiroCotaService.obterQuantidadeProcessamentoFinanceiroCota(numeroCota, produtoEdicao);
-			
+		//int qtdRegistros = this.movimentoFinanceiroCotaService.obterQuantidadeProcessamentoFinanceiroCota(numeroCota, produtoEdicao);
+		
+		int qtdRegistros = processamentoFinanceiroCotaVO.size();
+		
 		TableModel<CellModelKeyValue<ProcessamentoFinanceiroCotaVO>> tableModel = new TableModel<CellModelKeyValue<ProcessamentoFinanceiroCotaVO>>();
 			
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(processamentoFinanceiroCotaVO));
