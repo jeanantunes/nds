@@ -1051,6 +1051,10 @@ public class CotaServiceImpl implements CotaService {
         dto.setTipoDistribuicaoCota(cotaRepository.obterTipoDistribuicao(idCota).name());
         dto.setRecebeComplementar(parametroDistribuicaoCota.getRecebeComplementar());
         
+        if(parametroDistribuicaoCota.getEnderecoLED() != null){
+        	dto.setEnderecoLED(parametroDistribuicaoCota.getEnderecoLED());
+        }
+        
         ParametroCobrancaDistribuicaoCota parametro = cota.getParametroCobrancaDistribuicaoCota();
         
         if(parametro != null) {
@@ -1115,6 +1119,10 @@ public class CotaServiceImpl implements CotaService {
         parametros.setTermoAdesaoRecebido(dto.getTermoAdesaoRecebido());
         parametros.setUtilizaProcuracao(dto.getUtilizaProcuracao());
         parametros.setProcuracaoRecebida(dto.getProcuracaoRecebida());
+        
+        if(dto.getEnderecoLED() != null && dto.getEnderecoLED() > 0){
+        	parametros.setEnderecoLED(dto.getEnderecoLED());
+        }
         
         if(dto.getUtilizaParametrosDocsDistribuidor() != null){
         	parametros.setUtilizaDocsParametrosDistribuidor(dto.getUtilizaParametrosDocsDistribuidor());
@@ -3363,5 +3371,11 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional
 	public boolean isCotaParametro(Long idCota, Integer numCota, TipoEmissaoDocumento tipoDoc){
 		return cotaRepository.isCotaParametro(idCota, numCota, tipoDoc);
+	}
+	
+	@Override
+	@Transactional
+	public List<Integer> buscarNumeroCotasPorEnderecoLED(Integer enderecoLED){
+		return cotaRepository.buscarNumeroCotasPorEnderecoLED(enderecoLED);
 	}
 }
