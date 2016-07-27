@@ -41,6 +41,10 @@ public class NecaBuilder  implements Serializable {
 			public int compare(ItemNotaEnvio o1, ItemNotaEnvio o2) {
 				if(o1 != null && o2 != null && o1.getEstudoCota() != null && o2.getEstudoCota() != null
 						&& o1.getEstudoCota().getEstudo() != null && o2.getEstudoCota().getEstudo() != null) {
+					
+					if (o1.getEstudoCota().getEstudo().getLancamento() == null || o2.getEstudoCota().getEstudo().getLancamento() == null ) {
+						 return -1;
+					}
 					if(o1.getEstudoCota().getEstudo().getLancamento().getDataLancamentoDistribuidor().getTime() < o2.getEstudoCota().getEstudo().getLancamento().getDataLancamentoDistribuidor().getTime()){
 						return -1;
 					}
