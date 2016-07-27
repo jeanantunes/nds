@@ -1470,7 +1470,16 @@ public class CotaController extends BaseController {
 			cotaService.validarTipoEntrega(distribuicao.getNumCota(),distribuicao.getDescricaoTipoEntrega());
 			
 			DistribuicaoEntregaValidator.validar(distribuicao);
-		} 
+		}
+		
+		if(distribuicao.getEnderecoLED() != null && distribuicao.getEnderecoLED() > 0){
+			List<Integer> numeroCotasNoEnderecoLED =  cotaService.buscarNumeroCotasPorEnderecoLED(distribuicao.getEnderecoLED());
+			
+			if(!numeroCotasNoEnderecoLED.isEmpty()){
+				throw new ValidacaoException(TipoMensagem.WARNING,"A cota "+numeroCotasNoEnderecoLED.get(0)+" já esta cadastrado neste endereco: "+distribuicao.getEnderecoLED());
+			}
+			
+		}
 	}
 
 	/**

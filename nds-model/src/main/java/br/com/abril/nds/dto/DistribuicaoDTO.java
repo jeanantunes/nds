@@ -69,6 +69,8 @@ public class DistribuicaoDTO implements Serializable  {
 	
 	private List<ItemDTO<BaseCalculo, String>> basesCalculo;
 	
+	private Integer enderecoLED;
+	
 	public DistribuicaoDTO(){
 		
 	}
@@ -633,5 +635,13 @@ public class DistribuicaoDTO implements Serializable  {
 
 	public void setUtilizaParametrosDocsDistribuidor(Boolean utilizaParametrosDocsDistribuidor) {
 		this.utilizaParametrosDocsDistribuidor = utilizaParametrosDocsDistribuidor;
+	}
+
+	public Integer getEnderecoLED() {
+		return enderecoLED;
+	}
+	
+	public void setEnderecoLED(Integer enderecoLED) {
+		this.enderecoLED = enderecoLED;
 	}
 }

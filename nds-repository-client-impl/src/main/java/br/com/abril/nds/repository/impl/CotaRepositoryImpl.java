@@ -4037,4 +4037,19 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return (BigIntegerUtil.isMaiorQueZero((BigInteger)query.uniqueResult()));
 		
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Integer> buscarNumeroCotasPorEnderecoLED(Integer enderecoLED){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select c.numero_cota from cota c where c.endereco_led = :enderecoLED  ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("enderecoLED", enderecoLED);
+		
+		return query.list();
+	}
 }
