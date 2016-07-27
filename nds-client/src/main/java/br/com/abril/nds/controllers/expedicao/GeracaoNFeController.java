@@ -18,6 +18,7 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.RegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -36,6 +37,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.NaturezaOperacaoService;
+import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Constantes;
@@ -88,6 +90,9 @@ public class GeracaoNFeController extends BaseController {
 	@Autowired
 	private NaturezaOperacaoService naturezaOperacaoService;
 	
+	@Autowired
+	private RegiaoService regiaoService;
+	
 	private static final String FILTRO_SESSION_NOTA_FISCAL = "filtroNotaFiscal";
 	
 	@Path("/")
@@ -100,6 +105,7 @@ public class GeracaoNFeController extends BaseController {
 		this.obterTiposDestinatarios();
 		this.iniciarComboBox();
 		this.iniciarTiposEmissaoRegimeEspecial();
+		this.carregarComboRegiao();
 		
 	}
 
@@ -126,7 +132,19 @@ public class GeracaoNFeController extends BaseController {
 
     	result.include("listaBox", this.roteirizacaoService.getComboTodosBoxes());
     }
+    
+	public void carregarComboRegiao() {
 
+		List<ItemDTO<Long,String>> comboRegiao =  new ArrayList<ItemDTO<Long,String>>();
+		List<RegiaoDTO> regioes = regiaoService.buscarRegiao();
+
+		for (RegiaoDTO itemRegiao : regioes) {
+			comboRegiao.add(new ItemDTO<Long,String>(itemRegiao.getIdRegiao() , itemRegiao.getNomeRegiao()));
+		}
+
+		result.include("listaRegiao",comboRegiao);
+	}
+    
 	private void iniciarComboRoteiro() {
 		//result.include("listaTipoNotaFiscal", this.carregarTipoNotaFiscal());
 		

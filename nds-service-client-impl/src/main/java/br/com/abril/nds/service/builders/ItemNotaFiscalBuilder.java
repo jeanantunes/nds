@@ -34,6 +34,7 @@ import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoFechamentoFisc
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoFechamentoFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.COFINS;
+import br.com.abril.nds.model.fiscal.nota.CofinsOutrWrapper;
 import br.com.abril.nds.model.fiscal.nota.CofinsWrapper;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ICMS;
@@ -43,12 +44,14 @@ import br.com.abril.nds.model.fiscal.nota.Impostos;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.OrigemProduto;
 import br.com.abril.nds.model.fiscal.nota.PIS;
+import br.com.abril.nds.model.fiscal.nota.PISOutrWrapper;
 import br.com.abril.nds.model.fiscal.nota.PISWrapper;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.TribIPI;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
+import br.com.abril.nds.service.impl.NFeCalculatorImpl;
 import br.com.abril.nds.util.CurrencyUtil;
 
 public class ItemNotaFiscalBuilder  {
@@ -356,6 +359,9 @@ public class ItemNotaFiscalBuilder  {
 			} else {
 				produtoServico.setValorAliquotaIPI(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getValorAliquota()));
 				
+				// se produto não for tributado não cria tag
+				
+				/*
 				IPI ipi = new IPI();
 				
 				ipi.setCst(ipiProduto.getCst().toString());
@@ -370,6 +376,7 @@ public class ItemNotaFiscalBuilder  {
 				// FIX ME ajustar a classe de valor do ipi
 				ipi.getIPITrib().setValorIPI(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getBaseCalculo()));
 				detalheNotaFiscal.getImpostos().setIpi(ipi);
+				*/
 			}
 			
 		} else {
@@ -389,7 +396,16 @@ public class ItemNotaFiscalBuilder  {
 		TributoAliquota tributoCofins = tributoAliquota.get("COFINS");
 		
 		if(tributoPis != null) {
-			PISWrapper pisWrapper = new PISWrapper();
+			PISOutrWrapper pisOutWrapper = null;
+			
+			PISWrapper pisWrapper = null;
+			
+			if(!tributacaoProduto.get("PIS").isIsentoOuNaoTributado()) {
+				pisOutWrapper = new PISOutrWrapper();
+			} else {
+				pisWrapper = new PISWrapper();
+			}
+			
 			PIS pis = new PIS();
 			pis.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 			pis.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
@@ -398,22 +414,23 @@ public class ItemNotaFiscalBuilder  {
 			
 			if(tributacaoProduto.get("PIS") != null) {
 				
-				pis.setCst(tributacaoProduto.get("PIS").getCst());
-				
 				if(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getTributosNaturezaOperacao() != null) {
+					pis.setCst(tributacaoProduto.get("PIS").getCst());
 					
 					for(Tributo t : notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getTributosNaturezaOperacao()) {
 						if("PIS".equals(t.getNome())) {
-							if(tributacaoProduto.get("PIS").isIsentoOuNaoTributado()) {
+							if(!tributacaoProduto.get("PIS").isIsentoOuNaoTributado()) {
 								pis.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 								pis.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 								pis.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));	
 								pis.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 							} else {
-								pis.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(tributacaoProduto.get("PIS").getBaseCalculo()));
+								
 								pis.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoPis.getValor()));
 								pis.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoPis.getValor()));
 								pis.setValor(CurrencyUtil.arredondarValorParaDuasCasas(produtoServico.getValorTotalBruto().multiply(tributoPis.getValor().divide(BigDecimal.valueOf(100)))));
+								pis.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(NFeCalculatorImpl.calculate(pis)));
+								
 							}
 							break;
 						}
@@ -422,10 +439,14 @@ public class ItemNotaFiscalBuilder  {
 				
 			}
 			
-			// FIXME Ajustar CST
-			pisWrapper.setPis(pis);
-			
-			detalheNotaFiscal.getImpostos().setPis(pisWrapper);
+			if(pisOutWrapper != null) {
+				pisOutWrapper.setPis(pis);
+				
+				detalheNotaFiscal.getImpostos().setPisOutr(pisOutWrapper);
+			} else {
+				pisWrapper.setPis(pis);
+				detalheNotaFiscal.getImpostos().setPis(pisWrapper);
+			}			
 			
 		} else {
 			StringBuilder sb = new StringBuilder().append("PIS não encontrado para o Produto: ")
@@ -439,7 +460,16 @@ public class ItemNotaFiscalBuilder  {
 		
 		if(tributoCofins != null){
 			
-			CofinsWrapper cofinsWrapper = new CofinsWrapper();	
+			CofinsOutrWrapper cofinsOutrWrapper = null;
+			
+			CofinsWrapper cofinsWrapper = null;
+			
+			if(!tributacaoProduto.get("COFINS").isIsentoOuNaoTributado()) {
+				cofinsOutrWrapper = new CofinsOutrWrapper();	
+			} else {
+				cofinsWrapper = new CofinsWrapper();
+			}
+			
 			COFINS cofins = new COFINS();
 			cofins.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 			cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
@@ -454,16 +484,16 @@ public class ItemNotaFiscalBuilder  {
 					
 					for(Tributo t : notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getTributosNaturezaOperacao()) {
 						if("COFINS".equals(t.getNome())) {
-							if(tributacaoProduto.get("COFINS").isIsentoOuNaoTributado()) {
+							if(!tributacaoProduto.get("COFINS").isIsentoOuNaoTributado()) {
 								cofins.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 								cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 								cofins.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 								cofins.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 							} else {
-								cofins.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(tributacaoProduto.get("COFINS").getBaseCalculo()));
 								cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoCofins.getValor()));
 								cofins.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoCofins.getValor()));
 								cofins.setValor(CurrencyUtil.arredondarValorParaDuasCasas(produtoServico.getValorTotalBruto().multiply(tributoCofins.getValor().divide(BigDecimal.valueOf(100)))));
+								cofins.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(NFeCalculatorImpl.calculate(cofins)));
 							}
 							break;
 						}
@@ -472,9 +502,17 @@ public class ItemNotaFiscalBuilder  {
 				
 			}
 			
-			cofinsWrapper.setCofins(cofins);
 			
-			detalheNotaFiscal.getImpostos().setCofins(cofinsWrapper);
+			
+			if(cofinsWrapper != null) {
+				cofinsWrapper.setCofins(cofins);
+				detalheNotaFiscal.getImpostos().setCofins(cofinsWrapper);
+				
+			} else {
+				cofinsOutrWrapper.setCofins(cofins);
+				detalheNotaFiscal.getImpostos().setCofinsOutr(cofinsOutrWrapper);
+				
+			}
 			
 		} else {
 			StringBuilder sb = new StringBuilder().append("COFINS não encontrado para o Produto: ")
@@ -615,7 +653,6 @@ public class ItemNotaFiscalBuilder  {
 				codigoBarras = "";
 			}	
 			
-			
 			produtoServico = new ProdutoServico();
 			produtoServico.setCodigoBarras(codigoBarras);
 			produtoServico.setNcm(movimentoFechamentoFiscal.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getCodigo());
@@ -632,6 +669,7 @@ public class ItemNotaFiscalBuilder  {
 		BigDecimal valorTotalBruto = BigDecimal.ZERO;
 		BigDecimal valorUnitario = BigDecimal.ZERO;
 		BigDecimal valorDesconto = BigDecimal.ZERO;
+		
 		if(movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalCota) {
 			
 			valorUnitario = ((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getValoresAplicados().getPrecoComDesconto();

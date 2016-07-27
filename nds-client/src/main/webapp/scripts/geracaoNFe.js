@@ -518,6 +518,8 @@ var geracaoNFeController = $.extend({
 			});
 		}
 		
+		params.push({name:"filtro.idRegiao[]" , value: $("#geracaoNfe-filtro-comboRegioes").val()});
+		
 		var mensagens = []; 
 		if($("#geracaoNfe-filtro-movimentoDe").val() == '' || $("#geracaoNfe-filtro-movimentoAte").val() == '') {
 			mensagens.push('A data de movimento não nula');
@@ -632,6 +634,9 @@ var geracaoNFeController = $.extend({
 				params.push({name : "filtro.listIdFornecedor[]", value : v});
 			});
 		}
+		
+		params.push({name:"filtro.idRegiao[]" , value: $("#geracaoNfe-filtro-comboRegioes").val()});
+		
 		_this.gerar();
 		
 		// $.postJSON(this.path + 'hasCotasSuspensas.json', params, function(data) {
@@ -690,6 +695,9 @@ var geracaoNFeController = $.extend({
 				params.push({name : "filtro.listIdFornecedor[]", value : v});
 			});
 		}
+		
+		params.push({name:"filtro.idRegiao[]" , value: $("#geracaoNfe-filtro-comboRegioes").val()});
+		
 		var todas = $('#checkboxCheckAllCotasSuspensas', this.workspace).checked;
 		
 		var cotasSuspensas = $(".checkboxCheckCotasSuspensas", this.workspace);
