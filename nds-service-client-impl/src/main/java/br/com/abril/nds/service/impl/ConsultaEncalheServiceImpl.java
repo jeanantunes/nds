@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
@@ -25,13 +26,18 @@ import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.service.ChamadaEncalheService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ConsultaEncalheService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
+import br.com.abril.nds.service.EmailService;
+import br.com.abril.nds.service.exception.AutenticacaoEmailException;
+import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.PDFUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.DebitoCreditoCotaVO;
 
 @Service
@@ -50,10 +56,13 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 	private ConferenciaEncalheService conferenciaEncalheService;
 	
 	@Autowired
-	private ChamadaEncalheService chamadaEncalheService;
+	private DocumentoCobrancaService documentoCobrancaService;
 	
 	@Autowired
-	private DocumentoCobrancaService documentoCobrancaService;
+	private CotaService cotaService;
+	
+	@Autowired
+	private EmailService emailService;
 
 	/*
 	 * (non-Javadoc)
@@ -216,6 +225,33 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 			
 			datas.add(filtro.getDataRecolhimentoInicial());
 			
+			List<Integer> numeroCotasExclusao = new ArrayList<>();
+			
+			for (Integer numCota : listaCotas) {
+				
+				Cota cota = cotaService.obterPorNumeroDaCota(numCota);
+				
+				if(filtro.getNumCota() == null){
+					if(cota.getParametroDistribuicao().getUtilizaDocsParametrosDistribuidor()){
+						if(filtro.isDistribEnviaEmail()){
+							enviarSlipPorEmail(filtro, cota);
+						}
+					}else{
+						if(!Util.validarBoolean(cota.getParametroDistribuicao().getSlipImpresso())){
+							numeroCotasExclusao.add(numCota);
+						}else{
+							if(Util.validarBoolean(cota.getParametroDistribuicao().getSlipEmail())){
+								enviarSlipPorEmail(filtro, cota);
+							}
+						}
+					}
+				}
+			}
+			
+			if(!numeroCotasExclusao.isEmpty()){
+				listaCotas.removeAll(numeroCotasExclusao);
+			}
+			
 			this.documentoCobrancaService.gerarSlipCobranca(arquivos, listaCotas, filtro.getDataRecolhimentoInicial(), filtro.getDataRecolhimentoFinal(), false, TipoArquivo.PDF);
 			
 			if (arquivos.size() == 1) {
@@ -229,6 +265,42 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		}
 
 		return retorno;
+	}
+
+
+	private void enviarSlipPorEmail(FiltroConsultaEncalheDTO filtro, Cota cota){
+		
+		List<byte[]> arquivosCota = new ArrayList<byte[]>();
+		
+		List<Integer> numeroCotaList = new ArrayList<>();
+		numeroCotaList.add(cota.getNumeroCota());
+		
+		this.documentoCobrancaService.gerarSlipCobranca(arquivosCota, numeroCotaList, filtro.getDataRecolhimentoInicial(), filtro.getDataRecolhimentoFinal(), false, TipoArquivo.PDF);
+		
+		byte[] retornoArquivoCota = null; 
+		
+		retornoArquivoCota = arquivosCota.size() > 1 ? retornoArquivoCota = PDFUtil.mergePDFs(arquivosCota) : arquivosCota.get(0);
+		
+		/*
+		if (arquivosCota.size() == 1) {
+			
+			retornoArquivoCota = arquivosCota.get(0);
+		
+		} else if (arquivosCota.size() > 1) {
+
+			retornoArquivoCota = PDFUtil.mergePDFs(arquivosCota);
+		}
+		*/
+		
+		String[] listaDeDestinatarios = {cota.getPessoa().getEmail()};
+		AnexoEmail anexoPDF = new AnexoEmail("nota-envio", retornoArquivoCota, TipoAnexo.PDF);
+		
+		try {
+			emailService.enviar("[NDS] - Consulta Encalhe", "Olá, segue em anexo o slip emitido pela consulta de encalhe.", listaDeDestinatarios, anexoPDF);
+		} catch (AutenticacaoEmailException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	/**

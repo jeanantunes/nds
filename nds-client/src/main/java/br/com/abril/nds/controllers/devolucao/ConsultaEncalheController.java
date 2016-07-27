@@ -44,6 +44,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ConsultaEncalheService;
@@ -144,6 +145,10 @@ public class ConsultaEncalheController extends BaseController {
         this.iniciarComboRota();
 
         this.iniciarComboRoteiro();
+        
+        //this.isDistribGeraSlip();
+        boolean isRecebe = distribuidorService.verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(null, TipoParametrosDistribuidorEmissaoDocumento.SLIP);
+		result.include("isDistribGeraSlip", isRecebe);
 		
 	}
 	
@@ -515,6 +520,12 @@ public class ConsultaEncalheController extends BaseController {
 		
 	}
 	
+	
+	private void isDistribGeraSlip() {
+		boolean isRecebe = distribuidorService.verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(null, TipoParametrosDistribuidorEmissaoDocumento.SLIP);
+		result.include("isDistribGeraSlip", isRecebe);
+	}
+	
 	@Get
 	@Path("/gerarSlip")
 	public void gerarSlip(String dataRecolhimentoInicial, String dataRecolhimentoFinal, 
@@ -523,12 +534,14 @@ public class ConsultaEncalheController extends BaseController {
 			
 		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial, dataRecolhimentoFinal, idFornecedor, numeroCota, codigoProduto, idBoxEncalhe, idBox, null, idRota, idRoteiro);
 		
+		filtro.setDistribEnviaEmail(distribuidorService.verificarParametroDistribuidorEmissaoDocumentosEmailCheck(null, TipoParametrosDistribuidorEmissaoDocumento.SLIP));
+		
 		byte[] slip =  consultaEncalheService.gerarDocumentosConferenciaEncalhe(filtro);
 		
 		if(slip != null) { 
 			escreverArquivoParaResponse(slip, "slip");
 		} else {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum slip encontra."));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum slip encontrado."));
 		}
 		
 	}
@@ -1130,7 +1143,6 @@ public class ConsultaEncalheController extends BaseController {
 		FileExporter.to("consulta-encalhe-detalhe", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), 
 				filtro, 
-				null,
 				listaConsultaEncalheVO,
 				ConsultaEncalheDetalheReparteVO.class, this.httpResponse);
 		

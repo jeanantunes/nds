@@ -22,6 +22,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
@@ -217,6 +218,9 @@ public class GeracaoNotaEnvioController extends BaseController {
     private byte[] getNotas() throws Exception{
 
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+		
+		filtro.setImpressao(true);
+		filtro.setDistribEnviaEmail(this.distribuidorService.verificarParametroDistribuidorEmissaoDocumentosEmailCheck(null, TipoParametrosDistribuidorEmissaoDocumento.NOTA_ENVIO));
 	
 		List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro);
 	
@@ -246,6 +250,10 @@ public class GeracaoNotaEnvioController extends BaseController {
     @Post
     public void getArquivoNotaEnvio() {
 
+     	if(!distribuidorService.verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(null, TipoParametrosDistribuidorEmissaoDocumento.NOTA_ENVIO)){
+     		throw new ValidacaoException(TipoMensagem.ERROR, "Notas de envio não podem ser impressas, distribuidor não aceita impressão deste documento.");
+     	}
+         
         try {
             
             byte[] notasGeradas = this.getNotas();
@@ -364,6 +372,12 @@ public class GeracaoNotaEnvioController extends BaseController {
     public void enviarEmail() {
     	
     	FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+    	
+    	filtro.setEnvioEmail(true);
+    	
+     	if(!distribuidorService.verificarParametroDistribuidorEmissaoDocumentosEmailCheck(null, TipoParametrosDistribuidorEmissaoDocumento.NOTA_ENVIO)){
+     		throw new ValidacaoException(TipoMensagem.ERROR, "Notas de envio não podem ser enviadas por e-mail, distribuidor não aceita o envio deste documento.");
+     	}
     	
 		try {
 			ValidacaoException mensagemValidacao = geracaoNotaEnvioService.enviarEmail(filtro);

@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.SQLQuery;
+
 import br.com.abril.nds.client.vo.CotaVO;
+import br.com.abril.nds.client.vo.baixaboleto.TipoEmissaoDocumento;
 import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoXLSDTO;
@@ -43,6 +46,7 @@ import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
+import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
 
@@ -458,4 +462,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
 
 	boolean validarCotaRecebeFornecedor(Long idCota, Long idEdicao);
+
+
+	boolean isCotaParametro(Long idCota, Integer numeroCota, TipoEmissaoDocumento tipoDoc);
 }

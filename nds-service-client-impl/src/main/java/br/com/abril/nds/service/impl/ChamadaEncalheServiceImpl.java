@@ -34,12 +34,14 @@ import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
+import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
@@ -69,6 +71,7 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
@@ -862,6 +865,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 		}
        
+//		return "teste Email".getBytes();
 		return this.gerarDocumentoEmissaoCE(listaCEWrapper);
 		
 	}
@@ -869,11 +873,13 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Transactional
 	public List<ChamadaEncalheImpressaoWrapper> gerarListaChamadaEncalheImpressaoWrapper(FiltroEmissaoCE filtro){
 		
-		Date dataOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
-		
 		DistribuidorDTO distribuidor = distribuidorService.obterDadosEmissao();
 		
+		Date dataOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
+		
 		final List<ChamadaEncalheImpressaoWrapper> listaCEWrapper = new ArrayList<ChamadaEncalheImpressaoWrapper>();
+		
+		List<ChamadaEncalheImpressaoWrapper> listaCEWrapperImpressaoEemail = new ArrayList<ChamadaEncalheImpressaoWrapper>();
 		
 		List<CotaEmissaoDTO> lista = chamadaEncalheRepository.obterDadosEmissaoImpressaoChamadasEncalhe(filtro);
 		
@@ -883,9 +889,45 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		Map<Long, List<GrupoCota>> mapGPS =  this.grupoRepository.obterListaGrupoCotaPorDataOperacao(dataOperacaoDistribuidor);
 		
+		List<Integer> numeroCotasNaoRecebemEmail = new ArrayList<>();
+		
+		List<Long> idCotasImpressaoEenvioEmail = new ArrayList<>();
+		
 		for(CotaEmissaoDTO dto : lista) {
+
+			boolean isImpressaoEemail = false;
 			
 			Cota cota = cotaRepository.buscarPorId(dto.getIdCota());
+			
+			if(filtro.getNumCotaDe()==null && filtro.getNumCotaAte()==null){
+				
+				if(filtro.isImpressao()){
+					if(cota.getParametroDistribuicao().getUtilizaDocsParametrosDistribuidor()){
+						if(filtro.isDistribEnviaEmail()){
+							idCotasImpressaoEenvioEmail.add(dto.getIdCota());
+							isImpressaoEemail = true;
+	    				}
+					}else{
+						if(!Util.validarBoolean(cota.getParametroDistribuicao().getChamadaEncalheImpresso())){
+							continue;
+	    				}else{
+	    					if(Util.validarBoolean(cota.getParametroDistribuicao().getChamadaEncalheEmail())){
+	    						idCotasImpressaoEenvioEmail.add(dto.getIdCota());
+	    						isImpressaoEemail = true;
+	    					}
+	    				}
+					}
+				}else{
+					if(filtro.isEnvioEmail()){
+						if(!cota.getParametroDistribuicao().getUtilizaDocsParametrosDistribuidor()){
+        					if(!Util.validarBoolean(cota.getParametroDistribuicao().getChamadaEncalheEmail())){
+        						numeroCotasNaoRecebemEmail.add(cota.getNumeroCota());
+    							continue;
+        					}
+        				}
+					}
+				}
+			}
 			
 			dto.setEmissorNome(distribuidor.getRazaoSocial());
 			dto.setEmissorCNPJ(distribuidor.getCnpj());
@@ -967,7 +1009,32 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			listaCEWrapper.add(new ChamadaEncalheImpressaoWrapper(dto));
 			
+			if(isImpressaoEemail){
+				listaCEWrapperImpressaoEemail.add(new ChamadaEncalheImpressaoWrapper(dto));
+			}
+			
 		}
+		
+		if(!numeroCotasNaoRecebemEmail.isEmpty()){
+			String numeroCotas = "";
+			for (Integer cota : numeroCotasNaoRecebemEmail) {
+				if(numeroCotas.isEmpty()){
+					numeroCotas = cota.toString();
+				}else{
+					numeroCotas += ", "+cota;
+				}
+			}
+			
+			filtro.setValidacao(new ValidacaoVO(TipoMensagem.WARNING, "As seguintes Cotas que não recebem CE: \n"+numeroCotas));
+		}
+		
+		if(!listaCEWrapperImpressaoEemail.isEmpty()){
+
+			Map<Long, List<ChamadaEncalheImpressaoWrapper>> mapa = agruparCEporCota(listaCEWrapperImpressaoEemail);
+			
+			enviarCEporEmail(mapa);
+		}
+		
 		
 		return listaCEWrapper;
 	}
@@ -1022,10 +1089,75 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 
 	@Override
 	@Transactional
-	public String enviarEmail(FiltroEmissaoCE filtro) {
+	public void enviarEmail(FiltroEmissaoCE filtro) {
+		
+		Distribuidor distrib = distribuidorService.obter();
+		
+		if(!distribuidorService.verificarParametroDistribuidorEmissaoDocumentosEmailCheck(distrib, TipoParametrosDistribuidorEmissaoDocumento.CHAMADA_ENCALHE)){
+			throw new ValidacaoException(TipoMensagem.ERROR, "CE não podem ser enviadas por e-mail, distribuidor não aceita o envio deste documento.");
+		}
 		
 		List<ChamadaEncalheImpressaoWrapper> listaDeCEImpressao = this.gerarListaChamadaEncalheImpressaoWrapper(filtro);
 		
+		Map<Long, List<ChamadaEncalheImpressaoWrapper>> mapa = agruparCEporCota(listaDeCEImpressao);
+
+		String numeroCotasSemEmail = enviarCEporEmail(mapa);
+		
+		String mensagem = "";
+		
+		if (!numeroCotasSemEmail.isEmpty()) {
+			mensagem = "E-mail enviado com sucesso.\n As cotas abaixo não possuem e-mail cadastrado: \n "+ numeroCotasSemEmail +"\n";
+			mensagem += "-------------------------- \n";
+		}
+		
+		if(filtro.getValidacao() != null){
+			mensagem += filtro.getValidacao().getListaMensagens();
+		}
+		
+		if(!mensagem.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, mensagem);
+		}
+		
+	}
+
+
+	private String enviarCEporEmail(Map<Long, List<ChamadaEncalheImpressaoWrapper>> mapa) {
+		String numeroCotasSemEmail = "";
+		
+		for (Map.Entry<Long, List<ChamadaEncalheImpressaoWrapper>> entry : mapa.entrySet()) {
+			Long idCota = entry.getKey();
+			List<ChamadaEncalheImpressaoWrapper> lista = entry.getValue();
+			
+			Cota cota = cotaService.obterPorId(idCota);
+			
+			if (cota.getPessoa().getEmail() == null) {
+				if(numeroCotasSemEmail.isEmpty()){
+					numeroCotasSemEmail = cota.getNumeroCota().toString();
+				}else{
+					numeroCotasSemEmail +=", "+ cota.getNumeroCota().toString();
+				}
+				continue;
+			} 
+
+//			cota.getPessoa().setEmail("romulo.amendola@infoa2.com.br");
+			
+			String[] listaDeDestinatarios = {cota.getPessoa().getEmail()};
+			
+			try {
+				byte[] anexo = this.gerarDocumentoEmissaoCE(lista);
+				
+				AnexoEmail anexoPDF = new AnexoEmail("nota-envio", anexo, TipoAnexo.PDF);
+				emailSerice.enviar("Emissão Chamada de Encalhe", "Olá, segue em anexo a chamada de encalhe.", listaDeDestinatarios, anexoPDF);
+			} catch ( AutenticacaoEmailException | JRException | URISyntaxException e) {
+				e.printStackTrace();
+			}
+		}
+		return numeroCotasSemEmail;
+	}
+
+
+	private Map<Long, List<ChamadaEncalheImpressaoWrapper>> agruparCEporCota(
+			List<ChamadaEncalheImpressaoWrapper> listaDeCEImpressao) {
 		Map<Long, List<ChamadaEncalheImpressaoWrapper>> mapa = new HashMap<>();
 		
 		for (ChamadaEncalheImpressaoWrapper chamadaEncalheImpressaoWrapper : listaDeCEImpressao) {
@@ -1045,36 +1177,6 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				
 			}
 		}
-		
-		StringBuilder numeroCotas = new StringBuilder();
-		
-		for (Map.Entry<Long, List<ChamadaEncalheImpressaoWrapper>> entry : mapa.entrySet()) {
-			Long idCota = entry.getKey();
-			List<ChamadaEncalheImpressaoWrapper> lista = entry.getValue();
-			
-			Cota cota = cotaService.obterPorId(idCota);
-			
-			if (cota.getPessoa().getEmail() == null) {
-				numeroCotas.append(cota.getNumeroCota().toString() + ",");
-			} else {
-				
-				String emailDestinatario = cota.getPessoa().getEmail();
-				String[] listaDeDestinatarios = {emailDestinatario};
-				
-				
-				try {
-					byte[] anexo = this.gerarDocumentoEmissaoCE(lista);
-					
-					AnexoEmail anexoPDF = new AnexoEmail("nota-envio", anexo, TipoAnexo.PDF);
-					emailSerice.enviar("Emissão Chamada de Encalhe", "Olá, segue em anexo a chamada de encalhe.", listaDeDestinatarios, anexoPDF);
-				} catch ( AutenticacaoEmailException | JRException | URISyntaxException e) {
-					e.printStackTrace();
-				}
-				
-			}
-		}
-		
-		return numeroCotas.toString();
-		
+		return mapa;
 	}
 }

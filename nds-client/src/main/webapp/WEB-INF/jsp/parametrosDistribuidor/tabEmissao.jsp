@@ -130,27 +130,37 @@
 				<td width="75">Modelo 2</td>
 				<td width="20"><input type="radio" name="interfaceLED"
 					id="interfaceLEDMODELO3" value="MODELO_3" /></td>
-				<td width="111">Modelo 3</td>
+				<td width="85">Modelo 3</td>
+				<td width="20"><input type="radio" name="interfaceLED"
+					id="interfaceLEDMODELO4" value="MODELO_4" /></td>
+				<td width="85">Modelo 4</td>
 			</tr>
 			<tr>
-				<td colspan="3">Nome Arquivo Modelo 1:</td>
+				<td colspan="4">Nome Arquivo Modelo 1:</td>
 				<td colspan="3" style="padding-left: 10px;">
 					<input type="text" id="nomeArquivoInterfaceLED1" maxlength="100" style="width: 120px;"
 						   value="${parametrosDistribuidor.nomeArquivoInterfaceLED1}">
 				</td>
 			</tr>
 			<tr>
-				<td colspan="3">Nome Arquivo Modelo 2:</td>
+				<td colspan="4">Nome Arquivo Modelo 2:</td>
 				<td colspan="3" style="padding-left: 10px;">
 					<input type="text" id="nomeArquivoInterfaceLED2" maxlength="100" style="width: 120px;"
 						   value="${parametrosDistribuidor.nomeArquivoInterfaceLED2}">
 				</td>
 			</tr>
 			<tr>
-				<td colspan="3">Nome Arquivo Modelo 3:</td>
+				<td colspan="4">Nome Arquivo Modelo 3:</td>
 				<td colspan="3" style="padding-left: 10px;">
 					<input type="text" id="nomeArquivoInterfaceLED3" maxlength="100" style="width: 120px;"
 						   value="${parametrosDistribuidor.nomeArquivoInterfaceLED3}">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="4">Nome Arquivo Modelo 4:</td>
+				<td colspan="3" style="padding-left: 10px;">
+					<input type="text" id="nomeArquivoInterfaceLED4" maxlength="100" style="width: 120px;"
+						   value="${parametrosDistribuidor.nomeArquivoInterfaceLED4}">
 				</td>
 			</tr>
 			<tr>

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -49,6 +50,10 @@ public class FiltroDividaGeradaDTO implements Serializable {
 	private	ColunaOrdenacao colunaOrdenacao;
 	
 	private List<ColunaOrdenacao> listaColunaOrdenacao;
+	
+	private String mensagemValidacaoImpressao;
+	
+	private boolean isDistribEnviaEmail;
 	
 	public FiltroDividaGeradaDTO() {}
 	
@@ -279,7 +284,24 @@ public class FiltroDividaGeradaDTO implements Serializable {
 	public void setIdBanco(Long idBanco) {
 		this.idBanco = idBanco;
 	}
+	
 
+	public String getMensagemValidacaoImpressao() {
+		return mensagemValidacaoImpressao;
+	}
+
+	public void setMensagemValidacaoImpressao(String mensagemValidacaoImpressao) {
+		this.mensagemValidacaoImpressao = mensagemValidacaoImpressao;
+	}
+
+	public boolean isDistribEnviaEmail() {
+		return isDistribEnviaEmail;
+	}
+
+	public void setDistribEnviaEmail(boolean isDistribEnviaEmail) {
+		this.isDistribEnviaEmail = isDistribEnviaEmail;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
