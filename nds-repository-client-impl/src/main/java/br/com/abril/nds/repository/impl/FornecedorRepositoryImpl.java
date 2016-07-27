@@ -64,7 +64,7 @@ public class FornecedorRepositoryImpl extends
 		final StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select fornecedor from Fornecedor fornecedor  ")
-			.append(" where fornecedor.id not in ( ")
+			.append(" where fornecedor.situacaoCadastro ='ATIVO' AND  fornecedor.id not in ( ")
 			
 						.append(" select fornecedorF.id from Cota cota JOIN cota.fornecedores fornecedorF ")
 						.append(" where cota.id = :idCota ) ");
