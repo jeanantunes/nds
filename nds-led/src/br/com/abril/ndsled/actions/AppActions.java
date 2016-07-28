@@ -98,8 +98,11 @@ public class AppActions {
 			throws CarregarLancamentoException, FileNotFoundException,
 			IOException, Exception {
 
-		Properties props = loadProperties(new FileInputStream(
-				"conf/couchdb.properties"));
+		//Properties props = loadProperties(new FileInputStream(
+		//		"./couchdb.properties"));
+		
+		Properties props = loadProperties(AppActions.class.getClassLoader().getResourceAsStream("couchdb.properties"));
+		
 
 		CouchDbProperties couchDbProperties = new CouchDbProperties()
 				.setDbName(props.getProperty("couchdb.dbname"))
