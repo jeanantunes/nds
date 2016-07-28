@@ -22,7 +22,7 @@ import java.util.TreeSet;
 
 import javax.xml.bind.ValidationException;
 
-//import org.jrimum.domkee.financeiro.banco.febraban.Titulo.EnumAceite;
+import org.jrimum.domkee.financeiro.banco.febraban.Titulo.EnumAceite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1815,14 +1815,14 @@ public class BoletoServiceImpl implements BoletoService {
         //PARAMETROS ?
         corpoBoleto.setTituloDigitoDoNossoNumero(digitoNossoNumero);
         corpoBoleto.setTituloTipoDeDocumento("DM_DUPLICATA_MERCANTIL");
-        if(corpoBoleto.getTituloAceite() == null) {
+        if(corpoBoleto.getTituloAceite() == null || corpoBoleto.getTituloAceite().equals("")) {
         	corpoBoleto.setTituloAceite("N");
         } else {
-//        	if(corpoBoleto.getTituloAceite().equals(EnumAceite.A)) {
-//        		corpoBoleto.setTituloAceite("A");
-//        	} else {
-//        		corpoBoleto.setTituloAceite("N");
-//        	}
+        	if(corpoBoleto.getTituloAceite().equals(EnumAceite.A)) {
+        		corpoBoleto.setTituloAceite("A");
+        	} else {
+        		corpoBoleto.setTituloAceite("N");
+        	}
         	
         }
         

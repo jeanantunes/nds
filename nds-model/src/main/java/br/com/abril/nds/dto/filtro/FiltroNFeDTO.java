@@ -59,6 +59,8 @@ public class FiltroNFeDTO implements Serializable {
 	
 	private Long idEditor;
 	
+	private Long idRegiao;
+	
 	public Integer getIntervaloBoxInicial() {
 		return intervaloBoxInicial;
 	}
@@ -242,5 +244,13 @@ public class FiltroNFeDTO implements Serializable {
 
 	public void setIdEditor(Long idEditor) {
 		this.idEditor = idEditor;
+	}
+
+	public Long getIdRegiao() {
+		return idRegiao;
+	}
+
+	public void setIdRegiao(Long idRegiao) {
+		this.idRegiao = idRegiao;
 	}
 }

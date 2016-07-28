@@ -20,8 +20,14 @@ public class Impostos implements Serializable {
 	@XmlElement(name="PIS")
 	private PISWrapper pis;
 
+	@XmlElement(name="PIS")
+	private PISOutrWrapper pisOutr;
+	
 	@XmlElement(name="COFINS")
 	private CofinsWrapper cofins;
+	
+	@XmlElement(name="COFINS")
+	private CofinsOutrWrapper cofinsOutr;
 	
 	public ICMS getIcms() {
 		if(this.icms == null) return null;
@@ -48,6 +54,14 @@ public class Impostos implements Serializable {
 	public void setPis(PISWrapper pis) {
 		this.pis = pis;
 	}
+	
+	public PISOutrWrapper getPisOutr() {
+		return pisOutr;
+	}
+
+	public void setPisOutr(PISOutrWrapper pisOutr) {
+		this.pisOutr = pisOutr;
+	}
 
 	public CofinsWrapper getCofins() {
 		return cofins;
@@ -55,5 +69,13 @@ public class Impostos implements Serializable {
 
 	public void setCofins(CofinsWrapper cofins) {
 		this.cofins = cofins;
+	}
+
+	public CofinsOutrWrapper getCofinsOutr() {
+		return cofinsOutr;
+	}
+
+	public void setCofinsOutr(CofinsOutrWrapper cofinsOutr) {
+		this.cofinsOutr = cofinsOutr;
 	}
 }

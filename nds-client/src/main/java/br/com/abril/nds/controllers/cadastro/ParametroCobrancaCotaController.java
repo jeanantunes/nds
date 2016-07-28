@@ -423,8 +423,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         
         validarParametroCobrancaCota(parametroCobranca);
         
-        if (parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(parametroCobranca.getIdCota()) == 0
-        		&& parametroCobrancaAlterado) {
+        if (parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(parametroCobranca.getIdCota()) == 0 && parametroCobrancaAlterado) {
 
             parametroCobrancaCotaService.inserirFormaCobrancaDoDistribuidorNaCota(parametroCobranca);
             

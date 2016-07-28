@@ -244,7 +244,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		} else if (idTipoNotaFiscal == NF_ENTRADA_POR_DEVOLUCAO) {
 			sqlBuilder.append(" '5' as tipoPedido, ");
 		} else if (idTipoNotaFiscal == NF_VENDA_COTA){
-			sqlBuilder.append(" '9' as tipoPedido, ");
+			sqlBuilder.append(" '2' as tipoPedido, ");
 		} else {
 			sqlBuilder.append(" '2' as tipoPedido, ");
 		}
@@ -277,7 +277,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		
 		sqlBuilder.append(" LPAD(cast(nfn.id as char), 8, '0') as numeroDocOrigem, ")
 		.append(" cast(nfps.SEQUENCIA as char) as numItemPedido, ")
-		.append(" 'NDS' as codSistemaOrigemPedido, ")
+		.append(" paramFtf.CODIGO_ORIGEM as codSistemaOrigemPedido, ")
 		.append(" RPAD(cast(nfps.CODIGO_PRODUTO as char), 10, ' ') as codProdutoOuServicoSistemaOrigem, ")
 		.append(" replace(cast(nfps.quantidade_comercial as char), '.', '') as qtdeProdutoOuServico, ")
 		.append(" replace(cast(round(nfps.VALOR_UNITARIO_COMERCIAL, 8) as char), '.', '') as valorUnitario, ")
@@ -295,11 +295,13 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" '0000100014' as codMaterialOuServicoCorporativo, ")
 		.append(" paramFtf.CODIGO_NATUREZA_OPERACAO_FTF as novoCodigoTipoNaturezaOperacao, ")
 		.append(" nfps.DESCRICAO_PRODUTO as descricaoProduto, ")
-		.append(" '' as codEanProduto ")
+		.append(" '' as codEanProduto, ")
+		.append(" produto.CENTRO_LUCRO_CORPORATIVO as centroLucroCorporativo ")
 		.append(" from nota_fiscal_produto_servico nfps ")
 		.append(" inner join nota_fiscal_novo nfn ON nfn.id = nfps.NOTA_FISCAL_ID ")
 		.append(" left join natureza_operacao no ON no.ID = nfn.NATUREZA_OPERACAO_ID ")
 		.append(" inner join produto_edicao pe ON pe.id = nfps.PRODUTO_EDICAO_ID ")
+		.append(" inner join produto produto ON pe.PRODUTO_ID = produto.ID ")
 		.append(" inner join nota_fiscal_pessoa nfp on nfp.ID = nfn.PESSOA_DESTINATARIO_ID_REFERENCIA ")
         .append(" inner join pessoa p on p.id = nfp.ID_PESSOA_ORIGINAL ")
         .append(" left outer join cota c on c.PESSOA_ID = p.id and c.id = nfn.COTA_ID ")
