@@ -778,6 +778,15 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			
 		}
 
+		if(filtro.getIdRegiao() != null) {
+			hql.append(" AND cota.id in (SELECT ");
+			hql.append(" c.id ");
+			hql.append(" FROM RegistroCotaRegiao registroCotaRegiao ");
+			hql.append(" INNER JOIN registroCotaRegiao.cota c ");
+			hql.append(" INNER JOIN registroCotaRegiao.regiao regiao ");
+			hql.append(" WHERE regiao.id = :idRegiao) ");
+		}
+		
 		// Data Emissão:	...		
 		if(filtro.getDataEmissao() != null) {
 			hql.append(" ");
@@ -888,7 +897,11 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getListIdFornecedor() != null) {
 			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
 		}
-
+		
+		if(filtro.getIdRegiao() != null) {
+			query.setParameter("idRegiao", filtro.getIdRegiao());
+		}
+		
 		return query;	
 	}
 
