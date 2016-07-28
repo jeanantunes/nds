@@ -78,7 +78,11 @@ public class NotaFiscalValoresCalculadosBuilder {
 		
 		BigDecimal valorIPI = BigDecimal.ZERO;
 		for(DetalheNotaFiscal dnf : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
-			valorIPI = NFeCalculatorImpl.calculate(dnf.getImpostos().getIpi());
+			
+			if(dnf.getImpostos().getIpi() != null) {				
+				valorIPI = NFeCalculatorImpl.calculate(dnf.getImpostos().getIpi());
+			}
+			
 		}
 		
 		return valorIPI;
