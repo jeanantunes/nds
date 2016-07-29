@@ -85,7 +85,10 @@ public class ParametrosSistemaController extends BaseController {
 		result.include("tiposAmbientes", tiposAmbientes);
 		result.include("processosEmissaoNFe", processosEmissao);
 		result.include("formatosImpressao", formatosImpressao);
-		result.include("displayTrava", "admin".equals(usuarioService.getUsuarioLogado().getLogin())?"":"none");
+		result.include("displayTrava", "admin".equals(usuarioService.getUsuarioLogado().getLogin())||
+				"SAD".equals(usuarioService.getUsuarioLogado().getLogin())||
+				"sustentacao".equals(usuarioService.getUsuarioLogado().getLogin())
+				?"":"none");
 		
 		boolean utilizaFTF = pdService.getParametrosDistribuidor().getTipoAtividade().equals(TipoAtividade.PRESTADOR_FILIAL)
 				&& dto.getNfeInformacoesTipoEmissor().equals(ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.name());
