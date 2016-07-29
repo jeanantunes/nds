@@ -28,9 +28,9 @@ public class LancamentoHelper {
 		
 		return Arrays.asList(StatusLancamento.CONFIRMADO
 				, StatusLancamento.PLANEJADO
-			//  COMENTADO POR ODEMIR/DOUGLAS PARA NAO PERMITIR REABERTURA DE MATRIZ QUANDO EM_BALANCEAMENTO OU BALANCEADO
-			//	, StatusLancamento.EM_BALANCEAMENTO
-			//	, StatusLancamento.BALANCEADO
+				, StatusLancamento.EM_BALANCEAMENTO
+				, StatusLancamento.BALANCEADO
+				, StatusLancamento.FURO
 				);		
 	}
 	
