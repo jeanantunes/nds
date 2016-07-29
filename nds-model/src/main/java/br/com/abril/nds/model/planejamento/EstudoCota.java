@@ -344,9 +344,10 @@ public class EstudoCota implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
-		result = prime * result + ((this.getEstudo() == null) ? 0 : this.getEstudo().hashCode());
 		
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+ 		result = prime * result + ((this.getEstudo() == null) ? 0 : this.getEstudo().hashCode());
+ 		
 		return result;
 	}
 
@@ -360,10 +361,20 @@ public class EstudoCota implements Serializable {
 			return false;
 		
 		EstudoCota other = (EstudoCota) obj;
-		if (this.getId() == null) {
-			if (other.getId() != null)
+ 		if (this.getId() == null) {
+ 			if (other.getId() != null)
+ 				return false;
+ 		} else if (!this.getId().equals(other.getId()))
+ 			return false;
+		if (this.getCota() == null) {
+			if (other.getCota() != null)
 				return false;
-		} else if (!this.getId().equals(other.getId()))
+		} else if (!this.getCota().equals(other.getCota()))
+			return false;
+		if (this.getEstudo() == null) {
+			if (other.getEstudo() != null)
+				return false;
+		} else if (!this.getEstudo().equals(other.getEstudo()))
 			return false;
 		
 		return true;
