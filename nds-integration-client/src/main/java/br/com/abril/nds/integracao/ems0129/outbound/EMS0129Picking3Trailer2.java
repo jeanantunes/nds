@@ -60,37 +60,37 @@ public class EMS0129Picking3Trailer2 implements Serializable {
 		return sequencia;
 	}
 
-	@Field(offset = 12, length = 9)
+	@Field(offset = 12, length = 11)
 	public String getProduto() {
 		return produto;
 	}
 
-	@Field(offset = 21, length = 5)
+	@Field(offset = 23, length = 5)
 	public String getEdicao() {
 		return edicao;
 	}
 
-	@Field(offset = 26, length = 21)
+	@Field(offset = 28, length = 21)
 	public String getNome() {
 		return nome;
 	}
 
-	@Field(offset = 47, length = 11)
+	@Field(offset = 49, length = 11)
 	public String getPreco() {
 		return preco;
 	}
 
-	@Field(offset = 58, length = 11)
+	@Field(offset = 60, length = 11)
 	public String getPrecoDesconto() {
 		return precoDesconto;
 	}
 	
-	@Field(offset = 69, length = 6)
+	@Field(offset = 71, length = 6)
 	public String getDesconto() {
 		return desconto;
 	}
 
-	@Field(offset = 75, length = 7)
+	@Field(offset = 77, length = 7)
 	public String getQuantidade() {
 		return quantidade;
 	}
