@@ -34,6 +34,8 @@ public class FiltroLancamentoDTO implements Serializable {
 	private	ColunaOrdenacao colunaOrdenacao;
 	private Integer totalRegistrosEncontrados;
 	
+	private Integer filtroFisico;
+	
 	public FiltroLancamentoDTO(Date data, List<Long> idsFornecedores,
 			PaginacaoVO paginacao, String sortName) {
 		this.data = data;
@@ -98,6 +100,15 @@ public class FiltroLancamentoDTO implements Serializable {
 	public void setTotalRegistrosEncontrados(Integer totalRegistrosEncontrados) {
 		this.totalRegistrosEncontrados = totalRegistrosEncontrados;
 	}
+
+	public Integer getFiltroFisico() {
+		return filtroFisico;
+	}
+
+	public void setFiltroFisico(Integer filtroFisico) {
+		this.filtroFisico = filtroFisico;
+	}
+
 
 	public enum ColunaOrdenacao {
 		CODIGO_PRODUTO("codigoProduto"),
