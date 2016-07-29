@@ -665,7 +665,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	 * @return
 	 */
 	public InterfaceDetalhesPicking getDetalhesFromDTO(DetalhesPickingDTO pickingDTO, InterfaceDetalhesPicking modelo) {
-		
+		 
 		modelo.setCodigoCota(String.format("%1$05d", pickingDTO.getNumeroCota()));
 
 		modelo.setQuantidade(pickingDTO.getQtdeMEC().longValue());
@@ -896,7 +896,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		sql.append(" select '2;' as identificadorLinha ");
 		sql.append(" ,concat(lpad(a.numero_cota,4,0), ';') as codigoCota  ");
 		sql.append(" ,concat(lpad(l.SEQUENCIA_MATRIZ,3,0), ';') as sequencia  ");
-		sql.append(" ,concat(lpad(k.codigo,8,0), ';') as produto ");
+		sql.append(" ,concat(lpad(k.codigo,10,0), ';') as produto ");
 		sql.append(" ,concat(lpad(j.numero_edicao,4,0), ';') as edicao ");
 		sql.append(" ,concat(rpad(j.nome_comercial,20,' '), ';') as nome  ");
 		sql.append(" ,concat(replace(lpad(truncate(j.PRECO_VENDA,2),11,0),'.',''), ';') as preco ");
