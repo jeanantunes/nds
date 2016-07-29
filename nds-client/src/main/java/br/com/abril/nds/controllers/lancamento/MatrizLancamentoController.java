@@ -136,7 +136,7 @@ public class MatrizLancamentoController extends BaseController {
     }
     
     @Post
-    public void obterMatrizLancamento(final Date dataLancamento, final List<Long> idsFornecedores) {
+    public void obterMatrizLancamento(final Date dataLancamento, final List<Long> idsFornecedores, Integer fisicoLancamento) {
         
         validarDadosPesquisa(dataLancamento, idsFornecedores);
         
@@ -147,6 +147,10 @@ public class MatrizLancamentoController extends BaseController {
         //session.setAttribute(DATA_ATUAL_SELECIONADA, null);
         
         final FiltroLancamentoDTO filtro = configurarFiltropesquisa(dataLancamento, idsFornecedores);
+        
+        if(fisicoLancamento != null){
+        	filtro.setFiltroFisico(fisicoLancamento);
+        }
         
         final BalanceamentoLancamentoDTO balanceamentoLancamento = this.obterBalanceamentoLancamento(filtro);
         

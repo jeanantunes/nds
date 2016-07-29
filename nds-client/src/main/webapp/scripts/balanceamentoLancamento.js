@@ -32,6 +32,10 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			data.push({name:'idsFornecedores', value: $(this).val()});
 		});
 		
+		var comboFisico = $("#comboFisico", _workspace).val();
+		
+		data.push({name:'fisicoLancamento', value: comboFisico});
+		
 		T.esconderGrid();
 				
 		$.postJSON(
