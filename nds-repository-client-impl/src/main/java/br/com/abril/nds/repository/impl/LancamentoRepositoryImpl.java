@@ -1391,9 +1391,9 @@ public class LancamentoRepositoryImpl extends
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Date dataLancamento,
-			Intervalo<Date> periodoDistribuicao, List<Long> fornecedores) {
+			Intervalo<Date> periodoDistribuicao, List<Long> fornecedores, Integer filtroFisicoLancamento) {
 
-		String sql = this.montarConsultaBalanceamentoLancamentoAnalitico()
+		String sql = this.montarConsultaBalanceamentoLancamentoAnalitico(filtroFisicoLancamento)
 				+ " order by dataLancamentoDistribuidor,nomeProduto ";
 
 		Query query = this.getQueryBalanceamentoRecolhimento(
@@ -1402,7 +1402,7 @@ public class LancamentoRepositoryImpl extends
 		return query.list();
 	}
 
-	private String montarConsultaBalanceamentoLancamentoAnalitico() {
+	private String montarConsultaBalanceamentoLancamentoAnalitico(Integer filtroFisicoLancamento) {
 
 		StringBuilder sql = new StringBuilder();
 
@@ -1463,12 +1463,12 @@ public class LancamentoRepositoryImpl extends
 		
 		sql.append(" if(produto.FORMA_COMERCIALIZACAO != 'CONSIGNADO',true,false) as produtoContaFirme ");
 
-		sql.append(montarClausulaFromConsultaBalanceamentoLancamento());
+		sql.append(montarClausulaFromConsultaBalanceamentoLancamento(filtroFisicoLancamento));
 
 		return sql.toString();
 	}
 
-	private String montarClausulaFromConsultaBalanceamentoLancamento() {
+	private String montarClausulaFromConsultaBalanceamentoLancamento(Integer filtroFisicoLancamento) {
 
 		StringBuilder sql = new StringBuilder();
 
@@ -1528,6 +1528,14 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" from lancamento lb where lb.status in (:statusLancamentoDataMenorFinalExpedido) ");
 		sql.append(" and lb.DATA_LCTO_DISTRIBUIDOR between :periodoInicial and :periodoFinal))) ");
 		sql.append(" and produtoEdicao.ATIVO = 1 ");
+		
+		if(filtroFisicoLancamento != null){
+			if(filtroFisicoLancamento > 0){
+				sql.append(" and estoqueProduto.QTDE > 0 ");
+			}else{
+				sql.append(" and (estoqueProduto.QTDE <= 0 or QTDE is null) ");
+			}
+		}
 		
 		return sql.toString();
 	}

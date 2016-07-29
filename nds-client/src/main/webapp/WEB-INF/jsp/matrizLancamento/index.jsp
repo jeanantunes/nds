@@ -206,11 +206,22 @@ balanceamentoLancamento.inicializar();
 		              </div>
 		            
 		            </td>
-		   	        <td colspan="3">Data de Lançamento Matriz/Distribuidor:</td>
+		   	        <td width="250">Data de Lançamento Matriz/Distribuidor:</td>
 		   	        <td width="109"><input class="campoDePesquisa" type="text" name="matrizLancamento-datepickerDe" id="matrizLancamento-datepickerDe" style="width:80px;" value="${data}" /></td>
-		   	        <td width="47" align="center">&nbsp;</td>
-		   	        <td width="112">&nbsp;</td>
-		   	        <td width="104"><span class="bt_novos" title="Pesquisar">   
+		   	        <td width="20" align="center">&nbsp;</td>
+		   	        
+		   	        <td width="48">F&iacute;sico:</td>
+					<td width="120">
+						<select name="comboFisico" id="comboFisico" style="width: 120px;">
+							<option value="1" label="Com F&iacute;sico"></option>
+							<option value="0" label="Sem F&iacute;sico"></option>
+							<option selected="selected" value="null" label="Ambos"></option>
+						</select>
+					</td>
+					
+					<td width="60">&nbsp;</td>
+		   	        
+		   	        <td width="60"><span class="bt_novos" title="Pesquisar">   
 						<!-- Pesquisar -->
 						<a id="linkPesquisarMatrizLancamento" href="javascript:;" onclick="balanceamentoLancamento.verificarBloqueioMatrizLancamento();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
 					</td>
