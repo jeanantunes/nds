@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService {
 	
 	
-	private static final String[] EXTENSOES_ARQUIVO_VALIDAS = {"dat", "ret"};
+	private static final String[] EXTENSOES_ARQUIVO_VALIDAS = {"dat", "ret","txt"};
 	
 	public ArquivoPagamentoBancoDTO obterPagamentosBanco(File file, String nomeArquivo) {
 	    
@@ -220,7 +221,7 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		
 		if (!isExtensaoArquivoValida(nomeArquivo)) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Extensão do arquivo inválida!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Extensão do arquivo inválida! Válidas somente ("+Arrays.toString(EXTENSOES_ARQUIVO_VALIDAS)+")");
 		}
 		
 		if (file == null || !file.isFile()) {
