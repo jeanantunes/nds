@@ -187,7 +187,7 @@ public class LeitorArquivoBaixaFinanConsolidadaServiceImpl implements LeitorArqu
 
 		if (!isExtensaoArquivoValida(nomeArquivo)) {
 
-			throw new ValidacaoException(TipoMensagem.WARNING,"Extensão do arquivo inválida!");
+			throw new ValidacaoException(TipoMensagem.WARNING,"Extensão do arquivo inválida! Válidas somente ("+java.util.Arrays.toString(EXTENSOES_ARQUIVO_VALIDAS)+")");
 		}
 
 		if (file == null || !file.isFile()) {
