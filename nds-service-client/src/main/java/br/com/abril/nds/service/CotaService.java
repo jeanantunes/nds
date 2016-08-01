@@ -464,4 +464,6 @@ public interface CotaService {
 	boolean isCotaRecebeFornecedor(Long idProdutoEdicao, Long idCota);
 
 	boolean isCotaParametro(Long idCota, Integer numCota, TipoEmissaoDocumento tipoDoc);
+
+	List<Integer> buscarNumeroCotasPorEnderecoLED(Integer enderecoLED);
 }

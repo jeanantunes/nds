@@ -184,11 +184,16 @@ $(function(){
 				<td>&nbsp;</td>
 			</tr>
 			<tr>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
+				<td width="48">Região:</td>
+					<td width="752" colspan="2">
+						<select name="geracaoNfe-filtro-comboRegioes" id="geracaoNfe-filtro-comboRegioes" style="width: 250px;">
+							<option selected="selected">Selecione...</option>
+							<c:forEach items="${listaRegiao}" var="regiao">
+								<option value="${regiao.key}" label="${regiao.value}" />
+							</c:forEach>
+						</select>
+				</td>
+				
 				<td>
 					<span class="bt_pesquisar">
 						<a href="javascript:;" id="geracaoNfe-filtro-btnPesquisar" onclick="geracaoNFeController.pesquisar();"></a>

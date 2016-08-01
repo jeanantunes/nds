@@ -287,7 +287,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 			if (dadosRetornoNFE.getNumeroNotaFiscal() != null || dadosRetornoNFE.getProtocolo() != null) {
 				NotaFiscal notaFiscal = null;
-
+				
+				if(dadosRetornoNFE.getStatus() == null) {
+					LOGGER.error("Não foi possivel realizar o parser do status / codigo." + dadosRetornoNFE.getChaveAcesso() +" - " + dadosRetornoNFE.getNumeroNotaFiscal() + " - " +dadosRetornoNFE.getSerie());
+					throw new ValidacaoException(TipoMensagem.ERROR,"Não foi possivel realizar o parser do statusda nota pelo codigo" + dadosRetornoNFE.getChaveAcesso() +" - " + dadosRetornoNFE.getNumeroNotaFiscal() + " - " +dadosRetornoNFE.getSerie()); 
+				}
+				
 				if (dadosRetornoNFE.getStatus().equals(StatusRetornado.CANCELAMENTO_HOMOLOGADO)) {
 					notaFiscal = this.notaFiscalRepository.obterChaveAcesso(dadosRetornoNFE);
 				} else {

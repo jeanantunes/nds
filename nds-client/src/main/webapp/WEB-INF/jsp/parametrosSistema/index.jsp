@@ -63,7 +63,7 @@ $(function(){
 								</tr>
 								<tr>
 									<td>Senha</td>
-									<td><input type="text" name="dto.senha" id="senha" style="width:220px;" value="${parametroSistemaGeralDTO.senha}" /></td>
+									<td><input type="password" name="dto.senha" id="senha" style="width:220px;" value="${parametroSistemaGeralDTO.senha}" /></td>
 								</tr>
 								<tr>
 									<td>Autenticar e-mail?</td>

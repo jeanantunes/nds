@@ -445,16 +445,17 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" FROM MovimentoEstoqueCota mec ")
 		.append(" JOIN mec.tipoMovimento tipoMovimento ")
 		.append(" LEFT OUTER JOIN mec.lancamento lancamento ")
-		.append(" JOIN mec.cota cota ")
-		.append(" JOIN cota.pessoa pessoa ")
+		.append(" JOIN mec.cota cota ");
+		
+		hql.append(" JOIN cota.pessoa pessoa ")
 		.append(" LEFT JOIN cota.box box ")
 		.append(" LEFT JOIN box.roteirizacao roteirizacao ")
 		.append(" LEFT JOIN roteirizacao.roteiros roteiro ");
-
+		
 		if(filtro.getIdRota()!= null){	
 			hql.append(" LEFT JOIN roteiro.rotas rota ");
 		}
-
+		
 		hql.append(" JOIN mec.produtoEdicao produtoEdicao")
 		.append(" JOIN produtoEdicao.produto produto ")
 		.append(" JOIN produto.fornecedores fornecedor")
@@ -490,7 +491,16 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			hql.append("JOIN no.tipoMovimento tm ");
 			hql.append("WHERE no.id in(:idNaturezaOperacao)) ");
 		}
-
+		
+		if(filtro.getIdRegiao() != null) {
+			hql.append(" AND cota.id in (SELECT ");
+			hql.append(" c.id ");
+			hql.append(" FROM RegistroCotaRegiao registroCotaRegiao ");
+			hql.append(" INNER JOIN registroCotaRegiao.cota c ");
+			hql.append(" INNER JOIN registroCotaRegiao.regiao regiao ");
+			hql.append(" WHERE regiao.id = :idRegiao) ");
+		}
+		
 		// Data Emissão:	...		
 		if(filtro.getDataEmissao() != null) {
 			hql.append(" ");
@@ -609,7 +619,11 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			query.setParameter("codigoBoxInicial", filtro.getIntervaloBoxInicial());
 			query.setParameter("codigoBoxFinal", filtro.getIntervaloBoxFinal());
 		}
-
+		
+		if(filtro.getIdRegiao() != null) {
+			query.setParameter("idRegiao", filtro.getIdRegiao());
+		}
+		
 		return query;	
 	}
 
@@ -764,6 +778,15 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			
 		}
 
+		if(filtro.getIdRegiao() != null) {
+			hql.append(" AND cota.id in (SELECT ");
+			hql.append(" c.id ");
+			hql.append(" FROM RegistroCotaRegiao registroCotaRegiao ");
+			hql.append(" INNER JOIN registroCotaRegiao.cota c ");
+			hql.append(" INNER JOIN registroCotaRegiao.regiao regiao ");
+			hql.append(" WHERE regiao.id = :idRegiao) ");
+		}
+		
 		// Data Emissão:	...		
 		if(filtro.getDataEmissao() != null) {
 			hql.append(" ");
@@ -874,7 +897,11 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getListIdFornecedor() != null) {
 			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
 		}
-
+		
+		if(filtro.getIdRegiao() != null) {
+			query.setParameter("idRegiao", filtro.getIdRegiao());
+		}
+		
 		return query;	
 	}
 

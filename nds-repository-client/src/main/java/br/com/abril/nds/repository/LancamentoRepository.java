@@ -2,15 +2,12 @@ package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
-
-import org.hibernate.Query;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
@@ -229,7 +226,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * 
 	 * @return lista de produtos do balanceamento do lançamento
 	 */
-	List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Date dataLancamento,Intervalo<Date> periodoDistribuicao, List<Long> fornecedores);
+	List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Date dataLancamento,Intervalo<Date> periodoDistribuicao, List<Long> fornecedores, Integer filtroFisicoLancamento);
 
 	/**
 	 * Burca último balançeamento de lançamento realizado no dia

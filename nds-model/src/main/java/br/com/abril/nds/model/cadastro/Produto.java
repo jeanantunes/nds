@@ -189,6 +189,9 @@ public class Produto implements Serializable {
 	@Column(name = "CODIGO_ICD", nullable = false)
 	private String codigoICD;
 	
+	@Column(name = "CENTRO_LUCRO_CORPORATIVO")
+	private String centroLucroCorporativo;
+	
 	public Long getId() {
 		return id;
 	}
@@ -602,11 +605,6 @@ public class Produto implements Serializable {
 	public void setProdutoEdicao(List<ProdutoEdicao> produtoEdicao) {
 		this.produtoEdicao = produtoEdicao;
 	}
-
-	@Override
-	public String toString() {
-		return new StringBuilder(codigo).append("-").append(nome).toString();
-	}
 	
 	public Boolean getIsGeracaoAutomatica() {
 		return isGeracaoAutomatica;
@@ -630,6 +628,14 @@ public class Produto implements Serializable {
 
 	public void setCodigoICD(String codigoICD) {
 		this.codigoICD = codigoICD;			
+	}
+	
+	public String getCentroLucroCorporativo() {
+		return centroLucroCorporativo;
+	}
+
+	public void setCentroLucroCorporativo(String centroLucroCorporativo) {
+		this.centroLucroCorporativo = centroLucroCorporativo;
 	}
 
 	@Override
@@ -662,4 +668,10 @@ public class Produto implements Serializable {
 			return false;
 		return true;
 	}
+	
+	@Override
+	public String toString() {
+		return new StringBuilder(codigo).append("-").append(nome).toString();
+	}
+	
 }

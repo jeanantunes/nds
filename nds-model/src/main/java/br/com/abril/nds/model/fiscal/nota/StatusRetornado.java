@@ -14,7 +14,8 @@ public enum StatusRetornado {
 	SERVICO_PARALISADO(109, "Serviço Paralisado sem Previsão"),
 	USO_DENEGADO(110, "Uso Denegado"),
 	CONSULTA_CADASTRO_UMA_OCORRENCIA(111, "Consulta cadastro com uma ocorrência"),
-	CONSULTA_CADASTRO_MUITAS_OCORRENCIAS(112, "Consulta cadastro com mais de uma ocorrência");
+	CONSULTA_CADASTRO_MUITAS_OCORRENCIAS(112, "Consulta cadastro com mais de uma ocorrência"),
+	DENEGADO(302, "Uso Denegado : Irregularidade fiscal do destinatario");
 	
 	private Integer codigo;
 	

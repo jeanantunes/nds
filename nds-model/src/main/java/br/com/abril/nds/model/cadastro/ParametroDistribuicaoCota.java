@@ -102,6 +102,8 @@ public class ParametroDistribuicaoCota implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date fimPeriodoCarencia;
 
+    @Column(name = "ENDERECO_LED")
+    private Integer enderecoLED;
 	
 	public ParametroDistribuicaoCota(){
 		
@@ -479,6 +481,12 @@ public class ParametroDistribuicaoCota implements Serializable {
 	public void setUtilizaDocsParametrosDistribuidor(Boolean utilizaDocsParametrosDistribuidor) {
 		this.utilizaDocsParametrosDistribuidor = utilizaDocsParametrosDistribuidor;
 	}
-	
-	
+
+	public Integer getEnderecoLED() {
+		return enderecoLED;
+	}
+
+	public void setEnderecoLED(Integer enderecoLED) {
+		this.enderecoLED = enderecoLED;
+	}
 }

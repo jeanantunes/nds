@@ -95,6 +95,7 @@ function Distribuicao(tela) {
 		data.push({name:'distribuicao.solNumAtras',				            value: D.get("solNumAtras")});
 		data.push({name:'distribuicao.recebeRecolhe',			            value: D.get("recebeRecolhe")});
 		data.push({name:'distribuicao.recebeComplementar',		            value: D.get("recebeComplementar")});
+		data.push({name:'distribuicao.enderecoLED',		           			value: D.get("enderecoLED")});
 		data.push({name:'distribuicao.neImpresso',				            value: D.get("neImpresso")});
 		data.push({name:'distribuicao.neEmail',					            value: D.get("neEmail")});
 		data.push({name:'distribuicao.ceImpresso',				            value: D.get("ceImpresso")});
@@ -190,6 +191,17 @@ function Distribuicao(tela) {
 		D.set('repPorPontoVenda',	    dto.repPorPontoVenda);
 		D.set('solNumAtras',			dto.solNumAtras);
 		D.set('recebeRecolhe',			dto.recebeRecolhe);
+		
+		if(dto.enderecoLED != undefined && dto.enderecoLED > 0){
+			var str = "" + dto.enderecoLED
+			var pad = "0000"
+			var ans = pad.substring(0, pad.length - str.length) + str
+			
+			D.set('enderecoLED',		ans);
+		}else{
+			D.set('enderecoLED',		'');
+		}
+		
 		
 		if(dto.tipoDistribuicaoCota=='CONVENCIONAL'){
 			D.set('recebeComplementar',	dto.recebeComplementar);			
