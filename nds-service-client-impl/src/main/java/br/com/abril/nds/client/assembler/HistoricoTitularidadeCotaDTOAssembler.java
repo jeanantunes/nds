@@ -127,6 +127,7 @@ public final class HistoricoTitularidadeCotaDTOAssembler {
         if (cota.isPessoaFisica()) {
             HistoricoTitularidadeCotaPessoaFisica pf = cota.getPessoaFisica();
             dto.setNomePessoa(pf.getNome());
+            dto.setNomeFantasia(null);
             dto.setNumeroCPF(pf.getCpf());
             dto.setNumeroRG(pf.getRg());
             dto.setDataNascimento(pf.getDataNascimento());
