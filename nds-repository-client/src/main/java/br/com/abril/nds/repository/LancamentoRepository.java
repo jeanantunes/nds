@@ -12,6 +12,7 @@ import java.util.TreeMap;
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
+import br.com.abril.nds.dto.InformeLancamentoDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoCanceladoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
@@ -448,5 +449,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	List<Date> obterDatasRecolhimentoValidasAux();
 
 	List<Long> getIdUltimoLancamentoFechado(String codigoProduto);
+
+	List<InformeLancamentoDTO> buscarInformeLancamento(Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento, PaginacaoVO paginacao);
 	
 }

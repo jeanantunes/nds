@@ -4,19 +4,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.util.CurrencyUtil;
 
-/**
- * 
- * @author Diego Fernandes
- *
- */
 public class InformeEncalheDTO implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2161743590665713176L;
 	
 	
