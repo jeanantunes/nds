@@ -90,6 +90,9 @@ public enum Permissao {
 	ROLE_LANCAMENTO_RELATORIO_TIPOS_PRODUTOS_ALTERACAO("Relatório Tipos de Produtos",	  	   				Permissao.ROLE_LANCAMENTO, true),
 	ROLE_LANCAMENTO_RELATORIO_TIPOS_PRODUTOS("Relatório Tipos de Produtos",							  	   	Permissao.ROLE_LANCAMENTO, ROLE_LANCAMENTO_RELATORIO_TIPOS_PRODUTOS_ALTERACAO, true, null),
 	
+	ROLE_LANCAMENTO_INFORME_LANCAMENTO_ALTERACAO("Informe Lançamento",	  	   								Permissao.ROLE_LANCAMENTO, true),
+	ROLE_LANCAMENTO_INFORME_LANCAMENTO("Informe Lançamento",									  	   		Permissao.ROLE_LANCAMENTO, ROLE_LANCAMENTO_INFORME_LANCAMENTO_ALTERACAO, true, null),
+	
 	ROLE_LANCAMENTO_HELP_ALTERACAO("Help",													  		 		Permissao.ROLE_LANCAMENTO, true),
 	ROLE_LANCAMENTO_HELP("Help",																		   	Permissao.ROLE_LANCAMENTO, ROLE_LANCAMENTO_HELP_ALTERACAO, true, null),
 	

@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.ProdutoLancamentoVO;
 import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
+import br.com.abril.nds.dto.InformeLancamentoDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
@@ -43,13 +44,9 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.CotaRepository;
-import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.ExpedicaoRepository;
-import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
-import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CotaService;
@@ -72,17 +69,8 @@ public class LancamentoServiceImpl implements LancamentoService {
 	private LancamentoRepository lancamentoRepository;
 	
 	@Autowired
-	private CotaRepository cotaRepository;
-	
-	@Autowired
-	private EstudoCotaRepository estudoCotaRepository;
-	
-	@Autowired
 	private EstudoGeradoRepository estudoGeradoRepository;
 	
-	@Autowired
-	private HistoricoLancamentoRepository historicoLancamentoRepository;
-
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
 	
@@ -103,9 +91,6 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Autowired
 	private CalendarioService calendarioService;
-	
-	@Autowired
-	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
 	
 	@Autowired
 	private TipoMovimentoService tipoMovimentoService;
@@ -789,10 +774,15 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	
 	@Transactional
-	     public void alterarStatus(Lancamento lancamento,StatusLancamento status){
-	        lancamento.setStatus(status);
-	        this.lancamentoRepository.merge(lancamento);
-	     }
+    public void alterarStatus(Lancamento lancamento,StatusLancamento status){
+        lancamento.setStatus(status);
+        this.lancamentoRepository.merge(lancamento);
+	}
 	
+	@Override
+	@Transactional
+	public List<InformeLancamentoDTO> buscarInformeLancamento (Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento, PaginacaoVO paginacao){
+		return this.lancamentoRepository.buscarInformeLancamento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento, paginacao);
+	}
 
 }
