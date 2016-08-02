@@ -73,7 +73,7 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
     	
     	StringBuilder sql = new StringBuilder();
     	
-    	sql.append(" select cota.numero_cota as numCota, pessoa.razao_social as nomeCota ");
+    	sql.append(" select cota.numero_cota as numCota, coalesce(if(pessoa.tipo='F',pessoa.nome, pessoa.razao_social),pessoa.nome_fantasia) as nomeCota ");
     	
     	sql.append(" from cota ");
 

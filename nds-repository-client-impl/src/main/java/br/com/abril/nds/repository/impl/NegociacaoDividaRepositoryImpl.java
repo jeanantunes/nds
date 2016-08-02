@@ -690,7 +690,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		
 		sql.append("   SELECT  ");
 		sql.append("       ct.NUMERO_COTA as numeroCota, ");
-		sql.append("       coalesce(ps.NOME_FANTASIA, ps.RAZAO_SOCIAL, ps.NOME, '') as nomeCota, ");
+		sql.append("       coalesce(if(ps.tipo = 'F',ps.NOME, ps.RAZAO_SOCIAL), ps.NOME_FANTASIA, '') as nomeCota, ");
 		sql.append("       ct.SITUACAO_CADASTRO as statusCota, ");
 		sql.append("       ROUND(ng.VALOR_ORIGINAL, 2) as dividaInicial, ");
 		sql.append("       ROUND(cb.ENCARGOS, 2) as valorEncargos, ");

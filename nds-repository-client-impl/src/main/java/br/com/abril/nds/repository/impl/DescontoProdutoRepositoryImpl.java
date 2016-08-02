@@ -152,14 +152,14 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	public List<CotaDescontoProdutoDTO> obterCotasDoTipoDescontoProduto(Long idDescontoProduto, Ordenacao ordenacao) {
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append("  SELECT c.NUMERO_COTA as numeroCota, coalesce(p.NOME, p.RAZAO_SOCIAL) as nome ")
+		sql.append("  SELECT c.NUMERO_COTA as numeroCota, coalesce(if(p.tipo = 'F',p.NOME, p.RAZAO_SOCIAL),p.nome_fantasia) as nome ")
 			.append(" FROM COTA c ")
 			.append(" JOIN PESSOA p ON (c.PESSOA_ID=p.ID) ")
 			.append(" LEFT OUTER JOIN HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES hdcpe on (hdcpe.COTA_ID=c.ID) ")
 			.append(" LEFT OUTER JOIN DESCONTO_LANCAMENTO_COTA dlc ON (dlc.COTA_ID=c.ID) ")
 			.append(" WHERE hdcpe.DESCONTO_ID = :descontoID OR dlc.DESCONTO_LANCAMENTO_ID = :descontoID ")
 			.append(" UNION ")
-			.append(" SELECT c.NUMERO_COTA as numeroCota, coalesce(p.NOME, p.RAZAO_SOCIAL) as nome ")
+			.append(" SELECT c.NUMERO_COTA as numeroCota, coalesce(if(p.tipo='F',p.NOME, p.RAZAO_SOCIAL),p.nome_fantasia) as nome ")
 			.append(" FROM COTA c ")
 			.append(" JOIN PESSOA p ON ( c.PESSOA_ID=p.ID ) ")
 			.append(" LEFT OUTER JOIN DESCONTO_LANCAMENTO_COTA dlc on( dlc.COTA_ID=c.ID ) ")

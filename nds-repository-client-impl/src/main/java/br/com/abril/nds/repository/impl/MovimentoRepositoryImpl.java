@@ -219,7 +219,7 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 		sql.append(" movimentoAprovacao.DESCRICAO as descricaoTipoMovimento, ");
 		sql.append(" movimentoAprovacao.DATA_CRIACAO as dataCriacao, ");
 	    sql.append(" cota.NUMERO_COTA as numeroCota, ");
-	    sql.append(" coalesce(pessoa.NOME, pessoa.RAZAO_SOCIAL, '') as nomeCota, ");
+	    sql.append(" coalesce(if(pessoa.tipo = 'F',pessoa.NOME, pessoa.RAZAO_SOCIAL),pessoa.nome_fantasia, '') as nomeCota, ");
 		sql.append(" movimentoAprovacao.VALOR as valor, ");
 		sql.append(" movimentoAprovacao.PARCELAS as parcelas, ");
 		sql.append(" movimentoAprovacao.PRAZO as prazo, ");

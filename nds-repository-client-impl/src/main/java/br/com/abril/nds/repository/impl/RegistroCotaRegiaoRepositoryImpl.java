@@ -307,7 +307,7 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 			sql.append(" epc.cota_id as cota_id, ");
 			sql.append(" cotas.numero_cota as numCota, ");
 			sql.append(" cotas.situacao_cadastro as situacao, ");
-			sql.append(" coalesce(pessoaJoin.nome_fantasia, pessoaJoin.razao_social, pessoaJoin.nome, '') as nomeCota, ");
+			sql.append(" coalesce(if(pessoaJoin.tipo = 'F',pessoaJoin.nome, pessoaJoin.razao_social), pessoaJoin.nome_fantasia, '') as nomeCota, ");
 			
 			sql.append(" epc.qtde_recebida - epc.qtde_devolvida as venda_edicoes ");
 			
@@ -370,7 +370,7 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 			
 			sql.append(" select ");
 			sql.append(" cotas.numero_cota as numeroCota, ");
-			sql.append(" coalesce(pessoaJoin.nome_fantasia, pessoaJoin.razao_social, pessoaJoin.nome, '') as nomePessoa, ");
+			sql.append(" coalesce(if(pessoaJoin.tipo = 'F',pessoaJoin.nome, pessoaJoin.razao_social), pessoaJoin.nome_fantasia, '') as nomePessoa, ");
 			sql.append(" cotas.situacao_cadastro as status ");
 
 			sql.append(" from ");
