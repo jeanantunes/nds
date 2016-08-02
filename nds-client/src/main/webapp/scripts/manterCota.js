@@ -401,7 +401,9 @@ var MANTER_COTA = $.extend(true, {
 
     montarCombo:function(result,idCombo){
 
-        var comboClassificacao =  montarComboBox(result, false);
+    	 var comboClassificacao = "";
+    	if ( result != undefined )
+           comboClassificacao =  montarComboBox(result, false);
         
         if(idCombo == "#classificacaoSelecionadaCPF" ){
         	var inicio = '<select name="cotaDTO.classificacaoSelecionada" id="classificacaoSelecionadaCPF" style="width:300px;" disabled="disabled">';
@@ -1233,13 +1235,15 @@ var COTA_CNPJ = $.extend(true, {
         
         $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
         
-        $("#historicoPrimeiraCota", this.workspace).val((result.cotasBases[0] != undefined) ? result.cotasBases[0].numeroCota : "").disable();
-        $("#historicoSegundaCota", this.workspace).val((result.cotasBases[1] != undefined) ? result.cotasBases[1].numeroCota : "").disable();
-        $("#historicoTerceiraCota", this.workspace).val((result.cotasBases[2] != undefined) ? result.cotasBases[2].numeroCota : "").disable();
-        $("#historicoPrimeiraPorcentagem", this.workspace).val((result.cotasBases[0] != undefined) ? result.cotasBases[0].nomeCota : "").disable();
-        $("#historicoSegundaPorcentagem", this.workspace).val((result.cotasBases[1] != undefined) ? result.cotasBases[1].nomeCota : "").disable();
-        $("#historicoTerceiraPorcentagem", this.workspace).val((result.cotasBases[2] != undefined) ? result.cotasBases[2].nomeCota : "").disable();
-
+        if ( result.cotasBases != undefined )
+        try {
+	        $("#historicoPrimeiraCota", this.workspace).val((result.cotasBases.length > 0) ? result.cotasBases[0].numeroCota : "").disable();
+	        $("#historicoSegundaCota", this.workspace).val((result.cotasBases.length > 1) ? result.cotasBases[1].numeroCota : "").disable();
+	        $("#historicoTerceiraCota", this.workspace).val((result.cotasBases.length > 2) ? result.cotasBases[2].numeroCota : "").disable();
+	        $("#historicoPrimeiraPorcentagem", this.workspace).val((result.cotasBases.length > 0) ? result.cotasBases[0].nomeCota : "").disable();
+	        $("#historicoSegundaPorcentagem", this.workspace).val((result.cotasBases.length > 1) ? result.cotasBases[1].nomeCota : "").disable();
+	        $("#historicoTerceiraPorcentagem", this.workspace).val((result.cotasBases.length > 2) ? result.cotasBases[2].nomeCota : "").disable();
+        } catch ( e ) { console.log(e);}
         if(result.inicioPeriodo){
             $("#periodoCotaDe", this.workspace).val(result.inicioPeriodo.$).disable();
         }
@@ -1442,6 +1446,7 @@ var COTA_CPF = $.extend(true, {
 
         COTA_CPF.limparCampos();
 
+ 
         $( "#tabCota", this.workspace ).tabs({ selected:0 });
         TAB_COTA.possuiDadosObrigatorios = true;
 
@@ -1468,12 +1473,18 @@ var COTA_CPF = $.extend(true, {
 //        //Ajuste 0153
 //        $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
         
-        $("#historicoPrimeiraCotaCPF", this.workspace).val((result.cotasBases[0] != undefined) ? result.cotasBases[0].numeroCota : "").disable();
-        $("#historicoSegundaCotaCPF", this.workspace).val((result.cotasBases[1] != undefined) ? result.cotasBases[1].numeroCota : "").disable();
-        $("#historicoTerceiraCotaCPF", this.workspace).val((result.cotasBases[2] != undefined) ? result.cotasBases[2].numeroCota : "").disable();
-        $("#historicoPrimeiraPorcentagemCPF", this.workspace).val((result.cotasBases[0] != undefined) ? result.cotasBases[0].nomeCota : "").disable();
-        $("#historicoSegundaPorcentagemCPF", this.workspace).val((result.cotasBases[1] != undefined) ? result.cotasBases[1].nomeCota : "").disable();
-        $("#historicoTerceiraPorcentagemCPF", this.workspace).val((result.cotasBases[2] != undefined) ? result.cotasBases[2].nomeCota : "").disable();
+       if ( result.cotasBases != null ) {
+	       try {
+	        $("#historicoPrimeiraCotaCPF", this.workspace).val((result.cotasBases.length > 0 ) ? result.cotasBases[0].numeroCota : "").disable();
+	        $("#historicoSegundaCotaCPF", this.workspace).val((result.cotasBases.length > 1) ? result.cotasBases[1].numeroCota : "").disable();
+	        $("#historicoTerceiraCotaCPF", this.workspace).val((result.cotasBases.length > 2) ? result.cotasBases[2].numeroCota : "").disable();
+	        $("#historicoPrimeiraPorcentagemCPF", this.workspace).val((result.cotasBases.length > 0) ? result.cotasBases[0].nomeCota : "").disable();
+	        $("#historicoSegundaPorcentagemCPF", this.workspace).val((result.cotasBases.length > 1) ? result.cotasBases[1].nomeCota : "").disable();
+	        $("#historicoTerceiraPorcentagemCPF", this.workspace).val((result.cotasBases.length > 2) ? result.cotasBases[2].nomeCota : "").disable();
+	       } catch (  e) {
+	    	   console.log(e);
+	       }
+	      }
 
         if(result.dataNascimento){
             //$("#dataNascimento", this.workspace).val(result.dataNascimento.$);

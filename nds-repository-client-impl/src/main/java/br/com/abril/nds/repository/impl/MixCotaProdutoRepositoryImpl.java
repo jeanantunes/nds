@@ -196,7 +196,7 @@ public class MixCotaProdutoRepositoryImpl extends AbstractRepositoryModel<MixCot
 		.append(" produto.codigo_icd as codigoProduto, ")
 		.append(" cota.numero_cota as numeroCota, ")
 		.append(" produto.nome as nomeProduto, ")
-		.append(" coalesce(pessoa.nome_fantasia, pessoa.razao_social, pessoa.nome, '')  as nomeCota, ")
+		.append(" coalesce(if(pessoa.tipo='F',pessoa.nome, pessoa.razao_social), pessoa.nome_fantasia, '')  as nomeCota, ")
 		.append(" mix_cota_produto.DATAHORA as dataHora, ")
 		.append(" DATE_FORMAT(mix_cota_produto.DATAHORA, '%d/%c/%Y') as data, ")
         .append(" DATE_FORMAT(mix_cota_produto.DATAHORA, '%H:%i') as hora, ")

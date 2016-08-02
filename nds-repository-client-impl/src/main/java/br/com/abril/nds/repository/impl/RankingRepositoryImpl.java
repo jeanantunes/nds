@@ -323,7 +323,7 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		
 		sql.append(" movimento_estoque_cota.COTA_ID AS COTA_ID, "); 
 		sql.append(" cota.NUMERO_COTA AS NUMERO_COTA,");
-		sql.append(" pessoa.NOME AS NOME_COTA,");
+		sql.append("if(pessoa.tipo='F',pessoa.NOME,pessoa.nome_fantasia) AS NOME_COTA,");
 		sql.append(" pessoa.RAZAO_SOCIAL AS RAZAO_SOCIAL_COTA,");
 		sql.append(" endereco.CIDADE AS CIDADE_COTA, ");
 		sql.append(" produto_edicao.PRODUTO_ID AS PRODUTO_ID, 	");

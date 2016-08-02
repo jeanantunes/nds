@@ -328,7 +328,7 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 			.append(" d.VALOR as desconto, ")
 			.append(" EDITOR_ID as editorId, ")
 			.append(" e.CODIGO as codigoEditor, ")
-			.append(" coalesce(p.nome_fantasia, p.razao_social, p.nome, '') as nomeEditor, ")
+			.append(" coalesce(if(p.tipo = 'F',p.nome, p.razao_social), p.nome_fantasia, '') as nomeEditor, ")
 			.append(" dados.USUARIO_ID as usuarioId, ")
 			.append(" u.NOME as nomeUsuario, ")
 			.append(" d.DATA_ALTERACAO as dataAlteracao, ")

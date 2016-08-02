@@ -602,8 +602,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             sql.append("	 select                                                             ");
             sql.append("        cota.ID as idCota,                                              ");
             sql.append("        cota.NUMERO_COTA as numeroCota,                                 ");
-            sql.append("        coalesce(pessoa.NOME,                                           ");
-            sql.append("        pessoa.RAZAO_SOCIAL) as colaboradorName,                        ");
+            sql.append("        coalesce(if(pessoa.tipo = 'F',pessoa.NOME,                                           ");
+            sql.append("        pessoa.RAZAO_SOCIAL),pessoa.nome_fantasia) as colaboradorName,                        ");
             sql.append("        box.NOME as boxName,                                            ");
             sql.append("        roteiro.DESCRICAO_ROTEIRO as roteiroName,                       ");
             sql.append("        rota.DESCRICAO_ROTA as rotaName,                                ");
@@ -718,8 +718,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             sql.append("	 select                                                             ");
             sql.append("        cota.ID as idCota,                                              ");
             sql.append("        cota.NUMERO_COTA as numeroCota,                                 ");
-            sql.append("        coalesce(pessoa.NOME,                                           ");
-            sql.append("        pessoa.RAZAO_SOCIAL) as colaboradorName,                        ");
+            sql.append("        coalesce(if(pessoa.tipo = 'F',pessoa.NOME,                                           ");
+            sql.append("        pessoa.RAZAO_SOCIAL),pessoa.nome_fantasia) as colaboradorName,                        ");
             sql.append("        box.NOME as boxName,                                            ");
             sql.append("        roteiro.DESCRICAO_ROTEIRO as roteiroName,                       ");
             sql.append("        rota.DESCRICAO_ROTA as rotaName,                                ");
@@ -852,8 +852,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             sql.append(" 	select                                                  ");
             sql.append("    cota.ID as idCota,                                      ");
             sql.append("    cota.NUMERO_COTA as numeroCota,                         ");
-            sql.append("    coalesce(pessoa.NOME,                                   ");
-            sql.append("    pessoa.RAZAO_SOCIAL) as colaboradorName,                ");
+            sql.append("    coalesce(if(pessoa.tipo = 'F',pessoa.NOME,                                   ");
+            sql.append("    pessoa.RAZAO_SOCIAL),pessoa.nome_fantasia) as colaboradorName,                ");
             sql.append("    box.NOME as boxName,                                    ");
             sql.append("    roteiro.DESCRICAO_ROTEIRO as roteiroName,               ");
             sql.append("    rota.DESCRICAO_ROTA as rotaName,                        ");
@@ -1639,8 +1639,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             sql.append("	 select                                                             ");
             sql.append("        cota.ID as idCota,                                              ");
             sql.append("        cota.NUMERO_COTA as numeroCota,                                 ");
-            sql.append("        coalesce(pessoa.NOME,                                           ");
-            sql.append("        pessoa.RAZAO_SOCIAL) as colaboradorName,                        ");
+            sql.append("        coalesce(if(pessoa.tipo= 'F',pessoa.NOME,                                           ");
+            sql.append("        pessoa.RAZAO_SOCIAL),pessoa.nome_fantasia) as colaboradorName,                        ");
             sql.append("        box.NOME as boxName,                                            ");
             sql.append("        roteiro.DESCRICAO_ROTEIRO as roteiroName,                       ");
             sql.append("        rota.DESCRICAO_ROTA as rotaName,                                ");
@@ -1774,8 +1774,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             sql.append(" 	select                                                  ");
             sql.append("    cota.ID as idCota,                                      ");
             sql.append("    cota.NUMERO_COTA as numeroCota,                         ");
-            sql.append("    coalesce(pessoa.NOME,                                   ");
-            sql.append("    pessoa.RAZAO_SOCIAL) as colaboradorName,                ");
+            sql.append("    coalesce(if(pessoa.tipo = 'F',pessoa.NOME,                                   ");
+            sql.append("    pessoa.RAZAO_SOCIAL),pessoa.nome_fantasia) as colaboradorName,                ");
             sql.append("    box.NOME as boxName,                                    ");
             sql.append("    roteiro.DESCRICAO_ROTEIRO as roteiroName,               ");
             sql.append("    rota.DESCRICAO_ROTA as rotaName,                        ");

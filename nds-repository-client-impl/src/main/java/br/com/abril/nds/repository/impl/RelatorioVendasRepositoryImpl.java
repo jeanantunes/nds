@@ -270,7 +270,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("             mecReparte.COTA_ID AS COTA_ID, ");
 		sql.append("             mecReparte.VALOR_DESCONTO AS valorDesconto, ");
 		sql.append("             c.NUMERO_COTA AS NUMERO_COTA, ");
-		sql.append("             pess.NOME AS NOME_COTA, ");
+		sql.append("             if(pess.tipo = 'F',pess.NOME,pess.NOME_FANTASIA) AS NOME_COTA, ");
 		sql.append("             pess.RAZAO_SOCIAL AS RAZAO_SOCIAL_COTA, ");
 		sql.append("             endereco.CIDADE AS CIDADE_COTA, ");
 		sql.append("             pe.PRECO_VENDA AS PRECO_VENDA, ");
@@ -811,8 +811,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                     mecReparte.COTA_ID AS COTA_ID, ");
 		sql.append("                     mecReparte.VALOR_DESCONTO AS valorDesconto, ");
 		sql.append("                     c.NUMERO_COTA AS NUMERO_COTA, ");
-		sql.append("                     pess.NOME AS NOME_COTA, ");
-		sql.append("                     pess.RAZAO_SOCIAL AS RAZAO_SOCIAL_COTA, ");
+		sql.append("                     IF(pess.tipo='F',pess.NOME,pess.nome_fantasia) AS NOME_COTA, ");
+		sql.append("                     if(pess.tipo='F',pess.nome,pess.RAZAO_SOCIAL) AS RAZAO_SOCIAL_COTA, ");
 		sql.append("                     endereco.CIDADE AS CIDADE_COTA, ");
 		sql.append("                     pe.PRECO_VENDA AS PRECO_VENDA, ");
 		sql.append("                     l.id as lancId, ");
