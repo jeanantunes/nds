@@ -4,15 +4,21 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.transform.Transformers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.EstudoCotaDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade {@link br.com.abril.nds.model.planejamento.EstudoCota}.
@@ -23,6 +29,8 @@ import br.com.abril.nds.util.Intervalo;
 @Repository
 public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota, Long> implements EstudoCotaRepository {
 	
+    private static final Logger LOGGER = LoggerFactory.getLogger(EstudoCotaRepositoryImpl.class);
+    
 	/**
 	 * Construtor.
 	 */
@@ -201,16 +209,23 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
     
     @Override
 	public void removerEstudosCotaPorEstudos(List<Long> listIdEstudos) {
-		
-		StringBuilder hql = new StringBuilder(" delete from EstudoCota ec ");
-		
-		hql.append(" where ec.estudo.id in (:listIdEstudos) ");
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		
-		query.setParameterList("listIdEstudos", listIdEstudos);
-		
-		query.executeUpdate();
-	}
-    
+			
+	    try {
+	   		StringBuilder hql = new StringBuilder(" delete from EstudoCota ec ");
+			
+			hql.append(" where ec.estudo.id in (:listIdEstudos) ");
+			
+			Query query = this.getSession().createQuery(hql.toString());
+			
+			query.setParameterList("listIdEstudos", listIdEstudos);
+			
+			query.executeUpdate();
+		} catch ( ConstraintViolationException cve ) {
+			LOGGER.warn("ERRO REABRINDO ESTUDO",cve);
+			if ( cve.getCause() != null &&  cve.getCause().getMessage().contains("nota_envio_item")){
+			   throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro reabrindo estudo. Nota de Envio ja gerado !!"));
+			}
+			 throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro reabrindo estudo."+cve.getLocalizedMessage()));
+		}
+    }
 }
