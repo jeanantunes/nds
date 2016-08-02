@@ -1484,7 +1484,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append("	select distinct	");
         
         sql.append("	COTA.NUMERO_COTA						  as numeroCota,  ");
-        sql.append("	coalesce(PESSOA.NOME,PESSOA.RAZAO_SOCIAL) as nomeCota,    ");
+        sql.append("	coalesce(if(PESSOA.TIPO='F',PESSOA.NOME,PESSOA.RAZAO_SOCIAL),PESSOA.NOME_FANTASIA) as nomeCota,    ");
         sql.append(" 	CONFERENCIA_ENCALHE.OBSERVACAO			  as observacao  ");
         
         montarSqlFromDetalhesEncalhe(sql);
@@ -1503,7 +1503,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append("	select distinct	");
         
         sql.append("	COTA.NUMERO_COTA						  as numeroCota,  ");
-        sql.append("	coalesce(PESSOA.NOME,PESSOA.RAZAO_SOCIAL) as nomeCota,    ");
+        sql.append("	coalesce(IF(PESSOA.TIPO='F',PESSOA.NOME,PESSOA.RAZAO_SOCIAL),PESSOA.NOME_FANTASIA) as nomeCota,    ");
         sql.append(" 	concat(format(CONFERENCIA_ENCALHE.QTDE,0),' exes. Juramentado') as observacao  ");
         
         montarSqlFromDetalhesEncalhe(sql);
@@ -2386,7 +2386,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" select box.ID as idBox, ");
         hql.append(" 		concat(box.CODIGO, '-', box.NOME) as box, ");
         hql.append(" 		cota.NUMERO_COTA as codigoCota, ");
-        hql.append("        coalesce(pessoa.NOME, pessoa.RAZAO_SOCIAL, '') as nomeCota, ");
+        hql.append("        coalesce(if(pessoa.tipo = 'F',pessoa.NOME, pessoa.RAZAO_SOCIAL),pessoa.nome_fantasia, '') as nomeCota, ");
         hql.append(" 		count(distinct  produtoEdicao.ID) as totalProduto, ");
         hql.append(" 		sum(estudoCota.QTDE_EFETIVA) as totalReparte, ");
         hql.append(" 		sum(estudoCota.QTDE_EFETIVA * produtoEdicao.PRECO_VENDA) as totalBox ");
@@ -2820,7 +2820,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" 		produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
         hql.append(" 		sum(estudoCota.REPARTE) as reparte, ");
         hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa, ");
-        hql.append(" 		coalesce(pessoa.NOME, pessoa.NOME_FANTASIA, pessoa.RAZAO_SOCIAL, '') as nomeCota, ");
+        hql.append(" 		coalesce(if(pessoa.tipo='F',pessoa.NOME, pessoa.NOME_RAZAO_SOCIAL), pessoa.NOME_FANTASIA, '') as nomeCota, ");
         hql.append(" 		cota.NUMERO_COTA as codigoCota ");
         
         gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
@@ -2987,7 +2987,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append("        box.NOME as nomeBox, ");
         hql.append(" 		rota.DESCRICAO_ROTA as codigoRota, ");
         hql.append(" 		cota.NUMERO_COTA as codigoCota, ");
-        hql.append(" 		coalesce(pessoa.NOME, pessoa.NOME_FANTASIA, pessoa.RAZAO_SOCIAL, '') as nomeCota, ");
+        hql.append(" 		coalesce(if(pessoa.tipo = 'F',pessoa.NOME, pessoa.RAZAO_SOCIAL), pessoa.nome_fantasia, '') as nomeCota, ");
         hql.append(" 		produto.CODIGO as codigoProduto, ");
         hql.append(" 		produto.NOME as nomeProduto, ");
         hql.append(" 		produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
@@ -3331,7 +3331,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" select box.CODIGO as codigoBox, ");
         hql.append("  		box.NOME as nomeBox, ");
         hql.append("  		cota.NUMERO_COTA as codigoCota, ");
-        hql.append(" 		coalesce(pessoa.RAZAO_SOCIAL, pessoa.NOME) as nomeCota,");
+        hql.append(" 		coalesce(if(pessoa.tipo='F',pessoa.nome, pessoa.razao_social),pessoa.nome_fantasia) as nomeCota,");
         hql.append(" 		produto.CODIGO as codigoProduto, ");
         hql.append(" 		produto.NOME as nomeProduto, ");
         hql.append(" 		produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
@@ -3656,7 +3656,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" 		estudo.QTDE_REPARTE as reparte, ");
         hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa, ");
         hql.append(" 		cota.NUMERO_COTA as codigoCota, ");
-        hql.append(" 		coalesce(pessoa.RAZAO_SOCIAL, pessoa.NOME) as nomeCota,");
+        hql.append(" 		coalesce(if(pessoa.tipo = 'F',pessoa.nome, pessoa.RAZAO_SOCIAL),pessoa.nome_fantasia,'') as nomeCota,");
         hql.append(" 		estudoCota.REPARTE as qtdeExms ");
         
         gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
@@ -3754,7 +3754,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" 		sum(estudoCota.REPARTE * produtoEdicao.PRECO_VENDA) as totalBox, ");
         hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa, ");
         hql.append("        entregador.ID as idEntregador, ");
-        hql.append("        coalesce(pessoaEnt.NOME, pessoaEnt.RAZAO_SOCIAL, '') as nomeEntregador, ");
+        hql.append("        coalesce(if(pessoaEnt.tipo = 'F',pessoaEnt.NOME, pessoaEnt.RAZAO_SOCIAL),pessoaEnt.nome_fantasia, '') as nomeEntregador, ");
         hql.append("        rotaEnt.DESCRICAO_ROTA as descRota, ");
         hql.append("        roteiroEnt.DESCRICAO_ROTEIRO as descRoteiro, ");
         hql.append("        boxEnt.CODIGO as codigoBox ");
@@ -3822,7 +3822,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" 		sum(estudoCota.REPARTE * produtoEdicao.PRECO_VENDA) as totalBox, ");
         hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa, ");
         hql.append("        entregador.ID as idEntregador, ");
-        hql.append("        coalesce(pessoaEnt.NOME, pessoaEnt.RAZAO_SOCIAL, '') as nomeEntregador, ");
+        hql.append("        coalesce(if(pessoaEnt.tipo='F',pessoaEnt.NOME, pessoaEnt.RAZAO_SOCIAL),pessoaEnt.nome_fantasia, '') as nomeEntregador, ");
         hql.append("        rotaEnt.DESCRICAO_ROTA as descRota, ");
         hql.append("        roteiroEnt.DESCRICAO_ROTEIRO as descRoteiro, ");
         hql.append(" 		lancamento.SEQUENCIA_MATRIZ as sequenciaMatriz, ");
@@ -4698,7 +4698,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	        hql.append(" 		sum(estudoCota.REPARTE * produtoEdicao.PRECO_VENDA) as totalBox, ");
 	        hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa, ");
 	        hql.append("        entregador.ID as idEntregador, ");
-	        hql.append("        coalesce(pessoaEnt.NOME, pessoaEnt.RAZAO_SOCIAL, '') as nomeEntregador, ");
+	        hql.append("        coalesce(if(pessoaEnt.tipo = 'F',pessoaEnt.NOME, pessoaEnt.RAZAO_SOCIAL),pessoaEnt.nome_fantasia, '') as nomeEntregador, ");
 	        hql.append("        rotaEnt.DESCRICAO_ROTA as descRota, ");
 	        hql.append("        roteiroEnt.DESCRICAO_ROTEIRO as descRoteiro, ");
 	        hql.append(" 		lancamento.SEQUENCIA_MATRIZ as sequenciaMatriz, ");
@@ -4771,7 +4771,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			 qtdeInformadaEncalhe.append(" and ce.PRODUTO_EDICAO_ID = mec.produto_edicao_id ");  		
 			 qtdeInformadaEncalhe.append(" and cec.cota_id = mec.cota_id ");
 		      
-			sql.append(" 			SELECT  coalesce(pessoa.nome_fantasia, pessoa.razao_social, pessoa.nome, '') as nomeCota ,");
+			sql.append(" 			SELECT  coalesce(if(pessoa.tipo = 'F',pessoa.nome, pessoa.razao_social), pessoa.nome_fantasia, '') as nomeCota ,");
 			sql.append(" 			boxid as idBox,boxnome as nomeBox,tipobox as tipobox,");
 			sql.append(" 		       c.numero_cota as idCota,");
 			sql.append(" 		        MEC.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID,MEC.cota_id ,");
