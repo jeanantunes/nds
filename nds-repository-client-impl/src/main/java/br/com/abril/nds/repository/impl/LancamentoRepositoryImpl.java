@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
+import br.com.abril.nds.dto.InformeLancamentoDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoCanceladoDTO;
@@ -64,9 +65,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
-public class LancamentoRepositoryImpl extends
-		AbstractRepositoryModel<Lancamento, Long> implements
-		LancamentoRepository {
+public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento, Long> implements LancamentoRepository {
 
 	@Autowired
 	FuroProdutoRepository furoProdutoRepository;
@@ -3270,6 +3269,103 @@ public class LancamentoRepositoryImpl extends
         
         return (List<Long>)query.list();
     	
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<InformeLancamentoDTO> buscarInformeLancamento(Long idFornecedor, Calendar dataInicioRecolhimento, 
+													   Calendar dataFimRecolhimento, PaginacaoVO paginacao){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT  ");
+		
+		sql.append("   l.SEQUENCIA_MATRIZ as sequencia, ");
+		sql.append("   p.CODIGO as codigoProduto, ");
+		sql.append("   p.NOME_COMERCIAL as nomeProduto, ");
+		sql.append("   pe.NUMERO_EDICAO as numeroEdicao, ");
+		sql.append("   pe.CHAMADA_CAPA as chamadaCapa, ");
+		sql.append("   pe.CODIGO_DE_BARRAS as codigoDeBarras, ");
+		sql.append("   pe.PRECO_VENDA as precoVenda, ");
+		sql.append("   pe.ID as idProdutoEdicao ");
+
+		sql.append(" FROM lancamento l  ");
+		sql.append(" join produto_edicao pe ");
+		sql.append("   ON l.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" join produto p  ");
+		sql.append("   ON pe.PRODUTO_ID = p.ID ");
+		sql.append(" join produto_fornecedor pf ");
+		sql.append("   ON pf.PRODUTO_ID = p.ID ");
+		sql.append(" join fornecedor f  ");
+		sql.append("   ON pf.fornecedores_ID = f.ID ");
+		
+		sql.append("   WHERE  ");
+		sql.append("   l.DATA_LCTO_DISTRIBUIDOR between :dataInicial and :dataFinal  ");
+		
+		if(idFornecedor != null){
+			sql.append("   and f.ID = :idFornecedor ");
+		}
+		
+		if(paginacao != null && paginacao.getSortColumn() != null){
+			
+			sql.append(" order by ");
+			
+			if(paginacao.getSortColumn().equalsIgnoreCase("precoVendaFormatado")){
+				sql.append("  precoVenda  ");
+			}else{
+				sql.append(" "+paginacao.getSortColumn()); 
+			}
+			
+			if(paginacao.getSortOrder() != null){
+				sql.append(" " +paginacao.getSortOrder());
+			}
+		}else{
+			sql.append("   order by l.SEQUENCIA_MATRIZ asc ");
+		}
+		
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataInicial", dataInicioRecolhimento);
+		query.setParameter("dataFinal", dataFimRecolhimento);
+		
+		if(idFornecedor != null){
+			query.setParameter("idFornecedor", idFornecedor);
+		}
+	
+		query.addScalar("sequencia", StandardBasicTypes.INTEGER);
+		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
+		query.addScalar("numeroEdicao", StandardBasicTypes.LONG);
+		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
+		query.addScalar("codigoDeBarras", StandardBasicTypes.STRING);
+		query.addScalar("precoVenda", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(InformeLancamentoDTO.class));
+		
+		this.configurarPaginacao(paginacao, query);
+		
+		return query.list();
+	}
+	
+	private void configurarPaginacao(PaginacaoVO paginacao, Query query) {
+
+		if(paginacao == null){
+			return;
+		}
+		
+		if (paginacao.getQtdResultadosTotal().equals(0)) {
+			paginacao.setQtdResultadosTotal(query.list().size());
+		}
+
+		if(paginacao.getQtdResultadosPorPagina() != null) {
+			query.setMaxResults(paginacao.getQtdResultadosPorPagina());
+		}
+
+		if (paginacao.getPosicaoInicial() != null) {
+			query.setFirstResult(paginacao.getPosicaoInicial());
+		}
 	}
 	
 }

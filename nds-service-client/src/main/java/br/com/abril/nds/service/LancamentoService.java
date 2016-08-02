@@ -8,9 +8,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import br.com.abril.nds.client.vo.ProdutoLancamentoVO;
 import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
+import br.com.abril.nds.dto.InformeLancamentoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -205,6 +208,8 @@ public interface LancamentoService {
 	List<Lancamento> obterLancamentosDaEdicao(Long idProdutoEdicao);
 	
 	void alterarStatus(Lancamento lancamento ,StatusLancamento status);
+
+	List<InformeLancamentoDTO> buscarInformeLancamento(Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento, PaginacaoVO paginacao);
 
 	
 }
