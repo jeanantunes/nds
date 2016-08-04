@@ -415,7 +415,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 								LOGGER.error("ERRO. PRODUTO EDICAO ORIGEM INTERFACE SEM DESCONTO LOGISTICA ="
 										+itemFo.getProdutoEdicao().getProduto().getCodigo()
 										+" ed.="+itemFo.getProdutoEdicao().getNumeroEdicao());
-								throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao e Produto sem desconto Logistica ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+
+								throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao e Produto(origem INTERFACE) sem desconto Logistica ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+
 										                "/"+itemFo.getProdutoEdicao().getNumeroEdicao());
 								
 							}
@@ -429,16 +429,21 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 							
 						} else if(produtoEdicao.getOrigem().equals(Origem.PRODUTO_SEM_CADASTRO)) {
 							
-							if ( itemFo.getProdutoEdicao().getDescontoLogistica()== null && itemFo.getProdutoEdicao().getProduto().getDescontoLogistica() == null ) {
+							if ( itemFo.getProdutoEdicao().getDescontoLogistica()== null && itemFo.getProdutoEdicao().getProduto().getDescontoLogistica() == null  &&
+									itemFo.getProdutoEdicao().getDesconto() == null && itemFo.getProdutoEdicao().getProduto().getDesconto() == null  	) {
 								LOGGER.error("ERRO. PRODUTO EDICAO ORIGEM INTERFACE SEM DESCONTO LOGISTICA ="
 										+itemFo.getProdutoEdicao().getProduto().getCodigo()
 										+ " ed.="+itemFo.getProdutoEdicao().getNumeroEdicao());
-								throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao e Produto sem desconto Logistica ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+
+								throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao e Produto(origin PRODUTO_SEM_CADASTRO) sem desconto Logistica ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+
 										                "/"+itemFo.getProdutoEdicao().getNumeroEdicao());
 							} 
 							
 							BigDecimal valorDesconto =  (itemFo.getProdutoEdicao().getDescontoLogistica()!= null ?
-									itemFo.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto(): itemFo.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto());
+									itemFo.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto():
+									itemFo.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto()!= null ?
+									itemFo.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto():
+									itemFo.getProdutoEdicao().getDesconto() != null ?
+									itemFo.getProdutoEdicao().getDesconto(): itemFo.getProdutoEdicao().getProduto().getDesconto());
 							
 							valoresAplicados.setValorDesconto(valorDesconto);
 
