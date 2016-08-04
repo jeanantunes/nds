@@ -55,6 +55,11 @@ public class EmitenteDestinatarioBuilder {
 			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Cota %s sem Tipo Logradouro no endereço.", cota.getNumeroCota())); 
 		}
 		
+		if ( cota.getEnderecoPrincipal().getEndereco().getCodigoUf() == null ) {
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Cota %s sem Codigo UF no endereço.", cota.getNumeroCota())); 
+			
+		}
+		
 		if(cota.getEnderecoPrincipal().getEndereco() != null && cota.getEnderecoPrincipal().getEndereco().getTipoLogradouro() != null) {
 			tipoLogradouro = cota.getEnderecoPrincipal().getEndereco().getTipoLogradouro();
 		}
