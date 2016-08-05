@@ -400,7 +400,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		// OBTER TODAS AS COTAS DA TELA
 		StringBuilder hql = new StringBuilder("SELECT ");
-		hql.append(" mffc.cota ");
+		hql.append(" distinct mffc.cota ");
 		Query query = queryConsultaCotaMFFNfeParameters(queryConsultaCotaMFFNfe(filtro, hql, false, false, false), filtro);
 
 		return query.list();
@@ -417,7 +417,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		// OBTER TODAS AS COTAS DA TELA
 		StringBuilder hql = new StringBuilder("SELECT ");
-		hql.append(" mec.cota ");
+		hql.append(" distinct mec.cota ");
 		Query query = queryConsultaMECNfeParameters(queryConsultaMECNfe(filtro, hql, false, false, false), filtro);
 
 		return query.list();
