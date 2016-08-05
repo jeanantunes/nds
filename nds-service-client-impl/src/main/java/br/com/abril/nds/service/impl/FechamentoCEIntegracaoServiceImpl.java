@@ -434,13 +434,13 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 								LOGGER.error("ERRO. PRODUTO EDICAO ORIGEM INTERFACE SEM DESCONTO LOGISTICA ="
 										+itemFo.getProdutoEdicao().getProduto().getCodigo()
 										+ " ed.="+itemFo.getProdutoEdicao().getNumeroEdicao());
-								throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao e Produto(origin PRODUTO_SEM_CADASTRO) sem desconto Logistica ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+
+								throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao e Produto(origem PRODUTO_SEM_CADASTRO) sem desconto Logistica ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+
 										                "/"+itemFo.getProdutoEdicao().getNumeroEdicao());
 							} 
 							
 							BigDecimal valorDesconto =  (itemFo.getProdutoEdicao().getDescontoLogistica()!= null ?
 									itemFo.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto():
-									itemFo.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto()!= null ?
+									itemFo.getProdutoEdicao().getProduto().getDescontoLogistica() != null ?
 									itemFo.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto():
 									itemFo.getProdutoEdicao().getDesconto() != null ?
 									itemFo.getProdutoEdicao().getDesconto(): itemFo.getProdutoEdicao().getProduto().getDesconto());
