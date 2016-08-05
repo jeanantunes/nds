@@ -887,10 +887,20 @@ var produtoEdicaoController =$.extend(true,  {
 							
 							if(isProdutoContaFirme){
 								$("#fildSet-data-recolhimento", this.workspace).hide();
-							}
-							else{
+							}else{
 								$("#fildSet-data-recolhimento", this.workspace).show();
 							}
+							
+							if(result.statusSituacao == 'PLANEJADO' || result.statusSituacao == 'CONFIRMADO'
+								 || result.statusSituacao == 'FURO' || result.statusSituacao == 'EM_BALANCEAMENTO'){
+								$("#produtoEdicaoController-dataLancamento").removeAttr("disabled");
+								$("#produtoEdicaoController-dataLancamento").removeAttr("readonly");
+								$("#produtoEdicaoController-dataLancamento").css({ "background-color": "white"})
+								
+							}else{
+								$("#produtoEdicaoController-dataLancamento").attr("disabled");
+							}  
+							
 						}
 					},
 					null,

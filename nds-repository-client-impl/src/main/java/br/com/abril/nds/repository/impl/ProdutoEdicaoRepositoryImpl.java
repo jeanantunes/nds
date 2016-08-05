@@ -291,7 +291,16 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		.append(" SELECT pe.id as id, p.codigo as codigoProduto, p.NOME_COMERCIAL as nomeComercial, ")
 		.append("        pe.NUMERO_EDICAO as numeroEdicao, coalesce(if(pessoa.tipo = 'F',pessoa.nome, pessoa.RAZAO_SOCIAL),pessoa.nome_fantasia,'') as nomeFornecedor, ")
 		.append("        l.TIPO_LANCAMENTO as statusLancamento, ") 
-		.append("        l.status as statusSituacao , ") 
+//		.append("        l.status as statusSituacao , ")
+		
+		.append("        if(pe.PARCIAL = false, ")
+		.append("                      l.status, ")
+		.append("                      coalesce((select l.STATUS from lancamento l  ")
+		.append("                          join periodo_lancamento_parcial plp ON plp.ID = l.PERIODO_LANCAMENTO_PARCIAL_ID ")
+		.append("                       where  l.PRODUTO_EDICAO_ID = pe.id  ")
+		.append("                          and ((select DATA_OPERACAO from distribuidor) between l.DATA_LCTO_DISTRIBUIDOR and l.DATA_REC_DISTRIB OR plp.TIPO = 'FINAL') ")
+		.append("                          order by plp.NUMERO_PERIODO limit 1), l.status)) as statusSituacao, ")
+		
 		.append("        pe.possui_brinde as temBrinde, ")
 		.append("        pe.parcial as parcial ");
 		
