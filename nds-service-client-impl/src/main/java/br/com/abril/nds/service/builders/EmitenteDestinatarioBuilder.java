@@ -60,6 +60,11 @@ public class EmitenteDestinatarioBuilder {
 			
 		}
 		
+		if ( cota.getEnderecoPrincipal().getEndereco().getCodigoCidadeIBGE() == null ) {
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Cota %s sem Codigo Cidade IBGE  no endereço.", cota.getNumeroCota())); 
+			
+		}
+		
 		if(cota.getEnderecoPrincipal().getEndereco() != null && cota.getEnderecoPrincipal().getEndereco().getTipoLogradouro() != null) {
 			tipoLogradouro = cota.getEnderecoPrincipal().getEndereco().getTipoLogradouro();
 		}
