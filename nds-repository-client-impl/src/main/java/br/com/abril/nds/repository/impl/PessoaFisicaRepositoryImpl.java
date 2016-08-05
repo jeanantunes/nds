@@ -4,6 +4,8 @@ package br.com.abril.nds.repository.impl;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.PessoaFisicaRepository;
@@ -32,6 +34,8 @@ public class PessoaFisicaRepositoryImpl extends AbstractRepositoryModel<PessoaFi
 	@Override
 	public PessoaFisica buscarPorCpf(String cpf) {
 
+   try {
+	   
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" from PessoaFisica pessoaFisica ")
@@ -42,5 +46,12 @@ public class PessoaFisicaRepositoryImpl extends AbstractRepositoryModel<PessoaFi
 		query.setParameter("cpf", cpf);
 		
 		return (PessoaFisica) query.uniqueResult();
+		
+	   } catch (  org.hibernate.NonUniqueResultException nur) {
+			
+		   throw new ValidacaoException(TipoMensagem.WARNING, "Mais de uma pessoa fisica com o mesmo cpf->"+cpf);
+		   
+	   }
 	}
+	
 }

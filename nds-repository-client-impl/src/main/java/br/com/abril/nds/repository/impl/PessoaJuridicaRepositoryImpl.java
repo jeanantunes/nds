@@ -6,6 +6,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
@@ -28,6 +30,8 @@ public class PessoaJuridicaRepositoryImpl extends
 	@Override
 	public PessoaJuridica buscarPorCnpj(String cnpj) {
 
+	try {
+		
 		String hql = "from PessoaJuridica where cnpj = :cnpj";
 
 		Query query = getSession().createQuery(hql);
@@ -35,10 +39,18 @@ public class PessoaJuridicaRepositoryImpl extends
 		query.setParameter("cnpj", cnpj);
 
 		return (PessoaJuridica) query.uniqueResult();
+		
+	   } catch (  org.hibernate.NonUniqueResultException nur) {
+		
+		   throw new ValidacaoException(TipoMensagem.WARNING, "Mais de uma pessoa juridica com o mesmo cnpj->"+cnpj);
+		   
+	   }
 	}
 
 	@Override
 	public PessoaJuridica buscarCnpjPorFornecedor(String nomeFantasia) {
+	 try {
+		 
 		String hql = "from PessoaJuridica where nomeFantasia = :nomeFantasia";
 
 		Query query = getSession().createQuery(hql);
@@ -46,6 +58,12 @@ public class PessoaJuridicaRepositoryImpl extends
 		query.setParameter("nomeFantasia", nomeFantasia);
 
 		return (PessoaJuridica) query.uniqueResult();
+		
+	
+	 
+	   } catch (  org.hibernate.NonUniqueResultException nur) {
+		   throw new ValidacaoException(TipoMensagem.WARNING, "Mais de uma pessoa juridica com o mesmo nome fantasia ->"+nomeFantasia);
+	   }
 	}
 	
 	
