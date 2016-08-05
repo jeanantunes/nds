@@ -412,11 +412,22 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 						// verifica se tem desconto_logistica para produto edicao ou produto se origem for INTERFACE
 						if(produtoEdicao.getOrigem().equals(Origem.INTERFACE)) {
 							if ( itemFo.getProdutoEdicao().getDescontoLogistica()== null && itemFo.getProdutoEdicao().getProduto().getDescontoLogistica() == null ) {
+								
+								
+								String msg=" ";
+								for(ChamadaEncalheFornecedor cefx : chamadasFornecedor)
+								for(ItemChamadaEncalheFornecedor item : itemChamadaEncalheFornecedorRepository.obterItensChamadaEncalheFornecedor(cefx.getId())) 
+									if ( item.getProdutoEdicao().getOrigem().equals(Origem.INTERFACE) &&
+											item.getProdutoEdicao().getDescontoLogistica()== null && item.getProdutoEdicao().getProduto().getDescontoLogistica() == null )
+										msg+=" "+item.getProdutoEdicao().getProduto().getCodigo()+ "/"+item.getProdutoEdicao().getNumeroEdicao();
+								
+								
 								LOGGER.error("ERRO. PRODUTO EDICAO ORIGEM INTERFACE SEM DESCONTO LOGISTICA ="
 										+itemFo.getProdutoEdicao().getProduto().getCodigo()
-										+" ed.="+itemFo.getProdutoEdicao().getNumeroEdicao());
+										+" ed.="+itemFo.getProdutoEdicao().getNumeroEdicao() + " "+msg);
+								
 								throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao e Produto(origem INTERFACE) sem desconto Logistica ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+
-										                "/"+itemFo.getProdutoEdicao().getNumeroEdicao());
+										                "/"+itemFo.getProdutoEdicao().getNumeroEdicao()+ " " + msg +")");
 								
 							}
 							
@@ -430,12 +441,23 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 						} else if(produtoEdicao.getOrigem().equals(Origem.PRODUTO_SEM_CADASTRO)) {
 							
 							if ( itemFo.getProdutoEdicao().getDescontoLogistica()== null && itemFo.getProdutoEdicao().getProduto().getDescontoLogistica() == null  &&
-									itemFo.getProdutoEdicao().getDesconto() == null && itemFo.getProdutoEdicao().getProduto().getDesconto() == null  	) {
-								LOGGER.error("ERRO. PRODUTO EDICAO ORIGEM INTERFACE SEM DESCONTO LOGISTICA ="
+								 itemFo.getProdutoEdicao().getDesconto() == null && itemFo.getProdutoEdicao().getProduto().getDesconto() == null  	) {
+								
+								String msg=" ";
+								for(ChamadaEncalheFornecedor cefx : chamadasFornecedor)
+								for(ItemChamadaEncalheFornecedor item : itemChamadaEncalheFornecedorRepository.obterItensChamadaEncalheFornecedor(cefx.getId())) 
+									if ( item.getProdutoEdicao().getOrigem().equals(Origem.PRODUTO_SEM_CADASTRO) &&
+									     item.getProdutoEdicao().getDescontoLogistica()== null && item.getProdutoEdicao().getProduto().getDescontoLogistica() == null  &&
+										 item.getProdutoEdicao().getDesconto() == null && item.getProdutoEdicao().getProduto().getDesconto() == null  	) 
+										msg+=" "+item.getProdutoEdicao().getProduto().getCodigo()+ "/"+item.getProdutoEdicao().getNumeroEdicao();
+								 
+								
+								
+								LOGGER.error("ERRO. PRODUTO EDICAO ORIGEM PRODUTO_SEM_CADASTRO SEM DESCONTO LOGISTICA ="
 										+itemFo.getProdutoEdicao().getProduto().getCodigo()
-										+ " ed.="+itemFo.getProdutoEdicao().getNumeroEdicao());
+										+ " ed.="+itemFo.getProdutoEdicao().getNumeroEdicao()+" "+msg);
 								throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao e Produto(origem PRODUTO_SEM_CADASTRO) sem desconto Logistica ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+
-										                "/"+itemFo.getProdutoEdicao().getNumeroEdicao());
+										                "/"+itemFo.getProdutoEdicao().getNumeroEdicao()+" "+msg+ ")");
 							} 
 							
 							BigDecimal valorDesconto =  (itemFo.getProdutoEdicao().getDescontoLogistica()!= null ?
@@ -479,6 +501,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 
 		}
+		
 	}
 	
 	/**
