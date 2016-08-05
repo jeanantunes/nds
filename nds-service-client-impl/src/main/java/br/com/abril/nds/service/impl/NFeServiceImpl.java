@@ -977,6 +977,11 @@ public class NFeServiceImpl implements NFeService {
 			Distribuidor distribuidor,
 			List<Transportador> transportadores) {
 		
+       if(parametrosSistema.get("NFE_LIMITAR_QTDE_ITENS") == null ) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Parâmetro de Limite de Itens por NF-e nao configurado.");
+		}
+		
 		int limiteQtdItens = Integer.valueOf(parametrosSistema.get("NFE_LIMITAR_QTDE_ITENS").getValor());
 		
 		if(limiteQtdItens == 0) {
@@ -986,8 +991,8 @@ public class NFeServiceImpl implements NFeService {
 		
 		List<NotaFiscal> notasFiscaisSubdivididas = new ArrayList<NotaFiscal>();
 		
-		if (notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal() == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Parâmetro de Limite de Itens por NF-e configurado incorretamente.");
+		if (notaFiscal.getNotaFiscalInformacoes() == null || notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal() == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Nota fiscal sem detalhes/itens.");
 		}
 		
 		if(notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() > limiteQtdItens) {
@@ -1141,7 +1146,7 @@ public class NFeServiceImpl implements NFeService {
 				List<MovimentoEstoqueCota> mecs = this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro);
 				
 				if(mecs == null || mecs.isEmpty()){
-					throw new ValidacaoException(TipoMensagem.ERROR, "ferrou");
+					throw new ValidacaoException(TipoMensagem.ERROR, "Nao encontrado Movimentacao de estoque para Cota");
 				}
 						
 				movimentosEstoqueCota.addAll(this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro));
