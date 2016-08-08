@@ -118,7 +118,7 @@ public class HomeController {
         result.include("menus", mapaMenus);
         result.include("nomeUsuario", usuarioService.getNomeUsuarioLogado());
         result.include("versao", version);
-        if ( "admin".equals(authentication.getName()))
+        if ( "admin".equals(authentication.getName())|| "sad".equalsIgnoreCase(authentication.getName())|| "sustentacao".equalsIgnoreCase(authentication.getName()))
            result.include("changes", obterInformacoesDoSistema());
         		
         		 
