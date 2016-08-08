@@ -32,6 +32,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" prod.NOME as nomeProduto,")
 		.append(" tsp.id as idSegmento,")
 		.append(" prodEdic.ID as idProdutoEdicao,")
+		.append(" if(plp.id is null, 'NORMAL', 'PARCIAL') as modoAnaliseDefault, ")
 		.append(" prodEdic.NUMERO_EDICAO as numeroEdicao,")
 		.append(" plp.NUMERO_PERIODO as periodo, ")
 		.append(" prodEdic.PRECO_VENDA as precoVenda,")
@@ -40,7 +41,6 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" pessoa.NOME_FANTASIA as nomeFornecedor,")
 		.append(" estoqueProd.QTDE_JURAMENTADO as juram,")
 		.append(" estoqueProd.QTDE_SUPLEMENTAR as suplem,")
-//		.append(" estoqueProd.QTDE as estoque,")
         
 		.append(" (SELECT sum(lc.REPARTE_PROMOCIONAL) FROM lancamento lc join periodo_lancamento_parcial plcp on plcp.ID = lc.PERIODO_LANCAMENTO_PARCIAL_ID ")
         .append(" 		WHERE lc.PRODUTO_EDICAO_ID = prodEdic.id and plcp.NUMERO_PERIODO = plp.NUMERO_PERIODO) AS promo, ")
@@ -109,7 +109,6 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 	 	
 	 	sql.append(" order by liberado, idEstudo ");
 	 	sql.append(" , " + filtro.getPaginacao().getSortColumn() + " " + filtro.getPaginacao().getOrdenacao());
-//	 	sql.append(" order by codigoProduto, numeroEdicao");
 	 	
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
@@ -130,8 +129,6 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoDistribuicaoVO.class));
 		
 		List<ProdutoDistribuicaoVO> result = query.list();
-		
-//		Collections.sort(result);
 		
 		return result;
 	}

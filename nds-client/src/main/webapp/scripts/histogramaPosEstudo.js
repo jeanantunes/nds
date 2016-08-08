@@ -86,44 +86,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		 */
 		// Analise do estudo - EMS 2031
 		$('#analiseEstudo').click(function() {
-			
-			var reparteOrigemCopia = $("#copiarEstudo-copia-reparte", MatrizDistribuicao.workspace).text();
-			
-			if(reparteOrigemCopia != '' && reparteOrigemCopia != undefined){
-				var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo +
-				'&modoAnalise='+ histogramaPosEstudoController.modoAnalise +'&reparteCopiado=' +reparteOrigemCopia;
-			}else{
-				var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo +
-				'&modoAnalise='+ histogramaPosEstudoController.modoAnalise;
-			}
-			
-			reparteOrigemCopia = '';
-			
-			var abaAberta = false;
-			
-			$('#workspace .ui-tabs-nav li a').each(function(k, v){ 
-				if($(v).text() == 'Análise de Estudos') {
-					console.log(k +' - '+ $(v).text());
-					$("#workspace").tabs('option', 'selected', k); 
-					$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));
-					// $("#workspace").tabs('load', k);
-					abaAberta = true;
-				} 
-			});
-			
-			if(abaAberta){
-				
-				$('#workspace').tabs({load : function(event, ui) {
-					$('#workspace').tabs({load : function(event, ui) {}});
-				}});
-
-				
-				$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
-			} else {
-				
-				$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
-			}
-			
+			histogramaPosEstudoController.redirectTelaAnaliseEstudo(histogramaPosEstudoController.matrizSelecionado.estudo, histogramaPosEstudoController.modoAnalise);
 		});
 
 		// RECALCULAR ESTUDO - EMS 2025 - Distribuição Venda Média
@@ -808,6 +771,46 @@ var histogramaPosEstudoController = $.extend(true, {
 			selectTabTitle('Matriz Distribuição');
 		}
 		
+	},
+	
+	redirectTelaAnaliseEstudo : function(estudo, modoAnalise){
+		
+		var reparteOrigemCopia = $("#copiarEstudo-copia-reparte", MatrizDistribuicao.workspace).text();
+		
+		if(reparteOrigemCopia != '' && reparteOrigemCopia != undefined){
+			var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + estudo +
+			'&modoAnalise='+ modoAnalise +'&reparteCopiado=' +reparteOrigemCopia;
+		}else{
+			var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + estudo +
+			'&modoAnalise='+ modoAnalise;
+		}
+		
+		reparteOrigemCopia = '';
+		
+		var abaAberta = false;
+		
+		$('#workspace .ui-tabs-nav li a').each(function(k, v){ 
+			if($(v).text() == 'Análise de Estudos') {
+				console.log(k +' - '+ $(v).text());
+				$("#workspace").tabs('option', 'selected', k); 
+				$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));
+				// $("#workspace").tabs('load', k);
+				abaAberta = true;
+			} 
+		});
+		
+		if(abaAberta){
+			
+			$('#workspace').tabs({load : function(event, ui) {
+				$('#workspace').tabs({load : function(event, ui) {}});
+			}});
+
+			
+			$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
+		} else {
+			
+			$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
+		}
 	}
 
 }, BaseController);

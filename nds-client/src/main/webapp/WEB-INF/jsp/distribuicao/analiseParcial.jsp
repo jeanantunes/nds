@@ -372,6 +372,12 @@ table.dadosTab { margin-left: 370px;}
 					</c:otherwise>
 				</c:choose>
 				
+				<span class="bt_novos">
+       	  			<a href="javascript:;" onclick="analiseParcialController.analiseHistogramaEstudo()" rel="tipsy" title="Histograma">
+   	  					<img id="imgAnalise" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" hspace="5" border="0"/> Histograma
+       	  			</a>
+       	  		</span>
+       	  		
                 <span class="bt_novos">
                     <a href="javascript:;" id="botaoVoltarTelaAnalise" onclick="$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected')); selectTabTitle('Analise de Estudos');">
                         <img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" /> Voltar
@@ -386,7 +392,7 @@ table.dadosTab { margin-left: 370px;}
                 <span class="bt_novos">
                     <a href="javascript:;" onclick="analiseParcialController.mudarBaseVisualizacao();">
                         <img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" alt="Mudar Base de Visualização" hspace="5" border="0" />
-                        <span>Mudar Base de Visualização</span>
+                        <span>Mudar Bases</span>
 					</a>
 				</span>
             </c:if>
