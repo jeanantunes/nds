@@ -159,6 +159,7 @@ var lancamentoNovoController = $.extend(true, {
 		$("#nomeCotaNota", lancamentoNovoController.workspace).val("");
 		
 		$("#nomeEstoqueSpan", lancamentoNovoController.workspace).html("Estoque");
+		$("#tdNomeEstoqueSpan").css('width', 80);
 		
 		$("#divPesquisaProdutosNota", lancamentoNovoController.workspace).hide();
 
@@ -191,19 +192,31 @@ var lancamentoNovoController = $.extend(true, {
 		lancamentoNovoController.openModalDiferenca();
 
 		var tipoDiferenca = null;
+		var tipoDirecionamento = 'ESTOQUE';
+		
+		$("#tipoDiferenca", lancamentoNovoController.workspace).val("FALTA_EM");
 		
 		if(camposRecarregar) {
 			tipoDiferenca = camposRecarregar.tipoDiferenca;
+			
+			if(camposRecarregar.tipoDiferenca == "FALTA_EM"){
+				tipoDirecionamento = 'COTA';
+			}
+			
 		} else {
-			tipoDiferenca = $("#tipoDiferenca", lancamentoNovoController.workspace).val();
+			tipoDiferenca = "FALTA_EM";
+			tipoDirecionamento = 'COTA';
+//			tipoDiferenca = $("#tipoDiferenca", lancamentoNovoController.workspace).val();
 		}
 		
 		lancamentoNovoController.tratarVisualizacaoOpcaoEstoque({
 			tipoDiferenca: tipoDiferenca,
-			direcionamento: 'ESTOQUE',
+			direcionamento: tipoDirecionamento,
 			clearInputs: true,
 			camposRecarregar : camposRecarregar
 		});
+		
+		setTimeout(function() { $("#codigoProdutoInput", lancamentoNovoController.workspace).focus(); }, 100);
 	
 	},
 	
@@ -220,16 +233,27 @@ var lancamentoNovoController = $.extend(true, {
 					
 					$("#tipoDiferenca", lancamentoNovoController.workspace).val('SOBRA_DE');
 					
+				} else if (diferenca.tipoDiferenca == 'SOBRA_DE' || diferenca.tipoDiferenca == 'SOBRA_EM') {
+					
+					$("#tipoDiferenca", lancamentoNovoController.workspace).val(diferenca.tipoDiferenca);
+					
+					$(".view-estoque-sobra", this.workspace).show();
+					$("#selectTipoEstoqueSobra", lancamentoNovoController.workspace).val(diferenca.tipoEstoque);
+					
 				} else if (diferenca.tipoDiferenca == 'SOBRA_EM_DIRECIONADA_COTA') {
 					
 					$("#tipoDiferenca", lancamentoNovoController.workspace).val('SOBRA_EM');
+					$(".view-estoque-sobra", this.workspace).show();
+					$("#selectTipoEstoqueSobra", lancamentoNovoController.workspace).show();
+					$("#selectTipoEstoqueSobra", lancamentoNovoController.workspace).val(diferenca.tipoEstoque);
 					
 				} else if (diferenca.tipoDiferenca == 'FALTA_EM_DIRECIONADA_COTA') {
 					
+					$(".view-estoque-sobra", this.workspace).hide();
 					$("#tipoDiferenca", lancamentoNovoController.workspace).val('FALTA_EM');
 					
 				} else {
-				
+					$(".view-estoque-sobra", this.workspace).hide();
 					$("#tipoDiferenca", lancamentoNovoController.workspace).val(diferenca.tipoDiferenca);
 				}
 				
@@ -383,6 +407,9 @@ var lancamentoNovoController = $.extend(true, {
 		
 		$("#ui-dialog-title-dialogNovasDiferencas", lancamentoNovoController.workspace).text("Lançamento Faltas e Sobras - Produto");
 		
+		$("#nomeEstoqueSpan", lancamentoNovoController.workspace).html("Estoque");
+		$("#tdNomeEstoqueSpan").css('width', 80);
+		
 		lancamentoNovoController.tratarVisualizacaoOpcaoEstoque({tipoDiferenca: 'ALTERACAO_REPARTE'});		
 		
 		if(typeof result == 'undefined' || result == null){
@@ -422,6 +449,9 @@ var lancamentoNovoController = $.extend(true, {
 		
 		$("#paraCota",lancamentoNovoController.workspace).check();
 		
+		$("#nomeEstoqueSpan", lancamentoNovoController.workspace).html("Estoque");
+		$("#tdNomeEstoqueSpan").css('width', 80);
+		
 		if(result.rateios){
 			
 			lancamentoNovoController.renderizarlistaRateio(result.rateios);
@@ -450,6 +480,7 @@ var lancamentoNovoController = $.extend(true, {
 		
 		var tipoEstoque = result.diferenca != null ? "(" + result.diferenca.descricaoTipoEstoque + ")" : "";
 		$("#nomeEstoqueSpan").html("Estoque " + tipoEstoque);
+		$("#tdNomeEstoqueSpan").css('width', 200);
 		
 		lancamentoNovoController.tratarVisualizacaoOpcaoEstoque({
 			tipoDiferenca: result.diferenca.tipoDiferenca,
@@ -464,6 +495,9 @@ var lancamentoNovoController = $.extend(true, {
 		$(".prodComCota", lancamentoNovoController.workspace).show();
 		$(".prodSemCota", lancamentoNovoController.workspace).hide();
 		$("#ui-dialog-title-dialogNovasDiferencas", lancamentoNovoController.workspace).text("Lançamento Faltas e Sobras - Cota");
+		
+		$("#nomeEstoqueSpan", lancamentoNovoController.workspace).html("Estoque");
+		$("#tdNomeEstoqueSpan").css('width', 80);
 		
 		if(result.rateios){
 			
@@ -572,7 +606,10 @@ var lancamentoNovoController = $.extend(true, {
 					$("#gridNovasDiferencas", lancamentoNovoController.workspace).flexAddData({rows:[]});
 					$(this).dialog("close");
 					
-					lancamentoNovoController.houveAlteracaoLancamentos = false;
+					if($('.gridLancamentos tr',this.workspace).size() <= 0){
+						lancamentoNovoController.houveAlteracaoLancamentos = false;
+					}
+					
 				}
 			},
 			beforeClose: function() {
@@ -742,6 +779,10 @@ var lancamentoNovoController = $.extend(true, {
 		var pacotePadrao = $("#pacotePadrao", lancamentoNovoController.workspace).html();
 		
 		var tipoEstoque = lancamentoNovoController.tipoEstoqueSelecionado;
+		
+		if (tipoDiferenca == "SOBRA_DE" || tipoDiferenca == "SOBRA_EM"){
+			tipoEstoque = $("#selectTipoEstoqueSobra", lancamentoNovoController.workspace).val();
+		}
 		
 		if (lancamentoNovoController.isTipoDiferencaAlteracaoReparte(tipoDiferenca)) {
 			
@@ -986,6 +1027,8 @@ var lancamentoNovoController = $.extend(true, {
 	},
 	
 	processamentoSucessoCadastroNovaDiferenca:function(isBotaoIncluirNovo ){
+		
+		lancamentoNovoController.houveAlteracaoLancamentos = true;
 		
 		var data = [
 					 {name: "tipoDiferenca", value: $("#selectTiposDiferenca", lancamentoNovoController.workspace).val()},
@@ -1635,6 +1678,12 @@ limparCota : function(index) {
 			lancamentoNovoController.recarregarValoresDialogDiferenca(params.camposRecarregar);
 		}
 		
+		if (value == "SOBRA_DE" || value == "SOBRA_EM" || value == "SOBRA_EM_DIRECIONADA_COTA" || value == "SOBRA_DE_DIRECIONADA_COTA"){
+			$(".view-estoque-sobra", this.workspace).show();
+		}else{
+			$(".view-estoque-sobra", this.workspace).hide();
+		}
+		
 	},
 	
 	limparCamposProdutoAlteracaoReparte : function() {
@@ -1716,6 +1765,11 @@ limparCota : function(index) {
 	atualizarTipoEstoqueSelecionado : function() {
 		
 		lancamentoNovoController.tipoEstoqueSelecionado = $("#selectTipoEstoqueAlteracaoReparte", lancamentoNovoController.workspace).val();
+	},
+	
+	atualizarTipoEstoqueSobraSelecionado : function() {
+		
+		lancamentoNovoController.tipoEstoqueSelecionado = $("#selectTipoEstoqueSobra", lancamentoNovoController.workspace).val();
 	},
 	
 	buscarDadosAlteracaoReparte : function(tipoEstoque) {

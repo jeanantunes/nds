@@ -145,10 +145,10 @@
 				<td width="20" class="view-estouque">
 					<input name="direcionar" type="radio" id="paraEstoque" onchange="lancamentoNovoController.paraEstoque(true);"/>
 				</td>
-				<td width="72" class="view-estouque">
+				<td width="72" id="tdNomeEstoqueSpan" class="view-estouque">
 					<span id="nomeEstoqueSpan">Estoque</span>
 				</td>
-				<td width="20" class="view-cota">
+				<td width="20" class="view-cota" style="padding-left: 20px;">
 					<input name="direcionar" type="radio" id="paraCota" onchange="lancamentoNovoController.paraEstoque(false);" />
 				</td>
 				<td width="95" class="view-cota">Cota</td>
@@ -156,9 +156,37 @@
 				<td class="alteracaoReparte">
 		    		 <select id="selectTipoEstoqueAlteracaoReparte" size="1" onchange="lancamentoNovoController.atualizarTipoEstoqueSelecionado();"></select>
 		    	</td>
+		    	
+		    	<td width="72" class="view-estoque-sobra" style="display:none; padding-left: 100px;">Estoque:</td>
+				<td class="view-estoque-sobra" style="display:none; padding-left: 20px;">
+		    		 <select id="selectTipoEstoqueSobra" size="1" onchange="lancamentoNovoController.atualizarTipoEstoqueSobraSelecionado();">
+		    		 	<option value="LANCAMENTO">Lan&ccedil;amento</option>
+		    		 	<option value="SUPLEMENTAR">Suplementar</option>
+		    		 </select>
+		    	</td>
+		    	
 			</tr>
 		</table>
     </fieldset>
+    
+   <!-- 
+    <div class="view-estoque-sobra" style="display:block;">
+	    <fieldset style="width:650px!important;">
+	   		<legend>Direcionar para:</legend>
+	       	<table width="220" border="0" cellspacing="1" cellpadding="1">
+				<tr>
+					<td width="72" class="alteracaoReparte">Estoque:</td>
+					<td class="view-estoque-sobra">
+			    		 <select id="selectTipoEstoqueSobra" size="1" onchange="lancamentoNovoController.atualizarTipoEstoqueSobraSelecionado();">
+			    		 	<option value="LANCAMENTO">Lançamento</option>
+			    		 	<option value="SUPLEMENTAR">Suplementar</option>
+			    		 </select>
+			    	</td>
+				</tr>
+			</table>
+	    </fieldset>
+    </div>
+    -->
 	
 	<div class="linha_separa_fields" style="width:650px!important;">&nbsp;</div>
 	
