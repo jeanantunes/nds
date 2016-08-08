@@ -14,6 +14,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.parametrosDePesquisa = null;
 	var estudoAserCopiado = null;
 	
+	this.modoAnaliseDefault = 'NORMAL';
+	
 //	this.definirAcaoPesquisaTeclaEnter = function() {
 //		definirAcaoPesquisaTeclaEnter();
 //	},
@@ -272,6 +274,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					pctPadrao : row.cell.pctPadrao,
 					liberado : liberado,
 					dataFinMatDistrib : row.cell.dataFinMatDistrib,
+					modoAnalise : row.cell.modoAnaliseDefault,
 					idCopia : row.cell.idCopia
 		});
 		
@@ -482,6 +485,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			exibirMensagem("WARNING",["Este produto está com o segmento inválido, ajuste-o no Cadastro de Produto."]);
 			return;
 		}
+		
+	    T.modoAnaliseDefault = estudoParaDivisao.modoAnalise;
 		
 		showTab(contextPath +"/dividirEstudo/index", "Dividir Estudo");
 		T.mostrarOpcoes();
@@ -965,39 +970,67 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.redirectToTelaAnalise = function redirectToTelaAnalise(estudo){
 
+		var modoAnalise =  T.modoAnaliseDefault; 
+		
+		var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + estudo + '&modoAnalise='+ modoAnalise;
+		
+		var abaAberta = false;
+		
+		$('#workspace .ui-tabs-nav li a').each(function(k, v){ 
+			if($(v).text() == 'Análise de Estudos') {
+				console.log(k +' - '+ $(v).text());
+				$("#workspace").tabs('option', 'selected', k); 
+				$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));
+
+				abaAberta = true;
+			} 
+		});
+		
+		if(abaAberta){
+			
+			$('#workspace').tabs({load : function(event, ui) {
+				$('#workspace').tabs({load : function(event, ui) {}});
+			}});
+
+			$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
+		} else {
+			$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
+		}
+		
+		
         // Obter matriz de distribuição
-        var matriz = [],
-        	url = contextPath + "/distribuicao/analiseEstudo/obterMatrizDistribuicaoPorEstudo",
-        	dadosResumo = {},
-        	numeroEstudo = estudo;
-        
-        $.postJSON(url,
-                [{name : "id" , value : numeroEstudo}],
-                function(response){
-	            // CALLBACK
-	            // ONSUCESS
-	            matriz.push({name: "selecionado.classificacao",  value: response.classificacao});
-	            matriz.push({name: "selecionado.nomeProduto",    value: response.nomeProduto});
-	            matriz.push({name: "selecionado.codigoProduto",  value: response.codigoProduto});
-	            matriz.push({name: "selecionado.dataLcto",       value: response.dataLancto});
-	            matriz.push({name: "selecionado.edicao",         value: response.numeroEdicao});
-	            matriz.push({name: "selecionado.estudo",         value: response.idEstudo});
-	            matriz.push({name: "selecionado.idLancamento",   value: response.idLancamento});
-	            matriz.push({name: "selecionado.estudoLiberado", value: (response.liberado != "")});
-	            
-	            $('#workspace').tabs({load : function(event, ui) {
-					
-	            	histogramaPosEstudoController.dadosResumo = dadosResumo;
-	            	histogramaPosEstudoController.matrizSelecionado = matriz;
-	            	histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(matriz, undefined, false);
-
-					$('#workspace').tabs({load : function(event, ui) {}});
-				}});
-
-                var parametros = '?codigoProduto='+ response.codigoProduto +'&edicao='+ response.numeroEdicao;
-				$('#workspace').tabs('addTab', 'Histograma Pré Análise', contextPath + '/matrizDistribuicao/histogramaPosEstudo' + parametros);
-        	}
-        );
+//        var matriz = [],
+//        	url = contextPath + "/distribuicao/analiseEstudo/obterMatrizDistribuicaoPorEstudo",
+//        	dadosResumo = {},
+//        	numeroEstudo = estudo;
+//        
+//        $.postJSON(url,
+//                [{name : "id" , value : numeroEstudo}],
+//                function(response){
+//	            // CALLBACK
+//	            // ONSUCESS
+//	            matriz.push({name: "selecionado.classificacao",  value: response.classificacao});
+//	            matriz.push({name: "selecionado.nomeProduto",    value: response.nomeProduto});
+//	            matriz.push({name: "selecionado.codigoProduto",  value: response.codigoProduto});
+//	            matriz.push({name: "selecionado.dataLcto",       value: response.dataLancto});
+//	            matriz.push({name: "selecionado.edicao",         value: response.numeroEdicao});
+//	            matriz.push({name: "selecionado.estudo",         value: response.idEstudo});
+//	            matriz.push({name: "selecionado.idLancamento",   value: response.idLancamento});
+//	            matriz.push({name: "selecionado.estudoLiberado", value: (response.liberado != "")});
+//	            
+//	            $('#workspace').tabs({load : function(event, ui) {
+//					
+//	            	histogramaPosEstudoController.dadosResumo = dadosResumo;
+//	            	histogramaPosEstudoController.matrizSelecionado = matriz;
+//	            	histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(matriz, undefined, false);
+//
+//					$('#workspace').tabs({load : function(event, ui) {}});
+//				}});
+//
+//                var parametros = '?codigoProduto='+ response.codigoProduto +'&edicao='+ response.numeroEdicao;
+//				$('#workspace').tabs('addTab', 'Histograma Pré Análise', contextPath + '/matrizDistribuicao/histogramaPosEstudo' + parametros);
+//        	}
+//        );
 
 	},
 
@@ -1021,6 +1054,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		}
 				
 		T.esconderOpcoes();
+		
+		T.modoAnaliseDefault = selecionado.modoAnalise;
 		
 		$("#somarEstudo-estudoPesquisa", _workspace).bind("keydown", function(event) {
 			  var keycode = (event.keyCode ? event.keyCode : (event.which ? event.which : event.charCode));
@@ -1072,6 +1107,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		}
 		
 		T.esconderOpcoes();
+		
+		T.modoAnaliseDefault = selecionado.modoAnalise;
 		
 //		$(".areaBts", _workspace).hide();
 		
@@ -1633,6 +1670,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			return;
 		}
 	    
+	    T.modoAnaliseDefault = selecionado.modoAnalise;
+	    
 	    var postData = [];
 	    
 	    postData.push({name: "estudoId",        	value: selecionado.estudo});
@@ -1716,6 +1755,67 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				
 				var parametros = '?idLancamento='+ selecionado.idLancamento;
 				$('#workspace').tabs('addTab', 'Histograma Pré Análise', contextPath + '/matrizDistribuicao/histogramaPosEstudo'+ parametros);
+			}
+			
+		}else{
+			exibirMensagem("WARNING", ["Selecione um item."]);
+			return false;
+		}
+		
+	};
+	
+	this.analiseEstudo = function(){
+		//testa se registro foi selecionado
+		if (T.validarMarcacaoUnicoItem()) {
+			$.each(T.lancamentos, function(index, lancamento){
+				if(lancamento.selecionado) {
+					selecionado = lancamento;
+				}
+			});
+			
+			//testa se registro selecionado possui estudo gerado
+			if (selecionado.estudo == null || selecionado.estudo == "") {
+				exibirMensagem("WARNING",["Selecione um produto que tenha um estudo gerado."]);
+				return;
+			} else {
+				
+				var modoAnalise =  selecionado.modoAnalise != undefined ? selecionado.modoAnalise : 'NORMAL'; 
+				
+				var reparteOrigemCopia = $("#copiarEstudo-copia-reparte", MatrizDistribuicao.workspace).text();
+				
+				if(reparteOrigemCopia != '' && reparteOrigemCopia != undefined){
+					var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + selecionado.estudo + '&modoAnalise='+ modoAnalise 
+								   +'&reparteCopiado=' +reparteOrigemCopia;
+				}else{
+					var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + selecionado.estudo + '&modoAnalise='+ modoAnalise;
+				}
+				
+				reparteOrigemCopia = '';
+				
+				var abaAberta = false;
+				
+				$('#workspace .ui-tabs-nav li a').each(function(k, v){ 
+					if($(v).text() == 'Análise de Estudos') {
+						console.log(k +' - '+ $(v).text());
+						$("#workspace").tabs('option', 'selected', k); 
+						$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));
+						// $("#workspace").tabs('load', k);
+						abaAberta = true;
+					} 
+				});
+				
+				if(abaAberta){
+					
+					$('#workspace').tabs({load : function(event, ui) {
+						$('#workspace').tabs({load : function(event, ui) {}});
+					}});
+
+					
+					$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
+				} else {
+					
+					$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
+				}
 			}
 			
 		}else{

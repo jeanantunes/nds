@@ -96,6 +96,8 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	
 	private BigInteger idSegmento;
 	
+	private String modoAnaliseDefault;
+	
 	public void addItemDuplicado(ProdutoDistribuicaoVO produtoDistribuicaoVO, Integer row) {
 		
 		produtoDistribuicoesDuplicados.add(produtoDistribuicaoVO);
@@ -436,4 +438,13 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	public void setIdSegmento(BigInteger idSegmento) {
 		this.idSegmento = idSegmento;
 	}
+
+	public String getModoAnaliseDefault() {
+		return modoAnaliseDefault;
+	}
+
+	public void setModoAnaliseDefault(String modoAnaliseDefault) {
+		this.modoAnaliseDefault = modoAnaliseDefault;
+	}
+	
 }
