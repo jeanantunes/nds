@@ -334,7 +334,8 @@ public class EnderecoServiceImpl implements EnderecoService {
 					ret.setCep(logradouro.getCep());
 					ret.setLogradouro(logradouro.getNome());				
 					ret.setTipoLogradouro(logradouro.getTipoLogradouro());				
-					ret.setBairro(bairroInicial.getNome());				
+					ret.setBairro(bairroInicial.getNome());	
+					
 				} else if (list.size() == 4) {
 						logradouro = om.treeToValue(list.get(0), Logradouro.class);
 						localidade = om.treeToValue(list.get(1), Localidade.class);
@@ -353,7 +354,9 @@ public class EnderecoServiceImpl implements EnderecoService {
 //				bairroFinal = om.treeToValue(list.get(3), Bairro.class);
 				
 								
-				ret.setCodigoCidadeIBGE(localidade.getCodigoMunicipioIBGE());				
+				ret.setCodigoCidadeIBGE(localidade.getCodigoMunicipioIBGE());		
+				if ( ret.getCodigoCidadeIBGE() != null )
+			     ret.setCodigoUf(new Long((""+ret.getCodigoCidadeIBGE()).substring(0,2)));
 				ret.setIdLocalidade(localidade.get_id());
 				ret.setLocalidade(localidade.getNome());				
 				

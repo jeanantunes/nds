@@ -248,6 +248,7 @@ function Endereco(paramTela, paramMessage) {
 				$("#"+paramTela+"bairro", Endereco.workspace).val(result.endereco.bairro);
 				$("#"+paramTela+"cidade", Endereco.workspace).val(result.endereco.cidade);
 				$("#"+paramTela+"uf", Endereco.workspace).val(result.endereco.uf);
+				$("#"+paramTela+"codigoUf", Endereco.workspace).val(result.endereco.codigoUf);
 				$("#"+paramTela+"principal", Endereco.workspace).attr("checked", result.enderecoPrincipal);
 				$("#"+paramTela+"codigoBairro", Endereco.workspace).val(result.endereco.codigoBairro);
 				$("#"+paramTela+"codigoCidadeIBGE", Endereco.workspace).val(result.endereco.codigoCidadeIBGE);
@@ -315,6 +316,8 @@ function Endereco(paramTela, paramMessage) {
 		$("#"+paramTela+"bairro", Endereco.workspace).val("");
 		$("#"+paramTela+"cidade", Endereco.workspace).val("");
 		$("#"+paramTela+"uf", Endereco.workspace).val("");
+		$("#"+paramTela+"codigoUf", Endereco.workspace).val("");
+		$("#"+paramTela+"codigoCidadeIBGE", Endereco.workspace).val("");
 		$("#"+paramTela+"principal", Endereco.workspace).attr("checked", false);
 	},
 	
@@ -349,7 +352,9 @@ function Endereco(paramTela, paramMessage) {
 		$("#"+paramTela+"bairro", 					Endereco.workspace).prop('disabled', indBloqueiaCampo);
 		$("#"+paramTela+"cidade", 					Endereco.workspace).prop('disabled', indBloqueiaCampo);
 		$("#"+paramTela+"uf", 						Endereco.workspace).prop('disabled', indBloqueiaCampo);
-		$("#"+paramTela+"principal", 				Endereco.workspace).prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"codigoUf", 				Endereco.workspace).prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"codigoCidadeIBGE", 		Endereco.workspace).prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"principal", 				Endereco.workspace).prop('disabled', true);
 		
 	},
 	
@@ -364,9 +369,9 @@ function Endereco(paramTela, paramMessage) {
 	
 		var cep = $("#"+paramTela+"cep").val();
 
-		$("#"+paramTela+"numero", Endereco.workspace).val("");
+	//	$("#"+paramTela+"numero", Endereco.workspace).val("");
 		
-		$("#"+paramTela+"complemento", Endereco.workspace).val("");
+	//	$("#"+paramTela+"complemento", Endereco.workspace).val("");
 
 		
 		$.postJSON(
@@ -382,6 +387,7 @@ function Endereco(paramTela, paramMessage) {
 					$("#"+paramTela+"codigoBairro", Endereco.workspace).val(result.codigoBairro);
 					$("#"+paramTela+"bairro", Endereco.workspace).val(result.bairro);
 					$("#"+paramTela+"uf", Endereco.workspace).val(result.uf);
+					$("#"+paramTela+"codigoUf", Endereco.workspace).val(result.codigoUf);
 					$("#"+paramTela+"codigoCidadeIBGE", Endereco.workspace).val(result.codigoCidadeIBGE);
 					$("#"+paramTela+"cidade", Endereco.workspace).val(result.localidade);
 				}
@@ -394,6 +400,7 @@ function Endereco(paramTela, paramMessage) {
 				$("#"+paramTela+"codigoBairro", Endereco.workspace).val("");
 				$("#"+paramTela+"bairro", Endereco.workspace).val("");
 				$("#"+paramTela+"uf", Endereco.workspace).val("");
+				$("#"+paramTela+"codigoUf", Endereco.workspace).val("");
 				$("#"+paramTela+"codigoCidadeIBGE", Endereco.workspace).val("");
 				$("#"+paramTela+"cidade", Endereco.workspace).val("");
 			}, 
