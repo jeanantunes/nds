@@ -31,6 +31,8 @@ public class EnderecoVO extends IntegracaoDocument implements Serializable {
 	private String numero;
 	
 	private String complemento;
+	
+	private Long codigoUf;
 
 	/**
 	 * @return the uf
@@ -185,6 +187,14 @@ public class EnderecoVO extends IntegracaoDocument implements Serializable {
 	 */
 	public void setComplemento(String complemento) {
 		this.complemento = complemento;
+	}
+
+	public Long getCodigoUf() {
+		return codigoUf;
+	}
+
+	public void setCodigoUf(Long codigoUf) {
+		this.codigoUf = codigoUf;
 	}
 	
 }

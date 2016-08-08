@@ -28,8 +28,6 @@
 			
 			<input type="hidden" name="enderecoAssociacao.endereco.codigoBairro" id="${param.telaEndereco}codigoBairro"/>
 			
-			<input type="hidden" name="enderecoAssociacao.endereco.codigoCidadeIBGE" id="${param.telaEndereco}codigoCidadeIBGE"/>
-			
 			<input type="hidden" id="${param.telaEndereco}idLocalidade"/>
 			
 			<input type="hidden" name="enderecoAssociacao.enderecoPessoa" id="${param.telaEndereco}enderecoPessoa"/>
@@ -78,6 +76,8 @@
 								id="${param.telaEndereco}uf"
 								name="enderecoAssociacao.endereco.uf">
 						</select>
+					
+						
 					</td>
 					<td>Cidade:</td>
 					<td>
@@ -86,6 +86,27 @@
 							   onkeyup="${param.telaEndereco}.autoCompletarLocalidades();"
 							   onblur="${param.telaEndereco}.autoCompletarLocalidades(true);"
 							   name="enderecoAssociacao.endereco.cidade" />
+					
+						
+					</td>
+				</tr>
+				<tr>
+					<td>Codigo UF:</td>
+					<td>
+						
+					
+						<input style="width:80px;" 
+								id="${param.telaEndereco}codigoUf"
+								name="enderecoAssociacao.endereco.codigoUf" disabled >
+						</input>
+					</td>
+					<td>Codigo Cidade:</td>
+					<td>
+						
+						<input style="width:50px" 
+								id="${param.telaEndereco}codigoCidadeIBGE"
+								name="enderecoAssociacao.endereco.codigoCidadeIBGE" disabled>
+						</input>
 					</td>
 				</tr>
 				<tr>
