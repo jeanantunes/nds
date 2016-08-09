@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +43,8 @@ import br.com.abril.nds.util.Util;
 @Service
 public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExtratoEdicaoServiceImpl.class);
+	 
 	@Autowired
 	private MovimentoEstoqueRepository movimentoEstoqueRepository;
 	
@@ -135,32 +139,39 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 			this.lancamentoDiferencaRepository.buscarPorId(
 				itemExtratoEdicao.getIdLancamentoDiferenca());
 		
+		
+		
 		Diferenca diferenca = lancamentoDiferenca.getDiferenca();
-		
-		String novaDescricao = itemExtratoEdicao.getDescMovimento();
-		
-		if (!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())
-				&& !diferenca.getTipoDiferenca().isAlteracaoReparte()
-				&& !(diferenca.getTipoDiferenca().equals(TipoDiferenca.FALTA_EM_DIRECIONADA_COTA) 
-						|| diferenca.getTipoDiferenca().equals(TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA))) {
+	
+		if ( diferenca != null ) {
 			
-			novaDescricao = novaDescricao + " COTA";
-		}
+			String novaDescricao = itemExtratoEdicao.getDescMovimento();
+			if (!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())
+					&& !diferenca.getTipoDiferenca().isAlteracaoReparte()
+					&& !(diferenca.getTipoDiferenca().equals(TipoDiferenca.FALTA_EM_DIRECIONADA_COTA) 
+							|| diferenca.getTipoDiferenca().equals(TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA))) {
+				
+				novaDescricao = novaDescricao + " COTA";
+			}
+			
+			StatusIntegracao statusIntegracao = (lancamentoDiferenca.getMovimentoEstoque()!= null)
+													?lancamentoDiferenca.getMovimentoEstoque().getStatusIntegracao()
+															:null;
+	
+			if (!diferenca.getTipoEstoque().equals(TipoEstoque.GANHO) 
+					&& !diferenca.getTipoEstoque().equals(TipoEstoque.PERDA)
+					&& (!StatusIntegracao.NAO_INTEGRAR.equals(statusIntegracao) 
+							&& !StatusIntegracao.ENCALHE.equals(statusIntegracao)
+							&& !StatusIntegracao.FORA_DO_PRAZO.equals(statusIntegracao))) {
+	
+				novaDescricao = novaDescricao + " (Pendente de Aprovação no GFS)";
+			}
+			itemExtratoEdicao.setDescMovimento(novaDescricao);
+		} else {
+			LOGGER.error("ERRO.. REGISTRO DIFERENCA NAO ENCONTRADO PARA TABELA LANCAMENTO DIFERENCA ID="+lancamentoDiferenca.getId());
+		  }
 		
-		StatusIntegracao statusIntegracao = (lancamentoDiferenca.getMovimentoEstoque()!= null)
-												?lancamentoDiferenca.getMovimentoEstoque().getStatusIntegracao()
-														:null;
-
-		if (!diferenca.getTipoEstoque().equals(TipoEstoque.GANHO) 
-				&& !diferenca.getTipoEstoque().equals(TipoEstoque.PERDA)
-				&& (!StatusIntegracao.NAO_INTEGRAR.equals(statusIntegracao) 
-						&& !StatusIntegracao.ENCALHE.equals(statusIntegracao)
-						&& !StatusIntegracao.FORA_DO_PRAZO.equals(statusIntegracao))) {
-
-			novaDescricao = novaDescricao + " (Pendente de Aprovação no GFS)";
-		}
-
-		itemExtratoEdicao.setDescMovimento(novaDescricao);
+		
 	}
 	
 	private void processarAtualizacaoEstoqueGFS(Long idProdutoEdicao,
