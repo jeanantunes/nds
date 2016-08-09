@@ -1193,6 +1193,11 @@ var lancamentoNovoController = $.extend(true, {
 			lancamentoNovoController.limparCotas();
 			$("#fieldCota", lancamentoNovoController.workspace).hide();
 			
+			if($("#tipoDiferenca", lancamentoNovoController.workspace).val() == "SOBRA_EM"){
+				$("#codigoProdutoInput", lancamentoController.workspace).focus();
+				$(".view-estoque-sobra", this.workspace).show();
+			}
+			
 		} else {
 			
 			var idProdutoEdicao = $("#idProdutoEdicao", lancamentoNovoController.workspace).val();
@@ -1206,7 +1211,11 @@ var lancamentoNovoController = $.extend(true, {
 			}
 			
 			$("#fieldCota", lancamentoNovoController.workspace).show();
+			
+			$(".view-estoque-sobra", this.workspace).hide();
+			$("#codigoProdutoInput", lancamentoController.workspace).focus();
 		}
+		
 	},
 	
 	erroPesquisaCota:function(indiceLinha){
@@ -1678,10 +1687,14 @@ limparCota : function(index) {
 			lancamentoNovoController.recarregarValoresDialogDiferenca(params.camposRecarregar);
 		}
 		
-		if (value == "SOBRA_DE" || value == "SOBRA_EM" || value == "SOBRA_EM_DIRECIONADA_COTA" || value == "SOBRA_DE_DIRECIONADA_COTA"){
+		if (value == "SOBRA_DE" || value == "SOBRA_EM_DIRECIONADA_COTA" || value == "SOBRA_DE_DIRECIONADA_COTA"){
 			$(".view-estoque-sobra", this.workspace).show();
 		}else{
 			$(".view-estoque-sobra", this.workspace).hide();
+		}
+		
+		if(value == "SOBRA_EM"){
+			$("#codigoProdutoInput", lancamentoController.workspace).focus();
 		}
 		
 	},
