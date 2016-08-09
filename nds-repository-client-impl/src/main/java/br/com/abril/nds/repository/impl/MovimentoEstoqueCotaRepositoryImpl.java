@@ -2820,7 +2820,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" 		produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
         hql.append(" 		sum(estudoCota.REPARTE) as reparte, ");
         hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa, ");
-        hql.append(" 		coalesce(if(pessoa.tipo='F',pessoa.NOME, pessoa.NOME_RAZAO_SOCIAL), pessoa.NOME_FANTASIA, '') as nomeCota, ");
+        hql.append(" 		coalesce(if(pessoa.tipo='F',pessoa.NOME, pessoa.RAZAO_SOCIAL), pessoa.NOME_FANTASIA, '') as nomeCota, ");
         hql.append(" 		cota.NUMERO_COTA as codigoCota ");
         
         gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);

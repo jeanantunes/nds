@@ -62,11 +62,11 @@ public class NFeCalculatorImpl {
 	}
 
 	public static BigDecimal calculate(PIS pis) {
-		BigDecimal taxValue = pis.getValor();
-		validate(pis.getValorAliquota(), pis.getValorBaseCalculo());
+		BigDecimal taxValue = pis.getValorBaseCalculo();
+		validate(pis.getValorAliquota(), pis.getValor());
 
-		if (taxValue==null) {
-			taxValue = internalCalculate(pis.getValorBaseCalculo(), pis.getValorAliquota());
+		if (taxValue==null || taxValue.intValue() == 0) {
+			taxValue = internalCalculate(pis.getValor(), pis.getValorAliquota());
 			logger.debug("Valor calculado do PIS: {}.", taxValue);
 			return taxValue;
 		}
@@ -76,11 +76,11 @@ public class NFeCalculatorImpl {
 	}
 
 	public static BigDecimal calculate(COFINS cofins) {
-		BigDecimal taxValue = cofins.getValor();
-		validate(cofins.getValorAliquota(), cofins.getValorBaseCalculo());
+		BigDecimal taxValue = cofins.getValorBaseCalculo();
+		validate(cofins.getValorAliquota(), cofins.getValor());
 
-		if (taxValue==null) {
-			taxValue = internalCalculate(cofins.getValorBaseCalculo(), cofins.getValorAliquota());
+		if (taxValue==null || taxValue.intValue() == 0) {
+			taxValue = internalCalculate(cofins.getValorCofins(), cofins.getValorAliquota());
 			logger.debug("Valor calculado do CONFINS: {}.", taxValue);
 			return taxValue;
 		}
