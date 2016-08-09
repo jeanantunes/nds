@@ -160,8 +160,8 @@
 		    	<td width="72" class="view-estoque-sobra" style="display:none; padding-left: 100px;">Estoque:</td>
 				<td class="view-estoque-sobra" style="display:none; padding-left: 20px;">
 		    		 <select id="selectTipoEstoqueSobra" size="1" onchange="lancamentoNovoController.atualizarTipoEstoqueSobraSelecionado();">
-		    		 	<option value="LANCAMENTO">Lan&ccedil;amento</option>
 		    		 	<option value="SUPLEMENTAR">Suplementar</option>
+		    		 	<option value="LANCAMENTO">Lan&ccedil;amento</option>
 		    		 </select>
 		    	</td>
 		    	
