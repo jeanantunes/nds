@@ -2171,6 +2171,50 @@ var analiseParcialController = $.extend(true, {
 			return parametro;
 		}
 		
+	},
+	
+	analiseHistogramaEstudo : function(){
+
+//		  Obter matriz de distribuição
+
+		var matriz = [],
+	      	url = contextPath + "/distribuicao/analiseEstudo/obterMatrizDistribuicaoPorEstudo",
+	      	dadosResumo = {},
+	      	numeroEstudo = $('#estudoId').val();
+      
+      $.postJSON(url,
+              [{name : "id" , value : numeroEstudo}],
+              function(response){
+		            matriz.push({name: "selecionado.classificacao",  value: response.classificacao});
+		            matriz.push({name: "selecionado.nomeProduto",    value: response.nomeProduto});
+		            matriz.push({name: "selecionado.codigoProduto",  value: response.codigoProduto});
+		            matriz.push({name: "selecionado.dataLcto",       value: response.dataLancto});
+		            matriz.push({name: "selecionado.edicao",         value: response.numeroEdicao});
+		            matriz.push({name: "selecionado.estudo",         value: response.idEstudo});
+		            matriz.push({name: "selecionado.idLancamento",   value: response.idLancamento});
+		            matriz.push({name: "selecionado.estudoLiberado", value: (response.liberado != "")});
+	            
+	            $('#workspace .ui-tabs-nav li a').each(function(k, v){ 
+					if($(v).text() == 'Histograma Pré Análise') {
+						console.log(k +' - '+ $(v).text());
+						$("#workspace").tabs('option', 'selected', k); 
+						$("#workspace").tabs('load', k); 
+					} 
+				});
+	            
+	            $('#workspace').tabs({load : function(event, ui) {
+					
+	            	histogramaPosEstudoController.dadosResumo = dadosResumo;
+	            	histogramaPosEstudoController.matrizSelecionado = matriz;
+	            	histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(matriz, undefined, false);
+
+					$('#workspace').tabs({load : function(event, ui) {}});
+				}});
+
+              var parametros = '?codigoProduto='+ response.codigoProduto +'&edicao='+ response.numeroEdicao;
+				$('#workspace').tabs('addTab', 'Histograma Pré Análise', contextPath + '/matrizDistribuicao/histogramaPosEstudo' + parametros);
+      	}
+      );
 	}
 	
 	

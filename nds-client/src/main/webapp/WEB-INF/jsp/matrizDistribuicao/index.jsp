@@ -121,7 +121,7 @@ var lancamentosSelecionados = [];
 		         	  		</span>
 		         	  		
 		         	  		<span class="bt_novos">
-			         	  			<a href="javascript:;" onclick="matrizDistribuicao.analise()" rel="tipsy" title="Analisar Estudo">
+			         	  			<a href="javascript:;" onclick="matrizDistribuicao.analiseEstudo()" rel="tipsy" title="Analisar Estudo">
 		         	  					<img id="imgAnalise" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" hspace="5" border="0"/>
 			         	  			</a>
 		         	  		</span>
