@@ -34,6 +34,7 @@ import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro00;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro01;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro02;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro03;
+import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro05;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro06;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro08;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro09;
@@ -72,7 +73,9 @@ public class FTFServiceImpl implements FTFService {
 
 	@Autowired
 	private NotaFiscalService notaFiscalService;
-
+	
+	private static String PERCENTUAL_RATEIO = "10000";
+	
 	@Override
 	@Transactional
 	public FTFReportDTO gerarFtf(final List<NotaFiscal> notas) {
@@ -116,9 +119,14 @@ public class FTFServiceImpl implements FTFService {
 				ftfEnvTipoRegistro01.setItemNFList03(regTipo03);
 			}
 
+			if(ftfRepository.verificarRegistroVenda(idNaturezaOperacao)){
+				this.carregarRegistroTipo05(validacaoBeans, ftfEnvTipoRegistro01, idNF);
+			}
+			
 			this.carregarRegistroTipo06(validacaoBeans, ftfEnvTipoRegistro01, idNF);
 		}
-
+		
+		
 		this.setarRegistrosTipo06(list, listTipoRegistro01Cadastrados);
 
 		this.logarErrosEncontrados(validacaoBeans);
@@ -151,13 +159,19 @@ public class FTFServiceImpl implements FTFService {
 			ftfEnvTipoRegistro03.setNumItemPedido(ftfTipoRegistro02.getNumItemPedido());
 			ftfEnvTipoRegistro03.setTipoPedido(ftfTipoRegistro02.getTipoPedido());
 			ftfEnvTipoRegistro03.setCodSetorialCRP(ftfTipoRegistro02.getCentroLucroCorporativo());
+			ftfEnvTipoRegistro03.setPercentualRateio(PERCENTUAL_RATEIO);
 			listaEnvTipoRegistro03.add(ftfEnvTipoRegistro03);
 
 		}
 
 		return listaEnvTipoRegistro03;
 	}
-
+	
+	private void carregarRegistroTipo05(List<String> validacaoBeans, FTFEnvTipoRegistro01 ftfEnvTipoRegistro01, long idNF) {
+		FTFEnvTipoRegistro05 regTipo05 = ftfRepository.obterRegistroTipo05(idNF);
+		ftfEnvTipoRegistro01.setRegTipo05(regTipo05);
+	}
+	
 	private void setarRegistrosTipo06(List<FTFBaseDTO> list, List<FTFEnvTipoRegistro01> listTipoRegistro01Cadastrados) {
 
 		for (FTFEnvTipoRegistro01 ftfEnvTipoRegistro01 : listTipoRegistro01Cadastrados) {
@@ -175,6 +189,10 @@ public class FTFServiceImpl implements FTFService {
 
 			if(ftfEnvTipoRegistro01.getRegTipo08() != null){
 				list.add(ftfEnvTipoRegistro01.getRegTipo08());				
+			}
+			
+			if(ftfEnvTipoRegistro01.getRegTipo05() != null){
+				list.add(ftfEnvTipoRegistro01.getRegTipo05());				
 			}
 		}
 	}

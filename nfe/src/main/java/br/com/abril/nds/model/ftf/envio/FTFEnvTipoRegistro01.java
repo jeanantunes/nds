@@ -14,6 +14,8 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	
 	public List<FTFEnvTipoRegistro03> itemNFList03;
 	
+	private FTFEnvTipoRegistro05 regTipo05;
+	
 	private FTFEnvTipoRegistro06 regTipo06;
 	
 	private FTFEnvTipoRegistro08 regTipo08;
@@ -1108,6 +1110,14 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 
 	public List<FTFEnvTipoRegistro02> getItemNFList() {
 		return itemNFList;
+	}
+	
+	public FTFEnvTipoRegistro05 getRegTipo05() {
+		return regTipo05;
+	}
+
+	public void setRegTipo05(FTFEnvTipoRegistro05 regTipo05) {
+		this.regTipo05 = regTipo05;
 	}
 
 	public FTFEnvTipoRegistro06 getRegTipo06() {

@@ -56,6 +56,9 @@ public class ParametroFTFGeracao implements Serializable {
 	@JoinColumn(name="CFOP_ID", updatable=true, insertable=true)
 	private CFOP cfop; 
 	
+	@Column(name="CODIGO_ORIGEM")
+	private String codigoOrigem; 
+	
 	public long getId() {
 		return id;
 	}
@@ -144,4 +147,11 @@ public class ParametroFTFGeracao implements Serializable {
 		this.cfop = cfop;
 	}
 
+	public String getCodigoOrigem() {
+		return codigoOrigem;
+	}
+
+	public void setCodigoOrigem(String codigoOrigem) {
+		this.codigoOrigem = codigoOrigem;
+	}
 }

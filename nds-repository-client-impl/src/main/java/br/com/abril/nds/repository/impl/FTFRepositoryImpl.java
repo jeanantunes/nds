@@ -33,14 +33,13 @@ import br.com.abril.nds.model.ftf.FTFCommons;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro00;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro01;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro02;
+import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro05;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro06;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro08;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro09;
 import br.com.abril.nds.model.ftf.retorno.FTFRetTipoRegistro01;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.repository.AbstractRepository;
-import br.com.abril.nds.repository.CotaRepository;
-import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FTFRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.util.Constantes;
@@ -67,13 +66,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	@Autowired
-	private DistribuidorRepository distribuidorRepository;
-
-	@Autowired
 	private ParametroSistemaRepository parametroSistemaRepository;
-
-	@Autowired
-	private CotaRepository cotaRepository;
 
 	@Override
 	public FTFEnvTipoRegistro00 obterRegistroTipo00(long idNaturezaOperacao) {
@@ -134,7 +127,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" nfn.DOCUMENTO_DESTINATARIO as cpfCnpjDestinatario, ");
 		sqlBuilder.append(" '' as cpfCnpjEstabelecimentoEntrega, ");
 		sqlBuilder.append(" '' as codDestinatarioSistemaOrigem, ");
-		sqlBuilder.append(" COALESCE(cast(nfn.CONDICAO as char),'') as codCondicaoPagamento, ");
+		sqlBuilder.append(" COALESCE(cast(nfn.CONDICAO as char),'00') as codCondicaoPagamento, ");
 		sqlBuilder.append(" '' as numInscricaoEstadual, ");
 		sqlBuilder.append(" '' as numDeclaracaoImportacao, ");
 		sqlBuilder.append(" '' as valorDespesasAcessorias, ");
@@ -177,7 +170,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" '' as textoObservacoes, ");
 		sqlBuilder.append(" '' as numFaturaCliente, ");
 		sqlBuilder.append(" '' as valorDescontoComercial, ");
-		sqlBuilder.append(" '' as codUnidadeOperacionalEmpresaEmissora, ");
+		sqlBuilder.append(" paramFtf.CODIGO_UNIDADE_OPERACIONAL as codUnidadeOperacionalEmpresaEmissora, ");
 		sqlBuilder.append(" '0' as indicadorResponsavelPeloFrete, ");
 		sqlBuilder.append(" '1' as statusPedido, ");
 
@@ -286,7 +279,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" replace(cast(round(valor_desconto, 8) as char), '.', '') as percentualDescontoItem, ")
 		.append(" '' as valorDescontoComercial, ")
 		.append(" '1' as tipoUtilizacaoProduto, ")
-		.append(" paramFtf.CODIGO_NATUREZA_OPERACAO_FTF as codTipoNaturezaOperacao, ")
+		.append(" '000' as codTipoNaturezaOperacao, ")
 		.append(" '' as textoObservacoes, ")
 		.append(" CONCAT('0', pe.numero_edicao) as numEdicaoRevista, ")
 		.append(" '' as dataCompetencia, ")
@@ -296,7 +289,14 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" paramFtf.CODIGO_NATUREZA_OPERACAO_FTF as novoCodigoTipoNaturezaOperacao, ")
 		.append(" nfps.DESCRICAO_PRODUTO as descricaoProduto, ")
 		.append(" '' as codEanProduto, ")
-		.append(" produto.CENTRO_LUCRO_CORPORATIVO as centroLucroCorporativo ")
+		.append(" '100541' as centroLucroCorporativo ")
+		
+		/**TODO 
+		 * retirar o comentario abaixo, quando for informado pelo grupo do ftf
+		 * Esse item foi inserido por não saber informar onde obter essa informação!!
+		 */
+		
+		// .append(" produto.CENTRO_LUCRO_CORPORATIVO as centroLucroCorporativo ")
 		.append(" from nota_fiscal_produto_servico nfps ")
 		.append(" inner join nota_fiscal_novo nfn ON nfn.id = nfps.NOTA_FISCAL_ID ")
 		.append(" left join natureza_operacao no ON no.ID = nfn.NATUREZA_OPERACAO_ID ")
@@ -423,9 +423,6 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 	}
 	
-	
-	
-
 	public FTFEnvTipoRegistro06 obterRegistroTipo06(final NotaFiscalReferenciada nota) {
 
 		FTFEnvTipoRegistro06 tipoRegistro06 = null;
@@ -446,6 +443,52 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		return tipoRegistro06;
 	}
 
+	public FTFEnvTipoRegistro05 obterRegistroTipo05(final Long idNF) {
+
+		StringBuilder sqlBuilder = new StringBuilder();
+
+		sqlBuilder.append(" select ");
+		sqlBuilder.append(" '5' as tipoRegistro, ");
+		sqlBuilder.append(" paramFtf.CODIGO_ESTABELECIMENTO_EMISSOR_GFF as codigoEstabelecimentoEmissor, ");
+		sqlBuilder.append(" paramFtf.CNPJ_EMISSOR as cnpjEmpresaEmissora, ");
+		sqlBuilder.append(" paramFtf.ESTABELECIMENTO as codLocal, ");
+		concatenarTipoPedidoBy(idNF, sqlBuilder);
+		sqlBuilder.append(" LPAD(cast(nfn.id as char), 8, '0') as numeroDocOrigem, ");
+		sqlBuilder.append(" '00' as numParcela,  "); 
+		sqlBuilder.append(" '00' as qtdeDiasParaPagamento, ");
+		sqlBuilder.append(" lpad(replace(cast(round(VALOR_NF, 2) as char), '.', ''), 15, '0') as valorParcela, ");
+		sqlBuilder.append(" '' dataVencimentoParcela, ");
+		sqlBuilder.append(" '' dataCotacao, ");
+		sqlBuilder.append(" '' as percentualDescontoCondicional, ");
+		sqlBuilder.append(" '' as dataLimiteDescontoCondicional, ");
+		sqlBuilder.append(" '' as percentualDescontoFinanceiro, ");
+		sqlBuilder.append(" '' as dataLimiteDescontoFinanceiro, ");
+		sqlBuilder.append(" '0000' as bancoCobranca, ");
+		sqlBuilder.append(" '' as agenciaCobranca, ");
+		sqlBuilder.append(" '' as digitoAgencia, ");
+		sqlBuilder.append(" '' as dataRelatorioCartaoDebitado ");
+		sqlBuilder.append(" from nota_fiscal_novo nfn ");
+		sqlBuilder.append(" inner join nota_fiscal_produto_servico nfps on nfps.NOTA_FISCAL_ID = nfn.ID ");
+		sqlBuilder.append(" inner join nota_fiscal_valor_calculado nfvc on nfn.NOTA_FISCAL_VALOR_CALCULADO_ID = nfvc.id");
+		sqlBuilder.append(" inner join produto_edicao pe on nfps.PRODUTO_EDICAO_ID = pe.ID ");
+		sqlBuilder.append(" left join natureza_operacao no ON no.ID = nfn.NATUREZA_OPERACAO_ID ");
+		sqlBuilder.append(" join parametros_ftf_geracao paramFtf ON no.ID = paramftf.NATUREZA_OPERACAO_ID ");
+		sqlBuilder.append(" left join nota_fiscal_endereco endereco on endereco.ID = nfn.ENDERECO_ID_DESTINATARIO ");
+		sqlBuilder.append(" left join nota_fiscal_pessoa nfp on nfp.ID = nfn.PESSOA_DESTINATARIO_ID_REFERENCIA ");
+
+		sqlBuilder.append(" where 1 = 1 ");
+		sqlBuilder.append(" and nfn.id =:idNotaFiscal ");
+		sqlBuilder.append(" GROUP BY nfn.id ");
+		
+		SQLQuery query = getSession().createSQLQuery(sqlBuilder.toString());
+
+		query.setParameter("idNotaFiscal", idNF);
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(FTFEnvTipoRegistro05.class));
+
+		return (FTFEnvTipoRegistro05) query.uniqueResult();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public FTFEnvTipoRegistro06 obterRegistroTipo06(final Long idNF) {
@@ -598,6 +641,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 	
 	@Override
 	@Transactional(readOnly = true)
+	@SuppressWarnings("unchecked")
 	public List<NotaEncalheBandeiraVO> obterNotasNaoEnviadas() {
 		StringBuilder sql = new StringBuilder();
 		
@@ -628,8 +672,9 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		return query.list();
 	}
 	
-	 @Override
-	    @Transactional(readOnly = true)
+	@Override
+	@Transactional(readOnly = true)
+	@SuppressWarnings("unchecked")
 	public List<ItemEncalheBandeiraVO> obterItensNotasNaoEnviadas(Integer notaId) {
 		StringBuilder sql = new StringBuilder();
 		
