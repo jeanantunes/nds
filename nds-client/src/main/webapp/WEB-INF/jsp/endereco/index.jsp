@@ -90,22 +90,20 @@
 						
 					</td>
 				</tr>
-				<tr>
-					<td>Codigo UF:</td>
+				<tr class="cuf">
+					<td>Código UF:</td>
 					<td>
-						
-					
 						<input style="width:80px;" 
 								id="${param.telaEndereco}codigoUf"
-								name="enderecoAssociacao.endereco.codigoUf" disabled >
+								name="enderecoAssociacao.endereco.codigoUf"  >
 						</input>
 					</td>
-					<td>Codigo Cidade:</td>
+					<td>Código Cidade:</td>
 					<td>
-						
+
 						<input style="width:50px" 
 								id="${param.telaEndereco}codigoCidadeIBGE"
-								name="enderecoAssociacao.endereco.codigoCidadeIBGE" disabled>
+								name="enderecoAssociacao.endereco.codigoCidadeIBGE" >
 						</input>
 					</td>
 				</tr>
