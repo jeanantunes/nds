@@ -9,6 +9,7 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro00;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro01;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro02;
+import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro05;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro06;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro08;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro09;
@@ -44,6 +45,8 @@ public interface FTFRepository {
 	public List<ItemEncalheBandeiraVO> obterItensNotasNaoEnviadas(Integer notaId) ;
 	
 	public void atualizaFlagInterfaceNotasEnviadas(Integer notaId,boolean flag);
+	
 	public void atualizarQtdVolumePallet(Integer numero,Integer serie, Integer qtd) ;
 	
+	FTFEnvTipoRegistro05 obterRegistroTipo05(Long idNF);
 }

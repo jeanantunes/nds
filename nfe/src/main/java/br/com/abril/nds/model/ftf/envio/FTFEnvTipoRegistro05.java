@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.ftf.envio;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFfield;
 import br.com.abril.nds.model.ftf.FTFCommons;
@@ -65,9 +67,6 @@ public class FTFEnvTipoRegistro05 extends FTFBaseDTO implements FTFCommons {
 	 */
 	@FTFfield(tamanho=10, tipo="char", ordem=19)
 	private String dataRelatorioCartaoDebitado;
-
-	@FTFfield(tamanho=10, tipo="char", ordem=20)
-	private String idCentroCustoCorporativo;
 	
 	public String getTipoRegistro() {
 		return tipoRegistro;
@@ -202,7 +201,7 @@ public class FTFEnvTipoRegistro05 extends FTFBaseDTO implements FTFCommons {
 
 	@Override
 	public void setTipoPedido(String tipoPedido) {
-		this.tipoPedido = tipoPedido;
+		this.tipoPedido = StringUtils.leftPad(tipoPedido, 2, '0');
 	}
 
 	@Override
@@ -225,13 +224,5 @@ public class FTFEnvTipoRegistro05 extends FTFBaseDTO implements FTFCommons {
 
 	public void setPercentualDescontoFinanceiro(String percentualDescontoFinanceiro) {
 		this.percentualDescontoFinanceiro = percentualDescontoFinanceiro;
-	}
-
-	public String getIdCentroCustoCorporativo() {
-		return idCentroCustoCorporativo;
-	}
-
-	public void setIdCentroCustoCorporativo(String idCentroCustoCorporativo) {
-		this.idCentroCustoCorporativo = idCentroCustoCorporativo;
 	}
 }
