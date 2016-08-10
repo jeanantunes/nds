@@ -48,6 +48,15 @@ function Endereco(paramTela, paramMessage) {
 		}
 	},
 	
+	
+	//Define a tela como operação de edição/readonly
+	this.desabilitarCodigoUfIBGE = function() {
+		$(".cuf", Endereco.workspace).hide();
+	},
+	
+	this.habitarCodigoUfIBGE = function() {
+		$(".cuf", Endereco.workspace).show();
+	},
 	this.confirmarExclusaoEndereco = function (idEndereco) {
 		
 		var _this = this;
@@ -225,6 +234,10 @@ function Endereco(paramTela, paramMessage) {
 
 	this.editarEndereco = function(idEndereco) {
 		
+		if ( paramTela == 'ENDERECO_COTA')
+			this.habitarCodigoUfIBGE();
+		else
+			this.desabilitarCodigoUfIBGE();
 		$("#"+paramTela+"linkIncluirNovoEndereco", Endereco.workspace).html("");
 		$("#"+paramTela+"linkIncluirNovoEndereco", Endereco.workspace).attr('title', 'Editar Endereço');
 		$("#"+paramTela+"linkIncluirNovoEndereco", Endereco.workspace).html("<img src='"+contextPath+"/images/ico_salvar.gif' hspace='5' border='0' /> ");
@@ -253,8 +266,21 @@ function Endereco(paramTela, paramMessage) {
 				$("#"+paramTela+"codigoBairro", Endereco.workspace).val(result.endereco.codigoBairro);
 				$("#"+paramTela+"codigoCidadeIBGE", Endereco.workspace).val(result.endereco.codigoCidadeIBGE);
 				$("#"+paramTela+"enderecoPessoa", Endereco.workspace).val(result.enderecoPessoa);
+				if ( result.endereco.cep.length == 8 && result.endereco.codigoUf != undefined && result.endereco.codigoCidadeIBGE != undefined 
+						&& result.endereco.codigoUf.toString() == result.endereco.codigoCidadeIBGE.toString().substring(0,2)) {
+				$("#"+paramTela+"codigoUf", 				Endereco.workspace).prop('disabled', true);
+				$("#"+paramTela+"codigoCidadeIBGE", 		Endereco.workspace).prop('disabled', true);
+				} else {
+					$("#"+paramTela+"codigoUf", 				Endereco.workspace).prop('disabled', false);
+					$("#"+paramTela+"codigoCidadeIBGE", 		Endereco.workspace).prop('disabled', false);
+				}
+
 			},
-			null, 
+			function() {
+				$("#"+paramTela+"codigoUf", 				Endereco.workspace).prop('disabled', false);
+				$("#"+paramTela+"codigoCidadeIBGE", 		Endereco.workspace).prop('disabled', false);
+
+			},
 			true,
 			paramMessage
 		);
@@ -319,6 +345,9 @@ function Endereco(paramTela, paramMessage) {
 		$("#"+paramTela+"codigoUf", Endereco.workspace).val("");
 		$("#"+paramTela+"codigoCidadeIBGE", Endereco.workspace).val("");
 		$("#"+paramTela+"principal", Endereco.workspace).attr("checked", false);
+		$("#"+paramTela+"codigoUf", 				Endereco.workspace).prop('disabled', false);
+		$("#"+paramTela+"codigoCidadeIBGE", 		Endereco.workspace).prop('disabled', false);
+
 	},
 	
 	this.bloquearCamposFormEndereco = function(indBloqueiaCampo) {
@@ -352,8 +381,8 @@ function Endereco(paramTela, paramMessage) {
 		$("#"+paramTela+"bairro", 					Endereco.workspace).prop('disabled', indBloqueiaCampo);
 		$("#"+paramTela+"cidade", 					Endereco.workspace).prop('disabled', indBloqueiaCampo);
 		$("#"+paramTela+"uf", 						Endereco.workspace).prop('disabled', indBloqueiaCampo);
-		$("#"+paramTela+"codigoUf", 				Endereco.workspace).prop('disabled', indBloqueiaCampo);
-		$("#"+paramTela+"codigoCidadeIBGE", 		Endereco.workspace).prop('disabled', indBloqueiaCampo);
+		$("#"+paramTela+"codigoUf", 				Endereco.workspace).prop('disabled', true);
+		$("#"+paramTela+"codigoCidadeIBGE", 		Endereco.workspace).prop('disabled', true);
 		$("#"+paramTela+"principal", 				Endereco.workspace).prop('disabled', true);
 		
 	},
@@ -390,6 +419,9 @@ function Endereco(paramTela, paramMessage) {
 					$("#"+paramTela+"codigoUf", Endereco.workspace).val(result.codigoUf);
 					$("#"+paramTela+"codigoCidadeIBGE", Endereco.workspace).val(result.codigoCidadeIBGE);
 					$("#"+paramTela+"cidade", Endereco.workspace).val(result.localidade);
+					$("#"+paramTela+"codigoUf", 				Endereco.workspace).prop('disabled', true);
+					$("#"+paramTela+"codigoCidadeIBGE", 		Endereco.workspace).prop('disabled', true);
+				
 				}
 			},
 			function() {
@@ -403,6 +435,9 @@ function Endereco(paramTela, paramMessage) {
 				$("#"+paramTela+"codigoUf", Endereco.workspace).val("");
 				$("#"+paramTela+"codigoCidadeIBGE", Endereco.workspace).val("");
 				$("#"+paramTela+"cidade", Endereco.workspace).val("");
+				$("#"+paramTela+"codigoUf", 				Endereco.workspace).prop('disabled', false);
+				$("#"+paramTela+"codigoCidadeIBGE", 		Endereco.workspace).prop('disabled', false);
+			
 			}, 
 			isFromModal,
 			paramMessage
@@ -451,6 +486,9 @@ function Endereco(paramTela, paramMessage) {
 		
 		if (cep.length == 9) {
 			this.pesquisarEnderecoPorCep();
+		} else {
+			$("#"+paramTela+"codigoUf", 				Endereco.workspace).prop('disabled', false);
+			$("#"+paramTela+"codigoCidadeIBGE", 		Endereco.workspace).prop('disabled', false);
 		}
 	},
 
@@ -602,6 +640,11 @@ function Endereco(paramTela, paramMessage) {
 	},
 	
 	this.popularGrid = function(){
+		
+		if ( paramTela == 'ENDERECO_COTA')
+			this.habitarCodigoUfIBGE();
+		else
+			this.desabilitarCodigoUfIBGE();
 		
 		var nomeGrid = paramTela +"enderecosGrid";
 		
