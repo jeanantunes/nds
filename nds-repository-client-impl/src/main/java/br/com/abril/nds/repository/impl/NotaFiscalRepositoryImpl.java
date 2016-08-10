@@ -1497,7 +1497,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		   .append(" join pe.produto p					")
 		   .append(" WHERE 1=1 ")
 		   .append(" AND notaFiscal.numero is not null ")
-		   .append(" AND enderecos.principal = :true ");
+		   .append(" AND enderecos.principal = true ");
 	}
 
 	@Override
