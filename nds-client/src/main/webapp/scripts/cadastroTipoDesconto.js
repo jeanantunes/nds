@@ -408,4 +408,4 @@ var tipoDescontoController = $.extend(true,  {
 	}
 }, BaseController);
 
-//@sourceURL=cadastroTipoDesconto.js
+//@ sourceURL=cadastroTipoDesconto.js

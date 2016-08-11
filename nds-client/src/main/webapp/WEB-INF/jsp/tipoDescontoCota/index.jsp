@@ -93,7 +93,7 @@
 			</fieldset>
 		</div>
 	</form>
-
+	
 	<form action="/administracao/naturezaOperacao"
 		id="dialog_consulta_tipo_desconto_form">
 		<div class="areaBts">
@@ -137,6 +137,14 @@
 					</span>
 				</div>
 				
+				<div id="panelBtsCOPIA">
+					<span class="bt_novos"> 
+						<a isEdicao="true" href="javascript:;" onclick="descontoProdutoController.copiarDescontoEntreCotas();"	rel="tipsy" title="Copiar desconto entre Cotas"> 
+							<img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />
+						</a>
+					</span>
+				</div>
+				
 				<div id="idExportacaoESPECIFICO" style="display: none;">
 					</span> <span class="bt_arq"> <a
 						href="${pageContext.request.contextPath}/financeiro/tipoDescontoCota/exportar?fileType=XLS&tipoDesconto=ESPECIFICO"
@@ -167,7 +175,8 @@
 							src="${pageContext.request.contextPath}/images/ico_impressora.gif"
 							alt="Imprimir" hspace="5" border="0" />
 					</a>
-					</span></div>
+					</span>
+				</div>
 				
 				<div id="idExportacaoPRODUTO" style="display: none;">
 					<span class="bt_arq"> <a
@@ -183,10 +192,8 @@
 							src="${pageContext.request.contextPath}/images/ico_impressora.gif"
 							alt="Imprimir" hspace="5" border="0" />
 					</a>
-					</span></div>
-
-
-
+					</span>
+				</div>
 			</div>
 		</div>
 		<div class="linha_separa_fields">&nbsp;</div>
@@ -214,7 +221,8 @@
 					<td width="585">
 						<div class="especifico" style="display: none">
 
-							<label style="width: auto !important;">Cota:</label> <input
+							<label style="width: auto !important;">Cota:</label> 
+							<input
 								name="numCotaPesquisa" id="numCotaPesquisa" type="text"
 								maxlength="11" style="width: 70px; float: left;"
 								onchange="pesquisaCotaTipoDescontoCota.pesquisarPorNumeroCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,

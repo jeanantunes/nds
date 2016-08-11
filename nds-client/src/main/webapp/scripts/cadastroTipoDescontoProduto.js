@@ -32,6 +32,23 @@ var descontoProdutoController = $.extend(true,{
 						}
 					}
 				],
+				beforeClose: function() {
+					$("#radioTodasCotas").prop("checked", true);
+					
+					$("#pCodigoProduto").val("");
+					$("#pNomeProduto").val("");
+					$("#mostrarEdicao").prop("checked", false);
+					$("#edicaoProduto").val("");
+					$("#quantidadeEdicoes").val("");
+					$("#descontoProduto").val("");
+					$("#descontoPredominante").prop("checked", false);
+					
+					$('#quantidadeEdicoes').removeAttr('disabled');
+					$('#edicaoProduto').removeAttr('disabled');
+					
+					$("#comboRegioesCotaDesconto").val('Selecione...')
+					
+				},
 				form: $("#dialog-produto", this.workspace).parents("form")
 		});	
 	},
@@ -106,11 +123,13 @@ var descontoProdutoController = $.extend(true,{
 	
 	mostrarGridCota:function(){
 		$('.especificaCota',this.workspace).show();
+		$('#trRegiao',this.workspace).show();
 	},
 
 	esconderGridCota:function(){
 		
 		$('.especificaCota',this.workspace).hide();
+		$('#trRegiao',this.workspace).hide();
 		
 		descontoProdutoController.resetGridCota();
 	},
@@ -137,6 +156,47 @@ var descontoProdutoController = $.extend(true,{
 			'</td>' +
 			'</tr>'
 		);
+	},
+	
+	pesquisarCotasRegiao : function(input){
+		
+		var regiao = $("#comboRegioesCotaDesconto option:selected").val();
+		
+		if (regiao != "Selecione..."){
+			
+			$("tr[id^='trCota']",this.workspace).remove();
+			
+			$.postJSON(contextPath+"/financeiro/tipoDescontoCota/carregarCotasDaRegiao",
+					[{name: 'idRegiao', value: regiao}, {name: 'sortorder', value: 'asc'}],
+					   function(result) {
+							
+						var linhaAtual = 0;
+						
+						$.each(result.rows, function(index, row) {
+							
+							linhaAtual = index;
+							
+							var tr = $('<tr class="trCotas" id="trCota'+ (linhaAtual + 1) +'" style="'+ ((linhaAtual + 1) % 2 == 0 ? "background: #F5F5F5;" : "") +'">' +
+									'<td><input type="text" value='+row.cell.numeroCota+' name="cotaInput" maxlength="255" id="cotaInput'+ (linhaAtual + 1) +'" onblur="descontoProdutoController.pesquisaCota.pesquisarPorNumeroCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', true,function(){descontoProdutoController.adicionarLinhaCota('+ (linhaAtual + 1) +')});" style="width:120px;" /></td>' +
+									'<td>'+
+									'<input type="text" value='+row.cell.nome+' name="nomeInput" maxlength="255" id="nomeInput'+ (linhaAtual + 1) +'" style="width:245px;" '+
+									' onkeyup="descontoProdutoController.pesquisaCota.autoCompletarPorNome(nomeInput'+ (linhaAtual + 1) +');" ' +
+									' onblur="descontoProdutoController.pesquisaCota.pesquisarPorNomeCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', true, function(){descontoProdutoController.adicionarLinhaCota('+ (linhaAtual + 1) +');});" ' +
+									'/>'+
+									'</td>' +
+									'</tr>'
+							);
+							
+							$("#gridCotas",this.workspace).append(tr);
+							
+						});
+						descontoProdutoController.adicionarLinhaCota(linhaAtual+1);
+		               },
+		               function(result) {
+		            	   descontoProdutoController.adicionarLinhaCota(0);
+		               },
+					   true);
+		}
 	},
 
 	adicionarLinhaCota:function(linhaAtual){
@@ -171,7 +231,7 @@ var descontoProdutoController = $.extend(true,{
 
 		$(".lstCotaGrid",this.workspace).flexReload();
 
-		$( "#dialog-cotas",this.workspace ).dialog({
+		$("#dialog-cotas-produto").dialog({
 			resizable: false,
 			height:'auto',
 			width:400,
@@ -179,11 +239,61 @@ var descontoProdutoController = $.extend(true,{
 			buttons:[ {id:"btn_close_cotas",
 				   text:"Fechar",
 				   click: function() {
-						$( this ).dialog( "close" );
+						$(this).dialog("close");
 					},
 				}],
 			form: $("#dialog-cotas", this.workspace).parents("form")
 		});	
+	},
+	
+	copiarDescontoEntreCotas : function(){
+		
+		$("#dialog-copiarDescontoCotas").dialog({
+			resizable: false,
+			height:'auto',
+			width:500,
+			modal: true,
+			open:function(){
+				$("#numCotaOrigem").val('');
+				$("#nomeCotaOrigem").val('');
+				$("#numCotaDestino").val('');
+				$("#nomeCotaDestino").val('');
+			},
+			buttons : {
+				"Confirmar" : function() {
+					
+					descontoProdutoController.copiarDescontoCotas();
+				},
+				"Cancelar" : function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+	},
+	
+	copiarDescontoCotas: function(){
+		
+		var cotaOrigem = $("#numCotaOrigem").val();
+		var cotaDestino = $("#numCotaDestino").val();
+		
+		if(cotaOrigem == undefined || cotaOrigem.trim() == ''){
+			exibirMensagem("WARNING", ["Insira uma cota de Origem, para efetuar a cópia"]);
+		}
+		
+		if(cotaDestino == undefined || cotaDestino.trim() == ''){
+			exibirMensagem("WARNING", ["Insira uma cota de Destino, para efetuar a cópia"]);
+		}
+		
+		$.postJSON(contextPath+"/financeiro/tipoDescontoCota/copiarDescontoCotas",
+				[{name: 'numeroCotaOrigem', value: cotaOrigem}, {name: 'numeroCotaDestino', value: cotaDestino}],
+				   function(result) {
+						exibirMensagem("SUCCESS", ["Cópia efetuada com sucesso"]);
+						$("#dialog-copiarDescontoCotas").dialog("close");
+	               },
+	               function(result) {
+	               },
+				   true);
+		
 	},
 	
 	init: function(pesquisaCota){
