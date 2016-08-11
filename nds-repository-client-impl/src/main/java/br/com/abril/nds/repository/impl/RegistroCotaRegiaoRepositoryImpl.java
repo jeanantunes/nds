@@ -74,15 +74,17 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 		
 		hql.append(" order by ");
 
-		if (filtro.getPaginacao() != null) {
+		if (filtro.getPaginacao() != null && filtro.getPaginacao().getSortColumn() != null) {
 		
         	if((filtro.getPaginacao().getSortColumn().equalsIgnoreCase("FATURAMENTO")) || (filtro.getPaginacao().getSortColumn().equalsIgnoreCase("ACAO"))){
         		hql.append(" cota.numeroCota ");
         	}else{
         		hql.append(filtro.getPaginacao().getSortColumn());
         	}
-
-        	hql.append(" "+filtro.getPaginacao().getSortOrder());
+        	
+        	if(filtro.getPaginacao().getSortOrder() != null){
+        		hql.append(" "+filtro.getPaginacao().getSortOrder());
+        	}
 			
 		} else {
 			hql.append(" cota.numeroCota ");
@@ -172,19 +174,22 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 		
 		private void configurarPaginacao(FiltroDTO filtro, Query query) {
 
-			PaginacaoVO paginacao = filtro.getPaginacao();
-
-			if (paginacao.getQtdResultadosTotal().equals(0)) {
-				paginacao.setQtdResultadosTotal(query.list().size());
+			if(filtro.getPaginacao() != null){
+				PaginacaoVO paginacao = filtro.getPaginacao();
+				
+				if (paginacao.getQtdResultadosTotal().equals(0)) {
+					paginacao.setQtdResultadosTotal(query.list().size());
+				}
+				
+				if(paginacao.getQtdResultadosPorPagina() != null) {
+					query.setMaxResults(paginacao.getQtdResultadosPorPagina());
+				}
+				
+				if (paginacao.getPosicaoInicial() != null) {
+					query.setFirstResult(paginacao.getPosicaoInicial());
+				}
 			}
-
-			if(paginacao.getQtdResultadosPorPagina() != null) {
-				query.setMaxResults(paginacao.getQtdResultadosPorPagina());
-			}
-
-			if (paginacao.getPosicaoInicial() != null) {
-				query.setFirstResult(paginacao.getPosicaoInicial());
-			}
+			
 		}
 
 		@SuppressWarnings("unchecked")

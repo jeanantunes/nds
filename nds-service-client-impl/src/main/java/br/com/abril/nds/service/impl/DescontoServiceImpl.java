@@ -20,11 +20,13 @@ import br.com.abril.nds.component.DescontoComponent;
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.DescontoEditorDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
+import br.com.abril.nds.dto.RegiaoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.dto.TipoDescontoEditorDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaHistoricoDescontoDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoEditorDTO;
@@ -68,7 +70,9 @@ import br.com.abril.nds.repository.HistoricoDescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.HistoricoDescontoProdutoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
+import br.com.abril.nds.repository.RegistroCotaRegiaoRepository;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -131,6 +135,9 @@ public class DescontoServiceImpl implements DescontoService {
 
 	@Autowired
 	private ProdutoRepository produtoRepository;
+	
+	@Autowired
+	private RegistroCotaRegiaoRepository regiaoRepository;
 
 	@Override
 	@Transactional(readOnly=true)
@@ -745,6 +752,36 @@ public class DescontoServiceImpl implements DescontoService {
 		}
 
 		return this.descontoProdutoRepository.obterCotasDoTipoDescontoProduto(idDescontoProduto, ordenacao);
+	}
+	
+	@Override
+	@Transactional
+	public List<CotaDescontoProdutoDTO> carregarCotasPorRegiao(Long idRegiao, String sortorder) {
+
+		if (idRegiao == null) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao buscar as cotas da Região!");
+		}
+		
+		FiltroCotasRegiaoDTO filtro = new FiltroCotasRegiaoDTO();
+		
+		filtro.setId(idRegiao);
+		
+		filtro.setPaginacao(new PaginacaoVO(null, null, sortorder));
+		
+		List<RegiaoCotaDTO> cotasRegiao = regiaoRepository.carregarCotasRegiao(filtro);
+		
+		List<CotaDescontoProdutoDTO> cotasRegiaoDesconto = new ArrayList<>();
+		
+		for (RegiaoCotaDTO regiaoCotaDTO : cotasRegiao) {
+			CotaDescontoProdutoDTO cotaRegiao = new CotaDescontoProdutoDTO();
+			cotaRegiao.setNome(regiaoCotaDTO.getNomeCota());
+			cotaRegiao.setNumeroCota(regiaoCotaDTO.getNumeroCota());
+			
+			cotasRegiaoDesconto.add(cotaRegiao);
+		}
+
+		return cotasRegiaoDesconto;
 	}
 
 	/**

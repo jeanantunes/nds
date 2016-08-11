@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.DescontoEditorDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.RegiaoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.dto.TipoDescontoEditorDTO;
@@ -36,6 +37,7 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
@@ -69,6 +71,9 @@ public class TipoDescontoCotaController extends BaseController {
 
 	@Autowired
 	private CotaService cotaService;
+	
+	@Autowired
+	private RegiaoService regiaoService;
 
 	@Autowired
 	private HttpServletResponse httpServletResponse;
@@ -82,7 +87,18 @@ public class TipoDescontoCotaController extends BaseController {
 	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_EDITOR_SESSION_ATTRIBUTE = "filtroPesquisaPorEditor";
 
 	@Path("/")
-	public void index() {}
+	public void index() {
+		
+		List<ItemDTO<Long,String>> comboRegiao =  new ArrayList<ItemDTO<Long,String>>();
+		List<RegiaoDTO> regioes = regiaoService.buscarRegiao();
+
+		for (RegiaoDTO itemRegiao : regioes) {
+			comboRegiao.add(new ItemDTO<Long,String>(itemRegiao.getIdRegiao() , itemRegiao.getNomeRegiao()));
+		}
+
+		result.include("listaRegiao",comboRegiao);
+		
+	}
 
 	@Post
 	@Path("/novoDescontoGeral")
@@ -204,6 +220,53 @@ public class TipoDescontoCotaController extends BaseController {
 		}
 
 		this.result.use(FlexiGridJson.class).from(cotas).total(cotas.size()).serialize();
+	}
+	
+	@Post
+	@Path("/carregarCotasDaRegiao")
+	public void carregarCotasDaRegiao(Long idRegiao, String sortorder) {
+
+		List<CotaDescontoProdutoDTO> cotas = this.descontoService.carregarCotasPorRegiao(idRegiao, sortorder);
+
+		if (cotas == null || cotas.isEmpty()) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota cadastrada para esse tipo de desconto.");
+		}
+
+		this.result.use(FlexiGridJson.class).from(cotas).total(cotas.size()).serialize();
+	}
+	
+	@Post
+	@Path("/copiarDescontoCotas")
+	public void copiarDescontoCotas(Integer numeroCotaOrigem, Integer numeroCotaDestino) {
+
+		FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
+		
+		filtro.setNumeroCota(numeroCotaOrigem);
+
+		List<TipoDescontoCotaDTO> listaDescontoCotaEspecifica = descontoService.buscarTipoDescontoCota(filtro);
+		
+		if(listaDescontoCotaEspecifica.isEmpty()){
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Cota Origem não possui desconto cadastrado"),"result").recursive().serialize();
+		}
+
+		TipoDesconto tpDesconto = TipoDesconto.getStatusByDescription(listaDescontoCotaEspecifica.get(0).getDescTipoDesconto());
+		
+		List<Fornecedor> fornecedores = descontoService.buscarFornecedoresAssociadosADesconto(listaDescontoCotaEspecifica.get(0).getDescontoId(), tpDesconto);
+		
+		List<Long> idsFornecedores = new ArrayList<>();
+		
+		if(fornecedores.isEmpty()){
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Erro ao executar a cópia de descontos"),"result").recursive().serialize();
+		}else{
+			for (Fornecedor fornecedor : fornecedores) {
+				idsFornecedores.add(fornecedor.getId());
+			}
+		}
+		
+		descontoService.incluirDescontoCota(listaDescontoCotaEspecifica.get(0).getDesconto(), idsFornecedores, numeroCotaDestino, getUsuarioLogado());
+
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro de Tipo de Desconto realizado com sucesso"),"result").recursive().serialize();
 	}
 
 	@Post
