@@ -193,4 +193,6 @@ public interface DescontoService {
 
 	List<Cota> buscarCotasAssociadasAoDescontoEditor(Long idDesconto, TipoDesconto tipoDesconto);
 
+	List<CotaDescontoProdutoDTO> carregarCotasPorRegiao(Long idRegiao, String sortorder);
+
 }
