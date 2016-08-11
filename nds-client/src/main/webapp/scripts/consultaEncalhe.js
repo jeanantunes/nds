@@ -13,6 +13,9 @@ var ConsultaEncalhe = $
 						var colunasOutrosValores = ConsultaEncalhe
 								.obterColModelOutrosValores();
 
+						 $("#consulta-encalhe-selectRota").attr('disabled', 'disabled');
+		        		 $("#consulta-encalhe-selectRoteiro").attr('disabled', 'disabled');     	
+		        		 
 						$("#consulta-encalhe-cota", ConsultaEncalhe.workspace)
 								.numeric();
 
@@ -302,6 +305,16 @@ var ConsultaEncalhe = $
 						
 			        	var boxDe = $("#consulta-encalhe-box").val();
 			        	
+			        	if ( boxDe == undefined || boxDe.length == 0 ) {
+			        		 $("#consulta-encalhe-selectRota").attr('disabled', 'disabled');
+			        		 $("#consulta-encalhe-selectRota").val();
+			        		 $("#consulta-encalhe-selectRoteiro").attr('disabled', 'disabled');  
+			        		 $("#consulta-encalhe-selectRoteiro").val();
+			        		 return;
+			        	} else {
+			        		$("#consulta-encalhe-selectRota").removeAttr('disabled');
+			        	}
+			        	
 			        	var boxAte = $("#consulta-encalhe-box").val();
 			        	
 			        	var idRota = $("#consulta-encalhe-selectRota").val();
@@ -343,6 +356,13 @@ var ConsultaEncalhe = $
 			            var boxDe = $("#consulta-encalhe-box").val();
 			        	
 			        	var idRota = $("#consulta-encalhe-selectRota").val();
+			        	if ( idRota == undefined || idRota.length == 0 ) {	
+			        		 $("#consulta-encalhe-selectRoteiro").attr('disabled', 'disabled');     	
+			        		 $("#consulta-encalhe-selectRoteiro").val();
+			        		 return;
+			        	} else {
+			        		 $("#consulta-encalhe-selectRoteiro").removeAttr('disabled');	
+			        	}
 			        	
 			        	var idRoteiro = $("#consulta-encalhe-selectRoteiro").val();
 			        	
