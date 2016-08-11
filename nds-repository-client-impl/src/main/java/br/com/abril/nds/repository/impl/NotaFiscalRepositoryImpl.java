@@ -569,6 +569,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 					|| filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
 				query.setParameter("true", true);
 			}
+		} else {
+			query.setParameter("true", false);
 		}
 
 		query.setParameter("false", false);
@@ -1453,7 +1455,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			query.setParameterList("produtoEdicoesIds", produtoEdicoesIds);
 		}
 		
-		if(tipoDestinatario.equals(TipoDestinatario.FORNECEDOR)) {
+		if(!tipoDestinatario.equals(TipoDestinatario.DISTRIBUIDOR)) {
 			query.setParameter("true", true);
 		}
 		
@@ -1497,7 +1499,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		   .append(" join pe.produto p					")
 		   .append(" WHERE 1=1 ")
 		   .append(" AND notaFiscal.numero is not null ")
-		   .append(" AND enderecos.principal = true ");
+		   .append(" AND enderecos.principal = :true ");
 	}
 
 	@Override
