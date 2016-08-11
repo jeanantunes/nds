@@ -569,9 +569,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 					|| filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
 				query.setParameter("true", true);
 			}
-		} else {
-			query.setParameter("true", false);
-		}
+		} 
 
 		query.setParameter("false", false);
 		
