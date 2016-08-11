@@ -89,8 +89,9 @@ $(function(){
 						</c:forEach>
 					</select>
 				</td>
-    			
-    			<td>Box:</td>
+    			</tr>
+    			<tr>
+    			<td width="93">Box:</td>
     			<td width="91">
 					<select id="consulta-encalhe-box" style="width:150px;"  onchange="ConsultaEncalhe.changeBox();">
 						<option selected="selected"> </option>	    
@@ -99,11 +100,10 @@ $(function(){
 						</c:forEach>
 					</select>
 				</td>
-    		</tr>
-    		<tr>			
+    					
    				<td width="93">Rota:</td>
    				<td>
-					<select id="consulta-encalhe-selectRota" onchange="ConsultaEncalhe.changeRota();" style="width:150px; font-size:11px!important">
+					<select id="consulta-encalhe-selectRota" onchange="ConsultaEncalhe.changeRota();" style="width:222px; font-size:11px!important">
     					<option value="">Selecione...</option>
     					<c:forEach items="${rotas}" var="rota">
 							<option value="${rota.key }">${rota.value }</option>
@@ -154,7 +154,8 @@ $(function(){
 				
 				</td>
 				
-				<td width="25" colspan="2">Nome:
+				<td width="55" >Nome:</td>
+				<td>
 					<input type="text"
 		            maxlength="255" 
 		            name="consulta-encalhe-nomeCota" 
