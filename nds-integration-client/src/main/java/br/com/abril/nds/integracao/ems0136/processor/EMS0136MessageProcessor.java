@@ -243,7 +243,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 
 		for (Lancamento lancamentoAtual : lancamentosDaEdicao) {
 
-			if (LANCAMENTO_EXPEDIDO.contains(lancamentoAtual.getStatus())) {
+			// manter lancamentos EXPEDIDOS ou que CONTENHA ESTUDO ( senao o estudo e' removido )
+			if (LANCAMENTO_EXPEDIDO.contains(lancamentoAtual.getStatus()) || lancamentoAtual.getEstudo() != null) {
 				
 				int numeroLancamento = 1;
 				
