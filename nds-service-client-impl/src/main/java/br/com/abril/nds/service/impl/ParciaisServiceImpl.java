@@ -489,7 +489,10 @@ public class ParciaisServiceImpl implements ParciaisService{
 					
 					Lancamento lancamento = item.getLancamentoPeriodoParcial();
 					
-					if(lancamento!= null && getStatusLancamentoPreExpedicao().contains(lancamento.getStatus())){
+					if(lancamento!= null && getStatusLancamentoPreExpedicao().contains(lancamento.getStatus())) {
+					  if (  lancamento.getEstudo() != null  ){
+						  throw new ValidacaoException(TipoMensagem.WARNING,"Existe estudo para o período "+item.getNumeroPeriodo()+".Exclua o estudo e tente novamente.");
+					  }
 						
 						periodoLancamentoParcialRepository.remover(item);
 
