@@ -1693,8 +1693,10 @@ limparCota : function(index) {
 			$(".view-estoque-sobra", this.workspace).hide();
 		}
 		
-		if(value == "SOBRA_EM"){
-			$("#codigoProdutoInput", lancamentoController.workspace).focus();
+		$("#codigoProdutoInput", lancamentoController.workspace).focus();
+
+		if(value == "ALTERACAO_REPARTE_PARA_LANCAMENTO"){
+			$("#codigoProdutoInputAlteracaoReparte", lancamentoController.workspace).focus();
 		}
 		
 	},

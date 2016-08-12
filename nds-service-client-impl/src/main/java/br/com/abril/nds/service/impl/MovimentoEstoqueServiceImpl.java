@@ -1059,6 +1059,15 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 
                 estoqueProduto.setQtde(novaQuantidade);
                 
+                if(tipoEstoqueDirecionamento.equals(TipoEstoque.SUPLEMENTAR)){
+                	final BigInteger qtdeSuplementar = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
+                    
+                    novaQuantidade = isOperacaoEntrada ? qtdeSuplementar.add(qntMovimento) :
+                        qtdeSuplementar.subtract(qntMovimento);
+                    
+                    estoqueProduto.setQtdeSuplementar(novaQuantidade);
+                }
+                
                 break;
                 
             case PRODUTOS_DANIFICADOS:
@@ -1279,8 +1288,16 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                     
                     if(tipoEstoqueDirecionamento == null || tipoEstoqueDirecionamento.equals(TipoEstoque.RECOLHIMENTO)) {
                     	
+                    	if(estoqueProduto.getQtdeDevolucaoEncalhe() == null){
+                    		estoqueProduto.setQtdeDevolucaoEncalhe(BigInteger.ZERO);
+                    	}
+                    	
                     	estoqueProduto.setQtdeDevolucaoEncalhe(estoqueProduto.getQtdeDevolucaoEncalhe().add(qntMovimento));
                     } else if(tipoEstoqueDirecionamento.equals(TipoEstoque.SUPLEMENTAR)) {
+                    	
+                    	if(estoqueProduto.getQtdeSuplementar() == null){
+                    		estoqueProduto.setQtdeSuplementar(BigInteger.ZERO);
+                    	}
                     	
                     	estoqueProduto.setQtdeSuplementar(estoqueProduto.getQtdeSuplementar().add(qntMovimento));
                     }
