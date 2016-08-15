@@ -165,6 +165,16 @@ public class EmitenteDestinatarioBuilder {
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual().trim());			
 		}
 		
+		String UFEmitente = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getUf();
+		
+	    String UFDestinatario = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().getUf();
+				
+		if(UFEmitente.equals(UFDestinatario)) {
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERNA);
+		} else {
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERESTADUAL);
+		}
+		
 		if(distribuidor.getJuridica().getEnderecos() != null 
 				&& !distribuidor.getJuridica().getEnderecos().isEmpty()) {
 			
