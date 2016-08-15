@@ -121,7 +121,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 	
 	            /**
-     * Processa geração do arquivo de Picking do Modelo1
+     * Processa geraÃ§Ã£o do arquivo de Picking do Modelo1
      * 
      * @param message
      * @param distribuidor
@@ -142,7 +142,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 	
 	            /**
-     * Processa geração do arquivo de Picking do Modelo1
+     * Processa geraÃ§Ã£o do arquivo de Picking do Modelo1
      * 
      * @param message
      * @param distribuidor
@@ -254,7 +254,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			this.ledModelo4IntegracaoService.exportarPickingLED(registros, data);
 			
 			if(!cotasSemEnderecoLED.isEmpty()){
-				String mensagemValidacao = "As seguintes cotas não possuem endereço LED cadastrado: "+cotasSemEnderecoLED;
+				String mensagemValidacao = "As seguintes cotas nÃ£o possuem endereÃ§o LED cadastrado: "+cotasSemEnderecoLED;
 				this.lancarMensagemValidacao(mensagemValidacao, message);
 			}
 
@@ -410,7 +410,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	
 	
 				/**
-     * Obtém a data de Lançamento do Distribuidor
+     * ObtÃ©m a data de LanÃ§amento do Distribuidor
      * 
      * @param message
      * @return
@@ -431,7 +431,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	
 	
 	            /**
-     * Obtém os dados de detalhes para geração do arquivo
+     * ObtÃ©m os dados de detalhes para geraÃ§Ã£o do arquivo
      * 
      * @param message
      * @return
@@ -494,7 +494,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	
 	
 	            /**
-     * Cria o cabeçalho para os arquivos do modelo1
+     * Cria o cabeÃ§alho para os arquivos do modelo1
      * 
      * @param headerDTO
      * @return
@@ -511,7 +511,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 	
 	            /**
-     * Cria o cabeçalho para os arquivos do modelo 2
+     * Cria o cabeÃ§alho para os arquivos do modelo 2
      * 
      * @param headerDTO
      * @return
@@ -530,7 +530,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	            /**
-     * Obtém dados utilizado no header dos arquivos de LED
+     * ObtÃ©m dados utilizado no header dos arquivos de LED
      * 
      * @param data
      * @return
@@ -665,7 +665,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	 * @return
 	 */
 	public InterfaceDetalhesPicking getDetalhesFromDTO(DetalhesPickingDTO pickingDTO, InterfaceDetalhesPicking modelo) {
-		 
+		
 		modelo.setCodigoCota(String.format("%1$05d", pickingDTO.getNumeroCota()));
 
 		modelo.setQuantidade(pickingDTO.getQtdeMEC().longValue());
@@ -688,7 +688,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	            /**
-     * Lança Exceção com Mensagem de Validação
+     * LanÃ§a ExceÃ§Ã£o com Mensagem de ValidaÃ§Ã£o
      * 
      * @param mensagemValidacao
      * @param message
@@ -724,7 +724,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	    /**
-	* Processa geração do arquivo de Picking do Modelo3
+	* Processa geraÃ§Ã£o do arquivo de Picking do Modelo3
 	* 
 	* @param message
 	* @param distribuidor
@@ -908,7 +908,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		sql.append(" where i.cota_id = a.id  ");
 		sql.append(" and h.id = i.estudo_id ");
 		sql.append(" and k.id = j.produto_id ");
-		sql.append(" and h.produto_edicao_id = j.id ");
+		sql.append(" and h.id = l.estudo_id ");
 		sql.append(" and l.PRODUTO_EDICAO_ID = j.id ");
 		sql.append(" and l.status in ('BALANCEADO', 'EXPEDIDO') ");
 		
