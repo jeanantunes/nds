@@ -85,8 +85,10 @@ public class EMS0126MessageProcessor extends AbstractRepository implements
 				
 				if(new BigInteger(input.getCodigoBarras()).longValue() >0 && new BigInteger(produtoEdicao.getCodigoDeBarras()).longValue()!= new BigInteger(input.getCodigoBarras()).longValue()){
 			
-				String codigoBarras = new BigInteger(input.getCodigoBarras()).toString();
-				
+				String codigoBarras =input.getCodigoBarras();
+				if (produtoEdicao.getProduto().getTipoSegmentoProduto() == null || !"IMPORTADAS".equals(produtoEdicao.getProduto().getTipoSegmentoProduto().getDescricao()))
+					 codigoBarras = new BigInteger(input.getCodigoBarras()).toString();
+					
 				ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Alteração do Código de Barras"

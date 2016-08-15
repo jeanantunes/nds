@@ -1072,7 +1072,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 				if(edicao != null && edicao.getCodigoDeBarras() != null 
 						&& input.getCodBarra() != null 
 						&& new Long(edicao.getCodigoDeBarras()).longValue() != new Long(input.getCodBarra()).longValue()) {
-					codigoDeBarras = new BigInteger(input.getCodBarra()).toString();
+					if (edicao.getProduto().getTipoSegmentoProduto() == null || !"IMPORTADAS".equals(edicao.getProduto().getTipoSegmentoProduto().getDescricao()))
+					    codigoDeBarras = new BigInteger(input.getCodBarra()).toString();
 					
 					this.ndsiLoggerFactory.getLogger().logInfo(
 							message,
