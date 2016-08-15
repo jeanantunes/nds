@@ -1219,12 +1219,13 @@ public class NFeServiceImpl implements NFeService {
 		}
 		
 		NotaFiscalBuilder.popularDadosEmissor(notaFiscal, distribuidor);
+
+		NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, distribuidor, parametrosSistema, naturezaOperacao);
+		
+		EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, distribuidor);
 		
 		NotaFiscalBuilder.popularDadosTransportadora(notaFiscal, distribuidor);
 		
-		NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, distribuidor, parametrosSistema);
-		
-		EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, distribuidor);
 		
 		NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 		

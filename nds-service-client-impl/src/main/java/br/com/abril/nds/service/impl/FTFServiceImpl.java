@@ -319,7 +319,8 @@ public class FTFServiceImpl implements FTFService {
 			String cpfCnpjDestinatario = Util.removerMascaraCnpj(ftfEnvTipoRegistro01.getCpfCnpjDestinatario());
 
 			if(!verificarPessoaWs(cpfCnpjDestinatario)){
-				report.getNaoCadastradosCRP().add(ftfEnvTipoRegistro01);
+				// report.getNaoCadastradosCRP().add(ftfEnvTipoRegistro01);
+				listTipoRegistro01Cadastrados.add(ftfEnvTipoRegistro01);
 			}else {
 				listTipoRegistro01Cadastrados.add(ftfEnvTipoRegistro01);
 			}

@@ -267,7 +267,7 @@ public class NotaFiscalBuilder implements Serializable {
 		
 	}
 
-	public static void montarHeaderNotaFiscal(NotaFiscal notaFiscal, Distribuidor distribuidor, Map<String, ParametroSistema> parametrosSistema) {
+	public static void montarHeaderNotaFiscal(NotaFiscal notaFiscal, Distribuidor distribuidor, Map<String, ParametroSistema> parametrosSistema, NaturezaOperacao naturezaOperacao) {
 		
 		//FIXME: Obter forma de pagamento da cota
 		FormaPagamento formaPagamento = FormaPagamento.OUTROS;
@@ -288,6 +288,25 @@ public class NotaFiscalBuilder implements Serializable {
 		
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoEmissao(TipoEmissao.NORMAL);
+		
+		if( naturezaOperacao.getTipoMovimento().get(0) instanceof TipoMovimentoEstoque) {
+			
+			TipoMovimentoEstoque tipoMovimentoEstoque =  (TipoMovimentoEstoque) naturezaOperacao.getTipoMovimento().get(0);
+			
+			if(!tipoMovimentoEstoque.getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE)) {
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe.NORMAL);
+			} else {
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe.DEVOLUCAO_RETORNO);
+			}
+		} else {
+			
+			if(naturezaOperacao.getTipoMovimento().get(0) instanceof TipoMovimentoFiscal) {
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe.DEVOLUCAO_RETORNO);
+			} else {
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe.NORMAL);				
+			}
+			
+		}
 		
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe.NORMAL);

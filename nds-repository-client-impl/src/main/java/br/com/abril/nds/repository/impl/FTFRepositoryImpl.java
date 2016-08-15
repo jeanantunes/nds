@@ -124,7 +124,10 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" paramFtf.CODIGO_SOLICITANTE as codSolicitante,  "); 
 		sqlBuilder.append(" '' as  nomeLocalEntregaNf, ");
 		sqlBuilder.append(" DATE_FORMAT(nfn.DATA_EMISSAO,'%d/%m/%Y') as dataPedido, ");
-		sqlBuilder.append(" nfn.DOCUMENTO_DESTINATARIO as cpfCnpjDestinatario, ");
+		//sqlBuilder.append(" nfn.DOCUMENTO_DESTINATARIO as cpfCnpjDestinatario, ");
+		
+		sqlBuilder.append(" CASE WHEN nfn.cota_id is null THEN paramftf.CNPJ_DESTINATARIO ELSE nfn.DOCUMENTO_DESTINATARIO END as cpfCnpjDestinatario, ");
+		
 		sqlBuilder.append(" '' as cpfCnpjEstabelecimentoEntrega, ");
 		sqlBuilder.append(" '' as codDestinatarioSistemaOrigem, ");
 		sqlBuilder.append(" COALESCE(cast(nfn.CONDICAO as char),'00') as codCondicaoPagamento, ");
