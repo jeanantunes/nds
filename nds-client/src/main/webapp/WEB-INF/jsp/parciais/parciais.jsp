@@ -332,7 +332,7 @@
       	<div class="linha_separa_fields">&nbsp;</div>
 		<div class="grids" style="display:none;">
 		<!-- PESQUISA DE LANCAMENTOS ParciaisController -->
-		<fieldset id="parcial-painelLancamentos" class="fieldGrid" style="display:block">
+		<fieldset id="parcial-painelLancamentos" class="fieldGrid" style="display:none">
 			     <legend>Parciais Cadastradas</legend>
 			        	
 			    <table class="parcial-parciaisGrid"></table>
