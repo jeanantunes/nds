@@ -1059,7 +1059,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 
                 estoqueProduto.setQtde(novaQuantidade);
                 
-                if(tipoEstoqueDirecionamento.equals(TipoEstoque.SUPLEMENTAR)){
+                if(TipoEstoque.SUPLEMENTAR.equals(tipoEstoqueDirecionamento)){
                 	final BigInteger qtdeSuplementar = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
                     
                     novaQuantidade = isOperacaoEntrada ? qtdeSuplementar.add(qntMovimento) :
