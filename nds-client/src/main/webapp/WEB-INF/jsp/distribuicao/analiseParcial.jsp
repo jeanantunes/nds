@@ -373,7 +373,7 @@ table.dadosTab { margin-left: 370px;}
 				</c:choose>
 				
 				<span class="bt_novos">
-       	  			<a href="javascript:;" onclick="analiseParcialController.analiseHistogramaEstudo()" rel="tipsy" title="Histograma">
+       	  			<a href="javascript:;" onclick="analiseParcialController.analiseHistogramaEstudo()">
    	  					<img id="imgAnalise" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" hspace="5" border="0"/> Histograma
        	  			</a>
        	  		</span>
