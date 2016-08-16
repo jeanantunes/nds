@@ -1297,10 +1297,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
             throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de Movimento de Estoque não encontrado.");
         }
         
-//        if(diferenca.getTipoEstoque().equals(TipoEstoque.SUPLEMENTAR)){
-//        	tipoMovimentoEstoque.getGrupoMovimentoEstoque().
-//        }
-
         return movimentoEstoqueService.gerarMovimentoEstoqueDiferenca(
                 diferenca, idUsuario,
                 tipoMovimentoEstoque, isAprovacaoAutomatica,

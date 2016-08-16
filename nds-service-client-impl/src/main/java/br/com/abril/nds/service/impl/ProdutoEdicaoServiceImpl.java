@@ -666,6 +666,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             produtoEdicao = new ProdutoEdicao();
             produtoEdicao.setProduto(produtoRepository.obterProdutoPorCodigoProdin(codigoProduto));
             produtoEdicao.setOrigem(Origem.MANUAL);
+            produtoEdicao.setParcial(dto.isParcial());
         } else {
             produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
             semRestricao = validarAtualizacaoCampoSemRestricao(dto, produtoEdicao);
@@ -687,7 +688,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         	}
     	}
         
-    	if(dto.isParcial()) {
+    	if(dto.isParcial() && indNovoProdutoEdicao == false) {
         	if(!semRestricao) {
         		if(indDataLancamentoAlterada || indDataRecolhimentoAlterada || indDataLancamentoPrevistoAlterada) {
         			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível a alteração de datas dos Lancamentos de Parciais. Utilize a tela de Parciais.");

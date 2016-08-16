@@ -80,13 +80,7 @@ public class ParciaisController extends BaseController {
 	private LancamentoParcialService lancamentoParcialService;
 	
 	@Autowired
-	private DistribuidorService distribuidorService;
-	
-	@Autowired
 	private PeriodoLancamentoParcialService periodoLancamentoParcialService;
-	
-	@Autowired
-	private ProdutoEdicaoService produtoEdicaoService;
 	
 	@Autowired
 	private ParciaisService parciaisService;
@@ -223,6 +217,10 @@ public class ParciaisController extends BaseController {
 		List<ParcialDTO> listaParciais = lancamentoParcialService.buscarLancamentosParciais(filtro);
 						
 		Integer totalRegistros = lancamentoParcialService.totalBuscaLancamentosParciais(filtro);
+		
+		if(totalRegistros == null || totalRegistros <= 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma parcial encontrada.");
+		}
 		
 		TableModel<CellModelKeyValue<ParcialDTO>> tableModel = new TableModel<CellModelKeyValue<ParcialDTO>>();
 

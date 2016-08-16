@@ -41,111 +41,111 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 	@Override
 	public List<PeriodoParcialDTO> obterPeriodosParciais(FiltroParciaisDTO filtro) {
 				
-		StringBuilder hql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 		
-		hql.append(" SELECT STRAIGHT_JOIN produtoedi3_.ID AS idProdutoEdicao, ");
-		hql.append(" periodolan0_.NUMERO_PERIODO AS numeroPeriodo, ");
-		hql.append(" lancamento2_.DATA_LCTO_DISTRIBUIDOR AS dataLancamento, ");
-		hql.append(" lancamento2_.DATA_REC_DISTRIB AS dataRecolhimento, ");
-		hql.append(" lancamento2_.DATA_LCTO_PREVISTA AS dataLancamentoPrevista, ");
-		hql.append(" lancamento2_.DATA_REC_PREVISTA AS dataRecolhimentoPrevista, ");
-		hql.append(" produtoedi3_.ORIGEM AS origem, ");
-		hql.append(" lancamento2_.ID AS idLancamento, ");
-		hql.append(" lancamento2_.STATUS AS statusLancamento, ");
-		hql.append(" periodolan0_.ID AS idPeriodo, ");
+		sql.append(" SELECT STRAIGHT_JOIN produtoedi3_.ID AS idProdutoEdicao, ");
+		sql.append(" periodolan0_.NUMERO_PERIODO AS numeroPeriodo, ");
+		sql.append(" lancamento2_.DATA_LCTO_DISTRIBUIDOR AS dataLancamento, ");
+		sql.append(" lancamento2_.DATA_REC_DISTRIB AS dataRecolhimento, ");
+		sql.append(" lancamento2_.DATA_LCTO_PREVISTA AS dataLancamentoPrevista, ");
+		sql.append(" lancamento2_.DATA_REC_PREVISTA AS dataRecolhimentoPrevista, ");
+		sql.append(" produtoedi3_.ORIGEM AS origem, ");
+		sql.append(" lancamento2_.ID AS idLancamento, ");
+		sql.append(" lancamento2_.STATUS AS statusLancamento, ");
+		sql.append(" periodolan0_.ID AS idPeriodo, ");
 
-		hql.append(" (SELECT coalesce(sum(CASE tipomovime11_.OPERACAO_ESTOQUE WHEN 'ENTRADA' THEN movimentoe10_.QTDE ELSE (movimentoe10_.QTDE*-1) END), 0) ");
-		hql.append(" FROM MOVIMENTO_ESTOQUE_COTA movimentoe10_ ");
-		hql.append(" INNER JOIN TIPO_MOVIMENTO tipomovime11_ ON movimentoe10_.TIPO_MOVIMENTO_ID=tipomovime11_.ID ");
-		hql.append(" INNER JOIN LANCAMENTO lancamento12_ ON movimentoe10_.LANCAMENTO_ID=lancamento12_.ID ");
-		hql.append(" INNER JOIN PERIODO_LANCAMENTO_PARCIAL periodolan13_ ON lancamento12_.PERIODO_LANCAMENTO_PARCIAL_ID=periodolan13_.ID ");
-		hql.append(" INNER JOIN PRODUTO_EDICAO produtoedi14_ ON lancamento12_.PRODUTO_EDICAO_ID=produtoedi14_.ID ");
-		hql.append(" LEFT OUTER JOIN MOVIMENTO_ESTOQUE_COTA movimentoe15_ ON movimentoe10_.MOVIMENTO_ESTOQUE_COTA_FURO_ID=movimentoe15_.ID ");
-		hql.append(" WHERE produtoedi14_.ID=produtoedi3_.ID ");
-		hql.append(" AND periodolan13_.ID=periodolan0_.ID ");
-		hql.append(" AND (lancamento12_.DATA_LCTO_DISTRIBUIDOR>=lancamento2_.DATA_LCTO_DISTRIBUIDOR OR lancamento12_.DATA_REC_DISTRIB<=lancamento2_.DATA_REC_DISTRIB) ");
-		hql.append(" AND (tipomovime11_.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposMovimentoEstoqueLancamento)) ");
-		hql.append(" AND (lancamento12_.TIPO_LANCAMENTO IN (:tipoLancamento)) ");
-		hql.append(" AND (movimentoe15_.ID IS NULL)) AS reparte, ");
+		sql.append(" (SELECT coalesce(sum(CASE tipomovime11_.OPERACAO_ESTOQUE WHEN 'ENTRADA' THEN movimentoe10_.QTDE ELSE (movimentoe10_.QTDE*-1) END), 0) ");
+		sql.append(" FROM MOVIMENTO_ESTOQUE_COTA movimentoe10_ ");
+		sql.append(" INNER JOIN TIPO_MOVIMENTO tipomovime11_ ON movimentoe10_.TIPO_MOVIMENTO_ID=tipomovime11_.ID ");
+		sql.append(" INNER JOIN LANCAMENTO lancamento12_ ON movimentoe10_.LANCAMENTO_ID=lancamento12_.ID ");
+		sql.append(" INNER JOIN PERIODO_LANCAMENTO_PARCIAL periodolan13_ ON lancamento12_.PERIODO_LANCAMENTO_PARCIAL_ID=periodolan13_.ID ");
+		sql.append(" INNER JOIN PRODUTO_EDICAO produtoedi14_ ON lancamento12_.PRODUTO_EDICAO_ID=produtoedi14_.ID ");
+		sql.append(" LEFT OUTER JOIN MOVIMENTO_ESTOQUE_COTA movimentoe15_ ON movimentoe10_.MOVIMENTO_ESTOQUE_COTA_FURO_ID=movimentoe15_.ID ");
+		sql.append(" WHERE produtoedi14_.ID=produtoedi3_.ID ");
+		sql.append(" AND periodolan13_.ID=periodolan0_.ID ");
+		sql.append(" AND (lancamento12_.DATA_LCTO_DISTRIBUIDOR>=lancamento2_.DATA_LCTO_DISTRIBUIDOR OR lancamento12_.DATA_REC_DISTRIB<=lancamento2_.DATA_REC_DISTRIB) ");
+		sql.append(" AND (tipomovime11_.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposMovimentoEstoqueLancamento)) ");
+		sql.append(" AND (lancamento12_.TIPO_LANCAMENTO IN (:tipoLancamento)) ");
+		sql.append(" AND (movimentoe15_.ID IS NULL)) AS reparte, ");
 
-		hql.append(" (SELECT coalesce(sum(CASE tipomovime17_.OPERACAO_ESTOQUE WHEN 'ENTRADA' THEN movimentoe16_.QTDE ELSE (movimentoe16_.QTDE*-1) END), 0) ");
-		hql.append(" FROM MOVIMENTO_ESTOQUE_COTA movimentoe16_ ");
-		hql.append(" INNER JOIN TIPO_MOVIMENTO tipomovime17_ ON movimentoe16_.TIPO_MOVIMENTO_ID=tipomovime17_.ID ");
-		hql.append(" INNER JOIN LANCAMENTO lancamento18_ ON movimentoe16_.LANCAMENTO_ID=lancamento18_.ID ");
-		hql.append(" INNER JOIN PERIODO_LANCAMENTO_PARCIAL periodolan19_ ON lancamento18_.PERIODO_LANCAMENTO_PARCIAL_ID=periodolan19_.ID ");
-		hql.append(" INNER JOIN PRODUTO_EDICAO produtoedi20_ ON lancamento18_.PRODUTO_EDICAO_ID=produtoedi20_.ID ");
-		hql.append(" LEFT OUTER JOIN MOVIMENTO_ESTOQUE_COTA movimentoe21_ ON movimentoe16_.MOVIMENTO_ESTOQUE_COTA_FURO_ID=movimentoe21_.ID ");
-		hql.append(" WHERE produtoedi20_.ID=produtoedi3_.ID ");
-		hql.append(" AND periodolan19_.ID=periodolan0_.ID ");
-		hql.append(" AND (lancamento18_.DATA_LCTO_DISTRIBUIDOR>=lancamento2_.DATA_LCTO_DISTRIBUIDOR OR lancamento18_.DATA_REC_DISTRIB<=lancamento2_.DATA_REC_DISTRIB) ");
-		hql.append(" AND (tipomovime17_.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposMovimentoEstoqueLancamento)) ");
-		hql.append(" AND (lancamento18_.TIPO_LANCAMENTO IN (:tipoLancamentoRedistribuicao)) ");
-		hql.append(" AND (movimentoe21_.ID IS NULL)) AS suplementacao, ");
+		sql.append(" (SELECT coalesce(sum(CASE tipomovime17_.OPERACAO_ESTOQUE WHEN 'ENTRADA' THEN movimentoe16_.QTDE ELSE (movimentoe16_.QTDE*-1) END), 0) ");
+		sql.append(" FROM MOVIMENTO_ESTOQUE_COTA movimentoe16_ ");
+		sql.append(" INNER JOIN TIPO_MOVIMENTO tipomovime17_ ON movimentoe16_.TIPO_MOVIMENTO_ID=tipomovime17_.ID ");
+		sql.append(" INNER JOIN LANCAMENTO lancamento18_ ON movimentoe16_.LANCAMENTO_ID=lancamento18_.ID ");
+		sql.append(" INNER JOIN PERIODO_LANCAMENTO_PARCIAL periodolan19_ ON lancamento18_.PERIODO_LANCAMENTO_PARCIAL_ID=periodolan19_.ID ");
+		sql.append(" INNER JOIN PRODUTO_EDICAO produtoedi20_ ON lancamento18_.PRODUTO_EDICAO_ID=produtoedi20_.ID ");
+		sql.append(" LEFT OUTER JOIN MOVIMENTO_ESTOQUE_COTA movimentoe21_ ON movimentoe16_.MOVIMENTO_ESTOQUE_COTA_FURO_ID=movimentoe21_.ID ");
+		sql.append(" WHERE produtoedi20_.ID=produtoedi3_.ID ");
+		sql.append(" AND periodolan19_.ID=periodolan0_.ID ");
+		sql.append(" AND (lancamento18_.DATA_LCTO_DISTRIBUIDOR>=lancamento2_.DATA_LCTO_DISTRIBUIDOR OR lancamento18_.DATA_REC_DISTRIB<=lancamento2_.DATA_REC_DISTRIB) ");
+		sql.append(" AND (tipomovime17_.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposMovimentoEstoqueLancamento)) ");
+		sql.append(" AND (lancamento18_.TIPO_LANCAMENTO IN (:tipoLancamentoRedistribuicao)) ");
+		sql.append(" AND (movimentoe21_.ID IS NULL)) AS suplementacao, ");
 
-		hql.append(" (SELECT COALESCE(SUM(CASE tipomovime23_.OPERACAO_ESTOQUE WHEN 'SAIDA' THEN movimentoe22_.QTDE ELSE movimentoe22_.QTDE*-1 END), 0) ");
-		hql.append(" FROM MOVIMENTO_ESTOQUE_COTA movimentoe22_ ");
-		hql.append(" INNER JOIN TIPO_MOVIMENTO tipomovime23_ ON movimentoe22_.TIPO_MOVIMENTO_ID=tipomovime23_.ID ");
-		hql.append(" INNER JOIN conferencia_encalhe ce ON ce.MOVIMENTO_ESTOQUE_COTA_ID=movimentoe22_.ID ");
-		hql.append(" INNER JOIN CHAMADA_ENCALHE_COTA cec ON ce.CHAMADA_ENCALHE_COTA_ID=cec.ID ");
-		hql.append(" INNER JOIN chamada_encalhe che ON che.ID=cec.CHAMADA_ENCALHE_ID ");
-		hql.append(" INNER JOIN CHAMADA_ENCALHE_LANCAMENTO cel ON cel.CHAMADA_ENCALHE_ID=che.ID ");
-		hql.append(" INNER JOIN LANCAMENTO lancamento24_ ON cel.LANCAMENTO_ID=lancamento24_.ID ");
-		hql.append(" INNER JOIN PRODUTO_EDICAO produtoedi26_ ON lancamento24_.PRODUTO_EDICAO_ID=produtoedi26_.ID ");
-		hql.append(" INNER JOIN PERIODO_LANCAMENTO_PARCIAL periodolan25_ ON lancamento24_.PERIODO_LANCAMENTO_PARCIAL_ID=periodolan25_.ID ");
-		hql.append(" LEFT OUTER JOIN MOVIMENTO_ESTOQUE_COTA movimentoe27_ ON movimentoe22_.MOVIMENTO_ESTOQUE_COTA_FURO_ID=movimentoe27_.ID ");
-		hql.append(" WHERE produtoedi26_.ID=produtoedi3_.ID ");
-		hql.append(" AND periodolan25_.ID=periodolan0_.ID ");
-		hql.append(" AND lancamento24_.DATA_LCTO_DISTRIBUIDOR>=lancamento2_.DATA_LCTO_DISTRIBUIDOR ");
-		hql.append(" AND lancamento24_.DATA_REC_DISTRIB<=lancamento2_.DATA_REC_DISTRIB ");
-		hql.append(" AND (movimentoe27_.ID IS NULL) ");
-		hql.append(" AND (tipomovime23_.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposMovimentoEstoqueEncalhe)) ");
-		hql.append(" AND (movimentoe27_.ID IS NULL)) AS  encalhe, ");
+		sql.append(" (SELECT COALESCE(SUM(CASE tipomovime23_.OPERACAO_ESTOQUE WHEN 'SAIDA' THEN movimentoe22_.QTDE ELSE movimentoe22_.QTDE*-1 END), 0) ");
+		sql.append(" FROM MOVIMENTO_ESTOQUE_COTA movimentoe22_ ");
+		sql.append(" INNER JOIN TIPO_MOVIMENTO tipomovime23_ ON movimentoe22_.TIPO_MOVIMENTO_ID=tipomovime23_.ID ");
+		sql.append(" INNER JOIN conferencia_encalhe ce ON ce.MOVIMENTO_ESTOQUE_COTA_ID=movimentoe22_.ID ");
+		sql.append(" INNER JOIN CHAMADA_ENCALHE_COTA cec ON ce.CHAMADA_ENCALHE_COTA_ID=cec.ID ");
+		sql.append(" INNER JOIN chamada_encalhe che ON che.ID=cec.CHAMADA_ENCALHE_ID ");
+		sql.append(" INNER JOIN CHAMADA_ENCALHE_LANCAMENTO cel ON cel.CHAMADA_ENCALHE_ID=che.ID ");
+		sql.append(" INNER JOIN LANCAMENTO lancamento24_ ON cel.LANCAMENTO_ID=lancamento24_.ID ");
+		sql.append(" INNER JOIN PRODUTO_EDICAO produtoedi26_ ON lancamento24_.PRODUTO_EDICAO_ID=produtoedi26_.ID ");
+		sql.append(" INNER JOIN PERIODO_LANCAMENTO_PARCIAL periodolan25_ ON lancamento24_.PERIODO_LANCAMENTO_PARCIAL_ID=periodolan25_.ID ");
+		sql.append(" LEFT OUTER JOIN MOVIMENTO_ESTOQUE_COTA movimentoe27_ ON movimentoe22_.MOVIMENTO_ESTOQUE_COTA_FURO_ID=movimentoe27_.ID ");
+		sql.append(" WHERE produtoedi26_.ID=produtoedi3_.ID ");
+		sql.append(" AND periodolan25_.ID=periodolan0_.ID ");
+		sql.append(" AND lancamento24_.DATA_LCTO_DISTRIBUIDOR>=lancamento2_.DATA_LCTO_DISTRIBUIDOR ");
+		sql.append(" AND lancamento24_.DATA_REC_DISTRIB<=lancamento2_.DATA_REC_DISTRIB ");
+		sql.append(" AND (movimentoe27_.ID IS NULL) ");
+		sql.append(" AND (tipomovime23_.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposMovimentoEstoqueEncalhe)) ");
+		sql.append(" AND (movimentoe27_.ID IS NULL)) AS  encalhe, ");
 
 
-		hql.append(" (SELECT coalesce(sum(itemchamad28_.QTDE_VENDA_APURADA), 0) ");
-		hql.append(" FROM ITEM_CHAMADA_ENCALHE_FORNECEDOR itemchamad28_ ");
-		hql.append(" INNER JOIN PRODUTO_EDICAO produtoedi29_ ON itemchamad28_.PRODUTO_EDICAO_ID=produtoedi29_.ID ");
-		hql.append(" WHERE produtoedi29_.ID=produtoedi3_.ID ");
-		hql.append(" AND itemchamad28_.DATA_RECOLHIMENTO<=lancamento2_.DATA_REC_DISTRIB ");
-		hql.append(" AND (itemchamad28_.REGIME_RECOLHIMENTO IN ('PARCIAL' , 'FINAL'))) AS vendaCE ");
+		sql.append(" (SELECT coalesce(sum(itemchamad28_.QTDE_VENDA_APURADA), 0) ");
+		sql.append(" FROM ITEM_CHAMADA_ENCALHE_FORNECEDOR itemchamad28_ ");
+		sql.append(" INNER JOIN PRODUTO_EDICAO produtoedi29_ ON itemchamad28_.PRODUTO_EDICAO_ID=produtoedi29_.ID ");
+		sql.append(" WHERE produtoedi29_.ID=produtoedi3_.ID ");
+		sql.append(" AND itemchamad28_.DATA_RECOLHIMENTO<=lancamento2_.DATA_REC_DISTRIB ");
+		sql.append(" AND (itemchamad28_.REGIME_RECOLHIMENTO IN ('PARCIAL' , 'FINAL'))) AS vendaCE ");
 		
-		hql.append(" FROM PERIODO_LANCAMENTO_PARCIAL periodolan0_ ");
-		hql.append(" INNER JOIN LANCAMENTO_PARCIAL lancamento1_ ON periodolan0_.LANCAMENTO_PARCIAL_ID=lancamento1_.ID ");
+		sql.append(" FROM PERIODO_LANCAMENTO_PARCIAL periodolan0_ ");
+		sql.append(" INNER JOIN LANCAMENTO_PARCIAL lancamento1_ ON periodolan0_.LANCAMENTO_PARCIAL_ID=lancamento1_.ID ");
 		
 		// se tiver index NDX_STATUS_IDX ignorar na query, por problema de performance
 		List list= getSession().createSQLQuery("show index from lancamento where Key_name = 'NDX_STATUS_IDX'").list();
 		if ( list != null && !list.isEmpty())
-		  hql.append(" INNER JOIN LANCAMENTO lancamento2_ ignore index ( NDX_STATUS_IDX) ON periodolan0_.ID=lancamento2_.PERIODO_LANCAMENTO_PARCIAL_ID ");
+		  sql.append(" INNER JOIN LANCAMENTO lancamento2_ ignore index ( NDX_STATUS_IDX) ON periodolan0_.ID=lancamento2_.PERIODO_LANCAMENTO_PARCIAL_ID ");
 		else
-		 hql.append(" INNER JOIN LANCAMENTO lancamento2_  ON periodolan0_.ID=lancamento2_.PERIODO_LANCAMENTO_PARCIAL_ID ");
+		 sql.append(" INNER JOIN LANCAMENTO lancamento2_  ON periodolan0_.ID=lancamento2_.PERIODO_LANCAMENTO_PARCIAL_ID ");
 	
-		hql.append(" INNER JOIN PRODUTO_EDICAO produtoedi3_ ON lancamento2_.PRODUTO_EDICAO_ID=produtoedi3_.ID ");
-		hql.append(" INNER JOIN PRODUTO produto4_ ON produtoedi3_.PRODUTO_ID=produto4_.ID ");
-		hql.append(" INNER JOIN PRODUTO_FORNECEDOR fornecedor7_ ON produto4_.ID=fornecedor7_.PRODUTO_ID ");
-		hql.append(" INNER JOIN FORNECEDOR fornecedor8_ ON fornecedor7_.fornecedores_ID=fornecedor8_.ID ");
-		hql.append(" INNER JOIN PESSOA pessoajuri9_ ON fornecedor8_.JURIDICA_ID=pessoajuri9_.ID ");
-		hql.append(" LEFT OUTER JOIN ESTUDO estudo5_ ON lancamento2_.ESTUDO_ID=estudo5_.ID ");
-		hql.append(" LEFT OUTER JOIN MOVIMENTO_ESTOQUE_COTA movimentoe6_ ON lancamento2_.ID=movimentoe6_.LANCAMENTO_ID ");
-		hql.append(" WHERE lancamento2_.STATUS <> :statusCancelado ");
-		hql.append(" AND produto4_.CODIGO = :codProduto ");
-		hql.append(" AND produtoedi3_.NUMERO_EDICAO = :edProduto ");
+		sql.append(" INNER JOIN PRODUTO_EDICAO produtoedi3_ ON lancamento2_.PRODUTO_EDICAO_ID=produtoedi3_.ID ");
+		sql.append(" INNER JOIN PRODUTO produto4_ ON produtoedi3_.PRODUTO_ID=produto4_.ID ");
+		sql.append(" INNER JOIN PRODUTO_FORNECEDOR fornecedor7_ ON produto4_.ID=fornecedor7_.PRODUTO_ID ");
+		sql.append(" INNER JOIN FORNECEDOR fornecedor8_ ON fornecedor7_.fornecedores_ID=fornecedor8_.ID ");
+		sql.append(" INNER JOIN PESSOA pessoajuri9_ ON fornecedor8_.JURIDICA_ID=pessoajuri9_.ID ");
+		sql.append(" LEFT OUTER JOIN ESTUDO estudo5_ ON lancamento2_.ESTUDO_ID=estudo5_.ID ");
+		sql.append(" LEFT OUTER JOIN MOVIMENTO_ESTOQUE_COTA movimentoe6_ ON lancamento2_.ID=movimentoe6_.LANCAMENTO_ID ");
+		sql.append(" WHERE lancamento2_.STATUS <> :statusCancelado ");
+		sql.append(" AND produto4_.CODIGO = :codProduto ");
+		sql.append(" AND produtoedi3_.NUMERO_EDICAO = :edProduto ");
 
 		if(filtro != null && filtro.getDataInicial() != null) {
 			
-			hql.append(" AND lancamento2_.DATA_LCTO_DISTRIBUIDOR >= :dtInicial ");
+			sql.append(" AND lancamento2_.DATA_LCTO_DISTRIBUIDOR >= :dtInicial ");
 		}
 		
 		if(filtro != null && filtro.getDataFinal() != null) {
 			
-			hql.append(" AND lancamento2_.DATA_LCTO_DISTRIBUIDOR <= :dtFinal ");
+			sql.append(" AND lancamento2_.DATA_LCTO_DISTRIBUIDOR <= :dtFinal ");
 		}
 		
-		hql.append(" GROUP BY periodolan0_.ID ");
-		hql.append(" ORDER BY periodolan0_.NUMERO_PERIODO ");
+		sql.append(" GROUP BY periodolan0_.ID ");
+		sql.append(" ORDER BY periodolan0_.NUMERO_PERIODO ");
 		
 
 		
-		Query query =  getSession().createSQLQuery(hql.toString());
+		Query query =  getSession().createSQLQuery(sql.toString());
 		
 		((SQLQuery) query).addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
 		((SQLQuery) query).addScalar("numeroPeriodo", StandardBasicTypes.INTEGER);
