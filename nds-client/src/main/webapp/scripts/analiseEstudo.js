@@ -149,39 +149,69 @@ var analiseEstudoController = $.extend(true, {
 
     redirectToTelaAnalise : function(numeroEstudo, event){
 
-        // Obter matriz de distribuição
-        var matriz = [],
-        	url = contextPath + "/distribuicao/analiseEstudo/obterMatrizDistribuicaoPorEstudo",
-        	dadosResumo ={};
-        
-        $.postJSON(url,
-                [{name : "id" , value : numeroEstudo}],
-                function(response){
-            // CALLBACK
-            // ONSUCESS
-            matriz.push({name: "selecionado.classificacao",  value: response.classificacao});
-            matriz.push({name: "selecionado.nomeProduto",    value: response.nomeProduto});
-            matriz.push({name: "selecionado.codigoProduto",  value: response.codigoProduto});
-            matriz.push({name: "selecionado.dataLcto",       value: response.dataLancto});
-            matriz.push({name: "selecionado.edicao",         value: response.numeroEdicao});
-            matriz.push({name: "selecionado.estudo",         value: response.idEstudo});
-            matriz.push({name: "selecionado.idLancamento",   value: response.idLancamento});
-            matriz.push({name: "selecionado.estudoLiberado", value: (response.liberado != "")});
+    	var modoAnalise =  $(event.target).val().toUpperCase() != undefined ? $(event.target).val().toUpperCase() : 'NORMAL'; 
+		
+		var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + numeroEstudo + '&modoAnalise='+ modoAnalise;
+		
+		var abaAberta = false;
+		
+		$('#workspace .ui-tabs-nav li a').each(function(k, v){ 
+			if($(v).text() == 'Análise de Estudos') {
+				console.log(k +' - '+ $(v).text());
+				$("#workspace").tabs('option', 'selected', k); 
+				$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));
 
-            // CARREGAR TELA EMS 2022
-            $.get(contextPath + '/distribuicao/histogramaPosEstudo/index', //url
-                    null, // parametros
-                    function(html){ // onSucessCallBack
-                $('#AnaliseEstudoMainContent').hide();
-                $('#histogramaPosEstudoContent').html(html).show();
-
-                histogramaPosEstudoController.dadosResumo = dadosResumo;
-                histogramaPosEstudoController.matrizSelecionado = matriz;
-                histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(matriz, undefined, false);
-                histogramaPosEstudoController.modoAnalise = $(event.target).val().toUpperCase();
-            });
-        }
-        );
+				abaAberta = true;
+			} 
+		});
+		
+		if(abaAberta){
+			
+			$('#workspace').tabs({load : function(event, ui) {
+				$('#workspace').tabs({load : function(event, ui) {}});
+			}});
+			
+			$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
+		} else {
+			
+			$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
+		}
+    	
+    	
+//    	##REDIRECT OLD, HISTOGRAMA > ANALISE_ESTUDO
+//    	// Obter matriz de distribuição
+//        var matriz = [],
+//        	url = contextPath + "/distribuicao/analiseEstudo/obterMatrizDistribuicaoPorEstudo",
+//        	dadosResumo ={};
+//        
+//        $.postJSON(url,
+//                [{name : "id" , value : numeroEstudo}],
+//                function(response){
+//            // CALLBACK
+//            // ONSUCESS
+//            matriz.push({name: "selecionado.classificacao",  value: response.classificacao});
+//            matriz.push({name: "selecionado.nomeProduto",    value: response.nomeProduto});
+//            matriz.push({name: "selecionado.codigoProduto",  value: response.codigoProduto});
+//            matriz.push({name: "selecionado.dataLcto",       value: response.dataLancto});
+//            matriz.push({name: "selecionado.edicao",         value: response.numeroEdicao});
+//            matriz.push({name: "selecionado.estudo",         value: response.idEstudo});
+//            matriz.push({name: "selecionado.idLancamento",   value: response.idLancamento});
+//            matriz.push({name: "selecionado.estudoLiberado", value: (response.liberado != "")});
+//
+//            // CARREGAR TELA EMS 2022
+//            $.get(contextPath + '/distribuicao/histogramaPosEstudo/index', //url
+//                    null, // parametros
+//                    function(html){ // onSucessCallBack
+//                $('#AnaliseEstudoMainContent').hide();
+//                $('#histogramaPosEstudoContent').html(html).show();
+//
+//                histogramaPosEstudoController.dadosResumo = dadosResumo;
+//                histogramaPosEstudoController.matrizSelecionado = matriz;
+//                histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(matriz, undefined, false);
+//                histogramaPosEstudoController.modoAnalise = $(event.target).val().toUpperCase();
+//            });
+//        }
+//        );
     },
     
     errorCallBack : function errorCallBack(){
