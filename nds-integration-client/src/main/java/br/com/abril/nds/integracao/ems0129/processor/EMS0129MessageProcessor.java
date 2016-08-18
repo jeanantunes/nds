@@ -21,8 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
-
 import br.com.abril.icd.axis.util.Constantes;
 import br.com.abril.icd.axis.util.DateUtil;
 import br.com.abril.nds.dto.DetalhesPickingDTO;
@@ -45,6 +43,7 @@ import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking3Footer;
 import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking3Header;
 import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking3Trailer2;
 import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking3Trailer3;
+import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking3_8_Trailer2;
 import br.com.abril.nds.integracao.ems0129.outbound.InterfaceDetalhesPicking;
 import br.com.abril.nds.integracao.ems0129.route.EMS0129Route;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
@@ -57,6 +56,8 @@ import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.service.LedModelo4IntegracaoService;
+
+import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
 @Component
 
@@ -100,7 +101,8 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			
 		} else if (distribuidor.getTipoImpressaoInterfaceLED().equals(TipoImpressaoInterfaceLED.MODELO_2)) {
 			
-			processarArquivoPickingModelo2(message, distribuidor);
+			// processarArquivoPickingModelo2(message, distribuidor);
+			processarArquivoPickingModelo3_8(message, distribuidor);
 
 		} else if (distribuidor.getTipoImpressaoInterfaceLED().equals(TipoImpressaoInterfaceLED.MODELO_3)) {
 			
@@ -121,7 +123,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 	
 	            /**
-     * Processa geração do arquivo de Picking do Modelo1
+     * Processa geraÃ§Ã£o do arquivo de Picking do Modelo1
      * 
      * @param message
      * @param distribuidor
@@ -142,7 +144,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 	
 	            /**
-     * Processa geração do arquivo de Picking do Modelo1
+     * Processa geraÃ§Ã£o do arquivo de Picking do Modelo1
      * 
      * @param message
      * @param distribuidor
@@ -254,7 +256,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			this.ledModelo4IntegracaoService.exportarPickingLED(registros, data);
 			
 			if(!cotasSemEnderecoLED.isEmpty()){
-				String mensagemValidacao = "As seguintes cotas não possuem endereço LED cadastrado: "+cotasSemEnderecoLED;
+				String mensagemValidacao = "As seguintes cotas nÃ£o possuem endereÃ§o LED cadastrado: "+cotasSemEnderecoLED;
 				this.lancarMensagemValidacao(mensagemValidacao, message);
 			}
 
@@ -410,7 +412,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	
 	
 				/**
-     * Obtém a data de Lançamento do Distribuidor
+     * ObtÃ©m a data de LanÃ§amento do Distribuidor
      * 
      * @param message
      * @return
@@ -431,7 +433,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	
 	
 	            /**
-     * Obtém os dados de detalhes para geração do arquivo
+     * ObtÃ©m os dados de detalhes para geraÃ§Ã£o do arquivo
      * 
      * @param message
      * @return
@@ -494,7 +496,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	
 	
 	            /**
-     * Cria o cabeçalho para os arquivos do modelo1
+     * Cria o cabeÃ§alho para os arquivos do modelo1
      * 
      * @param headerDTO
      * @return
@@ -511,7 +513,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 	
 	            /**
-     * Cria o cabeçalho para os arquivos do modelo 2
+     * Cria o cabeÃ§alho para os arquivos do modelo 2
      * 
      * @param headerDTO
      * @return
@@ -530,7 +532,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	            /**
-     * Obtém dados utilizado no header dos arquivos de LED
+     * ObtÃ©m dados utilizado no header dos arquivos de LED
      * 
      * @param data
      * @return
@@ -665,7 +667,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	 * @return
 	 */
 	public InterfaceDetalhesPicking getDetalhesFromDTO(DetalhesPickingDTO pickingDTO, InterfaceDetalhesPicking modelo) {
-		 
+		
 		modelo.setCodigoCota(String.format("%1$05d", pickingDTO.getNumeroCota()));
 
 		modelo.setQuantidade(pickingDTO.getQtdeMEC().longValue());
@@ -688,7 +690,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	            /**
-     * Lança Exceção com Mensagem de Validação
+     * LanÃ§a ExceÃ§Ã£o com Mensagem de ValidaÃ§Ã£o
      * 
      * @param mensagemValidacao
      * @param message
@@ -724,7 +726,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	    /**
-	* Processa geração do arquivo de Picking do Modelo3
+	* Processa geraÃ§Ã£o do arquivo de Picking do Modelo3
 	* 
 	* @param message
 	* @param distribuidor
@@ -739,6 +741,99 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		}
 		
 		gerarArquivoPickingModelo3(message, nomeArquivoPickingInterfaceLED);
+	}
+	
+	
+    /**
+	* Processa geraÃ§Ã£o do arquivo de Picking do Modelo3 com codigo produto com 8 caracteres
+	* 
+	* @param message
+	* @param distribuidor
+	*/
+	private void processarArquivoPickingModelo3_8(Message message, Distribuidor distribuidor) {
+	
+		String nomeArquivoPickingInterfaceLED = distribuidor.getArquivoInterfaceLedPicking2();
+		
+		if (nomeArquivoPickingInterfaceLED == null) {
+			
+			nomeArquivoPickingInterfaceLED = NOME_ARQUIVO_PICKING_INTERFACE_LED_DEFAULT;
+		}
+		
+		gerarArquivoPickingModelo3_8(message, nomeArquivoPickingInterfaceLED);
+	}
+	
+	
+	/**
+	 * Gera o arquivo de acordo com o modelo de picking 3 com codigo de produto com 8 digitos
+	 * 
+	 * @param message
+	 * @param nomeArquivoPickingInterfaceLED
+	 */
+	private void gerarArquivoPickingModelo3_8(Message message, String nomeArquivoPickingInterfaceLED) {
+		
+		try {
+			
+			//StringBuilder stringFinal = new StringBuilder();
+			//File file = new File("/Users/lazaroJR/Documents/docsnds/ambiente2/parametros_nds/picking/teste.txt");
+
+			FileWriter fileWriter = new FileWriter(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_PICKING_EXPORTACAO.name())	+ 
+					File.separator  + nomeArquivoPickingInterfaceLED);
+			
+			PrintWriter print = new PrintWriter(fileWriter, true);
+			
+			Date dataLancamento = getDataLancDistrib(message);
+			
+			List<HeaderPickingDTO> listHeaders = getHeadePickingModulo3(dataLancamento);
+			
+			List<SubHeaderPickingDTO> listaSubHeadePickingModulo3 = getSubHeaderPickingModulo3(dataLancamento, false);
+			
+			if (listHeaders.isEmpty()) {
+
+				String mensagemValidacao = "Nenhum registro encontrado!";
+				
+				this.lancarMensagemValidacao(mensagemValidacao, message);
+			}
+			
+			int cont = 0;
+			for (HeaderPickingDTO headerDTO : listHeaders) {
+				
+				EMS0129Picking3Header linha01Modelo03 = criarHeaderModelo3(headerDTO);
+				
+				print.println(fixedFormatManager.export(linha01Modelo03) + "\r");
+				
+				List<DetalhesPickingPorCotaModelo03DTO> listaLinha02Modelo03 = getLinha02Modelo03_8(linha01Modelo03.getCodigoCota(), dataLancamento);
+				
+				for (DetalhesPickingPorCotaModelo03DTO detalhesPickingPorCotaModelo03DTO : listaLinha02Modelo03) {
+					EMS0129Picking3_8_Trailer2 linha02Modelo03 = criarLinha02Modelo03_8(detalhesPickingPorCotaModelo03DTO);
+					print.println(fixedFormatManager.export(linha02Modelo03) + "\r");
+				}
+				
+				SubHeaderPickingDTO subHeaderPickingDTO = listaSubHeadePickingModulo3.get(cont);
+				
+				EMS0129Picking3Trailer3 linha03Modelo03 = criarLinha03Modelo03(subHeaderPickingDTO);
+				
+				print.println(fixedFormatManager.export(linha03Modelo03) + "\r");
+				
+				cont++;
+				
+			}
+			
+			FooterPickingModelo3DTO footerPickingModulo3 = getFooterPickingModulo3(dataLancamento);
+			
+			EMS0129Picking3Footer linhaFooterModelo03 = criarLinhaFooterModelo03(footerPickingModulo3);
+			
+			print.println(fixedFormatManager.export(linhaFooterModelo03) + "\r");
+			
+			print.flush();
+			print.close();
+
+		} catch (IOException e) {
+
+			String mensagemValidacao = "Erro ao gerar o arquivo. " + e.getMessage();
+			
+			this.lancarMensagemValidacao(mensagemValidacao, message);
+		}
+		
 	}
 	
 	/**
@@ -908,7 +1003,46 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		sql.append(" where i.cota_id = a.id  ");
 		sql.append(" and h.id = i.estudo_id ");
 		sql.append(" and k.id = j.produto_id ");
-		sql.append(" and h.produto_edicao_id = j.id ");
+		sql.append(" and h.id = l.estudo_id ");
+		sql.append(" and l.PRODUTO_EDICAO_ID = j.id ");
+		sql.append(" and l.status in ('BALANCEADO', 'EXPEDIDO') ");
+		
+		sql.append(" and l.data_lcto_distribuidor = :dataLancamento ");
+		sql.append(" and a.numero_cota = :codigoCota ;");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataLancamento", dataLancamento);
+		query.setParameter("codigoCota", numeroCota);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(DetalhesPickingPorCotaModelo03DTO.class));
+		
+		return (List<DetalhesPickingPorCotaModelo03DTO>) query.list();
+		
+		
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	private List<DetalhesPickingPorCotaModelo03DTO> getLinha02Modelo03_8(String numeroCota, Date dataLancamento) {
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select '2;' as identificadorLinha ");
+		sql.append(" ,concat(lpad(a.numero_cota,4,0), ';') as codigoCota  ");
+		sql.append(" ,concat(lpad(l.SEQUENCIA_MATRIZ,3,0), ';') as sequencia  ");
+		sql.append(" ,concat(lpad(k.codigo,8,0), ';') as produto ");
+		sql.append(" ,concat(lpad(j.numero_edicao,4,0), ';') as edicao ");
+		sql.append(" ,concat(rpad(j.nome_comercial,20,' '), ';') as nome  ");
+		sql.append(" ,concat(replace(lpad(truncate(j.PRECO_VENDA,2),11,0),'.',''), ';') as preco ");
+		sql.append(" ,concat(replace(lpad(truncate(j.PRECO_VENDA,2),11,0),'.',''), ';') as precoDesconto ");
+		sql.append(" ,concat('02500', ';' ) as desconto ");
+		sql.append(" ,concat(lpad(truncate(i.QTDE_efetiva,0),6,0), ';') as quantidade ");
+		
+		sql.append(" from cota a, estudo h, estudo_cota i, produto_edicao j, produto k, lancamento l ");
+		sql.append(" where i.cota_id = a.id  ");
+		sql.append(" and h.id = i.estudo_id ");
+		sql.append(" and k.id = j.produto_id ");
+		sql.append(" and h.id = l.estudo_id ");
 		sql.append(" and l.PRODUTO_EDICAO_ID = j.id ");
 		sql.append(" and l.status in ('BALANCEADO', 'EXPEDIDO') ");
 		
@@ -930,6 +1064,16 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	private EMS0129Picking3Trailer2 criarLinha02Modelo03(DetalhesPickingPorCotaModelo03DTO detalhesPickingPorCotaModelo03DTO) {
 		
 		return new EMS0129Picking3Trailer2(detalhesPickingPorCotaModelo03DTO.getIdentificadorLinha(), detalhesPickingPorCotaModelo03DTO.getCodigoCota(), 
+				detalhesPickingPorCotaModelo03DTO.getSequencia(), detalhesPickingPorCotaModelo03DTO.getProduto(),
+				detalhesPickingPorCotaModelo03DTO.getEdicao(), detalhesPickingPorCotaModelo03DTO.getNome(),
+				detalhesPickingPorCotaModelo03DTO.getPreco(), detalhesPickingPorCotaModelo03DTO.getPrecoDesconto(),
+				detalhesPickingPorCotaModelo03DTO.getDesconto(), detalhesPickingPorCotaModelo03DTO.getQuantidade());
+	}
+	
+	
+	private EMS0129Picking3_8_Trailer2 criarLinha02Modelo03_8(DetalhesPickingPorCotaModelo03DTO detalhesPickingPorCotaModelo03DTO) {
+		
+		return new EMS0129Picking3_8_Trailer2(detalhesPickingPorCotaModelo03DTO.getIdentificadorLinha(), detalhesPickingPorCotaModelo03DTO.getCodigoCota(), 
 				detalhesPickingPorCotaModelo03DTO.getSequencia(), detalhesPickingPorCotaModelo03DTO.getProduto(),
 				detalhesPickingPorCotaModelo03DTO.getEdicao(), detalhesPickingPorCotaModelo03DTO.getNome(),
 				detalhesPickingPorCotaModelo03DTO.getPreco(), detalhesPickingPorCotaModelo03DTO.getPrecoDesconto(),

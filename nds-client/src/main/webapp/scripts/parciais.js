@@ -183,11 +183,13 @@ var ParciaisController = $.extend(true, {
 		
 		$('#exportacaoPeriodos',ParciaisController.workspace).hide();
 		
-		if(result.mensagens) 
+		if(result.mensagens){
 			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+		} 
 		
 		if(result.rows.length==0) {
 			$("#exportacao",ParciaisController.workspace).hide();
+			$('#parcial-painelLancamentos',ParciaisController.workspace).hide();
 		} else {
 			$("#exportacao",ParciaisController.workspace).show();
 		}
@@ -944,7 +946,7 @@ var ParciaisController = $.extend(true, {
 		inicializarGrids : function() {
 			
 
-			$(".parciaisGrid", ParciaisController.workspace).flexigrid({
+			$(".parcial-parciaisGrid", ParciaisController.workspace).flexigrid({
 				colModel : [ {
 					display : 'Data Lancto',
 					name : 'dataLancamento',

@@ -761,6 +761,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             
             throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + idCota + " não encontrada!");
         }
+        
         /*
         if(filtro.isImpressao()){
         	if(!Util.validarBoolean(cota.getParametroDistribuicao().getNotaEnvioImpresso())){
@@ -1259,20 +1260,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             this.validarRoteirizacaoCota(filtro, listaIdCotas);
             
             listaNotaEnvio = this.gerar(listaIdCotas, filtro, null, null, null);
-            
-            
-            if(filtro.isImpressao() && !listaIdCotasImpressaoEnvioEmail.isEmpty()){
-            	List<NotaEnvio> listaNotaEnvioImpressaoEmail = this.gerar(listaIdCotasImpressaoEnvioEmail, filtro, null, null, null);
-            	
-    			Map<Pessoa, List<NotaEnvio>> mapaDeNotas = agruparNotasPorDestinatario(null, listaNotaEnvioImpressaoEmail);
-    			
-    			try {
-					enviarNotasParaCadaCota(filtro, mapaDeNotas);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-            	
-            }
             
         } finally {
             TRAVA_GERACAO_NE.remove("neCotasSendoGeradas");

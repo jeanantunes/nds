@@ -838,6 +838,13 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 .addScalar("reparte", StandardBasicTypes.BIG_DECIMAL)
                 .addScalar("venda", StandardBasicTypes.BIG_DECIMAL);
 
+        
+        //Tratamento Paliativo, não interfer no resultado final
+        if(listCotaId.size() == 1){
+        	listCotaId.add(000L);
+        }
+        //FIM!
+        
         query.setParameterList("listIdsCota", listCotaId);
         
         if(listProdutoEdicaoId != null && listProdutoEdicaoId.size() > 0){
