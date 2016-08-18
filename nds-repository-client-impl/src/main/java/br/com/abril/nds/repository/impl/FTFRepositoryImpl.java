@@ -286,7 +286,14 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" '' as textoObservacoes, ")
 		.append(" CONCAT('0', pe.numero_edicao) as numEdicaoRevista, ")
 		.append(" '' as dataCompetencia, ")
-		.append(" LPAD(cast(nfps.CODIGO_BARRAS as char), 13, '0') as codBarrasProduto, ")
+
+		.append(" (CASE WHEN tsp.DESCRICAO = 'IMPORTADAS' THEN ")
+		.append("      pe.CODIGO_DE_BARRAS ") 
+		.append(" ELSE ")
+		.append("      LPAD(cast(nfps.CODIGO_BARRAS as char), 13, '0')  ")
+		.append(" END) as codBarrasProduto, ")
+		
+		// .append(" LPAD(cast(nfps.CODIGO_BARRAS as char), 13, '0') as codBarrasProduto, ")
 		.append(" '5' as indicadorProdutoServicoMaterial, ") //TODO: -- aguardando resposta equipe de negócio
 		.append(" '0000100014' as codMaterialOuServicoCorporativo, ")
 		.append(" paramFtf.CODIGO_NATUREZA_OPERACAO_FTF as novoCodigoTipoNaturezaOperacao, ")
@@ -305,6 +312,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" left join natureza_operacao no ON no.ID = nfn.NATUREZA_OPERACAO_ID ")
 		.append(" inner join produto_edicao pe ON pe.id = nfps.PRODUTO_EDICAO_ID ")
 		.append(" inner join produto produto ON pe.PRODUTO_ID = produto.ID ")
+		.append(" inner join tipo_segmento_produto tsp on produto.tipo_segmento_produto_id = tsp.id ") 
 		.append(" inner join nota_fiscal_pessoa nfp on nfp.ID = nfn.PESSOA_DESTINATARIO_ID_REFERENCIA ")
         .append(" inner join pessoa p on p.id = nfp.ID_PESSOA_ORIGINAL ")
         .append(" left outer join cota c on c.PESSOA_ID = p.id and c.id = nfn.COTA_ID ")
