@@ -355,6 +355,18 @@ table.dadosTab { margin-left: 370px;}
 				    </a>
 				</span>
 
+				<span class="bt_novos">
+       	  			<a href="javascript:;" onclick="analiseParcialController.analiseHistogramaEstudo()">
+   	  					<img id="imgAnalise" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" hspace="5" border="0"/> Histograma
+       	  			</a>
+       	  		</span>
+       	  		
+                <span class="bt_novos">
+                    <a href="javascript:;" id="botaoVoltarTelaAnalise" onclick="$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected')); selectTabTitle('Analise de Estudos');">
+                        <img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" /> Voltar
+				    </a>
+				</span>
+
 				<c:choose>
 					<c:when test="${lancamentoComEstudoLiberado}">
 						<span class="bt_novos">
@@ -372,17 +384,6 @@ table.dadosTab { margin-left: 370px;}
 					</c:otherwise>
 				</c:choose>
 				
-				<span class="bt_novos">
-       	  			<a href="javascript:;" onclick="analiseParcialController.analiseHistogramaEstudo()" rel="tipsy" title="Histograma">
-   	  					<img id="imgAnalise" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" hspace="5" border="0"/> Histograma
-       	  			</a>
-       	  		</span>
-       	  		
-                <span class="bt_novos">
-                    <a href="javascript:;" id="botaoVoltarTelaAnalise" onclick="$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected')); selectTabTitle('Analise de Estudos');">
-                        <img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" /> Voltar
-				    </a>
-				</span>
                 <span class="bt_novos">
                     <a href="javascript:;" onclick="analiseParcialController.exibirCotasQueNaoEntraramNoEstudo();">
 						<img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" alt="Cotas que não entraram no Estudo" hspace="5" border="0" /> Cotas que não entraram no Estudo

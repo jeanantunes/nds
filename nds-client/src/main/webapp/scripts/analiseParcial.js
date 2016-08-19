@@ -594,7 +594,7 @@ var analiseParcialController = $.extend(true, {
 					
 				}
   
-				$('#abrangencia').text(result).formatNumber({format:'#.00 %', locale:'br'});
+				$('#abrangencia').text(result).formatNumber({format:'0.00 %', locale:'br'});
     		},
     		error: function(result) {
 
@@ -648,7 +648,7 @@ var analiseParcialController = $.extend(true, {
     	}
     	
     	if(abrangencia){
-    		$('#abrangencia').text(abrangencia).formatNumber({format:'#.00 %', locale:'br'});
+    		$('#abrangencia').text(abrangencia).formatNumber({format:'0.00 %', locale:'br'});
         } else {
         	$('#abrangencia').text('');
     	}
@@ -824,7 +824,7 @@ var analiseParcialController = $.extend(true, {
                     analiseParcialController.exibirMsg(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
                     $('#abrangencia').text('');
                 } else {
-                    $('#abrangencia').text(result).formatNumber({format:'#.00 %', locale:'br'});
+                    $('#abrangencia').text(result).formatNumber({format:'0.00 %', locale:'br'});
                 }
             }
         );

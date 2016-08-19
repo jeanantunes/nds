@@ -316,11 +316,40 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 								
 								break;
 							}
+						} else if(dtnf.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_VENDA)) {
+							
+							if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)){
+								if(!dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
+									
+									LOGGER.info("obter notas para prestador filial ");				
+									
+									List<NotaFiscal> notas = null;;
+									
+									notas = notasPorCotaFornecedor(filtro, naturezaOperacao, notas);
+									
+									for (NotaFiscal notaFiscal : notas) {
+										DanfeDTO danfe = montarDanfe(notaFiscal);
+										if(danfe!=null) {
+											listaDanfeWrapper.add(new DanfeWrapper(danfe));
+										}
+									}
+									
+									break;
+								}
+							} 
 						} else {
+
+							List<NotaFiscal> notas = null; 
 							
-							throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
+							notas = notasPorCotaFornecedor(filtro, naturezaOperacao, notas);
 							
-						}
+							for (NotaFiscal notaFiscal : notas) {
+								DanfeDTO danfe = montarDanfe(notaFiscal);
+								if(danfe!=null) {
+									listaDanfeWrapper.add(new DanfeWrapper(danfe));
+								}
+							}
+						}	
 					} else if(dtnf.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_DEVOLUCAO_PELA_COTA)) {
 						if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)){
 							if(!dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
