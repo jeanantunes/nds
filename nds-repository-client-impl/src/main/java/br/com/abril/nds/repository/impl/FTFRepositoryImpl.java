@@ -695,7 +695,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		     .append(" p.codigo as  codPublicacao, ")
 			 .append(" pe.numero_edicao as numEdicao,")
 			 .append(" (select max(lan.data_rec_prevista) from lancamento lan where lan.produto_edicao_id = pe.id ) as dataRecolhimento , ")
-			 .append(" item.QUANTIDADE_COMERCIAL as qtdExemplares,")
+			 .append(" SUM(item.QUANTIDADE_COMERCIAL) as qtdExemplares,")
 			 .append(" case when pe.pacote_padrao > 0 then pe.pacote_padrao else 1 end  as pacotePadrao,")
 			// .append(" 1 as exemplaresPacote,")
 			// .append(" 0 as qtdExemplaresIrregular, ")
@@ -705,7 +705,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 			 .append(" from nota_fiscal_produto_servico item ")
 			 .append(" inner join produto_edicao pe on  item.produto_edicao_id = pe.id ")
 			 .append(" inner join produto p on pe.produto_id = p.id ")
-		    .append("  where item.nota_fiscal_id = :notaId and  item.QUANTIDADE_COMERCIAL > 0 ");
+		    .append("  where item.nota_fiscal_id = :notaId and  item.QUANTIDADE_COMERCIAL > 0 group by pe.id ");
 		   	
 		   SQLQuery query = getSession().createSQLQuery(sql.toString());
 		   query.setParameter("notaId",notaId);

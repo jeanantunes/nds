@@ -38,6 +38,7 @@ import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.EstudoGeradoPreAnaliseDTO;
 import br.com.abril.nds.model.planejamento.EstudoPDV;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusEstudo;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
@@ -160,8 +161,10 @@ public class EstudoServiceImpl implements EstudoService {
 			analiseDTO.setQtdRepartePromocional(BigIntegerUtil.valueOfInteger(reparte));
 		}
 	
-	if (analiseDTO.getAbrangenciaEstudo() == null )
-		analiseDTO.setAbrangenciaEstudo(analiseParcialService.calcularPercentualAbrangencia(estudoId));  
+	    EstudoGerado estudo = estudoGeradoRepository.buscarPorId(estudoId);
+	    
+	    if (estudo == null || !estudo.isLiberado() ) // se  estudo nao foi liberado, recalcular
+		    analiseDTO.setAbrangenciaEstudo(analiseParcialService.calcularPercentualAbrangencia(estudoId));  
 		
 		return analiseDTO;
 	}
