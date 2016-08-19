@@ -1230,6 +1230,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                         
                         estoqueProduto.setQtde(BigInteger.ZERO);
                     }
+                    if (estoqueProduto.getQtdeDevolucaoEncalhe()==null){
+                        
+                        estoqueProduto.setQtdeDevolucaoEncalhe(BigInteger.ZERO);
+                    }
                     
                     if( tipoEstoqueDirecionamento != null && !tipoEstoqueDirecionamento.equals(TipoEstoque.RECOLHIMENTO) 
                     		&& !tipoEstoqueDirecionamento.equals(TipoEstoque.SUPLEMENTAR)) {
