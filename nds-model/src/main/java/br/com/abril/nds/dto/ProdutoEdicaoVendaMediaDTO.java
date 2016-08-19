@@ -1,4 +1,4 @@
-package br.com.abril.nds.dto;
+																			package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -187,6 +187,127 @@ public class ProdutoEdicaoVendaMediaDTO implements Serializable {
 
 	public void setIdLancamento(BigInteger idLancamento) {
 		this.idLancamento = idLancamento;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((classificacao == null) ? 0 : classificacao.hashCode());
+		result = prime * result
+				+ ((codigoProduto == null) ? 0 : codigoProduto.hashCode());
+		result = prime
+				* result
+				+ ((dataLancamentoFormatada == null) ? 0
+						: dataLancamentoFormatada.hashCode());
+		result = prime * result
+				+ ((idClassificacao == null) ? 0 : idClassificacao.hashCode());
+		result = prime * result
+				+ ((idLancamento == null) ? 0 : idLancamento.hashCode());
+		result = prime * result
+				+ ((idProduto == null) ? 0 : idProduto.hashCode());
+		result = prime * result
+				+ ((indicePeso == null) ? 0 : indicePeso.hashCode());
+		result = prime * result + (isParcialConsolidado ? 1231 : 1237);
+		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+		result = prime * result
+				+ ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());
+		result = prime * result + (parcial ? 1231 : 1237);
+		result = prime * result
+				+ ((percentualVenda == null) ? 0 : percentualVenda.hashCode());
+		result = prime * result + ((periodo == null) ? 0 : periodo.hashCode());
+		result = prime * result + ((reparte == null) ? 0 : reparte.hashCode());
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		result = prime * result + ((venda == null) ? 0 : venda.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProdutoEdicaoVendaMediaDTO other = (ProdutoEdicaoVendaMediaDTO) obj;
+		if (classificacao == null) {
+			if (other.classificacao != null)
+				return false;
+		} else if (!classificacao.equals(other.classificacao))
+			return false;
+		if (codigoProduto == null) {
+			if (other.codigoProduto != null)
+				return false;
+		} else if (!codigoProduto.equals(other.codigoProduto))
+			return false;
+		if (dataLancamentoFormatada == null) {
+			if (other.dataLancamentoFormatada != null)
+				return false;
+		} else if (!dataLancamentoFormatada
+				.equals(other.dataLancamentoFormatada))
+			return false;
+		if (idClassificacao == null) {
+			if (other.idClassificacao != null)
+				return false;
+		} else if (!idClassificacao.equals(other.idClassificacao))
+			return false;
+		if (idLancamento == null) {
+			if (other.idLancamento != null)
+				return false;
+		} else if (!idLancamento.equals(other.idLancamento))
+			return false;
+		if (idProduto == null) {
+			if (other.idProduto != null)
+				return false;
+		} else if (!idProduto.equals(other.idProduto))
+			return false;
+		if (indicePeso == null) {
+			if (other.indicePeso != null)
+				return false;
+		} else if (!indicePeso.equals(other.indicePeso))
+			return false;
+		if (isParcialConsolidado != other.isParcialConsolidado)
+			return false;
+		if (nome == null) {
+			if (other.nome != null)
+				return false;
+		} else if (!nome.equals(other.nome))
+			return false;
+		if (numeroEdicao == null) {
+			if (other.numeroEdicao != null)
+				return false;
+		} else if (!numeroEdicao.equals(other.numeroEdicao))
+			return false;
+		if (parcial != other.parcial)
+			return false;
+		if (percentualVenda == null) {
+			if (other.percentualVenda != null)
+				return false;
+		} else if (!percentualVenda.equals(other.percentualVenda))
+			return false;
+		if (periodo == null) {
+			if (other.periodo != null)
+				return false;
+		} else if (!periodo.equals(other.periodo))
+			return false;
+		if (reparte == null) {
+			if (other.reparte != null)
+				return false;
+		} else if (!reparte.equals(other.reparte))
+			return false;
+		if (status == null) {
+			if (other.status != null)
+				return false;
+		} else if (!status.equals(other.status))
+			return false;
+		if (venda == null) {
+			if (other.venda != null)
+				return false;
+		} else if (!venda.equals(other.venda))
+			return false;
+		return true;
 	}
 	
 }

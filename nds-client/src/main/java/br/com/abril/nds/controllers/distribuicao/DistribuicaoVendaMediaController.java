@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -283,6 +285,12 @@ public class DistribuicaoVendaMediaController extends BaseController {
         	}
         }
 	}
+	
+	// eliminar duplicados
+	Set<ProdutoEdicaoVendaMediaDTO> hs = new HashSet<>();
+	hs.addAll(selecionados);
+	selecionados.clear();
+	selecionados.addAll(hs);
 	
 	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, selecionados);
 	
