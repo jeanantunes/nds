@@ -383,8 +383,9 @@ public class InterfaceExecutor {
 				
 				try {
 					couchDbClient.find(id+ "/" + id+".jpg");
-					LOGGER.warn("IMAGEM CAPA JA EXISTE NO COUCH.NAO SERA INSERIDO e IMAGEM SERA DELETADA");
-					imagem.delete();
+					LOGGER.warn("IMAGEM CAPA JA EXISTE NO COUCH.IMAGEM SERA DELETADA e REINSERIDA");
+					inserir=true;
+					couchDbClient.remove(doc);
 					
 				} catch ( NoDocumentException e) {
 					LOGGER.warn("IMAGEM CAPA NAO EXISTE NO COUCH.CAPA SERA RECRIADA E IMAGEM INSERIDA");
@@ -398,7 +399,7 @@ public class InterfaceExecutor {
 			}
 				
 			if ( inserir ) {
-				LOGGER.warn("INSERINDO NO COUCH IMAGEM "+imagem);
+				LOGGER.warn("INSERINDO NO COUCH IMAGEM "+imagem+  " tamanho="+imagem.length());
 				doc = new IntegracaoDocument();
 				doc.set_id(id);
 				doc.setTipoDocumento("ImagemCapa");				
