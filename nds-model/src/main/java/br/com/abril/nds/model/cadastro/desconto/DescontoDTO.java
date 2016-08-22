@@ -5,12 +5,13 @@ import java.math.BigDecimal;
 
 public class DescontoDTO implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5523508217786687630L;
 
 	private Long id;
+	
+	private String tipoDesconto; 
+	
+	private Long idEspecifico;
 	
 	private Long cotaId; 
 	
@@ -98,6 +99,22 @@ public class DescontoDTO implements Serializable {
 
 	public void setProximoLancamento(boolean proximoLancamento) {
 		this.proximoLancamento = proximoLancamento;
+	}
+
+	public String getTipoDesconto() {
+		return tipoDesconto;
+	}
+
+	public void setTipoDesconto(String tipoDesconto) {
+		this.tipoDesconto = tipoDesconto;
+	}
+
+	public Long getIdEspecifico() {
+		return idEspecifico;
+	}
+
+	public void setIdEspecifico(Long idEspecifico) {
+		this.idEspecifico = idEspecifico;
 	}
 	
 }

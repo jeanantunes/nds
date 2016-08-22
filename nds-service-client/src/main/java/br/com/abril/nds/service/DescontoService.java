@@ -195,4 +195,12 @@ public interface DescontoService {
 
 	List<CotaDescontoProdutoDTO> carregarCotasPorRegiao(Long idRegiao, String sortorder);
 
+	List<DescontoDTO> buscarDescontosCotaOrigem(Integer cotaOrigem);
+
+	void copiarDescontoCotasPorHistoricoDesconto(Cota cotaDestino, Usuario usuarioLogado, long idDescontoEspecifico);
+
+	void copiarDescontoCotasPorProdutoExcecoes(Cota cotaDestino, Usuario usuarioLogado, long idDescontoEspecifico);
+
+	void copiarDescontoCotasPorProximosLancamento(Cota cotaDestino, Usuario usuarioLogado, long idDescontoEspecifico);
+
 }

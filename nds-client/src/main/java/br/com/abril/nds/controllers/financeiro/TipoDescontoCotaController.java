@@ -31,8 +31,10 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
@@ -239,33 +241,48 @@ public class TipoDescontoCotaController extends BaseController {
 	@Post
 	@Path("/copiarDescontoCotas")
 	public void copiarDescontoCotas(Integer numeroCotaOrigem, Integer numeroCotaDestino) {
-
-		FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
 		
-		filtro.setNumeroCota(numeroCotaOrigem);
-
-		List<TipoDescontoCotaDTO> listaDescontoCotaEspecifica = descontoService.buscarTipoDescontoCota(filtro);
-		
-		if(listaDescontoCotaEspecifica.isEmpty()){
-			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Cota Origem não possui desconto cadastrado"),"result").recursive().serialize();
-		}
-
-		TipoDesconto tpDesconto = TipoDesconto.getStatusByDescription(listaDescontoCotaEspecifica.get(0).getDescTipoDesconto());
-		
-		List<Fornecedor> fornecedores = descontoService.buscarFornecedoresAssociadosADesconto(listaDescontoCotaEspecifica.get(0).getDescontoId(), tpDesconto);
-		
-		List<Long> idsFornecedores = new ArrayList<>();
-		
-		if(fornecedores.isEmpty()){
-			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Erro ao executar a cópia de descontos"),"result").recursive().serialize();
+		if(numeroCotaOrigem == null || numeroCotaOrigem <= 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Digite uma cota de Origem válida!");
 		}else{
-			for (Fornecedor fornecedor : fornecedores) {
-				idsFornecedores.add(fornecedor.getId());
+			if(numeroCotaDestino == null || numeroCotaDestino <= 0){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Digite uma cota de Destino válida!.");
 			}
 		}
 		
-		descontoService.incluirDescontoCota(listaDescontoCotaEspecifica.get(0).getDesconto(), idsFornecedores, numeroCotaDestino, getUsuarioLogado());
+		List<DescontoDTO> descontosCotaOrigem = this.descontoService.buscarDescontosCotaOrigem(numeroCotaOrigem);
+		
+		Cota cotaDestino = this.cotaService.obterPorNumeroDaCota(numeroCotaDestino);
+		
+		Usuario usuarioLogado = getUsuarioLogado();
 
+		if(cotaDestino == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota destino não encontrada!");
+		}
+		
+		for (DescontoDTO desconto : descontosCotaOrigem) {
+
+			switch (desconto.getTipoDesconto()) {
+			
+			case "desconto_proximos_lancamentos":
+				
+				this.descontoService.copiarDescontoCotasPorProximosLancamento(cotaDestino, usuarioLogado, desconto.getIdEspecifico());
+				
+				break;
+			
+			case "desconto_cota_produto_excessoes":
+				
+				this.descontoService.copiarDescontoCotasPorProdutoExcecoes(cotaDestino, usuarioLogado, desconto.getIdEspecifico());
+
+				break;
+			default:
+				
+				this.descontoService.copiarDescontoCotasPorHistoricoDesconto(cotaDestino, usuarioLogado, desconto.getIdEspecifico());
+				
+				break;
+			}
+		}
+		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro de Tipo de Desconto realizado com sucesso"),"result").recursive().serialize();
 	}
 

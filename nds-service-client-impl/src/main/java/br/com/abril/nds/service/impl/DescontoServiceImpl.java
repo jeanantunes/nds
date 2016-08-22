@@ -138,7 +138,7 @@ public class DescontoServiceImpl implements DescontoService {
 	
 	@Autowired
 	private RegistroCotaRegiaoRepository regiaoRepository;
-
+	
 	@Override
 	@Transactional(readOnly=true)
 	public List<TipoDescontoDTO> buscarTipoDesconto(FiltroTipoDescontoDTO filtro) {
@@ -1176,7 +1176,7 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		FiltroConsultaHistoricoDescontoDTO filtroConsultaHistorico = new FiltroConsultaHistoricoDescontoDTO();
 		
-		if(idsDescontoProximosLancamento!=null && !idsDescontoProximosLancamento.isEmpty()) {
+		if(!idsDescontoProximosLancamento.isEmpty()) {
             
             for(Long dpl : idsDescontoProximosLancamento) {
                 
@@ -1850,5 +1850,101 @@ public class DescontoServiceImpl implements DescontoService {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
 		}
 	}
+	
+	@Transactional
+	@Override
+	public void copiarDescontoCotasPorProximosLancamento(Cota cotaDestino, Usuario usuarioLogado, long idDescontoEspecifico){
+		
+		DescontoProximosLancamentos descontoProxLancamento = this.descontoProximosLancamentosRepository.buscarPorId(idDescontoEspecifico);
+		
+		Set<Cota> cotas = new LinkedHashSet<Cota>();
+		cotas.add(cotaDestino);
+		
+		DescontoProximosLancamentos novoDescontoCotaDestino = new DescontoProximosLancamentos();
+		
+		novoDescontoCotaDestino.setDataInicioDesconto(new Date());
+		novoDescontoCotaDestino.setProduto(descontoProxLancamento.getProduto());
+		novoDescontoCotaDestino.setQuantidadeProximosLancamaentos(descontoProxLancamento.getQuantidadeProximosLancamaentos());
+		novoDescontoCotaDestino.setQuantidadeProximosLancamentosOriginal(descontoProxLancamento.getQuantidadeProximosLancamentosOriginal());
+		novoDescontoCotaDestino.setValorDesconto(descontoProxLancamento.getValorDesconto());
+		novoDescontoCotaDestino.setDesconto(descontoProxLancamento.getDesconto());
+		novoDescontoCotaDestino.setAplicadoATodasAsCotas(descontoProxLancamento.isAplicadoATodasAsCotas());
+		
+		novoDescontoCotaDestino.setCotas(cotas);
+		
+		novoDescontoCotaDestino.setUsuario(usuarioLogado);
+		novoDescontoCotaDestino.setDistribuidor(descontoProxLancamento.getDistribuidor());
+		
+		this.descontoProximosLancamentosRepository.adicionar(novoDescontoCotaDestino);
+	}
+	
+	@Transactional
+	@Override
+	public void copiarDescontoCotasPorProdutoExcecoes(Cota cotaDestino, Usuario usuarioLogado, long idDescontoEspecifico){
+		
+		DescontoCotaProdutoExcessao descontoCotaProdExcecao = this.descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(idDescontoEspecifico);
+		
+		DescontoCotaProdutoExcessao dcpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
+				TipoDesconto.PRODUTO, null, null, null, cotaDestino, descontoCotaProdExcecao.getProduto().getId(), null);
+		
+		if(dcpe == null) {
+			if(descontoCotaProdExcecao.getProdutoEdicao() != null){
+				dcpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
+						TipoDesconto.PRODUTO, null, null, null, cotaDestino, descontoCotaProdExcecao.getProduto().getId(), 
+							descontoCotaProdExcecao.getProdutoEdicao().getId());
+			}
+			
+			if(dcpe == null){
+				dcpe = new DescontoCotaProdutoExcessao();
+			}
+		}		
 
+		dcpe.setDistribuidor(descontoCotaProdExcecao.getDistribuidor());
+		dcpe.setFornecedor(descontoCotaProdExcecao.getFornecedor());
+		dcpe.setCota(cotaDestino);
+		dcpe.setUsuario(usuarioLogado);
+		dcpe.setProduto(descontoCotaProdExcecao.getProduto());
+		dcpe.setDesconto(descontoCotaProdExcecao.getDesconto());
+		dcpe.setDescontoPredominante(descontoCotaProdExcecao.isDescontoPredominante());
+		dcpe.setTipoDesconto(TipoDesconto.PRODUTO);
+		
+		if(descontoCotaProdExcecao.getProdutoEdicao() != null){
+			dcpe.setProdutoEdicao(descontoCotaProdExcecao.getProdutoEdicao());
+		}
+
+		descontoProdutoEdicaoExcessaoRepository.adicionar(dcpe);
+		
+	}
+	
+	@Transactional
+	@Override
+	public void copiarDescontoCotasPorHistoricoDesconto(Cota cotaDestino, Usuario usuarioLogado, long idDescontoEspecifico){
+		
+		HistoricoDescontoCotaProdutoExcessao descontoHistorico = this.historicoDescontoCotaProdutoRepository.buscarHistoricoDescontoCotaProdutoExcecaoao(idDescontoEspecifico);
+		
+		HistoricoDescontoCotaProdutoExcessao hdcp = new HistoricoDescontoCotaProdutoExcessao();
+		
+		hdcp.setDataAlteracao(new Date());
+		hdcp.setDesconto(descontoHistorico.getDesconto());
+		hdcp.setDistribuidor(descontoHistorico.getDistribuidor());
+		hdcp.setFornecedor(descontoHistorico.getFornecedor());
+		hdcp.setCota(cotaDestino);
+		hdcp.setUsuario(usuarioLogado);
+		hdcp.setValor(descontoHistorico.getValor());
+		hdcp.setProduto(descontoHistorico.getProduto());
+		
+		this.historicoDescontoCotaProdutoRepository.adicionar(hdcp);
+	}
+	
+	@Transactional
+	@Override
+	public List<DescontoDTO> buscarDescontosCotaOrigem(Integer cotaOrigem){
+		List<DescontoDTO> descontosCota = this.descontoRepository.buscarDescontosAssociadosACota(cotaOrigem);
+		
+		if(descontosCota.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Cota origem não possui descontos cadastrados"));
+		}
+		
+		return descontosCota;
+	}
 }

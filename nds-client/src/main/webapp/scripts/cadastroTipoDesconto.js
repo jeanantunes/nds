@@ -119,11 +119,14 @@ var tipoDescontoController = $.extend(true,  {
 	},
 	
 	preMostra:function(tipo) {
+		
+		$("#panelBtsGERAL", this.workspace).hide();
 		tipoDescontoController.exibirExportacao(false);
 		tipoDescontoController.exibirNovo(false);
 		tipoDescontoController.exibirTipoGrid(false);
 		tipoDescontoController.tipoDescontoSelecionado = tipo;
 		tipoDescontoController.exibirNovo(true);
+		
 	},
 	
 	exibirExportacao:function(isExibir) {
@@ -147,7 +150,7 @@ var tipoDescontoController = $.extend(true,  {
 	exibirNovo:function(isExibir) {
 		
 		if(isExibir == true) {
-			$("#panelBts" + tipoDescontoController.tipoDescontoSelecionado,this.workspace).show();	
+			$("#panelBts" + tipoDescontoController.tipoDescontoSelecionado,this.workspace).show();
 		} else {
 			$("#panelBts" + tipoDescontoController.tipoDescontoSelecionado,this.workspace).hide();
 		}
@@ -369,6 +372,8 @@ var tipoDescontoController = $.extend(true,  {
 	},
 	
 	init: function() {
+		
+		tipoDescontoController.tipoDescontoSelecionado = "GERAL";
 		
 		$(".lstFornecedoresGrid",this.workspace).flexigrid({
 			dataType : 'json',
