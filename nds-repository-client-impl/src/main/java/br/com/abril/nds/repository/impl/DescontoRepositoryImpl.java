@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.TipoDescontoDTO;
@@ -12,6 +14,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DescontoRepository;
 
@@ -331,5 +334,70 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 		q.setParameter("idDesconto", desconto.getId());
 		
 		return (Editor) q.uniqueResult();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<DescontoDTO> buscarDescontosAssociadosACota(Integer numeroCota){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select distinct   ");
+		sql.append(" 	T.desconto_id as id, ");
+		sql.append(" 	T.tipo as tipoDesconto,  ");
+		sql.append(" 	T.idEspecifico as idEspecifico  ");
+		sql.append(" from  ");
+		sql.append("   (select   ");
+		sql.append("       dpl.DESCONTO_ID,   ");
+		sql.append("       'desconto_proximos_lancamentos' as tipo,  ");
+		sql.append("       dpl.id as idEspecifico  ");
+		sql.append("   from desconto_proximos_lancamentos dpl  ");
+		sql.append("   join produto p    ");
+		sql.append("     on dpl.PRODUTO_ID = p.ID  ");
+		sql.append("   join desconto_lancamento_cota dlc  ");
+		sql.append("     on dlc.DESCONTO_LANCAMENTO_ID = dpl.ID  ");
+		sql.append("   join cota c  ");
+		sql.append("     on dlc.COTA_ID = c.ID  ");
+		sql.append("   join desconto dc  ");
+		sql.append("     on dpl.DESCONTO_ID = dc.ID  ");
+		sql.append("   where c.NUMERO_COTA = :numCota and dc.TIPO_DESCONTO = 'PRODUTO'  ");
+		sql.append(" union all   ");
+		sql.append("   select   ");
+		sql.append("       dcpe.DESCONTO_ID,   ");
+		sql.append("       'desconto_cota_produto_excessoes' as tipo,  ");
+		sql.append("       dcpe.id as idEspecifico  ");
+		sql.append("   from desconto_cota_produto_excessoes dcpe   ");
+		sql.append("   join cota c  ");
+		sql.append("     on dcpe.COTA_ID = c.ID  ");
+		sql.append("   join produto p   ");
+		sql.append("     on dcpe.PRODUTO_ID = p.ID  ");
+		sql.append("   join desconto dc  ");
+		sql.append("     on dcpe.DESCONTO_ID = dc.ID  ");
+		sql.append("   where c.NUMERO_COTA = :numCota and dc.TIPO_DESCONTO = 'PRODUTO'  ");
+		sql.append(" union all   ");
+		sql.append("   select   ");
+		sql.append("       hd.DESCONTO_ID,   ");
+		sql.append("       'historico_desconto_cota_produto_excessoes' as tipo,  ");
+		sql.append("       hd.id as idEspecifico  ");
+		sql.append("   from historico_desconto_cota_produto_excessoes hd   ");
+		sql.append("   join cota c  ");
+		sql.append("     on hd.COTA_ID = c.ID  ");
+		sql.append("   join desconto dc  ");
+		sql.append("     on hd.DESCONTO_ID = dc.ID  ");
+		sql.append("   where c.NUMERO_COTA = :numCota and dc.TIPO_DESCONTO = 'PRODUTO'  ");
+		sql.append("   and hd.PRODUTO_ID is not null) T   ");
+		sql.append(" order by DESCONTO_ID;  ");
+		
+		Query query = getSession().createSQLQuery(sql.toString()); 
+		
+		query.setParameter("numCota", numeroCota);
+		
+		((SQLQuery) query).addScalar("id", StandardBasicTypes.LONG);
+		((SQLQuery) query).addScalar("tipoDesconto", StandardBasicTypes.STRING);
+		((SQLQuery) query).addScalar("idEspecifico", StandardBasicTypes.LONG);
+		
+		query.setResultTransformer(Transformers.aliasToBean(DescontoDTO.class));
+		
+		return query.list();
 	}
 }

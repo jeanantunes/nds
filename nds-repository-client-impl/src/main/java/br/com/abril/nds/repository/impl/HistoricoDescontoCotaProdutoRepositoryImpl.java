@@ -90,6 +90,7 @@ public class HistoricoDescontoCotaProdutoRepositoryImpl extends AbstractReposito
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<HistoricoDescontoCotaProdutoExcessao> buscarListaHistoricoDescontoCotaProdutoExcessao(FiltroConsultaHistoricoDescontoDTO filtro) {
 
@@ -157,5 +158,20 @@ public class HistoricoDescontoCotaProdutoRepositoryImpl extends AbstractReposito
 		
 	}	
 	
+	@Override
+	public HistoricoDescontoCotaProdutoExcessao buscarHistoricoDescontoCotaProdutoExcecaoao(Long idDescontoCotaProd) {
+		
+		StringBuilder hql = new StringBuilder("select d ");
+		hql.append(" from HistoricoDescontoCotaProdutoExcessao d ")
+			.append(" where id = :id ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("id", idDescontoCotaProd);
+		
+		query.setMaxResults(1);
+		
+		return (HistoricoDescontoCotaProdutoExcessao) query.uniqueResult();
+	}
 	
 }

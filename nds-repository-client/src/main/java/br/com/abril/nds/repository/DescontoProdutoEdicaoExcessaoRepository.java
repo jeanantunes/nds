@@ -3,6 +3,8 @@ package br.com.abril.nds.repository;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Query;
+
 import br.com.abril.nds.dto.TipoDescontoEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoEditorDTO;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -160,5 +162,7 @@ public interface DescontoProdutoEdicaoExcessaoRepository extends Repository<Desc
 	List<TipoDescontoEditorDTO> buscarTipoDescontoEditor(FiltroTipoDescontoEditorDTO filtro);
 
 	Integer buscarQuantidadeTipoDescontoEditor(FiltroTipoDescontoEditorDTO filtro);
+
+	DescontoCotaProdutoExcessao buscarDescontoCotaProdutoExcessao(Long idDescontoCotaProd);
 
 }
