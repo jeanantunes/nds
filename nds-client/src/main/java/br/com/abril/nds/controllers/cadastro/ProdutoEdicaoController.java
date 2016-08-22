@@ -329,7 +329,7 @@ public class ProdutoEdicaoController extends BaseController {
 				    	    imgInputStream = new ByteArrayInputStream(os.toByteArray());
 				           } catch ( Exception ee ){
 				        	   LOGGER.error("Erro redimensionando imagem ", ee);
-				        	   throw new ValidacaoException(TipoMensagem.WARNING, "Imagem muito grande(acima de 50k) e erro no redimensionando!");
+				        	   throw new ValidacaoException(TipoMensagem.WARNING, "Imagem muito grande(acima de 50k) e erro redimensionando a imagem !");
 				           }
 				   }
 
