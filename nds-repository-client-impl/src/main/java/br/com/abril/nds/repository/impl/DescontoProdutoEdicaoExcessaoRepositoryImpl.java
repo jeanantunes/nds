@@ -390,5 +390,21 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 			.append(" GROUP BY dados.DESCONTO_ID ");
 				
 	}
+	
+	@Override
+	public DescontoCotaProdutoExcessao buscarDescontoCotaProdutoExcessao(Long idDescontoCotaProd) {
+		
+		StringBuilder hql = new StringBuilder("select d ");
+		hql.append(" from DescontoCotaProdutoExcessao d ")
+			.append(" where id = :id ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("id", idDescontoCotaProd);
+		
+		query.setMaxResults(1);
+		
+		return (DescontoCotaProdutoExcessao) query.uniqueResult();
+	}
 
 }

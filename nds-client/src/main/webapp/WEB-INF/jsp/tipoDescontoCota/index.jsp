@@ -98,7 +98,7 @@
 		id="dialog_consulta_tipo_desconto_form">
 		<div class="areaBts">
 			<div class="area">
-				<div id="panelBtsGERAL" style="display: none;">
+				<div id="panelBtsGERAL">
 					<span class="bt_novos"> <a isEdicao="true"
 						href="javascript:;"
 						onclick="descontoDistribuidorController.popup_geral();"
@@ -139,7 +139,7 @@
 				
 				<div id="panelBtsCOPIA">
 					<span class="bt_novos"> 
-						<a isEdicao="true" href="javascript:;" onclick="descontoProdutoController.copiarDescontoEntreCotas();"	rel="tipsy" title="Copiar desconto entre Cotas"> 
+						<a isEdicao="true" style="display: none;" class="produto" href="javascript:;" onclick="descontoProdutoController.copiarDescontoEntreCotas();"	rel="tipsy" title="Copiar desconto entre Cotas"> 
 							<img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />
 						</a>
 					</span>
@@ -203,7 +203,7 @@
 				class="filtro">
 				<tr>
 					<td width="20"><input type="radio" name="radio"
-						id="radioGeral" value="radio"
+						id="radioGeral" checked="checked" value="radio"
 						onclick="tipoDescontoController.mostra_geral();" /></td>
 					<td width="47">Geral</td>
 					<td width="20"><input type="radio" name="radio"

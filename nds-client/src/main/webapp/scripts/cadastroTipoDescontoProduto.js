@@ -177,12 +177,9 @@ var descontoProdutoController = $.extend(true,{
 							linhaAtual = index;
 							
 							var tr = $('<tr class="trCotas" id="trCota'+ (linhaAtual + 1) +'" style="'+ ((linhaAtual + 1) % 2 == 0 ? "background: #F5F5F5;" : "") +'">' +
-									'<td><input type="text" value='+row.cell.numeroCota+' name="cotaInput" maxlength="255" id="cotaInput'+ (linhaAtual + 1) +'" onblur="descontoProdutoController.pesquisaCota.pesquisarPorNumeroCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', true,function(){descontoProdutoController.adicionarLinhaCota('+ (linhaAtual + 1) +')});" style="width:120px;" /></td>' +
+									'<td><input type="text" value='+row.cell.numeroCota+' name="cotaInput" maxlength="255" id="cotaInput'+ (linhaAtual + 1) +'" style="width:120px;" /></td>' +
 									'<td>'+
-									'<input type="text" value='+row.cell.nome+' name="nomeInput" maxlength="255" id="nomeInput'+ (linhaAtual + 1) +'" style="width:245px;" '+
-									' onkeyup="descontoProdutoController.pesquisaCota.autoCompletarPorNome(nomeInput'+ (linhaAtual + 1) +');" ' +
-									' onblur="descontoProdutoController.pesquisaCota.pesquisarPorNomeCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', true, function(){descontoProdutoController.adicionarLinhaCota('+ (linhaAtual + 1) +');});" ' +
-									'/>'+
+									'<input type="text" value="'+row.cell.nome.trimRight()+'" name="nomeInput" maxlength="255" id="nomeInput'+ (linhaAtual + 1) +'" style="width:245px;" />'+
 									'</td>' +
 									'</tr>'
 							);
