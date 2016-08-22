@@ -8,6 +8,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 
 /**
  * Interface que define as regras de acesso a dados
@@ -38,5 +39,7 @@ public interface DescontoRepository extends Repository<Desconto, Long> {
 	List<Cota> buscarCotasQueUsamDescontoEditor(Desconto desconto);
 
 	Editor buscarEditorUsaDescontoEditor(Desconto desconto);
+
+	List<DescontoDTO> buscarDescontosAssociadosACota(Integer numeroCota);
 	
 }

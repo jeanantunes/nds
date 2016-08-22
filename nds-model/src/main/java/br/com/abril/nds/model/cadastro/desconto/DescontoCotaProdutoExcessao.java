@@ -59,7 +59,7 @@ public class DescontoCotaProdutoExcessao implements Serializable {
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "EDITOR_ID")
 	private Editor editor;
 	

@@ -2,6 +2,8 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import org.hibernate.Query;
+
 import br.com.abril.nds.dto.filtro.FiltroConsultaHistoricoDescontoDTO;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoCotaProdutoExcessao;
 
@@ -31,6 +33,9 @@ public interface HistoricoDescontoCotaProdutoRepository extends Repository<Histo
 	 * @return List - HistoricoDescontoCotaProdutoExcessao
 	 */
 	List<HistoricoDescontoCotaProdutoExcessao> buscarListaHistoricoDescontoCotaProdutoExcessao(FiltroConsultaHistoricoDescontoDTO filtro);
+
+
+	HistoricoDescontoCotaProdutoExcessao buscarHistoricoDescontoCotaProdutoExcecaoao(Long idDescontoCotaProd);
 
 	
 }
