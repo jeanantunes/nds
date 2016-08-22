@@ -968,7 +968,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			if(cef.getDataFechamentoNDS() == null || cef.getDataFechamentoNDS().compareTo(dataOperacao)!=0
 					|| StatusIntegracao.INTEGRADO.equals(cef.getStatusIntegracao())){
 				
-				fornecedorSemReabertura.append((cef.getFornecedor().getJuridica()!= null)
+				fornecedorSemReabertura.append((cef.getFornecedor() != null && cef.getFornecedor().getJuridica()!= null)
 						? cef.getFornecedor().getJuridica().getRazaoSocial()
 								:"").append(",");
 				continue;
