@@ -50,6 +50,7 @@ import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
+import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
@@ -88,6 +89,7 @@ import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiroProduto;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoEmissao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
@@ -700,7 +702,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	private String gerarArquivoNota(List<NotaFiscal> notasFiscaisParaExportacao) throws Exception {
 
 		StringBuilder sBuilder = new StringBuilder();
-
+		ParametroSistemaGeralDTO dto = parametroSistemaService.buscarParametroSistemaGeral();
 		for (NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
 
 			JAXBContext jc;
@@ -809,7 +811,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					Element elo = (Element) elementos.item(0);
 					elo.setIdAttribute("Id", true);
 					
-					signatureHandler.sign(new DOMStructure(doc.getDocumentElement()), "infNFe");
+					
+					if(!dto.getNfeInformacoesTipoEmissor().equals(ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.name())) {
+						signatureHandler.sign(new DOMStructure(doc.getDocumentElement()), "infNFe");						
+					}
+					
 					
 					if(numeroCota != null ) {						
 						os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + numeroCota + "-" + serieNF + "-" + numeroNF + ".xml");
