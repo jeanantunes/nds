@@ -17,8 +17,8 @@ public class NotaFiscalValoresCalculadosBuilder {
 		BigDecimal valorTotalItens = calcularValorTotalItens(notaFiscal);
 		BigDecimal valorICMS = calcularImpostosICMS(notaFiscal);
 		BigDecimal valorIPI = calcularImpostosIPI(notaFiscal);
-		BigDecimal valorCofins = calcularImpostosIPI(notaFiscal);
-		BigDecimal valorPIS = calcularImpostosIPI(notaFiscal);
+		BigDecimal valorCofins = calcularImpostosCofins(notaFiscal);
+		BigDecimal valorPIS = calcularImpostosPIS(notaFiscal);
 		
 		if(notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados() == null ){
 			notaFiscal.getNotaFiscalInformacoes().setNotaFiscalValoresCalculados(new NotaFiscalValorCalculado());
@@ -86,6 +86,43 @@ public class NotaFiscalValoresCalculadosBuilder {
 		}
 		
 		return valorIPI;
+	}
+	
+	private static BigDecimal calcularImpostosCofins(NotaFiscal notaFiscal) {
+		
+		BigDecimal valorCofins = BigDecimal.ZERO;
+		for(DetalheNotaFiscal dnf : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
+			
+			if(dnf.getImpostos().getCofins() != null) {				
+				valorCofins = valorCofins.add(NFeCalculatorImpl.calculate(dnf.getImpostos().getCofins().getCofins()));
+			}
+			
+			if(dnf.getImpostos().getCofinsOutr() != null) {
+				valorCofins = valorCofins.add(NFeCalculatorImpl.calculate(dnf.getImpostos().getCofins().getCofins()));
+			}
+			
+		}
+		
+		return valorCofins;
+	}
+	
+	private static BigDecimal calcularImpostosPIS(NotaFiscal notaFiscal) {
+		
+		BigDecimal valorPIS = BigDecimal.ZERO;
+		
+		for(DetalheNotaFiscal dnf : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
+			
+			if(dnf.getImpostos().getPis() != null) {				
+				valorPIS = valorPIS.add(NFeCalculatorImpl.calculate(dnf.getImpostos().getPis().getPis()));
+			}
+			
+			if(dnf.getImpostos().getPisOutr() != null) {
+				valorPIS = valorPIS.add(NFeCalculatorImpl.calculate(dnf.getImpostos().getPisOutr().getPis()));
+			}
+			
+		}
+		
+		return valorPIS;
 	}
 	
 	/**
