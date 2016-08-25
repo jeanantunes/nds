@@ -14,7 +14,9 @@ var ConsultaEncalhe = $
 								.obterColModelOutrosValores();
 
 						 $("#consulta-encalhe-selectRota").attr('disabled', 'disabled');
-		        		 $("#consulta-encalhe-selectRoteiro").attr('disabled', 'disabled');     	
+		        		 $("#consulta-encalhe-selectRoteiro").attr('disabled', 'disabled');   
+		        		 $("#consulta-encalhe-selectRota").val();
+		        		 $("#consulta-encalhe-selectRoteiro").val();
 		        		 
 						$("#consulta-encalhe-cota", ConsultaEncalhe.workspace)
 								.numeric();

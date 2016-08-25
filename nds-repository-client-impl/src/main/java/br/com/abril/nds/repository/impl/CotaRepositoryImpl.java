@@ -186,6 +186,16 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     }
     
     @Override
+    public Long obterIdPorNumerDaCota(final Integer numeroCota) {
+        
+    	 final SQLQuery query = this.getSession().createSQLQuery("select id from Cota c where c.numero_cota = :numeroCota");
+         
+         query.setParameter("numeroCota", numeroCota);
+         BigInteger c = (BigInteger) query.uniqueResult();
+         return c.longValue();
+    }
+    
+    @Override
     public Cota obterPorNumerDaCota(final Integer numeroCota) {
         
         return this.obterPorNumerDaCota(numeroCota, Arrays.asList(SituacaoCadastro.ATIVO, SituacaoCadastro.SUSPENSO));
