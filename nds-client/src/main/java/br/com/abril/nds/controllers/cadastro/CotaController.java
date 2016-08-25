@@ -396,7 +396,7 @@ public class CotaController extends BaseController {
 			
 			for (Cota cota : listaCotas) {
 				
-				String nomeExibicao = cota.getNumeroCota() +" "+PessoaUtil.obterNomeExibicaoPeloTipo(cota.getPessoa());
+				String nomeExibicao = PessoaUtil.obterNomeExibicaoPeloTipo(cota.getPessoa());
 					
 				CotaVO cotaVO = new CotaVO(cota.getNumeroCota(), nomeExibicao);
 				
