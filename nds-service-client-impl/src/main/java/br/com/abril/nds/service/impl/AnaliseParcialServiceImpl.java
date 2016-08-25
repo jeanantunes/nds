@@ -5,12 +5,12 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,7 +59,6 @@ import br.com.abril.nds.service.RepartePdvService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import ch.qos.logback.classic.Logger;
 
 @Service
 public class AnaliseParcialServiceImpl implements AnaliseParcialService {
@@ -589,12 +588,12 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	if(estudoGerado.getDistribuicaoPorMultiplos() != null && estudoGerado.getDistribuicaoPorMultiplos() == 1){
     		this.validarDistribuicaoPorMultiplo(estudoId, reparteDigitado, estudoGerado);
     	}
-    	Cota c = cotaRepository.obterPorNumerDaCota(numeroCota);
+    	Long cId = cotaRepository.obterIdPorNumerDaCota(numeroCota);
     	
     	if(reparteDigitado >= 0){
-    		analiseParcialRepository.atualizaReparteCota(estudoId, c.getId(), reparte);
+    		analiseParcialRepository.atualizaReparteCota(estudoId, cId, reparte);
     	}else{
-    		EstudoCotaGerado estudoCota = estudoService.obterEstudoCotaGerado(c.getId(), estudoId);
+    		EstudoCotaGerado estudoCota = estudoService.obterEstudoCotaGerado(cId, estudoId);
     		estudoCotaGerado.removerEstudoCotaGerado(estudoCota.getId());
     	}
     	
@@ -677,9 +676,17 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     public BigDecimal calcularPercentualAbrangencia(Long estudoId) {
         int cotasAtivas = cotaRepository.obterCotasAtivas();
         int cotasComReparte = estudoGeradoRepository.obterCotasComRepartePorIdEstudo(estudoId);
-        return cotasAtivas == 0 ? BigDecimal.ZERO : BigDecimal.valueOf(cotasComReparte)
+        BigDecimal abrangencia =  cotasAtivas == 0 ? BigDecimal.ZERO : BigDecimal.valueOf(cotasComReparte)
                 .divide(BigDecimal.valueOf(cotasAtivas), 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100))
                 .divide(BigDecimal.ONE, 2, RoundingMode.HALF_UP);
+        
+        EstudoGerado eg = estudoGeradoRepository.buscarPorId(estudoId);
+        if ( eg != null ) {
+        	eg.setAbrangencia(abrangencia);
+        	eg.setDataAlteracao(new Date());
+        	estudoGeradoRepository.merge(eg);
+        }
+        return abrangencia;
     }
     
     @Override

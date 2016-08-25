@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -169,6 +170,8 @@ public class AnaliseParcialController extends BaseController {
         
         if(resumo.getSaldo() != null){
         	estudoCota.getEstudo().setSobra(resumo.getSaldo().toBigInteger());
+        } else {
+        	estudoCota.getEstudo().setSobra(BigInteger.ZERO);
         }
         
     	result.include("estudo", estudoCota.getEstudo());
