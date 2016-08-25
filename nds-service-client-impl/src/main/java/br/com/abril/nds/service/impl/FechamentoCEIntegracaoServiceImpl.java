@@ -386,7 +386,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 					int valor = estoqueProduto.getMovimentos().size();
 					
 					if (valor == 0) {
-						throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao sem Movimento Estoque ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+"/"+itemFo.getProdutoEdicao().getNumeroEdicao());
+						// throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao sem Movimento Estoque ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+"/"+itemFo.getProdutoEdicao().getNumeroEdicao());
+						LOGGER.warn("Produto Edicao sem Movimento Estoque ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+"/"+itemFo.getProdutoEdicao().getNumeroEdicao());
 					} else {
 						oimffdf.setMovimento(estoqueProduto.getMovimentos().get(0));
 						
