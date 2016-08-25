@@ -345,6 +345,7 @@ function Endereco(paramTela, paramMessage) {
 		$("#"+paramTela+"codigoUf", Endereco.workspace).val("");
 		$("#"+paramTela+"codigoCidadeIBGE", Endereco.workspace).val("");
 		$("#"+paramTela+"principal", Endereco.workspace).attr("checked", false);
+		$("#"+paramTela+"principal", Endereco.workspace).attr("disabled", false);
 		$("#"+paramTela+"codigoUf", 				Endereco.workspace).prop('disabled', false);
 		$("#"+paramTela+"codigoCidadeIBGE", 		Endereco.workspace).prop('disabled', false);
 
