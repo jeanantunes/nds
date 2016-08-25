@@ -466,4 +466,6 @@ public interface CotaService {
 	boolean isCotaParametro(Long idCota, Integer numCota, TipoEmissaoDocumento tipoDoc);
 
 	List<Integer> buscarNumeroCotasPorEnderecoLED(Integer enderecoLED);
+
+	DistribuicaoDTO buscarParametrosDistribEmissaoDoc();
 }

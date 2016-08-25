@@ -742,6 +742,10 @@ function Distribuicao(tela) {
 		D.mostrarEsconderDiv(divArquivoRecebido, exibirDiv);
 	};
 	
+	this.uncheckUtilizaParametrosDistrib = function(){
+		$(".isCotaUtilizaParametrosDistrib", this.workspace).prop( "checked", false );
+	}
+	
 	this.limparCampos = function() {
 		
 		var tipoEntrega = D.get('tipoEntregaHidden');

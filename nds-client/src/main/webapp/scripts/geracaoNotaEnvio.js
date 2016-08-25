@@ -384,12 +384,26 @@ var geracaoNotaEnvioController = $.extend({
 									exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 								}
 							}else{
-								exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA! Verifique também os parametros do distribuidor para impressão de documentos"]);
+								 $.postJSON(contextPath + '/expedicao/geracaoNotaEnvio/getErrorGetArquivos',
+											null, 
+											function(result) {
+									        },
+									        function(result) {
+									        	result = result.mensagens;
+												var tipoMensagem = result.tipoMensagem;
+												var listaMensagens = result.listaMensagens;
+												
+												if (tipoMensagem && listaMensagens) {
+													exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+												}
+									        }
+									);
 							}
+							geracaoNotaEnvioController.pesquisar();
 		                    
 		                },
 		                successCallback : function() {
-		                    _this.pesquisar();
+		                	geracaoNotaEnvioController.pesquisar();
 		                }
 		            });
 			        return true;
