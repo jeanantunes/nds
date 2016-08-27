@@ -364,41 +364,48 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		List<Long> idsProdutoEdicao = new ArrayList<>();
 		
 		if(cota != null && cota.getProdutos() == null) {
-			LOGGER.error("Não foram encontrados produtos para a Cota "+cota.getNumCota()+ " .Verificar se tem movimento estoque cota com reparte > 0");
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados produtos para a Cota "+cota.getNumCota());
-		}
-		
-		for(ProdutoEmissaoDTO produtoDTO : cota.getProdutos()) {
 			
-			idsProdutoEdicao.add(produtoDTO.getIdProdutoEdicao());
-			
-			produtoDTO.setQuantidadeDevolvida((produtoDTO.getQuantidadeDevolvida() == null) ? BigInteger.ZERO : produtoDTO.getQuantidadeDevolvida());
-			produtoDTO.setQuantidadeDev((produtoDTO.getQuantidadeDevolvida() == null) ? null : produtoDTO.getQuantidadeDevolvida().intValue());
-			
-			produtoDTO.setReparte( (produtoDTO.getReparte()==null) ? BigInteger.ZERO : produtoDTO.getReparte() );
-			
-			produtoDTO.setQuantidadeReparte((produtoDTO.getReparte()==null) ? 0 : produtoDTO.getReparte().intValue());
-			
-			produtoDTO.setVlrDesconto( (produtoDTO.getVlrDesconto() == null) ? BigDecimal.ZERO :  produtoDTO.getVlrDesconto());
-			
-			if(produtoDTO.getConfereciaRealizada() == true) { 
-				produtoDTO.setVendido(produtoDTO.getReparte().subtract(produtoDTO.getQuantidadeDevolvida()));
-			} else { 
-				produtoDTO.setVendido(BigInteger.ZERO);
+			if(filtro.isEnvioEmail() == true || filtro.isImpressao() == true){
+				filtro.setValidacao(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrados produtos para a Cota "+cota.getNumCota()));
+			}else{
+				throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados produtos para a Cota "+cota.getNumCota());
 			}
 			
-			produtoDTO.setVlrVendido(CurrencyUtil.formatarValor(produtoDTO.getVlrPrecoComDesconto().multiply(BigDecimal.valueOf(produtoDTO.getVendido().longValue()))));
+			LOGGER.error("Não foram encontrados produtos para a Cota "+cota.getNumCota()+ " .Verificar se tem movimento estoque cota com reparte > 0");
+		}else{
 			
-			vlrReparte = vlrReparte.add( produtoDTO.getPrecoVenda().multiply(BigDecimal.valueOf(produtoDTO.getReparte().longValue())));
-
-			vlrDesconto = vlrDesconto.add(produtoDTO.getPrecoVenda().subtract(produtoDTO.getVlrPrecoComDesconto())
-					.multiply(BigDecimal.valueOf(produtoDTO.getReparte().longValue())));
-			
-			vlrEncalhe = vlrEncalhe.add(produtoDTO.getVlrPrecoComDesconto()
-					.multiply( BigDecimal.valueOf(produtoDTO.getQuantidadeDevolvida().longValue()) ));
-			
-			formatarLinhaExtraSupRedistCE(cota, produtoDTO, produtosSupRedist);
-			
+			for(ProdutoEmissaoDTO produtoDTO : cota.getProdutos()) {
+				
+				idsProdutoEdicao.add(produtoDTO.getIdProdutoEdicao());
+				
+				produtoDTO.setQuantidadeDevolvida((produtoDTO.getQuantidadeDevolvida() == null) ? BigInteger.ZERO : produtoDTO.getQuantidadeDevolvida());
+				produtoDTO.setQuantidadeDev((produtoDTO.getQuantidadeDevolvida() == null) ? null : produtoDTO.getQuantidadeDevolvida().intValue());
+				
+				produtoDTO.setReparte( (produtoDTO.getReparte()==null) ? BigInteger.ZERO : produtoDTO.getReparte() );
+				
+				produtoDTO.setQuantidadeReparte((produtoDTO.getReparte()==null) ? 0 : produtoDTO.getReparte().intValue());
+				
+				produtoDTO.setVlrDesconto( (produtoDTO.getVlrDesconto() == null) ? BigDecimal.ZERO :  produtoDTO.getVlrDesconto());
+				
+				if(produtoDTO.getConfereciaRealizada() == true) { 
+					produtoDTO.setVendido(produtoDTO.getReparte().subtract(produtoDTO.getQuantidadeDevolvida()));
+				} else { 
+					produtoDTO.setVendido(BigInteger.ZERO);
+				}
+				
+				produtoDTO.setVlrVendido(CurrencyUtil.formatarValor(produtoDTO.getVlrPrecoComDesconto().multiply(BigDecimal.valueOf(produtoDTO.getVendido().longValue()))));
+				
+				vlrReparte = vlrReparte.add( produtoDTO.getPrecoVenda().multiply(BigDecimal.valueOf(produtoDTO.getReparte().longValue())));
+				
+				vlrDesconto = vlrDesconto.add(produtoDTO.getPrecoVenda().subtract(produtoDTO.getVlrPrecoComDesconto())
+						.multiply(BigDecimal.valueOf(produtoDTO.getReparte().longValue())));
+				
+				vlrEncalhe = vlrEncalhe.add(produtoDTO.getVlrPrecoComDesconto()
+						.multiply( BigDecimal.valueOf(produtoDTO.getQuantidadeDevolvida().longValue()) ));
+				
+				formatarLinhaExtraSupRedistCE(cota, produtoDTO, produtosSupRedist);
+				
+			}
 		}
 		
 		BigDecimal vlrReparteLiquido = vlrReparte.subtract(vlrDesconto);
@@ -1025,7 +1032,12 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				}
 			}
 			
-			filtro.setValidacao(new ValidacaoVO(TipoMensagem.WARNING, "As seguintes Cotas que não recebem CE: \n"+numeroCotas));
+			if(filtro.getValidacao() != null){
+				filtro.getValidacao().getListaMensagens().add("\n As seguintes Cotas que não recebem CE: "+numeroCotas);
+			}else{
+				filtro.setValidacao(new ValidacaoVO(TipoMensagem.WARNING, "As seguintes Cotas que não recebem CE: "+numeroCotas));
+			}
+			
 		}
 		
 		if(!listaCEWrapperImpressaoEemail.isEmpty()){
@@ -1138,19 +1150,18 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				}
 				continue;
 			} 
-
-//			cota.getPessoa().setEmail("romulo.amendola@infoa2.com.br");
 			
 			String[] listaDeDestinatarios = {cota.getPessoa().getEmail()};
 			
 			try {
 				byte[] anexo = this.gerarDocumentoEmissaoCE(lista);
 				
-				AnexoEmail anexoPDF = new AnexoEmail("nota-envio", anexo, TipoAnexo.PDF);
+				AnexoEmail anexoPDF = new AnexoEmail("CHAMADA DE ENCALHE – COTA "+cota.getNumeroCota(), anexo, TipoAnexo.PDF);
 				emailSerice.enviar("Emissão Chamada de Encalhe", "Olá, segue em anexo a chamada de encalhe.", listaDeDestinatarios, anexoPDF);
 			} catch ( AutenticacaoEmailException | JRException | URISyntaxException e) {
 				e.printStackTrace();
 			}
+			System.out.println("CHAMADA DE ENCALHE – COTA "+cota.getNumeroCota());
 		}
 		return numeroCotasSemEmail;
 	}

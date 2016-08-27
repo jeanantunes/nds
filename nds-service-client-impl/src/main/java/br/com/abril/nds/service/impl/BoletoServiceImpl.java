@@ -1966,7 +1966,7 @@ public class BoletoServiceImpl implements BoletoService {
             email.enviar(assunto == null ? "" : assunto,
                     mensagem == null ? "" : mensagem,
                             destinatarios,
-                            new AnexoEmail("Boleto-"+nossoNumero, anexo,TipoAnexo.PDF),
+                            new AnexoEmail("Boleto-"+nossoNumero+" - Cota "+cota.getNumeroCota(), anexo,TipoAnexo.PDF),
                             true);
             
         } catch(final AutenticacaoEmailException e){
