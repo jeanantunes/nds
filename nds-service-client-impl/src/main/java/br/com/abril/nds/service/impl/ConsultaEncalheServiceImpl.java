@@ -281,22 +281,12 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		retornoArquivoCota = arquivosCota.size() > 1 ? retornoArquivoCota = PDFUtil.mergePDFs(arquivosCota) : arquivosCota.get(0);
 		
-		/*
-		if (arquivosCota.size() == 1) {
-			
-			retornoArquivoCota = arquivosCota.get(0);
-		
-		} else if (arquivosCota.size() > 1) {
-
-			retornoArquivoCota = PDFUtil.mergePDFs(arquivosCota);
-		}
-		*/
-		
 		String[] listaDeDestinatarios = {cota.getPessoa().getEmail()};
-		AnexoEmail anexoPDF = new AnexoEmail("nota-envio", retornoArquivoCota, TipoAnexo.PDF);
+		AnexoEmail anexoPDF = new AnexoEmail("SLIP – COTA "+cota.getNumeroCota(), retornoArquivoCota, TipoAnexo.PDF);
 		
 		try {
-			emailService.enviar("[NDS] - Consulta Encalhe", "Olá, segue em anexo o slip emitido pela consulta de encalhe.", listaDeDestinatarios, anexoPDF);
+			emailService.enviar("[NDS] - Emissão SLIP", "Olá, segue em anexo o slip emitido pela consulta de encalhe.", listaDeDestinatarios, anexoPDF);
+			System.out.println("Envio EMAIL SLIP COTA - "+cota.getNumeroCota());
 		} catch (AutenticacaoEmailException e) {
 			e.printStackTrace();
 		}
