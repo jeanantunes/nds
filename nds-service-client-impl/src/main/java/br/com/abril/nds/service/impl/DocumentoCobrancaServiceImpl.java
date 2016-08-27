@@ -84,7 +84,6 @@ import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
-import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -184,8 +183,6 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
             final String msg = "Erro ao enviar e-mail de arquivo de cobrança para nosso número: " + nossoNumero + " - "
                     + e.getMessage();
             LOGGER.error(msg, e);
-            throw new ValidacaoException(TipoMensagem.ERROR,
-                    msg );
         }
         
         cobrancaRepository.incrementarVia(nossoNumero);
@@ -1418,20 +1415,20 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
             
             byte[] slip = JasperRunManager.runReportToPdf(path, slipDTO.getParametersSlip(), jrDataSource);
             
-            Cota cota = cotaService.obterPorNumeroDaCota(slipDTO.getNumeroCota());
-            
-            if(cota.getParametroDistribuicao().getSlipEmail() != null && cota.getParametroDistribuicao().getSlipEmail() == true){
-            	if(cota.getPessoa().getEmail() != null){
-        			String[] listaDeDestinatarios = {cota.getPessoa().getEmail()};
-        			
-        			try {
-        				AnexoEmail anexoPDF = new AnexoEmail("nota-envio", slip, TipoAnexo.PDF);
-        				emailService.enviar("Emissão de Slip", "Olá, o documento de SLIP segue anexo.", listaDeDestinatarios, anexoPDF);
-        			} catch ( AutenticacaoEmailException e) {
-        				e.printStackTrace();
-        			}
-            	}
-            }
+//            Cota cota = cotaService.obterPorNumeroDaCota(slipDTO.getNumeroCota());
+//            
+//            if(cota.getParametroDistribuicao().getSlipEmail() != null && cota.getParametroDistribuicao().getSlipEmail() == true){
+//            	if(cota.getPessoa().getEmail() != null){
+//        			String[] listaDeDestinatarios = {cota.getPessoa().getEmail()};
+//        			
+//        			try {
+//        				AnexoEmail anexoPDF = new AnexoEmail("nota-envio", slip, TipoAnexo.PDF);
+//        				emailService.enviar("Emissão de Slip", "Olá, o documento de SLIP segue anexo.", listaDeDestinatarios, anexoPDF);
+//        			} catch ( AutenticacaoEmailException e) {
+//        				e.printStackTrace();
+//        			}
+//            	}
+//            }
             
             return slip;
             

@@ -340,39 +340,70 @@ var parametrosDistribuidorController = $.extend(true, {
 	    var eficiencia1 = parseInt($('#listPercentualExcedente1\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente1\\.pdv', this.workspace).val());
 	    var eficiencia2 = parseInt($('#listPercentualExcedente2\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente2\\.pdv', this.workspace).val());
 	    
+	    var slipImpressao = $('#slipImpressao', this.workspace).is(':checked');
+		var slipEmail = $('#slipEmail', this.workspace).is(':checked');
+		var boletoImpressao = $('#boletoImpressao', this.workspace).is(':checked');
+		var boletoEmail = $('#boletoEmail', this.workspace).is(':checked');
+		var boletoSlipImpressao = $('#boletoSlipImpressao', this.workspace).is(':checked');
+		var boletoSlipEmail = $('#boletoSlipEmail', this.workspace).is(':checked');
+		var reciboImpressao = $('#reciboImpressao', this.workspace).is(':checked');
+		var reciboEmail = $('#reciboEmail', this.workspace).is(':checked');
+		var notaEnvioImpressao = $('#notaEnvioImpressao', this.workspace).is(':checked');
+		var notaEnvioEmail = $('#notaEnvioEmail', this.workspace).is(':checked');
+		var chamadaEncalheImpressao = $('#chamadaEncalheImpressao', this.workspace).is(':checked');
+		var chamadaEncalheEmail = $('#chamadaEncalheEmail', this.workspace).is(':checked');
+	    
+	    
 	    if(vendaMediaMais > 10 || vendaMediaMais < 1) {
-		arrayMensagemWarning.push("- \'Venda Média +\' deve ser de 01 a 10!");
+	    	arrayMensagemWarning.push("- \'Venda Média +\' deve ser de 01 a 10!");
 	    }
 		
 	    if(percentualMaximoFixacao > 75 || percentualMaximoFixacao < 1) {
-		arrayMensagemWarning.push("- \'% Máximo de Fixação\' deve ser de 1% a 75%!");
+	    	arrayMensagemWarning.push("- \'% Máximo de Fixação\' deve ser de 1% a 75%!");
 	    }
-	    
-	   
 	   
 	    if(percentualTaxaExtra > 0 &&  descricaoTaxaExtra.length == 0 ) {
 			arrayMensagemWarning.push("- \'Descrição de Taxa Extra obrigatorio!");
-		    } 
+	    } 
 	    if(percentualTaxaExtra == 0 && ( descricaoTaxaExtra.length > 0) ) {
 			arrayMensagemWarning.push("- \'Obrigatorio informar valor da Taxa Extra quando informado a Descricao!");
-		    } 
+	    } 
 	    
 	    if(eficiencia0 != 100) {
-		arrayMensagemWarning.push("- '\> 60 %\' deve ter o total da soma igual a 100%!");
+	    	arrayMensagemWarning.push("- '\> 60 %\' deve ter o total da soma igual a 100%!");
 	    }
 	    
 	    if(eficiencia1 != 100) {
-		arrayMensagemWarning.push("- '\> 30% a 60%\' deve ter o total da soma igual a 100%!");
+	    	arrayMensagemWarning.push("- '\> 30% a 60%\' deve ter o total da soma igual a 100%!");
 	    }
 	    
 	    if(eficiencia2 != 100) {
-		arrayMensagemWarning.push("- '\0% a 30%\' deve ter o total da soma igual a 100%!");
+	    	arrayMensagemWarning.push("- '\0% a 30%\' deve ter o total da soma igual a 100%!");
+	    }
+	    
+	    if(slipImpressao == false && slipEmail == false){
+	    	arrayMensagemWarning.push("Selecione pelo menos um tipo de emissão para SLIP! ");
+	    }
+	    
+	    if(boletoImpressao == false && boletoEmail == false){
+	    	arrayMensagemWarning.push("Selecione pelo menos um tipo de emissão para Boleto / Recibo! ");
+	    }
+
+	    if(boletoSlipImpressao == false && boletoSlipEmail == false){
+	    	arrayMensagemWarning.push("Selecione pelo menos um tipo de emissão para Boleto + Slip! ");
+	    }
+	    
+	    if(notaEnvioImpressao == false && notaEnvioEmail == false){
+	    	arrayMensagemWarning.push("Selecione pelo menos um tipo de emissão para Nota de Envio! ");
+	    }
+
+	    if(chamadaEncalheImpressao == false && chamadaEncalheEmail == false){
+	    	arrayMensagemWarning.push("Selecione pelo menos um tipo de emissão para Chamada de Encalhe! ");
 	    }
 	    
 	    if(arrayMensagemWarning.length > 0) {
 	    	exibirMensagem('WARNING', arrayMensagemWarning);
 	    } else {
-		
 	    	$("#confirmarParametrosDistribuidor").dialog("open");
 			
 	    }
