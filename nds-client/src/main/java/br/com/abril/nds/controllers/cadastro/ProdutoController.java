@@ -156,6 +156,20 @@ public class ProdutoController extends BaseController {
 			result.use(Results.json()).from(produto, "result").serialize();
 		}		
 	}
+	
+	@Post
+	public void pesquisarPorCodigoProdutoIcd(String codigoProduto) throws ValidacaoException{
+		
+		Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
+		if ( produto == null && codigoProduto != null && codigoProduto.length() > 6 )
+			produto = produtoService.obterProdutoPorCodigo(codigoProduto.substring(0,6));
+		if (produto == null) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + codigoProduto
+                    + "\" não encontrado!");
+		 } else {
+			 result.use(Results.json()).from(produto, "result").serialize();
+		 }		
+	}
 
 	/**
 	 * Metodo a ser utilizado no componente autocomplete.js

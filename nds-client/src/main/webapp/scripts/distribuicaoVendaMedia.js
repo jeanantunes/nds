@@ -32,7 +32,15 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	    
 	    
 	    $('#codigoPesquisaBases').change(function(){
-	    	pesquisaProduto.pesquisarPorCodigoProduto('#codigoPesquisaBases', '#nomeProdutoEdicaoBase', '#edicaoPesquisaBases', true);
+	    	pesquisaProduto.pesquisarPorCodigoProdutoIcd('#codigoPesquisaBases', 
+	    			'#nomeProdutoEdicaoBase', '#edicaoPesquisaBases', true,
+	    			function (result) { // mostrar codigo icd se nao achou produto pelo codigo completo
+	    		      if (parseInt( result.codigo) != parseInt($('#codigoPesquisaBases').val()))
+	    			   $('#codigoPesquisaBases').val(result.codigo.substring(0,6));
+	    			   },
+	    			null
+	    	
+	    	);
 	    	$("#edicaoPesquisaBases").focus();
 	    	
 	    });
