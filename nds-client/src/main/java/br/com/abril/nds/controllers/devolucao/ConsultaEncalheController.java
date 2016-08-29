@@ -13,7 +13,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.GET;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
@@ -564,7 +563,7 @@ public class ConsultaEncalheController extends BaseController {
 		
 	}
 	
-	@GET
+	@Get
 	@Path("/isDistribImprimeSlip")
 	public void isDistribImprimeSlip(){
 		boolean isRecebe = distribuidorService.verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(null, TipoParametrosDistribuidorEmissaoDocumento.SLIP);
