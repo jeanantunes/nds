@@ -1,9 +1,13 @@
 package br.com.abril.nds.service;
 
+import java.util.List;
+
 import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.util.Util;
 
 public interface ConsultaEncalheService {
 	
@@ -28,5 +32,7 @@ public interface ConsultaEncalheService {
 	public byte[] gerarDocumentosConferenciaEncalhe(FiltroConsultaEncalheDTO filtro);
 	
 	InfoConsultaEncalheDTO pesquisarReparte(FiltroConsultaEncalheDTO filtro);
+
+	void enviarEmailLoteSlip(FiltroConsultaEncalheDTO filtro);
 	
 }

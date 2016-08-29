@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
@@ -39,6 +40,7 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.DebitoCreditoCotaVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
@@ -291,6 +293,46 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	@Transactional
+	@Override
+	public void enviarEmailLoteSlip(FiltroConsultaEncalheDTO filtro){
+		
+		List<Integer> listaCotas = controleConferenciaEncalheCotaRepository.obterListaNumCotaConferenciaEncalheCota(filtro);
+		
+		if (listaCotas != null && !listaCotas.isEmpty() ) {
+
+			for (Integer numCota : listaCotas) {
+				
+				Cota cota = cotaService.obterPorNumeroDaCota(numCota);
+				
+				if(filtro.getNumCota() == null){
+					if(cota.getParametroDistribuicao().getUtilizaDocsParametrosDistribuidor()){
+						if(filtro.isDistribEnviaEmail()){
+							enviarSlipPorEmail(filtro, cota);
+						}else{
+							addMensagemValidacao(filtro, cota);
+						}
+					}else{
+						if(Util.validarBoolean(cota.getParametroDistribuicao().getSlipEmail())){
+							enviarSlipPorEmail(filtro, cota);
+						}else{
+							addMensagemValidacao(filtro, cota);
+						}
+					}
+				}
+			}
+		}
+		
+	}
+
+	private void addMensagemValidacao(FiltroConsultaEncalheDTO filtro, Cota cota) {
+		if(filtro.getValidacao() != null){
+			filtro.getValidacao().addMensagem("Cota "+cota.getNumeroCota()+", não recebe SLIP por e-mail! \n");
+		}else{
+			filtro.setValidacao(new ValidacaoVO(TipoMensagem.WARNING, "Cota "+cota.getNumeroCota()+", não recebe SLIP por e-mail! \n"));
+		}
 	}
 	
 	/**

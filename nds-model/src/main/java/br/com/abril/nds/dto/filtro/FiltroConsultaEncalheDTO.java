@@ -5,6 +5,7 @@ import java.util.Date;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 @Exportable
 public class FiltroConsultaEncalheDTO {
@@ -55,6 +56,8 @@ public class FiltroConsultaEncalheDTO {
 	private Integer idRoteiro;
 	
 	private boolean isDistribEnviaEmail;
+
+	private ValidacaoVO validacao;
 	
 	public FiltroConsultaEncalheDTO() {
 	    
@@ -349,6 +352,14 @@ public class FiltroConsultaEncalheDTO {
 
 	public void setDistribEnviaEmail(boolean isDistribEnviaEmail) {
 		this.isDistribEnviaEmail = isDistribEnviaEmail;
+	}
+	
+	public ValidacaoVO getValidacao() {
+		return validacao;
+	}
+
+	public void setValidacao(ValidacaoVO validacao) {
+		this.validacao = validacao;
 	}
 
 	@Override
