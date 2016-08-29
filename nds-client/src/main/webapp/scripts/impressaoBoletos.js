@@ -16,6 +16,30 @@ var impressaoBoletosController = $.extend(true, {
 		
 		$("#dataMovimento", impressaoBoletosController.workspace).focus();
 		
+		
+		$('#impressaoBoletos-btnEnviarEmail', impressaoBoletosController.workspace).click(function() {
+
+			this.confirmDialog = new ConfirmDialog('Confirmar Envio de email?', function() {
+				
+				$.postJSON(contextPath + '/financeiro/impressaoBoletos/enviarDividasPorEmail', 
+							impressaoBoletosController.formData()), 
+					function(data){
+						var tipoMensagem = data.tipoMensagem;
+						var listaMensagens = data.listaMensagens;
+						
+						if (tipoMensagem && listaMensagens) {
+							exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+						}
+					};
+				
+				return true;
+			}, function() {
+				
+			});
+			this.confirmDialog.open();						
+					
+		});
+		
 	    $("#impressao-dialog-banco").dialog({
 			autoOpen : false,
 			resizable : false,
@@ -241,27 +265,6 @@ var impressaoBoletosController = $.extend(true, {
 				});
 	},
 	
-//	enviarEmailDividas:function(tipoImpressao){
-//		
-//		/*
-//		 * $("#impressosGrid", impressaoBoletosController.workspace).flexOptions({
-//				url: contextPath + "/financeiro/impressaoBoletos/consultar",
-//				params: impressaoBoletosController.formData(),
-//				newp: 1,
-//				sortname : "numeroCota",
-//				sortorder : "asc",
-//			});
-//		 */
-//		
-//		$.postJSON(contextPath + "/financeiro/impressaoBoletos/enviarDividasPorEmail",
-//				impressaoBoletosController.formData(), 
-//				function(result){
-//					// success
-//				},
-//				function(result){
-//					// error
-//				});
-//	},
 	
 	renderizarArquivos:function(result){
 		
