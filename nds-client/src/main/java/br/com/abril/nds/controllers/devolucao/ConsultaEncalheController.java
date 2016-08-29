@@ -146,7 +146,6 @@ public class ConsultaEncalheController extends BaseController {
 
         this.iniciarComboRoteiro();
         
-        //this.isDistribGeraSlip();
         boolean isRecebe = distribuidorService.verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(null, TipoParametrosDistribuidorEmissaoDocumento.SLIP);
 		result.include("isDistribGeraSlip", isRecebe);
 		
@@ -520,12 +519,6 @@ public class ConsultaEncalheController extends BaseController {
 		
 	}
 	
-	
-	private void isDistribGeraSlip() {
-		boolean isRecebe = distribuidorService.verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(null, TipoParametrosDistribuidorEmissaoDocumento.SLIP);
-		result.include("isDistribGeraSlip", isRecebe);
-	}
-	
 	@Get
 	@Path("/gerarSlip")
 	public void gerarSlip(String dataRecolhimentoInicial, String dataRecolhimentoFinal, 
@@ -544,6 +537,38 @@ public class ConsultaEncalheController extends BaseController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum slip encontrado."));
 		}
 		
+	}
+	
+	@Post
+	@Path("/enviarEmail")
+	public void enviarEmail(String dataRecolhimentoInicial, String dataRecolhimentoFinal, 
+			Long idFornecedor, Integer numeroCota, Integer codigoProduto, 
+			Integer idBoxEncalhe, Integer idBox, Integer idRota, Integer idRoteiro) throws IOException {
+		
+		if(!distribuidorService.verificarParametroDistribuidorEmissaoDocumentosEmailCheck(null, TipoParametrosDistribuidorEmissaoDocumento.SLIP)){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Distribuidor não aceita o envio de SLIP's por e-mail!");
+		}
+			
+		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial, dataRecolhimentoFinal, idFornecedor, numeroCota, codigoProduto, idBoxEncalhe, idBox, null, idRota, idRoteiro);
+		
+		filtro.setDistribEnviaEmail(distribuidorService.verificarParametroDistribuidorEmissaoDocumentosEmailCheck(null, TipoParametrosDistribuidorEmissaoDocumento.SLIP));
+		
+		this.consultaEncalheService.enviarEmailLoteSlip(filtro);
+		
+		if(filtro.getValidacao() != null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Emails enviados com Sucesso!!\n"+ filtro.getValidacao().getListaMensagens());
+		}else{
+			throw new ValidacaoException(TipoMensagem.WARNING, "Emails enviados com Sucesso!!\n");
+		}
+		
+	}
+	
+	@Get
+	@Path("/isDistribImprimeSlip")
+	public void isDistribImprimeSlip(){
+		boolean isRecebe = distribuidorService.verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(null, TipoParametrosDistribuidorEmissaoDocumento.SLIP);
+		
+		result.use(Results.json()).withoutRoot().from(isRecebe).recursive().serialize();
 	}
 
 	private FiltroConsultaEncalheDTO getFiltroConsultaEncalheDTO(String dataRecolhimentoInicial, 
