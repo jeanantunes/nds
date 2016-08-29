@@ -98,11 +98,11 @@ public class AppActions {
 			throws CarregarLancamentoException, FileNotFoundException,
 			IOException, Exception {
 
-		//Properties props = loadProperties(new FileInputStream(
-		//		"./couchdb.properties"));
-		
-		Properties props = loadProperties(AppActions.class.getClassLoader().getResourceAsStream("couchdb.properties"));
-		
+		// Properties props = loadProperties(new FileInputStream(
+		// "./couchdb.properties"));
+
+		Properties props = loadProperties(AppActions.class.getClassLoader()
+				.getResourceAsStream("app.properties"));
 
 		CouchDbProperties couchDbProperties = new CouchDbProperties()
 				.setDbName(props.getProperty("couchdb.dbname"))
@@ -124,16 +124,16 @@ public class AppActions {
 		try {
 			jsonDoc = couchDbClient.find(JsonObject.class, docName);
 		} catch (NoDocumentException e) {
-			throw new CarregarLancamentoException("Lançamento não encontrado para essa Data.");
+			throw new CarregarLancamentoException(
+					"Lançamento não encontrado para essa Data.");
 		}
 
 		if (jsonDoc != null) {
 			Gson gson = new Gson();
 			JsonArray jaCotas = jsonDoc.getAsJsonArray(dataFormatada);
 			for (JsonElement jsonElement : jaCotas) {
-				PickingLEDFullDTO registroArquivo = gson
-						.fromJson(jsonElement,
-								PickingLEDFullDTO.class);
+				PickingLEDFullDTO registroArquivo = gson.fromJson(jsonElement,
+						PickingLEDFullDTO.class);
 				registros.add(registroArquivo);
 			}
 		}
@@ -141,27 +141,36 @@ public class AppActions {
 		List<Lancamento> lancamentos = new ArrayList<Lancamento>();
 		for (PickingLEDFullDTO det : registros) {
 			System.out.println(det.toString());
-			System.out.println(det.getCodigoCotaLinha1());
-			System.out.println(det.getEnderecoLED());
-			
-			List<DetalhesPickingPorCotaModelo04DTO> det1 = det.getListTrailer2();
-			
-			for(DetalhesPickingPorCotaModelo04DTO item : det1){
+			System.out.println("Cota:"+det.getCodigoCotaLinha1());
+			System.out.println("Led:" + det.getEnderecoLED());
+			System.out.println("Box: " + det.getCodigoBox());
+
+			List<DetalhesPickingPorCotaModelo04DTO> det1 = det
+					.getListTrailer2();
+
+			for (DetalhesPickingPorCotaModelo04DTO item : det1) {
 				Lancamento lancamento = new Lancamento();
-				lancamento.setCodigoCota(new Integer(det.getCodigoCotaLinha1().replace(";", "")));
-				lancamento.setCodigoProduto(new Integer(item.getProduto().replace(";", "")));
-				lancamento.setDataLacamento(new SimpleDateFormat("ddMMyyyy").parse(det.getDataLancamento().replace(";", "")));
-				//lancamento.setDesconto(new BigDecimal(item.getPrecoDesconto()));
-				lancamento.setEdicaoProduto(new Integer(item.getEdicao().replace(";", "")));
+				lancamento.setCodigoCota(new Integer(det.getCodigoCotaLinha1()
+						.replace(";", "")));
+				lancamento.setCodigoProduto(new Integer(item.getProduto()
+						.replace(";", "")));
+				lancamento.setCodigoBox(new Integer(det.getCodigoBox().replace(";", "")));
+				lancamento.setDataLacamento(new SimpleDateFormat("ddMMyyyy")
+						.parse(det.getDataLancamento().replace(";", "")));
+				// lancamento.setDesconto(new
+				// BigDecimal(item.getPrecoDesconto()));
+				lancamento.setEdicaoProduto(new Integer(item.getEdicao()
+						.replace(";", "")));
 				lancamento.setNomeProduto(item.getNome().replace(";", ""));
-				//lancamento.setPrecoCapa(new BigDecimal(14.99));
-				//lancamento.setPrecoCusto(new BigDecimal(14.99));
-				lancamento.setQuantidadeReparte(new Integer(item.getQuantidade().replace(";", "")));
-				lancamento.setCodigoLed(new Integer(det.getEnderecoLED().replace(";", "")));
+				// lancamento.setPrecoCapa(new BigDecimal(14.99));
+				// lancamento.setPrecoCusto(new BigDecimal(14.99));
+				lancamento.setQuantidadeReparte(new Integer(item
+						.getQuantidade().replace(";", "")));
+				lancamento.setCodigoLed(new Integer(det.getEnderecoLED()
+						.replace(";", "")));
 				lancamentos.add(lancamento);
 			}
-			
-			
+
 		}
 
 		return lancamentos;
@@ -171,20 +180,21 @@ public class AppActions {
 	/**
 	 * Metodo Util para carregar uma arquivo de Properties
 	 * 
-	 * @param in Espera uma arquivo .properties
+	 * @param in
+	 *            Espera uma arquivo .properties
 	 * @return Properties
 	 * @throws IOException
 	 */
-	private static Properties loadProperties(InputStream in) throws IOException {
+	public static Properties loadProperties(InputStream in) throws IOException {
 		Properties props = new Properties();
 		props.load(in);
 		in.close();
 		return props;
 	}
 
-
 	/**
 	 * Metodo usado para verificar cota sem led.
+	 * 
 	 * @param cotas
 	 * @return boolean
 	 */
@@ -192,11 +202,27 @@ public class AppActions {
 		Iterator<Cota> iCotas = cotas.iterator();
 		boolean retorno = false;
 		while (iCotas.hasNext()) {
-			if(iCotas.next().getCodLed() == 0){
+			if (iCotas.next().getCodLed() == 0) {
 				retorno = true;
 				break;
 			}
 		}
 		return retorno;
+	}
+
+
+	/**
+	 * Metodo usado para setar maxlength para um campo textfield.
+	 * 
+	 * @param str
+	 * @return string
+	 */
+	public static String maxlength(String str, int tamanho) {
+		String valor = "";
+		if (str.length() > tamanho) {
+			valor = str.substring(0, tamanho);
+			str = valor;
+		}
+		return str;
 	}
 }

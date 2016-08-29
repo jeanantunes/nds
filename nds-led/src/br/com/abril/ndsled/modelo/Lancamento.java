@@ -7,6 +7,7 @@ public class Lancamento {
 
 	private Integer codigoCota;
 	private Integer codigoProduto;
+	private Integer codigoBox;
 	private Integer edicaoProduto;
 	private String nomeProduto;
 	private BigDecimal precoCusto;
@@ -46,6 +47,14 @@ public class Lancamento {
 
 	public void setNomeProduto(String nomeProduto) {
 		this.nomeProduto = nomeProduto;
+	}
+
+	public Integer getCodigoBox() {
+		return codigoBox;
+	}
+
+	public void setCodigoBox(Integer codigoBox) {
+		this.codigoBox = codigoBox;
 	}
 
 	public BigDecimal getPrecoCusto() {

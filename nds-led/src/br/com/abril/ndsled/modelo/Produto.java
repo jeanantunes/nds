@@ -9,6 +9,7 @@ public class Produto {
 	private BigDecimal precoCusto;
 	private BigDecimal precoCapa;
 	private BigDecimal desconto;
+	private Integer quantidade;
 
 	public Integer getCodigoProduto() {
 		return codigoProduto;
@@ -58,9 +59,17 @@ public class Produto {
 		this.desconto = desconto;
 	}
 
+	public Integer getQuantidade() {
+		return quantidade;
+	}
+
+	public void setQuantidade(Integer quantidade) {
+		this.quantidade = quantidade;
+	}
+
 	@Override
 	public String toString() {
-		return codigoProduto + " - " + edicaoProduto + " - " + nomeProduto;
+		return codigoProduto + " - " + edicaoProduto + " - " + nomeProduto + " - Reparte: " + quantidade + " Exs";
 	}
 
 }

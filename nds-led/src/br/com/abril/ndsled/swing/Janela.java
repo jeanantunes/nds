@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -40,11 +41,15 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import br.com.abril.ndsled.actions.AppActions;
 import br.com.abril.ndsled.exceptions.CarregarLancamentoException;
+import br.com.abril.ndsled.modelo.Box;
 import br.com.abril.ndsled.modelo.Cota;
 import br.com.abril.ndsled.modelo.Lancamento;
 import br.com.abril.ndsled.modelo.Produto;
 import br.com.abril.ndsled.serialcom.PortaCom;
 import br.com.abril.ndsled.serialcom.SerialCom;
+import javax.swing.JTextField;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 /**
 * Classe da Janela Principal do aplicativo
@@ -57,6 +62,7 @@ public class Janela {
 	//================================================================================
     // Properties
     //================================================================================
+	private Properties props;
 	private JFrame frmProjetoLedV;
 	private JMenuBar menuBar;
 	private JMenu mnMenu;
@@ -77,8 +83,13 @@ public class Janela {
 	private List<Lancamento> lstLancamentos;
 	private List<Produto> lstProdutosAgrupados;
 	private List<Cota> lstCotas;
+	private List<Box> lstBox;
 	private JPanel pnlStatusBar;
 	private JDatePanelImpl datePanel;
+	private JLabel lblCaractereReparteZero;
+	private JTextField txtCatactereReparteZero;
+	private JScrollPane pnlBoxQuantidade;
+	private JTable tblBoxQuantidade;
 
 	//================================================================================
     // Constructors
@@ -117,10 +128,17 @@ public class Janela {
 	* @return Nothing
 	*/
 	private void initialize() {
+		try {
+			props = AppActions.loadProperties(AppActions.class.getClassLoader().getResourceAsStream("app.properties"));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		frmProjetoLedV = new JFrame();
-		frmProjetoLedV.setTitle("Projeto LED v0.1");
+		frmProjetoLedV.setTitle(props.getProperty("app.title") + " Distribuidor: " + props.getProperty("app.cod_distribuidor"));
 		frmProjetoLedV.setResizable(false);
-		frmProjetoLedV.setBounds(100, 100, 536, 387);
+		frmProjetoLedV.setBounds(100, 100, 720, 387);
 		frmProjetoLedV.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		menuBar = new JMenuBar();
@@ -144,18 +162,18 @@ public class Janela {
 
 		cbxListaProdutos = new JComboBox();
 
-		cbxListaProdutos.setBounds(10, 83, 277, 20);
+		cbxListaProdutos.setBounds(10, 83, 477, 20);
 		frmProjetoLedV.getContentPane().add(cbxListaProdutos);
 
 		btnEnviar = new JButton("Enviar");
-		btnEnviar.setBounds(198, 114, 89, 23);
+		btnEnviar.setBounds(398, 110, 89, 23);
 		frmProjetoLedV.getContentPane().add(btnEnviar);
 
 		pnlConfiguracao = new JPanel();
 		pnlConfiguracao.setBorder(new TitledBorder(UIManager
 				.getBorder("TitledBorder.border"), "Configura\u00E7\u00E3o",
 				TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-		pnlConfiguracao.setBounds(10, 147, 155, 158);
+		pnlConfiguracao.setBounds(10, 114, 175, 191);
 		frmProjetoLedV.getContentPane().add(pnlConfiguracao);
 		pnlConfiguracao.setLayout(null);
 
@@ -178,9 +196,25 @@ public class Janela {
 		btnApagarLeds.setToolTipText("");
 		btnApagarLeds.setBounds(10, 112, 131, 23);
 		pnlConfiguracao.add(btnApagarLeds);
+		
+		lblCaractereReparteZero = new JLabel("Caractere Reparte Zero:");
+		lblCaractereReparteZero.setBounds(10, 146, 155, 14);
+		pnlConfiguracao.add(lblCaractereReparteZero);
+		
+		txtCatactereReparteZero = new JTextField();
+		txtCatactereReparteZero.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				txtCatactereReparteZero.setText(AppActions.maxlength(txtCatactereReparteZero.getText(), 1));
+			}
+		});
+		txtCatactereReparteZero.setText("0");
+		txtCatactereReparteZero.setBounds(10, 160, 22, 20);
+		pnlConfiguracao.add(txtCatactereReparteZero);
+		txtCatactereReparteZero.setColumns(10);
 
 		pnlCotaLed = new JScrollPane();
-		pnlCotaLed.setBounds(313, 11, 207, 294);
+		pnlCotaLed.setBounds(497, 10, 207, 294);
 		frmProjetoLedV.getContentPane().add(pnlCotaLed);
 
 		Properties p = new Properties();
@@ -196,7 +230,7 @@ public class Janela {
 		pnlStatusBar = new JPanel();
 		pnlStatusBar.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null,
 				null, null));
-		pnlStatusBar.setBounds(0, 313, 530, 25);
+		pnlStatusBar.setBounds(0, 313, 714, 25);
 		frmProjetoLedV.getContentPane().add(pnlStatusBar);
 		pnlStatusBar.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 2));
 
@@ -227,6 +261,21 @@ public class Janela {
 		tblCotaLed.getColumnModel().getColumn(0).setResizable(false);
 		tblCotaLed.getColumnModel().getColumn(1).setResizable(false);
 		tblCotaLed.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		
+		pnlBoxQuantidade = new JScrollPane();
+		pnlBoxQuantidade.setBounds(191, 109, 200, 196);
+		frmProjetoLedV.getContentPane().add(pnlBoxQuantidade);
+		
+		tblBoxQuantidade = new JTable();
+		tblBoxQuantidade.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"BOX", "Quantidade"
+			}
+		));
+		tblBoxQuantidade.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		pnlBoxQuantidade.setViewportView(tblBoxQuantidade);
 
 		//================================================================================
 	    // Events
@@ -241,6 +290,8 @@ public class Janela {
 			public void actionPerformed(ActionEvent e) {
 				Produto produtoSelecionado = (Produto) cbxListaProdutos
 						.getSelectedItem();
+				
+				carregaTblBoxQuantidade();
 				// System.out.println(produtoSelecionado);
 				// System.out.println(produtoSelecionado.getCodigoCota());
 				// System.out.println(produtoSelecionado.getQuantidadeReparte());
@@ -249,6 +300,11 @@ public class Janela {
 		
 		btnApagarLeds.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String charZerado = "0";
+				if(!txtCatactereReparteZero.getText().isEmpty()){
+					charZerado = txtCatactereReparteZero.getText();
+				}
+				
 				// Iniciando leitura serial
 				try {
 					PortaCom pCom = new PortaCom(cbxPortaSerial
@@ -258,15 +314,15 @@ public class Janela {
 					Iterator<Cota> cotaIterator = lstCotas.iterator();
 					while(cotaIterator.hasNext()){
 						String codLed = String.format("%04d", cotaIterator.next().getCodLed());
-						pCom.EnviarComando("p"+codLed+"0000");
+						pCom.EnviarComando("p"+codLed+charZerado+charZerado+charZerado+charZerado);
 						try {
-							Thread.sleep(100);
+							Thread.sleep(5);
 						} catch (InterruptedException ex) {
 							// TODO Auto-generated catch block
 							ex.printStackTrace();
 						}
 					}
-					Thread.sleep(100);
+					Thread.sleep(5);
 					pCom.FecharCom();
 				} catch (Exception ex) {
 					System.out.println(ex.getMessage());
@@ -287,13 +343,13 @@ public class Janela {
 						String codLed = String.format("%04d", cotaIterator.next().getCodLed());
 						pCom.EnviarComando("p"+codLed+"8888");
 						try {
-							Thread.sleep(100);
+							Thread.sleep(5);
 						} catch (InterruptedException ex) {
 							// TODO Auto-generated catch block
 							ex.printStackTrace();
 						}
 					}
-					Thread.sleep(100);
+					Thread.sleep(5);
 					pCom.FecharCom();
 				} catch (Exception ex) {
 					System.out.println(ex.getMessage());
@@ -348,9 +404,10 @@ public class Janela {
 					pd.setCodigoProduto(it1.getCodigoProduto());
 					pd.setDesconto(it1.getDesconto());
 					pd.setEdicaoProduto(it1.getEdicaoProduto());
-					pd.setNomeProduto(it1.getNomeProduto());
+					pd.setNomeProduto(it1.getNomeProduto().trim());
 					pd.setPrecoCapa(it1.getPrecoCapa());
 					pd.setPrecoCusto(it1.getPrecoCusto());
+					pd.setQuantidade(it1.getQuantidadeReparte());
 					lstProdutosAgrupados.add(pd);
 
 				} else {
@@ -360,6 +417,7 @@ public class Janela {
 						Produto pd2 = it2.next();
 						if (pd2.getCodigoProduto().compareTo(
 								it1.getCodigoProduto()) == 0) {
+							pd2.setQuantidade(pd2.getQuantidade()+it1.getQuantidadeReparte());
 							jaExiste = true;
 							break;
 						}
@@ -369,9 +427,10 @@ public class Janela {
 						pd.setCodigoProduto(it1.getCodigoProduto());
 						pd.setDesconto(it1.getDesconto());
 						pd.setEdicaoProduto(it1.getEdicaoProduto());
-						pd.setNomeProduto(it1.getNomeProduto());
+						pd.setNomeProduto(it1.getNomeProduto().trim());
 						pd.setPrecoCapa(it1.getPrecoCapa());
 						pd.setPrecoCusto(it1.getPrecoCusto());
+						pd.setQuantidade(it1.getQuantidadeReparte());
 						lstProdutosAgrupados.add(pd);
 					}
 				}
@@ -457,10 +516,73 @@ public class Janela {
 				habilitarObjetosView();
 			}
 			
-
+			
+			carregaTblBoxQuantidade();
+			
 		} catch (Exception e) {
 			lblStatusBarMessage.setText(e.getMessage());
 			desabilitarObjetosView();
+		}
+	}
+	
+	private void carregaTblBoxQuantidade(){
+		//Limpa a Tabela (JTable) com a Box/Quantidade de outros dados carregados
+		DefaultTableModel dtm = (DefaultTableModel) tblBoxQuantidade.getModel();
+		for(int i = dtm.getRowCount()-1; i>=0;i--){
+			dtm.removeRow(i);
+		}
+		
+		//Filtra em Lista os BOX que estão no Lançamento
+		Iterator<Lancamento> iListLancamentos = lstLancamentos.iterator();
+		lstBox = new ArrayList<Box>();
+		
+		while (iListLancamentos.hasNext()) {
+			Lancamento it1 = iListLancamentos.next();
+
+			if(it1.getCodigoProduto().compareTo(((Produto) cbxListaProdutos.getSelectedItem()).getCodigoProduto()) == 0){
+				if (lstBox.size() == 0) {
+					Box box = new Box();
+					box.setCodigoBox(it1.getCodigoBox());
+					box.setQuantidade(it1.getQuantidadeReparte());
+					lstBox.add(box);
+				} else {
+					Iterator<Box> it2 = lstBox.iterator();
+					boolean jaExiste = false;
+					while (it2.hasNext()) {
+						Box box2 = it2.next();
+						if (box2.getCodigoBox().compareTo(it1.getCodigoBox()) == 0) {
+							box2.setQuantidade(box2.getQuantidade() + it1.getQuantidadeReparte());
+							jaExiste = true;
+							break;
+						}
+					}
+					if (!jaExiste) {
+						Box box = new Box();
+						box.setCodigoBox(it1.getCodigoBox());
+						box.setQuantidade(it1.getQuantidadeReparte());
+						lstBox.add(box);
+					}
+				}
+			}
+		}
+		
+		//Ordena a lista de cota por numero da cota.
+		Collections.sort(lstBox, new Comparator<Box>() {
+
+			@Override
+			public int compare(Box o1, Box o2) {
+				// TODO Auto-generated method stub
+				return o1.getCodigoBox().compareTo(o2.getCodigoBox());
+			}
+		});
+		
+		//Alimenta a Tabela (JTable)  com a Cotas/LEDs do Lançamento do dia selecionado.
+		DefaultTableModel dtm2 = (DefaultTableModel) tblBoxQuantidade.getModel();
+		Iterator<Box> itListBox = lstBox.iterator();
+		while (itListBox.hasNext()) {
+			Box box = itListBox.next();
+			dtm2.addRow(new Object[] { box.getCodigoBox(),
+					box.getQuantidade() });
 		}
 	}
 	
@@ -509,7 +631,7 @@ public class Janela {
 				String qtde = String.format("%04d", lanc.getQuantidadeReparte());
 				pCom.EnviarComando("p"+codLed+qtde);
 				try {
-					Thread.sleep(100);
+					Thread.sleep(5);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -522,6 +644,11 @@ public class Janela {
 	
 	private void limparLeds(){
 
+		String charZerado = "0";
+		if(!txtCatactereReparteZero.getText().isEmpty()){
+			charZerado = txtCatactereReparteZero.getText();
+		}
+		
 		if(lstCotas != null){
 			PortaCom portaCom = new PortaCom(cbxPortaSerial
 					.getSelectedItem().toString(), 9600, 0);
@@ -530,9 +657,9 @@ public class Janela {
 			Iterator<Cota> cotaIterator = lstCotas.iterator();
 			while(cotaIterator.hasNext()){
 				String codLed = String.format("%04d", cotaIterator.next().getCodLed());
-				portaCom.EnviarComando("p"+codLed+"0000");
+				portaCom.EnviarComando("p"+codLed+charZerado+charZerado+charZerado+charZerado);
 				try {
-					Thread.sleep(100);
+					Thread.sleep(5);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
