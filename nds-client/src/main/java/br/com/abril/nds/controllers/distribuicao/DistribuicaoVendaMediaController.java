@@ -391,7 +391,14 @@ public class DistribuicaoVendaMediaController extends BaseController {
     	filtro.setConsolidado(modoAnalise.equals("NORMAL") || idProdutoEdicaoPesquisa == null || !idProdutoEdicao.equals(idProdutoEdicaoPesquisa));
     	
     	Produto produto = prodService.obterProdutoPorCodigo(filtro.getCodigo());
-    	filtro.setCodigo(produto.getCodigoICD());
+    	if ( produto == null && filtro.getCodigo() != null && filtro.getCodigo().length() > 6 )
+    		produto = prodService.obterProdutoPorCodigo(filtro.getCodigo().substring(0,6));
+    	if ( produto != null ) {
+    	   filtro.setCodigo(produto.getCodigoICD());
+    	  }
+    	  else {
+    		filtro.setCodigo(filtro.getCodigo().substring(0,6));
+    	  }
     	
         List<ProdutoEdicaoVendaMediaDTO> resultado = distribuicaoVendaMediaService.pesquisar(filtro);
         
