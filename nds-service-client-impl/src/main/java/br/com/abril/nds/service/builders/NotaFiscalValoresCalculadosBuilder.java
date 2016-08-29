@@ -49,8 +49,8 @@ public class NotaFiscalValoresCalculadosBuilder {
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorICMSSubstituto(BigDecimal.valueOf(0));
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorOutro(BigDecimal.valueOf(0));
 		
-		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorPIS(CurrencyUtil.arredondarValorParaDuasCasas(valorPIS));
-		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorCOFINS(CurrencyUtil.arredondarValorParaDuasCasas(valorCofins));
+		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorPIS(valorPIS);
+		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorCOFINS(valorCofins);
 		return notaFiscal;
 	}
 
@@ -98,12 +98,12 @@ public class NotaFiscalValoresCalculadosBuilder {
 			}
 			
 			if(dnf.getImpostos().getCofinsOutr() != null) {
-				valorCofins = valorCofins.add(NFeCalculatorImpl.calculate(dnf.getImpostos().getCofins().getCofins()));
+				valorCofins = valorCofins.add(NFeCalculatorImpl.calculate(dnf.getImpostos().getCofinsOutr().getCofins()));
 			}
 			
 		}
 		
-		return valorCofins;
+		return CurrencyUtil.arredondarValorParaDuasCasas(valorCofins);
 	}
 	
 	private static BigDecimal calcularImpostosPIS(NotaFiscal notaFiscal) {
@@ -112,7 +112,8 @@ public class NotaFiscalValoresCalculadosBuilder {
 		
 		for(DetalheNotaFiscal dnf : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
 			
-			if(dnf.getImpostos().getPis() != null) {				
+			if(dnf.getImpostos().getPis() != null) {
+				
 				valorPIS = valorPIS.add(NFeCalculatorImpl.calculate(dnf.getImpostos().getPis().getPis()));
 			}
 			
@@ -122,7 +123,7 @@ public class NotaFiscalValoresCalculadosBuilder {
 			
 		}
 		
-		return valorPIS;
+		return CurrencyUtil.arredondarValorParaDuasCasas(valorPIS);
 	}
 	
 	/**

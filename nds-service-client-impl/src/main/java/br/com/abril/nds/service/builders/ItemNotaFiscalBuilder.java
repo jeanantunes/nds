@@ -208,10 +208,6 @@ public class ItemNotaFiscalBuilder  {
 			
 			quantidade = produtoServico.getQuantidade().abs();
 			
-			LOGGER.warn("Produto: "+produtoServico.getCodigoProduto());
-			
-			LOGGER.warn("quantidade: "+quantidade);
-			
 			if(produtoServico.getQuantidade().intValue() > 0) {
 				
 				produtoServico.setQuantidade(quantidade);
@@ -427,7 +423,7 @@ public class ItemNotaFiscalBuilder  {
 							} else {
 								
 								pis.setValorBaseCalculo(produtoServico.getValorTotalBruto());
-								pis.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoPis.getValor()));
+								pis.setPercentualAliquota(tributoPis.getValor());
 								
 								BigDecimal valorCalculado = NFeCalculatorImpl.calculate(pis);
 								
@@ -496,7 +492,7 @@ public class ItemNotaFiscalBuilder  {
 								cofins.setPercentualAliquota(tributoCofins.getValor());
 								BigDecimal valorCofinsCalculado = NFeCalculatorImpl.calculate(cofins);								
 								cofins.setValor(valorCofinsCalculado);
-								cofins.setValorAliquota(tributoCofins.getValor());
+								cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoCofins.getValor()));
 							}
 							break;
 						}

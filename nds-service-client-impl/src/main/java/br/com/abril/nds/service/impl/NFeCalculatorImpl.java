@@ -10,6 +10,7 @@ import br.com.abril.nds.model.fiscal.nota.ICMS;
 import br.com.abril.nds.model.fiscal.nota.ICMSST;
 import br.com.abril.nds.model.fiscal.nota.IPI;
 import br.com.abril.nds.model.fiscal.nota.PIS;
+import br.com.abril.nds.util.CurrencyUtil;
 
 /**
  * Implementacao padrao para calculo de impostos.
@@ -67,6 +68,7 @@ public class NFeCalculatorImpl {
 
 		if (taxValue==null || taxValue.intValue() == 0) {
 			taxValue = internalCalculate(pis.getValorBaseCalculo(), pis.getPercentualAliquota());
+			taxValue = CurrencyUtil.arredondarValorParaDuasCasas(taxValue);
 			logger.debug("Valor calculado do PIS: {}.", taxValue);
 			return taxValue;
 		}
@@ -81,6 +83,7 @@ public class NFeCalculatorImpl {
 
 		if (taxValue==null || taxValue.intValue() == 0) {
 			taxValue = internalCalculate(cofins.getValorBaseCalculo(), cofins.getPercentualAliquota());
+			taxValue = CurrencyUtil.arredondarValorParaDuasCasas(taxValue);
 			logger.debug("Valor calculado do CONFINS: {}.", taxValue);
 			return taxValue;
 		}
