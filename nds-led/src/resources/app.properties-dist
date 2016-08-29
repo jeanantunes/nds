@@ -1,0 +1,14 @@
+############################################
+# Config Gerais
+app.title=NDS-LED
+app.cod_distribuidor=CODIGO_DISTRIBUIDOR
+
+############################################
+# CouchDB config
+couchdb.protocol=http
+couchdb.dbname=DATABASE_COUCHDB
+couchdb.host=ENDERECO_IP_COUCHDB
+couchdb.port=5984
+couchdb.username=USERNAME_COUCHDB
+couchdb.password=PASSWORD_COUCHDB
+couchdb.bachSize=500

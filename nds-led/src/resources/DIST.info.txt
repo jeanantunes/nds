@@ -1,0 +1,4 @@
+### Arquivos que deverão ser clonados removendo o "DIST" para funcionamento ###
+
+/nds-led/src/resources/app.properties
+    app.properties-dist ->  app.properties
