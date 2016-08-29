@@ -418,7 +418,7 @@ var fechamentoEncalheController = $.extend(true, {
 		});
 	},
 	
-	xitao : function() {
+	checkAllRecalculo : function() {
 		
 		var index = 0;
 		
@@ -431,7 +431,7 @@ var fechamentoEncalheController = $.extend(true, {
 			var diferenca = tabela.rows[index].cells[11].firstChild;
 			var valor = tabela.rows[index].cells[7].firstChild.innerHTML;
 			var campo2 = tabela.rows[index].cells[10].firstChild.firstChild;
-			
+			var valorCalculado;
 			
 			if (campo2.disabled) {
 				
@@ -456,8 +456,10 @@ var fechamentoEncalheController = $.extend(true, {
 				}
 				
 				campo.value = valor - juramentado - vendaEncalhe;
+				valorCalculado = valor - juramentado - vendaEncalhe;
+				
 				diferenca.innerHTML = "0";
-				$("#"+fisico.id).val(devolucao);
+				$("#"+fisico.id).val(valorCalculado);
 			} else {
 				
 				campo2.value = "";
@@ -539,7 +541,7 @@ var fechamentoEncalheController = $.extend(true, {
 
 		checkAll(input,"checkgroupFechamento");
 		
-		fechamentoEncalheController.xitao();
+		fechamentoEncalheController.checkAllRecalculo();
 		
 		fechamentoEncalheController.checkAllGrid = input.checked;
 	},
