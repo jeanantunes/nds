@@ -35,7 +35,7 @@ $(function(){
 			
 			<span class="bt_arq">
        			<a id="consultaEncalhe-btnEnviarEmail" href="javascript:void(0)" original-title="Enviar email">
-       				<img src="/nds-client/images/ico_email.png" alt="Enviar email" hspace="5" border="0">
+       				<img src="${pageContext.request.contextPath}/images/ico_email.png" alt="Enviar email" hspace="5" border="0">
        			</a>
        		</span>
 			
