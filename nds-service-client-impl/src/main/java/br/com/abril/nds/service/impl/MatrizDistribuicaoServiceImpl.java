@@ -825,8 +825,10 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 						reparteDistribuir = reparteDistribuir.subtract(reparte);
 					} else if (reparteDistribuir.compareTo(BigInteger.ZERO) <= 0
 							&& cota.getReparte().compareTo(BigInteger.ZERO) > 0) {
-						cota.setReparte(cota.getReparte().subtract(reparte));
-						reparteDistribuir = reparteDistribuir.add(reparte);
+						if ( cota.getReparte().intValue() >= reparte.intValue() ) {  // evitar que cota fique com reparte negativo
+							cota.setReparte(cota.getReparte().subtract(reparte));
+							reparteDistribuir = reparteDistribuir.add(reparte);
+						}
 					} else {
 						break;
 					}
