@@ -264,10 +264,10 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		
 		hql.append(" select count(*) from estudo_cota_gerado ec where ec.ESTUDO_ID=")
 				.append( estudoBase.toString()) 
-				.append(" and ec.reparte>0 and ec.COTA_ID in (  ")
+				.append(" and ec.reparte!=0 and ec.COTA_ID in (  ")
 			.append(" 	select ec2.COTA_ID from estudo_cota_gerado ec2 where ec2.ESTUDO_ID = ")
 					.append( estudoSomado.toString())	 
-					.append( " AND ec.reparte>0)" );
+					.append( " AND ec.reparte != 0)" );
 		
 		Query query =	this.getSession().createSQLQuery(hql.toString());
 		
@@ -281,7 +281,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
     public int obterCotasComRepartePorIdEstudo(Long estudoId) {
         return ((Number) this.getSession().createCriteria(EstudoCotaGerado.class)
                 .add(Restrictions.eq("estudo.id", estudoId))
-                .add(Restrictions.gt("reparte", BigInteger.ZERO))
+                .add(Restrictions.ne("reparte", BigInteger.ZERO))
                 .setProjection(Projections.rowCount())
                 .uniqueResult()).intValue();
     }

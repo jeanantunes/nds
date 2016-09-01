@@ -250,7 +250,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
         sql.append("  where ec.ESTUDO_ID = :estudoId ");
             
-        sql.append("  and  ec.reparte is not null and ec.reparte >= 0  ");
+        sql.append("  and  ec.reparte is not null    ");
         
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
         	
