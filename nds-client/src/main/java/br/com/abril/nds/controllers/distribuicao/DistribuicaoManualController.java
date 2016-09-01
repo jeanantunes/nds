@@ -12,6 +12,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
@@ -35,6 +37,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.impl.CotaServiceImpl;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -49,6 +52,8 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 public class DistribuicaoManualController extends BaseController {
 
+	  private static final Logger LOGGER = LoggerFactory.getLogger(DistribuicaoManualController.class);
+	  
     @Autowired
     private Result result;
     
@@ -191,22 +196,28 @@ public class DistribuicaoManualController extends BaseController {
     	
     	List<EstudoCotaDTO> cotasParaDistribuicao = XlsUploaderUtils.getBeanListFromXls(EstudoCotaDTO.class, excelFileDistbManual);
     	
-    	parseNumCotaIdCotaParseDto(cotasParaDistribuicao, estudoDTO);
     	
-    	if(!(cotasParaDistribuicao == null || cotasParaDistribuicao.isEmpty())){
+    	
+    	if( cotasParaDistribuicao != null && !cotasParaDistribuicao.isEmpty()){
+    		
+    		parseNumCotaIdCotaParseDto(cotasParaDistribuicao, estudoDTO);
     		
     		// validar status - Ativo, suspenso. Inibir Inativo e Pendente
     		validarStatusCota(cotasParaDistribuicao);
     		
     		try {
     			if(cotasParaDistribuicao != null && cotasParaDistribuicao.size() > 0){
+    			try {
     				this.gravarEstudo(estudoDTO, cotasParaDistribuicao);
+    			} catch ( ValidacaoException ve ) {
+    				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, ve.getMessage()),"result").recursive().serialize();
+    			}
     			}else{
     				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Estudo não realizado, não há cotas aptas a receberem reparte."),"result").recursive().serialize();
     			}
 			} catch (Exception e) {
-				e.printStackTrace();
-				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar estudo."),"result").recursive().serialize();
+				LOGGER.error("ERRO ao gerar estudo",e);
+				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar estudo."+e.getLocalizedMessage()),"result").recursive().serialize();
 			}
     		
     	}else{
