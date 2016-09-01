@@ -66,6 +66,7 @@ import br.com.abril.nds.repository.RoteiroRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
+import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
@@ -109,6 +110,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
     
     @Autowired
     private EmailService emailSerice;
+    
+    @Autowired
+    private NFeService nfeService;
     
     // Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
     // O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
@@ -1472,8 +1476,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			Pessoa destinatario = entry.getKey();
 			
 			List<NotaEnvio> listaDeNotaEnvioDeUmaCota = entry.getValue();
-//			notaDeCadaCota = nfeService.obterNEsPDF(listaDeNotaEnvioDeUmaCota, false, filtro.getIntervaloMovimento());
-			notaDeCadaCota = "nfeService.obterNEsPDF(listaDeNotaEnvioDeUmaCota, false, filtro.getIntervaloMovimento());".getBytes();
+			notaDeCadaCota = nfeService.obterNEsPDF(listaDeNotaEnvioDeUmaCota, false, filtro.getIntervaloMovimento());
 			
 			if(destinatario.getEmail() == null){
 				continue;
