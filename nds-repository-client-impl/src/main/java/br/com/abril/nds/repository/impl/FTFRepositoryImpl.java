@@ -286,11 +286,11 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" '' as textoObservacoes, ")
 		.append(" CONCAT('0', pe.numero_edicao) as numEdicaoRevista, ")
 		.append(" '' as dataCompetencia, ")
-
+		
 		.append(" (CASE WHEN tsp.DESCRICAO = 'IMPORTADAS' THEN ")
-		.append("      pe.CODIGO_DE_BARRAS ") 
+		.append("      pe.CODIGO_DE_BARRAS_CORPORATIVO ") 
 		.append(" ELSE ")
-		.append("      LPAD(cast(nfps.CODIGO_BARRAS as char), 13, '0')  ")
+		.append("      LPAD(cast(nfps.CODIGO_DE_BARRAS_CORPORATIVO as char), 13, '0')  ")
 		.append(" END) as codBarrasProduto, ")
 		
 		// .append(" LPAD(cast(nfps.CODIGO_BARRAS as char), 13, '0') as codBarrasProduto, ")

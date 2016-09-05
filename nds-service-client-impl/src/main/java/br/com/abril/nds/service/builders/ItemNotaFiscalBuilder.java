@@ -208,10 +208,6 @@ public class ItemNotaFiscalBuilder  {
 			
 			quantidade = produtoServico.getQuantidade().abs();
 			
-			LOGGER.warn("Produto: "+produtoServico.getCodigoProduto());
-			
-			LOGGER.warn("quantidade: "+quantidade);
-			
 			if(produtoServico.getQuantidade().intValue() > 0) {
 				
 				produtoServico.setQuantidade(quantidade);
@@ -426,10 +422,12 @@ public class ItemNotaFiscalBuilder  {
 								pis.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 							} else {
 								
-								pis.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoPis.getValor()));
-								pis.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoPis.getValor()));
-								pis.setValor(CurrencyUtil.arredondarValorParaDuasCasas(produtoServico.getValorTotalBruto().multiply(tributoPis.getValor().divide(BigDecimal.valueOf(100)))));
-								pis.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(NFeCalculatorImpl.calculate(pis)));
+								pis.setValorBaseCalculo(produtoServico.getValorTotalBruto());
+								pis.setPercentualAliquota(tributoPis.getValor());
+								
+								BigDecimal valorCalculado = NFeCalculatorImpl.calculate(pis);
+								
+								pis.setValor(valorCalculado);
 								
 							}
 							break;
@@ -490,10 +488,11 @@ public class ItemNotaFiscalBuilder  {
 								cofins.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 								cofins.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 							} else {
+								cofins.setValorBaseCalculo(produtoServico.getValorTotalBruto());
+								cofins.setPercentualAliquota(tributoCofins.getValor());
+								BigDecimal valorCofinsCalculado = NFeCalculatorImpl.calculate(cofins);								
+								cofins.setValor(valorCofinsCalculado);
 								cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoCofins.getValor()));
-								cofins.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoCofins.getValor()));
-								cofins.setValor(CurrencyUtil.arredondarValorParaDuasCasas(produtoServico.getValorTotalBruto().multiply(tributoCofins.getValor().divide(BigDecimal.valueOf(100)))));
-								cofins.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(NFeCalculatorImpl.calculate(cofins)));
 							}
 							break;
 						}

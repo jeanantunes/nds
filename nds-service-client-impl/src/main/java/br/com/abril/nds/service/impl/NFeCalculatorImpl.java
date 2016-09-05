@@ -10,6 +10,7 @@ import br.com.abril.nds.model.fiscal.nota.ICMS;
 import br.com.abril.nds.model.fiscal.nota.ICMSST;
 import br.com.abril.nds.model.fiscal.nota.IPI;
 import br.com.abril.nds.model.fiscal.nota.PIS;
+import br.com.abril.nds.util.CurrencyUtil;
 
 /**
  * Implementacao padrao para calculo de impostos.
@@ -48,7 +49,7 @@ public class NFeCalculatorImpl {
 	}
 
 	public static BigDecimal calculate(IPI ipi) {
-		BigDecimal taxValue = ipi.getValor();
+		BigDecimal taxValue = BigDecimal.ZERO;
 		validate(ipi.getAliquota(), ipi.getValorBaseCalculo());
 
 		if (taxValue==null) {
@@ -62,11 +63,12 @@ public class NFeCalculatorImpl {
 	}
 
 	public static BigDecimal calculate(PIS pis) {
-		BigDecimal taxValue = pis.getValorBaseCalculo();
-		validate(pis.getValorAliquota(), pis.getValor());
+		BigDecimal taxValue = BigDecimal.ZERO;
+		validate(pis.getPercentualAliquota(), pis.getValorBaseCalculo());
 
 		if (taxValue==null || taxValue.intValue() == 0) {
-			taxValue = internalCalculate(pis.getValor(), pis.getValorAliquota());
+			taxValue = internalCalculate(pis.getValorBaseCalculo(), pis.getPercentualAliquota());
+			taxValue = CurrencyUtil.arredondarValorParaDuasCasas(taxValue);
 			logger.debug("Valor calculado do PIS: {}.", taxValue);
 			return taxValue;
 		}
@@ -76,11 +78,12 @@ public class NFeCalculatorImpl {
 	}
 
 	public static BigDecimal calculate(COFINS cofins) {
-		BigDecimal taxValue = cofins.getValorBaseCalculo();
-		validate(cofins.getValorAliquota(), cofins.getValor());
+		BigDecimal taxValue = BigDecimal.ZERO;
+		validate(cofins.getPercentualAliquota(), cofins.getValorBaseCalculo());
 
 		if (taxValue==null || taxValue.intValue() == 0) {
-			taxValue = internalCalculate(cofins.getValorCofins(), cofins.getValorAliquota());
+			taxValue = internalCalculate(cofins.getValorBaseCalculo(), cofins.getPercentualAliquota());
+			taxValue = CurrencyUtil.arredondarValorParaDuasCasas(taxValue);
 			logger.debug("Valor calculado do CONFINS: {}.", taxValue);
 			return taxValue;
 		}
