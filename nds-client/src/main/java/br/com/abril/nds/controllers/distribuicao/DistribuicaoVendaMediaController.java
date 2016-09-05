@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -287,7 +287,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	}
 	
 	// eliminar duplicados
-	Set<ProdutoEdicaoVendaMediaDTO> hs = new HashSet<>();
+	Set<ProdutoEdicaoVendaMediaDTO> hs = new LinkedHashSet<>();
 	hs.addAll(selecionados);
 	selecionados.clear();
 	selecionados.addAll(hs);
