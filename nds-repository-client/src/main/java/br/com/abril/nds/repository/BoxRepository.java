@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.List;
 
 import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
+import br.com.abril.nds.dto.filtro.FiltroBoletoAvulsoDTO;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Rota;
@@ -177,4 +178,6 @@ public interface BoxRepository extends Repository<Box,Long> {
 	List<Box> obterBoxPorCodigo(Integer codigoBox);
 	
 	Long obterIdBoxEspecial();
+	
+	List<Cota> obterCotasParaBoletoAvulso(FiltroBoletoAvulsoDTO boletoAvulso);
 }

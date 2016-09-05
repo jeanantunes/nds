@@ -86,4 +86,6 @@ public interface BancoRepository extends Repository<Banco,Long>{
 	List<Banco> obterBancosPorStatus(Boolean ativo);
 
 	Banco buscarBancoPorIdCobranca(Long idCobranca);
+	
+	List<Banco> obterBancoBoletoAvulso();
 }

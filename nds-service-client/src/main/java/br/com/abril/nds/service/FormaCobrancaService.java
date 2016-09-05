@@ -159,4 +159,6 @@ public interface FormaCobrancaService {
 	 * @return boolean
 	 */
 	boolean isValorMinimoAtingido(Long idCota, BigDecimal valorTotalCobrar);
+	
+	FormaCobranca obterFormaCobrancaBoletoAvulso(TipoCobranca tipoCobranca);
 }

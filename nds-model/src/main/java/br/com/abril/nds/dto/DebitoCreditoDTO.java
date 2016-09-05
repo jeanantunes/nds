@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 
@@ -30,6 +31,10 @@ public class DebitoCreditoDTO implements Serializable {
 	private boolean permiteAlteracao;
 	
 	private Date dataCriacao;
+	
+	private Long idBanco;
+	
+	private List<ItemDTO<Integer, String>> bancos;
 	
 	/**
 	 * @return the id
@@ -169,7 +174,23 @@ public class DebitoCreditoDTO implements Serializable {
 	public DebitoCreditoDTO(){
 		
 	}
-			
+	
+	public Long getIdBanco() {
+		return idBanco;
+	}
+
+	public void setIdBanco(Long idBanco) {
+		this.idBanco = idBanco;
+	}
+	
+	public List<ItemDTO<Integer, String>> getBancos() {
+		return bancos;
+	}
+
+	public void setBancos(List<ItemDTO<Integer, String>> bancos) {
+		this.bancos = bancos;
+	}
+
 	public DebitoCreditoDTO(Long id, String dataLancamento,
 			String dataVencimento, Integer numeroCota, String nomeCota,
 			TipoMovimentoFinanceiro tipoMovimentoFinanceiro, Long idUsuario,

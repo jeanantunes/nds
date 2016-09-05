@@ -579,5 +579,23 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 
 		return query.list();
 	}
+
+	@Override
+	public FormaCobranca obterFormaCobrancaBoletoAvulso(TipoCobranca tipoCobranca) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select f from FormaCobranca f ");		
+		
+		hql.append(" where 1=1 ");
+		
+	    hql.append(" and f.tipoCobranca = :tipoCobranca ");
+			
+		Query query = super.getSession().createQuery(hql.toString());
+		
+        query.setParameter("tipoCobranca", tipoCobranca);
+        
+        return (FormaCobranca) query.uniqueResult();
+	}
 	
 }

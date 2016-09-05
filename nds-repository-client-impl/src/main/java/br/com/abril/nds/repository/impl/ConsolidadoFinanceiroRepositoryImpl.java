@@ -1333,6 +1333,44 @@ ConsolidadoFinanceiroRepository {
 		sql.append(" encargos as encargos,");
 		sql.append(" pendente as pendente, ");
 		sql.append(" (total *-1) total, ");
+		
+		 //Valor Pago
+		sql.append(" ROUND(");
+               
+		sql.append("    COALESCE( ");
+        //divida paga em cota unificadora: valor pago = total na cota unificada
+		sql.append("    (SELECT CF.TOTAL ");
+		sql.append("     FROM DIVIDA D, DIVIDA_CONSOLIDADO DC, CONSOLIDADO_FINANCEIRO_COTA CF ");
+		sql.append("     WHERE DC.DIVIDA_ID = D.ID ");
+		sql.append("     AND DC.CONSOLIDADO_ID = CF.ID ");
+		sql.append("     AND CF.ID = a.ID ");
+		sql.append("     AND D.COTA_ID <> b.ID ");
+		sql.append("     AND D.STATUS = :statusDividaQuitada) * (-1) ");
+        
+		sql.append("    ,");
+        
+		sql.append("    (select SUM( coalesce(bc.VALOR_PAGO, 0) ) - ");
+        //consolidados de cotas unificadas subtraidos do valor pago na cota unificadora
+		sql.append("    COALESCE(((SELECT SUM(ROUND(CF.TOTAL,2)) ");
+		sql.append("               FROM DIVIDA_CONSOLIDADO DC, CONSOLIDADO_FINANCEIRO_COTA CF ");
+		sql.append("               WHERE DC.DIVIDA_ID = divida.ID ");
+		sql.append("               AND DC.CONSOLIDADO_ID = CF.ID ");
+		sql.append("               AND CF.ID <> a.ID ");
+		sql.append("               AND CF.COTA_ID <> b.ID) * (-1)),0) ");
+
+		sql.append("     from BAIXA_COBRANCA bc ");
+		sql.append("     inner join COBRANCA cobranca ON cobranca.ID = bc.COBRANCA_ID ");
+		sql.append("     inner join DIVIDA divida ON divida.ID = cobranca.DIVIDA_ID ");
+		sql.append("     inner join DIVIDA_CONSOLIDADO d_cons ON divida.ID = d_cons.DIVIDA_ID ");
+		sql.append("     where bc.STATUS not in (:statusBaixaCobranca) ");
+		sql.append("     and b.ID = cobranca.COTA_ID ");
+		sql.append("     and d_cons.CONSOLIDADO_ID = a.ID ");
+		sql.append("     and cfc.ID) ");
+ 
+        sql.append("    ,0)");
+        
+        sql.append(" ,2) as valorPago, ");
+		
 		sql.append(" b.situacao_cadastro as situacaoCadastro, ");
 		sql.append(" IFNULL(d.status, 'POSTEGADO') as legenda ");
 		sql.append(" from consolidado_financeiro_cota a ");
@@ -1346,7 +1384,16 @@ ConsolidadoFinanceiroRepository {
         final Query query = this.getSession().createSQLQuery(sql.toString());
         query.setParameter("inicioPeriodo", filtro.getInicioPeriodo());
         query.setParameter("fimPeriodo", filtro.getFimPeriodo());
-      
+        
+        final List<String> statusBaixaCobranca =
+                Arrays.asList(StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA.name(),
+                        StatusBaixa.NAO_PAGO_DIVERGENCIA_DATA.name(),
+                        StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR.name());
+        
+        query.setParameterList("statusBaixaCobranca", statusBaixaCobranca);
+        
+        query.setParameter("statusDividaQuitada", StatusDivida.QUITADA.name());
+        
         query.setResultTransformer(new AliasToBeanResultTransformer(ContaCorrenteVO.class));
         return  query.list();
     }

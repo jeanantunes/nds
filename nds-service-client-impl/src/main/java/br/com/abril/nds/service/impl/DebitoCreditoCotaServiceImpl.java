@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
@@ -111,8 +112,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 
 		movimentoFinanceiroCotaDTO.setObservacao(debitoCredito.getObservacao());
 
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiro =
-				this.tipoMovimentoFinanceiroRepository.buscarPorId(debitoCredito.getTipoMovimentoFinanceiro().getId());
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = this.tipoMovimentoFinanceiroRepository.buscarPorId(debitoCredito.getTipoMovimentoFinanceiro().getId());
 
 		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
 		
@@ -133,6 +133,48 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		return movimentoFinanceiroCotaDTO;
 	}
 
+	@Override
+	@Transactional
+	public MovimentoFinanceiroCotaDTO gerarMovimentoFinanceiroBoletoAvulsoDTO(BoletoAvulsoDTO debitoCredito) {
+
+		Long idMovimento = debitoCredito.getId();
+
+		MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
+		
+		movimentoFinanceiroCotaDTO.setIdMovimentoFinanceiroCota(idMovimento);
+		
+		movimentoFinanceiroCotaDTO.setDataCriacao(
+			DateUtil.removerTimestamp(debitoCredito.getDataCriacao() == null ? new Date() : debitoCredito.getDataCriacao()));
+
+		Date dataVencimento = DateUtil.parseDataPTBR(debitoCredito.getDataVencimento());
+		
+		movimentoFinanceiroCotaDTO.setDataVencimento(dataVencimento);
+
+		movimentoFinanceiroCotaDTO.setValor(new BigDecimal(debitoCredito.getValor()));
+
+		movimentoFinanceiroCotaDTO.setObservacao(debitoCredito.getObservacao());
+
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = this.tipoMovimentoFinanceiroRepository.buscarPorId(debitoCredito.getTipoMovimentoFinanceiro().getId());
+
+		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
+		
+		Cota cota = this.cotaRepository.obterPorNumeroDaCota(debitoCredito.getNumeroCota());
+		
+		movimentoFinanceiroCotaDTO.setCota(cota);
+
+		Usuario usuario = this.usuarioRepository.buscarPorId(debitoCredito.getIdUsuario());
+		
+		movimentoFinanceiroCotaDTO.setUsuario(usuario);
+		
+		movimentoFinanceiroCotaDTO.setLancamentoManual(true);
+		
+		Fornecedor fornecedor = cota.getParametroCobranca()!=null?cota.getParametroCobranca().getFornecedorPadrao():null;
+
+		movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
+
+		return movimentoFinanceiroCotaDTO;
+	}
+	
 	
 	/**
 	 * Obtém dados pré-configurados com informações das Cotas do Box, Rota e Roteiro. Para lançamentos de débitos e/ou créditos

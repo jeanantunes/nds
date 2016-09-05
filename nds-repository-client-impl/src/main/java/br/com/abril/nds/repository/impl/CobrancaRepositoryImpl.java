@@ -21,6 +21,7 @@ import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.ExportarCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -886,6 +887,32 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		query.setParameter("tipoBaixa", TipoBaixaCobranca.CONSOLIDADA);
 		
 		return (Long) query.uniqueResult();
+		
+	}
+
+	@Override
+	public Cobranca obterCobrancaBoletoAvulso(Integer numeroCota) {
+		System.out.println("passou");
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select c from Cobranca as c ");
+		hql.append(" JOIN c.cota as cota ");
+		hql.append(" where cota.numeroCota = :numeroCota ");
+		hql.append(" and c.tipoCobranca = :tipoCobranca ");
+		hql.append(" and c.vias = :vias ");
+		hql.append(" and c.statusCobranca = :statusCobranca ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		query.setParameter("tipoCobranca", TipoCobranca.BOLETO_AVULSO);
+		
+		query.setParameter("vias", 0);
+		
+		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO);
+		
+		return (Cobranca) query.uniqueResult();
 		
 	}
 }

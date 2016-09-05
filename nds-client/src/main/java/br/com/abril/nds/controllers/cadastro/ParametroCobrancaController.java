@@ -291,10 +291,13 @@ public class ParametroCobrancaController extends BaseController {
 	    }
 		else if ((parametros.getTipoCobranca()==TipoCobranca.CHEQUE)||(parametros.getTipoCobranca()==TipoCobranca.DINHEIRO)){
 			parametros.setIdBanco(null);
-		}    
-		else if (parametros.getTipoCobranca()==TipoCobranca.OUTROS){
+		} else if (parametros.getTipoCobranca()==TipoCobranca.OUTROS){
 			parametros.setIdBanco(null);
-		}    
+		} else if ((parametros.getTipoCobranca()==TipoCobranca.BOLETO_AVULSO)){
+			parametros.setTaxaJuros(null);
+			parametros.setTaxaMulta(null);
+			parametros.setValorMulta(null);
+	    }   
         
 		return parametros;
 		

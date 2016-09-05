@@ -27,6 +27,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Cascade;
@@ -216,7 +217,9 @@ public class Cota implements Serializable {
 	
 	@Column(name = "RECEBE_RECOLHE_PARCIAIS", insertable=false,  updatable=false)
 	private Integer recebeRecolheParciais;
-	///insertable = false, updatable = false
+	
+	@Column(name = "GERAR_BOLETO_NFE")
+	private boolean boletoNFE;
 	
 	public Cota() {
         this.inicioAtividade = new Date();
@@ -714,6 +717,15 @@ public class Cota implements Serializable {
 		this.parametroCobrancaDistribuicaoCota = parametroCobrancaDistribuicaoCota;
 	}
 	
+	public boolean isBoletoNFE() {
+		return boletoNFE;
+	}
+
+	public void setBoletoNFE(boolean boletoNFE) {
+		this.boletoNFE = boletoNFE;
+	}
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

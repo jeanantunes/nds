@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.client.vo.baixaboleto.TipoEmissaoDocumento;
@@ -10,6 +11,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 
 public interface GerarCobrancaService {
@@ -118,4 +120,6 @@ public interface GerarCobrancaService {
     * @return Date
     */
 	Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento, String localidade);
+	
+	void gerarCobrancaBoletoAvulso(Long idUsuario, MovimentoFinanceiroCota movimentoFinanceiroCota, Map<Integer, Long> cotasBanco) throws GerarCobrancaValidacaoException;
 }

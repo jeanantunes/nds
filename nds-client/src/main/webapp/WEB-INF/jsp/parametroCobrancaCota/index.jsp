@@ -274,6 +274,28 @@ $(function(){
 		
 	</div>
 	
+	<div class="form-cota-boleto-nfe">
+		<table width="770" border="0" cellspacing="1" cellpadding="1">
+		
+			<tbody>	
+			
+					<tr>
+						<td width="126" style="width: 114px; ">Gerar Boleto via NFE:</td>
+
+						<td width="24">
+							<input id="isBoletoNFE" name="isBoletoNFE" type="checkbox"/>
+						</td>
+
+						<td colspan="3">
+							
+						</td>
+					</tr>
+		
+			</tbody>
+			
+		</table>
+	</div>
+	
 	</fieldset>
 	
 </div>

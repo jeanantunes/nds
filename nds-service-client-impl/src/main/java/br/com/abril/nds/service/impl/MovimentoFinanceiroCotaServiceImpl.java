@@ -462,7 +462,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS);
         gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.TAXA_EXTRA);
         gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.BCT);
-            
+        gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.BOLETO_AVULSO);
+        
         return gruposMovimentosFinanceiros;
     }
     

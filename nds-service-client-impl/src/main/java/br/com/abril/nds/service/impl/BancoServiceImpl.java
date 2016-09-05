@@ -249,6 +249,7 @@ public class BancoServiceImpl implements BancoService {
 	}
 
 	@Override
+	@Transactional
 	public List<ItemDTO<Long, String>> obterPessoasDisponiveisParaCedente() {
 		
 		List<ItemDTO<Long, String>> pessoasCedente =  new ArrayList<ItemDTO<Long, String>>();
@@ -265,4 +266,30 @@ public class BancoServiceImpl implements BancoService {
 		return pessoasCedente;
 	}
 
+	/**
+	 * Método responsável por obter bancos para preencher combo da camada view
+	 * @param ativo - Define se a busca retornará Bancos ativos(true), inativos(false) ou todos (null).
+	 * @return comboBancos: bancos cadastrados
+	 */
+	@Transactional(readOnly=true)
+	@Override
+	public List<ItemDTO<Integer, String>> getComboBancosBoletoAvulso() {
+		
+		List<ItemDTO<Integer,String>> comboBancos =  new ArrayList<ItemDTO<Integer,String>>();
+		
+		List<Banco> bancos = bancoRepository.obterBancoBoletoAvulso();
+		
+		for (Banco itemBanco : bancos){
+
+			String descricaoBanco = 
+					 (itemBanco.getNumeroBanco() == null ? "" : itemBanco.getNumeroBanco() + "-") 
+					 + (itemBanco.getApelido() == null ? "" :  itemBanco.getApelido() + " ")
+					 + (itemBanco.getConta() == null ? "" : itemBanco.getConta())
+					 + (itemBanco.getDvConta() == null ? "" : "-" + itemBanco.getDvConta());
+
+			comboBancos.add(new ItemDTO<Integer,String>(itemBanco.getId().intValue(), descricaoBanco));
+		}
+		return comboBancos;
+	}
+	
 }

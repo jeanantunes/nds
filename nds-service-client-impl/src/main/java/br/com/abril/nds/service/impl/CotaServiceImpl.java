@@ -3244,7 +3244,7 @@ public class CotaServiceImpl implements CotaService {
      */
     @Transactional
     @Override
-	public boolean salvarCaracteristicasFinanceirasEspecificasCota(final ParametroCobrancaCotaDTO parametroCobranca){
+	public boolean salvarCaracteristicasFinanceirasEspecificasCota(ParametroCobrancaCotaDTO parametroCobranca){
         
     	boolean alterado = false;
     	
@@ -3265,6 +3265,14 @@ public class CotaServiceImpl implements CotaService {
 
             alterado = true;
         }
+        
+        if ((cota.isBoletoNFE()) || (parametroCobranca.isBoletoNFE() != cota.isBoletoNFE())){
+            
+            cota.setBoletoNFE(parametroCobranca.isBoletoNFE());
+
+            alterado = true;
+        }
+        
         
         boolean politicaSuspensaoAlterado = this.salvarPoliticaSuspensaoCota(cota, 
         		                                                             parametroCobranca.isSugereSuspensao(), 

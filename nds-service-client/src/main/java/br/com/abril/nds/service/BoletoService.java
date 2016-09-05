@@ -10,12 +10,15 @@ import javax.xml.bind.ValidationException;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
+import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.BoletoCotaDTO;
 import br.com.abril.nds.dto.BoletoEmBrancoDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
+import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
+import br.com.abril.nds.dto.filtro.FiltroBoletoAvulsoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
@@ -259,4 +262,7 @@ public interface BoletoService {
             final List<PoliticaCobranca> politicasCobranca) throws IOException, ValidationException;
 	
 	byte[] gerarArquivo(final FiltroDividaGeradaDTO filtro) throws Exception, ValidationException;
+	
+	List<BoletoAvulsoDTO> obterDadosBoletoAvulso(final FiltroBoletoAvulsoDTO boletoAvulso);
+	
 }

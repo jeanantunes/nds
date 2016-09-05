@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.awt.Image;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -17,18 +18,24 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.xml.bind.ValidationException;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.apache.commons.collections.comparators.NullComparator;
+import org.jrimum.domkee.financeiro.banco.febraban.Titulo.EnumAceite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.CobrancaImpressaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
+import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.ItemSlipVendaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
@@ -41,7 +48,10 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaCobrancaBoleto;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -53,6 +63,7 @@ import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -69,6 +80,7 @@ import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.SlipRepository;
 import br.com.abril.nds.service.BoletoService;
@@ -87,8 +99,10 @@ import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.BigIntegerUtil;
+import br.com.abril.nds.util.CorpoBoleto;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.GeradorBoleto;
 import br.com.abril.nds.util.ImpressaoMatricialUtil;
 import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.util.PDFUtil;
@@ -154,6 +168,9 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     
     @Autowired
     private CotaService cotaService;
+    
+    @Autowired
+    protected PoliticaCobrancaRepository politicaCobrancaRepository;
     
     /**
      * BOLETO/COBRANCA
@@ -631,7 +648,29 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         return impressaoDTO;
     }
     
-	                                        /**
+    private CobrancaImpressaoDTO obterCobrancaImpressaoBoletoAvulso(final Cobranca cobranca, final String razaoSocialDistribuidor, DebitoCreditoDTO debito){
+        
+        final CobrancaImpressaoDTO impressaoDTO = new CobrancaImpressaoDTO();
+        
+        final Banco banco  = cobranca.getBanco();
+        
+        this.atribuirDadosBanco(impressaoDTO, banco);
+        
+        final Cota cota  = cobranca.getCota();
+        
+        this.atribuirDadosCota(razaoSocialDistribuidor, impressaoDTO, cota);
+        
+        BigDecimal valor  = cobranca.getValor();
+        valor = valor.setScale(2,RoundingMode.HALF_EVEN);
+        
+        impressaoDTO.setTipoCobranca(TipoCobranca.BOLETO_AVULSO);
+        impressaoDTO.setValor(valor);
+        impressaoDTO.setVencimento(cobranca.getDataVencimento());
+        
+        return impressaoDTO;
+    }
+    
+    /**
      * BOLETO/COBRANCA
      * 
      * Atribui os dados da cota para a impressão
@@ -1890,5 +1929,335 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         }
         
         return retorno;
+    }
+    
+    @Override
+    @Transactional
+    public byte[] gerarDocumentoCobrancaBoletoAvulso(List<BoletoAvulsoDTO> listaBoletosAvulso) {
+        
+    	final List<CorpoBoleto> corpos = new ArrayList<CorpoBoleto>();
+    	
+        Cobranca cobranca = null;
+        Boleto boleto = null;
+        
+        byte[] arquivo = null;
+        
+        for(BoletoAvulsoDTO debito : listaBoletosAvulso) {
+            
+            cobranca = cobrancaRepository.obterCobrancaBoletoAvulso(debito.getNumeroCota());
+            cobranca.setVias(1);
+            boleto = boletoRepository.obterPorNossoNumero(cobranca.getNossoNumero(), null, true);
+           
+            if(boleto!= null){
+                corpos.add(this.gerarCorpoBoletoCota(boleto, null, false));
+            }
+            
+        }
+        
+        try {        	
+        	if(!corpos.isEmpty()){
+        		final GeradorBoleto geradorBoleto = new GeradorBoleto(corpos) ;
+        		final byte[] b = geradorBoleto.getByteGroupPdf();
+        		return b;
+        	}
+        } catch (Exception e) {
+        	throw new ValidacaoException(TipoMensagem.WARNING,"Erro ao gerar Recibo.");
+        }
+        
+        
+        return arquivo ;
+    }
+    
+    private CorpoBoleto gerarCorpoBoletoCota(final Boleto boleto, final Pessoa pessoaCedente, final boolean aceitaPagamentoVencido){
+        
+    	final List<PoliticaCobranca> politicasCobranca = 
+                politicaCobrancaRepository.obterPoliticasCobranca(
+                        Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO));
+        
+        return this.gerarCorpoBoletoCota(boleto, pessoaCedente, aceitaPagamentoVencido, politicasCobranca);
+    }
+    
+    private CorpoBoleto gerarCorpoBoletoCota(final Boleto boleto, Pessoa pessoaCedente, 
+            final boolean aceitaPagamentoVencido, final List<PoliticaCobranca> politicasCobranca){
+        
+        final String nossoNumero = boleto.getNossoNumero();
+        final String digitoNossoNumero = boleto.getDigitoNossoNumero();
+        final BigDecimal valor = boleto.getValor() != null ? boleto.getValor().abs() : BigDecimal.ZERO;
+        final Banco banco = boleto.getBanco();
+        final Date dataEmissao = boleto.getDataEmissao();
+        final Date dataVencimento = boleto.getDataVencimento();
+        final Pessoa pessoaSacado = boleto.getCota().getPessoa();
+        pessoaCedente = banco.getPessoaJuridicaCedente(); 
+        
+        Endereco endereco = null;
+        
+        final Set<EnderecoCota> enderecosCota = boleto.getCota().getEnderecos();
+        
+        for(final EnderecoCota enderecoCota : enderecosCota){
+            
+            endereco = enderecoCota.getEndereco();
+            
+            if (enderecoCota.getTipoEndereco() == TipoEndereco.COBRANCA){
+                break;
+            }
+            
+        }
+        
+        return geraCorpoBoleto(nossoNumero,
+                digitoNossoNumero,
+                valor,
+                null,
+                null,
+                banco,
+                dataEmissao,
+                dataVencimento,
+                pessoaCedente,
+                pessoaSacado,
+                endereco,
+                boleto.getTipoCobranca(),
+                boleto.getCota().getNumeroCota(),
+                aceitaPagamentoVencido,
+                false,
+                politicasCobranca);
+    }
+    
+    private CorpoBoleto geraCorpoBoleto(final String nossoNumero,
+            final String digitoNossoNumero,
+            BigDecimal valorDocumento,
+            BigDecimal valorAcrescimo,
+            BigDecimal valorDesconto,
+            final Banco banco,
+            final Date dataEmissao,
+            final Date dataVencimento,
+            final Pessoa pessoaCedente,
+            final Pessoa pessoaSacado,
+            final Endereco enderecoSacado,
+            final TipoCobranca tipoCobranca,
+            final Integer numeroCota,
+            final boolean aceitaPagamentoVencido,
+            final boolean boletoEmBranco,
+            final List<PoliticaCobranca> politicasCobranca) {
+        
+        valorDocumento = (valorDocumento == null) ? BigDecimal.ZERO : valorDocumento.abs();
+        
+        final CorpoBoleto corpoBoleto = new CorpoBoleto();
+        
+        String nomeCedente = "";
+        String documentoCedente = "";
+        
+        if(pessoaCedente instanceof PessoaJuridica) {
+            
+            nomeCedente = ((PessoaJuridica) pessoaCedente).getRazaoSocial();
+            documentoCedente = ((PessoaJuridica) pessoaCedente).getCnpj();
+            
+        } else {
+            
+            nomeCedente = ((PessoaFisica) pessoaCedente).getNome();
+            documentoCedente = ((PessoaFisica) pessoaCedente).getCpf();
+            
+        }
+        
+        
+        //DADOS DO CEDENTE
+        corpoBoleto.setCodigoCedente(banco.getCodigoCedente());
+        corpoBoleto.setDigitoCodigoCedente(banco.getDigitoCodigoCedente());
+        corpoBoleto.setCedenteNome(nomeCedente);
+        corpoBoleto.setCedenteDocumento(documentoCedente);
+        
+        
+        //DADOS DO SACADO
+        
+        String nomeSacado = "";
+        
+        String documentoSacado = "";
+        
+        if (pessoaSacado instanceof PessoaFisica) {
+            nomeSacado = ((PessoaFisica) pessoaSacado).getNome();
+            documentoSacado = ((PessoaFisica) pessoaSacado).getCpf();
+        }
+        if (pessoaSacado instanceof PessoaJuridica) {
+            nomeSacado = ((PessoaJuridica) pessoaSacado).getRazaoSocial();
+            documentoSacado = ((PessoaJuridica) pessoaSacado).getCnpj();
+        }
+        
+        if(numeroCota != null && numeroCota >0) {
+            corpoBoleto.setSacadoNome(numeroCota + " - "+ nomeSacado);
+        } else {
+            corpoBoleto.setSacadoNome(nomeSacado);
+        }
+        
+        corpoBoleto.setSacadoDocumento(documentoSacado);
+        
+        
+        //ENDERECO DO SACADO
+        
+        if (enderecoSacado != null) {
+            corpoBoleto.setEnderecoSacadoUf(enderecoSacado.getUf());
+            corpoBoleto.setEnderecoSacadoLocalidade(enderecoSacado.getCidade());
+            corpoBoleto.setEnderecoSacadoCep(enderecoSacado.getCep());
+            corpoBoleto.setEnderecoSacadoBairro(enderecoSacado.getBairro());
+            corpoBoleto.setEnderecoSacadoLogradouro(enderecoSacado.getTipoLogradouro() + " " + enderecoSacado.getLogradouro());
+            corpoBoleto.setEnderecoSacadoNumero(enderecoSacado.getNumero());
+        } else {
+            corpoBoleto.setEnderecoSacadoUf("SP");
+            corpoBoleto.setEnderecoSacadoLocalidade("Endereco nao cadastrado.");
+            corpoBoleto.setEnderecoSacadoCep("");
+            corpoBoleto.setEnderecoSacadoBairro("");
+            corpoBoleto.setEnderecoSacadoLogradouro("");
+            corpoBoleto.setEnderecoSacadoNumero("");
+        }
+        
+        
+        //INFORMACOES DA CONTA(BANCO)
+        final String contaNumero=banco.getConta().toString();
+        
+        corpoBoleto.setContaNumeroBanco(banco.getNumeroBanco());
+        
+        corpoBoleto.setContaCarteira(banco.getCarteira());
+        
+        for (final PoliticaCobranca politicaCobranca : politicasCobranca) {
+            
+            final FormaCobranca formaCobranca = politicaCobranca.getFormaCobranca();
+            
+            if (formaCobranca.getBanco().getApelido().equals(banco.getApelido())) {
+                
+                if (formaCobranca.getFormaCobrancaBoleto() != null) {
+                    
+                    corpoBoleto.setContaTipoDeCobranca(formaCobranca.getFormaCobrancaBoleto().toString());
+                    
+                    break;
+                }
+            }
+        }
+        
+        if (corpoBoleto.getContaTipoDeCobranca() == null || corpoBoleto.getContaTipoDeCobranca().isEmpty()){
+            corpoBoleto.setContaTipoDeCobranca(FormaCobrancaBoleto.SEM_REGISTRO.name());
+        } else {
+        	
+        	if(corpoBoleto.getContaTipoDeCobranca().equals(FormaCobrancaBoleto.SEM_REGISTRO.name())) {
+        		 corpoBoleto.setContaTipoDeCobranca(FormaCobrancaBoleto.SEM_REGISTRO.name());
+        	} else {
+        		
+        		corpoBoleto.setContaTipoDeCobranca(FormaCobrancaBoleto.COM_REGISTRO.name());
+        	}  	
+        }
+        
+        corpoBoleto.setContaAgencia(banco.getAgencia().intValue());
+        corpoBoleto.setDigitoAgencia(banco.getDvAgencia());
+        
+        corpoBoleto.setContaNumero(Integer.parseInt(contaNumero));
+        
+        
+        //INFORMACOES DO TITULO
+        corpoBoleto.setTituloNumeroDoDocumento("9125253");
+        corpoBoleto.setTituloNossoNumero(nossoNumero);
+        
+        
+        //PARAMETROS ?
+        corpoBoleto.setTituloDigitoDoNossoNumero(digitoNossoNumero);
+        corpoBoleto.setTituloTipoDeDocumento("DM_DUPLICATA_MERCANTIL");
+        if(corpoBoleto.getTituloAceite() == null || corpoBoleto.getTituloAceite().equals("")) {
+        	corpoBoleto.setTituloAceite("N");
+        } else {
+        	if(corpoBoleto.getTituloAceite().equals(EnumAceite.A)) {
+        		corpoBoleto.setTituloAceite("A");
+        	} else {
+        		corpoBoleto.setTituloAceite("N");
+        	}
+        	
+        }
+        
+        corpoBoleto.setTituloTipoIdentificadorCNR("COM_VENCIMENTO");
+        
+        corpoBoleto.setTituloValor(valorDocumento.setScale(2, RoundingMode.HALF_EVEN));
+        corpoBoleto.setTituloDataDoDocumento(dataEmissao);
+        corpoBoleto.setTituloDataDoVencimento(dataVencimento);
+        
+        BigDecimal valorParaPagamentosVencidos = null;
+        
+        if (!aceitaPagamentoVencido) {
+            
+            valorParaPagamentosVencidos = BigDecimal.ZERO;
+            
+            valorDesconto = BigDecimal.ZERO;
+            
+            valorAcrescimo = BigDecimal.ZERO;
+        }
+        
+        if (boletoEmBranco){
+            
+            valorDesconto = valorDesconto.compareTo(BigDecimal.ZERO)>0?valorDesconto:null;
+        }
+        
+        corpoBoleto.setTituloDesconto(valorDesconto);
+        corpoBoleto.setTituloDeducao(valorParaPagamentosVencidos);
+        corpoBoleto.setTituloMora(valorParaPagamentosVencidos);
+        corpoBoleto.setTituloAcrecimo(valorAcrescimo);
+        corpoBoleto.setTituloValorCobrado(valorParaPagamentosVencidos);
+        
+        // INFORMAÇOES DO BOLETO
+        //PARAMETROS ?
+        corpoBoleto.setBoletoLocalPagamento("Pagável em qualquer agência bancária até o vencimento. Após o vencimento, consulte as instruções abaixo.");
+        corpoBoleto.setBoletoInstrucaoAoSacado("Instrução so Sacado");
+        corpoBoleto.setBoletoInstrucao1(banco.getInstrucoes1());
+        corpoBoleto.setBoletoInstrucao2(banco.getInstrucoes2());
+        corpoBoleto.setBoletoInstrucao3(banco.getInstrucoes3());
+        corpoBoleto.setBoletoInstrucao4(banco.getInstrucoes4());
+        corpoBoleto.setBoletoInstrucao5("");
+        corpoBoleto.setBoletoInstrucao6("");
+        corpoBoleto.setBoletoInstrucao7("");
+        
+        if(numeroCota != null && numeroCota >0) {
+        	ConsultaRoteirizacaoDTO roteirizacao = this.roteirizacao(numeroCota);
+        	
+        	if(roteirizacao != null) {
+        		corpoBoleto.setBoletoInstrucao8(montarRoteirizacao(roteirizacao));
+        	} else {
+        		corpoBoleto.setBoletoInstrucao8("");
+        	}
+        	
+        } else {
+        	corpoBoleto.setBoletoInstrucao8("");
+        }
+        
+        //BOLETO EM BRANCO
+        if (valorDocumento.compareTo(BigDecimal.ZERO) == 0) {	
+        	corpoBoleto.setBoletoSemValor(tipoCobranca.equals(TipoCobranca.BOLETO_AVULSO));        	
+        }
+        
+        return corpoBoleto;
+    }
+    
+    private ConsultaRoteirizacaoDTO roteirizacao(Integer numeroCota) {
+		
+        ConsultaRoteirizacaoDTO roteirizacaoDTO = null;
+        		
+		FiltroConsultaRoteirizacaoDTO filtro = new FiltroConsultaRoteirizacaoDTO();
+		
+		filtro.setNumeroCota(Integer.valueOf(numeroCota));
+		
+		List<ConsultaRoteirizacaoDTO> listaRoteirizacaoDTO = this.roteirizacaoRepository.buscarRoteirizacao(filtro); 
+		
+		for (ConsultaRoteirizacaoDTO item : listaRoteirizacaoDTO){
+			
+			if (!item.getTipobox().equals(TipoBox.ESPECIAL)) {
+				
+				roteirizacaoDTO = item;
+				
+				return roteirizacaoDTO;
+			}
+		}
+	    return null;		
+	}
+    
+    private String montarRoteirizacao(ConsultaRoteirizacaoDTO roteirizacao) {
+    	StringBuffer buffer = new StringBuffer();
+		
+		buffer.append("Box: ").append(roteirizacao.getNomeBox());
+		buffer.append(" / ");
+		buffer.append("Roteiro: ").append(roteirizacao.getDescricaoRoteiro());
+		buffer.append(" / ");
+		buffer.append("Rota : ").append(roteirizacao.getDescricaoRota());
+		return buffer.toString();
     }
 }

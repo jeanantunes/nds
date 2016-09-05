@@ -666,4 +666,11 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 
 		return mapFormasCobrancaFornecedor;
 	}
+
+	@Override
+	@Transactional
+	public FormaCobranca obterFormaCobrancaBoletoAvulso(TipoCobranca tipoCobranca) {
+		
+		return this.formaCobrancaRepository.obterFormaCobrancaBoletoAvulso(tipoCobranca);
+	}
 }

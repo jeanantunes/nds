@@ -643,6 +643,10 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#vrDividasAbertoCota", this.workspace).val( resultado.vrDividasAberto );
 		
 		$("#devolveEncalhe", this.workspace).val(resultado.devolveEncalhe ? 0 : 1);
+		
+		$("#isBoletoNFE", this.workspace).val(resultado.boletoNFE);
+		$("#isBoletoNFE").attr("checked", resultado.boletoNFE);
+		
 		if(resultado.situacaoCadastro != 'PENDENTE') {
 			$("#devolveEncalhe", this.workspace).attr('disabled', 'disabled');
         }
@@ -714,8 +718,19 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var qtdDividasAberto = $("#qtdDividasAbertoCota", this.workspace).val();
 		var vrDividasAberto = $("#vrDividasAbertoCota", this.workspace).val();
 		var devolveEncalhe = $("#devolveEncalhe", this.workspace).val() == 0 ? 1 : 0;
+		
+		if($("#isBoletoNFE", this.workspace).is(":checked")) {
+			$("#isBoletoNFE", this.workspace).val(1);
+		} else {
+			$("#isBoletoNFE", this.workspace).val(0);
+		}
+		
+		var boletoNFE = $("#isBoletoNFE", this.workspace).val();
+		
 		var fornecedorPadrao = $("#fornecedorPadrao", this.workspace).val();
 		//var unificaCobranca = $("#unificaCobranca", this.workspace).val() == 0 ? 1 : 0;
+		
+		console.log("param xitao2:" +boletoNFE);
 		
 		var params = {"parametroCobranca.idParametroCobranca": idParametroCobranca,
 				"parametroCobranca.idCota": idCota,
@@ -730,7 +745,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 				"parametroCobranca.qtdDividasAberto": qtdDividasAberto,  
 				"parametroCobranca.vrDividasAberto": vrDividasAberto,
 				"parametroCobranca.devolveEncalhe": devolveEncalhe,
-				"parametroCobranca.idFornecedor": fornecedorPadrao};
+				"parametroCobranca.idFornecedor": fornecedorPadrao, 
+				"parametroCobranca.boletoNFE": boletoNFE};
 		
 		return params;
 	},
@@ -1106,7 +1122,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 	    $("#primeiroDiaQuinzenalParametroCobrancaCota", this.workspace).val(resultado.primeiroDiaQuinzenal);
 	    $("#segundoDiaQuinzenalParametroCobrancaCota", this.workspace).val(resultado.segundoDiaQuinzenal);
 	    
-		
 		$("#recebeEmail", this.workspace).attr("checked", resultado.recebeEmail);
 
         $("#PCC-PS", this.workspace).attr("checked", resultado.segunda);
@@ -1218,7 +1233,15 @@ var parametroCobrancaCotaController = $.extend(true, {
         var terminoContrato 	= $("#parametroCobrancaDateTermino", this.workspace).val();
 		var qtdDividasAberto	= $("#qtdDividasAbertoCota", this.workspace).val();
 		var vrDividasAberto		= $("#vrDividasAbertoCota", this.workspace).val();
-			
+		
+		if($("#isBoletoNFE", this.workspace).is(":checked")) {
+			$("#isBoletoNFE", this.workspace).val(1);
+		} else {
+			$("#isBoletoNFE", this.workspace).val(0);
+		}
+		
+		var boletoNFE = $("#isBoletoNFE", this.workspace).val();
+		
 		$("#recebeEmail", this.workspace).val(0);
 		//if (document.formularioDadosBoleto.recebeEmail.checked){
 		if ($("#recebeEmail", this.workspace).is(":checked")) {
@@ -1274,7 +1297,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 			$("#PCC-PDom", this.workspace).val(1);
 		}
 		var domingo  = $("#PCC-PDom", this.workspace).val();
-				
+		
 		var params =  {"formaCobranca.idCota": idCota,
 						 "formaCobranca.idParametroCobranca": idParametroCobranca,
 						 "formaCobranca.tipoCobranca": tipoCobranca, 
@@ -1309,7 +1332,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 						 "parametroCobranca.vrDividasAberto": vrDividasAberto,
 						 "parametroCobranca.contrato": contrato,
 						 "parametroCobranca.inicioContrato": inicioContrato,
-						 "parametroCobranca.terminoContrato": terminoContrato};
+						 "parametroCobranca.terminoContrato": terminoContrato,
+						 "parametroCobranca.boletoNFE": boletoNFE};
 		
 		params = serializeArrayToPost('listaIdsFornecedores', parametroCobrancaCotaController.obterFornecedoresMarcados(), params );
  
