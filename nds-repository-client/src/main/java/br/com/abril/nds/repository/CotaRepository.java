@@ -468,4 +468,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
 
 	List<Integer> buscarNumeroCotasPorEnderecoLED(Integer enderecoLED);
+
+
+	Long obterIdPorNumerDaCota(Integer numeroCota);
 }

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -287,7 +287,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	}
 	
 	// eliminar duplicados
-	Set<ProdutoEdicaoVendaMediaDTO> hs = new HashSet<>();
+	Set<ProdutoEdicaoVendaMediaDTO> hs = new LinkedHashSet<>();
 	hs.addAll(selecionados);
 	selecionados.clear();
 	selecionados.addAll(hs);
@@ -391,7 +391,14 @@ public class DistribuicaoVendaMediaController extends BaseController {
     	filtro.setConsolidado(modoAnalise.equals("NORMAL") || idProdutoEdicaoPesquisa == null || !idProdutoEdicao.equals(idProdutoEdicaoPesquisa));
     	
     	Produto produto = prodService.obterProdutoPorCodigo(filtro.getCodigo());
-    	filtro.setCodigo(produto.getCodigoICD());
+    	if ( produto == null && filtro.getCodigo() != null && filtro.getCodigo().length() > 6 )
+    		produto = prodService.obterProdutoPorCodigo(filtro.getCodigo().substring(0,6));
+    	if ( produto != null ) {
+    	   filtro.setCodigo(produto.getCodigoICD());
+    	  }
+    	  else {
+    		filtro.setCodigo(filtro.getCodigo().substring(0,6));
+    	  }
     	
         List<ProdutoEdicaoVendaMediaDTO> resultado = distribuicaoVendaMediaService.pesquisar(filtro);
         

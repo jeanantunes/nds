@@ -47,6 +47,10 @@ var MANTER_COTA = $.extend(true, {
         $('#municipioPesquisa').keyup(function (){
         	autoCompl.autoCompletarPorNomeSimples("/cadastro/endereco/pesquisarLocalidades", '#municipioPesquisa', "nomeLocalidade", 1);
     	});
+        
+        $('.isCotaUtilizaParametrosDistrib').change(function (){
+        	MANTER_COTA.atualizarParametrosDistrib();
+    	});
 
         COTA_FORNECEDOR.initTabFornecedorCota();
 
@@ -844,7 +848,46 @@ var MANTER_COTA = $.extend(true, {
     fecharDialogExibicaoHistoricoTitularidade : function() {
         MANTER_COTA.cancelarCadastro(MANTER_COTA.carregarHistoricoTitularidade);
     },
+    
+    atualizarParametrosDistrib : function(){
+    	if($("#DISTRIB_COTAcotaUtilizaParametrosDistrib", this.workspace).prop("checked")){
+    		
+			 $.postJSON(contextPath + "/cadastro/cota/parametrosEmissaoDoc",null,
+		                function (result){
+				 			var dto = result;
+				 
+				 			MANTER_COTA.set('neImpresso',				    dto.neImpresso);
+							MANTER_COTA.set('neEmail',				        dto.neEmail);
+							MANTER_COTA.set('ceImpresso',				    dto.ceImpresso);
+							MANTER_COTA.set('ceEmail',				        dto.ceEmail);
+							MANTER_COTA.set('slipImpresso',			        dto.slipImpresso);
+							MANTER_COTA.set('slipEmail',				    dto.slipEmail);
+							MANTER_COTA.set('boletoImpresso',			    dto.boletoImpresso);
+							MANTER_COTA.set('boletoEmail',			        dto.boletoEmail);
+							MANTER_COTA.set('boletoSlipImpresso',		    dto.boletoSlipImpresso);
+							MANTER_COTA.set('boletoSlipEmail',		        dto.boletoSlipEmail);
+							MANTER_COTA.set('reciboImpresso',			    dto.reciboImpresso);
+							MANTER_COTA.set('reciboEmail',			        dto.reciboEmail);
+		                }
+	          		);
+    	}
+    },
 
+    set : function(campo,value) {
+		
+		var elemento = $("#DISTRIB_COTA"+campo);
+		
+		if(elemento.attr('type') == 'checkbox') {
+			if(value) {
+				elemento.attr('checked','checked');
+			} else {
+				elemento.removeAttr('checked');
+			}
+		} else {
+			elemento.val(value);
+		}
+	},
+    
     atualizarEstadoTela : function() {
         if (this.isModoTelaCadastroCota()) {
             $("#dialog-cota", this._workspace).find(':input(:disabled)').prop('disabled', false);

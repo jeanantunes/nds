@@ -404,7 +404,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
         		
         		if (cota != null) {
         			
-        		    return (fc.getFornecedores().contains(fornecedorAtual) && !fornecedorAtual.equals(fornecedorAnterior));
+        		    if  (fc.getFornecedores().contains(fornecedorAtual) && !fornecedorAtual.equals(fornecedorAnterior))
+        		    	return true;
         		}    
         	}
         }
@@ -413,7 +414,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
         	if (fc.getPoliticaCobranca() != null) {
         		
-        		return (fc.getFornecedores().contains(fornecedorAtual) && !fornecedorAtual.equals(fornecedorAnterior));
+        		if  (fc.getFornecedores().contains(fornecedorAtual) && !fornecedorAtual.equals(fornecedorAnterior))
+        			return true;
         	}
         }
        

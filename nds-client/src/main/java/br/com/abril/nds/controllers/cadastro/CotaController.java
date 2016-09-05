@@ -396,7 +396,7 @@ public class CotaController extends BaseController {
 			
 			for (Cota cota : listaCotas) {
 				
-				String nomeExibicao = cota.getNumeroCota() +" "+PessoaUtil.obterNomeExibicaoPeloTipo(cota.getPessoa());
+				String nomeExibicao = PessoaUtil.obterNomeExibicaoPeloTipo(cota.getPessoa());
 					
 				CotaVO cotaVO = new CotaVO(cota.getNumeroCota(), nomeExibicao);
 				
@@ -674,6 +674,16 @@ public class CotaController extends BaseController {
 		
 		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
+	
+	@Post
+	@Path("/parametrosEmissaoDoc")
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
+	public void getDadosParametrosDistribEmissaoDoc(){
+		DistribuicaoDTO paramsEmissaoDoc = cotaService.buscarParametrosDistribEmissaoDoc();
+		
+		result.use(Results.json()).from(paramsEmissaoDoc, "result").recursive().serialize();
+	}
+	
 	
 	private void validar() {
 		
@@ -1460,12 +1470,12 @@ public class CotaController extends BaseController {
      */
 	private void validarDadosDistribuicaoCotaSalvar(DistribuicaoDTO distribuicao) {
 		
-		if(distribuicao.getDescricaoTipoEntrega() == null){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Tipo de Entrega deve ser informado!");
-		}
+//		if(distribuicao.getDescricaoTipoEntrega() == null){
+//			
+//			throw new ValidacaoException(TipoMensagem.WARNING,"Tipo de Entrega deve ser informado!");
+//		}
 		
-		if(!DescricaoTipoEntrega.COTA_RETIRA.equals(distribuicao.getDescricaoTipoEntrega())) {
+		if(distribuicao.getDescricaoTipoEntrega() != null && !DescricaoTipoEntrega.COTA_RETIRA.equals(distribuicao.getDescricaoTipoEntrega())) {
 			
 			cotaService.validarTipoEntrega(distribuicao.getNumCota(),distribuicao.getDescricaoTipoEntrega());
 			
@@ -1476,7 +1486,11 @@ public class CotaController extends BaseController {
 			List<Integer> numeroCotasNoEnderecoLED =  cotaService.buscarNumeroCotasPorEnderecoLED(distribuicao.getEnderecoLED());
 			
 			if(!numeroCotasNoEnderecoLED.isEmpty()){
-				throw new ValidacaoException(TipoMensagem.WARNING,"A cota "+numeroCotasNoEnderecoLED.get(0)+" já esta cadastrado neste endereco: "+distribuicao.getEnderecoLED());
+				
+				if(numeroCotasNoEnderecoLED.size() == 1 && (!numeroCotasNoEnderecoLED.get(0).equals(distribuicao.getNumCota()))){
+					throw new ValidacaoException(TipoMensagem.WARNING,"A cota "+numeroCotasNoEnderecoLED.get(0)+" já esta cadastrado neste endereco: "+distribuicao.getEnderecoLED());
+				}
+				
 			}
 			
 		}

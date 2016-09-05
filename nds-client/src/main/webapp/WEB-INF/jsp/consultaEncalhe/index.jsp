@@ -33,6 +33,12 @@ $(function(){
 				</a> 
 			</span> 
 			
+			<span class="bt_arq">
+       			<a id="consultaEncalhe-btnEnviarEmail" href="javascript:void(0)" original-title="Enviar email">
+       				<img src="${pageContext.request.contextPath}/images/ico_email.png" alt="Enviar email" hspace="5" border="0">
+       			</a>
+       		</span>
+			
 			<span class="bt_arq"> 
 				<a id="linkConsultaEncalhePDF"  href="javascript:void(0);"  rel="tipsy" title="Imprimir">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /> 
