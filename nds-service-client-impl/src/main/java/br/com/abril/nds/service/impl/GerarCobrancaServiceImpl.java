@@ -1235,7 +1235,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			FormaCobranca formaCobrancaDiferenciada = this.obterFormaCobrancaBoletoAvulso();
 			
 			if(formaCobrancaDiferenciada == null) {
-				throw new ValidacaoException(TipoMensagem.ERROR, "Não foi criado uma forma de cobrança boleto Auvulso.");
+				throw new ValidacaoException(TipoMensagem.ERROR, "Não foi criado uma forma de cobrança para boleto Avulso.");
 			}
 			
 			this.getConsolidadoHelperSemCentralizacao(cota, 

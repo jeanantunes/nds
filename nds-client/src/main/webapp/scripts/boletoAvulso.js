@@ -427,6 +427,7 @@ var GerarBoletoAvulsoController = $.extend(true, {
 			null,
 			true
 		);
+		
 	},
 	
 	//OBTEM OS CODIGOS DAS DIVIDAS MARCADAS

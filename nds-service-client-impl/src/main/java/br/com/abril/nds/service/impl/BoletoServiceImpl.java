@@ -3152,6 +3152,7 @@ public class BoletoServiceImpl implements BoletoService {
 	}
 
 	@Override
+	@Transactional
 	public List<BoletoAvulsoDTO> obterDadosBoletoAvulso(FiltroBoletoAvulsoDTO boletoAvulso) {
 		 
 		List<Cota> cotas = this.boxRepository.obterCotasParaBoletoAvulso(boletoAvulso);

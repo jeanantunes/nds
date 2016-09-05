@@ -408,6 +408,12 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
             
             query.setParameter("idBox", boletoAvulso.getIdBox());
         }
+        
+
+        if (boletoAvulso.getIdRegiao() != null && boletoAvulso.getIdRegiao() != 0){
+            
+            query.setParameter("idRegiao", boletoAvulso.getIdRegiao());
+        }
     }
     
     /**
@@ -635,7 +641,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 			hql.append(" WHERE regiao.id = :idRegiao) ");
 		}
         
-        hql.append(" and cota.numeroCota in ('100', '101', '102', '104') ");
+        // hql.append(" and cota.numeroCota in ('100', '101', '102', '104') ");
         hql.append("order by box.codigo, roteiro.ordem, rota.ordem, cota.numeroCota ");
     
         return hql.toString();
