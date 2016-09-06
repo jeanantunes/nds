@@ -295,33 +295,69 @@ public class ImpressaoNFEController extends BaseController {
 		
 		mensagens.add("Emails enviado com sucesso!");
 		
-		for (Integer numeroCota : listaDeNumerosDeCota) {
-			Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+		if(listaDeNumerosDeCota != null && !listaDeNumerosDeCota.isEmpty()){
 			
-			List<Long> nota = new ArrayList<>();
-			nota.add(listaDosNumerosDasNotas.get(cont));
-			filtro.setNumerosNotas(nota);
-			cont++;
-			
-			if(cota.getParametrosCotaNotaFiscalEletronica() == null || cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() == null){
-				mensagens.add("Erro ao enviar email para a cota: " + cota.getNumeroCota());
-				continue;
-			}
-			
-			String[] listaDeDestinatarios = {cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica()};
-
-			byte[] report = this.impressaoNFEService.imprimirNFe(filtro);
-			
-			AnexoEmail anexoPDF = new AnexoEmail("IMPRESSÃO NFE - Cota "+numeroCota, report, TipoAnexo.PDF);
-	    	
-	    	try {
-				emailSerice.enviar("[NDS] - Geração NF-e", "Olá, segue em anexo a NF-e.", listaDeDestinatarios, anexoPDF);
-				System.out.println("Email enviado, impressao NFE, cota - "+numeroCota);
+			for (Integer numeroCota : listaDeNumerosDeCota) {
+				Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 				
-			} catch (AutenticacaoEmailException e) {
-				mensagens.add("Erro ao enviar email para a cota: " + cota.getNumeroCota());
+				List<Long> nota = new ArrayList<>();
+				nota.add(listaDosNumerosDasNotas.get(cont));
+				filtro.setNumerosNotas(nota);
+				cont++;
+				
+				if(cota.getParametrosCotaNotaFiscalEletronica() == null || cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() == null){
+					mensagens.add("Erro ao enviar email para a cota: " + cota.getNumeroCota());
+					continue;
+				}
+				
+				String[] listaDeDestinatarios = {cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica()};
+				
+				byte[] report = this.impressaoNFEService.imprimirNFe(filtro);
+				
+				AnexoEmail anexoPDF = new AnexoEmail("IMPRESSÃO NFE - Cota "+numeroCota, report, TipoAnexo.PDF);
+				
+				try {
+					emailSerice.enviar("[NDS] - Geração NF-e", "Olá, segue em anexo a NF-e.", listaDeDestinatarios, anexoPDF);
+					System.out.println("Email enviado, impressao NFE, cota - "+numeroCota);
+					
+				} catch (AutenticacaoEmailException e) {
+					mensagens.add("Erro ao enviar email para a cota: " + cota.getNumeroCota());
+				}
 			}
+		}else{
+			filtro.setPesquisarCotasParaImpressao(true);
+			List<NotasCotasImpressaoNfeDTO> listaCotasImpressaoNFe = impressaoNFEService.obterNotafiscalImpressao(filtro);
+			
+			for (NotasCotasImpressaoNfeDTO notaDTO : listaCotasImpressaoNFe) {
+				
+				Cota cota = this.cotaService.obterPorId(notaDTO.getIdCota());
+				
+				List<Long> nota = new ArrayList<>();
+				nota.add(notaDTO.getNumero());
+				filtro.setNumerosNotas(nota);
+				
+				if(cota.getParametrosCotaNotaFiscalEletronica() == null || cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() == null){
+					mensagens.add("Erro ao enviar email para a cota: " + cota.getNumeroCota());
+					continue;
+				}
+				
+				String[] listaDeDestinatarios = {cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica()};
+				
+				byte[] report = this.impressaoNFEService.imprimirNFe(filtro);
+				
+				AnexoEmail anexoPDF = new AnexoEmail("IMPRESSÃO NFE - Cota "+cota.getNumeroCota(), report, TipoAnexo.PDF);
+				
+				try {
+					emailSerice.enviar("[NDS] - Geração NF-e", "Olá, segue em anexo a NF-e.", listaDeDestinatarios, anexoPDF);
+					System.out.println("Email enviado, impressao NFE, cota - "+cota.getNumeroCota());
+					
+				} catch (AutenticacaoEmailException e) {
+					mensagens.add("Erro ao enviar email para a cota: " + cota.getNumeroCota());
+				}
+			}
+			
 		}
+		
 		
 		if (mensagens.isEmpty()) {
 			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Email enviado com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
