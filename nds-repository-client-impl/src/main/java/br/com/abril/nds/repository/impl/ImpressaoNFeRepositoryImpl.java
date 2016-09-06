@@ -684,7 +684,9 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			hql.append(" AND caracteristicasPdv.pontoPrincipal = true ");			
 		}
 		
-		
+		if(filtro.isPesquisarCotasParaImpressao() && (filtro.getNumerosNotas() != null && !filtro.getNumerosNotas().isEmpty())){
+			hql.append(" AND notaFiscal.id  in (:numeroNotas) ");
+		}
 		
 		if(isGroup) {
 
@@ -756,8 +758,8 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		return hql;
 	}
 
-	private Query queryConsultaImpressaoParameters(StringBuilder hql, FiltroImpressaoNFEDTO filtro) {
 		
+	private Query queryConsultaImpressaoParameters(StringBuilder hql, FiltroImpressaoNFEDTO filtro) {
 		// Realizar a consulta e converter ao objeto cota exemplares.
 		Query query = this.getSession().createQuery(hql.toString());		
 		
@@ -807,6 +809,10 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		
 		if(filtro.getIdsFornecedores() != null) {
 			query.setParameterList("fornecedor", filtro.getIdsFornecedores());
+		}
+		
+		if(filtro.isPesquisarCotasParaImpressao() && (filtro.getNumerosNotas() != null && !filtro.getNumerosNotas().isEmpty())){
+			query.setParameterList("numeroNotas", filtro.getNumerosNotas());
 		}
 		
 		return query;

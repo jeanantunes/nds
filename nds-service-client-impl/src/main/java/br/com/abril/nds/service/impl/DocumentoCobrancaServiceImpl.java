@@ -464,9 +464,14 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
      */
     private void enviarDocumentoPorEmail(final Cobranca cobranca) throws AutenticacaoEmailException, Exception {
         
-        final String assunto = distribuidorService.assuntoEmailCobranca();
+//        final String assunto = distribuidorService.assuntoEmailCobranca();
+    	
+    	String assunto = cobranca.getTipoCobranca().getDescricao()+" - Data " +cobranca.getDataEmissao()+" - Cota " + cobranca.getCota().getNumeroCota();
+    	String nomeAnexo = cobranca.getNossoNumero()+" "+assunto;
         
-        final String mensagem = distribuidorService.mensagemEmailCobranca();
+//        final String mensagem = distribuidorService.mensagemEmailCobranca();
+    	
+    	String mensagem = "Olá, a cobrança segue anexo.";
         
         final String emailCota = cobranca.getCota().getPessoa().getEmail();
         final String[] destinatarios = new String[]{emailCota};
@@ -474,7 +479,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         final byte[] arquivo = getDocumentoCobranca(cobranca);
         
         final AnexoEmail anexoEmail = new AnexoEmail();
-        anexoEmail.setNome(cobranca.getNossoNumero());
+        anexoEmail.setNome(nomeAnexo);
         anexoEmail.setAnexo(arquivo);
         anexoEmail.setTipoAnexo(AnexoEmail.TipoAnexo.PDF);
         

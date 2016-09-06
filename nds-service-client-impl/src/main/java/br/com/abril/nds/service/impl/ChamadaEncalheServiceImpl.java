@@ -906,7 +906,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			Cota cota = cotaRepository.buscarPorId(dto.getIdCota());
 			
-			if(filtro.getNumCotaDe()==null && filtro.getNumCotaAte()==null){
+			if((filtro.getNumCotaDe()==null && filtro.getNumCotaAte()==null) || (!filtro.getNumCotaDe().equals(filtro.getNumCotaAte()))){
 				
 				if(filtro.isImpressao()){
 					if(cota.getParametroDistribuicao().getUtilizaDocsParametrosDistribuidor()){
@@ -1142,6 +1142,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			Cota cota = cotaService.obterPorId(idCota);
 			
+			lista.get(0).getEmissaoCEImpressao().get(0).getDataEmissao();
 			if (cota.getPessoa().getEmail() == null) {
 				if(numeroCotasSemEmail.isEmpty()){
 					numeroCotasSemEmail = cota.getNumeroCota().toString();
@@ -1154,10 +1155,14 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			String[] listaDeDestinatarios = {cota.getPessoa().getEmail()};
 			
 			try {
+				String nomeArquivo = "CHAMADA DE ENCALHE - "+DateUtil.formatarDataPTBR(new Date())+" – COTA "+cota.getNumeroCota();
+				
+				String assunto = "Emissão "+nomeArquivo;
+				
 				byte[] anexo = this.gerarDocumentoEmissaoCE(lista);
 				
-				AnexoEmail anexoPDF = new AnexoEmail("CHAMADA DE ENCALHE – COTA "+cota.getNumeroCota(), anexo, TipoAnexo.PDF);
-				emailSerice.enviar("Emissão Chamada de Encalhe", "Olá, segue em anexo a chamada de encalhe.", listaDeDestinatarios, anexoPDF);
+				AnexoEmail anexoPDF = new AnexoEmail(nomeArquivo, anexo, TipoAnexo.PDF);
+				emailSerice.enviar(assunto, "Olá, segue em anexo a chamada de encalhe.", listaDeDestinatarios, anexoPDF);
 			} catch ( AutenticacaoEmailException | JRException | URISyntaxException e) {
 				e.printStackTrace();
 			}
