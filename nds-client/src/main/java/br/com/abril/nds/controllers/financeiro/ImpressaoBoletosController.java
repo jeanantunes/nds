@@ -551,11 +551,12 @@ public class ImpressaoBoletosController extends BaseController {
 
 		session.setAttribute(DIVIDA_SESSION_ATTRIBUTE, arquivo);
 		
-		if(!filtro.getMensagemValidacaoImpressao().isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, filtro.getMensagemValidacaoImpressao());
-		}
-
 		result.use(Results.json()).from(tipoImpressao, "result").serialize();
+
+//		if(!filtro.getMensagemValidacaoImpressao().isEmpty()){
+//			throw new ValidacaoException(TipoMensagem.WARNING, filtro.getMensagemValidacaoImpressao());
+//		}
+
 	}
 
 	@Get

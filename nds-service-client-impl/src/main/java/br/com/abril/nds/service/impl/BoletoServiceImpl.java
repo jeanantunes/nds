@@ -1958,15 +1958,20 @@ public class BoletoServiceImpl implements BoletoService {
             
             final String[] destinatarios = new String[]{cota.getPessoa().getEmail()};
             
-            final String assunto = distribuidorRepository.assuntoEmailCobranca();
+//            final String assunto = distribuidorRepository.assuntoEmailCobranca();
+//            final String mensagem = distribuidorRepository.mensagemEmailCobranca();
+//            if(assunto == null || assunto.isEmpty()){
+//            	assunto = "[NDS] - Emissão "+nomeAnexo;
+//            }
+//            if(mensagem == null || mensagem.isEmpty()){
+//            	mensagem = "Olá, o boleto segue em anexo.";
+//            }
             
-            final String mensagem = distribuidorRepository.mensagemEmailCobranca();
+            String nomeAnexo = "Boleto "+nossoNumero+" - Data "+boleto.getDataEmissao()+" - Cota "+cota.getNumeroCota();
+            String assunto = "[NDS] - Emissão "+nomeAnexo;
+            String mensagem = "Olá, o boleto segue anexo.";
             
-            email.enviar(assunto == null ? "" : assunto,
-                    mensagem == null ? "" : mensagem,
-                            destinatarios,
-                            new AnexoEmail("Boleto-"+nossoNumero+" - Cota "+cota.getNumeroCota(), anexo,TipoAnexo.PDF),
-                            true);
+            email.enviar(assunto, mensagem, destinatarios, new AnexoEmail(nomeAnexo, anexo,TipoAnexo.PDF), true);
             
         } catch(final AutenticacaoEmailException e){
             
