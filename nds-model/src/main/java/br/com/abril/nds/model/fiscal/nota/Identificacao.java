@@ -189,6 +189,7 @@ public class Identificacao implements Serializable {
 		
 	}
 	
+	// Ajuste info Fisco
 	public enum ProcessoEmissao implements NotaFiscalEnum {
 		
 		EMISSAO_NFE_APLICATIVO_CONTRIBUINTE(0, "Aplicativo do Contribuinte"), 
