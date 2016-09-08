@@ -69,6 +69,7 @@ import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.Util;
@@ -1479,7 +1480,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			List<NotaEnvio> listaDeNotaEnvioDeUmaCota = entry.getValue();
 			notaDeCadaCota = nfeService.obterNEsPDF(listaDeNotaEnvioDeUmaCota, false, filtro.getIntervaloMovimento());
 			
-			String assuntoAndNomeArquivo = "NOTA DE ENVIO - "+listaDeNotaEnvioDeUmaCota.get(0).getDataEmissao() + " - COTA "+listaDeNotaEnvioDeUmaCota.get(0).getDestinatario().getNumeroCota();
+			String assuntoAndNomeArquivo = "[NDS] - NOTA DE ENVIO - "+DateUtil.formatarDataPTBR(listaDeNotaEnvioDeUmaCota.get(0).getDataEmissao()) + " - COTA "+listaDeNotaEnvioDeUmaCota.get(0).getDestinatario().getNumeroCota();
 			
 			
 			if(destinatario.getEmail() == null){
@@ -1489,7 +1490,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			String[] listaDeDestinatarios = {destinatario.getEmail()};
 			
 			AnexoEmail anexoPDF = new AnexoEmail(assuntoAndNomeArquivo, notaDeCadaCota, TipoAnexo.PDF);
-			emailSerice.enviar(assuntoAndNomeArquivo, "Olá, segue em anexo a nota de envio.", listaDeDestinatarios, anexoPDF);
+			emailSerice.enviar(assuntoAndNomeArquivo, "Olá, a nota de envio segue anexo.", listaDeDestinatarios, anexoPDF);
 			System.out.println("Email enviado: "+assuntoAndNomeArquivo);
 		}
 	}

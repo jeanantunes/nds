@@ -22,7 +22,7 @@ import java.util.TreeSet;
 
 import javax.xml.bind.ValidationException;
 
-import org.jrimum.domkee.financeiro.banco.febraban.Titulo.EnumAceite;
+//import org.jrimum.domkee.financeiro.banco.febraban.Titulo.EnumAceite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1818,11 +1818,11 @@ public class BoletoServiceImpl implements BoletoService {
         if(corpoBoleto.getTituloAceite() == null || corpoBoleto.getTituloAceite().equals("")) {
         	corpoBoleto.setTituloAceite("N");
         } else {
-        	if(corpoBoleto.getTituloAceite().equals(EnumAceite.A)) {
-        		corpoBoleto.setTituloAceite("A");
-        	} else {
-        		corpoBoleto.setTituloAceite("N");
-        	}
+//        	if(corpoBoleto.getTituloAceite().equals(EnumAceite.A)) {
+//        		corpoBoleto.setTituloAceite("A");
+//        	} else {
+//        		corpoBoleto.setTituloAceite("N");
+//        	}
         	
         }
         
@@ -1959,15 +1959,20 @@ public class BoletoServiceImpl implements BoletoService {
             
             final String[] destinatarios = new String[]{cota.getPessoa().getEmail()};
             
-            final String assunto = distribuidorRepository.assuntoEmailCobranca();
+//            final String assunto = distribuidorRepository.assuntoEmailCobranca();
+//            final String mensagem = distribuidorRepository.mensagemEmailCobranca();
+//            if(assunto == null || assunto.isEmpty()){
+//            	assunto = "[NDS] - Emissão "+nomeAnexo;
+//            }
+//            if(mensagem == null || mensagem.isEmpty()){
+//            	mensagem = "Olá, o boleto segue em anexo.";
+//            }
             
-            final String mensagem = distribuidorRepository.mensagemEmailCobranca();
+            String nomeAnexo = "Boleto "+nossoNumero+" - Data "+boleto.getDataEmissao()+" - Cota "+cota.getNumeroCota();
+            String assunto = "[NDS] - Emissão "+nomeAnexo;
+            String mensagem = "Olá, o boleto segue anexo.";
             
-            email.enviar(assunto == null ? "" : assunto,
-                    mensagem == null ? "" : mensagem,
-                            destinatarios,
-                            new AnexoEmail("Boleto-"+nossoNumero+" - Cota "+cota.getNumeroCota(), anexo,TipoAnexo.PDF),
-                            true);
+            email.enviar(assunto, mensagem, destinatarios, new AnexoEmail(nomeAnexo, anexo,TipoAnexo.PDF), true);
             
         } catch(final AutenticacaoEmailException e){
             

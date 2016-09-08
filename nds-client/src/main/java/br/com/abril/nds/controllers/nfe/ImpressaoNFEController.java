@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.nfe;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +37,7 @@ import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -314,10 +316,12 @@ public class ImpressaoNFEController extends BaseController {
 				
 				byte[] report = this.impressaoNFEService.imprimirNFe(filtro);
 				
-				AnexoEmail anexoPDF = new AnexoEmail("IMPRESSÃO NFE - Cota "+numeroCota, report, TipoAnexo.PDF);
+				String nomeAnexo = "NF-e - Data "+DateUtil.formatarDataPTBR(new Date())+" - Cota "+numeroCota;
+				
+				AnexoEmail anexoPDF = new AnexoEmail(nomeAnexo, report, TipoAnexo.PDF);
 				
 				try {
-					emailSerice.enviar("[NDS] - Geração NF-e", "Olá, segue em anexo a NF-e.", listaDeDestinatarios, anexoPDF);
+					emailSerice.enviar("[NDS] - Geração "+nomeAnexo, "Olá, a NF-e segue anexo.", listaDeDestinatarios, anexoPDF);
 					System.out.println("Email enviado, impressao NFE, cota - "+numeroCota);
 					
 				} catch (AutenticacaoEmailException e) {
@@ -345,10 +349,12 @@ public class ImpressaoNFEController extends BaseController {
 				
 				byte[] report = this.impressaoNFEService.imprimirNFe(filtro);
 				
-				AnexoEmail anexoPDF = new AnexoEmail("IMPRESSÃO NFE - Cota "+cota.getNumeroCota(), report, TipoAnexo.PDF);
+				String nomeAnexo = "NF-e - Data "+DateUtil.formatarDataPTBR(new Date())+" - Cota "+cota.getNumeroCota();
+				
+				AnexoEmail anexoPDF = new AnexoEmail(nomeAnexo, report, TipoAnexo.PDF);
 				
 				try {
-					emailSerice.enviar("[NDS] - Geração NF-e", "Olá, segue em anexo a NF-e.", listaDeDestinatarios, anexoPDF);
+					emailSerice.enviar("[NDS] - Geração "+nomeAnexo, "Olá, a NF-e segue anexo.", listaDeDestinatarios, anexoPDF);
 					System.out.println("Email enviado, impressao NFE, cota - "+cota.getNumeroCota());
 					
 				} catch (AutenticacaoEmailException e) {

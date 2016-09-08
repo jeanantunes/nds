@@ -285,12 +285,12 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		String[] listaDeDestinatarios = {cota.getPessoa().getEmail()};
 		
-		String nomeArquivo = "SLIP - "+DateUtil.formatarDataPTBR(new Date())+" - Cota "+cota.getNumeroCota();
+		String nomeArquivo = "SLIP - Data "+DateUtil.formatarDataPTBR(new Date())+" - Cota "+cota.getNumeroCota();
 		
 		AnexoEmail anexoPDF = new AnexoEmail(nomeArquivo, retornoArquivoCota, TipoAnexo.PDF);
 		
 		try {
-			emailService.enviar("[NDS] - Emissão "+nomeArquivo, "Olá, segue em anexo o slip.", listaDeDestinatarios, anexoPDF);
+			emailService.enviar("[NDS] - Emissão "+nomeArquivo, "Olá, o SLIP segue anexo.", listaDeDestinatarios, anexoPDF);
 			System.out.println("Envio EMAIL SLIP COTA - "+cota.getNumeroCota());
 		} catch (AutenticacaoEmailException e) {
 			e.printStackTrace();

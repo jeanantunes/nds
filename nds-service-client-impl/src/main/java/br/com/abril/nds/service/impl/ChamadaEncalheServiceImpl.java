@@ -1155,14 +1155,14 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			String[] listaDeDestinatarios = {cota.getPessoa().getEmail()};
 			
 			try {
-				String nomeArquivo = "CHAMADA DE ENCALHE - "+DateUtil.formatarDataPTBR(new Date())+" – COTA "+cota.getNumeroCota();
+				String nomeArquivo = "Chamada de Encalhe - "+DateUtil.formatarDataPTBR(new Date())+" – COTA "+cota.getNumeroCota();
 				
-				String assunto = "Emissão "+nomeArquivo;
+				String assunto = "[NDS] - Emissão "+nomeArquivo;
 				
 				byte[] anexo = this.gerarDocumentoEmissaoCE(lista);
 				
 				AnexoEmail anexoPDF = new AnexoEmail(nomeArquivo, anexo, TipoAnexo.PDF);
-				emailSerice.enviar(assunto, "Olá, segue em anexo a chamada de encalhe.", listaDeDestinatarios, anexoPDF);
+				emailSerice.enviar(assunto, "Olá, a chamada de encalhe segue anexo.", listaDeDestinatarios, anexoPDF);
 			} catch ( AutenticacaoEmailException | JRException | URISyntaxException e) {
 				e.printStackTrace();
 			}
