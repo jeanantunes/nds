@@ -14,7 +14,6 @@ import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.BoletoCotaDTO;
 import br.com.abril.nds.dto.BoletoEmBrancoDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
-import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;

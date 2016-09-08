@@ -1429,13 +1429,14 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Transactional
 	public ValidacaoException enviarEmail(FiltroConsultaNotaEnvioDTO filtro) {
 		
+		List<Integer> numeroCotasNaoRecebemEmail = new ArrayList<>();
 		List<Integer> numeroCotasSemEmail = new ArrayList<>();
 		
 		try {
 			List<NotaEnvio> notasEnvio = gerarNotasEnvio(filtro);
 			
 			if(!filtro.getNumeroCotasSemEmail().isEmpty()){
-				numeroCotasSemEmail.addAll(filtro.getNumeroCotasSemEmail());
+				numeroCotasNaoRecebemEmail.addAll(filtro.getNumeroCotasSemEmail());
 			}
 			
 			//Agrupar a lista de notas por destinatário
@@ -1443,19 +1444,19 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			
 			//Enviar a lista de notas para cada destinatário achado no laço acima
 			enviarNotasParaCadaCota(filtro, mapaDeNotas);
+
+			String mensagem = "E-mail enviado com sucesso.";
 			
 			if(!numeroCotasSemEmail.isEmpty()){
-				String numeroCotas = "";
-				
-				for (Integer numCota : numeroCotasSemEmail) {
-					if(numeroCotas.isEmpty()){
-						numeroCotas = ""+numCota;
-					}else{
-						numeroCotas = numeroCotas+", "+numCota;
-					}
-				}
-				
-				return new ValidacaoException(TipoMensagem.WARNING, "E-mail enviado com sucesso. Porém as cotas: " + numeroCotas + " não possuem e-mail cadastrado.");
+				mensagem += "\n Cotas que não possuem e-mail cadastrado: "+numeroCotasSemEmail.toString();
+			}
+			
+			if(!numeroCotasNaoRecebemEmail.isEmpty()){
+				mensagem += "\n Cotas que não recebem e-mail: "+numeroCotasNaoRecebemEmail.toString();
+			}
+			
+			if(!numeroCotasSemEmail.isEmpty() || !numeroCotasNaoRecebemEmail.isEmpty()){
+				return new ValidacaoException(TipoMensagem.WARNING, mensagem);
 			}
 		}catch (ValidacaoException e) {
 			e.printStackTrace();
@@ -1478,15 +1479,18 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			List<NotaEnvio> listaDeNotaEnvioDeUmaCota = entry.getValue();
 			notaDeCadaCota = nfeService.obterNEsPDF(listaDeNotaEnvioDeUmaCota, false, filtro.getIntervaloMovimento());
 			
+			String assuntoAndNomeArquivo = "NOTA DE ENVIO - "+listaDeNotaEnvioDeUmaCota.get(0).getDataEmissao() + " - COTA "+listaDeNotaEnvioDeUmaCota.get(0).getDestinatario().getNumeroCota();
+			
+			
 			if(destinatario.getEmail() == null){
 				continue;
 			}
 			
 			String[] listaDeDestinatarios = {destinatario.getEmail()};
 			
-			AnexoEmail anexoPDF = new AnexoEmail("NOTA DE ENVIO – COTA "+listaDeNotaEnvioDeUmaCota.get(0).getDestinatario().getNumeroCota(), notaDeCadaCota, TipoAnexo.PDF);
-			emailSerice.enviar("Nota de envio", "Olá, segue em anexo a nota de envio.", listaDeDestinatarios, anexoPDF);
-			System.out.println("Email enviado: NOTA DE ENVIO – COTA "+listaDeNotaEnvioDeUmaCota.get(0).getDestinatario().getNumeroCota());
+			AnexoEmail anexoPDF = new AnexoEmail(assuntoAndNomeArquivo, notaDeCadaCota, TipoAnexo.PDF);
+			emailSerice.enviar(assuntoAndNomeArquivo, "Olá, segue em anexo a nota de envio.", listaDeDestinatarios, anexoPDF);
+			System.out.println("Email enviado: "+assuntoAndNomeArquivo);
 		}
 	}
 

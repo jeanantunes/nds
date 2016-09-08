@@ -393,7 +393,7 @@ var impressaoNfeController = $.extend(true, {
 			else
 				this.cell.notaImpressa = '';
 
-			this.cell.sel = '<input type="checkbox" name="imprimirNFe" id="imprimirNFe_'+ this.cell.idNota +'" value="'+ this.cell.idNota + '" onclick="impressaoNfeController.adicionarAsNFesAImprimir(this.checked, '+ this.cell.idNota +'); impressaoNfeController.adicionarAsCotasAImprimir(this.checked, '+ this.cell.idCota +')" />';
+			this.cell.sel = '<input type="checkbox" name="imprimirNFe" id="imprimirNFe_'+ this.cell.idNota +'" cota="'+ this.cell.idCota +'" value="'+ this.cell.idNota + '" onclick="impressaoNfeController.adicionarAsNFesAImprimir(this.checked, '+ this.cell.idNota +'); impressaoNfeController.adicionarAsCotasAImprimir(this.checked, '+ this.cell.idCota +')" />';
 		});
 
 		$(".grids", impressaoNfeController.workspace).show();
@@ -573,6 +573,8 @@ var impressaoNfeController = $.extend(true, {
 					this.checked = false;
 
 				impressaoNfeController.adicionarAsNFesAImprimir(this.checked, parseInt(this.value));
+//				impressaoNfeController.adicionarAsCotasAImprimir(this.checked, parseInt($('#'+this.id).attr("cota")));
+				
 			}
 		});
 	},
