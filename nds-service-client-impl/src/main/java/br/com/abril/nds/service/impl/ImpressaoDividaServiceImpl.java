@@ -138,7 +138,7 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 			return documentoCobrancaService.gerarDocumentoCobrancaComSlip(dividas, filtro, politicasCobranca, filtro.getDataMovimento());
 		} else {
 		    
-		    return "documentoCobrancaService.gerarDocumentoCobranca(dividas, filtro.getTipoCobranca())".getBytes();
+		    return documentoCobrancaService.gerarDocumentoCobranca(dividas, filtro.getTipoCobranca());
 		}
 	}
 
