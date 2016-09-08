@@ -65,6 +65,7 @@ import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoAmbiente;
 import br.com.abril.nds.model.fiscal.nota.InfAdicWrapper;
 import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalInformacoes;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciadaNFE;
 import br.com.abril.nds.model.fiscal.nota.pk.NotaFiscalReferenciadaPK;
@@ -1030,25 +1031,43 @@ public class NFeServiceImpl implements NFeService {
 			notasFiscaisSubdivididas.add(notaFiscal);
 			
 			for(List<DetalheNotaFiscal> detalhesNotaFiscal : listaSubdivididaItensNotas) {
-				
+				/** Nota fiscal subDividida, quantidade de linhas na base de dados (900) linhas  
+				 */
 				final NotaFiscal notaFiscalSubdividida = new NotaFiscal();
-				naturezaOperacao.setNotaFiscalNumeroNF(naturezaOperacao.getNotaFiscalNumeroNF() + 1);
-				naturezaOperacaoRepository.merge(naturezaOperacao);
 				
-				final Usuario usuario = this.usuarioService.getUsuarioLogado();
-				
-				notaFiscal.setUsuario(usuario);
-				
-				NotaFiscalBuilder.popularDadosEmissor(notaFiscalSubdividida, distribuidor);
-				
-				NotaFiscalTransportadorBuilder.montarTransportador(notaFiscalSubdividida, naturezaOperacao, transportadores);
-				
-				NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscalSubdividida, parametrosSistema, naturezaOperacao);
-				
-				notaFiscalSubdividida.getNotaFiscalInformacoes().setDetalhesNotaFiscal(detalhesNotaFiscal);
-				
-				notasFiscaisSubdivididas.add(notaFiscalSubdividida);
-				
+			    naturezaOperacao.setNotaFiscalNumeroNF(naturezaOperacao.getNotaFiscalNumeroNF() + 1);
+			    
+			    naturezaOperacaoRepository.merge(naturezaOperacao);
+			    
+			    final Usuario usuario = this.usuarioService.getUsuarioLogado();
+			    
+			    notaFiscalSubdividida.setUsuario(usuario);
+			    
+			    NotaFiscalBuilder.popularDadosEmissor(notaFiscalSubdividida, distribuidor);
+			    
+			    NotaFiscalTransportadorBuilder.montarTransportador(notaFiscalSubdividida, naturezaOperacao, transportadores);
+			    
+			    NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscalSubdividida, parametrosSistema, naturezaOperacao);
+			    
+			    Fornecedor fornecedor = fornecedorService.obterFornecedorPorId(16L); 
+			    
+			    EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscalSubdividida, fornecedor);
+			    
+			    NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscalSubdividida, naturezaOperacao);
+			    
+			    montaChaveAcesso(notaFiscalSubdividida);
+			    
+			    notaFiscalSubdividida.getNotaFiscalInformacoes().setDetalhesNotaFiscal(detalhesNotaFiscal);
+			    
+			    if(notaFiscalSubdividida.getNotaFiscalInformacoes().getInformacaoEletronica() == null) {
+			     notaFiscalSubdividida.getNotaFiscalInformacoes().setInformacaoEletronica(new InformacaoEletronica());
+			    }
+			    
+			    notaFiscalSubdividida.getNotaFiscalInformacoes().getInformacaoEletronica().setChaveAcesso(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(3, 47));
+			    
+			    notaFiscalSubdividida.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(Long.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(46, 47)));
+			    
+			    notasFiscaisSubdivididas.add(notaFiscalSubdividida);
 			}
 			
 			return notasFiscaisSubdivididas;
@@ -1131,6 +1150,8 @@ public class NFeServiceImpl implements NFeService {
 			
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().setChaveAcesso(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(3, 47));
 			
+			
+			
 			// obter os movimentos da cota
 			final List<MovimentoFechamentoFiscal> movimentosFechamentoFiscal = new ArrayList<>();
 			final List<MovimentoEstoqueCota> movimentosEstoqueCota = new ArrayList<>();
@@ -1171,6 +1192,15 @@ public class NFeServiceImpl implements NFeService {
 			if(notasFiscaisSubdivididas != null && !notasFiscaisSubdivididas.isEmpty()) {
 				
 				for(NotaFiscal notasFiscalSubdividida : notasFiscaisSubdivididas) {
+					
+					if (notasFiscalSubdividida.getNotaFiscalInformacoes() == null) {
+						notasFiscalSubdividida.setNotaFiscalInformacoes(new NotaFiscalInformacoes());
+						notasFiscalSubdividida.getNotaFiscalInformacoes().setInfAdicWrapper(new InfAdicWrapper());
+					}
+					
+					if (notasFiscalSubdividida.getNotaFiscalInformacoes().getInfAdicWrapper() == null) {
+						notasFiscalSubdividida.getNotaFiscalInformacoes().setInfAdicWrapper(new InfAdicWrapper());
+					}
 					
 					notasFiscalSubdividida.getNotaFiscalInformacoes().getInfAdicWrapper().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 					FaturaBuilder.montarFaturaNotaFiscal(notasFiscalSubdividida);
