@@ -1823,7 +1823,6 @@ public class BoletoServiceImpl implements BoletoService {
         	} else {
         		corpoBoleto.setTituloAceite("N");
         	}
-        	
         }
         
         corpoBoleto.setTituloTipoIdentificadorCNR("COM_VENCIMENTO");

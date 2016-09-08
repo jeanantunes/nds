@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
+import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -60,6 +61,9 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 	@Autowired
 	private DocumentoCobrancaService documentoCobrancaService;
 	
+	@Autowired
+	private ConferenciaEncalheRepository conferenciaEncalheRepository;
+
 	@Autowired
 	private CotaService cotaService;
 	
@@ -218,6 +222,11 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		byte[] retorno = null; 
 
 		List<Integer> listaCotas = controleConferenciaEncalheCotaRepository.obterListaNumCotaConferenciaEncalheCota(filtro);
+		
+		
+		if(listaCotas.isEmpty()){
+			listaCotas = conferenciaEncalheRepository.obterCotasVarejoConferenciaEncalhe(filtro);
+		}
 		
 		if (listaCotas != null && !listaCotas.isEmpty() ) {
 

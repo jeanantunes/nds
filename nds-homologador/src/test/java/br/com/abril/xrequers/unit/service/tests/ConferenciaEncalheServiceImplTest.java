@@ -15,6 +15,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.repository.GrupoRepository;
+import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.impl.ConferenciaEncalheServiceImpl;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
@@ -28,7 +29,7 @@ public class ConferenciaEncalheServiceImplTest {
     private GrupoRepository grupoRepository;
     
     @InjectMocks
-    private ConferenciaEncalheServiceImpl conferenciaEncalheService = new ConferenciaEncalheServiceImpl();
+    private ConferenciaEncalheService conferenciaEncalheService = new ConferenciaEncalheServiceImpl();
     
     @Before
     public void setUp(){
