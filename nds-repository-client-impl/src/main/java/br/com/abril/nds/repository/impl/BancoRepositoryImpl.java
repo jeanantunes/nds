@@ -275,7 +275,7 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
         Query query = super.getSession().createQuery(hql.toString());
 		
         query.setParameter("ativo", true);
-        query.setParameterList("tipoCobranca", Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO, TipoCobranca.BOLETO_AVULSO));
+        query.setParameterList("tipoCobranca", Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_AVULSO));
         
 		return query.list();
 	}

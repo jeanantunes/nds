@@ -28,6 +28,7 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
@@ -83,6 +84,9 @@ public class GerarBoletoAvulsoController extends BaseController {
 	@Autowired
 	private DocumentoCobrancaService documentoCobrancaService;
 	
+	@Autowired
+	private BancoService bancoService;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(GerarBoletoAvulsoController.class);
 
 	@Path("/")
@@ -97,8 +101,17 @@ public class GerarBoletoAvulsoController extends BaseController {
 		this.carregarrComboRota(); 
 
 	    this.carregarComboRoteiro();
+	    
+	    this.carregarComboBanco();
 	}
   
+	private void carregarComboBanco() {
+		
+		List<ItemDTO<Integer,String>> comboBancos = this.bancoService.getComboBancosBoletoAvulso();
+		
+		result.include("bancos",comboBancos);
+	}
+
 	private void carregarComboRegiao() {
 
 		List<ItemDTO<Long,String>> comboRegiao =  new ArrayList<ItemDTO<Long,String>>();

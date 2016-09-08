@@ -606,8 +606,15 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	private String obterQueryCotasBoletoAvulso(FiltroBoletoAvulsoDTO boletoAvulso, StringBuilder hql) {
         
 	    hql.append(" from PDV pdv ")
-	       .append(" join pdv.cota cota ")
-	       .append(" join pdv.rotas rotaPDV ")
+	       .append(" join pdv.cota cota ");
+	    
+	    if(boletoAvulso.getIdBanco() != null) {
+	    	hql.append(" join cota.parametroCobranca parametroCobrancaCota ");
+	    	hql.append(" join parametroCobrancaCota.formasCobrancaCota formaCobranca ");
+	    	hql.append(" join join formaCobranca.banco banco ");
+	    }
+	    
+	    hql.append(" join pdv.rotas rotaPDV ")
 	       .append(" join rotaPDV.rota rota ")
 	       .append(" join rota.roteiro roteiro ")
 	       .append(" join roteiro.roteirizacao roteirizacao ")
