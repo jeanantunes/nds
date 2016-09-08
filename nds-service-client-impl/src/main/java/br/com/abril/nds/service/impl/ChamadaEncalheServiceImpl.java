@@ -130,6 +130,15 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Override
 	@Transactional
 	public List<Integer> obterCotasComOperacaoDiferenciada(FiltroEmissaoCE filtro) {
+		
+		if(filtro.getNumCotaDe() == null){
+			filtro.setNumCotaDe(0);
+		}
+		
+		if(filtro.getNumCotaAte() == null){
+			filtro.setNumCotaAte(999999);
+		}
+		
 		return grupoRepository.obterCotasComOperacaoDiferenciada(filtro);
 	}
 
@@ -610,7 +619,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			if(endereco != null) {
 				dto.setEndereco((endereco.getTipoLogradouro().trim()!= null ? endereco.getTipoLogradouro().toUpperCase().trim() + ": " :"")
-									+ endereco.getLogradouro().toUpperCase().trim()  + ", " + endereco.getNumero().trim());
+									+ endereco.getLogradouro().toUpperCase().trim()  + ", " + (endereco.getNumero()!= null ? endereco.getNumero().trim() : ""));
 				dto.setUf(endereco.getUf().trim());
 				dto.setCidade(endereco.getCidade().trim());
 				dto.setUf(endereco.getUf().trim());

@@ -2301,7 +2301,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 		hql.append(" left join produtoEdicao.descontoLogistica descontoLogisticaProdutoEdicao ");
 		hql.append(" left join produto.descontoLogistica descontoLogisticaProduto ");
 		hql.append(" left join lancamento.periodoLancamentoParcial periodoLancamentoParcial ");
-		hql.append(" join lancamento.estudo estudo, ");
+		hql.append(" left join lancamento.estudo estudo, ");
 		hql.append(" MovimentoEstoqueCota movimentoEstoqueCota join movimentoEstoqueCota.tipoMovimento tipoMovimento ");
 		hql.append(" join movimentoEstoqueCota.cota cota ");
 		hql.append(" join cota.box box ");

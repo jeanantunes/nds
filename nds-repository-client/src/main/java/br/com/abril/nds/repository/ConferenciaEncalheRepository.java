@@ -8,6 +8,7 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ProdutoEdicaoSlip;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -75,7 +76,7 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 			List<Date> datasRecolhimento,
 			boolean indFechado,
 			boolean indPostergado,
-			Set<Long> listaIdProdutoEdicao);
+			Set<Long> listaIdProdutoEdicao, boolean isOperacaoDiferenciada);
 	
 	/**
 	 * Obtém o valorTotal de uma operação de conferência de encalhe. Para o calculo do valor
@@ -138,5 +139,11 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	public boolean obterProcessoUtilizaNfeConferenciaEncalheCota(Integer numeroCota, Date dataOperacao);
 
 	List<CotaDTO> obterListaCotaConferenciaPendenciaErro(Date dataOperacao);
+
+	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_CotaVarejo(final String codigoBarras);
+
+	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoOuNome_CotaVarejo(String codigoOuNome);
+
+	List<Integer> obterCotasVarejoConferenciaEncalhe(FiltroConsultaEncalheDTO filtro);
 
 }
