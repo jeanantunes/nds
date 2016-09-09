@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -171,13 +173,17 @@ public class ImpressaoNFEController extends BaseController {
 	}
 	
 	private PaginacaoVO carregarPaginacao(String sortname, String sortorder, int rp, int page) {
+		
 		PaginacaoVO paginacao = new PaginacaoVO();
 		paginacao.setOrdenacao(Ordenacao.ASC);
 	    paginacao.setPaginaAtual(page);
 	    paginacao.setQtdResultadosPorPagina(rp);
 	    paginacao.setSortOrder(sortorder);
 	    paginacao.setSortColumn(sortname);
-		return paginacao;
+	
+	    
+	    
+	    return paginacao;
 	}
 	
 	private void verificarFiltro(FiltroImpressaoNFEDTO filtro) {
@@ -286,41 +292,40 @@ public class ImpressaoNFEController extends BaseController {
 			throw new ValidacaoException(validacaoVO);
 		}
 		
-		
-		List<Integer> listaDeNumerosDeCota = filtro.getCotasDasNotasJaFiltradas();
-		
-		List<Long> listaDosNumerosDasNotas = filtro.getNumerosNotas();
-		
-		int cont = 0;
+		Map<Integer, List<Long>> mapNumeroNotasAgrupadasPorCota = new HashMap<>();
+		Map<Integer, Cota> mapCotaPesquisada = new HashMap<>();
 		
 		List<String> mensagens  = new ArrayList<>();
-		
 		mensagens.add("Emails enviado com sucesso!");
 		
-		if(listaDeNumerosDeCota == null || listaDeNumerosDeCota.isEmpty()){
+		filtro.setPesquisarCotasParaImpressao(true);
+		List<NotasCotasImpressaoNfeDTO> listaCotasImpressaoNFe = impressaoNFEService.obterNotafiscalImpressao(filtro);
+		
+		for (NotasCotasImpressaoNfeDTO notaDTO : listaCotasImpressaoNFe) {
+			Cota cota = this.cotaService.obterPorId(notaDTO.getIdCota());
 			
-			filtro.setPesquisarCotasParaImpressao(true);
-			List<NotasCotasImpressaoNfeDTO> listaCotasImpressaoNFe = impressaoNFEService.obterNotafiscalImpressao(filtro);
-			
-			listaDeNumerosDeCota = new ArrayList<>();
-			
-			for (NotasCotasImpressaoNfeDTO notaDTO : listaCotasImpressaoNFe) {
-				Cota cota = this.cotaService.obterPorId(notaDTO.getIdCota());
+			if(mapNumeroNotasAgrupadasPorCota.get(cota.getNumeroCota()) == null){
 				
-				if(!listaDeNumerosDeCota.contains(cota.getNumeroCota())){
-					listaDeNumerosDeCota.add(cota.getNumeroCota());
-				}
+				List<Long> numeroNotas = new ArrayList<>();
+				numeroNotas.add(notaDTO.getNumeroNota());
+				
+				mapNumeroNotasAgrupadasPorCota.put(cota.getNumeroCota(), numeroNotas);
+				mapCotaPesquisada.put(cota.getNumeroCota(), cota);
+				
+			}else{
+				mapNumeroNotasAgrupadasPorCota.get(cota.getNumeroCota()).add(notaDTO.getNumeroNota());
 			}
-				
+			
 		}
 		
-		for (Integer numeroCota : listaDeNumerosDeCota) {
-			Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+		for (Integer numeroCota : mapNumeroNotasAgrupadasPorCota.keySet()) {
+			Cota cota = mapCotaPesquisada.get(numeroCota);
 			
 			List<Long> nota = new ArrayList<>();
-			nota.add(listaDosNumerosDasNotas.get(cont));
+			
+			nota.addAll(mapNumeroNotasAgrupadasPorCota.get(numeroCota));
+			
 			filtro.setNumerosNotas(nota);
-			cont++;
 			
 			if(cota.getParametrosCotaNotaFiscalEletronica() == null || cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() == null){
 				mensagens.add("Erro ao enviar email para a cota: " + cota.getNumeroCota());
