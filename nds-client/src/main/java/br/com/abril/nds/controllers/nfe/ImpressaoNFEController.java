@@ -306,14 +306,14 @@ public class ImpressaoNFEController extends BaseController {
 			
 			if(mapNumeroNotasAgrupadasPorCota.get(cota.getNumeroCota()) == null){
 				
-				List<Long> numeroNotas = new ArrayList<>();
-				numeroNotas.add(notaDTO.getNumeroNota());
+				List<Long> numeroIdNotas = new ArrayList<>();
+				numeroIdNotas.add(notaDTO.getIdNota());
 				
-				mapNumeroNotasAgrupadasPorCota.put(cota.getNumeroCota(), numeroNotas);
+				mapNumeroNotasAgrupadasPorCota.put(cota.getNumeroCota(), numeroIdNotas);
 				mapCotaPesquisada.put(cota.getNumeroCota(), cota);
 				
 			}else{
-				mapNumeroNotasAgrupadasPorCota.get(cota.getNumeroCota()).add(notaDTO.getNumeroNota());
+				mapNumeroNotasAgrupadasPorCota.get(cota.getNumeroCota()).add(notaDTO.getIdNota());
 			}
 			
 		}
@@ -321,16 +321,16 @@ public class ImpressaoNFEController extends BaseController {
 		for (Integer numeroCota : mapNumeroNotasAgrupadasPorCota.keySet()) {
 			Cota cota = mapCotaPesquisada.get(numeroCota);
 			
-			List<Long> nota = new ArrayList<>();
-			
-			nota.addAll(mapNumeroNotasAgrupadasPorCota.get(numeroCota));
-			
-			filtro.setNumerosNotas(nota);
-			
 			if(cota.getParametrosCotaNotaFiscalEletronica() == null || cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() == null){
 				mensagens.add("Erro ao enviar email para a cota: " + cota.getNumeroCota());
 				continue;
 			}
+
+			List<Long> idNotas = new ArrayList<>();
+			
+			idNotas.addAll(mapNumeroNotasAgrupadasPorCota.get(numeroCota));
+			
+			filtro.setNumerosNotas(idNotas);
 			
 			String[] listaDeDestinatarios = {cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica()};
 			
