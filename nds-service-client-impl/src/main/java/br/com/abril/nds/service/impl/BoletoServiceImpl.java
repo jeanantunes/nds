@@ -3158,11 +3158,18 @@ public class BoletoServiceImpl implements BoletoService {
 		List<Cota> cotas = this.boxRepository.obterCotasParaBoletoAvulso(boletoAvulso);
 		 
 		List<BoletoAvulsoDTO> listaDC = new ArrayList<BoletoAvulsoDTO>();
-		 
-		List<ItemDTO<Integer, String>> bancos = this.bancoService.getComboBancosBoletoAvulso();
+		
+		List<ItemDTO<Integer, String>> bancos = null;
+		
+		if(boletoAvulso.getIdBanco() != null && boletoAvulso.getIdBanco() > 0 ) {
+			bancos = this.comboBoletoAvulso(boletoAvulso);
+		} else {
+			bancos = this.bancoService.getComboBancosBoletoAvulso();
+		}
+		
 		 
 		for (int index = 0 ; index < cotas.size() ; index++){
-
+			
 		    Cota itemCota = cotas.get(index);
 			    
 			listaDC.add(new BoletoAvulsoDTO(
@@ -3179,5 +3186,22 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		return listaDC;
 	}
+	
+	private List<ItemDTO<Integer, String>> comboBoletoAvulso(FiltroBoletoAvulsoDTO boletoAvulso) {
 		
+		List<ItemDTO<Integer,String>> comboBancos =  new ArrayList<ItemDTO<Integer,String>>();
+		
+		Banco banco = this.bancoService.obterBancoPorId(boletoAvulso.getIdBanco());
+
+		String descricaoBanco = 
+				(banco.getNumeroBanco() == null ? "" : banco.getNumeroBanco() + "-") 
+				+ (banco.getApelido() == null ? "" :  banco.getApelido() + " ")
+				+ (banco.getConta() == null ? "" : banco.getConta())
+				+ (banco.getDvConta() == null ? "" : "-" + banco.getDvConta());
+
+		comboBancos.add(new ItemDTO<Integer,String>(banco.getId().intValue(), descricaoBanco));
+		
+		return comboBancos;
+	}
+	
 }

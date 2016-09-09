@@ -21,6 +21,8 @@ public class FiltroBoletoAvulsoDTO {
 	
 	private String observacao;
 	
+	private Integer numeroCota;
+	
 	public Long getIdRegiao() {
 		return idRegiao;
 	}
@@ -83,5 +85,13 @@ public class FiltroBoletoAvulsoDTO {
 
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
+	}
+
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
 	}
 }
