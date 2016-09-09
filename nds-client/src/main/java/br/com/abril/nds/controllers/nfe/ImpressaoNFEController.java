@@ -297,73 +297,52 @@ public class ImpressaoNFEController extends BaseController {
 		
 		mensagens.add("Emails enviado com sucesso!");
 		
-		if(listaDeNumerosDeCota != null && !listaDeNumerosDeCota.isEmpty()){
+		if(listaDeNumerosDeCota == null || listaDeNumerosDeCota.isEmpty()){
 			
-			for (Integer numeroCota : listaDeNumerosDeCota) {
-				Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
-				
-				List<Long> nota = new ArrayList<>();
-				nota.add(listaDosNumerosDasNotas.get(cont));
-				filtro.setNumerosNotas(nota);
-				cont++;
-				
-				if(cota.getParametrosCotaNotaFiscalEletronica() == null || cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() == null){
-					mensagens.add("Erro ao enviar email para a cota: " + cota.getNumeroCota());
-					continue;
-				}
-				
-				String[] listaDeDestinatarios = {cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica()};
-				
-				byte[] report = this.impressaoNFEService.imprimirNFe(filtro);
-				
-				String nomeAnexo = "NF-e - Data "+DateUtil.formatarDataPTBR(new Date())+" - Cota "+numeroCota;
-				
-				AnexoEmail anexoPDF = new AnexoEmail(nomeAnexo, report, TipoAnexo.PDF);
-				
-				try {
-					emailSerice.enviar("[NDS] - Geração "+nomeAnexo, "Olá, a NF-e segue anexo.", listaDeDestinatarios, anexoPDF);
-					System.out.println("Email enviado, impressao NFE, cota - "+numeroCota);
-					
-				} catch (AutenticacaoEmailException e) {
-					mensagens.add("Erro ao enviar email para a cota: " + cota.getNumeroCota());
-				}
-			}
-		}else{
 			filtro.setPesquisarCotasParaImpressao(true);
 			List<NotasCotasImpressaoNfeDTO> listaCotasImpressaoNFe = impressaoNFEService.obterNotafiscalImpressao(filtro);
 			
+			listaDeNumerosDeCota = new ArrayList<>();
+			
 			for (NotasCotasImpressaoNfeDTO notaDTO : listaCotasImpressaoNFe) {
-				
 				Cota cota = this.cotaService.obterPorId(notaDTO.getIdCota());
 				
-				List<Long> nota = new ArrayList<>();
-				nota.add(notaDTO.getNumero());
-				filtro.setNumerosNotas(nota);
-				
-				if(cota.getParametrosCotaNotaFiscalEletronica() == null || cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() == null){
-					mensagens.add("Erro ao enviar email para a cota: " + cota.getNumeroCota());
-					continue;
-				}
-				
-				String[] listaDeDestinatarios = {cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica()};
-				
-				byte[] report = this.impressaoNFEService.imprimirNFe(filtro);
-				
-				String nomeAnexo = "NF-e - Data "+DateUtil.formatarDataPTBR(new Date())+" - Cota "+cota.getNumeroCota();
-				
-				AnexoEmail anexoPDF = new AnexoEmail(nomeAnexo, report, TipoAnexo.PDF);
-				
-				try {
-					emailSerice.enviar("[NDS] - Geração "+nomeAnexo, "Olá, a NF-e segue anexo.", listaDeDestinatarios, anexoPDF);
-					System.out.println("Email enviado, impressao NFE, cota - "+cota.getNumeroCota());
-					
-				} catch (AutenticacaoEmailException e) {
-					mensagens.add("Erro ao enviar email para a cota: " + cota.getNumeroCota());
+				if(!listaDeNumerosDeCota.contains(cota.getNumeroCota())){
+					listaDeNumerosDeCota.add(cota.getNumeroCota());
 				}
 			}
-			
+				
 		}
 		
+		for (Integer numeroCota : listaDeNumerosDeCota) {
+			Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+			
+			List<Long> nota = new ArrayList<>();
+			nota.add(listaDosNumerosDasNotas.get(cont));
+			filtro.setNumerosNotas(nota);
+			cont++;
+			
+			if(cota.getParametrosCotaNotaFiscalEletronica() == null || cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() == null){
+				mensagens.add("Erro ao enviar email para a cota: " + cota.getNumeroCota());
+				continue;
+			}
+			
+			String[] listaDeDestinatarios = {cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica()};
+			
+			byte[] report = this.impressaoNFEService.imprimirNFe(filtro);
+			
+			String nomeAnexo = "NF-e - Data "+DateUtil.formatarDataPTBR(new Date())+" - Cota "+numeroCota;
+			
+			AnexoEmail anexoPDF = new AnexoEmail(nomeAnexo, report, TipoAnexo.PDF);
+			
+			try {
+				emailSerice.enviar("[NDS] - Impressão "+nomeAnexo, "Olá, a NF-e segue anexo.", listaDeDestinatarios, anexoPDF);
+				System.out.println("Email enviado, impressao NFE, cota - "+numeroCota);
+				
+			} catch (AutenticacaoEmailException e) {
+				mensagens.add("Erro ao enviar email para a cota: " + cota.getNumeroCota());
+			}
+		}
 		
 		if (mensagens.isEmpty()) {
 			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Email enviado com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
