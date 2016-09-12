@@ -475,10 +475,11 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 			.append(" FROM PDV pdv ")
 			.append(" JOIN pdv.cota cota ")
 			.append("LEFT JOIN pdv.enderecos enderecoPdv ")
+			.append(" with enderecoPdv.principal = true ")
 			.append("LEFT JOIN enderecoPdv.endereco endereco ")
 			.append("LEFT JOIN pdv.telefones telefonePdv ")
-			.append("LEFT JOIN telefonePdv.telefone telefone ")
 			.append(" with telefonePdv.principal = true ")
+			.append("LEFT JOIN telefonePdv.telefone telefone ")
 			.append(" WHERE pdv.cota.id = :idCota ");
 	        	
 		Query q = getSession().createQuery(hql.toString());

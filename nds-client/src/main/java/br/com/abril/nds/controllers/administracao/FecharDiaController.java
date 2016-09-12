@@ -687,7 +687,11 @@ public class FecharDiaController extends BaseController {
     }
     
     private void clearFechamentoDiarioDTO() {
+    try {
         setFechamentoDiarioDTO(null);
+    } catch ( Exception e ) {
+    	LOGGER.error("ERRO INVALIDANDO SESSAO NO FECHAMENTO. JA DEVE TER EXPIRADO/INVALIDADO");
+    }
     }
     
     /**

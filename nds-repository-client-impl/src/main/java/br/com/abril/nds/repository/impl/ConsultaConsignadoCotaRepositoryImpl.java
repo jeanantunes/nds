@@ -278,7 +278,13 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ");
 		
-		// sql.append(" AND MEC.FORMA_COMERCIALIZACAO=:formaComercializacao ");
+		if(filtro.isCotaAvista()){
+			if(!filtro.isCotaDevolveEncalhe()){
+				sql.append(" AND MEC.FORMA_COMERCIALIZACAO=:formaComercializacao ");
+			}
+		}else{
+			sql.append(" AND MEC.FORMA_COMERCIALIZACAO=:formaComercializacao ");
+		}
 		
 		if(filtro.getDataInicio() != null)
 		    sql.append(" AND MEC.DATA >=:dataInicio ");

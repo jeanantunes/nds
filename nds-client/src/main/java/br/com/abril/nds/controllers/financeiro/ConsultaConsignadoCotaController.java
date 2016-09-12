@@ -26,6 +26,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.ConsultaConsignadoCotaService;
@@ -207,14 +208,20 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		
 		this.tratarFiltro(filtro);
 		
-		TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>> tableModel = efetuarConsultaConsignadoCota(filtro);
+		TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>> tableModel = efetuarConsultaConsignadoCota(filtro, cota);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
 	
 	private TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>> efetuarConsultaConsignadoCota(
-			FiltroConsultaConsignadoCotaDTO filtro) {
+			FiltroConsultaConsignadoCotaDTO filtro, Cota cota) {
+		
+		if(cota.getTipoCota().equals(TipoCota.A_VISTA)){
+			filtro.setCotaAvista(true);
+			filtro.setCotaDevolveEncalhe(cota.isDevolveEncalhe() != null ? cota.isDevolveEncalhe() : false);
+			// VALIDAR SE O PARAMETRO DEVOLVE_ENCALHE está vindo corretamente
+		}
 		
 		int totalRegistros = this.consultaConsignadoCota.buscarConsignadoCota(filtro, false).size();
 		if (totalRegistros == 0) {

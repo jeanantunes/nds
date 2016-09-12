@@ -3438,6 +3438,13 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Override
 	@Transactional
+	public boolean isCotaVarejo(Long idCota){
+		return cotaRepository.validarCotaVarejo(idCota);
+
+	}
+	
+	@Override
+	@Transactional
 	public boolean isCotaParametro(Long idCota, Integer numCota, TipoEmissaoDocumento tipoDoc){
 		return cotaRepository.isCotaParametro(idCota, numCota, tipoDoc);
 	}

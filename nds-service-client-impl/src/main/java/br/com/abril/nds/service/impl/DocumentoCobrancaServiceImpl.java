@@ -482,13 +482,12 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     private void enviarDocumentoPorEmail(final Cobranca cobranca) throws AutenticacaoEmailException, Exception {
         
 //        final String assunto = distribuidorService.assuntoEmailCobranca();
-    	
-    	String assunto = cobranca.getTipoCobranca().getDescricao()+" - Data " +cobranca.getDataEmissao()+" - Cota " + cobranca.getCota().getNumeroCota();
-    	String nomeAnexo = cobranca.getNossoNumero()+" "+assunto;
-        
 //        final String mensagem = distribuidorService.mensagemEmailCobranca();
     	
-    	String mensagem = "Olá, a cobrança segue anexo.";
+    	String nomeAnexo = cobranca.getTipoCobranca().getDescricao()+" - Data " +DateUtil.formatarDataPTBR(cobranca.getDataEmissao())+" - Cota " + cobranca.getCota().getNumeroCota();
+    	String assunto = "[NDS] - Emissão "+nomeAnexo;
+        
+    	String mensagem = "Olá, A cobrança segue anexo.";
         
         final String emailCota = cobranca.getCota().getPessoa().getEmail();
         final String[] destinatarios = new String[]{emailCota};

@@ -130,6 +130,15 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Override
 	@Transactional
 	public List<Integer> obterCotasComOperacaoDiferenciada(FiltroEmissaoCE filtro) {
+		
+		if(filtro.getNumCotaDe() == null){
+			filtro.setNumCotaDe(0);
+		}
+		
+		if(filtro.getNumCotaAte() == null){
+			filtro.setNumCotaAte(999999);
+		}
+		
 		return grupoRepository.obterCotasComOperacaoDiferenciada(filtro);
 	}
 
@@ -610,7 +619,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			if(endereco != null) {
 				dto.setEndereco((endereco.getTipoLogradouro().trim()!= null ? endereco.getTipoLogradouro().toUpperCase().trim() + ": " :"")
-									+ endereco.getLogradouro().toUpperCase().trim()  + ", " + endereco.getNumero().trim());
+									+ endereco.getLogradouro().toUpperCase().trim()  + ", " + (endereco.getNumero()!= null ? endereco.getNumero().trim() : ""));
 				dto.setUf(endereco.getUf().trim());
 				dto.setCidade(endereco.getCidade().trim());
 				dto.setUf(endereco.getUf().trim());
@@ -1155,14 +1164,14 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			String[] listaDeDestinatarios = {cota.getPessoa().getEmail()};
 			
 			try {
-				String nomeArquivo = "CHAMADA DE ENCALHE - "+DateUtil.formatarDataPTBR(new Date())+" – COTA "+cota.getNumeroCota();
+				String nomeArquivo = "Chamada de Encalhe - "+DateUtil.formatarDataPTBR(new Date())+" – COTA "+cota.getNumeroCota();
 				
-				String assunto = "Emissão "+nomeArquivo;
+				String assunto = "[NDS] - Emissão "+nomeArquivo;
 				
 				byte[] anexo = this.gerarDocumentoEmissaoCE(lista);
 				
 				AnexoEmail anexoPDF = new AnexoEmail(nomeArquivo, anexo, TipoAnexo.PDF);
-				emailSerice.enviar(assunto, "Olá, segue em anexo a chamada de encalhe.", listaDeDestinatarios, anexoPDF);
+				emailSerice.enviar(assunto, "Olá, a chamada de encalhe segue anexo.", listaDeDestinatarios, anexoPDF);
 			} catch ( AutenticacaoEmailException | JRException | URISyntaxException e) {
 				e.printStackTrace();
 			}
