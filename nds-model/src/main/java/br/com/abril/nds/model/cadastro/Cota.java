@@ -218,6 +218,7 @@ public class Cota implements Serializable {
 	@Column(name = "RECEBE_RECOLHE_PARCIAIS", insertable=false,  updatable=false)
 	private Integer recebeRecolheParciais;
 	
+	@Transient
 	@Column(name = "GERAR_BOLETO_NFE")
 	private boolean boletoNFE;
 	

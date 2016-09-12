@@ -330,7 +330,9 @@ var consultaConsignadoCotaController = $.extend(true, {
 				
 				var htmlTotais =
 					" <table width='450' border='0' cellspacing='1' cellpadding='1' align='right'>"
-					+ "<tr> <td><strong>Total Geral:</strong></td>"
+					// + "<tr> <td><strong>Total Geral:</strong></td>"
+					+ "<tr> <td><a href='javascript:;' onclick='consultaConsignadoCotaController.obterTotalConsiganadoAvista();'><strong>Total Geral:</strong></a></td> " 
+					
 					+ " <td>&nbsp;</td> "
 					+ " <td align='right'><strong>" + result.totalGeral + "</strong></td></tr>";
 				
@@ -353,6 +355,32 @@ var consultaConsignadoCotaController = $.extend(true, {
 				}
 				
 				$("#totalGeralPorFornecedor", consultaConsignadoCotaController.workspace).html(htmlTotais);
+			},
+			null,
+			true
+		);
+		
+	},
+	
+	obterTotalConsiganadoAvista : function(){
+		
+		$.postJSON(
+			contextPath + '/financeiro/consultaConsignadoCota/buscarTotalGeralAvistaCota',
+			[{name:'filtro.idCota', value:$('#codigoCota', consultaConsignadoCotaController.workspace).val()},
+			{name:'filtro.idFornecedor', value:$('#idFornecedor', consultaConsignadoCotaController.workspace).val()}],
+			function(result) {
+				$("#dialog-total-consignado-avista", consultaConsignadoCotaController.workspace).html(result);
+				    $( "#dialog-total-consignado-avista" ).dialog({
+				      resizable: false,
+				      height: "auto",
+				      width: 400,
+				      modal: true,
+				      buttons: {
+				        "Fechar ": function() {
+				        	$( this ).dialog( "close" );
+				        },
+				      }
+				    });
 			},
 			null,
 			true
