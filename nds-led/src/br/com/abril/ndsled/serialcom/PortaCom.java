@@ -5,11 +5,17 @@ import gnu.io.SerialPort;
 
 import java.io.OutputStream;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
+import br.com.abril.ndsled.actions.AppActions;
+
 public class PortaCom {
 	
 	//================================================================================
     // Properties
     //================================================================================
+	Logger logger = LogManager.getLogger(PortaCom.class);
 	public String Dadoslidos;
 	public int nodeBytes;
 	private int baudrate;
@@ -54,13 +60,15 @@ public class PortaCom {
 		try {
 			cp = CommPortIdentifier.getPortIdentifier(NomePorta);
 			if (cp == null) {
-				System.out.println("Erro na porta");
+				//System.out.println("Erro na porta");
+				logger.error("Erro na porta");
 				IDPortaOK = false;
 				System.exit(1);
 			}
 			IDPortaOK = true;
 		} catch (Exception e) {
-			System.out.println("Erro obtendo ID da porta: " + e);
+			//System.out.println("Erro obtendo ID da porta: " + e);
+			logger.error("Erro obtendo ID da porta: " + e);
 			IDPortaOK = false;
 			System.exit(1);
 		}
@@ -83,7 +91,8 @@ public class PortaCom {
 			porta.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
 		} catch (Exception e) {
 			PortaOK = false;
-			System.out.println("Erro abrindo comunicação: " + e);
+			//System.out.println("Erro abrindo comunicação: " + e);
+			logger.error("Erro abrindo comunicação: " + e);
 			System.exit(1);
 		}
 	}
@@ -98,19 +107,25 @@ public class PortaCom {
 	public void EnviarComando(String msg) {
 		try {
 			saida = porta.getOutputStream();
-			System.out.println("FLUXO OK!");
+			//System.out.println("FLUXO OK!");
+			logger.info("FLUXO OK!");
 		} catch (Exception e) {
-			System.out.println("Erro.STATUS: " + e);
+			//System.out.println("Erro.STATUS: " + e);
+			logger.error("Erro.STATUS: " + e);
 		}
 		try {
-			System.out.println("Enviando um byte para " + NomePorta);
-			System.out.println("Enviando : " + msg);
+			//System.out.println("Enviando um byte para " + NomePorta);
+			//System.out.println("Enviando : " + msg);
+			logger.info("Enviando um byte para " + NomePorta);
+			logger.info("Enviando : " + msg);
 			saida.write(msg.getBytes());
 			Thread.sleep(100);
 			saida.flush();
 		} catch (Exception e) {
-			System.out.println("Houve um erro durante o envio. ");
-			System.out.println("STATUS: " + e);
+			//System.out.println("Houve um erro durante o envio. ");
+			logger.error("Houve um erro durante o envio.");
+			//System.out.println("STATUS: " + e);
+			logger.error("STATUS: " + e);
 			System.exit(1);
 		}
 	}
@@ -125,7 +140,8 @@ public class PortaCom {
 		try {
 			porta.close();
 		} catch (Exception e) {
-			System.out.println("Erro fechando porta: " + e);
+			//System.out.println("Erro fechando porta: " + e);
+			logger.error("Erro fechando porta: " + e);
 			System.exit(0);
 		}
 	}

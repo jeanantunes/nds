@@ -4,11 +4,11 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import javax.crypto.spec.DESedeKeySpec;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -27,6 +26,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
@@ -35,21 +35,19 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import br.com.abril.ndsled.actions.AppActions;
-import br.com.abril.ndsled.exceptions.CarregarLancamentoException;
 import br.com.abril.ndsled.modelo.Box;
 import br.com.abril.ndsled.modelo.Cota;
 import br.com.abril.ndsled.modelo.Lancamento;
 import br.com.abril.ndsled.modelo.Produto;
 import br.com.abril.ndsled.serialcom.PortaCom;
 import br.com.abril.ndsled.serialcom.SerialCom;
-import javax.swing.JTextField;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 /**
 * Classe da Janela Principal do aplicativo
@@ -62,6 +60,7 @@ public class Janela {
 	//================================================================================
     // Properties
     //================================================================================
+	Logger logger = LogManager.getLogger(Janela.class);
 	private Properties props;
 	private JFrame frmProjetoLedV;
 	private JMenuBar menuBar;
@@ -90,6 +89,7 @@ public class Janela {
 	private JTextField txtCatactereReparteZero;
 	private JScrollPane pnlBoxQuantidade;
 	private JTable tblBoxQuantidade;
+	private JButton btnAcenderCota;
 
 	//================================================================================
     // Constructors
@@ -128,10 +128,11 @@ public class Janela {
 	* @return Nothing
 	*/
 	private void initialize() {
+		logger.info("Iniciando Aplicativo.");
+		
 		try {
 			props = AppActions.loadProperties(AppActions.class.getClassLoader().getResourceAsStream("app.properties"));
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
@@ -276,6 +277,10 @@ public class Janela {
 		));
 		tblBoxQuantidade.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		pnlBoxQuantidade.setViewportView(tblBoxQuantidade);
+		
+		btnAcenderCota = new JButton("<html><center>Acender<br>Cota</center></html>");
+		btnAcenderCota.setBounds(398, 144, 89, 54);
+		frmProjetoLedV.getContentPane().add(btnAcenderCota);
 
 		//================================================================================
 	    // Events
@@ -318,14 +323,14 @@ public class Janela {
 						try {
 							Thread.sleep(5);
 						} catch (InterruptedException ex) {
-							// TODO Auto-generated catch block
-							ex.printStackTrace();
+							logger.error(ex.getMessage());
 						}
 					}
 					Thread.sleep(5);
 					pCom.FecharCom();
 				} catch (Exception ex) {
-					System.out.println(ex.getMessage());
+					//System.out.println(ex.getMessage());
+					logger.error(ex.getMessage());
 				}
 			}
 		});
@@ -345,14 +350,44 @@ public class Janela {
 						try {
 							Thread.sleep(5);
 						} catch (InterruptedException ex) {
-							// TODO Auto-generated catch block
 							ex.printStackTrace();
 						}
 					}
 					Thread.sleep(5);
 					pCom.FecharCom();
 				} catch (Exception ex) {
-					System.out.println(ex.getMessage());
+					//System.out.println(ex.getMessage());
+					logger.error(ex.getMessage());
+				}
+			}
+		});
+		
+		btnAcenderCota.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// Iniciando leitura serial
+				try {
+					PortaCom pCom = new PortaCom(cbxPortaSerial
+							.getSelectedItem().toString(), 9600, 0);
+					pCom.ObterIdDaPorta();
+					pCom.AbrirPorta();
+					Iterator<Cota> cotaIterator = lstCotas.iterator();
+					while(cotaIterator.hasNext()){
+						Cota cota = cotaIterator.next();
+						String codLed = String.format("%04d", cota.getCodLed());
+						String codCota = String.format("%04d", cota.getCodigoCota());
+						pCom.EnviarComando("p"+codLed+codCota);
+						try {
+							Thread.sleep(5);
+						} catch (InterruptedException ex) {
+							//ex.printStackTrace();
+							logger.error(ex.getMessage());
+						}
+					}
+					Thread.sleep(5);
+					pCom.FecharCom();
+				} catch (Exception ex) {
+					//System.out.println(ex.getMessage());
+					logger.error(ex.getMessage());
 				}
 			}
 		});
@@ -442,7 +477,6 @@ public class Janela {
 
 				@Override
 				public int compare(Produto o1, Produto o2) {
-					// TODO Auto-generated method stub
 					return o1.getNomeProduto().compareToIgnoreCase(o2.getNomeProduto());
 				}
 			});
@@ -491,7 +525,6 @@ public class Janela {
 
 				@Override
 				public int compare(Cota o1, Cota o2) {
-					// TODO Auto-generated method stub
 					return o1.getCodigoCota().compareTo(o2.getCodigoCota());
 				}
 			});
@@ -520,11 +553,15 @@ public class Janela {
 			carregaTblBoxQuantidade();
 			
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			lblStatusBarMessage.setText(e.getMessage());
 			desabilitarObjetosView();
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void carregaTblBoxQuantidade(){
 		//Limpa a Tabela (JTable) com a Box/Quantidade de outros dados carregados
 		DefaultTableModel dtm = (DefaultTableModel) tblBoxQuantidade.getModel();
@@ -571,7 +608,6 @@ public class Janela {
 
 			@Override
 			public int compare(Box o1, Box o2) {
-				// TODO Auto-generated method stub
 				return o1.getCodigoBox().compareTo(o2.getCodigoBox());
 			}
 		});
@@ -590,6 +626,7 @@ public class Janela {
 		btnEnviar.setEnabled(false);
 		btnAcenderLeds.setEnabled(false);
 		btnApagarLeds.setEnabled(false);
+		btnAcenderCota.setEnabled(false);
 		pnlConfiguracao.setEnabled(false);
 	}
 	
@@ -597,6 +634,7 @@ public class Janela {
 		btnEnviar.setEnabled(true);
 		btnAcenderLeds.setEnabled(true);
 		btnApagarLeds.setEnabled(true);
+		btnAcenderCota.setEnabled(true);
 		pnlConfiguracao.setEnabled(true);
 	}
 	
@@ -609,6 +647,11 @@ public class Janela {
 		DefaultTableModel dtm = (DefaultTableModel) tblCotaLed.getModel();
 		for(int i = dtm.getRowCount()-1; i>=0;i--){
 			dtm.removeRow(i);
+		}
+		// Limpa a Tabela (JTable) com a Box / Quantidade
+		DefaultTableModel dtm2 = (DefaultTableModel) tblBoxQuantidade.getModel();
+		for(int i = dtm2.getRowCount()-1; i>=0;i--){
+			dtm2.removeRow(i);
 		}
 	}
 	
@@ -633,8 +676,8 @@ public class Janela {
 				try {
 					Thread.sleep(5);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error(e.getMessage());
 				}
 			}
 		}
@@ -661,14 +704,12 @@ public class Janela {
 				try {
 					Thread.sleep(5);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error(e.getMessage());
 				}
 			}
 			portaCom.FecharCom();
 		}
-		
-		
 		
 	}
 }

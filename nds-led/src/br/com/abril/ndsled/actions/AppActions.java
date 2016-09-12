@@ -14,6 +14,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.CouchDbProperties;
 import org.lightcouch.NoDocumentException;
@@ -28,6 +30,7 @@ import br.com.abril.ndsled.modelo.DetalhesPickingPorCotaModelo04DTO;
 import br.com.abril.ndsled.modelo.Cota;
 import br.com.abril.ndsled.modelo.Lancamento;
 import br.com.abril.ndsled.modelo.PickingLEDFullDTO;
+import br.com.abril.ndsled.swing.Janela;
 
 /**
  * Classe com Metodos Statics para realizar acoes.
@@ -37,7 +40,6 @@ import br.com.abril.ndsled.modelo.PickingLEDFullDTO;
  * 
  */
 public class AppActions {
-
 	// TODO main TEST - EXCLUIR APÓS TESTES
 	/*
 	 * public static void main(String[] args) {
