@@ -710,9 +710,10 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
         .append(" produtoedi5_.ID as idProdutoEdicao,                                                           ")
         .append(" produtoedi5_.NUMERO_EDICAO as edicao,                                                         ")
         .append(" coalesce(movimentoe16_.VALOR_DESCONTO,")
-		.append("      (select VALOR_DESCONTO from MOVIMENTO_ESTOQUE_COTA mec FORCE INDEX (NDX_PRODUTO_EDICAO) where ")
-        .append("  mec.PRODUTO_EDICAO_ID = produtoedi5_.ID														")
-        .append(" and mec.COTA_ID = chamadaenc0_.COTA_ID and mec.tipo_movimento_id = 21 order by mec.data desc limit 1 ), 0   ")
+		.append("      (select VALOR_DESCONTO from MOVIMENTO_ESTOQUE_COTA mec FORCE INDEX (NDX_PRODUTO_EDICAO) ")
+		.append("       inner join tipo_movimento tm on tm.id = mec.tipo_movimento_id ") 
+        .append("  where mec.PRODUTO_EDICAO_ID = produtoedi5_.ID														")
+        .append(" and mec.COTA_ID = chamadaenc0_.COTA_ID and tm.OPERACAO_ESTOQUE = 'ENTRADA' order by mec.data desc limit 1 ), 0   ")
 		.append(" ) as desconto,       								                                            ")
         .append(" produtoedi5_.PRECO_VENDA as precoVenda,                                                       ")
         .append(" periodolan11_.TIPO as tipoRecolhimento,                                                       ")
@@ -720,9 +721,10 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
         .append(" chamadaenc1_.DATA_RECOLHIMENTO as dataRecolhimento,                                           ")
         .append("  chamadaenc0_.qtde_prevista as encalhe_previsto,                                              ")
         .append(" coalesce(movimentoe16_.PRECO_COM_DESCONTO, movimentoe16_.PRECO_VENDA, ")
-        .append("      (select PRECO_COM_DESCONTO from MOVIMENTO_ESTOQUE_COTA mec FORCE INDEX (NDX_PRODUTO_EDICAO) where ")
-        .append("  mec.PRODUTO_EDICAO_ID = produtoedi5_.ID														")
-        .append(" and mec.COTA_ID = chamadaenc0_.COTA_ID and mec.tipo_movimento_id = 21 order by mec.data desc limit 1 )   ")
+        .append("      (select PRECO_COM_DESCONTO from MOVIMENTO_ESTOQUE_COTA mec FORCE INDEX (NDX_PRODUTO_EDICAO) ")
+		.append("        inner join tipo_movimento tm on tm.id = mec.tipo_movimento_id  ")
+        .append(" where  mec.PRODUTO_EDICAO_ID = produtoedi5_.ID														")
+        .append(" and mec.COTA_ID = chamadaenc0_.COTA_ID and tm.OPERACAO_ESTOQUE = 'ENTRADA' order by mec.data desc limit 1 )   ")
         .append(" ,0) as precoComDesconto, ")
         
         //.append(" (select sum(cec.qtde_prevista) ")
@@ -742,7 +744,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		// .append(" and mec.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME'                                                ")
 		.append(" and ((mec.FORMA_COMERCIALIZACAO = 'CONTA_FIRME' and c.tipo_cota = 'A_VISTA' and c.devolve_encalhe) or mec.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME') " )
 		
-		.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null                                                ");
+		.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null                                                 ");
 		
 		if(filtro.getDtRecolhimentoDe() != null) {
 			hql.append(" and ce.DATA_RECOLHIMENTO >=:dataDe ");
