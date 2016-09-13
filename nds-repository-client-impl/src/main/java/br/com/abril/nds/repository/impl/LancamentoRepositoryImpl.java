@@ -790,7 +790,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 				.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao and mecMaxDate.lancamento.id =  lancamentoMaxDate.id   ");
 		
 		if(dataLimiteLancamento != null) {
-			hql.append(" and lancamento.dataLancamentoDistribuidor <= :dataLimiteLancamento");
+			hql.append(" and lancamentoMaxDate.dataLancamentoDistribuidor <= :dataLimiteLancamento");
 		}
 				hql.append(" ) ").append(" and lancamento.produtoEdicao.id = :idProdutoEdicao ");
 
@@ -822,7 +822,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 					.append("   from MovimentoEstoqueCota mecMaxDate ")
 					.append("   join mecMaxDate.produtoEdicao.lancamentos lancamentoMaxDate ")
 					.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao and mecMaxDate.lancamento.id =  lancamentoMaxDate.id  ");
-					hql.append(" and lancamento.dataLancamentoDistribuidor <= :dataLimiteLancamento");
+					hql.append(" and lancamentoMaxDate.dataLancamentoDistribuidor <= :dataLimiteLancamento");
 				hql.append(" )");	
 					
 			}
