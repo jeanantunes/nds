@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
+import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -60,6 +61,9 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 	@Autowired
 	private DocumentoCobrancaService documentoCobrancaService;
 	
+	@Autowired
+	private ConferenciaEncalheRepository conferenciaEncalheRepository;
+
 	@Autowired
 	private CotaService cotaService;
 	
@@ -219,6 +223,11 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 
 		List<Integer> listaCotas = controleConferenciaEncalheCotaRepository.obterListaNumCotaConferenciaEncalheCota(filtro);
 		
+		
+		if(listaCotas.isEmpty()){
+			listaCotas = conferenciaEncalheRepository.obterCotasVarejoConferenciaEncalhe(filtro);
+		}
+		
 		if (listaCotas != null && !listaCotas.isEmpty() ) {
 
 			List<byte[]> arquivos = new ArrayList<byte[]>();
@@ -284,10 +293,13 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		retornoArquivoCota = arquivosCota.size() > 1 ? retornoArquivoCota = PDFUtil.mergePDFs(arquivosCota) : arquivosCota.get(0);
 		
 		String[] listaDeDestinatarios = {cota.getPessoa().getEmail()};
-		AnexoEmail anexoPDF = new AnexoEmail("SLIP – COTA "+cota.getNumeroCota(), retornoArquivoCota, TipoAnexo.PDF);
+		
+		String nomeArquivo = "SLIP - Data "+DateUtil.formatarDataPTBR(new Date())+" - Cota "+cota.getNumeroCota();
+		
+		AnexoEmail anexoPDF = new AnexoEmail(nomeArquivo, retornoArquivoCota, TipoAnexo.PDF);
 		
 		try {
-			emailService.enviar("[NDS] - Emissão SLIP", "Olá, segue em anexo o slip emitido pela consulta de encalhe.", listaDeDestinatarios, anexoPDF);
+			emailService.enviar("[NDS] - Emissão "+nomeArquivo, "Olá, o SLIP segue anexo.", listaDeDestinatarios, anexoPDF);
 			System.out.println("Envio EMAIL SLIP COTA - "+cota.getNumeroCota());
 		} catch (AutenticacaoEmailException e) {
 			e.printStackTrace();
@@ -321,6 +333,8 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 							addMensagemValidacao(filtro, cota);
 						}
 					}
+				}else{
+					enviarSlipPorEmail(filtro, cota);
 				}
 			}
 		}

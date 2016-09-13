@@ -5,11 +5,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import br.com.abril.nds.service.ConferenciaEncalheService;
+
 @RunWith( MockitoJUnitRunner.class )
 public class ConferenciaEncalheServiceImplTest {
 
 	@Mock
-	ConferenciaEncalheServiceImpl service;
+	ConferenciaEncalheService service;
 	
 	@Test
 	public void test() {

@@ -130,6 +130,15 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Override
 	@Transactional
 	public List<Integer> obterCotasComOperacaoDiferenciada(FiltroEmissaoCE filtro) {
+		
+		if(filtro.getNumCotaDe() == null){
+			filtro.setNumCotaDe(0);
+		}
+		
+		if(filtro.getNumCotaAte() == null){
+			filtro.setNumCotaAte(999999);
+		}
+		
 		return grupoRepository.obterCotasComOperacaoDiferenciada(filtro);
 	}
 
@@ -610,7 +619,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			if(endereco != null) {
 				dto.setEndereco((endereco.getTipoLogradouro().trim()!= null ? endereco.getTipoLogradouro().toUpperCase().trim() + ": " :"")
-									+ endereco.getLogradouro().toUpperCase().trim()  + ", " + endereco.getNumero().trim());
+									+ endereco.getLogradouro().toUpperCase().trim()  + ", " + (endereco.getNumero()!= null ? endereco.getNumero().trim() : ""));
 				dto.setUf(endereco.getUf().trim());
 				dto.setCidade(endereco.getCidade().trim());
 				dto.setUf(endereco.getUf().trim());
@@ -906,7 +915,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			Cota cota = cotaRepository.buscarPorId(dto.getIdCota());
 			
-			if(filtro.getNumCotaDe()==null && filtro.getNumCotaAte()==null){
+			if((filtro.getNumCotaDe()==null && filtro.getNumCotaAte()==null) || (!filtro.getNumCotaDe().equals(filtro.getNumCotaAte()))){
 				
 				if(filtro.isImpressao()){
 					if(cota.getParametroDistribuicao().getUtilizaDocsParametrosDistribuidor()){
@@ -1142,6 +1151,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			Cota cota = cotaService.obterPorId(idCota);
 			
+			lista.get(0).getEmissaoCEImpressao().get(0).getDataEmissao();
 			if (cota.getPessoa().getEmail() == null) {
 				if(numeroCotasSemEmail.isEmpty()){
 					numeroCotasSemEmail = cota.getNumeroCota().toString();
@@ -1154,10 +1164,14 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			String[] listaDeDestinatarios = {cota.getPessoa().getEmail()};
 			
 			try {
+				String nomeArquivo = "Chamada de Encalhe - "+DateUtil.formatarDataPTBR(new Date())+" – COTA "+cota.getNumeroCota();
+				
+				String assunto = "[NDS] - Emissão "+nomeArquivo;
+				
 				byte[] anexo = this.gerarDocumentoEmissaoCE(lista);
 				
-				AnexoEmail anexoPDF = new AnexoEmail("CHAMADA DE ENCALHE – COTA "+cota.getNumeroCota(), anexo, TipoAnexo.PDF);
-				emailSerice.enviar("Emissão Chamada de Encalhe", "Olá, segue em anexo a chamada de encalhe.", listaDeDestinatarios, anexoPDF);
+				AnexoEmail anexoPDF = new AnexoEmail(nomeArquivo, anexo, TipoAnexo.PDF);
+				emailSerice.enviar(assunto, "Olá, a chamada de encalhe segue anexo.", listaDeDestinatarios, anexoPDF);
 			} catch ( AutenticacaoEmailException | JRException | URISyntaxException e) {
 				e.printStackTrace();
 			}
