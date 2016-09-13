@@ -1486,7 +1486,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		BigDecimal vlMovPostergado = BigDecimal.ZERO;
 		BigDecimal vlMovConsignado = BigDecimal.ZERO;
 		BigDecimal vlMovPendente = BigDecimal.ZERO;
-
+		BigDecimal vlBoletoAvulso = BigDecimal.ZERO;
+		
 		for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentos) {
 			
 			if (!movimentoFinanceiroCota.getCota().getId().equals(cota.getId())) {
@@ -1553,6 +1554,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					vlMovPendente = this.adicionarValor(vlMovPendente, movimentoFinanceiroCota);
 					
 					break;
+				
+				case BOLETO_AVULSO:
+					
+					vlBoletoAvulso = this.adicionarValor(vlMovFinanDebitoCredito, movimentoFinanceiroCota);
+					
+					break;
+						
 			}
 		}
 		
@@ -1563,7 +1571,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				.add(vlMovFinanVendaEncalhe)
 				.add(vlMovFinanDebitoCredito)
 				.add(vlMovFinanEncargos)
-				.add(vlMovPendente);
+				.add(vlMovPendente)
+				.add(vlBoletoAvulso);
+				
 		
 		consolidadoFinanceiroCota.setTotal(vlMovFinanTotal);
 		consolidadoFinanceiroCota.setDebitoCredito(vlMovFinanDebitoCredito);

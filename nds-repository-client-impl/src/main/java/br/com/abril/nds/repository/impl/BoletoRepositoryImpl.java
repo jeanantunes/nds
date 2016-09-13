@@ -132,7 +132,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		sql.append(" INNER JOIN DIVIDA D ON D.ID = COB.DIVIDA_ID ");
 		
-		sql.append(" WHERE COB.TIPO_COBRANCA = :tipoCobrancaBoleto ");		
+		sql.append(" WHERE COB.TIPO_COBRANCA in(:tipoCobrancaBoleto) ");		
 		
 		sql.append(" AND C.NUMERO_COTA = :ncota ");
 
@@ -326,7 +326,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
                             : StatusDivida.QUITADA).name());
 		}
 
-		query.setParameter("tipoCobrancaBoleto", TipoCobranca.BOLETO.name());
+		query.setParameterList("tipoCobrancaBoleto", Arrays.asList(TipoCobranca.BOLETO.name(), TipoCobranca.BOLETO_AVULSO.name()));
 		
         if (filtro.getPaginacao() != null) {
         	
