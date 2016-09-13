@@ -13,26 +13,18 @@ import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
-import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
-import br.com.abril.nds.repository.ViewContaCorrenteCotaRepository;
 import br.com.abril.nds.service.ContaCorrenteCotaService;
 
 @Service
 public class ContaCorrenteCotaServiceImpl implements ContaCorrenteCotaService {
 
 	@Autowired
-	private ViewContaCorrenteCotaRepository viewContaCorrenteCotaRepository;	
-	
-	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
 	
 	@Autowired
 	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
-	
-	@Autowired
-	private CotaRepository cotaRepository;
 	
 	@Override
 	@Transactional(readOnly=true)
