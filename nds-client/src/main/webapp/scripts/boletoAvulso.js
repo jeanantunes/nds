@@ -382,23 +382,27 @@ var GerarBoletoAvulsoController = $.extend(true, {
  			numeroCota = $("#boleto-avulso-numeroCota", GerarBoletoAvulsoController.workspace).val();
  		}
  		
- 		$.postJSON(
-			contextPath + '/financeiro/debitoCreditoCota/buscarCotaPorNumero',
-			{ "numeroCota": numeroCota },
-			function(result) {
+ 		if(numeroCota == '') {
+ 			$("#edicaoNomeCota", GerarBoletoAvulsoController.workspace).val("");
+ 		} else {
+ 			$.postJSON(
+ 					contextPath + '/financeiro/debitoCreditoCota/buscarCotaPorNumero',
+ 					{ "numeroCota": numeroCota },
+ 					function(result) {
 
-				if (isModalAlteracao) {
+ 						if (isModalAlteracao) {
 
-					$("#edicaoNomeCota", GerarBoletoAvulsoController.workspace).val(result);
-					
-				} else {
+ 							$("#edicaoNomeCota", GerarBoletoAvulsoController.workspace).val(result);
+ 							
+ 						} else {
 
-					$("#nomeCota", GerarBoletoAvulsoController.workspace).html(result);
-				}
-			},
-			null,
-			true
-		);
+ 							$("#nomeCota", GerarBoletoAvulsoController.workspace).html(result);
+ 						}
+ 					},
+ 					null,
+ 					true
+ 				);
+ 		}
  	},
 	
 	confirmar : function() {
@@ -513,6 +517,69 @@ var GerarBoletoAvulsoController = $.extend(true, {
 			var elem = document.getElementById("boleto-avulso-textoSelTodos");
 			elem.innerHTML = "Marcar todos";
 		}
+	},
+	
+	boletoAvulsoLote : function() {
+
+		
+		$("#modalUploadArquivo-BoletoAvulsoManual").dialog({
+			resizable : false,
+			height : 250,
+			width : 350,
+			modal : true,
+			buttons : {
+				"Confirmar" : function() {
+					$(this).dialog("close");
+					
+					GerarBoletoAvulsoController.executarSubmitAddLote();
+					
+				},
+				"Cancelar" : function() {
+					$(this).dialog("close");
+				}
+			},
+			form: $("#modalUploadArquivo-BoletoAvulsoManual", this.workspace).parents("form")
+		});
+
+	},
+	
+	executarSubmitAddLote : function (){
+		 var fileName = $("#xls").val();
+	      
+	       var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
+	       if(ext!="xls" & ext!="xlsx"){
+	    	   exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
+	    	   $(this).val('');
+	    	   return;
+	       }else{
+	    	
+	    	   $("#formUploadBoletoAvulsoManual").ajaxSubmit({
+					beforeSubmit: function(arr, formData, options) {
+					},
+					success: function(responseText, statusText, xhr, $form)  { 
+						var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
+						var tipoMensagem = mensagens.tipoMensagem;
+						var listaMensagens = mensagens.listaMensagens;
+
+						if (tipoMensagem && listaMensagens) {
+							
+							if (tipoMensagem != 'SUCCESS') {
+								
+								exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+							
+							}else{
+								exibirMensagem(tipoMensagem, listaMensagens);	
+							}
+
+							$("#modalUploadArquivo-BoletoAvulsoManual").dialog( "close" );
+							
+						}
+					}, 
+					url:  contextPath + '/financeiro/boletoAvulso/addBoletoAvulsoEmLote',
+					type: 'POST',
+					dataType: 'json'
+				});
+	       }
 	},
 	
 }, BaseController);

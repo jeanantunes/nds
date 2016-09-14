@@ -595,6 +595,8 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 		
         query.setParameter("tipoCobranca", tipoCobranca);
         
+        query.setMaxResults(1);
+        
         return (FormaCobranca) query.uniqueResult();
 	}
 	

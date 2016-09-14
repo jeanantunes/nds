@@ -2,6 +2,7 @@
 <head>
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 	<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/boletoAvulso.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
@@ -14,17 +15,44 @@
 	</script>
 </head>
 <body>
+	<!-- DIALOG  UPLOAD -->		
+	 <form id="formUploadBoletoAvulsoManual"  method="post" enctype="multipart/form-data">
+		<div id="modalUploadArquivo-BoletoAvulsoManual" title="Adicionar em Lote" style="display:none;">
+			<p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
+			<p ><span class="bt_novos"><a href="${pageContext.request.contextPath}/modelos/modelo_boleto_avulso.xls" rel="tipsy" title="Download Modelo">
+			<img align="center" src="images/ico_excel.png" hspace="5" border="0" /> Modelo de exemplo</a></span></p>
+			<br><br><br>
+			<hr>
+			<p>Selecione um arquivo para upload:</p>
+			<br>
+			<p align="center"><input type="file" id="excelFileBoletoAvulso" name="excelFileBoletoAvulso" style="width:300px"/></p>
+			
+		</div>		
+	  </form>
+
+
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_novos">
           		<a isEdicao="true" id="boleto-avulso-Confirmar" onclick="GerarBoletoAvulsoController.confirmar();" rel="tipsy" title="Confirmar Gera&ccedil;&atilde;o do Boleto Avulso">
          		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif"></a>
             </span>
+			<span class="bt_novos">
+				<a href="javascript:;" id="boletoAvulsoImportacao" onclick="GerarBoletoAvulsoController.boletoAvulsoLote();">
+					<img src="${pageContext.request.contextPath}/images/ico_integrar.png"
+					alt="Confirmar" hspace="5" border="0" /></a>
+			</span>
 		</div>
+		
 	</div>
 	<div class="linha_separa_fields">&nbsp;</div>
 	<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 		<legend>Boleto Avulso</legend>
+		
+		<jsp:include page="../messagesDialog.jsp">
+				<jsp:param value="dialogMensagemNovo" name="messageDialog" />
+			</jsp:include>
+		
 		<table width="950px" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		    <tbody>
 		    	<tr>

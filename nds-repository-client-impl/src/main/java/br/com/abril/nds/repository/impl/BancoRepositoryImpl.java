@@ -270,6 +270,7 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
 		hql.append(" from FormaCobranca fc ");
 		hql.append(" JOIN fc.banco b ");		
 		hql.append(" where b.ativo = :ativo ");
+		hql.append(" and fc.ativa = :ativo ");
 		hql.append(" and fc.tipoCobranca in (:tipoCobranca) ");
 		
         Query query = super.getSession().createQuery(hql.toString());

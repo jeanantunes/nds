@@ -1383,7 +1383,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			if(politicaCobranca != null && politicaCobranca.getFatorVencimento() != null){
 				
-				fatorVencimento = politicaCobranca.getFatorVencimento();
+				if(isBoletoAvulso) {
+					fatorVencimento = 0;
+				} else {					
+					fatorVencimento = politicaCobranca.getFatorVencimento();
+				}
+				
 			}
 			else{
 			    
@@ -1404,7 +1409,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			throw new ValidacaoException(TipoMensagem.ERROR, String.format("Cota %s sem Endereço Principal.", (cota != null) ? cota.getNumeroCota() : "[Não localizada]"));
 		}
 		
-	
+		
 		Date dataVencimento = this.obterDataVencimentoCobrancaCota(consolidadoFinanceiroCota.getDataConsolidado(), fatorVencimento, localidade);
 
 		if(!cobrarHoje){
@@ -2326,11 +2331,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		Set<String> setNossoNumero = null;
 		
-		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		Date dataOperacao = movimentoFinanceiroCota.getData();
 		
 		Usuario usuario = this.usuarioRepository.buscarPorId(idUsuario);
 		
-		Integer numeroDiasNovaCobranca = this.distribuidorRepository.obterNumeroDiasNovaCobranca(); 
+		Integer numeroDiasNovaCobranca = 0; 
 		
 		List<String> msgs = new ArrayList<String>();
 		
