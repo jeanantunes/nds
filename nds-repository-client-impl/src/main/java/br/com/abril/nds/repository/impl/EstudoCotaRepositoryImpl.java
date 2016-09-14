@@ -225,6 +225,9 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 			if ( cve.getCause() != null &&  cve.getCause().getMessage().contains("nota_envio_item")){
 			   throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro reabrindo estudo. Nota de Envio ja gerado !!"));
 			}
+			if ( cve.getCause() != null &&  cve.getCause().getMessage().contains("rateio_diferenca")){
+				   throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro reabrindo estudo. Ja foi lancado faltas e sobras (rateio_diferenca) !!"));
+				}
 			 throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro reabrindo estudo."+cve.getLocalizedMessage()));
 		}
     }
