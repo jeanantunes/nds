@@ -1947,8 +1947,9 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
             
             cobranca = cobrancaRepository.obterCobrancaBoletoAvulso(debito.getNumeroCota());
             cobranca.setVias(1);
+            cobranca.setObservacao(debito.getObservacao() == null ? "Boleto Avulso" : debito.getObservacao());
             boleto = boletoRepository.obterPorNossoNumero(cobranca.getNossoNumero(), null, true);
-           
+            
             if(boleto!= null){
                 corpos.add(this.gerarCorpoBoletoCota(boleto, null, false));
             }
@@ -1989,6 +1990,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         final Date dataVencimento = boleto.getDataVencimento();
         final Pessoa pessoaSacado = boleto.getCota().getPessoa();
         pessoaCedente = banco.getPessoaJuridicaCedente(); 
+        final String observacao = boleto.getObservacao();
         
         Endereco endereco = null;
         
@@ -2019,7 +2021,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
                 boleto.getCota().getNumeroCota(),
                 aceitaPagamentoVencido,
                 false,
-                politicasCobranca);
+                politicasCobranca, observacao);
     }
     
     private CorpoBoleto geraCorpoBoleto(final String nossoNumero,
@@ -2037,7 +2039,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
             final Integer numeroCota,
             final boolean aceitaPagamentoVencido,
             final boolean boletoEmBranco,
-            final List<PoliticaCobranca> politicasCobranca) {
+            final List<PoliticaCobranca> politicasCobranca, String observacao) {
         
         valorDocumento = (valorDocumento == null) ? BigDecimal.ZERO : valorDocumento.abs();
         
@@ -2204,7 +2206,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         corpoBoleto.setBoletoInstrucao2(banco.getInstrucoes2());
         corpoBoleto.setBoletoInstrucao3(banco.getInstrucoes3());
         corpoBoleto.setBoletoInstrucao4(banco.getInstrucoes4());
-        corpoBoleto.setBoletoInstrucao5("");
+        corpoBoleto.setBoletoInstrucao5(observacao);
         corpoBoleto.setBoletoInstrucao6("");
         corpoBoleto.setBoletoInstrucao7("");
         
