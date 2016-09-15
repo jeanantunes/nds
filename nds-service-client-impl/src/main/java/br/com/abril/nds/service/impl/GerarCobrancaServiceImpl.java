@@ -2118,7 +2118,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 		}
 		
-		this.dividaRepository.remover(divida);
+		if(cobranca.getTipoCobranca().equals(TipoCobranca.BOLETO_AVULSO)) {			
+			System.out.println("funcionou");
+		} else {
+			this.dividaRepository.remover(divida);
+		}
 		
 		
 	}

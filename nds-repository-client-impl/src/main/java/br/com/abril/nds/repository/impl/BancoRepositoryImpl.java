@@ -265,7 +265,7 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
 	@SuppressWarnings("unchecked")
 	public List<Banco> obterBancoBoletoAvulso() {
 		
-		StringBuilder hql = new StringBuilder("select b ");
+		StringBuilder hql = new StringBuilder("select distinct b ");
 		
 		hql.append(" from FormaCobranca fc ");
 		hql.append(" JOIN fc.banco b ");		

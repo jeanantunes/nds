@@ -584,10 +584,11 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
         
         //caso existam cotas que usam o parametro de cobranca do distribuidor
         if (pc.isPrincipal() || formaCobrancaRepository.obterFormasCobrancaAtivaCotas(true, fcDistrib.getId())){
-            
-            desativar =
-                    parametroCobrancaCotaRepository.verificarCotaSemParametroCobrancaPorFormaCobranca(
-                            fcDistrib.getId());
+            desativar = parametroCobrancaCotaRepository.verificarCotaSemParametroCobrancaPorFormaCobranca(fcDistrib.getId());
+        }
+        
+        if(fcDistrib.getTipoCobranca().equals(TipoCobranca.BOLETO_AVULSO)) {
+        	desativar = parametroCobrancaCotaRepository.verificarCotaSemParametroCobrancaPorFormaCobranca(fcDistrib.getId());
         }
         
         if(desativar) {
