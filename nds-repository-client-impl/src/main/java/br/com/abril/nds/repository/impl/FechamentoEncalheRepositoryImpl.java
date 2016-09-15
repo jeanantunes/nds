@@ -175,6 +175,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         final Type origemEnumType = new TypeLocatorImpl(new TypeResolver()).custom(EnumType.class, params);
         
+        ((SQLQuery) query).addScalar("pacotePadrao", StandardBasicTypes.LONG);
         ((SQLQuery) query).addScalar("produtoEdicao", StandardBasicTypes.LONG);
         ((SQLQuery) query).addScalar("sequencia", StandardBasicTypes.INTEGER);
         ((SQLQuery) query).addScalar("produto", StandardBasicTypes.STRING);
@@ -255,7 +256,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 
 		
 		if(!count) {
-			sql.append(" , PE.ORIGEM AS prodEdicaoOrigem,     ");
+			sql.append(" , PE.pacote_padrao AS pacotePadrao,     ");
+			sql.append(" PE.ORIGEM AS prodEdicaoOrigem,     ");
 			sql.append(" PE.DESCONTO AS prodEdicaoDesconto, ");
 			sql.append(" P.DESCONTO AS prodDesconto,        ");
 			sql.append(" COALESCE(CE.SEQUENCIA, 0) AS sequencia, ");
@@ -297,7 +299,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append(" P.DESCONTO_LOGISTICA_ID AS produtoDescontoLogisticaId        ");
 		
 		if(!count) {
-			sql.append(" , PE.ORIGEM AS prodEdicaoOrigem,     ");
+			sql.append(" , PE.pacote_padrao as pacotePadrao,    ");
+			sql.append("  PE.ORIGEM AS prodEdicaoOrigem,     ");
 			sql.append(" PE.DESCONTO AS prodEdicaoDesconto, ");
 			sql.append(" P.DESCONTO AS prodDesconto,        ");
 			sql.append(" COALESCE(CE.SEQUENCIA, 0) AS sequencia, ");
