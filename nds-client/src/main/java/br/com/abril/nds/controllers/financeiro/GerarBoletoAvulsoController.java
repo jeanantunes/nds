@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.financeiro;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -18,9 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.google.common.base.Strings;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.log.LogFuncional;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.MixCotaDTO;
+import br.com.abril.nds.dto.MixCotaProdutoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
@@ -177,8 +181,14 @@ public class GerarBoletoAvulsoController extends BaseController {
    	@Path("/obterInformacoesParaBoleto")
    	public void obterInformacoesParaBoleto(FiltroBoletoAvulsoDTO filtro){
     	
+    	Date dataDistrib = this.distribuidorService.obterDataOperacaoDistribuidor();
+    	
     	if (!this.calendarioService.isDiaUtil(filtro.getDataVencimento())) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data vencimento informada não é um dia util ");
+		}
+    	
+    	if (dataDistrib.getTime() >  filtro.getDataVencimento().getTime()) {
+    		throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Data] não pode ser menor que a [Data de Operação ");
 		}
     	
     	List<BoletoAvulsoDTO> listaCotasBoletos = this.boletoService.obterDadosBoletoAvulso(filtro);
@@ -404,7 +414,7 @@ public class GerarBoletoAvulsoController extends BaseController {
     
     @Post
 	@Path("/addBoletoAvulsoEmLote")
-	public void addBoletoAvulsoEmLote (UploadedFile xls) throws IOException {  
+	public void addBoletoAvulsoEmLote(UploadedFile xls) throws IOException {  
 
 		List<BoletoAvulsoDTO> listaCotasBoletos = XlsUploaderUtils.getBeanListFromXls(BoletoAvulsoDTO.class, xls);
 		
@@ -418,4 +428,19 @@ public class GerarBoletoAvulsoController extends BaseController {
 		
 	}
     
+    @Post
+	@Path("/uploadArquivoLote")
+	public void uploadExcel(UploadedFile excelFile) throws FileNotFoundException, IOException{
+
+		List<BoletoAvulsoDTO> listBoletoAvulsoExcel = XlsUploaderUtils.getBeanListFromXls(BoletoAvulsoDTO.class, excelFile);
+		
+		TableModel<CellModelKeyValue<BoletoAvulsoDTO>> tableModel = new TableModel<CellModelKeyValue<BoletoAvulsoDTO>>();
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listBoletoAvulsoExcel));
+		int qtd = listBoletoAvulsoExcel.size();
+		tableModel.setTotal(qtd);
+		tableModel.setPage(1);
+		
+		this.result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
 }
