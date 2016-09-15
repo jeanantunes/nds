@@ -30,6 +30,19 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	/** Data da Operação Corrente (usado apenas para exibição). */
 	private String dtOperacaoCorrente;
 	
+	private String emailTest;
+	
+	
+	public String getEmailTest() {
+		return emailTest;
+	}
+
+
+	public void setEmailTest(String emailTest) {
+		this.emailTest = emailTest;
+	}
+
+
 	/** Método Construtor padrão. */
 	public ParametroSistemaGeralDTO() {
 	}

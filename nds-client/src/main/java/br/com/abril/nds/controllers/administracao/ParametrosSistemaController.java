@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.administracao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -17,14 +18,17 @@ import br.com.abril.nds.controllers.distribuicao.HistogramaPosEstudoController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FormatoImpressao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoAmbiente;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.impl.GeracaoNotaEnvioServiceImpl;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -56,6 +60,14 @@ public class ParametrosSistemaController extends BaseController {
     
     @Autowired
     private UsuarioService usuarioService;
+    
+    
+    @Autowired
+    private DistribuidorService distribuidorService;
+
+    
+    @Autowired
+    EmailService emailService;
 	
 	/**
 	 * Busca os parâmetros gerais do sistema.
@@ -104,6 +116,36 @@ public class ParametrosSistemaController extends BaseController {
 	 * @param imgLogoSistema
 	 */
 	
+	public void testEmail(ParametroSistemaGeralDTO dto) {
+		
+	if ( dto.getEmailTest() == null || dto.getEmailTest().trim().length() == 0 ) {
+		
+		throw new ValidacaoException(TipoMensagem.NONE, "Digite o email destinatario para o teste ");	
+		
+	}
+	String email[] = {dto.getEmailTest()};
+    try {
+    	
+    	 LOGGER.warn("ENVIANDO EMAIL TESTE DO NDS PARA ",dto.getEmailTest());
+    	 
+    	 emailService.enviar("Teste email NDS em "+new Date()+" distribuidor="+distribuidorService.obterRazaoSocialDistribuidor(), "Teste email NDS de "+distribuidorService.obterRazaoSocialDistribuidor() +". NAO RESPONDER..", email);
+    	
+    	 LOGGER.warn("ENVIADO EMAIL TESTE DO NDS PARA ",dto.getEmailTest()+" COM SUCESSO");
+    	 
+    	} catch ( Exception e ) {
+    	
+		   	 LOGGER.error("ERRO ENVIANDO EMAIL DE TESTE para "+dto.getEmailTest(),e);
+		   	 
+		   	 throw new ValidacaoException(TipoMensagem.ERROR, "Erro testando envio de email para  "+dto.getEmailTest()+e.getMessage()+e.getCause().toString());
+		
+		     }
+    
+     throw new ValidacaoException(TipoMensagem.SUCCESS, "Email enviado com sucesso para "+dto.getEmailTest());	
+    
+	
+	}
+    
+    
 	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA_ALTERACAO)
 	public void removerTravas(ParametroSistemaGeralDTO dto) {
 		 String  usuario = (String) session.getAttribute(ControleSessionListener.USUARIO_LOGADO);
