@@ -91,6 +91,9 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 	
 	@Export(label = "Dia Recolhimento", alignment = Alignment.LEFT, exhibitionOrder = 15, fontSize=9)
 	private String diaRecolhimento;
+	
+	@Export(label = "Pct Padrao", alignment = Alignment.LEFT, exhibitionOrder = 16, fontSize=9)
+	private Long pacotePadrao;
 
 	@Export(label = "Sequência", exhibitionOrder = 1, fontSize=10)
 	private Integer sequencia;
@@ -420,6 +423,16 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 	public void setParcial(boolean parcial) {
 		this.parcial = parcial;
 	}
+	
+
+	public Long getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	public void setPacotePadrao(Long pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
+	}
+
 
 	@Override
 	public int hashCode() {
