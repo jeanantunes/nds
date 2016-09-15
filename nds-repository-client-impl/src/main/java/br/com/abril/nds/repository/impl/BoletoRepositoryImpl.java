@@ -990,12 +990,15 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		hql.append(" and divida.status not in(:statusPendente) ");
 		hql.append(" and cobranca.dataPagamento is null ");
 		hql.append(" and cobranca.oriundaNegociacaoAvulsa = :oriundaNegociacaoAvulsa ");
+		hql.append(" and cobranca.tipoCobranca <> :tipoCobranca ");
 
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("data", data);
 		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO);
 		query.setParameter("oriundaNegociacaoAvulsa", false);
+		
+		query.setParameter("tipoCobranca", TipoCobranca.BOLETO_AVULSO);
 		query.setParameterList("statusPendente", Arrays.asList(StatusDivida.PENDENTE_INADIMPLENCIA, StatusDivida.POSTERGADA,StatusDivida.NEGOCIADA));
 		return query.list();
 		
