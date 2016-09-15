@@ -678,6 +678,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 		sql.append("         ) ");
 		sql.append("     ) ");
 		sql.append("     and movimentoEstoqueCota.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
+		sql.append("  and   movimentoEstoqueCota.forma_comercializacao = 'CONSIGNADO' ");
 
 		return sql.toString();
 	}
