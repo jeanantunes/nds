@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.util.upload.XlsMapper;
 
 public class BoletoAvulsoDTO implements Serializable {
 
@@ -14,8 +15,10 @@ public class BoletoAvulsoDTO implements Serializable {
 	
 	private String dataLancamento;
 	
+	@XlsMapper(value="dataVencimento")
 	private String dataVencimento;
 	
+	@XlsMapper(value="numeroCota")
 	private Integer numeroCota;
 	
 	private String nomeCota;
@@ -24,8 +27,10 @@ public class BoletoAvulsoDTO implements Serializable {
 	
 	private Long idUsuario;
 	
+	@XlsMapper(value="valor")
 	private String valor;
 	
+	@XlsMapper(value="observ")
 	private String observacao;
 
 	private boolean permiteAlteracao;

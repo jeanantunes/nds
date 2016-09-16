@@ -161,6 +161,15 @@ var GerarBoletoAvulsoController = $.extend(true, {
 				});
 			}
 			
+			var dataVencimento = "";
+			if (row.cell.dataVencimento!=null){
+				vencimento = row.cell.dataVencimento;
+			}
+			
+			if (row.cell.observacao!=null){
+				observacao = row.cell.observacao;
+			}
+			
 			var hiddenId = '<input type="hidden" name="idMovimento" value="' + index + '" />';
 			
 			var parametroPesquisaCota = '\'#numeroCota' + index + '\', \'#nomeCota' + index + '\', true';
@@ -519,68 +528,75 @@ var GerarBoletoAvulsoController = $.extend(true, {
 		}
 	},
 	
-	boletoAvulsoLote : function() {
+	addLoteMix:function(){
 
+		GerarBoletoAvulsoController.initGrids();
 		
-		$("#modalUploadArquivo-BoletoAvulsoManual").dialog({
-			resizable : false,
-			height : 250,
-			width : 350,
-			modal : true,
-			buttons : {
-				"Confirmar" : function() {
-					$(this).dialog("close");
-					
-					GerarBoletoAvulsoController.executarSubmitAddLote();
+		$("#modalUploadArquivoMix").dialog({
+			resizable: false,
+			height:'auto',
+			width:400,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					GerarBoletoAvulsoController.executarSubmitArquivo();
 					
 				},
-				"Cancelar" : function() {
+				"Cancelar": function() {
+					$("#excelFile").val("");
 					$(this).dialog("close");
 				}
 			},
-			form: $("#modalUploadArquivo-BoletoAvulsoManual", this.workspace).parents("form")
 		});
+		
+		/*RECARREGA GRID CONFORME A EXECUCAO DO METODO COM OS PARAMETROS PASSADOS*/
+		$(".boleto-avulso-Grid_1", GerarBoletoAvulsoController.workspace).flexReload();
 
+		$(".grids", GerarBoletoAvulsoController.workspace).show();
+		
 	},
 	
-	executarSubmitAddLote : function (){
-		 var fileName = $("#xls").val();
+	//submit do arquivo adicionar em lote
+	executarSubmitArquivo:function(){
+		
+		var banco = $("#idBanco").val();
+		
+		var data = [];
+		data.push({name: 'bancoVO.idBanco', value: banco});
+		
+		var fileName = $("#excelFile").val();
 	      
-	       var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
-	       if(ext!="xls" & ext!="xlsx"){
-	    	   exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
-	    	   $(this).val('');
-	    	   return;
-	       }else{
-	    	
-	    	   $("#formUploadBoletoAvulsoManual").ajaxSubmit({
-					beforeSubmit: function(arr, formData, options) {
-					},
-					success: function(responseText, statusText, xhr, $form)  { 
-						var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
-						var tipoMensagem = mensagens.tipoMensagem;
-						var listaMensagens = mensagens.listaMensagens;
-
-						if (tipoMensagem && listaMensagens) {
-							
-							if (tipoMensagem != 'SUCCESS') {
-								
-								exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
-							
-							}else{
-								exibirMensagem(tipoMensagem, listaMensagens);	
-							}
-
-							$("#modalUploadArquivo-BoletoAvulsoManual").dialog( "close" );
-							
-						}
-					}, 
-					url:  contextPath + '/financeiro/boletoAvulso/addBoletoAvulsoEmLote',
-					type: 'POST',
-					dataType: 'json'
-				});
-	       }
+	    var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
+	    
+	    if(ext!="xls" & ext!="xlsx"){
+	       exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
+	       $(this).val('');
+	       return;
+	    }else{
+	    	   
+	       $("#formUploadLoteMix").ajaxSubmit({
+				
+	    	   success: function(responseText, statusText, xhr, $form, result, data)  { 
+					
+					if(responseText === null) {
+						exibirMensagemDialog("SUCCESS", ["Todo o arquivo foi importado com sucesso!"],"");
+					}
+						
+					$('#modalUploadArquivoMix').dialog('close');
+						
+					/*RECARREGA GRID CONFORME A EXECUCAO DO METODO COM OS PARAMETROS PASSADOS*/
+						
+					$(".boleto-avulso-Grid_1").flexAddData(responseText);
+						
+					$(".boleto-avulso-Grid_1", GerarBoletoAvulsoController.workspace).flexReload();
+						
+				},
+				
+				type: 'POST',
+				dataType: 'json',
+				data : data,
+			});
+       }
 	},
-	
 }, BaseController);
 //@ sourceURL=boletoAvulso.js

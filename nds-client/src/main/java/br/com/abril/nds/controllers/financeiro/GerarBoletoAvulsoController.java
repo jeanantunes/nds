@@ -16,36 +16,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.common.base.Strings;
-
 import br.com.abril.nds.client.annotation.Rules;
-import br.com.abril.nds.client.log.LogFuncional;
+import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.MixCotaDTO;
-import br.com.abril.nds.dto.MixCotaProdutoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
-import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroBoletoAvulsoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
-import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
-import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.FormaCobrancaService;
@@ -115,6 +109,9 @@ public class GerarBoletoAvulsoController extends BaseController {
 	
 	@Autowired
 	private FormaCobrancaService formaCobrancaService; 
+	
+	@Autowired
+	private CotaService cotaService; 
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(GerarBoletoAvulsoController.class);
 
@@ -430,17 +427,55 @@ public class GerarBoletoAvulsoController extends BaseController {
     
     @Post
 	@Path("/uploadArquivoLote")
-	public void uploadExcel(UploadedFile excelFile) throws FileNotFoundException, IOException{
-
-		List<BoletoAvulsoDTO> listBoletoAvulsoExcel = XlsUploaderUtils.getBeanListFromXls(BoletoAvulsoDTO.class, excelFile);
+	public void uploadExcel(UploadedFile excelFile, BancoVO bancoVO) throws FileNotFoundException, IOException{
+    	
+    	List<String> linhasComErro = new ArrayList<String>();
 		
+		String msgsErros = null;
+    	
+    	List<BoletoAvulsoDTO> listaCotasBoletosParser = new ArrayList<BoletoAvulsoDTO>();
+    	
+    	List<BoletoAvulsoDTO> listaCotasBoletos = XlsUploaderUtils.getBeanListFromXls(BoletoAvulsoDTO.class, excelFile);
+		
+    	List<ItemDTO<Integer,String>> comboBancos = this.bancoService.getComboBancosBoletoAvulso();
+    	for (BoletoAvulsoDTO boletoAvulsoDTO : listaCotasBoletos) {
+    		
+    		msgsErros = parserBoleto(msgsErros, listaCotasBoletosParser, comboBancos, boletoAvulsoDTO, linhasComErro);
+    		
+		}
+    	
 		TableModel<CellModelKeyValue<BoletoAvulsoDTO>> tableModel = new TableModel<CellModelKeyValue<BoletoAvulsoDTO>>();
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listBoletoAvulsoExcel));
-		int qtd = listBoletoAvulsoExcel.size();
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaCotasBoletosParser));
+		int qtd = listaCotasBoletosParser.size();
 		tableModel.setTotal(qtd);
 		tableModel.setPage(1);
+    	
+		if (linhasComErro != null && !linhasComErro.isEmpty()) {
+			
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, "Exitem cotas com problemas.\n"+msgsErros);
+					
+			validacao.setDados(linhasComErro);
+			
+			throw new ValidacaoException(validacao);
+		}
 		
 		this.result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+    }
+
+	private String parserBoleto(String msgsErros, List<BoletoAvulsoDTO> listaCotasBoletosParser,
+			List<ItemDTO<Integer, String>> comboBancos, BoletoAvulsoDTO boletoAvulsoDTO, List<String> linhasComErro) {
 		
+		Cota cota = cotaService.obterPorNumeroDaCota(boletoAvulsoDTO.getNumeroCota());
+		
+		if(cota != null) {
+			boletoAvulsoDTO.setNomeCota(cota.getPessoa().getNome());    			
+			boletoAvulsoDTO.setBancos(comboBancos);    			
+			listaCotasBoletosParser.add(boletoAvulsoDTO);
+		} else {
+			msgsErros += ("\n Cota inexistente: "+ boletoAvulsoDTO.getNumeroCota());
+			linhasComErro.add(msgsErros);
+		}
+		return msgsErros;
 	}
+    
 }
