@@ -551,6 +551,24 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         
         Object lancamento = query.uniqueResult();
         
+        if ( lancamento == null ) {
+        	
+        	 hql = new StringBuilder();
+        	 hql.append(" select lancamento ")
+	             .append(" from Lancamento lancamento ")
+	             .append(" where lancamento.dataLancamentoDistribuidor = ")
+	             .append(" (select max(lancamentoMaxDate.dataLancamentoDistribuidor) ")
+	             .append(" from Lancamento lancamentoMaxDate where lancamentoMaxDate.produtoEdicao.id=:idProdutoEdicao  and lancamentoMaxDate.dataLancamentoDistribuidor <= '3000-01-01' ) ")
+	             .append(" and lancamento.produtoEdicao.id=:idProdutoEdicao  ");
+
+             query = getSession().createQuery(hql.toString());
+             
+             query.setParameter("idProdutoEdicao", idProdutoEdicao);
+             
+             lancamento = query.uniqueResult();
+        	
+        	}
+        
         return (lancamento != null) ? (Lancamento) lancamento : null;
         
     }
