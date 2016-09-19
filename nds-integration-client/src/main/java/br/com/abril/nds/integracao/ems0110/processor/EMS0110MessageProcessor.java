@@ -10,6 +10,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -57,6 +59,8 @@ import com.google.common.base.Strings;
 public class EMS0110MessageProcessor extends AbstractRepository implements
 		MessageProcessor {
 
+	 private static final Logger LOGGER = LoggerFactory.getLogger(EMS0110MessageProcessor.class);
+	 
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 	
@@ -693,6 +697,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		boolean validarCodigoBarras = validarCodigoBarras(produto.getCodigo(), input.getEdicaoProd(), message, codigoDeBarras);
 		
 		if(validarCodigoBarras) {
+			if (produto.getTipoSegmentoProduto() == null || !"IMPORTADAS".equals(produto.getTipoSegmentoProduto().getDescricao())) {
+			    codigoDeBarras = new BigInteger(codigoDeBarras).toString();
+			    LOGGER.warn("ALTERADO CODIGO DE BARRA DO PRODUTO "+produto.getCodigo() +"  de "+input.getCodBarra()+
+			    		" para "+ codigoDeBarras );
+			}
 			edicao.setCodigoDeBarras(codigoDeBarras);
 		}
 		
