@@ -2,6 +2,8 @@ package br.com.abril.nds.integracao.ems0129.outbound;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.util.TirarAcento;
+
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
@@ -38,7 +40,7 @@ public class EMS0129Picking3Trailer2 implements Serializable {
 		this.sequencia = sequencia;
 		this.produto = produto;
 		this.edicao = edicao;
-		this.nome = nome;
+		this.nome = TirarAcento.removerAcentuacao(nome);
 		this.preco = preco;
 		this.precoDesconto = precoDesconto;
 		this.desconto = desconto;
