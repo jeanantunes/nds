@@ -1553,7 +1553,9 @@ ConsolidadoFinanceiroRepository {
         
         .append(" case when divida.STATUS = :statusPendenteInadimplencia then 1 else 0 end as inadimplente ")
         
-        .append(", mf.DATA as dataMovimento ")
+        .append(", mf.DATA as dataMovimento, ")
+        //cobrado/postergado
+        .append(" (select cob.TIPO_COBRANCA from COBRANCA cob where cob.DIVIDA_ID = divida.ID and cob.COTA_ID = cota.ID) as tipoCobranca ")
         
         .append(" from CONSOLIDADO_FINANCEIRO_COTA cfc ")
         .append(" inner join consolidado_mvto_financeiro_cota cmfc on cmfc.CONSOLIDADO_FINANCEIRO_ID = cfc.ID")
@@ -1926,7 +1928,9 @@ ConsolidadoFinanceiroRepository {
         .append("),0) as valorVendaDia, ")
         
         .append(" 0 as inadimplente ")
-        .append(", null as dataMovimento ")
+        .append(", null as dataMovimento, ")
+        
+        .append(" '' as tipoCobranca ")
         
         .append(" from MOVIMENTO_FINANCEIRO_COTA mfc ")
         .append(" inner join COTA on COTA.ID = mfc.COTA_ID")
@@ -1985,6 +1989,7 @@ ConsolidadoFinanceiroRepository {
         
         query.addScalar("nomeBox");
         query.addScalar("detalharDebitoCredito", StandardBasicTypes.BOOLEAN);
+        query.addScalar("tipoCobranca", StandardBasicTypes.STRING);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(ContaCorrenteCotaVO.class));
         

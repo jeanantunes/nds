@@ -272,6 +272,7 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
 		hql.append(" where b.ativo = :ativo ");
 		hql.append(" and fc.ativa = :ativo ");
 		hql.append(" and fc.tipoCobranca in (:tipoCobranca) ");
+		hql.append(" and fc.parametroCobrancaCota is null ");
 		
         Query query = super.getSession().createQuery(hql.toString());
 		
