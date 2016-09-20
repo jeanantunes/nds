@@ -14,12 +14,10 @@ public class CarregarLancamentoException extends Exception {
 
 	public CarregarLancamentoException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 	public CarregarLancamentoException(Throwable cause) {
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 
 }

@@ -4,6 +4,11 @@ import java.awt.EventQueue;
 
 import br.com.abril.ndsled.swing.Janela;
 
+/**
+ * Classe que inicia a aplicacao.
+ * @author Andre W Silva
+ * @since 19/07/2016
+ */
 public class AppLauncher {
 
 	/**

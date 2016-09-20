@@ -1,36 +1,29 @@
 package br.com.abril.ndsled.actions;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream.GetField;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.CouchDbProperties;
 import org.lightcouch.NoDocumentException;
+
+import br.com.abril.ndsled.exceptions.CarregarLancamentoException;
+import br.com.abril.ndsled.modelo.Cota;
+import br.com.abril.ndsled.modelo.DetalhesPickingPorCotaModelo04DTO;
+import br.com.abril.ndsled.modelo.Lancamento;
+import br.com.abril.ndsled.modelo.PickingLEDFullDTO;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
-import br.com.abril.ndsled.exceptions.CarregarLancamentoException;
-import br.com.abril.ndsled.modelo.DetalhesPickingPorCotaModelo04DTO;
-import br.com.abril.ndsled.modelo.Cota;
-import br.com.abril.ndsled.modelo.Lancamento;
-import br.com.abril.ndsled.modelo.PickingLEDFullDTO;
-import br.com.abril.ndsled.swing.Janela;
 
 /**
  * Classe com Metodos Statics para realizar acoes.
@@ -142,10 +135,10 @@ public class AppActions {
 
 		List<Lancamento> lancamentos = new ArrayList<Lancamento>();
 		for (PickingLEDFullDTO det : registros) {
-			System.out.println(det.toString());
-			System.out.println("Cota:"+det.getCodigoCotaLinha1());
-			System.out.println("Led:" + det.getEnderecoLED());
-			System.out.println("Box: " + det.getCodigoBox());
+			// System.out.println(det.toString());
+			// System.out.println("Cota:"+det.getCodigoCotaLinha1());
+			// System.out.println("Led:" + det.getEnderecoLED());
+			// System.out.println("Box: " + det.getCodigoBox());
 
 			List<DetalhesPickingPorCotaModelo04DTO> det1 = det
 					.getListTrailer2();
@@ -156,16 +149,13 @@ public class AppActions {
 						.replace(";", "")));
 				lancamento.setCodigoProduto(new Integer(item.getProduto()
 						.replace(";", "")));
-				lancamento.setCodigoBox(new Integer(det.getCodigoBox().replace(";", "")));
+				lancamento.setCodigoBox(new Integer(det.getCodigoBox().replace(
+						";", "")));
 				lancamento.setDataLacamento(new SimpleDateFormat("ddMMyyyy")
 						.parse(det.getDataLancamento().replace(";", "")));
-				// lancamento.setDesconto(new
-				// BigDecimal(item.getPrecoDesconto()));
 				lancamento.setEdicaoProduto(new Integer(item.getEdicao()
 						.replace(";", "")));
 				lancamento.setNomeProduto(item.getNome().replace(";", ""));
-				// lancamento.setPrecoCapa(new BigDecimal(14.99));
-				// lancamento.setPrecoCusto(new BigDecimal(14.99));
 				lancamento.setQuantidadeReparte(new Integer(item
 						.getQuantidade().replace(";", "")));
 				lancamento.setCodigoLed(new Integer(det.getEnderecoLED()
@@ -211,7 +201,6 @@ public class AppActions {
 		}
 		return retorno;
 	}
-
 
 	/**
 	 * Metodo usado para setar maxlength para um campo textfield.
