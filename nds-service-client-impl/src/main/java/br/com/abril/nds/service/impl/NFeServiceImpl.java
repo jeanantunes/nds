@@ -1111,7 +1111,9 @@ public class NFeServiceImpl implements NFeService {
 			
 			Map<String, TributoAliquota> tributoAliquota = new HashMap<String, TributoAliquota>();
 			
-			for(final TributoAliquota tributo : distribuidor.getRegimeTributarioTributoAliquota()){
+			distribuidor.getRegimeTributarioTributoAliquota();
+			
+			for(TributoAliquota tributo : distribuidor.getRegimeTributarioTributoAliquota()){
 				tributoAliquota.put(tributo.getNomeTributo(), tributo);
 			}
 			

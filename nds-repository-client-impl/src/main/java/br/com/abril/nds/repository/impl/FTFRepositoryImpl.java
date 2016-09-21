@@ -290,7 +290,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" (CASE WHEN tsp.DESCRICAO = 'IMPORTADAS' THEN ")
 		.append("      pe.CODIGO_DE_BARRAS_CORPORATIVO ") 
 		.append(" ELSE ")
-		.append("      LPAD(cast(nfps.CODIGO_DE_BARRAS_CORPORATIVO as char), 13, '0')  ")
+		.append("      LPAD(cast(pe.CODIGO_DE_BARRAS_CORPORATIVO as char), 13, '0')  ")
 		.append(" END) as codBarrasProduto, ")
 		
 		// .append(" LPAD(cast(nfps.CODIGO_BARRAS as char), 13, '0') as codBarrasProduto, ")
@@ -317,11 +317,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
         .append(" inner join pessoa p on p.id = nfp.ID_PESSOA_ORIGINAL ")
         .append(" left outer join cota c on c.PESSOA_ID = p.id and c.id = nfn.COTA_ID ")
         .append(" join parametros_ftf_geracao paramFtf ON no.ID = paramftf.NATUREZA_OPERACAO_ID ")
-		.append(" 		and (CASE WHEN c.CONTRIBUINTE_ICMS = true THEN ")
-		.append(" 				(paramFtf.CNPJ_DESTINATARIO IS NULL OR paramFtf.CNPJ_DESTINATARIO = '') ") 
-		.append(" 			ELSE ")
-		.append(" 				(paramFtf.CNPJ_DESTINATARIO IS NOT NULL AND LENGTH(paramFtf.CNPJ_DESTINATARIO) > 1) ")
-		.append(" 			END) ")
+		
 		.append(" where nfps.NOTA_FISCAL_ID = :idNF ")
 		.append(" GROUP BY nfn.id, nfps.CODIGO_PRODUTO, nfps.PRODUTO_EDICAO_ID ");
 		

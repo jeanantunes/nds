@@ -34,9 +34,19 @@ public class Impostos implements Serializable {
 		return icms.getIcms();
 	}
 
+	public ICMSST getIcmsst() {
+		if(this.icms == null) return null;
+		return icms.getIcmsst();
+	}
+	
 	public void setIcms(ICMS icms) {
 		if(this.icms == null) this.icms = new ICMSWrapper();
 		this.icms.setIcms(icms);
+	}
+	
+	public void setIcms(ICMSST icms) {
+		if(this.icms == null) this.icms = new ICMSWrapper();
+		this.icms.setIcmsst(icms);
 	}
 
 	public IPI getIpi() {

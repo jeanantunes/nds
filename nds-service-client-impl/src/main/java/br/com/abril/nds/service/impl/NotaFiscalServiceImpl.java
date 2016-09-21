@@ -654,15 +654,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		}
 		
 		
-		for (NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
-			
-			try {
-				dados = NFeGerarTxt.gerarNfeTxt(notaFiscal);
-			} catch (Exception e) {
-				throw new ValidacaoException(TipoMensagem.ERROR, "Erro fatal ao gerar aqrquivo TXT: ");
-			}
-			this.arquivoNotasTXT(dados.toString());
-		}
+//		for (NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
+//			
+//			try {
+//				dados = NFeGerarTxt.gerarNfeTxt(notaFiscal);
+//			} catch (Exception e) {
+//				throw new ValidacaoException(TipoMensagem.ERROR, "Erro fatal ao gerar aqrquivo TXT: ");
+//			}
+//			this.arquivoNotasTXT(dados.toString());
+//		}
 		
 		
 		for (NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
