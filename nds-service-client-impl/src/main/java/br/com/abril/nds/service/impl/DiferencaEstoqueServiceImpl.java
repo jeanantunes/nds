@@ -498,10 +498,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                                     usuario.getId(), isMovimentoDiferencaAutomatico,
                                     ultimoLancamento.getDataLancamentoDistribuidor());
                     
-                    if (produtoRecolhido) {
-                        
-                        this.lancarDebitoCreditoCota(diferenca, rateioDiferenca, movimentoEstoqueCota, usuario);
-                    }
                     
                     listaMovimentosEstoqueCota.add(movimentoEstoqueCota);
                 }
