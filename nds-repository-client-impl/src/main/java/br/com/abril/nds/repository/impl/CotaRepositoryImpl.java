@@ -319,7 +319,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
                      .append(" WHERE MOVIMENTOCOTA.COTA_ID = COTA_.ID ")
                      .append(" AND (MOVIMENTOCOTA.STATUS_ESTOQUE_FINANCEIRO IS NULL ")
                      .append(" OR MOVIMENTOCOTA.STATUS_ESTOQUE_FINANCEIRO =:statusEstoqueFinanceiro) ")
-                     .append(" AND TIPOMOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ")
+                     .append(" AND TIPOMOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE != (:tipoMovimentoEstorno) ")
                      .append(" AND MOVIMENTOCOTA.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
         
         final StringBuilder hqlDividaAcumulada = new StringBuilder();
@@ -522,7 +522,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append("         join cota cota  ")
            .append("         	on dv.cota_ID = cota.ID ")
            .append("         join distribuidor dist  ")
-           .append("         where ")
+           .append("         where COTA_.ID = cota.id AND  ")
            .append("         dv.STATUS in ('EM_ABERTO', 'PENDENTE_INADIMPLENCIA') ")
            .append("         	and cb.STATUS_COBRANCA = :statusCobrancaNaoPago ")
            .append("         	and (cota.SUGERE_SUSPENSAO = true or dist.SUGERE_SUSPENSAO = true )")

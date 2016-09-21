@@ -15,13 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DeparaVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.BoxDTO;
 import br.com.abril.nds.dto.DeparaDTO;
 import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaBox;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDepara;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Depara;
-
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -118,6 +120,47 @@ public class DeparaController extends BaseController {
         result.use(CustomJson.class).from(depara).serialize();
         
     }
+    
+public void exportarConsulta(final FileType fileType) throws IOException {
+        
+        final FiltroConsultaDepara filtro = (FiltroConsultaDepara) session.getAttribute(FILTRO_CONSULTA_DEPARA);
+        
+        if (filtro == null) {
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+                    "É necessario realizar a pesquisa primeiro."));
+        }
+        
+        final List<Depara> deparas = deparaService.busca(filtro.getFc(), filtro.getDinap(), filtro.getOrderBy(),filtro.getOrdenacao(), null,null);
+        
+        
+      
+        
+        final List<DeparaDTO> listaDePara = this.convertDeparatoDeparaDTO(deparas);
+        
+        FileExporter.to("consulta-depara", fileType).inHTTPResponse(this.getNDSFileHeader(), null, listaDePara,
+                DeparaDTO.class, httpServletResponse);
+        
+        result.use(Results.nothing());
+    }
+
+
+private List<DeparaDTO> convertDeparatoDeparaDTO(final List<Depara> deparaList) {
+    
+    final List<DeparaDTO> listaDeparaDTO = new ArrayList<DeparaDTO>();
+    
+    for (final Depara depara : deparaList) {
+        
+        final DeparaDTO deparaDTO = new DeparaDTO();
+        
+        deparaDTO.setDinap(depara.getDinap());
+        deparaDTO.setFc(depara.getFc());
+  
+        
+        listaDeparaDTO.add(deparaDTO);
+    }
+    
+    return listaDeparaDTO;
+}
     
     @Post
     @Path("/salvar.json")

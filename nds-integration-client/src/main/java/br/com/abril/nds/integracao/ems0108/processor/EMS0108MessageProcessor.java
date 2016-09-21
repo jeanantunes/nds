@@ -9,10 +9,13 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.ems0108.inbound.EMS0108Input;
+import br.com.abril.nds.integracao.ems0110.processor.EMS0110MessageProcessor;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.Origem;
@@ -39,6 +42,9 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 @Component
 public class EMS0108MessageProcessor extends AbstractRepository implements
 		MessageProcessor {
+	
+	
+	 private static final Logger LOGGER = LoggerFactory.getLogger(EMS0108MessageProcessor.class);
 
 	@Autowired
 	private DescontoLogisticaRepository descontoLogisticaRepository;
@@ -753,7 +759,13 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		produtoEdicao.setProduto(produto);
 		produtoEdicao.setNumeroEdicao(input.getEdicaoLancamento());
 		produtoEdicao.setPeso(input.getPesoProduto());
-		produtoEdicao.setCodigoDeBarras(input.getCodigoBarrasFisicoProduto());
+		String codigodeBarras = input.getCodigoBarrasFisicoProduto();
+		if (produto.getTipoSegmentoProduto() == null || !"IMPORTADAS".equals(produto.getTipoSegmentoProduto().getDescricao())) {
+		    codigodeBarras = new BigInteger(codigodeBarras).toString();
+		    LOGGER.warn("ALTERADO CODIGO DE BARRA DO PRODUTO "+produto.getCodigo() +"  de "+input.getCodigoBarrasFisicoProduto()+
+		    		" para "+ codigodeBarras );
+		}
+		produtoEdicao.setCodigoDeBarras(codigodeBarras);
 		//Tipo Classificação Default - ID Fixo.
 		produtoEdicao.setTipoClassificacaoProduto(new TipoClassificacaoProduto(16L));
 		

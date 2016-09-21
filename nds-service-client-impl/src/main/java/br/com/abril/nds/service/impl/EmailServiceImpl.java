@@ -118,6 +118,8 @@ public class EmailServiceImpl implements EmailService {
 	 */
 	private void enviarEmail(String assunto, String mensagem, String[] destinatarios,List<AnexoEmail> anexos, boolean isHtml) throws AutenticacaoEmailException{
 		
+		mailSender = new JavaMailSenderImpl();
+		
 		autenticarSmtp();
 		
 		ParametroSistema remetente = 
@@ -125,6 +127,7 @@ public class EmailServiceImpl implements EmailService {
 				TipoParametroSistema.EMAIL_REMETENTE);
 		
 		validarParametrosAutenticacao(remetente, TipoParametroSistema.EMAIL_PROTOCOLO);
+		
 		
 		MimeMessage message = mailSender.createMimeMessage();
 		
@@ -186,8 +189,8 @@ public class EmailServiceImpl implements EmailService {
 			mailSender.getJavaMailProperties().setProperty("mail.smtps.auth", "true");
 			mailSender.getJavaMailProperties().setProperty("mail.smtps.starttls.enable", "false");
 			
-			mailSender.getJavaMailProperties().setProperty("mail.smtp.socketFactory.port", porta.getValor());
-			mailSender.getJavaMailProperties().setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			// mailSender.getJavaMailProperties().setProperty("mail.smtp.socketFactory.port", porta.getValor());
+			// mailSender.getJavaMailProperties().setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 			
 		} else {
 		

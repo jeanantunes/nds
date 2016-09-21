@@ -41,7 +41,6 @@ var parametroSistemaController = $.extend(true, {
 	
 remover: function() {
 		
-		$("#autenticaEmailHidden", this.workspace).val($('#autenticaEmail', this.workspace).is(":checked"));
 		
 		var formData = $("#formParametroSistema", this.workspace).serializeArray();
 		
@@ -54,6 +53,33 @@ remover: function() {
 				
 		},
 		null,true);
+		
+		
+		
+		//setTimeout($("#menu_principal ul li ul li a[href^='"+ this.path.substring(0, this.path.length - 1) +"']").click(), 200);
+				
+	},
+	
+testEmail: function() {
+		
+		
+		var formData = $("#formParametroSistema", this.workspace).serializeArray();
+		
+		$.postJSON(this.path + "testEmail", 
+			formData,
+			function(result) {
+			exibirMensagem("ERROR",["Email enviado com Sucesso"]);
+		    
+				
+		},
+		function(result) {
+		
+		  
+		    exibirMensagem("ERROR",[result.mensagens.listaMensagens[0]]);
+				
+		},
+		
+		true);
 		
 		
 		

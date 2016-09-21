@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.quartz.impl.StdScheduler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -35,6 +37,7 @@ import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -49,6 +52,11 @@ import br.com.abril.nds.util.QuartzUtil;
 @Service
 public class SituacaoCotaServiceImpl implements SituacaoCotaService, ApplicationContextAware {
 
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(SituacaoCotaServiceImpl.class);
+	  
+	  
+	  
 	@Autowired
 	private HistoricoSituacaoCotaRepository historicoSituacaoCotaRepository;
 	
@@ -83,6 +91,10 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService, Application
 	
 	@Autowired
 	private CotaService cotaService;
+	
+	
+	@Autowired
+	private UsuarioService usuarioService;
 	
 	@Autowired 
 	private ConsultaConsignadoCotaService consultaConsignadoCotaService;
@@ -200,7 +212,16 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService, Application
         
         if(SituacaoCadastro.INATIVO.equals(cota.getSituacaoCadastro())){
             
-            throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível ativar uma cota com status Inativa!");
+        	// permitir que o usuario supervisor ou admin altere status
+        if ( ! usuarioService.isSupervisor() && !"SAD".equalsIgnoreCase(usuarioService.getUsuarioLogado().getLogin())) {
+        	
+            throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível ativar uma cota com status Inativa!(Somente o Supervisor ou SAD podem ativar)");
+            
+        }
+        else {
+        	LOGGER.error("ATENCAO.. USUARIO "+usuarioService.getNomeUsuarioLogado()+ " alterando status de cota inativa=" +
+            cota.getNumeroCota());
+        }
         
         }
         

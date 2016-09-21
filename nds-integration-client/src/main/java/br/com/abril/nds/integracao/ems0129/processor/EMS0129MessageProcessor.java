@@ -56,6 +56,7 @@ import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.service.LedModelo4IntegracaoService;
+import br.com.abril.nds.util.TirarAcento;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
@@ -676,7 +677,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		
 		modelo.setEdicao(String.format("%1$04d",pickingDTO.getCodigoEdicao()));
 		
-		modelo.setNomePublicacao(pickingDTO.getNomeProduto());
+		modelo.setNomePublicacao(TirarAcento.removerAcentuacao(pickingDTO.getNomeProduto()));
 		
 		modelo.setPrecoCusto(pickingDTO.getPrecoCustoProdutoEdicao());
 		
