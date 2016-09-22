@@ -278,13 +278,13 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ");
 		
-		if(filtro.isCotaAvista()){
-			if(!filtro.isCotaDevolveEncalhe()){
-				sql.append(" AND MEC.FORMA_COMERCIALIZACAO=:formaComercializacao ");
-			}
-		}else{
-			sql.append(" AND MEC.FORMA_COMERCIALIZACAO=:formaComercializacao ");
-		}
+//		if(filtro.isCotaAvista()){
+//			if(!filtro.isCotaDevolveEncalhe()){
+//				sql.append(" AND MEC.FORMA_COMERCIALIZACAO=:formaComercializacao ");
+//			}
+//		}else{
+//			sql.append(" AND MEC.FORMA_COMERCIALIZACAO=:formaComercializacao ");
+//		}
 		
 		if(filtro.getDataInicio() != null)
 		    sql.append(" AND MEC.DATA >=:dataInicio ");
@@ -556,7 +556,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
         	sql.append("    SUM( COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * (CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ) AS total ");
         }
         
-        this.setarFromWhereConsultaConsignado(sql, filtro);
+        this.setarFromWhereConsultaConsignadoCota(sql, filtro);
 		
 		sql.append(" GROUP BY ");
 		sql.append(" PE.ID, C.ID ");

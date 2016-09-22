@@ -439,7 +439,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		valorConsignado = this.consultaConsignadoCota.buscarTotalGeralConsignadoCota(filtro);
 		
 		StringBuilder html = new StringBuilder();
-		html.append("<table width='300' border='0' cellspacing='1' cellpadding='1' align='center'>");
+		html.append("<table width='400' border='0' cellspacing='1' cellpadding='1' align='center'>");
 		
 		html.append("<tr> ");
 		html.append("<td style='border-top:1px solid #000;'><strong>Total Consignado:</strong></td>");
@@ -448,7 +448,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		html.append("</tr>");
 
 		html.append("<tr>");
-		html.append("<td width='71'><strong>Total A vista:</strong></td>");				
+		html.append("<td width='100'><strong>Total A vista:</strong></td>");				
 		html.append("<td>&nbsp;</td>");
 		html.append("<td width='60' align='right'><strong>"+CurrencyUtil.formatarValor(valorAVista)+"</strong></td>");
 		html.append("</tr>");

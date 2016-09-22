@@ -373,7 +373,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 				    $( "#dialog-total-consignado-avista" ).dialog({
 				      resizable: false,
 				      height: "auto",
-				      width: 400,
+				      width: 500,
 				      modal: true,
 				      buttons: {
 				        "Fechar ": function() {
