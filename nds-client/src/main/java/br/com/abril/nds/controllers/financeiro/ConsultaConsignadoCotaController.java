@@ -125,6 +125,14 @@ public class ConsultaConsignadoCotaController extends BaseController {
 			    totalGeral = this.consultaConsignadoCota.buscarTotalGeralDaCota(filtro);
 			}
 			
+			BigDecimal valorAVista = this.consultaConsignadoCota.buscarTotalGeralAvistaCota(filtro);
+			
+			BigDecimal valorConsignado = this.consultaConsignadoCota.buscarTotalGeralConsignadoCota(filtro);
+			
+			mapaResultado.put("valorAVista", CurrencyUtil.formatarValor(valorAVista));
+			
+			mapaResultado.put("valorConsignado", CurrencyUtil.formatarValor(valorConsignado));
+			
 			mapaResultado.put("totalGeral", CurrencyUtil.formatarValor(totalGeral));
 	
 			session.setAttribute(TOTAIS_GERAIS_CONSIGNADO_SESSION, mapaResultado);

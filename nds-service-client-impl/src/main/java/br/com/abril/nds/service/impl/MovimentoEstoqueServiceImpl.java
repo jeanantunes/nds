@@ -1959,7 +1959,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
         
         if(produtoEdicao.getProduto().getFormaComercializacao().equals(FormaComercializacao.CONTA_FIRME) 
-        		|| (estudoCotaDTO.getTipoCota().equals(TipoCota.A_VISTA) && !estudoCotaDTO.isDevolveEncalhe())){        	
+        		|| (estudoCotaDTO.getTipoCota().equals(TipoCota.A_VISTA))){        	
         	movimentoEstoqueCota.setFormaComercializacao(FormaComercializacao.CONTA_FIRME.name());
         } else {
     		movimentoEstoqueCota.setFormaComercializacao(FormaComercializacao.CONSIGNADO.name());

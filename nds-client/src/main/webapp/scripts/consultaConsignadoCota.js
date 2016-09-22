@@ -327,14 +327,39 @@ var consultaConsignadoCotaController = $.extend(true, {
 				$("#totalGeralCota", consultaConsignadoCotaController.workspace).hide();
 				$('.tabelaGeralDetalhado', consultaConsignadoCotaController.workspace).hide();
 				$('.tabelaGeralPorFornecedor', consultaConsignadoCotaController.workspace).show();
+
+				var htmlTotais;
 				
-				var htmlTotais =
-					" <table width='450' border='0' cellspacing='1' cellpadding='1' align='right'>"
-					// + "<tr> <td><strong>Total Geral:</strong></td>"
-					+ "<tr> <td><a href='javascript:;' onclick='consultaConsignadoCotaController.obterTotalConsiganadoAvista();'><strong>Total Geral:</strong></a></td> " 
+				if(result.valorAVista == '0,00') {					
+					htmlTotais =	" <table width='450' border='0' cellspacing='1' cellpadding='1' align='right'>"
+						+ "<tr> <td><strong>Total Geral:</strong></td>"
+						+ " <td>&nbsp;</td> "
+						+ " <td align='right'><strong>" + result.totalGeral + "</strong></td></tr>";
+				} else {
+					htmlTotais =	" <table width='450' border='0' cellspacing='1' cellpadding='1' align='right'>"
+						+ "<tr>  "
+						+ " <td><strong>Total Geral:</strong></a></td>"
+						+ " <td>&nbsp;</td> "
+						+ " <td align='right'><strong>" + result.totalGeral + "</strong></td>"
+						+ "<tr> "
+						+ "<tr>  "
+						+ " <td><strong>Total a Vista:</strong></a></td>"
+						+ " <td>&nbsp;</td> "
+						+ " <td align='right'><strong>" + result.valorAVista + "</strong></td>"
+						+ "<tr> "
+						+ "<tr>  "
+						+ " <td><strong>Total Consignado:</strong></a></td>"
+						+ " <td>&nbsp;</td> "
+						+ " <td align='right'><strong>" + result.valorConsignado + "</strong></td>"
+						+ "<tr> ";
+						
 					
-					+ " <td>&nbsp;</td> "
-					+ " <td align='right'><strong>" + result.totalGeral + "</strong></td></tr>";
+					
+					
+				}
+				
+				
+				
 				
 				if (result.totaisFornecedores) {
 					
