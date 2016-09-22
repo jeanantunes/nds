@@ -562,7 +562,7 @@ var GerarBoletoAvulsoController = $.extend(true, {
 		var banco = $("#idBanco").val();
 		
 		var data = [];
-		data.push({name: 'bancoVO.idBanco', value: banco});
+		data.push({name: 'idBanco', value: banco});
 		
 		var fileName = $("#excelFile").val();
 	      

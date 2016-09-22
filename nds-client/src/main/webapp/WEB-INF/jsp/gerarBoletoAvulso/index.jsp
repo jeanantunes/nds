@@ -158,7 +158,7 @@
  	<form action="${pageContext.request.contextPath}/financeiro/boletoAvulso/uploadArquivoLote" id="formUploadLoteMix" method="post" enctype="multipart/form-data">
  		<td width="91"><span>Banco:</span></td>
 		<td>
-			<select id="idBanco" style="width:150px; font-size:11px!important">
+			<select id="idBanco" name="idBanco" style="width:150px; font-size:11px!important">
 				<c:forEach items="${bancos}" var="roteiro">
 					<option value="${roteiro.key }">${roteiro.value }</option>
 				</c:forEach>

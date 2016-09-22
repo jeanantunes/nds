@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
-import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -28,6 +27,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -427,7 +427,7 @@ public class GerarBoletoAvulsoController extends BaseController {
     
     @Post
 	@Path("/uploadArquivoLote")
-	public void uploadExcel(UploadedFile excelFile, BancoVO bancoVO) throws FileNotFoundException, IOException{
+	public void uploadExcel(UploadedFile excelFile, Long idBanco) throws FileNotFoundException, IOException{
     	
     	List<String> linhasComErro = new ArrayList<String>();
 		
@@ -437,11 +437,20 @@ public class GerarBoletoAvulsoController extends BaseController {
     	
     	List<BoletoAvulsoDTO> listaCotasBoletos = XlsUploaderUtils.getBeanListFromXls(BoletoAvulsoDTO.class, excelFile);
 		
-    	List<ItemDTO<Integer,String>> comboBancos = this.bancoService.getComboBancosBoletoAvulso();
+    	Banco banco = this.bancoService.obterBancoPorId(idBanco);
+    	
+    	List<ItemDTO<Integer,String>> comboBancos = new ArrayList<>();
+
+		String descricaoBanco = 
+					 (banco.getNumeroBanco() == null ? "" : banco.getNumeroBanco() + "-") 
+					 + (banco.getApelido() == null ? "" :  banco.getApelido() + " ")
+					 + (banco.getConta() == null ? "" : banco.getConta())
+					 + (banco.getDvConta() == null ? "" : "-" + banco.getDvConta());
+
+		comboBancos.add(new ItemDTO<Integer,String>(banco.getId().intValue(), descricaoBanco));
+		
     	for (BoletoAvulsoDTO boletoAvulsoDTO : listaCotasBoletos) {
-    		
     		msgsErros = parserBoleto(msgsErros, listaCotasBoletosParser, comboBancos, boletoAvulsoDTO, linhasComErro);
-    		
 		}
     	
 		TableModel<CellModelKeyValue<BoletoAvulsoDTO>> tableModel = new TableModel<CellModelKeyValue<BoletoAvulsoDTO>>();
@@ -461,14 +470,15 @@ public class GerarBoletoAvulsoController extends BaseController {
 		
 		this.result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
     }
-
+    
 	private String parserBoleto(String msgsErros, List<BoletoAvulsoDTO> listaCotasBoletosParser,
 			List<ItemDTO<Integer, String>> comboBancos, BoletoAvulsoDTO boletoAvulsoDTO, List<String> linhasComErro) {
 		
 		Cota cota = cotaService.obterPorNumeroDaCota(boletoAvulsoDTO.getNumeroCota());
 		
 		if(cota != null) {
-			boletoAvulsoDTO.setNomeCota(cota.getPessoa().getNome());    			
+			boletoAvulsoDTO.setNomeCota(cota.getPessoa().getNome());
+			
 			boletoAvulsoDTO.setBancos(comboBancos);    			
 			listaCotasBoletosParser.add(boletoAvulsoDTO);
 		} else {

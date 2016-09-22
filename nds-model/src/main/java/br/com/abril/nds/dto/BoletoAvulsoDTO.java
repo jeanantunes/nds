@@ -1,10 +1,14 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import com.google.common.base.Strings;
+
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.upload.XlsMapper;
 
 public class BoletoAvulsoDTO implements Serializable {
@@ -151,7 +155,13 @@ public class BoletoAvulsoDTO implements Serializable {
 	 * @param valor the valor to set
 	 */
 	public void setValor(String valor) {
-		this.valor = valor;
+		
+		if(Strings.isNullOrEmpty(valor))
+            return;        
+        
+		BigDecimal valorRetornado = (BigDecimal.valueOf(Double.parseDouble(valor.replace(",", "."))));
+		
+		this.valor = CurrencyUtil.formatarValor(valorRetornado);
 	}
 
 	/**
