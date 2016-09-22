@@ -47,6 +47,7 @@ import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Util;
 
 @Service
 public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
@@ -150,7 +151,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		movimentoFinanceiroCotaDTO.setDataVencimento(dataVencimento);
 
-		movimentoFinanceiroCotaDTO.setValor(new BigDecimal(debitoCredito.getValor()));
+		movimentoFinanceiroCotaDTO.setValor(new BigDecimal( Util.getValorSemMascara(debitoCredito.getValor())));
 
 		movimentoFinanceiroCotaDTO.setObservacao(debitoCredito.getObservacao());
 

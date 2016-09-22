@@ -262,8 +262,10 @@ public class GerarBoletoAvulsoController extends BaseController {
 		for (BoletoAvulsoDTO boletoAvulso : listaBoletosAvulso) {
 			
 			boletoAvulso.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
-
-			boletoAvulso.setValor(boletoAvulso.getValor());
+			
+			String valorSemMascara = Util.getValorSemMascara(boletoAvulso.getValor());
+			
+			boletoAvulso.setValor(valorSemMascara);
 
 			boletoAvulso.setIdUsuario(this.getUsuarioLogado().getId());
 			
