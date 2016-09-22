@@ -35,10 +35,12 @@ import br.com.abril.nds.client.vo.DiferencaVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.client.vo.ResultadoDiferencaVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.dto.EstoqueDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.RateioDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO.OrdenacaoColunaConsulta;
@@ -49,6 +51,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -58,6 +61,10 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -3256,5 +3263,4 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
         
         result.nothing();
     }
-    
 }

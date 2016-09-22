@@ -28,6 +28,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -503,13 +504,17 @@ public class CotaAusenteController extends BaseController {
 		for (MovimentoEstoqueCotaDTO mecDTO : movimentos){
 			
 			Cota cota  = this.cotaService.obterPorId(mecDTO.getIdCota());
-		
+
 			for (RateioDTO rateio : mecDTO.getRateios()){
-			
+				
+				Cota cotaRateio  = this.cotaService.obterPorNumeroDaCota(rateio.getNumCota());
+				
+				if(cotaRateio.getTipoCota().equals(TipoCota.A_VISTA)) {
+					throw new ValidacaoException(TipoMensagem.WARNING, "Não é permitido redistribuir a vista. ("+cotaRateio.getNumeroCota()+")");
+				}
+				
 			    if (cota.getNumeroCota().equals(rateio.getNumCota())){
-			    	
-                    throw new ValidacaoException(TipoMensagem.WARNING,
-                            "Não é permitido redistribuir para a cota ausente.");
+                    throw new ValidacaoException(TipoMensagem.WARNING, "Não é permitido redistribuir para a cota ausente.");
 		    	}
 		    }
 		}

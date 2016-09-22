@@ -126,14 +126,11 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 			
 			Cota cota = this.cotaRepository.obterPorNumeroDaCota(numeroCotaAusente);
 
-			List<MovimentoEstoqueCota> movimentosCota = 
-				this.movimentoEstoqueCotaRepository.obterMovimentoCotaLancamentoPorTipoMovimento(
+			List<MovimentoEstoqueCota> movimentosCota = this.movimentoEstoqueCotaRepository.obterMovimentoCotaLancamentoPorTipoMovimento(
 					data, cota.getId(), Arrays.asList(GrupoMovimentoEstoque.values()));
 
-			List<MovimentoEstoqueCota> movimentosCotaEnvio = 
-				this.movimentoEstoqueService.enviarSuplementarCotaAusente(
-					data, cota.getId(), movimentosCota);
-
+			List<MovimentoEstoqueCota> movimentosCotaEnvio = this.movimentoEstoqueService.enviarSuplementarCotaAusente(data, cota.getId(), movimentosCota, idUsuario);
+			
 			CotaAusente cotaAusente = this.gerarCotaAusente(
 				numeroCotaAusente, data, idUsuario, cota, movimentosCotaEnvio);
 
@@ -144,7 +141,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 
 		return cotasAusentes;
 	}
-
+	
 	private CotaAusente gerarCotaAusente(Integer numCota, Date data, Long idUsuario, Cota cota,
 										 List<MovimentoEstoqueCota> movimentosEstoqueCota)
 										 throws TipoMovimentoEstoqueInexistenteException {

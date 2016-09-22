@@ -247,7 +247,7 @@ public class GerarBoletoAvulsoController extends BaseController {
 
     }
     
-	private List<MovimentoFinanceiroCota> gerarMovimentacaoFinanceira(List<BoletoAvulsoDTO> listaNovosDebitoCredito, Long idTipoMovimento, Map<Integer, Long> cotasBanco) {
+	private List<MovimentoFinanceiroCota> gerarMovimentacaoFinanceira(List<BoletoAvulsoDTO> listaBoletosAvulso, Long idTipoMovimento, Map<Integer, Long> cotasBanco) {
 		
 		Date dataCriacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
@@ -259,27 +259,27 @@ public class GerarBoletoAvulsoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrado tipo de movimento Boleto Avulso ");
 		}
 		
-		for (BoletoAvulsoDTO debitoCredito : listaNovosDebitoCredito) {
+		for (BoletoAvulsoDTO boletoAvulso : listaBoletosAvulso) {
 			
-			debitoCredito.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
+			boletoAvulso.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
 
-			debitoCredito.setValor(debitoCredito.getValor());
+			boletoAvulso.setValor(boletoAvulso.getValor());
 
-			debitoCredito.setIdUsuario(this.getUsuarioLogado().getId());
+			boletoAvulso.setIdUsuario(this.getUsuarioLogado().getId());
 			
-			debitoCredito.setId(null);
+			boletoAvulso.setId(null);
 			
-			debitoCredito.setDataCriacao(dataCriacao);
+			boletoAvulso.setDataCriacao(dataCriacao);
 			
-			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = debitoCreditoCotaService.gerarMovimentoFinanceiroBoletoAvulsoDTO(debitoCredito);
+			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = debitoCreditoCotaService.gerarMovimentoFinanceiroBoletoAvulsoDTO(boletoAvulso);
 			
 			movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
 			
-			movimentoFinanceiroCotaDTO.setObservacao(debitoCredito.getObservacao());
+			movimentoFinanceiroCotaDTO.setObservacao(boletoAvulso.getObservacao());
 			
 			movimentosFinanceirosCota.addAll(this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO));
 			
-			cotasBanco.put(debitoCredito.getNumeroCota(), debitoCredito.getIdBanco());
+			cotasBanco.put(boletoAvulso.getNumeroCota(), boletoAvulso.getIdBanco());
 			
 		}
 		

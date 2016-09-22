@@ -56,7 +56,7 @@ public interface MovimentoEstoqueService {
 
 	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, ProdutoEdicao produtoEdicao, Long idCota, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, Date dataOperacao,Long idLancamento,Long idEestudoCota, FormaComercializacao formaComercializacao);
 
-	List<MovimentoEstoqueCota> enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistenteException;
+	List<MovimentoEstoqueCota> enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota, Long idUsuario) throws TipoMovimentoEstoqueInexistenteException;
 
 	public void excluirRegistroMovimentoEstoqueDeEncalhe(Cota cota, MovimentoEstoque movimentoEstoque);
 	
@@ -125,7 +125,7 @@ public interface MovimentoEstoqueService {
 	 * @param listaMovimentoCota
 	 * @return MovimentosEstoqueCotaSaldoDTO
 	 */
-	MovimentosEstoqueCotaSaldoDTO getMovimentosEstoqueCotaSaldo(List<MovimentoEstoqueCota> listaMovimentoCota);
+	MovimentosEstoqueCotaSaldoDTO getMovimentosEstoqueCotaSaldo(List<MovimentoEstoqueCota> listaMovimentoCota, Long idUsuario);
 
 	MovimentoEstoque gerarMovimentoEstoqueDiferenca(Diferenca diferenca,
 													Long idUsuario, TipoMovimentoEstoque tipoMovimentoEstoque,

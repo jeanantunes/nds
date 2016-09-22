@@ -1750,12 +1750,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				novaDivida.setStatus(StatusDivida.EM_ABERTO);
 				novaDivida.setResponsavel(usuario);
 				novaDivida.setOrigemNegociacao(false);
-									
+				
+				Date dataEmissao = distribuidorRepository.obterDataOperacaoDistribuidor();
+				
                 Cobranca cobranca = this.salvarDividaCobranca(formaCobrancaPrincipal, 
 									                		  novaDivida, 
 									                		  cota, 
 									                		  banco, 
-									                		  dataOperacao, 
+									                		  dataEmissao, 
 									                		  dataVencimento, 
 									                		  fornecedor);	
 
