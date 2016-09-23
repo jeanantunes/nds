@@ -866,15 +866,15 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 		hql.append(" select lancamento ")
 				.append(" from MovimentoEstoqueCota mec ")
 				.append(" join mec.produtoEdicao.lancamentos lancamento ")
-				.append(" join mec.cota cota ")
+	//			.append(" join mec.cota cota ")
 				.append(" where lancamento.dataLancamentoDistribuidor = ")
 				.append(" (")
 				.append("   select max(lancamentoMaxDate.dataLancamentoDistribuidor) ")
 				.append("   from MovimentoEstoqueCota mecMaxDate ")
 				.append("   join mecMaxDate.produtoEdicao.lancamentos lancamentoMaxDate ")
-				.append("   join mecMaxDate.cota cotaMaxDate ")
+	//			.append("   join mecMaxDate.cota cotaMaxDate ")
 				.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao and mecMaxDate.lancamento.id =  lancamentoMaxDate.id  ")
-				.append("   and cotaMaxDate.id = :idCota  ");
+				.append("   and mecMaxDate.cota.id = :idCota  ");
 		
 		if(dataLimiteLancamento != null) {
 				hql.append("   and lancamentoMaxDate.dataLancamentoDistribuidor <= :dataLimiteLancamento ");
@@ -882,7 +882,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 		
 				hql.append(" ) ")
 				.append(" and lancamento.produtoEdicao.id = :idProdutoEdicao ")
-				.append(" and cota.id = :idCota ");
+				.append(" and mec.cota.id = :idCota ");
 
 		Query query = getSession().createQuery(hql.toString());
 
@@ -2578,7 +2578,8 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 			Long produtoEdicaoId) {
 		StringBuilder sql = new StringBuilder();
 
-		sql.append("from Lancamento l where l.dataLancamentoPrevista=:dtLancamento and l.produtoEdicao.id=:produtoEdicaoId");
+		
+		sql.append("from Lancamento l where l.dataLancamentoDistribuidor =:dtLancamento and l.produtoEdicao.id=:produtoEdicaoId");
 
 		Query query = getSession().createQuery(sql.toString());
 
