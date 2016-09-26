@@ -352,14 +352,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 						+ " <td>&nbsp;</td> "
 						+ " <td align='right'><strong>" + result.valorConsignado + "</strong></td>"
 						+ "<tr> ";
-						
-					
-					
-					
 				}
-				
-				
-				
 				
 				if (result.totaisFornecedores) {
 					

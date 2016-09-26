@@ -300,7 +300,7 @@ public class Diferenca implements Serializable {
 	public BigDecimal getValorTotal() {
 	   BigDecimal preco = produtoEdicao.getPrecoVenda();
        BigDecimal exemplares = new BigDecimal(getQtdeExemplares());
-	   return exemplares.multiply(preco);
+	   return exemplares.multiply(preco == null?BigDecimal.ZERO:preco);
 	}
 	
     /**
