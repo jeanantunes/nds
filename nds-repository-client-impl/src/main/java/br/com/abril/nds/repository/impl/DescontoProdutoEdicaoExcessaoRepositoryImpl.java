@@ -332,7 +332,7 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 			.append(" dados.USUARIO_ID as usuarioId, ")
 			.append(" u.NOME as nomeUsuario, ")
 			.append(" d.DATA_ALTERACAO as dataAlteracao, ")
-			.append(" coalesce(count(COTA_ID), -1) as qtdCotas ");
+			.append(" coalesce(count(cotaId), -1) as qtdCotas ");
 		
 		queryFromTipoDescontoEditor(hql);
 		
@@ -375,12 +375,12 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 		
 		hql.append("FROM ")
 			.append(" ( ")
-			.append("	SELECT hdcpe.DESCONTO_ID, hdcpe.EDITOR_ID, hdcpe.USUARIO_ID, hdcpe.COTA_ID ")
+			.append("	SELECT hdcpe.DESCONTO_ID, hdcpe.EDITOR_ID, hdcpe.USUARIO_ID, hdcpe.COTA_ID as cotaId ")
 			.append("	FROM HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES hdcpe ")	 
 			.append("	inner join DESCONTO_COTA_PRODUTO_EXCESSOES dcpe on dcpe.DESCONTO_ID = hdcpe.DESCONTO_ID ")
 			.append("	where hdcpe.editor_id is not null ")
 			.append(" UNION ")
-			.append(" 	SELECT DESCONTO_ID, e.ID as EDITOR_ID, 1 as USUARIO_ID, null as COTA_ID ")
+			.append(" 	SELECT DESCONTO_ID, e.ID as EDITOR_ID, 1 as USUARIO_ID, null as cotaId ")
 			.append(" 	from editor e ")
 			.append(" ) as dados ")  
 			.append(" JOIN DESCONTO d on (dados.DESCONTO_ID=d.ID) ")
