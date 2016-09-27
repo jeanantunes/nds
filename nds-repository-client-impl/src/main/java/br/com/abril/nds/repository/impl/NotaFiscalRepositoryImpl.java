@@ -1,16 +1,17 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
-
-import javax.sql.DataSource;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
@@ -32,6 +33,7 @@ import br.com.abril.nds.model.fiscal.NotaFiscalTipoEmissaoRegimeEspecial;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
+import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -39,10 +41,7 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
 public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal, Long> implements NotaFiscalRepository {
-
-	@Autowired
-	private DataSource dataSource;
-
+	
 	public NotaFiscalRepositoryImpl() {
 		super(NotaFiscal.class);
 	}
@@ -1543,6 +1542,41 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		query.setMaxResults(1);
 
 		return (DestinoEncalhe) query.uniqueResult();
+		
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<BoletoAvulsoDTO> listaBoletoNFE(Date dataBoleto) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("   select c.numero_cota as numeroCota, ");
+		sql.append("   select p.nome as nomeCota, ");
+		sql.append("   nfc.VALOR_NF as valor, ");
+		sql.append("   'Boleto Gerado via Nota Fiscal Eletronica' as observacao ");
+		sql.append("   from nota_fiscal_novo nf "); 
+		sql.append("   inner join cota c on c.ID=nf.cota_id ");
+		sql.append("   inner join pessoa p on c.pessoa_id = p.id ");
+		sql.append("   inner join nota_fiscal_valor_calculado nfc on nf.NOTA_FISCAL_VALOR_CALCULADO_ID = nfc.ID ");
+		sql.append("   where nf.protocolo is not null ");
+		sql.append("   and nf.data_emissao = :dataBoleto ");
+		sql.append("   and nf.STATUS_RETORNADO = :statusRetornado ");
+		sql.append("   and nf.PROTOCOLO is not null ");
+
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataBoleto", dataBoleto);
+		query.setParameter("statusRetornado", StatusRetornado.AUTORIZADO.name());
+		
+		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		query.addScalar("nomeCota", StandardBasicTypes.STRING);
+		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("observacao", StandardBasicTypes.STRING);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(BoletoAvulsoDTO.class));
+		
+		return query.list();
 		
 	}
 }

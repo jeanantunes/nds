@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.NfeVO;
+import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
@@ -1749,4 +1750,8 @@ public class NFeServiceImpl implements NFeService {
         return (resto == 0 || resto == 1) ? 0 : (11 - resto);  
     }
 
+	@Override
+	public List<BoletoAvulsoDTO> listaBoletoNFE(Date dataBoleto) {
+		return this.notaFiscalRepository.listaBoletoNFE(dataBoleto);
+	}
 }

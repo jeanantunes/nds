@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
@@ -70,4 +71,7 @@ public interface NFeService {
 			List<Fornecedor> fornecedores);
 	
 	public NaturezaOperacao regimeEspecialParaCota(Cota cota);
+	
+	public  List<BoletoAvulsoDTO> listaBoletoNFE(Date dataBoleto);
+	
 }

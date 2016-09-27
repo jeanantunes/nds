@@ -1286,7 +1286,7 @@ ConsolidadoFinanceiroRepository {
         query.setParameter("idCota", idCota);
         
         query.setParameterList("grupoIgnorar", Arrays.asList(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
-                                                             GrupoMovimentoFinaceiro.ENVIO_ENCALHE));
+                                                             GrupoMovimentoFinaceiro.ENVIO_ENCALHE, GrupoMovimentoFinaceiro.BOLETO_AVULSO));
         
         if (idFornecedor != null){
             

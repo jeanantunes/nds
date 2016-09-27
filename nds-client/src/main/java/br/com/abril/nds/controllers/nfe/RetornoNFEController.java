@@ -2,34 +2,46 @@ package br.com.abril.nds.controllers.nfe;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.exolab.castor.xml.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.NFEImportUtil;
 import br.com.abril.nds.client.vo.SumarizacaoNotaRetornoVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.BoletoAvulsoDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
+import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
 import br.com.abril.nds.model.ftf.retorno.FTFRetTipoRegistro01;
 import br.com.abril.nds.model.ftf.retorno.FTFRetornoRET;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.DebitoCreditoCotaService;
 import br.com.abril.nds.service.FTFService;
+import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.FileImportUtil;
@@ -72,6 +84,21 @@ public class RetornoNFEController extends BaseController {
 	
 	@Autowired
 	private FTFService ftfService;
+	
+	@Autowired
+	private TipoMovimentoFinanceiroService tipoMovimentoFinanceiroService;
+	
+	@Autowired
+	private DebitoCreditoCotaService debitoCreditoCotaService;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+	
+	@Autowired
+	private GerarCobrancaService gerarCobrancaService;
+	
+	@Autowired
+	private NFeService nfeeService; 
 	
 	private static final String LISTA_NOTAS_DE_RETORNO = "listaNotasDeRetorno";
 	
@@ -366,4 +393,72 @@ public class RetornoNFEController extends BaseController {
 		
 		return notaCancelamentoMerged;
 	}
+	
+	@Path("/imprimirBoleto")
+	public void imprimirBoletoNFE(Date dataBoleto, Long idBanco) {
+		
+		// Obter Boleto Cota NFE
+		List<BoletoAvulsoDTO> listaBoletosAvulso = nfeeService.listaBoletoNFE(dataBoleto);
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = this.tipoMovimentoFinanceiroService.obterTipoMovimentoFincanceiroPorGrupoFinanceiroEOperacaoFinanceira(GrupoMovimentoFinaceiro.BOLETO_AVULSO, OperacaoFinaceira.DEBITO);
+		
+		Map<Integer, Long> cotasBanco = new HashMap<Integer, Long>();
+		
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = this.gerarMovimentacaoFinanceira(listaBoletosAvulso, tipoMovimentoFinanceiro.getId(), cotasBanco);
+		
+		this.gerarCobrancaBoletoAvulso(listaMovimentoFinanceiroCota, cotasBanco);
+	}
+	
+	private List<MovimentoFinanceiroCota> gerarMovimentacaoFinanceira(List<BoletoAvulsoDTO> listaBoletosAvulso, Long idTipoMovimento, Map<Integer, Long> cotasBanco) {
+		
+		Date dataCriacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		List<MovimentoFinanceiroCota> movimentosFinanceirosCota = new ArrayList<MovimentoFinanceiroCota>();
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = this.tipoMovimentoFinanceiroService.obterTipoMovimentoFincanceiroPorGrupoFinanceiroEOperacaoFinanceira(GrupoMovimentoFinaceiro.BOLETO_AVULSO, OperacaoFinaceira.DEBITO);
+		
+		if(tipoMovimentoFinanceiro == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrado tipo de movimento Boleto Avulso ");
+		}
+		
+		for (BoletoAvulsoDTO boletoAvulso : listaBoletosAvulso) {
+			
+			boletoAvulso.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
+			
+			String valorSemMascara = Util.getValorSemMascara(boletoAvulso.getValor());
+			
+			boletoAvulso.setValor(valorSemMascara);
+
+			boletoAvulso.setIdUsuario(this.getUsuarioLogado().getId());
+			
+			boletoAvulso.setId(null);
+			
+			boletoAvulso.setDataCriacao(dataCriacao);
+			
+			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = debitoCreditoCotaService.gerarMovimentoFinanceiroBoletoAvulsoDTO(boletoAvulso);
+			
+			movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+			
+			movimentoFinanceiroCotaDTO.setObservacao(boletoAvulso.getObservacao());
+			
+			movimentosFinanceirosCota.addAll(this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO));
+			
+			cotasBanco.put(boletoAvulso.getNumeroCota(), boletoAvulso.getIdBanco());
+			
+		}
+		
+		return movimentosFinanceirosCota;
+	}
+	
+	private void gerarCobrancaBoletoAvulso(List<MovimentoFinanceiroCota> movimentosFinanceirosCota, Map<Integer, Long> cotasBanco) {
+		
+    	for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentosFinanceirosCota) {
+			
+    		try {
+				this.gerarCobrancaService.gerarCobrancaBoletoAvulso(getUsuarioLogado().getId(), movimentoFinanceiroCota, cotasBanco);
+			} catch (GerarCobrancaValidacaoException e) {
+				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar cobrança por Boleto Avulso.");
+			}
+		}
+    }
 }

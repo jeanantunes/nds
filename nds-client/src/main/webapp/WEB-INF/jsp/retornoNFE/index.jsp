@@ -32,9 +32,16 @@
 		<div class="area">
 			<span class="bt_novos">
           		<a isEdicao="true" id="retornoNFEConfirmar" onclick="retornoNFEController.confirmar();" rel="tipsy" title="Confirmar Integração do Arquivo">
-         		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif"></a>
+         			<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+         		</a>
             </span>
-          
+          	
+          	<span class="bt_novos">
+          		<a isEdicao="true" id="retorno-boleto-nfe" onclick="retornoNFEController.imprimirBoletoNFE();" hspace="5" rel="tipsy" title="Confirmar Gera&ccedil;&atilde;o do Boleto NF-e">
+         			<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif">
+         		</a>
+            </span>
+          	
 		</div>
 	</div>
 	<div class="linha_separa_fields">&nbsp;</div>
@@ -97,4 +104,37 @@
 	        	-->  
  	      </fieldset>
       </div>
+      
+<div id="modalUploadArquivoMix" title="Adicionar em Lote" style="display:none;">
+ 	<form action="${pageContext.request.contextPath}/financeiro/boletoAvulso/uploadArquivoLote" id="formUploadLoteMix" method="post" enctype="multipart/form-data">
+ 		<td width="91"><span>Banco:</span></td>
+		<td>
+			<select id="idBanco" name="idBanco" style="width:150px; font-size:11px!important">
+				<c:forEach items="${bancos}" var="roteiro">
+					<option value="${roteiro.key }">${roteiro.value }</option>
+				</c:forEach>
+			</select>
+		</td>
+ 		
+ 		<br><br><br>
+ 		<hr>
+ 		
+ 		<p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
+      	<p >
+      		<span class="bt_novos" title="Download Modelo">
+      			<a href="${pageContext.request.contextPath}/modelos/modelo_boleto_avulso.xls">
+      				<img align="center" src="images/ico_excel.png" hspace="5" border="0" />Modelo de exemplo
+      			</a>
+      		</span>
+      	</p>
+      	<br><br><br>
+      	<hr>
+      	<p>Selecione um arquivo para upload:</p>
+      	<br>
+      	<p align="center">
+      		<input type="file" id="excelFile" name="excelFile" style="width:200px"/>
+      	</p>
+     </form>
+</div>
+      
 </body>	

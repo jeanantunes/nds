@@ -134,7 +134,6 @@
 		<br clear="all" />
 		<form name="listaCotasBoletos" id="listaCotasBoletos">
 			<table  width="950" class="boleto-avulso-Grid_1" id="boleto-avulso-Grid_1"></table>
-			
 			<table  width="950" border="0" cellspacing="2" cellpadding="2">
 			    <tr>
 				    <td width="65%"></td>    
@@ -147,10 +146,7 @@
 				    </td>
 	            </tr> 
 		    </table>
-		
 		</form>
-
-		
 	</fieldset>
 </div>		
 		

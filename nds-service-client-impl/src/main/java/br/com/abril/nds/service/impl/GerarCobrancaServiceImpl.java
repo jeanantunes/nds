@@ -1321,7 +1321,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 											          BigDecimal vlMovFinanTotal, 
 											          boolean isBoletoAvulso){
 		
-		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = this.montarConsolidadoFinanceiro(cota, movimentos, dataOperacao);
+		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = this.montarConsolidadoFinanceiro(cota, movimentos, dataOperacao, isBoletoAvulso);
 		
 		if(cota.isBoletoNFE() && !isBoletoAvulso) {
 			MovimentoFinanceiroCota movPost = this.gerarPostergado(cota, 
@@ -1409,8 +1409,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			throw new ValidacaoException(TipoMensagem.ERROR, String.format("Cota %s sem Endereço Principal.", (cota != null) ? cota.getNumeroCota() : "[Não localizada]"));
 		}
 		
+		Date dataVencimento = null;
 		
-		Date dataVencimento = this.obterDataVencimentoCobrancaCota(consolidadoFinanceiroCota.getDataConsolidado(), fatorVencimento, localidade);
+		if(isBoletoAvulso) {
+			dataVencimento = dataOperacao;
+		} else {
+			dataVencimento = this.obterDataVencimentoCobrancaCota(consolidadoFinanceiroCota.getDataConsolidado(), fatorVencimento, localidade);
+			
+		}
 
 		if(!cobrarHoje){
 
@@ -1456,7 +1462,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 											          Fornecedor fornecedor,
 											          Map<Cota, List<GerarCobrancaHelper>> consolidadosCota){
 		
-		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = this.montarConsolidadoFinanceiro(cota, movimentos, dataOperacao);
+		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = this.montarConsolidadoFinanceiro(cota, movimentos, dataOperacao, false);
 		
    	    this.addConsolidadoHelper(cotaCentralizadora, 
    	    		                  consolidadosCota, 
@@ -1476,12 +1482,18 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 * @param dataOperacao
 	 * @return ConsolidadoFinanceiroCota
 	 */
-	private ConsolidadoFinanceiroCota montarConsolidadoFinanceiro(Cota cota, List<MovimentoFinanceiroCota> movimentos, Date dataOperacao) {
+	private ConsolidadoFinanceiroCota montarConsolidadoFinanceiro(Cota cota, List<MovimentoFinanceiroCota> movimentos, Date dataOperacao, boolean isBoletoAvulso) {
 		
 		
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = new ConsolidadoFinanceiroCota();
 		consolidadoFinanceiroCota.setCota(cota);
-		consolidadoFinanceiroCota.setDataConsolidado(dataOperacao);
+		
+		if(isBoletoAvulso) {
+			consolidadoFinanceiroCota.setDataConsolidado(this.distribuidorRepository.obterDataOperacaoDistribuidor());
+		} else {
+			consolidadoFinanceiroCota.setDataConsolidado(dataOperacao);
+		}
+		
 		consolidadoFinanceiroCota.setMovimentos(movimentos);
 		
 		BigDecimal vlMovFinanDebitoCredito = BigDecimal.ZERO;
@@ -2337,7 +2349,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		Set<String> setNossoNumero = null;
 		
-		Date dataOperacao = movimentoFinanceiroCota.getData();
+		Date dataOperacao = movimentoFinanceiroCota.getDataIntegracao();
 		
 		Usuario usuario = this.usuarioRepository.buscarPorId(idUsuario);
 		

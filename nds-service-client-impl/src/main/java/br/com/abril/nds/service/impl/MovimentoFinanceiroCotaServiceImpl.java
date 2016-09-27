@@ -284,8 +284,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
             
             movimentoFinanceiroCota.setCota(movimentoFinanceiroCotaDTO.getCota());
             movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
-            movimentoFinanceiroCota.setData(movimentoFinanceiroCotaDTO.getDataVencimento());
+            movimentoFinanceiroCota.setData(movimentoFinanceiroCotaDTO.getDataAprovacao());
             movimentoFinanceiroCota.setDataCriacao(movimentoFinanceiroCotaDTO.getDataCriacao());
+            movimentoFinanceiroCota.setDataAprovacao(movimentoFinanceiroCotaDTO.getDataVencimento());
             movimentoFinanceiroCota.setUsuario(movimentoFinanceiroCotaDTO.getUsuario());
             movimentoFinanceiroCota.setValor(movimentoFinanceiroCotaDTO.getValor());
             movimentoFinanceiroCota.setMotivo(movimentoFinanceiroCotaDTO.getMotivo());
@@ -294,6 +295,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
             movimentoFinanceiroCota.setObservacao(movimentoFinanceiroCotaDTO.getObservacao());
             movimentoFinanceiroCota.setMovimentos(movimentosEstoqueCota);
             movimentoFinanceiroCota.setFornecedor(movimentoFinanceiroCotaDTO.getFornecedor());
+            movimentoFinanceiroCota.setDataAprovacao(movimentoFinanceiroCotaDTO.getDataAprovacao());
+            
+            movimentoFinanceiroCota.setDataIntegracao(movimentoFinanceiroCotaDTO.getDataIntegracao());
             
             movimentoFinanceiroCotaMerged = movimentoFinanceiroCotaRepository.merge(movimentoFinanceiroCota);
             

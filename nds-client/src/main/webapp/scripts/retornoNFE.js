@@ -142,5 +142,57 @@ var retornoNFEController  = $.extend(true, {
 		}
 	},
 	
+	imprimirBoletoNFE : function() {
+		var parametros = []; 
+		
+		var itens = GerarBoletoAvulsoController.obterCotasSelecionadas();
+		
+		$.postJSON(contextPath + '/financeiro/boletoAvulso/imprimirBoleto',
+			itens,
+			 function(resultado) {
+				$.fileDownload(contextPath +'/nfe/retornoNFe/imprimirBoleto', {
+					httpMethod : "POST",
+					data : itens,
+					
+					successCallback: function (url) {
+				    	console.log('success');
+				    	alert("caiu aqui");
+				    },
+				    failCallback: function (responseHtml, url) {
+				        preparingFileModal.dialog('close');
+				        $("#error-modal").dialog({ modal: true });
+				    }
+				});
+				
+			 },
+			null,
+			true
+		);
+		
+	},
+	
+	addLoteMix:function(){
+
+		GerarBoletoAvulsoController.initGrids();
+		
+		$("#modalUploadArquivoMix").dialog({
+			resizable: false,
+			height:'auto',
+			width:400,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					GerarBoletoAvulsoController.executarSubmitArquivo();
+					
+				},
+				"Cancelar": function() {
+					$("#excelFile").val("");
+					$(this).dialog("close");
+				}
+			},
+		});
+		
+	},
+	
 }, BaseController);
 //@ sourceURL=retornoNFE.js

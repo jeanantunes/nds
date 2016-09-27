@@ -139,25 +139,32 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 	public MovimentoFinanceiroCotaDTO gerarMovimentoFinanceiroBoletoAvulsoDTO(BoletoAvulsoDTO debitoCredito) {
 
 		Long idMovimento = debitoCredito.getId();
-
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
 		MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
 		
 		movimentoFinanceiroCotaDTO.setIdMovimentoFinanceiroCota(idMovimento);
 		
-		movimentoFinanceiroCotaDTO.setDataCriacao(
-			DateUtil.removerTimestamp(debitoCredito.getDataCriacao() == null ? new Date() : debitoCredito.getDataCriacao()));
-
+		movimentoFinanceiroCotaDTO.setDataCriacao(DateUtil.removerTimestamp(debitoCredito.getDataCriacao() == null ? new Date() : debitoCredito.getDataCriacao()));
+		
 		Date dataVencimento = DateUtil.parseDataPTBR(debitoCredito.getDataVencimento());
 		
-		movimentoFinanceiroCotaDTO.setDataVencimento(dataVencimento);
-
-		movimentoFinanceiroCotaDTO.setValor(new BigDecimal( Util.getValorSemMascara(debitoCredito.getValor())));
+		movimentoFinanceiroCotaDTO.setDataVencimento(dataOperacao);
+		
+		movimentoFinanceiroCotaDTO.setDataIntegracao(dataVencimento);
+		
+		movimentoFinanceiroCotaDTO.setDataAprovacao(dataVencimento);
+		
+		movimentoFinanceiroCotaDTO.setValor(new BigDecimal(Util.getValorSemMascara(debitoCredito.getValor())));
 
 		movimentoFinanceiroCotaDTO.setObservacao(debitoCredito.getObservacao());
 
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = this.tipoMovimentoFinanceiroRepository.buscarPorId(debitoCredito.getTipoMovimentoFinanceiro().getId());
 
 		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
+		
+		movimentoFinanceiroCotaDTO.setDataAprovacao(dataOperacao);
 		
 		Cota cota = this.cotaRepository.obterPorNumeroDaCota(debitoCredito.getNumeroCota());
 		
