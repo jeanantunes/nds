@@ -264,6 +264,9 @@ public class GeracaoNotaEnvioController extends BaseController {
 
     	FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
     	
+    	 filtro.getPaginacaoVO().setPaginaAtual(null);
+         filtro.getPaginacaoVO().setQtdResultadosPorPagina(null);
+         
         try {
             
             byte[] notasGeradas = this.getNotas();
@@ -389,6 +392,7 @@ public class GeracaoNotaEnvioController extends BaseController {
     public void enviarEmail() {
     	
     	FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+    	
     	
     	filtro.setEnvioEmail(true);
     	
