@@ -771,7 +771,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		hql.append(" from Cobranca cobranca ");
 		hql.append(" where cobranca.dataVencimento = :data ");
-		// hql.append(" and cobranca.tipoCobranca in (:tipoCobranca) ");
+		hql.append(" and cobranca.divida.status <>  'NEGOCIADA' ");
 		
 		return hql.toString();
 	}

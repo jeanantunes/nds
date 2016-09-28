@@ -874,7 +874,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 				.append("   join mecMaxDate.produtoEdicao.lancamentos lancamentoMaxDate ")
 				.append("   join mecMaxDate.cota cotaMaxDate ")
 				.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao and mecMaxDate.lancamento.id =  lancamentoMaxDate.id  ")
-				.append("   and cotaMaxDate.id = :idCota  ");
+				.append("   and  cotaMaxDate.id = :idCota   ");
 		
 		if(dataLimiteLancamento != null) {
 				hql.append("   and lancamentoMaxDate.dataLancamentoDistribuidor <= :dataLimiteLancamento ");
@@ -2578,7 +2578,8 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 			Long produtoEdicaoId) {
 		StringBuilder sql = new StringBuilder();
 
-		sql.append("from Lancamento l where l.dataLancamentoPrevista=:dtLancamento and l.produtoEdicao.id=:produtoEdicaoId");
+		
+		sql.append("from Lancamento l where l.dataLancamentoDistribuidor =:dtLancamento and l.produtoEdicao.id=:produtoEdicaoId");
 
 		Query query = getSession().createQuery(sql.toString());
 
