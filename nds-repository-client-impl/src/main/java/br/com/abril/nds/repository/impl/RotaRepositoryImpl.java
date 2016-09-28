@@ -56,11 +56,8 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 	public List<Rota> buscarRota(String sortname, Ordenacao ordenacao){
 		
 		Criteria criteria =  getSession().createCriteria(Rota.class);
-		if(Ordenacao.ASC ==  ordenacao){
-			criteria.addOrder(Order.asc(sortname));
-		}else if(Ordenacao.DESC ==  ordenacao){
-			criteria.addOrder(Order.desc(sortname));
-		}
+		criteria.addOrder(Order.asc("ordem"));
+		
 		return criteria.setCacheable(true).list();
 	}
 	
@@ -126,6 +123,7 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 		}
 		
 		hql.append(" GROUP BY rota ");
+		hql.append(" order by rota.ordem ");
 	
 		Query query = getSession().createQuery(hql.toString());
 		

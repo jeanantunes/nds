@@ -102,6 +102,8 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		movimentoFinanceiroCotaDTO.setIdMovimentoFinanceiroCota(idMovimento);
 		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
 		movimentoFinanceiroCotaDTO.setDataCriacao(
 			DateUtil.removerTimestamp(debitoCredito.getDataCriacao() == null ? new Date() : debitoCredito.getDataCriacao()));
 
@@ -109,6 +111,8 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		movimentoFinanceiroCotaDTO.setDataVencimento(dataVencimento);
 
+		movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacao);
+		
 		movimentoFinanceiroCotaDTO.setValor(new BigDecimal(debitoCredito.getValor()));
 
 		movimentoFinanceiroCotaDTO.setObservacao(debitoCredito.getObservacao());

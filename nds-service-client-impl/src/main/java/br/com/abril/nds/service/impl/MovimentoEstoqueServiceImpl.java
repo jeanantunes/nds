@@ -1536,10 +1536,18 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             final BigInteger quantidade, 
             final TipoMovimentoEstoque tipoMovimentoEstoque,
             final Long idEstudoCota,
-            final boolean isMovimentoDiferencaAutomatico, boolean isContribuinte, boolean isExigeNota) {
+            final boolean isMovimentoDiferencaAutomatico, boolean isContribuinte, boolean isExigeNota, TipoCota tipoCota) {
         
+    	FormaComercializacao formaComercializacao = null;
+    	
+    	if(tipoCota.equals(TipoCota.A_VISTA)) {
+    		formaComercializacao = FormaComercializacao.CONTA_FIRME;
+    	} else {
+    		formaComercializacao = FormaComercializacao.CONSIGNADO;
+    	}
+    	
         return criarMovimentoCota(dataLancamento, produtoEdicao, idCota,
-                idUsuario, quantidade, tipoMovimentoEstoque, dataLancamento, null, null, idEstudoCota, isMovimentoDiferencaAutomatico, null, FormaComercializacao.CONSIGNADO, isContribuinte, isExigeNota);
+                idUsuario, quantidade, tipoMovimentoEstoque, dataLancamento, null, null, idEstudoCota, isMovimentoDiferencaAutomatico, null, formaComercializacao, isContribuinte, isExigeNota);
     }
     
     @Override

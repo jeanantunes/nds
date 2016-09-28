@@ -147,9 +147,6 @@ public class ItemNotaFiscalBuilder  {
 				codigoBarras = "";
 			}
 			
-			
-			
-			
 			produtoServico = new ProdutoServico();
 			produtoServico.setCodigoBarras(codigoBarras);
 			produtoServico.setNcm(movimentoEstoque.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getCodigo());
@@ -158,6 +155,7 @@ public class ItemNotaFiscalBuilder  {
 			produtoServico.setDescricaoProduto(movimentoEstoque.getProdutoEdicao().getProduto().getNome());
 			produtoServico.setValorTotalBruto(BigDecimal.ZERO);
 			produtoServico.setQuantidade(BigInteger.ZERO);
+			
 		} else {
 			
 			produtoServico = detalheNotaFiscal.getProdutoServico();
@@ -223,13 +221,16 @@ public class ItemNotaFiscalBuilder  {
 				}
 			}
 		}
+		
 		produtoServico.setValorUnitario(valorUnitario);
+		
 		produtoServico.setValorTotalBruto(CurrencyUtil.truncateDecimal(valorUnitario.multiply(new BigDecimal(produtoServico.getQuantidade())), 2));
 				
 		produtoServico.setValorCompoeValorNF(true);
 		
 		//FIXME: Ajustar os produtos para sinalizarem a inclusao do frete na nf
 		produtoServico.setValorFreteCompoeValorNF(false);
+		
 		if(produtoServico.isValorFreteCompoeValorNF()) {
 			//FIXME: Ajustar os produtos para trazer os valores, se necessario
 			produtoServico.setValorFrete(BigDecimal.ZERO);
@@ -298,6 +299,7 @@ public class ItemNotaFiscalBuilder  {
 		TributoAliquota tributoSimples = tributoAliquota.get("SIMPLES");
 		
 		Tributacao icmsProduto = tributacaoProduto.get("ICMS");
+		
 		if(icmsProduto != null) {
 			produtoServico.setCst(icmsProduto.getCstA().toString() + icmsProduto.getCst().toString());
 			produtoServico.setValorAliquotaICMS(CurrencyUtil.arredondarValorParaDuasCasas(icmsProduto.getValorAliquota()));

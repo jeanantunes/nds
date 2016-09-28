@@ -517,7 +517,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
 
-		parameters.put("formaComercializacao", FormaComercializacao.CONSIGNADO.name());
+		// parameters.put("formaComercializacao", FormaComercializacao.CONSIGNADO.name());
 		
 		@SuppressWarnings("rawtypes")
 		RowMapper cotaRowMapper = new RowMapper() {
@@ -556,7 +556,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
         	sql.append("    SUM( COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * (CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ) AS total ");
         }
         
-        this.setarFromWhereConsultaConsignadoCota(sql, filtro);
+        this.setarFromWhereConsultaAVistaCota(sql, filtro);
 		
 		sql.append(" GROUP BY ");
 		sql.append(" PE.ID, C.ID ");
@@ -580,11 +580,11 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		parameters.put("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name());
 
-		// parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
+		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
-		parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
+		parameters.put("diferenciada", TipoCota.A_VISTA.name());
 
-		parameters.put("formaComercializacao", FormaComercializacao.CONTA_FIRME.name());
+		parameters.put("formaComercializacaoDiferenciada", FormaComercializacao.CONTA_FIRME.name());
 		
 		@SuppressWarnings("rawtypes")
 		RowMapper cotaRowMapper = new RowMapper() {
@@ -649,7 +649,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
-		parameters.put("tipoCotaAVista", TipoCota.CONSIGNADO.name());
+		parameters.put("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
 
 		parameters.put("formaComercializacao", FormaComercializacao.CONSIGNADO.name());
 		
@@ -697,6 +697,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ");
 		
+		sql.append(" AND C.TIPO_COTA = :tipoCotaConsignado ");
+		
 		sql.append(" AND MEC.FORMA_COMERCIALIZACAO=:formaComercializacao ");
 		
 		if(filtro.getDataInicio() != null)
@@ -721,6 +723,68 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 	}
 	
+	private void setarFromWhereConsultaAVistaCota(StringBuilder sql, FiltroConsultaConsignadoCotaDTO filtro){
+		
+		sql.append(" FROM ");
+		
+		sql.append(" MOVIMENTO_ESTOQUE_COTA MEC ");
+		
+		sql.append(" INNER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID) ");
+		
+		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
+		
+		sql.append(" INNER JOIN PESSOA P ON C.PESSOA_ID=P.ID ");
+		
+		sql.append(" INNER JOIN TIPO_MOVIMENTO TM ON MEC.TIPO_MOVIMENTO_ID=TM.ID ");
+		
+		sql.append(" INNER JOIN PRODUTO_EDICAO PE ON MEC.PRODUTO_EDICAO_ID = PE.ID ");
+		
+		sql.append(" INNER JOIN PRODUTO PR ON PE.PRODUTO_ID=PR.ID ");
+		
+		sql.append(" INNER JOIN PRODUTO_FORNECEDOR F ON PR.ID=F.PRODUTO_ID ");
+		
+		sql.append(" INNER JOIN FORNECEDOR fornecedor8_ ON F.fornecedores_ID=fornecedor8_.ID ");
+		
+		sql.append(" INNER JOIN PESSOA PJ ON fornecedor8_.JURIDICA_ID=PJ.ID ");
+		
+		sql.append(" WHERE ");
+		
+		sql.append(" MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
+	
+		sql.append(" AND LCTO.STATUS not in ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')");
+
+		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ");
+		
+		sql.append(" AND C.TIPO_COTA = :diferenciada ");
+		
+		sql.append(" AND MEC.FORMA_COMERCIALIZACAO= :formaComercializacaoDiferenciada ");
+		
+		sql.append("AND (");
+	    sql.append("        ((c.TIPO_COTA = :diferenciada AND (c.DEVOLVE_ENCALHE = TRUE OR c.DEVOLVE_ENCALHE is null)) ");
+	    sql.append("        	OR (c.TIPO_COTA <> :diferenciada AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro))) ");
+		sql.append("    )");
+		
+		if(filtro.getDataInicio() != null)
+		    sql.append(" AND MEC.DATA >=:dataInicio ");
+		
+		if(filtro.getDataFim() != null)
+            sql.append(" AND MEC.DATA <=:dataFim ");
+		
+		if(filtro.getIdCota() != null ) { 
+			
+			sql.append(" AND C.ID = :idCota ");
+		}
+		
+		if(filtro.getTipoOperacao() != null)
+		    sql.append(" AND TM.OPERACAO_ESTOQUE=:tipoEstoque ");
+		
+
+		if(filtro.getIdFornecedor() != null) { 
+			
+			sql.append(" AND fornecedor8_.ID = :idFornecedor ");
+		}
+		
+	}
 	
 	@Override
 	public BigDecimal buscarTotalDetalhadoSomado(FiltroConsultaConsignadoCotaDTO filtro) {
@@ -829,9 +893,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:tipoMovimentoEstorno) ");
 		sql.append(" AND LCTO.STATUS not in ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')");
 		
-		//sql.append(" and MEC.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME' ");
-		
-		sql.append(" and ((MEC.FORMA_COMERCIALIZACAO = 'CONTA_FIRME' and C.tipo_cota = 'A_VISTA' and C.DEVOLVE_ENCALHE is null OR C.DEVOLVE_ENCALHE = true) or MEC.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME') " );
+		// sql.append(" and ((MEC.FORMA_COMERCIALIZACAO = 'CONTA_FIRME' and C.tipo_cota = 'A_VISTA' and C.DEVOLVE_ENCALHE is null OR C.DEVOLVE_ENCALHE = true) or MEC.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME') " );
 		
 		if(filtro.getIdFornecedor()!=null) {
 		

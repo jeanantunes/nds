@@ -284,7 +284,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
             
             movimentoFinanceiroCota.setCota(movimentoFinanceiroCotaDTO.getCota());
             movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
-            movimentoFinanceiroCota.setData(movimentoFinanceiroCotaDTO.getDataAprovacao());
+            movimentoFinanceiroCota.setData(movimentoFinanceiroCotaDTO.getDataAprovacao() == null ? movimentoFinanceiroCotaDTO.getDataOperacao() : movimentoFinanceiroCotaDTO.getDataAprovacao());
             movimentoFinanceiroCota.setDataCriacao(movimentoFinanceiroCotaDTO.getDataCriacao());
             movimentoFinanceiroCota.setDataAprovacao(movimentoFinanceiroCotaDTO.getDataVencimento());
             movimentoFinanceiroCota.setUsuario(movimentoFinanceiroCotaDTO.getUsuario());

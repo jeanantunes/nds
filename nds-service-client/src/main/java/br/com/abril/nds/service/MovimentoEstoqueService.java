@@ -19,6 +19,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -118,7 +119,7 @@ public interface MovimentoEstoqueService {
 														Long idCota, Long idUsuario, 
 														BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
 														Long idEstudoCota,
-														boolean isMovimentoDiferencaAutomatico, boolean isContribuinte, boolean isExigeNota);
+														boolean isMovimentoDiferencaAutomatico, boolean isContribuinte, boolean isExigeNota, TipoCota tipoCota);
 
     /**
 	 * Obtem Objeto com Lista de movimentos de estoque referentes à reparte e Map de edicoes com saidas e entradas diversas

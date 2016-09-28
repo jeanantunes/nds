@@ -1153,8 +1153,6 @@ public class NFeServiceImpl implements NFeService {
 			
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().setChaveAcesso(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(3, 47));
 			
-			
-			
 			// obter os movimentos da cota
 			final List<MovimentoFechamentoFiscal> movimentosFechamentoFiscal = new ArrayList<>();
 			final List<MovimentoEstoqueCota> movimentosEstoqueCota = new ArrayList<>();

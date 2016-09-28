@@ -17,9 +17,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.SerializationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +27,6 @@ import br.com.abril.nds.client.vo.ContasAPagarConsignadoVO;
 import br.com.abril.nds.client.vo.DiferencaVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.client.vo.RelatorioLancamentoFaltasSobrasVO;
-import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.ImpressaoDiferencaEstoqueDTO;
@@ -67,7 +63,6 @@ import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
-import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
@@ -82,8 +77,6 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.LancamentoDiferencaRepository;
-import br.com.abril.nds.repository.LancamentoRepository;
-import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.RateioDiferencaRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
@@ -103,6 +96,8 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -476,8 +471,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         for (Diferenca diferenca : listaDiferencas) {
             
             final Lancamento ultimoLancamento = this.obterUltimoLancamentoProduto(diferenca);
-            
-            final boolean produtoRecolhido = this.verificarRecolhimentoProdutoEdicao(ultimoLancamento, diferenca.getDataMovimento());
             
             diferenca.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
             
@@ -1404,7 +1397,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                 dataLancamento, diferenca.getProdutoEdicao(), rateioDiferenca.getCota().getId(),
                 idUsuario, rateioDiferenca.getQtde(), tipoMovimentoEstoqueCota, estudoCotaId, isAprovacaoAutomatica, 
                 contribuinteICMS,
-                exigeNFe);
+                exigeNFe, cota.getTipoCota());
     }
     
 	                                    /*
