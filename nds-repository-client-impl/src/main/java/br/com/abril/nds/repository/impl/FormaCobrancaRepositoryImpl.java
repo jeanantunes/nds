@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -600,4 +601,23 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         return (FormaCobranca) query.uniqueResult();
 	}
 	
+	public boolean validarFormaCobrancaPorBanco(Long idBanco) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select case when count(f.id) > 0 then true else false end ");
+		hql.append(" from FormaCobranca f ");
+		hql.append(" join f.banco b ");
+		hql.append(" where f.ativa = :ativa ");
+		hql.append(" and b.id = :idBanco ");
+		hql.append(" and f.tipoCobranca in (:tipoCobranca) ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("ativa", true);
+		query.setParameter("idBanco", idBanco);
+		query.setParameterList("tipoCobranca", Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_AVULSO));
+		
+		return (boolean) query.uniqueResult();
+	}	
 }

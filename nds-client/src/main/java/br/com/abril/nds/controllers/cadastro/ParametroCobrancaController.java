@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO.OrdenacaoColunaParametrosCobranca;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -27,6 +28,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
@@ -66,7 +68,10 @@ public class ParametroCobrancaController extends BaseController {
 	
 	@Autowired
 	private CotaService cotaService;
-		
+	
+	@Autowired
+	private FormaCobrancaService formaCobrancaService;
+	
     private Result result;
     
     private HttpSession httpSession;
@@ -369,5 +374,17 @@ public class ParametroCobrancaController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Semanal é necessário marcar ao menos um dia da semana.");      	
 			}
 		}
+		
+		
+		if(parametros.getTipoCobranca().equals(TipoCobranca.BOLETO_AVULSO)) {
+			
+			boolean isTipoBoleto = formaCobrancaService.validarFormaCobrancaPorBanco(parametros.getIdBanco());
+			
+			if (!isTipoBoleto) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para Forma de Cobrança Boleto Avulso é necessário utilizar um Banco trabalhe com boleto.");   
+			}
+		}
+		
+		
 	}
 }

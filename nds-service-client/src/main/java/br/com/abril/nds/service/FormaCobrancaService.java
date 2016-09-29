@@ -161,4 +161,6 @@ public interface FormaCobrancaService {
 	boolean isValorMinimoAtingido(Long idCota, BigDecimal valorTotalCobrar);
 	
 	FormaCobranca obterFormaCobrancaBoletoAvulso(TipoCobranca tipoCobranca);
+	
+	boolean validarFormaCobrancaPorBanco(Long idBanco);
 }
