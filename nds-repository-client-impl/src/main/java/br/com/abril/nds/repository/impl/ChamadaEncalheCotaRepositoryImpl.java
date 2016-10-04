@@ -278,7 +278,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 	public BigInteger obterListaChamadaEncalheCotaChamadao(Long idCota, Long idProdutoEdicao, Date dataOperacao) {
 		
 		StringBuilder hql = new StringBuilder();
-		
+
 		hql.append(" select count(*) from chamada_encalhe_cota cec ");
 		
 		hql.append("  inner join chamada_encalhe ce on ce.id = cec.chamada_encalhe_id " );
@@ -289,7 +289,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		hql.append(" and ce.produto_edicao_id = :idProdutoEdicao ");
 		
-		hql.append(" and ce.data_recolhimento >= date_add(:dataOperacao , interval -7 DAY) ");
+		hql.append(" and ce.data_recolhimento >= date_add(:dataOperacao , interval -60 DAY) ");
 
 		SQLQuery query = getSession().createSQLQuery(hql.toString());
 		
@@ -317,7 +317,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		hql.append(" where ce.tipo_chamada_encalhe =:tipoChamadaEncalhe ");
 		
-		hql.append(" and ce.data_recolhimento >= date_add(:dataOperacao , interval -7 DAY) ");
+		hql.append(" and ce.data_recolhimento >= date_add(:dataOperacao , interval -60 DAY) ");
 		
 		hql.append("  group by cec.cota_id ");
 
