@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
+import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -40,6 +41,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
+import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
@@ -105,6 +107,9 @@ public class DebitoCreditoCotaController extends BaseController{
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
+	
+    @Autowired
+    private FechamentoEncalheService fechamentoEncalheService;
 	
 	private static List<ItemDTO<Long,String>> listaRoteiros =  new ArrayList<ItemDTO<Long,String>>();
 
@@ -553,12 +558,14 @@ public class DebitoCreditoCotaController extends BaseController{
 
 		validarPreenchimentoCampos(listaNovosDebitoCredito, idTipoMovimento);
 		
+		this.existeFechamentoEncalhePorDataOperacao();
+				
 		Date dataCriacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		for (DebitoCreditoDTO debitoCredito : listaNovosDebitoCredito) {
 
 			TipoMovimentoFinanceiro tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
-
+			
 			tipoMovimentoFinanceiro.setId(idTipoMovimento);
 
 			debitoCredito.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
@@ -571,16 +578,32 @@ public class DebitoCreditoCotaController extends BaseController{
 			
 			debitoCredito.setDataCriacao(dataCriacao);
 			
-			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = 
-					debitoCreditoCotaService.gerarMovimentoFinanceiroCotaDTO(debitoCredito);
+			boolean existeFechamentoEncalheCota = fechamentoEncalheService.existeFechamentoEncalhePorCota(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()), debitoCredito.getNumeroCota());
 			
-			movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = null;
 			
-			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
+			if(existeFechamentoEncalheCota) {
+				movimentoFinanceiroCotaDTO = debitoCreditoCotaService.gerarMovimentoFinanceiroCotaCobrancaDTO(debitoCredito);
+			} else {
+				movimentoFinanceiroCotaDTO = debitoCreditoCotaService.gerarMovimentoFinanceiroCotaDTO(debitoCredito);
+				movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);				
+				this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
+			}
 		}
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro realizado com sucesso."), 
 				"result").recursive().serialize();
+	}
+
+	private void existeFechamentoEncalhePorDataOperacao() {
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		boolean fechamentoEncalheRealizado = fechamentoEncalheService.existeFechamentoEncalhePorDataOperacao(dataOperacao);
+		
+		if(fechamentoEncalheRealizado) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Fechamento de encalhe já realizado na data");
+		}
 	}
 	
 	@Post
@@ -866,11 +889,11 @@ public class DebitoCreditoCotaController extends BaseController{
 
 				linhasComErro.add(debitoCredito.getId());
 			
-			} else if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(DateUtil.adicionarDias(dataDistrib, 1)), dataVencimento)) {
+			} else if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(DateUtil.adicionarDias(dataDistrib, 0)), dataVencimento)) {
 
 				linhasComErro.add(debitoCredito.getId());
 				
-				msgsErros += ("\nO campo [Data] deve ser maior que a [Data de Operação: "+DateUtil.formatarDataPTBR(dataDistrib)+"] na linha ["+linha+"] !");
+				msgsErros += ("\nO campo [Data] deve ser maior ou igual a [Data de Operação: "+DateUtil.formatarDataPTBR(dataDistrib)+"] na linha ["+linha+"] !");
 			}
 
 			if (debitoCredito.getValor() == null) {

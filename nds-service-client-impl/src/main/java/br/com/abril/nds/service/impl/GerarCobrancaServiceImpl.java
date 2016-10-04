@@ -2106,7 +2106,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				this.consolidadoFinanceiroRepository.alterar(consolidado);
 				
                 if(excluiFinanceiro && mfcs != null && !mfcs.isEmpty()) {
-					
 			    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(consolidado.getId());
 				}
              
@@ -2133,7 +2132,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 		
 		if(cobranca.getTipoCobranca().equals(TipoCobranca.BOLETO_AVULSO)) {			
-			System.out.println("funcionou");
+			LOGGER.debug("Não remover quando for Boleto Avulso");
 		} else {
 			this.dividaRepository.remover(divida);
 		}

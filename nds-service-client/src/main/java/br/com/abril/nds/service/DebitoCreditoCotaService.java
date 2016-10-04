@@ -116,4 +116,6 @@ public interface DebitoCreditoCotaService {
 	void processarDebitoDeDistribuicaoDeEntregaDaCota(Date dataOperacao);
 	
 	MovimentoFinanceiroCotaDTO gerarMovimentoFinanceiroBoletoAvulsoDTO(BoletoAvulsoDTO debitoCredito);
+	
+	MovimentoFinanceiroCotaDTO gerarMovimentoFinanceiroCotaCobrancaDTO(DebitoCreditoDTO debitoCreditoDTO);
 }

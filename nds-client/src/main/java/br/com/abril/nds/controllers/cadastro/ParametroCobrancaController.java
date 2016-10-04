@@ -18,7 +18,6 @@ import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO.OrdenacaoColunaParametrosCobranca;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -48,7 +47,6 @@ import br.com.caelum.vraptor.view.Results;
  * @author Discover Technology
  *
  */
-
 @Resource
 @Path("/distribuidor/parametroCobranca")
 @Rules(Permissao.ROLE_FINANCEIRO_PARAMETROS_COBRANCA)

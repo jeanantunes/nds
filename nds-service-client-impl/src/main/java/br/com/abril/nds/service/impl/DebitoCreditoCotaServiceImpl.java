@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,11 @@ import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.ParametroDistribuicaoEntregaCotaDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
@@ -42,6 +48,7 @@ import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
+import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -91,11 +98,13 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 	@Autowired
 	private PoliticaCobrancaRepository politicaCobrancaRepository;
 	
+	@Autowired
+	private GerarCobrancaService gerarCobrancaService;
+	
 	@Override
 	@Transactional
-	public MovimentoFinanceiroCotaDTO gerarMovimentoFinanceiroCotaDTO(
-			DebitoCreditoDTO debitoCredito) {
-
+	public MovimentoFinanceiroCotaDTO gerarMovimentoFinanceiroCotaDTO(DebitoCreditoDTO debitoCredito) {
+		
 		Long idMovimento = debitoCredito.getId();
 
 		MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
@@ -104,8 +113,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
-		movimentoFinanceiroCotaDTO.setDataCriacao(
-			DateUtil.removerTimestamp(debitoCredito.getDataCriacao() == null ? new Date() : debitoCredito.getDataCriacao()));
+		movimentoFinanceiroCotaDTO.setDataCriacao(DateUtil.removerTimestamp(debitoCredito.getDataCriacao() == null ? new Date() : debitoCredito.getDataCriacao()));
 
 		Date dataVencimento = DateUtil.parseDataPTBR(debitoCredito.getDataVencimento());
 		
@@ -763,4 +771,81 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		return segundoDiaQuinzenalValido;
 	}
+	
+	@Override
+	@Transactional
+	public MovimentoFinanceiroCotaDTO gerarMovimentoFinanceiroCotaCobrancaDTO(DebitoCreditoDTO debitoCredito) {
+		
+		Cota cota = this.cotaRepository.obterPorNumeroDaCota(debitoCredito.getNumeroCota());
+		
+		gerarCobrancaService.cancelarDividaCobranca(null, cota.getId(), DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()), true);
+				
+		return popularMovimentoFinanceiroDTO(debitoCredito, cota);
+	}
+
+	private MovimentoFinanceiroCotaDTO popularMovimentoFinanceiroDTO(DebitoCreditoDTO debitoCredito, Cota cota) {
+		
+		debitoCredito.getDataVencimento();
+		
+		Long idMovimento = debitoCredito.getId();
+
+		MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
+		
+		movimentoFinanceiroCotaDTO.setIdMovimentoFinanceiroCota(idMovimento);
+		
+		movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.ALTERACAO);
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		movimentoFinanceiroCotaDTO.setDataCriacao(DateUtil.removerTimestamp(debitoCredito.getDataCriacao() == null ? new Date() : debitoCredito.getDataCriacao()));
+
+		Date dataVencimento = DateUtil.parseDataPTBR(debitoCredito.getDataVencimento());
+		
+		movimentoFinanceiroCotaDTO.setDataVencimento(dataVencimento);
+
+		movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacao);
+		
+		movimentoFinanceiroCotaDTO.setValor(new BigDecimal(debitoCredito.getValor()));
+
+		movimentoFinanceiroCotaDTO.setObservacao(debitoCredito.getObservacao());
+
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = this.tipoMovimentoFinanceiroRepository.buscarPorId(debitoCredito.getTipoMovimentoFinanceiro().getId());
+
+		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
+		
+		movimentoFinanceiroCotaDTO.setCota(cota);
+
+		Usuario usuario = this.usuarioRepository.buscarPorId(debitoCredito.getIdUsuario());
+		
+		movimentoFinanceiroCotaDTO.setUsuario(usuario);
+		
+		movimentoFinanceiroCotaDTO.setLancamentoManual(true);
+		
+		Fornecedor fornecedor = cota.getParametroCobranca()!=null?cota.getParametroCobranca().getFornecedorPadrao():null;
+
+		movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
+		
+		final Set<String> nossoNumeroCollection = new HashSet<String>();
+		
+		this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
+		
+		List<Date> data = new ArrayList<>();
+		data.add(dataVencimento);
+		
+		//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE)
+		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(movimentoFinanceiroCotaDTO.getCota(),
+																		 data,
+				                                                         usuario,
+				                                                         207298L,
+																		 null);
+		
+		try {
+			this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), new HashSet<String>(), nossoNumeroCollection);
+		} catch (GerarCobrancaValidacaoException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar a cobrança por debito e credito");
+		}
+		
+		return movimentoFinanceiroCotaDTO;
+	}
+	
 }

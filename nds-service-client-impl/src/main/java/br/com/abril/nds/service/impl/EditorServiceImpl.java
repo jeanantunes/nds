@@ -64,12 +64,14 @@ public class EditorServiceImpl implements EditorService {
     }
 
 	@Override
+	@Transactional
 	public List<Editor> obterEditoresPorNomePessoa(String nomeEditor) {
 		
 		return editorRepository.obterEditoresPorNomePessoa(nomeEditor);
 	}
 
 	@Override
+	@Transactional
 	public Editor obterEditorPorCodigo(Long codigoEditor) {
 		
 		return editorRepository.obterPorCodigo(codigoEditor);
