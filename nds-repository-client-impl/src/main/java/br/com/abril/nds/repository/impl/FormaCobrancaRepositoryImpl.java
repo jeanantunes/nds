@@ -227,9 +227,7 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 	@Override
 	public FormaCobranca obterFormaCobranca() {
 		
-		
         StringBuilder hql = new StringBuilder();
-		
 		
         hql.append(" select f from FormaCobranca f ");		
 		
@@ -241,7 +239,6 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 
 		Query query = super.getSession().createQuery(hql.toString());
 		
-        
         query.setParameter("indAtivo", true);
         
         query.setParameter("principal", true);
@@ -607,16 +604,16 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 		
 		hql.append("select case when count(f.id) > 0 then true else false end ");
 		hql.append(" from FormaCobranca f ");
-		hql.append(" join f.banco b ");
+		hql.append(" left join f.banco b ");
 		hql.append(" where f.ativa = :ativa ");
 		hql.append(" and b.id = :idBanco ");
-		hql.append(" and f.tipoCobranca in (:tipoCobranca) ");
+		hql.append(" and f.tipoCobranca not in (:tipoCobranca) ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("ativa", true);
 		query.setParameter("idBanco", idBanco);
-		query.setParameterList("tipoCobranca", Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_AVULSO));
+		query.setParameterList("tipoCobranca", Arrays.asList(TipoCobranca.DEPOSITO));
 		
 		return (boolean) query.uniqueResult();
 	}	
