@@ -89,4 +89,6 @@ public interface RotaRepository extends Repository<Rota, Long> {
 	List<RotaPDV> buscarRotaPDVPorRota(Long rotaId);
 
 	void removerPDV(Long pdvsExclusao, Long rotaId);
+
+	void removerPorRoteiroId(Long roteiroId);
 }
