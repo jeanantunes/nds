@@ -1403,7 +1403,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			cota.setParametroCobranca(pcc);
 			
-			parametroCobrancaCotaRepository.adicionar();
+			parametroCobrancaCotaRepository.adicionar(pcc);
 		} else {
 			
 			cota.getParametroCobranca().setFatorVencimento(Integer.valueOf(""+ parametroCobranca.getFatorVencimento()));
