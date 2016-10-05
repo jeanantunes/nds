@@ -428,7 +428,6 @@ var GerarBoletoAvulsoController = $.extend(true, {
 					
 					successCallback: function (url) {
 				    	console.log('success');
-				    	alert("caiu aqui");
 				    },
 				    failCallback: function (responseHtml, url) {
 				        preparingFileModal.dialog('close');

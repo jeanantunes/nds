@@ -301,6 +301,22 @@ var debitoCreditoCotaController = $.extend(true, {
 				$(dialogId,debitoCreditoCotaController.workspace).dialog( "close" );
 				$(".grids",debitoCreditoCotaController.workspace).show();
 				
+				if(result.isFechamentoEncalheCota) {
+					$.fileDownload(contextPath +'/financeiro/debitoCreditoCota/imprimirBoleto', {
+						httpMethod : "POST",
+						data : formData,
+						
+						successCallback: function (url) {
+					    	console.log('success');
+					    	
+					    },
+					    failCallback: function (responseHtml, url) {
+					        preparingFileModal.dialog('close');
+					        $("#error-modal").dialog({ modal: true });
+					    }
+					});
+				}
+				
 				exibirMensagem(
 					result.tipoMensagem, 
 					result.listaMensagens
@@ -330,10 +346,7 @@ var debitoCreditoCotaController = $.extend(true, {
 
 				$("#dialog-excluir", debitoCreditoCotaController.workspace).dialog( "close" );
 				
-				exibirMensagem(
-					result.tipoMensagem, 
-					result.listaMensagens
-				);
+				exibirMensagem(result.tipoMensagem, result.listaMensagens);
 			},
 			function(result) {
 

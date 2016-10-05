@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DebitoCreditoVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
@@ -41,6 +43,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
+import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
@@ -49,6 +52,7 @@ import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -111,6 +115,9 @@ public class DebitoCreditoCotaController extends BaseController{
     @Autowired
     private FechamentoEncalheService fechamentoEncalheService;
 	
+    @Autowired
+    private DocumentoCobrancaService documentoCobrancaService;
+    
 	private static List<ItemDTO<Long,String>> listaRoteiros =  new ArrayList<ItemDTO<Long,String>>();
 
 	private static List<ItemDTO<Long,String>> listaRotas =  new ArrayList<ItemDTO<Long,String>>();
@@ -559,7 +566,9 @@ public class DebitoCreditoCotaController extends BaseController{
 		validarPreenchimentoCampos(listaNovosDebitoCredito, idTipoMovimento);
 		
 		this.existeFechamentoEncalhePorDataOperacao();
-				
+		
+		boolean isFechamentoEncalheCota = false;
+		
 		Date dataCriacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		for (DebitoCreditoDTO debitoCredito : listaNovosDebitoCredito) {
@@ -584,6 +593,7 @@ public class DebitoCreditoCotaController extends BaseController{
 			
 			if(existeFechamentoEncalheCota) {
 				movimentoFinanceiroCotaDTO = debitoCreditoCotaService.gerarMovimentoFinanceiroCotaCobrancaDTO(debitoCredito);
+				isFechamentoEncalheCota = true;
 			} else {
 				movimentoFinanceiroCotaDTO = debitoCreditoCotaService.gerarMovimentoFinanceiroCotaDTO(debitoCredito);
 				movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);				
@@ -591,8 +601,12 @@ public class DebitoCreditoCotaController extends BaseController{
 			}
 		}
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro realizado com sucesso."), 
-				"result").recursive().serialize();
+		if(!isFechamentoEncalheCota) {
+			
+			this.result.use(Results.json()).from(isFechamentoEncalheCota, "result").recursive().serialize();
+		} 
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro realizado com sucesso."), "result").recursive().serialize();
 	}
 
 	private void existeFechamentoEncalhePorDataOperacao() {
@@ -972,5 +986,30 @@ public class DebitoCreditoCotaController extends BaseController{
 		
 		return this.usuarioService.getUsuarioLogado().getId();
 	}
-}
+	
+	@Path("/imprimirBoleto")
+	public void imprimirBoleto(List<DebitoCreditoDTO> listaNovosDebitoCredito, Long idTipoMovimento) {
+    	
+    	byte[] arquivo = null; //this.documentoCobrancaService.gerarDocumentoCobrancaBoletoAvulso(listaBoletosAvulso);
+    	
+    	String nomeArquivo = "boleto-debito-credito"; 
+    	
+    	try {
+			
+    		this.httpResponse.setContentType("application/pdf");
+    		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=" + nomeArquivo + new Date()+ ".pdf");
 
+    		OutputStream output = this.httpResponse.getOutputStream();
+    		output.write(arquivo);
+
+    		this.httpResponse.getOutputStream().close();
+
+    		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS," sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
+	        
+		} catch (Exception e) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma informação encontrada para os filtros escolhidos.");
+		}
+
+    }
+}

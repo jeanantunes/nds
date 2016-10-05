@@ -162,5 +162,4 @@ public interface FormaCobrancaService {
 	
 	FormaCobranca obterFormaCobrancaBoletoAvulso(TipoCobranca tipoCobranca);
 	
-	boolean validarFormaCobrancaPorBanco(Long idBanco);
 }

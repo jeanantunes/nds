@@ -67,9 +67,6 @@ public class ParametroCobrancaController extends BaseController {
 	@Autowired
 	private CotaService cotaService;
 	
-	@Autowired
-	private FormaCobrancaService formaCobrancaService;
-	
     private Result result;
     
     private HttpSession httpSession;
@@ -372,17 +369,6 @@ public class ParametroCobrancaController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Semanal é necessário marcar ao menos um dia da semana.");      	
 			}
 		}
-		
-		
-		if(parametros.getTipoCobranca().equals(TipoCobranca.BOLETO_AVULSO)) {
-			
-			boolean isTipoBoleto = formaCobrancaService.validarFormaCobrancaPorBanco(parametros.getIdBanco());
-			
-			if (!isTipoBoleto) {
-				throw new ValidacaoException(TipoMensagem.WARNING, "Para Forma de Cobrança Boleto Avulso é necessário utilizar um Banco trabalhe com boleto.");   
-			}
-		}
-		
 		
 	}
 }

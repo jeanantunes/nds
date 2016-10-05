@@ -892,7 +892,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 
 	@Override
 	public Cobranca obterCobrancaBoletoAvulso(Integer numeroCota) {
-		System.out.println("passou");
+		
 		StringBuffer hql = new StringBuffer();
 		
 		hql.append(" select c from Cobranca as c ");

@@ -126,4 +126,6 @@ public interface DocumentoCobrancaService {
 	
 	byte[] gerarDocumentoCobrancaBoletoAvulso(List<BoletoAvulsoDTO> listaBoletosAvulso);
 	
+	byte[] gerarDocumentoCobrancaDebitoCredito(List<DebitoCreditoDTO> listaDebitoCredito);
+	
 }

@@ -1970,6 +1970,44 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         return arquivo ;
     }
     
+    @Override
+    @Transactional
+    public byte[] gerarDocumentoCobrancaDebitoCredito(List<DebitoCreditoDTO> listaDebitoCredito) {
+        
+    	final List<CorpoBoleto> corpos = new ArrayList<CorpoBoleto>();
+    	
+        Cobranca cobranca = null;
+        Boleto boleto = null;
+        
+        byte[] arquivo = null;
+        
+        for(DebitoCreditoDTO debito : listaDebitoCredito) {
+            
+            cobranca = cobrancaRepository.obterCobrancaBoletoAvulso(debito.getNumeroCota());
+            cobranca.setVias(1);
+            cobranca.setObservacao(debito.getObservacao() == null ? "Boleto Avulso" : debito.getObservacao());
+            boleto = boletoRepository.obterPorNossoNumero(cobranca.getNossoNumero(), null, true);
+            
+            if(boleto!= null){
+                corpos.add(this.gerarCorpoBoletoCota(boleto, null, false));
+            }
+            
+        }
+        
+        try {        	
+        	if(!corpos.isEmpty()){
+        		final GeradorBoleto geradorBoleto = new GeradorBoleto(corpos) ;
+        		final byte[] b = geradorBoleto.getByteGroupPdf();
+        		return b;
+        	}
+        } catch (Exception e) {
+        	throw new ValidacaoException(TipoMensagem.WARNING,"Erro ao gerar Recibo.");
+        }
+        
+        
+        return arquivo ;
+    }
+    
     private CorpoBoleto gerarCorpoBoletoCota(final Boleto boleto, final Pessoa pessoaCedente, final boolean aceitaPagamentoVencido){
         
     	final List<PoliticaCobranca> politicasCobranca = 

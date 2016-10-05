@@ -238,12 +238,14 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 		hql.append(" and p.principal = :principal ");
 
 		Query query = super.getSession().createQuery(hql.toString());
-		
+        
         query.setParameter("indAtivo", true);
         
         query.setParameter("principal", true);
         
+        
         query.setMaxResults(1);
+        
         
 		return (FormaCobranca) query.uniqueResult();
 	}

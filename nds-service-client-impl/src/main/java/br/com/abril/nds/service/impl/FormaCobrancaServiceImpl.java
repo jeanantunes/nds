@@ -674,11 +674,5 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 		return this.formaCobrancaRepository.obterFormaCobrancaBoletoAvulso(tipoCobranca);
 	}
 	
-	@Override
-	@Transactional
-	public boolean validarFormaCobrancaPorBanco(Long idBanco) {
-		
-		return this.formaCobrancaRepository.validarFormaCobrancaPorBanco(idBanco);
-	}
 	
 }

@@ -35,11 +35,13 @@ import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
+import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.NotaEnvioRepository;
@@ -48,6 +50,7 @@ import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
+import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.UsuarioService;
@@ -100,6 +103,12 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 	
 	@Autowired
 	private GerarCobrancaService gerarCobrancaService;
+	
+	@Autowired
+	private ControleConferenciaEncalheCotaRepository controleConferenciaEncalheCotaRepository; 
+	
+	@Autowired
+	private DocumentoCobrancaService documentoCobrancaService;
 	
 	@Override
 	@Transactional
@@ -785,8 +794,6 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 
 	private MovimentoFinanceiroCotaDTO popularMovimentoFinanceiroDTO(DebitoCreditoDTO debitoCredito, Cota cota) {
 		
-		debitoCredito.getDataVencimento();
-		
 		Long idMovimento = debitoCredito.getId();
 
 		MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
@@ -825,6 +832,12 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 
 		movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
 		
+		this.gerarMovimentoDebitoCreditoDataOperacao(cota, movimentoFinanceiroCotaDTO, dataOperacao, dataVencimento, usuario);
+		
+		return movimentoFinanceiroCotaDTO;
+	}
+
+	private void gerarMovimentoDebitoCreditoDataOperacao(Cota cota, MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO, Date dataOperacao, Date dataVencimento, Usuario usuario) {
 		final Set<String> nossoNumeroCollection = new HashSet<String>();
 		
 		this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
@@ -832,20 +845,21 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		List<Date> data = new ArrayList<>();
 		data.add(dataVencimento);
 		
+		final ControleConferenciaEncalheCota controleConferenciaEncalheCota = controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(cota.getNumeroCota(), dataOperacao);
+		
 		//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE)
 		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(movimentoFinanceiroCotaDTO.getCota(),
 																		 data,
 				                                                         usuario,
-				                                                         207298L,
+				                                                         controleConferenciaEncalheCota.getId(),
 																		 null);
 		
 		try {
 			this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), new HashSet<String>(), nossoNumeroCollection);
+			
 		} catch (GerarCobrancaValidacaoException e) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar a cobrança por debito e credito");
 		}
-		
-		return movimentoFinanceiroCotaDTO;
 	}
 	
 }
