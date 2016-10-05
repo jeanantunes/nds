@@ -1405,6 +1405,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			cota.setParametroCobranca(pcc);
 			
 			cota.setParametroCobranca(pcc);
+			
+			parametroCobrancaCotaRepository.adicionar();
 		} else {
 			
 			cota.getParametroCobranca().setFatorVencimento(Integer.valueOf(""+ parametroCobranca.getFatorVencimento()));
@@ -1427,6 +1429,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		formaCobranca.setVencimentoDiaUtil(formaCobrancaDistribuidor.isVencimentoDiaUtil());
 		
 		formaCobrancaRepository.adicionar(formaCobranca);
+		cotaRepository.merge(cota); // Odemir
 	}
 	
 
