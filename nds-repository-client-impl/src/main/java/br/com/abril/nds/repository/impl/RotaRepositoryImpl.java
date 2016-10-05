@@ -255,4 +255,17 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 		
 	}
 	
+	
+	@Override
+	public void removerPorRoteiroId(Long roteiroId) {
+		String hql = " DELETE FROM ROTA where roteiro_id = :roteiro_id ";
+			
+		Query query = getSession().createSQLQuery(hql.toString());
+		
+	
+		query.setParameter("roteiro_id", roteiroId);
+		query.executeUpdate();
+		
+	}
+	
 }
