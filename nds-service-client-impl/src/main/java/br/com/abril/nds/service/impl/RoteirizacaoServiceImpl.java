@@ -1040,6 +1040,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 					if(!rota.getRoteiro().getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
 					  desassociarBoxCota(setPdvsID);
 					}
+					this.rotaRepository.removerPorId(rota.getId());
 				}
 				
 				roteiro.desassociarRotas(roteiroDTO.getRotasExclusao());
@@ -1182,6 +1183,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 					}
 				}
 			}
+			this.rotaRepository.removerPorRoteiroId(idRoteiroExclusao);
 			
 			this.roteiroRepository.removerPorId(idRoteiroExclusao);
 		}
