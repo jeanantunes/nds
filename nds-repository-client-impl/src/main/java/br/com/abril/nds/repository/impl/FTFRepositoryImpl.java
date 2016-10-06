@@ -290,7 +290,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" (CASE WHEN tsp.DESCRICAO = 'IMPORTADAS' THEN ")
 		.append("      pe.CODIGO_DE_BARRAS_CORPORATIVO ") 
 		.append(" ELSE ")
-		.append("      LPAD(cast(nfps.CODIGO_DE_BARRAS_CORPORATIVO as char), 13, '0')  ")
+		.append("      LPAD(cast(pe.CODIGO_DE_BARRAS_CORPORATIVO as char), 13, '0')  ")
 		.append(" END) as codBarrasProduto, ")
 		
 		// .append(" LPAD(cast(nfps.CODIGO_BARRAS as char), 13, '0') as codBarrasProduto, ")
