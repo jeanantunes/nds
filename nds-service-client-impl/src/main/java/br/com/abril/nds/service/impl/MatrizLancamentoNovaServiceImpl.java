@@ -2047,7 +2047,7 @@ public class MatrizLancamentoNovaServiceImpl implements MatrizLancamentoNovaServ
         if (lancamentoRepository.existeMatrizLancamentosExpedidos(datasConfirmadas)) {
             
             throw new ValidacaoException(TipoMensagem.WARNING,
-                    "Existem lançamentos que já foram expedidos. Não será possivel reabir a matriz nesse dia!");
+                    "Existem lançamentos que já foram expedidos. Não será possivel reabrir a matriz nesse dia!");
             
         }
         
@@ -2055,6 +2055,15 @@ public class MatrizLancamentoNovaServiceImpl implements MatrizLancamentoNovaServ
                 .obterMatrizLancamentosConfirmados(datasConfirmadas);
         
         for (final Lancamento lancamento : lancamentos) {
+        	
+        	
+        	// verificar se ja tem nota emitida. caso tenha, nao permitir reabrir matriz 5/10/2016-rodrigo winter-odemir
+        	if ( lancamento.getEstudo() != null && lancamento.getEstudo().getEstudoCotas()!= null)
+        		for ( EstudoCota estudoCota :lancamento.getEstudo().getEstudoCotas())
+        			if ( estudoCota.getItemNotaEnvios()!= null && estudoCota.getItemNotaEnvios().size() > 0 )
+        				  throw new ValidacaoException(TipoMensagem.WARNING,
+        		                    "Há  Produto(s)  com  Nota de Envio gerado(s). Não será possivel reabrir a matriz nesse dia!");
+        				
             
             this.validarLancamentoParaReabertura(lancamento);
             
