@@ -868,15 +868,11 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
                 GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE.name(),
                 GrupoMovimentoFinaceiro.ENVIO_ENCALHE.name());
         
-        this.movimentoEstoqueCotaRepository.updateByCotaAndDataOpAndGrupos(
-                idCota, dataOperacao, grupoMovimentoFinaceiros , motivo,
-                StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
+        this.movimentoEstoqueCotaRepository.updateByCotaAndDataOpAndGrupos(idCota, dataOperacao, grupoMovimentoFinaceiros , motivo, StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
         
-        this.historicoMovimentoFinanceiroCotaRepository.removeByCotaAndDataOpAndGrupos(
-                idCota, dataOperacao, grupoMovimentoFinaceiros);
+        this.historicoMovimentoFinanceiroCotaRepository.removeByCotaAndDataOpAndGrupos(idCota, dataOperacao, grupoMovimentoFinaceiros);
         
-        this.movimentoFinanceiroCotaRepository.removeByCotaAndDataOpAndGrupos(
-                idCota, dataOperacao, grupoMovimentoFinaceiros);
+        this.movimentoFinanceiroCotaRepository.removeByCotaAndDataOpAndGrupos(idCota, dataOperacao, grupoMovimentoFinaceiros);
     }
     
     /**

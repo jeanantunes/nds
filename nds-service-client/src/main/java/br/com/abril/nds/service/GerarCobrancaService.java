@@ -122,4 +122,6 @@ public interface GerarCobrancaService {
 	Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento, String localidade);
 	
 	void gerarCobrancaBoletoAvulso(Long idUsuario, MovimentoFinanceiroCota movimentoFinanceiroCota, Map<Integer, Long> cotasBanco) throws GerarCobrancaValidacaoException;
+	
+	void gerarCobrancaBoletoNFe(Long idUsuario, MovimentoFinanceiroCota movimentoFinanceiroCota, Set<String> setNossoNumero) throws GerarCobrancaValidacaoException;
 }

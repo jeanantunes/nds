@@ -4229,7 +4229,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	
     	 this.getSession().createSQLQuery(sql.toString())
 	        .setParameter("motivo", motivo)
-	        .setParameter("movimentoFinanceiroCota", movimentoFinanceiroCota)
+	        .setParameter("movimentoFinanceiroCota", null)
 	        .setParameter("statusEstoqueFinanceiro", statusEstoqueFinanceiro.name())
 	        .setParameter("idConsolidado", idConsolidado)
 	        .setParameterList("grupoMovimentoFinaceiros", grupoMovimentoFinaceiros)

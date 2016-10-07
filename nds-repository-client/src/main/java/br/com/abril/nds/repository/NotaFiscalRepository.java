@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.NfeDTO;
@@ -106,5 +107,5 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 	
 	List<Fornecedor> obterConjuntoFornecedoresMovimentoFechamentoFiscal(FiltroNFeDTO filtro);
 
-	List<BoletoAvulsoDTO> listaBoletoNFE(Date dataBoleto);
+	List<DebitoCreditoDTO> listaBoletoNFE(Date dataBoleto);
 }

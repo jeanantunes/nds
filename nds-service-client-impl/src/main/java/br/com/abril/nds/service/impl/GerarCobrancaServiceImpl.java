@@ -612,7 +612,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 											        BigDecimal vlMovPostergado,
 											        Set<String> setNossoNumero, 
 											        boolean isBoletoAvulso, 
-											        Map<Integer, Long> cotasBanco) throws GerarCobrancaValidacaoException{
+											        Map<Integer, Long> cotasBanco, 
+											        boolean isCobrancaNFe) throws GerarCobrancaValidacaoException{
     	
     	Map<Cota, List<GerarCobrancaHelper>> consolidadosCota = new HashMap<Cota, List<GerarCobrancaHelper>>();
     	
@@ -629,7 +630,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					  consolidadosCotaCentralizacao,
 					  vlMovFinanTotal, 
 					  vlMovPostergado, 
-					  isBoletoAvulso);
+					  isBoletoAvulso,
+					  isCobrancaNFe);
     		
     		if(!consolidadosCota.isEmpty()) {
     			
@@ -637,8 +639,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
     					dataOperacao, 
     					setNossoNumero, 
     					consolidadosCota,
-    					msgs, isBoletoAvulso, 
-    					cotasBanco);
+    					msgs, 
+    					isBoletoAvulso, 
+    					cotasBanco, 
+    					isCobrancaNFe);
     		}
     	} else {
     		
@@ -653,7 +657,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
     				consolidadosCota, 
     				consolidadosCotaCentralizacao,
     				vlMovFinanTotal, 
-    				vlMovPostergado, false);
+    				vlMovPostergado, 
+    				isBoletoAvulso,
+    				isCobrancaNFe);
     		
     		if(!consolidadosCota.isEmpty()) {
     			
@@ -661,7 +667,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
     					dataOperacao, 
     					setNossoNumero, 
     					consolidadosCota,
-    					msgs, isBoletoAvulso, null);
+    					msgs, 
+    					isBoletoAvulso, 
+    					null, 
+    					isCobrancaNFe);
     		}
     	}
     	
@@ -774,7 +783,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 														    valorMovimentos,
 														    setNossoNumero, 
 														    false,
-														    null);
+														    null,
+														    false);
 
 					cotaAnterior = cotaAtual;
 					
@@ -808,7 +818,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 												    valorMovimentos,
 												    setNossoNumero, 
 												    false,
-												    null);
+												    null,
+												    false);
 		}
 		
 		//Processamento de Divida e Cobrança de Cotas com Centralização
@@ -838,7 +849,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						                             Map<Cota, List<GerarCobrancaHelper>> consolidadosCota,
 						                             List<String> msgs,
 						                             boolean isBoletAvulso,
-						                             Map<Integer, Long> cotasBanco) throws GerarCobrancaValidacaoException{
+						                             Map<Integer, Long> cotasBanco, boolean isCobrancaNFe) throws GerarCobrancaValidacaoException{
 		
         for (Entry<Cota, List<GerarCobrancaHelper>> entry : consolidadosCota.entrySet()){
 			
@@ -879,7 +890,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 									 helperPrincipal.getDataConsolidado(),
 									 setNossoNumero, 
 									 isBoletAvulso,
-									 cotasBanco);
+									 cotasBanco,
+									 isCobrancaNFe);
 		}
 		
         this.salvarBoletoEmailPendenteEnvio(setNossoNumero);
@@ -1229,7 +1241,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 								      Map<Cota, List<GerarCobrancaHelper>> consolidadosCotaCentralizacao,
 								      BigDecimal vlMovFinanTotal,
 								      BigDecimal vlMovPostergado, 
-								      boolean isBoletoAvulso){
+								      boolean isBoletoAvulso,
+								      boolean isCobrancaNFe){
 		
 		
 		if(isBoletoAvulso) {
@@ -1577,6 +1590,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					vlBoletoAvulso = this.adicionarValor(vlMovFinanDebitoCredito, movimentoFinanceiroCota);
 					
 					break;
+					
+				case BOLETO_NFE:
+					
+					vlBoletoAvulso = this.adicionarValor(vlMovFinanDebitoCredito, movimentoFinanceiroCota);
+					break;
 						
 			}
 		}
@@ -1682,7 +1700,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 										      		  banco, 
 										      		  dataOperacao, 
 										      		  dataVencimento, 
-										      		  fornecedor);
+										      		  fornecedor,
+										      		  false);
 		
 		if (movimentoFinanceiroCota != null){
 			
@@ -1726,7 +1745,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 									 Date dataConsolidado,
 									 Set<String> setNossoNumero,
 									 boolean isBoletAvulso, 
-									 Map<Integer, Long> cotasBanco) {
+									 Map<Integer, Long> cotasBanco,
+									 boolean isCobrancaNFe) {
 		
 	    Divida novaDivida = null;
 		
@@ -1771,7 +1791,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 									                		  banco, 
 									                		  dataEmissao, 
 									                		  dataVencimento, 
-									                		  fornecedor);	
+									                		  fornecedor,
+									                		  isCobrancaNFe);	
 
 				if (cobranca != null && setNossoNumero != null){
 					
@@ -1814,7 +1835,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 										                		  banco, 
 										                		  dataOperacao, 
 										                		  dataVencimento, 
-										                		  fornecedor);	
+										                		  fornecedor,
+										                		  isCobrancaNFe);	
 
 					if (cobranca != null && setNossoNumero != null){
 						
@@ -1858,7 +1880,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				                          Banco banco,
 				                          Date dataOperacao,
 				                          Date dataVencimento,
-				                          Fornecedor fornecedor) {
+				                          Fornecedor fornecedor,
+				                          boolean isCobrancaNFe) {
 			
 		Cobranca cobranca = null;
 		
@@ -1909,6 +1932,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			cobranca.setDataVencimento(dataVencimento);
 			cobranca.setVias(0);
 			cobranca.setEnviarPorEmail(formaCobrancaPrincipal.isRecebeCobrancaEmail());
+			cobranca.setCobrancaNFe(isCobrancaNFe);
 			
 			String nossoNumero =
 				Util.gerarNossoNumero(
@@ -2108,8 +2132,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
                 if(excluiFinanceiro && mfcs != null && !mfcs.isEmpty()) {
 			    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(consolidado.getId());
 				}
-             
-			    this.consolidadoFinanceiroRepository.remover(consolidado);
+                
+                this.consolidadoFinanceiroRepository.remover(consolidado);
 			    
 			}
 		} else {
@@ -2409,7 +2433,78 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 												    valorMovimentos,
 												    setNossoNumero, 
 												    true,
-												    cotasBanco);
+												    cotasBanco,
+												    false);
+		
+	}
+	
+	@Override
+	@Transactional
+	public void gerarCobrancaBoletoNFe(Long idUsuario, MovimentoFinanceiroCota movimentoFinanceiroCota, Set<String> setNossoNumero) throws GerarCobrancaValidacaoException {
+		
+		Date dataOperacao = movimentoFinanceiroCota.getData();
+		
+		Usuario usuario = this.usuarioRepository.buscarPorId(idUsuario);
+		
+		Integer numeroDiasNovaCobranca = 0; 
+		
+		List<String> msgs = new ArrayList<String>();
+		
+		Map<Cota, List<GerarCobrancaHelper>> consolidadosCotaCentralizacao = new HashMap<Cota, List<GerarCobrancaHelper>>();
+		
+		Fornecedor fornecedorAnterior = movimentoFinanceiroCota.getFornecedor();
+			
+		Fornecedor fornecedorAtual = null;
+			
+		Cota cotaAnterior = cotaRepository.buscarPorId(movimentoFinanceiroCota.getCota().getId());
+			
+		BigDecimal valorMovimentos = BigDecimal.ZERO;
+			
+		List<MovimentoFinanceiroCota> movimentos = new ArrayList<MovimentoFinanceiroCota>();
+			
+		Cota cotaAtual = cotaRepository.buscarPorId(movimentoFinanceiroCota.getCota().getId());
+							    
+		fornecedorAtual = movimentoFinanceiroCota.getFornecedor();
+
+		if (fornecedorAtual == null) {
+			    	
+	    	throw new GerarCobrancaValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+			    			                                                  "Fornecedor não encontrado para o [Movimento Financeiro " +
+			    			                                                  movimentoFinanceiroCota.getId() + "] [Cota " + 
+			    			                                                  cotaAtual.getNumeroCota() + "]."));
+	    }
+				
+		TipoMovimentoFinanceiro tipo = (TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento();
+		
+		valorMovimentos = valorMovimentos.add(movimentoFinanceiroCota.getValor());
+			
+		fornecedorAnterior = fornecedorAtual;
+			
+		movimentos = new ArrayList<MovimentoFinanceiroCota>();
+			
+		movimentos.add(movimentoFinanceiroCota);
+			
+		if (tipo.getOperacaoFinaceira().equals(OperacaoFinaceira.CREDITO)) {
+			valorMovimentos = movimentoFinanceiroCota.getValor().negate();	
+		} else {
+	    	valorMovimentos = movimentoFinanceiroCota.getValor();
+	    }
+		
+		this.processarConsolidadoDividaCobranca(cotaAnterior, 
+												    movimentos, 
+												    usuario, 
+												    numeroDiasNovaCobranca, 
+												    dataOperacao, 
+												    msgs, 
+												    fornecedorAnterior, 
+												    false,
+												    consolidadosCotaCentralizacao,
+												    valorMovimentos, 
+												    valorMovimentos,
+												    setNossoNumero, 
+												    false,
+												    null,
+												    true);
 		
 	}
 	

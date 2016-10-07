@@ -1,5 +1,7 @@
 var tipoEmissor = "";
 
+var existeNota;
+
 var retornoNFEController  = $.extend(true, {
 
 	path : contextPath +"/nfe/retornoNFe/",
@@ -143,31 +145,14 @@ var retornoNFEController  = $.extend(true, {
 	},
 	
 	imprimirBoletoNFE : function() {
-		var parametros = []; 
 		
-		var itens = GerarBoletoAvulsoController.obterCotasSelecionadas();
+		var params = [];
 		
-		$.postJSON(contextPath + '/financeiro/boletoAvulso/imprimirBoleto',
-			itens,
-			 function(resultado) {
-				$.fileDownload(contextPath +'/nfe/retornoNFe/imprimirBoleto', {
-					httpMethod : "POST",
-					data : itens,
-					
-					successCallback: function (url) {
-				    	console.log('success');
-				    },
-				    failCallback: function (responseHtml, url) {
-				        preparingFileModal.dialog('close');
-				        $("#error-modal").dialog({ modal: true });
-				    }
-				});
-				
-			 },
-			null,
-			true
-		);
+		var dataReferencia = $("#retornoNFEDataReferencia", this.workspace).val();
 		
+		retornoNFEController.existeNotaNaData(dataReferencia)
+		
+		console.log("flag: " +existeNota);
 	},
 	
 	addLoteMix:function(){
@@ -191,6 +176,35 @@ var retornoNFEController  = $.extend(true, {
 			},
 		});
 		
+	},
+	
+	existeNotaNaData : function(dataReferencia) {
+		
+		var params = [];
+		
+		var dataReferencia = $("#retornoNFEDataReferencia", this.workspace).val();
+		
+		params.push({name : "dataReferencia", value : dataReferencia});
+		
+		$.postJSON(contextPath + "/nfe/retornoNFe/existeNotaNaData", params, 
+		function(result){
+			
+			retornoNFEController.exibirMensagemSucesso(result);
+			
+			if(result.EXISTE_NFE) {
+				$.fileDownload(contextPath +'/nfe/retornoNFe/imprimirBoleto', {
+					httpMethod : "POST",
+					data : params,
+					
+					successCallback: function (url) {
+				    	console.log('success');
+				    },
+				    failCallback: function (result, url) {
+				    	retornoNFEController.exibirMensagemSucesso(responseHtml);
+				    }
+				});
+			}
+		});
 	},
 	
 }, BaseController);

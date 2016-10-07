@@ -601,11 +601,6 @@ public class DebitoCreditoCotaController extends BaseController{
 			}
 		}
 		
-		if(!isFechamentoEncalheCota) {
-			
-			this.result.use(Results.json()).from(isFechamentoEncalheCota, "result").recursive().serialize();
-		} 
-		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro realizado com sucesso."), "result").recursive().serialize();
 	}
 
@@ -681,8 +676,7 @@ public class DebitoCreditoCotaController extends BaseController{
 			throw new ValidacaoException(TipoMensagem.WARNING, "ID do movimento inválido.");
 		}
 
-		MovimentoFinanceiroCota movimentoFinanceiroCota = 
-				this.movimentoFinanceiroCotaService.obterMovimentoFinanceiroCotaPorId(idMovimento);
+		MovimentoFinanceiroCota movimentoFinanceiroCota = this.movimentoFinanceiroCotaService.obterMovimentoFinanceiroCotaPorId(idMovimento);
 
 		DebitoCreditoDTO debitoCredito = new DebitoCreditoDTO();
 		
@@ -690,8 +684,7 @@ public class DebitoCreditoCotaController extends BaseController{
 
 		Pessoa pessoa = movimentoFinanceiroCota.getCota().getPessoa();
 
-		String nomeCota = pessoa instanceof PessoaJuridica ? 
-						  ((PessoaJuridica) pessoa).getRazaoSocial() : ((PessoaFisica) pessoa).getNome();
+		String nomeCota = pessoa instanceof PessoaJuridica ? ((PessoaJuridica) pessoa).getRazaoSocial() : ((PessoaFisica) pessoa).getNome();
 
 		debitoCredito.setDataLancamento(formatField(movimentoFinanceiroCota.getDataCriacao()));
 		debitoCredito.setTipoMovimentoFinanceiro((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento());
@@ -940,8 +933,7 @@ public class DebitoCreditoCotaController extends BaseController{
 
 		if (!linhasComErro.isEmpty()) {
 			
-			ValidacaoVO validacao = new ValidacaoVO(
-					TipoMensagem.WARNING, "Existe(m) movimento(s) preenchido(s) incorretamente.\n"+msgsErros);
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, "Existe(m) movimento(s) preenchido(s) incorretamente.\n"+msgsErros);
 					
 			validacao.setDados(linhasComErro);
 			

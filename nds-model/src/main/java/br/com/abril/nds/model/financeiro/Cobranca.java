@@ -133,6 +133,9 @@ public abstract class Cobranca {
 	@Column(name="OBSERVACAO")
 	private String observacao;
 	
+	@Column(name="COBRANCA_NFE")
+	private boolean cobrancaNFe;
+	
 	public Long getId() {
 		return id;
 	}
@@ -353,6 +356,14 @@ public abstract class Cobranca {
 
 	public void setNossoNumeroConsolidado(String nossoNumeroConsolidado) {
 		this.nossoNumeroConsolidado = nossoNumeroConsolidado;
+	}
+	
+	public boolean isCobrancaNFe() {
+		return cobrancaNFe;
+	}
+
+	public void setCobrancaNFe(boolean cobrancaNFe) {
+		this.cobrancaNFe = cobrancaNFe;
 	}
 
 	public String getObservacao() {

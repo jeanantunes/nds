@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.NfeDTO;
@@ -1547,12 +1548,12 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<BoletoAvulsoDTO> listaBoletoNFE(Date dataBoleto) {
+	public List<DebitoCreditoDTO> listaBoletoNFE(Date dataBoleto) {
 		
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append("   select c.numero_cota as numeroCota, ");
-		sql.append("   select p.nome as nomeCota, ");
+		sql.append("   p.nome as nomeCota, ");
 		sql.append("   nfc.VALOR_NF as valor, ");
 		sql.append("   'Boleto Gerado via Nota Fiscal Eletronica' as observacao ");
 		sql.append("   from nota_fiscal_novo nf "); 
@@ -1563,7 +1564,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		sql.append("   and nf.data_emissao = :dataBoleto ");
 		sql.append("   and nf.STATUS_RETORNADO = :statusRetornado ");
 		sql.append("   and nf.PROTOCOLO is not null ");
-
+		sql.append("   and c.id = 99 ");
+		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("dataBoleto", dataBoleto);
@@ -1571,10 +1573,10 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
 		query.addScalar("nomeCota", StandardBasicTypes.STRING);
-		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("valor", StandardBasicTypes.STRING);
 		query.addScalar("observacao", StandardBasicTypes.STRING);
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(BoletoAvulsoDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoDTO.class));
 		
 		return query.list();
 		

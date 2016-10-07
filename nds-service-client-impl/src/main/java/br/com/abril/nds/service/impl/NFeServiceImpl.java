@@ -27,6 +27,7 @@ import br.com.abril.nds.client.vo.NfeVO;
 import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.NfeImpressaoDTO;
 import br.com.abril.nds.dto.NfeImpressaoWrapper;
@@ -1749,7 +1750,8 @@ public class NFeServiceImpl implements NFeService {
     }
 
 	@Override
-	public List<BoletoAvulsoDTO> listaBoletoNFE(Date dataBoleto) {
+	@Transactional
+	public List<DebitoCreditoDTO> listaBoletoNFE(Date dataBoleto) {
 		return this.notaFiscalRepository.listaBoletoNFE(dataBoleto);
 	}
 }

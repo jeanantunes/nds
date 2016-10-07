@@ -2,12 +2,16 @@ package br.com.abril.nds.controllers.nfe;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +20,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.NFEImportUtil;
 import br.com.abril.nds.client.vo.SumarizacaoNotaRetornoVO;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.BoletoAvulsoDTO;
+import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
@@ -34,16 +38,18 @@ import br.com.abril.nds.model.ftf.retorno.FTFRetTipoRegistro01;
 import br.com.abril.nds.model.ftf.retorno.FTFRetornoRET;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
+import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.FTFService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.FileImportUtil;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.Util;
@@ -80,9 +86,6 @@ public class RetornoNFEController extends BaseController {
 	private HttpSession session;
 	
 	@Autowired
-	private DistribuidorService distribuidorService;
-	
-	@Autowired
 	private FTFService ftfService;
 	
 	@Autowired
@@ -98,11 +101,19 @@ public class RetornoNFEController extends BaseController {
 	private GerarCobrancaService gerarCobrancaService;
 	
 	@Autowired
-	private NFeService nfeeService; 
+	private DocumentoCobrancaService documentoCobrancaService;
+	
+	@Autowired
+	private NFeService nfeService; 
+	
+	@Autowired
+	private HttpServletResponse httpResponse;
 	
 	private static final String LISTA_NOTAS_DE_RETORNO = "listaNotasDeRetorno";
 	
 	private static final String NFE_APLICATIVO_FTF = "EMISSAO_NFE_APLICATIVO_CONTRIBUINTE";
+	
+	private static final String EXISTE_NFE = "EXISTE_NFE";
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_NFE_RETORNO_NFE)
@@ -395,67 +406,86 @@ public class RetornoNFEController extends BaseController {
 	}
 	
 	@Path("/imprimirBoleto")
-	public void imprimirBoletoNFE(Date dataBoleto, Long idBanco) {
+	public void imprimirBoletoNFE(final Date dataReferencia) {
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = this.tipoMovimentoFinanceiroService.obterTipoMovimentoFincanceiroPorGrupoFinanceiroEOperacaoFinanceira(GrupoMovimentoFinaceiro.BOLETO_NFE, OperacaoFinaceira.DEBITO);
 		
 		// Obter Boleto Cota NFE
-		List<BoletoAvulsoDTO> listaBoletosAvulso = nfeeService.listaBoletoNFE(dataBoleto);
+		List<DebitoCreditoDTO> listaBoletosAvulso = nfeService.listaBoletoNFE(dataReferencia);
 		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = this.tipoMovimentoFinanceiroService.obterTipoMovimentoFincanceiroPorGrupoFinanceiroEOperacaoFinanceira(GrupoMovimentoFinaceiro.BOLETO_AVULSO, OperacaoFinaceira.DEBITO);
-		
-		Map<Integer, Long> cotasBanco = new HashMap<Integer, Long>();
-		
-		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = this.gerarMovimentacaoFinanceira(listaBoletosAvulso, tipoMovimentoFinanceiro.getId(), cotasBanco);
-		
-		this.gerarCobrancaBoletoAvulso(listaMovimentoFinanceiroCota, cotasBanco);
-	}
-	
-	private List<MovimentoFinanceiroCota> gerarMovimentacaoFinanceira(List<BoletoAvulsoDTO> listaBoletosAvulso, Long idTipoMovimento, Map<Integer, Long> cotasBanco) {
-		
-		Date dataCriacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		if(listaBoletosAvulso != null && listaBoletosAvulso.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi encontrado nenhum registro para pesquisa.");
+		}
 		
 		List<MovimentoFinanceiroCota> movimentosFinanceirosCota = new ArrayList<MovimentoFinanceiroCota>();
 		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = this.tipoMovimentoFinanceiroService.obterTipoMovimentoFincanceiroPorGrupoFinanceiroEOperacaoFinanceira(GrupoMovimentoFinaceiro.BOLETO_AVULSO, OperacaoFinaceira.DEBITO);
-		
-		if(tipoMovimentoFinanceiro == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrado tipo de movimento Boleto Avulso ");
-		}
-		
-		for (BoletoAvulsoDTO boletoAvulso : listaBoletosAvulso) {
+		for(DebitoCreditoDTO debitoCredito : listaBoletosAvulso) {
 			
-			boletoAvulso.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
+			debitoCredito.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
 			
-			String valorSemMascara = Util.getValorSemMascara(boletoAvulso.getValor());
+			debitoCredito.setIdUsuario(getUsuarioLogado().getId());
 			
-			boletoAvulso.setValor(valorSemMascara);
-
-			boletoAvulso.setIdUsuario(this.getUsuarioLogado().getId());
+			SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy");
+            
+			debitoCredito.setDataVencimento(f.format(dataReferencia));
 			
-			boletoAvulso.setId(null);
-			
-			boletoAvulso.setDataCriacao(dataCriacao);
-			
-			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = debitoCreditoCotaService.gerarMovimentoFinanceiroBoletoAvulsoDTO(boletoAvulso);
+			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = debitoCreditoCotaService.gerarMovimentoFinanceiroCotaDTO(debitoCredito);
 			
 			movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
 			
-			movimentoFinanceiroCotaDTO.setObservacao(boletoAvulso.getObservacao());
+			movimentoFinanceiroCotaDTO.setObservacao(debitoCredito.getObservacao());
 			
 			movimentosFinanceirosCota.addAll(this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO));
-			
-			cotasBanco.put(boletoAvulso.getNumeroCota(), boletoAvulso.getIdBanco());
-			
 		}
 		
-		return movimentosFinanceirosCota;
+		Set<String> setNossoNumero = new HashSet<>();
+		
+		this.gerarCobrancaBoletoNFe(movimentosFinanceirosCota, setNossoNumero);
+		
+		byte[] arquivo = null;
+		
+		for(String s :  setNossoNumero) {
+			arquivo = this.documentoCobrancaService.gerarDocumentoCobranca(s);
+		}
+		
+		String nomeArquivo = "boleto-debito-credito"; 
+    	
+    	try {
+			
+    		this.httpResponse.setContentType("application/pdf");
+    		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=" + nomeArquivo + new Date()+ ".pdf");
+
+    		OutputStream output = this.httpResponse.getOutputStream();
+    		output.write(arquivo);
+
+    		this.httpResponse.getOutputStream().close();
+
+    		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS," sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
+	        
+		} catch (Exception e) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma informação encontrada para os filtros escolhidos.");
+		}
 	}
 	
-	private void gerarCobrancaBoletoAvulso(List<MovimentoFinanceiroCota> movimentosFinanceirosCota, Map<Integer, Long> cotasBanco) {
+	@Path("/existeNotaNaData")
+	public void existeNotaNaData(final Date dataReferencia) {
 		
+		final boolean existeNfe = true;
+		
+		if(!existeNfe) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não tem nota para gerar boleto na data.");
+		}
+		
+		this.result.use(CustomMapJson.class).put(EXISTE_NFE, existeNfe).serialize();
+	}
+	
+	private void gerarCobrancaBoletoNFe(List<MovimentoFinanceiroCota> movimentosFinanceirosCota, Set<String> setNossoNumero) {
+    	
     	for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentosFinanceirosCota) {
 			
     		try {
-				this.gerarCobrancaService.gerarCobrancaBoletoAvulso(getUsuarioLogado().getId(), movimentoFinanceiroCota, cotasBanco);
+				this.gerarCobrancaService.gerarCobrancaBoletoNFe(getUsuarioLogado().getId(), movimentoFinanceiroCota, setNossoNumero);
 			} catch (GerarCobrancaValidacaoException e) {
 				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar cobrança por Boleto Avulso.");
 			}

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -72,6 +73,6 @@ public interface NFeService {
 	
 	public NaturezaOperacao regimeEspecialParaCota(Cota cota);
 	
-	public  List<BoletoAvulsoDTO> listaBoletoNFE(Date dataBoleto);
+	public  List<DebitoCreditoDTO> listaBoletoNFE(Date dataBoleto);
 	
 }

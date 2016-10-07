@@ -1113,11 +1113,23 @@ public class BoletoServiceImpl implements BoletoService {
         
         // Baixa o boleto o gera baixa com status de pago
         
-        gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO, boleto, dataOperacao,
-                nomeArquivo, pagamento, usuario, banco, dataPagamento);
+        gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO, boleto, dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
         
         efetivarBaixaCobranca(boleto, dataPagamento);
+        
+        if(boleto.isCobrancaNFe()) {
+        	this.gerarCreditoBoletoNFe(usuario, boleto, dataPagamento);
+        }
     }
+
+	private void gerarCreditoBoletoNFe(final Usuario usuario, final Boleto boleto, final Date dataPagamento) {
+		movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(
+				getMovimentoFinanceiroCotaDTO(boleto.getCota(),
+						GrupoMovimentoFinaceiro.CREDITO,
+						usuario, boleto.getValor(),
+						dataPagamento, null,
+						calendarioService.adicionarDiasUteis(dataPagamento, 1), null));
+	}
     
     private void baixarBoletoValorAcima(final TipoBaixaCobranca tipoBaixaCobranca, final PagamentoDTO pagamento,
             final Usuario usuario, final String nomeArquivo,
@@ -1140,13 +1152,12 @@ public class BoletoServiceImpl implements BoletoService {
                 baixaCobranca = gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, boleto,
                         dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
                 
-                movimentoFinanceiroCotaService
-                .gerarMovimentosFinanceirosDebitoCredito(
+                movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(
                         getMovimentoFinanceiroCotaDTO(boleto.getCota(),
-                                GrupoMovimentoFinaceiro.CREDITO,
-                                usuario, pagamento.getValorPagamento(),
-                                dataOperacao, baixaCobranca,
-                                dataNovoMovimento, null));
+                        GrupoMovimentoFinaceiro.CREDITO,
+                        usuario, pagamento.getValorPagamento(),
+                        dataOperacao, baixaCobranca,
+                        dataNovoMovimento, null));
                 
                 return;
             }

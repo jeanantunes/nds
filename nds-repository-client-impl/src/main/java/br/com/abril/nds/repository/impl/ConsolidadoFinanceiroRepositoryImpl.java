@@ -1301,23 +1301,19 @@ ConsolidadoFinanceiroRepository {
     @Override
     public List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(final Long idCota, Date dataOperacao) {
         
-        //final StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c ");
+        final StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c ");
+        hql.append(" join c.cota cota ");
         
-        // hql.append(" join c.cota cota ");
-        
-    	final StringBuilder hql = new StringBuilder("select con ");
-        hql.append(" from Cobranca c ");
-        hql.append(" join c.divida d ");
-        hql.append(" join d.cota cota ");
-        hql.append(" join d.consolidados con ");
-        hql.append(" where con.dataConsolidado = :dataOperacao ");
-        hql.append(" and c.tipoCobranca <> :tipoCobranca ");    
+//    	final StringBuilder hql = new StringBuilder("select con ");
+//        hql.append(" from Cobranca c ");
+        hql.append(" where c.dataConsolidado = :dataOperacao ");
+        //hql.append(" and c.tipoCobranca <> :tipoCobranca ");    
         hql.append(" and cota.id = :idCota ");
         
         final Query query = this.getSession().createQuery(hql.toString());
         
         query.setParameter("idCota", idCota);
-        query.setParameter("tipoCobranca", TipoCobranca.BOLETO_AVULSO);
+       // query.setParameter("tipoCobranca", TipoCobranca.BOLETO_AVULSO);
         query.setParameter("dataOperacao", dataOperacao);
         
         return query.list();
