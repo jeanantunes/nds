@@ -177,28 +177,27 @@ var lancamentoNovoController = $.extend(true, {
 		
 	},
 	
+
 	popupNovasDiferencas : function(camposRecarregar) {
-		
 		if(!verificarPermissaoAcesso(lancamentoNovoController.workspace)){
 			return;
 		}
 		
-		if($("#tipoDiferenca", lancamentoNovoController.workspace).val() == "ALTERACAO_REPARTE_PARA_LANCAMENTO"){
-			camposRecarregar.tipoDiferenca = "ALTERACAO_REPARTE_PARA_LANCAMENTO";
-			camposRecarregar.selectTipoEstoqueAlteracaoReparte = 'SUPLEMENTAR';
+		if(camposRecarregar != undefined)
+		{
+			if($("#tipoDiferenca", lancamentoNovoController.workspace).val() === "ALTERACAO_REPARTE_PARA_LANCAMENTO")
+			{
+				camposRecarregar.tipoDiferenca = "ALTERACAO_REPARTE_PARA_LANCAMENTO";
+				camposRecarregar.selectTipoEstoqueAlteracaoReparte = 'SUPLEMENTAR';
+			}
 		}
-		
 		lancamentoNovoController.resetarCamposTela();
-		
 		lancamentoNovoController.redirecionarProdutosEstoque = false;
-		
 		lancamentoNovoController.idDiferenca = null;
-		
 		lancamentoNovoController.openModalDiferenca();
-
 		var tipoDiferenca = null;
 		var tipoDirecionamento = 'ESTOQUE';
-		
+
 		$("#tipoDiferenca", lancamentoNovoController.workspace).val("FALTA_EM");
 		
 		if(camposRecarregar) {
