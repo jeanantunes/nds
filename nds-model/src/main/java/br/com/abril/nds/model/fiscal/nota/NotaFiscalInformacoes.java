@@ -148,6 +148,9 @@ public class NotaFiscalInformacoes implements Serializable {
 	@Column(name = "PESO_BRUTO_LIQUIDO", nullable = false)
 	private BigDecimal pesoBrutoLiquido;
 	
+	@Column(name = "BOLETO_NFE_GERADO")
+	private boolean boletoNfeGerado;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -370,5 +373,13 @@ public class NotaFiscalInformacoes implements Serializable {
 
 	public void setPesoBrutoLiquido(BigDecimal pesoBrutoLiquido) {
 		this.pesoBrutoLiquido = pesoBrutoLiquido;
+	}
+
+	public boolean isBoletoNfeGerado() {
+		return boletoNfeGerado;
+	}
+
+	public void setBoletoNfeGerado(boolean boletoNfeGerado) {
+		this.boletoNfeGerado = boletoNfeGerado;
 	}
 }

@@ -413,6 +413,8 @@ public class RetornoNFEController extends BaseController {
 		// Obter Boleto Cota NFE
 		List<DebitoCreditoDTO> listaBoletosAvulso = nfeService.listaBoletoNFE(dataReferencia);
 		
+		List<Long> idNotas = new ArrayList<Long>(); 
+		
 		if(listaBoletosAvulso != null && listaBoletosAvulso.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi encontrado nenhum registro para pesquisa.");
 		}
@@ -436,11 +438,17 @@ public class RetornoNFEController extends BaseController {
 			movimentoFinanceiroCotaDTO.setObservacao(debitoCredito.getObservacao());
 			
 			movimentosFinanceirosCota.addAll(this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO));
+			
+			idNotas.add(debitoCredito.getIdNota());
 		}
 		
 		Set<String> setNossoNumero = new HashSet<>();
 		
 		this.gerarCobrancaBoletoNFe(movimentosFinanceirosCota, setNossoNumero);
+		
+		for(Long idNota : idNotas) {
+			this.nfeService.obterNFEPorID(idNota);
+		}
 		
 		byte[] arquivo = null;
 		
@@ -449,7 +457,7 @@ public class RetornoNFEController extends BaseController {
 		}
 		
 		String nomeArquivo = "boleto-debito-credito"; 
-    	
+		
     	try {
 			
     		this.httpResponse.setContentType("application/pdf");

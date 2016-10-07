@@ -1555,7 +1555,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		sql.append("   select c.numero_cota as numeroCota, ");
 		sql.append("   p.nome as nomeCota, ");
 		sql.append("   nfc.VALOR_NF as valor, ");
-		sql.append("   'Boleto Gerado via Nota Fiscal Eletronica' as observacao ");
+		sql.append("   'Boleto Gerado via Nota Fiscal Eletronica' as observacao, ");
+		sql.append("   nf.id as idNota ");
 		sql.append("   from nota_fiscal_novo nf "); 
 		sql.append("   inner join cota c on c.ID=nf.cota_id ");
 		sql.append("   inner join pessoa p on c.pessoa_id = p.id ");
@@ -1564,21 +1565,38 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		sql.append("   and nf.data_emissao = :dataBoleto ");
 		sql.append("   and nf.STATUS_RETORNADO = :statusRetornado ");
 		sql.append("   and nf.PROTOCOLO is not null ");
-		sql.append("   and c.id = 99 ");
+		sql.append("   and nf.BOLETO_NFE_GERADO = :boletoNfeGerado ");
+		sql.append("   and c.GERAR_BOLETO_NFE = :boletoNFE ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("dataBoleto", dataBoleto);
 		query.setParameter("statusRetornado", StatusRetornado.AUTORIZADO.name());
+		query.setParameter("boletoNfeGerado", false);
+		query.setParameter("boletoNFE", true);
 		
 		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
 		query.addScalar("nomeCota", StandardBasicTypes.STRING);
 		query.addScalar("valor", StandardBasicTypes.STRING);
 		query.addScalar("observacao", StandardBasicTypes.STRING);
+		query.addScalar("idNota", StandardBasicTypes.LONG);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoDTO.class));
 		
 		return query.list();
 		
+	}
+
+	@Override
+	public NotaFiscal obterNFEPorID(Long idNota) {
+		StringBuffer sql = new StringBuffer("SELECT notaFiscal ")
+		.append(" FROM NotaFiscal as notaFiscal ")
+		.append(" WHERE")
+		.append(" notaFiscal.id = :idNota ");
+		
+		Query query = this.getSession().createQuery(sql.toString());
+		query.setParameter("idNota", idNota);
+
+		return (NotaFiscal) query.uniqueResult();
 	}
 }

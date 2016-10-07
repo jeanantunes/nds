@@ -34,6 +34,8 @@ public class DebitoCreditoDTO implements Serializable {
 	
 	private Long idBanco;
 	
+	private Long idNota;
+	
 	private List<ItemDTO<Integer, String>> bancos;
 	
 	/**
@@ -189,6 +191,14 @@ public class DebitoCreditoDTO implements Serializable {
 
 	public void setBancos(List<ItemDTO<Integer, String>> bancos) {
 		this.bancos = bancos;
+	}
+	
+	public Long getIdNota() {
+		return idNota;
+	}
+
+	public void setIdNota(Long idNota) {
+		this.idNota = idNota;
 	}
 
 	public DebitoCreditoDTO(Long id, String dataLancamento,

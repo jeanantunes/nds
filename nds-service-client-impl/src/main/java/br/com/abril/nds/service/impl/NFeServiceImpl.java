@@ -1754,4 +1754,16 @@ public class NFeServiceImpl implements NFeService {
 	public List<DebitoCreditoDTO> listaBoletoNFE(Date dataBoleto) {
 		return this.notaFiscalRepository.listaBoletoNFE(dataBoleto);
 	}
+	
+	@Override
+	@Transactional
+	public NotaFiscal obterNFEPorID(Long idNota) {
+		NotaFiscal notaFiscal = this.notaFiscalRepository.obterNFEPorID(idNota);
+		
+		notaFiscal.getNotaFiscalInformacoes().setBoletoNfeGerado(true);
+		
+		notaFiscalRepository.merge(notaFiscal);
+		
+		return notaFiscal;
+	}
 }

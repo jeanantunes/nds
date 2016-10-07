@@ -75,4 +75,6 @@ public interface NFeService {
 	
 	public  List<DebitoCreditoDTO> listaBoletoNFE(Date dataBoleto);
 	
+	NotaFiscal obterNFEPorID(Long idNota);
+	
 }
