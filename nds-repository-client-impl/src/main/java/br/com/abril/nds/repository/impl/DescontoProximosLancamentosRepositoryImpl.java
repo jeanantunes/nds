@@ -51,7 +51,7 @@ implements DescontoProximosLancamentosRepository{
 	public List<DescontoDTO> obterDescontosProximosLancamentos(Date dataLancamento) {
 		
 		StringBuilder hql = new StringBuilder("")
-			.append(" SELECT cota_id AS cotaId ")
+			.append(" SELECT d.cota_id AS cotaId ")
 			.append(" 		, null AS fornecedorId ")
 			.append(" 		, null AS produtoEdicaoId ")
 			.append(" 		, produto_id AS produtoId ")
