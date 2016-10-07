@@ -185,7 +185,7 @@ var lancamentoNovoController = $.extend(true, {
 		
 		if(camposRecarregar != undefined)
 		{
-			if($("#tipoDiferenca", lancamentoNovoController.workspace).val() === "ALTERACAO_REPARTE_PARA_LANCAMENTO")
+			if($("#tipoDiferenca", lancamentoNovoController.workspace).val() == "ALTERACAO_REPARTE_PARA_LANCAMENTO")
 			{
 				camposRecarregar.tipoDiferenca = "ALTERACAO_REPARTE_PARA_LANCAMENTO";
 				camposRecarregar.selectTipoEstoqueAlteracaoReparte = 'SUPLEMENTAR';
