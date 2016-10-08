@@ -110,4 +110,6 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 	List<DebitoCreditoDTO> listaBoletoNFE(Date dataBoleto);
 
 	NotaFiscal obterNFEPorID(Long idNota);
+	
+	boolean existeNotaNaData(Date dataReferencia);
 }

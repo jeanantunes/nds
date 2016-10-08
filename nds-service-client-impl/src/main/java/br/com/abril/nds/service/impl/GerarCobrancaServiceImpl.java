@@ -1264,7 +1264,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	                postergarDividas, 
 	                consolidadosCota, 
 	                vlMovFinanTotal, 
-	                isBoletoAvulso);
+	                isBoletoAvulso,
+	                isCobrancaNFe);
 			
 			
 		} else {
@@ -1288,7 +1289,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						postergarDividas, 
 						consolidadosCota, 
 						vlMovFinanTotal, 
-						isBoletoAvulso);
+						isBoletoAvulso,
+						isCobrancaNFe);
 			} else {
 				
 				this.getConsolidadoHelperComCentralizacao(cota,
@@ -1332,9 +1334,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 											          boolean postergarDividas,
 											          Map<Cota, List<GerarCobrancaHelper>> consolidadosCota,
 											          BigDecimal vlMovFinanTotal, 
-											          boolean isBoletoAvulso){
+											          boolean isBoletoAvulso,
+											          boolean isCobrancaNFe){
 		
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = this.montarConsolidadoFinanceiro(cota, movimentos, dataOperacao, isBoletoAvulso);
+		
+		if(isCobrancaNFe) {
+			isBoletoAvulso = isCobrancaNFe;
+		}
 		
 		if(cota.isBoletoNFE() && !isBoletoAvulso) {
 			MovimentoFinanceiroCota movPost = this.gerarPostergado(cota, 
@@ -2096,7 +2103,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		} else {
 			
-			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacao(idCota, dataOperacao);
+			List<Long> idConsolidados = this.consolidadoFinanceiroRepository.obterIdsConsolidadosDataOperacao(idCota, dataOperacao);
+			
+			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacao(idConsolidados);
 		}
 		
 		if (consolidados != null && !consolidados.isEmpty()) {

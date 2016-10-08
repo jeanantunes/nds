@@ -38,9 +38,7 @@ import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
-public class ConsolidadoFinanceiroRepositoryImpl extends
-AbstractRepositoryModel<ConsolidadoFinanceiroCota, Long> implements
-ConsolidadoFinanceiroRepository {
+public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepositoryModel<ConsolidadoFinanceiroCota, Long> implements ConsolidadoFinanceiroRepository {
     
     public ConsolidadoFinanceiroRepositoryImpl() {
         
@@ -1297,28 +1295,19 @@ ConsolidadoFinanceiroRepository {
         return query.list();
     }
     
-    @SuppressWarnings("unchecked")
     @Override
-    public List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(final Long idCota, Date dataOperacao) {
-        
-        final StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c ");
-        hql.append(" join c.cota cota ");
-        
-//    	final StringBuilder hql = new StringBuilder("select con ");
-//        hql.append(" from Cobranca c ");
-        hql.append(" where c.dataConsolidado = :dataOperacao ");
-        //hql.append(" and c.tipoCobranca <> :tipoCobranca ");    
-        hql.append(" and cota.id = :idCota ");
+    @SuppressWarnings("unchecked")
+    public List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(List<Long> idConsolidado) {
+       
+    	final StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c ");
+        hql.append(" where c.id in (:idConsolidado) ");
         
         final Query query = this.getSession().createQuery(hql.toString());
         
-        query.setParameter("idCota", idCota);
-       // query.setParameter("tipoCobranca", TipoCobranca.BOLETO_AVULSO);
-        query.setParameter("dataOperacao", dataOperacao);
+		query.setParameterList("idConsolidado", idConsolidado);
         
-        return query.list();
-        
-        
+		return query.list();
+		
     }
     
     @SuppressWarnings("unchecked")
@@ -2146,5 +2135,32 @@ ConsolidadoFinanceiroRepository {
         query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCota.class));
         
         return query.list();
-    }  
+    }
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Long> obterIdsConsolidadosDataOperacao(Long idCota, Date dataOperacao) {
+		
+		StringBuffer sql = new StringBuffer(" select cfc.id as id from CONSOLIDADO_FINANCEIRO_COTA cfc ");
+        sql.append(" inner join cota c on cfc.COTA_ID = c.id ");
+		sql.append(" left outer join divida_consolidado dc on cfc.ID = dc.CONSOLIDADO_ID ");
+		sql.append(" left outer join divida d on dc.DIVIDA_ID = d.ID ");
+		sql.append(" left outer join cobranca cb on cb.DIVIDA_ID = d.ID ");
+		sql.append(" where 1=1 ");
+		sql.append(" and cfc.DT_CONSOLIDADO = :dataOperacao ");
+		sql.append(" and (cb.COBRANCA_NFE is null or cb.COBRANCA_NFE = :boletoGerado) ");
+		sql.append(" and (cb.TIPO_COBRANCA is null or cb.TIPO_COBRANCA <> :tipoCobranca) ");
+		sql.append(" and c.id = :idCota ");
+       
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("idCota", idCota);
+		query.setParameter("boletoGerado", false);
+	    query.setParameter("tipoCobranca", TipoCobranca.BOLETO_AVULSO);
+	    query.setParameter("dataOperacao", dataOperacao);
+	    
+	    query.addScalar("id", StandardBasicTypes.LONG);
+	    
+        return query.list();
+	}  
 }

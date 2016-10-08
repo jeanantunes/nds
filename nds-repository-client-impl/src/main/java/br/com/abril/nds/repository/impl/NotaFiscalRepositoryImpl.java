@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -11,7 +12,6 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
@@ -1504,7 +1504,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	public NotaFiscal obterNotaFiscalNumeroChaveAcesso(RetornoNFEDTO dadosRetornoNFE) {
 
 		StringBuffer sql = new StringBuffer("SELECT notaFiscal")
-		.append(" FROM NotaFiscal as notaFiscal")
+		.append(" FROM NotaFiscal ")
 		.append(" JOIN notaFiscal.notaFiscalInformacoes as nfi ")
 		.append(" JOIN nfi.informacaoEletronica as infElet ")
 		.append(" JOIN nfi.identificacao as ident ");
@@ -1599,4 +1599,28 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		return (NotaFiscal) query.uniqueResult();
 	}
+	
+	public boolean existeNotaNaData(Date dataReferencia) {
+
+		StringBuffer sql = new StringBuffer("SELECT count(nf.id) ");
+		sql.append("   from nota_fiscal_novo nf "); 
+		sql.append("   inner join cota c on c.ID=nf.cota_id ");
+		sql.append("   where nf.protocolo is not null ");
+		sql.append("   and nf.data_emissao = :dataReferencia ");
+		sql.append("   and c.GERAR_BOLETO_NFE = :boletoNFE ");
+		sql.append("   and nf.BOLETO_NFE_GERADO = :boletoNfeGerado ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+       
+		query.setParameter("dataReferencia", dataReferencia);
+       
+		query.setParameter("boletoNFE", true);
+		query.setParameter("boletoNfeGerado", false);
+		
+		BigInteger totalRegistros = (BigInteger) query.uniqueResult();
+		
+		return totalRegistros.intValue() > 0 ? true : false;
+
+	}
+	
 }

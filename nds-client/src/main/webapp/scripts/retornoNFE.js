@@ -151,8 +151,6 @@ var retornoNFEController  = $.extend(true, {
 		var dataReferencia = $("#retornoNFEDataReferencia", this.workspace).val();
 		
 		retornoNFEController.existeNotaNaData(dataReferencia)
-		
-		console.log("flag: " +existeNota);
 	},
 	
 	addLoteMix:function(){
@@ -200,7 +198,7 @@ var retornoNFEController  = $.extend(true, {
 				    	console.log('success');
 				    },
 				    failCallback: function (result, url) {
-				    	retornoNFEController.exibirMensagemSucesso(responseHtml);
+				    	retornoNFEController.exibirMensagemSucesso(result);
 				    }
 				});
 			}

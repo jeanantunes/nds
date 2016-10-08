@@ -456,7 +456,7 @@ public class RetornoNFEController extends BaseController {
 			arquivo = this.documentoCobrancaService.gerarDocumentoCobranca(s);
 		}
 		
-		String nomeArquivo = "boleto-debito-credito"; 
+		String nomeArquivo = "boleto-nota-fiscal-eletronica"; 
 		
     	try {
 			
@@ -479,7 +479,7 @@ public class RetornoNFEController extends BaseController {
 	@Path("/existeNotaNaData")
 	public void existeNotaNaData(final Date dataReferencia) {
 		
-		final boolean existeNfe = true;
+		final boolean existeNfe = nfeService.existeNotaNaData(dataReferencia);
 		
 		if(!existeNfe) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não tem nota para gerar boleto na data.");

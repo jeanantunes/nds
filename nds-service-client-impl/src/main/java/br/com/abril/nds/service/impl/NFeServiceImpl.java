@@ -1766,4 +1766,10 @@ public class NFeServiceImpl implements NFeService {
 		
 		return notaFiscal;
 	}
+	
+	@Override
+	@Transactional
+	public boolean existeNotaNaData(Date dataReferencia) {
+		return notaFiscalRepository.existeNotaNaData(dataReferencia);
+	}
 }

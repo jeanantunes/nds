@@ -77,4 +77,6 @@ public interface NFeService {
 	
 	NotaFiscal obterNFEPorID(Long idNota);
 	
+	boolean existeNotaNaData(Date dataReferencia);
+	
 }
