@@ -436,11 +436,16 @@ public class BoletoServiceImpl implements BoletoService {
         
         LOGGER.info("INICIO PROCESSO ADIAMENTO DIVIDA BOLETO NAO PAGO");
         
+      try { 
         final boolean naoAcumulaDividas = distribuidorRepository.naoAcumulaDividas();
         
         if(naoAcumulaDividas == true) {
             LOGGER.info("DISTRIBUIDOR NÃO ACUMULA DIVIDAS");
             return;
+        }
+        } catch ( Exception e ) {
+        	LOGGER.error("ERRO OBTENDO ACUMULA DIVIDA. VER SE TABELA POLITICA COBRANCA TEM REGISTROS",e);
+        	  throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao verificar se acumula divida! Verificar se Politica de Cobranca foi configurado");
         }
         
         final List<Cobranca> boletosNaoPagos = boletoRepository.obterBoletosNaoPagos(dataPagamento);
