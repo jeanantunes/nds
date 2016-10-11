@@ -712,9 +712,9 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepositoryModel
         
         .append("        ( ")
         
-        .append("      case when cota1_.alteracao_tipo_cota is not null then ")
+        .append("      case when cota1_.tipo_cota is not null then ")
         
-        .append("          case when movimentos4_.data <= cota1_.alteracao_tipo_cota then ")
+        .append("          case when movimentos4_.data <= cota1_.tipo_cota then ")
         
         .append("          coalesce( ")
         
@@ -841,9 +841,9 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepositoryModel
         
         .append("        ( ")
         
-        .append("      case when cota1_.alteracao_tipo_cota is not null then ")
+        .append("      case when cota1_.tipo_cota is not null then ")
         
-        .append("          case when movimentos2_.data <= cota1_.alteracao_tipo_cota then ")
+        .append("          case when movimentos2_.data <= cota1_.tipo_cota then ")
         
         .append("          coalesce( ")
         
