@@ -425,7 +425,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 		if (periodo == null) {
 			
 			periodo = this.criarNovoPeriodoLancamento(parcial, input.getNumeroPeriodo()
-					, input.getTipoRecolhimento().equals("P") ? TipoLancamentoParcial.PARCIAL : TipoLancamentoParcial.FINAL, dataRecolhimento);
+					, input.getTipoRecolhimento().equals("P")||input.getTipoRecolhimento().equals("R") ? TipoLancamentoParcial.PARCIAL : TipoLancamentoParcial.FINAL, dataRecolhimento);
 			
 			parcial.getPeriodos().add(periodo);
 			return periodo;
@@ -439,7 +439,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 		}
 		
 		if (ultimoPeriodo != null && (ultimoPeriodo.equals(periodo) || ultimoPeriodo.after(periodo))) {
-			ultimoPeriodo.setTipo(input.getTipoRecolhimento().equals("P") ? TipoLancamentoParcial.PARCIAL : TipoLancamentoParcial.FINAL);
+			ultimoPeriodo.setTipo(input.getTipoRecolhimento().equals("P")|| input.getTipoRecolhimento().equals("R") ? TipoLancamentoParcial.PARCIAL : TipoLancamentoParcial.FINAL);
 			return periodo;
 		} 
 		
