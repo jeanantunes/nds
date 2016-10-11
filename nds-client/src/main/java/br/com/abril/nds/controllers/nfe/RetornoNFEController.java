@@ -51,6 +51,7 @@ import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.FileImportUtil;
+import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -450,11 +451,15 @@ public class RetornoNFEController extends BaseController {
 			this.nfeService.obterNFEPorID(idNota);
 		}
 		
+		List<byte[]> docs = new ArrayList<byte[]>();
+		
 		byte[] arquivo = null;
 		
 		for(String s :  setNossoNumero) {
-			arquivo = this.documentoCobrancaService.gerarDocumentoCobranca(s);
+			docs.add(this.documentoCobrancaService.gerarDocumentoCobranca(s));
 		}
+		
+		arquivo = PDFUtil.mergePDFs(docs);
 		
 		String nomeArquivo = "boleto-nota-fiscal-eletronica"; 
 		

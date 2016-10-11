@@ -1569,7 +1569,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		sql.append("   select c.numero_cota as numeroCota, ");
 		sql.append("   p.nome as nomeCota, ");
 		sql.append("   nfc.VALOR_NF as valor, ");
-		sql.append("   'Boleto Gerado via Nota Fiscal Eletronica' as observacao, ");
+		sql.append("   concat('Boleto Gerado via Nota Fiscal Eletronica - N.', nf.numero_documento_fiscal) as observacao, ");
 		sql.append("   nf.id as idNota ");
 		sql.append("   from nota_fiscal_novo nf "); 
 		sql.append("   inner join cota c on c.ID=nf.cota_id ");

@@ -1431,12 +1431,18 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		Date dataVencimento = null;
 		
-		if(isBoletoAvulso) {
-			dataVencimento = dataOperacao;
-		} else {
+		if(isCobrancaNFe) {
 			dataVencimento = this.obterDataVencimentoCobrancaCota(consolidadoFinanceiroCota.getDataConsolidado(), fatorVencimento, localidade);
+		} else {
 			
+			if(isBoletoAvulso) {
+				dataVencimento = dataOperacao;
+			} else {
+				dataVencimento = this.obterDataVencimentoCobrancaCota(consolidadoFinanceiroCota.getDataConsolidado(), fatorVencimento, localidade);
+				
+			}
 		}
+		
 
 		if(!cobrarHoje){
 
@@ -2453,7 +2459,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	@Transactional
 	public void gerarCobrancaBoletoNFe(Long idUsuario, MovimentoFinanceiroCota movimentoFinanceiroCota, Set<String> setNossoNumero) throws GerarCobrancaValidacaoException {
 		
-		Date dataOperacao = movimentoFinanceiroCota.getData();
+		//Date dataOperacao = movimentoFinanceiroCota.getData();
+		
+		Date dataOperacao = distribuidorRepository.obterDataOperacaoDistribuidor();
 		
 		Usuario usuario = this.usuarioRepository.buscarPorId(idUsuario);
 		
