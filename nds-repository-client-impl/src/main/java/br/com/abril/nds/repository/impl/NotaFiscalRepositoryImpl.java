@@ -536,7 +536,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getListIdFornecedor() != null) {
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
-
+		
+		hql.append(" AND produto.notaFiscal = :notaFiscalProduto ");
+		
 		if(!isGroup){
 			hql.append(" GROUP BY mec.cota.numeroCota, mec.cotaContribuinteExigeNF ");
 			
@@ -623,6 +625,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getIdRegiao() != null) {
 			query.setParameter("idRegiao", filtro.getIdRegiao());
 		}
+		
+		query.setParameter("notaFiscalProduto", false);
 		
 		return query;	
 	}
@@ -821,6 +825,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
 
+		hql.append(" AND produto.notaFiscal = :notaFiscalProduto ");
+		
 		if(!isGroup){
 			hql.append(" GROUP BY mffc.cota.numeroCota ");
 		} else {
@@ -901,6 +907,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getIdRegiao() != null) {
 			query.setParameter("idRegiao", filtro.getIdRegiao());
 		}
+		
+		query.setParameter("notaFiscalProduto", false);
 		
 		return query;	
 	}
@@ -993,6 +1001,10 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		hql.append(" and mfff.qtde > 0 ");
 		
+		hql.append(" and produto. ");
+		
+		hql.append(" and produto.notaFiscal = :notaFiscalProduto ");
+		
 		if(!isGroup){
 			if(filtro.isEmissaoPorEditor()) {
 				hql.append(" GROUP BY mfff.fornecedor.id ");
@@ -1056,6 +1068,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
 		}
 
+		query.setParameter("notaFiscalProduto", false);
+		
 		return query;	
 	}
 

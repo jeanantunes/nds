@@ -192,6 +192,9 @@ public class Produto implements Serializable {
 	@Column(name = "CENTRO_LUCRO_CORPORATIVO")
 	private String centroLucroCorporativo;
 	
+	@Column(name = "NOTA_FISCAL")
+	private boolean notaFiscal;
+	
 	public Long getId() {
 		return id;
 	}
@@ -636,6 +639,14 @@ public class Produto implements Serializable {
 
 	public void setCentroLucroCorporativo(String centroLucroCorporativo) {
 		this.centroLucroCorporativo = centroLucroCorporativo;
+	}
+	
+	public boolean isNotaFiscal() {
+		return notaFiscal;
+	}
+
+	public void setNotaFiscal(boolean notaFiscal) {
+		this.notaFiscal = notaFiscal;
 	}
 
 	@Override
