@@ -296,7 +296,8 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		sql.append("      and ce.DATA_RECOLHIMENTO = :dataRecolhimento ");
 		sql.append("      and c.id = :idCota ");
 		sql.append("      and c.UTILIZA_IPV = :true ");
-		sql.append("      order by c.NUMERO_COTA, ce.PRODUTO_EDICAO_ID ");
+		sql.append("      group by c.NUMERO_COTA,ce.PRODUTO_EDICAO_ID");
+		sql.append("      order by c.NUMERO_COTA, ce.PRODUTO_EDICAO_ID  ");
 		
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString()); 
