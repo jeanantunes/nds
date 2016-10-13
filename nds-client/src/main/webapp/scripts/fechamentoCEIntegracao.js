@@ -905,10 +905,21 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							row.cell.precoCapaFormatado +
 						'</span>';
 					
+					
+					// 	Chamado 4639998
+
+					var newValor = parseFloat(row.cell.precoCapaFormatado.replace(/\./g, '').replace(',', '.')) * parseFloat(row.cell.venda.replace(/\./g, '').replace(',', '.'));
+					var sinal = parseFloat(newValor).toFixed( 2 ).replace('.', ',');
+					
 					var colunaValorVenda =
 						'<span id="valorVenda' + row.cell.idItemCeIntegracao + '">' +
-							row.cell.valorVendaFormatado +
+							sinal +
 						'</span>';
+					
+					//var colunaValorVenda =
+					//	'<span id="valorVenda' + row.cell.idItemCeIntegracao + '">' +
+					//		row.cell.valorVendaFormatado +
+					//	'</span>';
 					
 					row.cell.estoque = colunaEstoque;
 					row.cell.reparte = colunaReparte;
