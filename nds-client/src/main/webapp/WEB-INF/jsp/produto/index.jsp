@@ -172,7 +172,7 @@
 											<td>
 												<input type="checkbox" id="selNotaFiscal" name="selNotaFiscal" style="float: left; margin-right: 25px;" />
 											</td>
-											<td width="59" colspan="5">Produto Nota Fiscal</td>
+											<td width="59" colspan="5">N&atilde;o Gerar Movimento Fiscal</td>
 										</tr>
 									</table>
 								</fieldset>

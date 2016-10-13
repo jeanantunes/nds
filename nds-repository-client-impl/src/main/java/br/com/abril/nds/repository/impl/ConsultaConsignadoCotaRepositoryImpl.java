@@ -278,14 +278,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ");
 		
-//		if(filtro.isCotaAvista()){
-//			if(!filtro.isCotaDevolveEncalhe()){
-//				sql.append(" AND MEC.FORMA_COMERCIALIZACAO=:formaComercializacao ");
-//			}
-//		}else{
-//			sql.append(" AND MEC.FORMA_COMERCIALIZACAO=:formaComercializacao ");
-//		}
-		
 		if(filtro.getDataInicio() != null)
 		    sql.append(" AND MEC.DATA >=:dataInicio ");
 		
@@ -516,8 +508,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
 		parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
-
-		// parameters.put("formaComercializacao", FormaComercializacao.CONSIGNADO.name());
 		
 		@SuppressWarnings("rawtypes")
 		RowMapper cotaRowMapper = new RowMapper() {
@@ -830,7 +820,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" INNER JOIN PESSOA PJ ON forn.JURIDICA_ID=PJ.ID ");
 		
 		sql.append(" WHERE MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL  ");
-		sql.append(" AND MEC.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME'");
+		// sql.append(" AND MEC.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME'");
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:tipoMovimentoEstorno) ");
 		sql.append(" AND LCTO.STATUS not in ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')");
 		
