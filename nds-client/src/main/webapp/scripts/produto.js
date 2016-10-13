@@ -425,7 +425,8 @@ habilitarDesabilitarCamposInterfaceEditor : function(habilitar) {
 						$("#selSemCeIntegracao", produtoController.workspace).attr('checked', result.isSemCeIntegracao);
 						$("#comboTipoSegmento", produtoController.workspace).val(result.idTipoSegmentoProduto);
 						$("#comboClassifProd", produtoController.workspace).val(result.idTipoClassifProduto);
-
+						$("#selNotaFiscal", produtoController.workspace).attr('checked', result.notaFiscal);
+						
 						produtoController.habilitarDesabilitarCamposInterface(!(result.origem == "INTERFACE"));
 						
 						produtoController.habilitarDesabilitarCamposInterfaceEditor(!(result.origem == "INTERFACE") || result.codigoEditor == 0 );
@@ -648,6 +649,7 @@ habilitarDesabilitarCamposInterfaceEditor : function(habilitar) {
 		
 		$("#selGeracaoAuto", produtoController.workspace).attr('checked', false);
 		$("#selSemCeIntegracao", produtoController.workspace).attr('checked', false);
+		$("#selNotaFiscal", produtoController.workspace).attr('checked', false);
 	},
 	
 	salvarProduto : function() {
@@ -680,6 +682,7 @@ habilitarDesabilitarCamposInterfaceEditor : function(habilitar) {
         			   {name:"produto.isGeracaoAutomatica",value:(produtoController.formatarCampoGeracaoAutomatica("#selGeracaoAuto"))},
         			   
         			   {name:"produto.isSemCeIntegracao",value:(produtoController.formatarCampoGeracaoAutomatica("#selSemCeIntegracao"))},
+        			   {name:"produto.notaFiscal",value:(produtoController.formatarCampoGeracaoAutomatica("#selNotaFiscal"))},
         			   
         			   {name:"produto.tipoSegmentoProduto.id",value:$("#comboTipoSegmento", produtoController.workspace).val()},
         			   {name:"produto.tipoSegmentoProduto.descricao",value:$("#comboTipoSegmento :checked", produtoController.workspace).text()},

@@ -67,6 +67,8 @@ public class ProdutoCadastroVO implements Serializable {
 	
 	private Long idTipoClassifProduto;
 	
+	private boolean notaFiscal;
+	
 	public ProdutoCadastroVO() {
 		
 	}
@@ -80,7 +82,7 @@ public class ProdutoCadastroVO implements Serializable {
 			String formaFisica, 
 			Long idTipoSegmentoProduto, 
 			Origem origem, 
-			Boolean isGeracaoAutomatica, Boolean isSemCeIntegracao) {
+			Boolean isGeracaoAutomatica, Boolean isSemCeIntegracao, boolean notaFiscal) {
 		
 		this.id = id;
 		this.codigo = codigo;
@@ -105,6 +107,7 @@ public class ProdutoCadastroVO implements Serializable {
 		this.origem = origem;
 		this.isGeracaoAutomatica = isGeracaoAutomatica;
 		this.isSemCeIntegracao = isSemCeIntegracao;
+		this.notaFiscal = notaFiscal;
 	}
 
 	public static ProdutoCadastroVO parseProdutoToProdutoCadastroVO(Produto produto) {
@@ -142,7 +145,8 @@ public class ProdutoCadastroVO implements Serializable {
 			(produto.getTipoSegmentoProduto()!=null)?produto.getTipoSegmentoProduto().getId():null,
 			produto.getOrigem(),
 			produto.getIsGeracaoAutomatica(),
-			produto.getIsSemCeIntegracao()
+			produto.getIsSemCeIntegracao(),
+			produto.isNotaFiscal()
 			);
 		
 		if(Origem.INTERFACE.equals(produto.getOrigem()) && produto.getDescontoLogistica()!= null){
@@ -464,5 +468,13 @@ public class ProdutoCadastroVO implements Serializable {
 
 	public void setIdTipoClassifProduto(Long idTipoClassifProduto) {
 		this.idTipoClassifProduto = idTipoClassifProduto;
+	}
+
+	public boolean isNotaFiscal() {
+		return notaFiscal;
+	}
+
+	public void setNotaFiscal(boolean notaFiscal) {
+		this.notaFiscal = notaFiscal;
 	}
 }

@@ -263,6 +263,8 @@ public class ProdutoServiceImpl implements ProdutoService {
 				produtoExistente.setIsSemCeIntegracao(produto.getIsSemCeIntegracao());
 				produtoExistente.setTipoSegmentoProduto(produto.getTipoSegmentoProduto());
 				
+				produtoExistente.setNotaFiscal(produto.isNotaFiscal());
+				
 				produtoExistente.setEditor(editor);
 				
 				this.alteraFornecedorProduto(produtoExistente, fornecedor);
