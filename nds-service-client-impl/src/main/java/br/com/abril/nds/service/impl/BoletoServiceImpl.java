@@ -627,6 +627,7 @@ public class BoletoServiceImpl implements BoletoService {
 						if(divida.getValor().compareTo(valorBoleto) >= 0) {
 							LOGGER.warn("NAO PERMITE ACUMULO DIVIDA.. VALOR da DIVIDA  ="+divida.getValor()+
 									"  ACIMA DO TETO PERMITIDO "+valorBoleto);
+						return false;
 						}
 					}
 				}
