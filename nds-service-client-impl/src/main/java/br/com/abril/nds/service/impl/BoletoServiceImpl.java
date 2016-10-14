@@ -423,13 +423,13 @@ public class BoletoServiceImpl implements BoletoService {
     @Transactional
     public void adiarDividaBoletosNaoPagos(final Usuario usuario, final Date dataPagamento) {
         
-        LOGGER.info("INICIO PROCESSO ADIAMENTO DIVIDA BOLETO NAO PAGO");
+        LOGGER.warn("INICIO PROCESSO ADIAMENTO DIVIDA BOLETO NAO PAGO");
         
       try { 
         final boolean naoAcumulaDividas = distribuidorRepository.naoAcumulaDividas();
         
         if(naoAcumulaDividas == true) {
-            LOGGER.info("DISTRIBUIDOR NÃO ACUMULA DIVIDAS");
+            LOGGER.warn("DISTRIBUIDOR NÃO ACUMULA DIVIDAS.BOLETO NAO ADIADO");
             return;
         }
         } catch ( Exception e ) {
@@ -469,7 +469,7 @@ public class BoletoServiceImpl implements BoletoService {
                 continue;
             }
             
-            LOGGER.info("ADIANDO DIVIDA BOLETO NAO PAGO [" + ++contador + "]  DE [" + qtdBoletosNaoPagos + "].");
+            LOGGER.warn("ADIANDO DIVIDA BOLETO NAO PAGO [" + ++contador + "]  DE [" + qtdBoletosNaoPagos + "].");
             
             nossoNumero = boleto.getNossoNumero();
             
@@ -479,8 +479,9 @@ public class BoletoServiceImpl implements BoletoService {
                 
             	isPermiteAcumulo = permiteAcumuloDivida(isPermiteAcumulo, divida);
                 
-                if(isPermiteAcumulo) {
             	
+                if(isPermiteAcumulo) {
+                	LOGGER.warn("ACUMULANDO DIVIDA ="+isPermiteAcumulo);
 	                divida.setStatus(StatusDivida.PENDENTE_INADIMPLENCIA);
 	                dividaRepository.alterar(divida);
 	                
@@ -543,6 +544,8 @@ public class BoletoServiceImpl implements BoletoService {
 	                }
 
 	                this.gerarAcumuloDivida(usuario, divida, movimentoPendente, movimentoJuros, movimentoMulta);
+                } else {
+                	LOGGER.warn("NAO ACUMULANDO DIVIDA .. PERMITE ACUMULAR DIVIDA FALSE ="+isPermiteAcumulo);
                 }
                 
             } catch (final IllegalArgumentException e) {
@@ -563,20 +566,25 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		Cota cota = divida.getCota();
 		
-		LOGGER.info("Cota: "+cota.getNumeroCota());
+		LOGGER.warn("permite acumulo divida Cota: "+cota.getNumeroCota());
 		
 		BigInteger numeroMaximoAcumulo = acumuloDividasService.obterNumeroMaximoAcumuloCota(cota.getId(), divida.getId());
 		
+		LOGGER.warn("permite acumulo divida numeroMaximoAcumulo="+numeroMaximoAcumulo);
+		
+		
 		if(cota.isSugereSuspensaoDistribuidor()) {
+			LOGGER.warn("SUGERE SUSPENSAO DISTRIBUIDOR="+cota.isSugereSuspensaoDistribuidor());
 			ParametrosDistribuidorVO parametrosDistribuidorVO = parametrosDistribuidorService.getParametrosDistribuidor();
 			
 			if(parametrosDistribuidorVO.isPararAcumuloDividas()) {
-				
-				if(parametrosDistribuidorVO.getSugereSuspensaoQuandoAtingirBoletos() != null && !parametrosDistribuidorVO.getSugereSuspensaoQuandoAtingirBoletos().isEmpty()){
+				LOGGER.warn("PARAR DE ACUMULAR DIVIDA=true. ver se atende condicoes de parada  ="+parametrosDistribuidorVO.isPararAcumuloDividas());
+					if(parametrosDistribuidorVO.getSugereSuspensaoQuandoAtingirBoletos() != null && !parametrosDistribuidorVO.getSugereSuspensaoQuandoAtingirBoletos().isEmpty()){
 					qtdeAcumulo = new BigInteger(parametrosDistribuidorVO.getSugereSuspensaoQuandoAtingirBoletos());
 				}
 				
 				if(numeroMaximoAcumulo.compareTo(qtdeAcumulo) >= 0) {
+					LOGGER.warn("PARAR!! .. qtde de acumulo da cota  ="+numeroMaximoAcumulo+"  ja atingiu maximo="+qtdeAcumulo);
 					return false;
 				}
 				
@@ -586,15 +594,19 @@ public class BoletoServiceImpl implements BoletoService {
 					
 					if(valorBoleto.intValue() > 0) {
 						if(divida.getValor().compareTo(valorBoleto) >= 0) {
+							LOGGER.warn("PARAR!!.. VALOR da DIVIDA  ="+divida.getValor()+"  ACIMA DO TETO PERMITIDO "+valorBoleto);
 							return false;
 						}
 					}
 				}
 				
 			} else {
-				return false;
+				LOGGER.warn("PARAR DE ACUMULAR DIVIDA=false. ACUMULAR ENTAO..  ispararacumulodivida (nao) ="+parametrosDistribuidorVO.isPararAcumuloDividas());
+				return true;
 			}			
 		} else {
+			LOGGER.warn("cota nao  segue suspensao distribuidor="+cota.isSugereSuspensaoDistribuidor());
+			
 			if(cota.isSugereSuspensao()) {
 				
 				if(cota.getPoliticaSuspensao().getNumeroAcumuloDivida() > 0){
@@ -602,6 +614,9 @@ public class BoletoServiceImpl implements BoletoService {
 				}
 				
 				if(numeroMaximoAcumulo.compareTo(qtdeAcumulo) >= 0) {
+					LOGGER.warn("NAO PERMITE ACUMULO DIVIDA COTA.. qtde de acumulo da cota  ="+numeroMaximoAcumulo+
+							"  ja atingiu maximo="+qtdeAcumulo);
+					
 					return false;
 				}
 				
@@ -610,15 +625,18 @@ public class BoletoServiceImpl implements BoletoService {
 					
 					if(valorBoleto.intValue() > 0) {						
 						if(divida.getValor().compareTo(valorBoleto) >= 0) {
-							return false;
+							LOGGER.warn("NAO PERMITE ACUMULO DIVIDA.. VALOR da DIVIDA  ="+divida.getValor()+
+									"  ACIMA DO TETO PERMITIDO "+valorBoleto);
 						}
 					}
 				}
 			} else {
+				LOGGER.warn("PARAR!! COTA NAO SUGERE SUSPENSAO  ");
 				return false;
 			}
 		}
 		
+		LOGGER.warn("RETORNANDO PERMITE ACUMULO DIVIDA ="+isPermiteAcumulo);
 		return isPermiteAcumulo;
 	}
     
