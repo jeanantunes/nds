@@ -41,6 +41,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
@@ -1280,9 +1281,16 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 
 	@Override
     public Date obterMaxDataRecolhimento(final TipoChamadaEncalhe tipoChamadaEncalhe){
-	    final Criteria criteria = getSession().createCriteria(ChamadaEncalhe.class);
+	    final Criteria criteria = getSession().createCriteria(ChamadaEncalhe.class,"chamadaEncalhe");
 	    
 	    criteria.add(Restrictions.eq("tipoChamadaEncalhe", tipoChamadaEncalhe));
+	    criteria.add(Restrictions.sqlRestriction(" data_recolhimento < '3000-01-01'"));
+	    criteria.createAlias("chamadaEncalhe.lancamentos", "lancamentos"); 
+	    criteria.add(Restrictions.ne("lancamentos.status", StatusLancamento.FECHADO));
+	    criteria.add(Restrictions.ne("lancamentos.status", StatusLancamento.RECOLHIDO));
+	    criteria.add(Restrictions.ne("lancamentos.status", StatusLancamento.CANCELADO));
+	    criteria.add(Restrictions.ne("lancamentos.status", StatusLancamento.FURO));
+	    
 	    criteria.setProjection(Projections.max("dataRecolhimento"));
 	    
 	    return (Date) criteria.uniqueResult();
