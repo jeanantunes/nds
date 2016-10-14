@@ -161,7 +161,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		
 		
 		StringBuilder html = new StringBuilder();
-		html.append("<table width='190' border='0' cellspacing='1' cellpadding='1' align='right'>");
+		html.append("<table width='190' border='1' cellspacing='1' cellpadding='1' align='right'>");
 		List<TotalConsultaConsignadoCotaDetalhado> listaGeralDetalhado = this.consultaConsignadoCota.buscarTotalDetalhado(filtro);
 		int cont = 0;
 		
@@ -447,7 +447,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		valorConsignado = this.consultaConsignadoCota.buscarTotalGeralConsignadoCota(filtro);
 		
 		StringBuilder html = new StringBuilder();
-		html.append("<table width='400' border='0' cellspacing='1' cellpadding='1' align='center'>");
+		html.append("<table width='500' border='1' cellspacing='1' cellpadding='1' align='center'>");
 		
 		html.append("<tr> ");
 		html.append("<td style='border-top:1px solid #000;'><strong>Total Consignado:</strong></td>");

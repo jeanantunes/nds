@@ -331,12 +331,12 @@ var consultaConsignadoCotaController = $.extend(true, {
 				var htmlTotais;
 				
 				if(result.valorAVista == '0,00') {					
-					htmlTotais =	" <table width='450' border='0' cellspacing='1' cellpadding='1' align='right'>"
+					htmlTotais =	" <table width='650' border='0' cellspacing='1' cellpadding='1' align='right' RULES='rows'>"
 						+ "<tr> <td><strong>Total Geral:</strong></td>"
 						+ " <td>&nbsp;</td> "
 						+ " <td align='right'><strong>" + result.totalGeral + "</strong></td></tr>";
 				} else {
-					htmlTotais =	" <table width='450' border='0' cellspacing='1' cellpadding='1' align='right'>"
+					htmlTotais =	" <table width='650' border='0' cellspacing='1' cellpadding='1' align='right' RULES='rows'>"
 						+ "<tr>  "
 						+ " <td><strong>Total Geral:</strong></a></td>"
 						+ " <td>&nbsp;</td> "
@@ -361,13 +361,13 @@ var consultaConsignadoCotaController = $.extend(true, {
 						htmlTotais += "<tr>";
 						
 						if (index == 0) {
-							htmlTotais += "<td width='71'><strong>Total por Fornecedor:</strong></td>";		
+							htmlTotais += "<td width='45'><strong>Total por Fornecedor:</strong></td>";		
 						} else {
 							htmlTotais += "<td>&nbsp;</td>";
 						}
 						
-						htmlTotais += "<td width='90'><strong>" + value.nomeFornecedor + "</strong></td>";
-						htmlTotais += "<td width='60' align='right'><strong>" + value.totalFormatado + "</strong></td>";
+						htmlTotais += "<td width='145'><strong>" + value.nomeFornecedor + "</strong></td>";
+						htmlTotais += "<td width='45' align='right'><strong>" + value.totalFormatado + "</strong></td>";
 						htmlTotais += "</tr>";
 					});
 				}
