@@ -679,7 +679,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         
         debitoCredito.setDataVencimento(
                 DateUtil.formatarDataPTBR(
-                        calendarioService.adicionarDiasUteis(diferenca.getDataMovimento(), 1)));
+                        calendarioService.adicionarDiasUteis(diferenca.getDataMovimento(), 0)));
         
         final Cota cota = rateioDiferenca.getCota();
         

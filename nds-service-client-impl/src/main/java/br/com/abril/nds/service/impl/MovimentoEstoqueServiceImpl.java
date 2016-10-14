@@ -545,7 +545,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         
         Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
         
-        debitoCredito.setDataVencimento(DateUtil.formatarDataPTBR(calendarioService.adicionarDiasUteis(dataOperacao, 1)));
+        debitoCredito.setDataVencimento(DateUtil.formatarDataPTBR(calendarioService.adicionarDiasUteis(dataOperacao, 0)));
         
         final Cota cota = movimentoEstoqueCota.getCota();
         
@@ -643,8 +643,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                     && movimentoCota.getProdutoEdicao() != null
                     && movimentoCota.getUsuario() != null
                     && movimentoCota.getQtde() != null ) {
-                
-                
+            	
                 final BigInteger quantidadeSaidas = produtoEdicaoQtdSaida.get(movimentoCota.getProdutoEdicao().getId())!=null?
                         produtoEdicaoQtdSaida.get(movimentoCota.getProdutoEdicao().getId()):
                             BigInteger.ZERO;
@@ -663,6 +662,14 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                                         quantidade,
                                         tipoMovimento);
                                 
+                                FormaComercializacao formaComercializacao = null;
+                                
+                                if(movimentoCota.getCota().getTipoCota().equals(TipoCota.A_VISTA)) {
+                                	formaComercializacao = FormaComercializacao.CONTA_FIRME;
+                                } else {
+                                	formaComercializacao = FormaComercializacao.CONSIGNADO;
+                                }
+                                
                                 listaMovimentoCotaEnvio.add(criarMovimentoCota(data
                                 		, movimentoCota.getProdutoEdicao()
                                 		, movimentoCota.getCota().getId()
@@ -674,7 +681,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                                 		, movimentoCota.getLancamento() != null ? movimentoCota.getLancamento().getId() : null
                                 		, null
                                 		, false
-                                		, movimentoCota.getValoresAplicados(), FormaComercializacao.CONSIGNADO, false, false));
+                                		, movimentoCota.getValoresAplicados(), formaComercializacao, false, false));
                                 
             }
         }
