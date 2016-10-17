@@ -149,7 +149,7 @@ public class ParametrosSistemaController extends BaseController {
 	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA_ALTERACAO)
 	public void removerTravas(ParametroSistemaGeralDTO dto) {
 		 String  usuario = (String) session.getAttribute(ControleSessionListener.USUARIO_LOGADO);
-		 if ( "admin".equals(usuario)) {
+		 if ( "admin".equalsIgnoreCase(usuario)|| "sad".equalsIgnoreCase(usuario)) {
 		  LOGGER.error("REMOVENDO TODOS OS BLOQUEIOS DE ESTUDO e MATRIZ DE RECOLHIMENTO");
 		  java.util.Map map = (java.util.Map)session.getServletContext().getAttribute(HistogramaPosEstudoController.MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
 		  LOGGER.error("MAPAS DE ESTUDO BLOQUEANDO:"+map );
