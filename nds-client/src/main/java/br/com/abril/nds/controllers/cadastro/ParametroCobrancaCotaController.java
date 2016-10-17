@@ -804,7 +804,7 @@ public class ParametroCobrancaCotaController extends BaseController {
      */
     @Post
     @Path("/salvarContratoECaracteristicasFinanceirasEspecificasCota")
-    public void salvarContratoECaracteristicasFinanceirasEspecificasCota(final ParametroCobrancaCotaDTO parametroCobranca) {
+    public void salvarContratoECaracteristicasFinanceirasEspecificasCota(ParametroCobrancaCotaDTO parametroCobranca) {
         
         String msg1 = "";
         String msg2 = "";

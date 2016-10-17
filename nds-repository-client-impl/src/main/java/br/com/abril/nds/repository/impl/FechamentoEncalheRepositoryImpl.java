@@ -36,6 +36,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
@@ -1897,4 +1898,45 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
       
     }
     
+    public boolean existeFechamentoEncalhePorData(final Date dataEncalhe) {
+        
+        final StringBuilder hql = new StringBuilder("select count(cfe.id) ");
+        hql.append(" from ControleFechamentoEncalhe cfe ")
+        .append(" where cfe.dataEncalhe = :dataEncalhe ");
+        
+        final Query query = this.getSession().createQuery(hql.toString());
+        query.setParameter("dataEncalhe", dataEncalhe);
+        
+        return (Long)query.uniqueResult() != 0;
+    }
+ 
+    public boolean existeFechamentoEncalhePorCota(Date dataOperacao, Integer numeroCota) {
+        
+        final StringBuilder hql = new StringBuilder("select count(ccec.id) ");
+//        hql.append(" from ConsolidadoFinanceiroCota consolidado ")
+//        .append(" join consolidado.cota cota ")
+//        .append(" where 1=1 ")
+//        .append(" and consolidado.dataConsolidado = :dataOperacao ")
+//        .append(" and consolidado.id not in (")
+//        .append(" select c.id from Divida d join d.consolidados c ")
+//        .append(" join d.cobranca cob ")
+//        .append(" where c.id = consolidado.id ")
+//        .append(" and cob.tipoCobranca <> :tipoCobranca ")
+//        .append(" and d.origemNegociacao = true ")
+//        .append(")");
+        
+        hql.append(" from ControleConferenciaEncalheCota ccec ");
+        hql.append(" join ccec.cota cota ");
+        hql.append(" where 1=1 ");
+        hql.append(" and cota.numeroCota = :numeroCota ");
+        hql.append(" and ccec.dataOperacao = :dataOperacao ");
+        
+        final Query query = this.getSession().createQuery(hql.toString());
+        
+        query.setParameter("numeroCota", numeroCota);        
+        
+        query.setParameter("dataOperacao", dataOperacao);
+        
+        return (Long) query.uniqueResult() != 0;
+    }        
 }

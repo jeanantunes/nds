@@ -54,7 +54,6 @@ import br.com.abril.nds.repository.HistoricoMovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.NegociacaoDividaRepository;
-import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
@@ -63,7 +62,6 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
-import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.strategy.importacao.input.HistoricoFinanceiroInput;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -98,9 +96,6 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     
     @Autowired
     private UsuarioRepository usuarioRepository;
-    
-    @Autowired
-    private ProdutoEdicaoRepository produtoEdicaoRepository;
     
     @Autowired
     private FornecedorRepository fornecedorRepository;
@@ -210,6 +205,40 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         return movimentosFinanceirosCota;
     }
     
+    @Override
+    @Transactional
+    public List<MovimentoFinanceiroCota> gerarMovimentosFinanceirosDebitoCreditoCobrancaGerada(final MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO) {
+        
+        final Map<Long, List<MovimentoEstoqueCota>> mapaMovimentoEstoqueCotaPorFornecedor = this
+                .gerarMapaMovimentoEstoqueCotaPorFornecedor(movimentoFinanceiroCotaDTO.getMovimentos());
+        
+        final List<MovimentoFinanceiroCota> movimentosFinanceirosCota = new ArrayList<MovimentoFinanceiroCota>();
+        
+        MovimentoFinanceiroCota movimentoFinanceiroCota;
+        
+        if (mapaMovimentoEstoqueCotaPorFornecedor.isEmpty()) {
+            
+            movimentoFinanceiroCota = gerarMovimentoFinanceiroCota(movimentoFinanceiroCotaDTO, null);
+            
+            movimentosFinanceirosCota.add(movimentoFinanceiroCota);
+            
+        } else {
+            
+            for (final Map.Entry<Long, List<MovimentoEstoqueCota>> entry : mapaMovimentoEstoqueCotaPorFornecedor
+                    .entrySet()) {
+                
+                movimentoFinanceiroCota = gerarMovimentoFinanceiroCota(movimentoFinanceiroCotaDTO, entry.getValue());
+                
+                movimentosFinanceirosCota.add(movimentoFinanceiroCota);
+                
+            }
+        }
+        
+        
+        return movimentosFinanceirosCota;
+    }
+    
+    
     private List<MovimentoFinanceiroCota> gerarMovimentosFinanceirosDebitoCredito(
             final MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO, final List<MovimentosEstoqueEncalheDTO> movimentosEstoqueCota ) {
         
@@ -256,6 +285,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         this.validarFornecedor(movimentoFinanceiroCotaDTO);
         
         MovimentoFinanceiroCota movimentoFinanceiroCota = null;
+        
         MovimentoFinanceiroCota movimentoFinanceiroCotaMerged = null;
         
         if (movimentoFinanceiroCotaDTO.getIdMovimentoFinanceiroCota() != null) {
@@ -284,8 +314,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
             
             movimentoFinanceiroCota.setCota(movimentoFinanceiroCotaDTO.getCota());
             movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
-            movimentoFinanceiroCota.setData(movimentoFinanceiroCotaDTO.getDataVencimento());
+            movimentoFinanceiroCota.setData(movimentoFinanceiroCotaDTO.getDataAprovacao() == null ? movimentoFinanceiroCotaDTO.getDataVencimento() : movimentoFinanceiroCotaDTO.getDataAprovacao());
             movimentoFinanceiroCota.setDataCriacao(movimentoFinanceiroCotaDTO.getDataCriacao());
+            movimentoFinanceiroCota.setDataAprovacao(movimentoFinanceiroCotaDTO.getDataVencimento());
             movimentoFinanceiroCota.setUsuario(movimentoFinanceiroCotaDTO.getUsuario());
             movimentoFinanceiroCota.setValor(movimentoFinanceiroCotaDTO.getValor());
             movimentoFinanceiroCota.setMotivo(movimentoFinanceiroCotaDTO.getMotivo());
@@ -294,6 +325,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
             movimentoFinanceiroCota.setObservacao(movimentoFinanceiroCotaDTO.getObservacao());
             movimentoFinanceiroCota.setMovimentos(movimentosEstoqueCota);
             movimentoFinanceiroCota.setFornecedor(movimentoFinanceiroCotaDTO.getFornecedor());
+            movimentoFinanceiroCota.setDataAprovacao(movimentoFinanceiroCotaDTO.getDataAprovacao());
+            
+            movimentoFinanceiroCota.setDataIntegracao(movimentoFinanceiroCotaDTO.getDataIntegracao());
             
             movimentoFinanceiroCotaMerged = movimentoFinanceiroCotaRepository.merge(movimentoFinanceiroCota);
             
@@ -462,7 +496,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS);
         gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.TAXA_EXTRA);
         gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.BCT);
-            
+        gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.BOLETO_AVULSO);
+        
         return gruposMovimentosFinanceiros;
     }
     
@@ -833,15 +868,11 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
                 GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE.name(),
                 GrupoMovimentoFinaceiro.ENVIO_ENCALHE.name());
         
-        this.movimentoEstoqueCotaRepository.updateByCotaAndDataOpAndGrupos(
-                idCota, dataOperacao, grupoMovimentoFinaceiros , motivo,
-                StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
+        this.movimentoEstoqueCotaRepository.updateByCotaAndDataOpAndGrupos(idCota, dataOperacao, grupoMovimentoFinaceiros , motivo, StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
         
-        this.historicoMovimentoFinanceiroCotaRepository.removeByCotaAndDataOpAndGrupos(
-                idCota, dataOperacao, grupoMovimentoFinaceiros);
+        this.historicoMovimentoFinanceiroCotaRepository.removeByCotaAndDataOpAndGrupos(idCota, dataOperacao, grupoMovimentoFinaceiros);
         
-        this.movimentoFinanceiroCotaRepository.removeByCotaAndDataOpAndGrupos(
-                idCota, dataOperacao, grupoMovimentoFinaceiros);
+        this.movimentoFinanceiroCotaRepository.removeByCotaAndDataOpAndGrupos(idCota, dataOperacao, grupoMovimentoFinaceiros);
     }
     
     /**

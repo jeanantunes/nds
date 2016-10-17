@@ -168,18 +168,23 @@ var cotaAusenteController = $.extend(true, {
 		
 		$.each(grid.rows, function(index, row) {
 			
-			row.cell.acao = cotaAusenteController.gerarBotaoExcluir(row.cell.idCotaAusente);		
+			row.cell.acao = cotaAusenteController.gerarBotaoExcluir(row.cell.idCotaAusente, row.cell.cotaAvista);		
 			
 	  	});
 		
 		return grid;
 	},
 
-	gerarBotaoExcluir : function(idCotaAusente) {
+	gerarBotaoExcluir : function(idCotaAusente, cotaAvista) {
 		
 		if(idCotaAusente) {
-			return "<a href=\"javascript:;\" isEdicao=\"true\" onclick=\"cotaAusenteController.popup_excluir("+idCotaAusente+");\"> "+
-			 "<img src=\"" + contextPath + "/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" /></a>";
+			if(cotaAvista == 'A_VISTA') {
+				return  "<img style=\"opacity: 0.5\" src=\"" + contextPath + "/images/ico_excluir.gif\" title=\"Cota A vista\" hspace=\"5\" border=\"0\" />";
+			} else {
+				return "<a href=\"javascript:;\" isEdicao=\"true\" onclick=\"cotaAusenteController.popup_excluir("+idCotaAusente+");\"> "+
+				"<img src=\"" + contextPath + "/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" /></a>";				
+			}
+			
 		} else {
 			return  "<img style=\"opacity: 0.5\" src=\"" + contextPath + "/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" />";
 		}

@@ -3,8 +3,11 @@ package br.com.abril.nds.service;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.BoletoAvulsoDTO;
+import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -120,5 +123,9 @@ public interface DocumentoCobrancaService {
 	List<byte[]> gerarListaSlipCobranca(List<Slip> listaSlipDTO, TipoArquivo tpArquivo);
 
 	void gerarSlipCobranca(List<byte[]> arquivos, List<Integer> listaCotas, Date dataDe, Date dataAte, boolean incluirNumeroSlip, TipoArquivo tpArquivo);
+	
+	byte[] gerarDocumentoCobrancaBoletoAvulso(List<BoletoAvulsoDTO> listaBoletosAvulso);
+	
+	byte[] gerarDocumentoCobrancaDebitoCredito(List<DebitoCreditoDTO> listaDebitoCredito);
 	
 }

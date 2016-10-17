@@ -50,4 +50,5 @@ public interface BancoService {
 	
 	List<ItemDTO<Long, String>> obterPessoasDisponiveisParaCedente();
 	
+	List<ItemDTO<Integer, String>> getComboBancosBoletoAvulso();
 }

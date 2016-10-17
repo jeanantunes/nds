@@ -51,6 +51,8 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	
 	private String situacaoCadastro;	
 	
+	private boolean boletoNFE;
+	
 	public Long getIdParametroCobranca() {
 		return idParametroCobranca;
 	}
@@ -249,6 +251,14 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 
 	public void setSituacaoCadastro(String situacaoCadastro) {
 		this.situacaoCadastro = situacaoCadastro;
+	}
+	
+	public boolean isBoletoNFE() {
+		return boletoNFE;
+	}
+
+	public void setBoletoNFE(boolean boletoNFE) {
+		this.boletoNFE = boletoNFE;
 	}
 
 	/* (non-Javadoc)

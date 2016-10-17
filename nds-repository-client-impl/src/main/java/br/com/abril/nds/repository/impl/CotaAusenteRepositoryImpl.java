@@ -57,7 +57,8 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		queryNative.append(" box.NOME as box, ");
 		queryNative.append(" cota.NUMERO_COTA as cota, ");
 	    queryNative.append(" (case when (pessoa.TIPO = 'F') then pessoa.NOME else pessoa.RAZAO_SOCIAL end) AS nome, ");
-	    queryNative.append(" SUM(ec.QTDE_EFETIVA * pe.PRECO_VENDA) as valorNE ");
+	    queryNative.append(" SUM(ec.QTDE_EFETIVA * pe.PRECO_VENDA) as valorNE, ");
+	    queryNative.append(" cota.TIPO_COTA as cotaAvista ");
 		
 		queryNative.append(getFromWhereBuscaCotaAusente(filtro));
 		
@@ -95,7 +96,9 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 				.addScalar("box")
 				.addScalar("cota")
 				.addScalar("nome")
-				.addScalar("valorNe").setResultTransformer(Transformers.aliasToBean(CotaAusenteDTO.class));
+				.addScalar("valorNe")
+				.addScalar("cotaAvista")
+				.setResultTransformer(Transformers.aliasToBean(CotaAusenteDTO.class));
 
 		setParametersBuscaCotaAusente(filtro, query);
 		

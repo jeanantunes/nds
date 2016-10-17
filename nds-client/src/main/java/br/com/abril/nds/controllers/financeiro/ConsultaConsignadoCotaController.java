@@ -125,6 +125,14 @@ public class ConsultaConsignadoCotaController extends BaseController {
 			    totalGeral = this.consultaConsignadoCota.buscarTotalGeralDaCota(filtro);
 			}
 			
+			BigDecimal valorAVista = this.consultaConsignadoCota.buscarTotalGeralAvistaCota(filtro);
+			
+			BigDecimal valorConsignado = this.consultaConsignadoCota.buscarTotalGeralConsignadoCota(filtro);
+			
+			mapaResultado.put("valorAVista", CurrencyUtil.formatarValor(valorAVista));
+			
+			mapaResultado.put("valorConsignado", CurrencyUtil.formatarValor(valorConsignado));
+			
 			mapaResultado.put("totalGeral", CurrencyUtil.formatarValor(totalGeral));
 	
 			session.setAttribute(TOTAIS_GERAIS_CONSIGNADO_SESSION, mapaResultado);
@@ -153,7 +161,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		
 		
 		StringBuilder html = new StringBuilder();
-		html.append("<table width='190' border='0' cellspacing='1' cellpadding='1' align='right'>");
+		html.append("<table width='190' border='1' cellspacing='1' cellpadding='1' align='right'>");
 		List<TotalConsultaConsignadoCotaDetalhado> listaGeralDetalhado = this.consultaConsignadoCota.buscarTotalDetalhado(filtro);
 		int cont = 0;
 		
@@ -410,5 +418,52 @@ public class ConsultaConsignadoCotaController extends BaseController {
     private void removerTotaisGeraisSessao(){
 		
 		session.removeAttribute(TOTAIS_GERAIS_CONSIGNADO_SESSION);
-	} 
+	}
+    
+    @Post
+	@Path("/buscarTotalGeralAvistaCota")
+	public void buscarTotalGeralAvistaCota(FiltroConsultaConsignadoCotaDTO filtro){
+		
+		this.validarEntrada(filtro);
+		
+		if(filtro.getIdCota() != null){
+			cota = obterCota(filtro.getIdCota().intValue());
+			if(cota == null){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Cota inesxistente.");
+			}
+			filtro.setIdCota(cota.getId());
+		}
+		
+		if(filtro.getIdFornecedor() == -1 || filtro.getIdFornecedor() == 0){
+			filtro.setIdFornecedor(null);
+		}
+		
+		BigDecimal valorAVista = BigDecimal.ZERO;
+		
+		BigDecimal valorConsignado = BigDecimal.ZERO;
+		
+		valorAVista = this.consultaConsignadoCota.buscarTotalGeralAvistaCota(filtro);
+		
+		valorConsignado = this.consultaConsignadoCota.buscarTotalGeralConsignadoCota(filtro);
+		
+		StringBuilder html = new StringBuilder();
+		html.append("<table width='500' border='1' cellspacing='1' cellpadding='1' align='center'>");
+		
+		html.append("<tr> ");
+		html.append("<td style='border-top:1px solid #000;'><strong>Total Consignado:</strong></td>");
+		html.append("<td style='border-top:1px solid #000;'>&nbsp;</td>");
+		html.append("<td style='border-top:1px solid #000;' align='right'><strong>"+CurrencyUtil.formatarValor(valorConsignado)+"</strong></td>");
+		html.append("</tr>");
+
+		html.append("<tr>");
+		html.append("<td width='100'><strong>Total A vista:</strong></td>");				
+		html.append("<td>&nbsp;</td>");
+		html.append("<td width='60' align='right'><strong>"+CurrencyUtil.formatarValor(valorAVista)+"</strong></td>");
+		html.append("</tr>");
+		
+		html.append("</table>");
+		
+		this.result.use(Results.json()).from(html.toString(), "result").recursive().serialize();
+		
+	}
 }

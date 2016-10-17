@@ -58,6 +58,12 @@ public class ContaCorrenteVO implements Serializable {
 	@Export(label = "Total R$", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA)
 	private BigDecimal total;
 	
+	@Export(label = "Vlr. Pago R$", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA)
+	private BigDecimal valorPago;
+	
+	@Export(label = "Saldo R$", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA)
+	private BigDecimal saldo;
+	
 	@Export(label = "Situação")
 	private String situacaoCadastro;
 	
@@ -211,6 +217,22 @@ public class ContaCorrenteVO implements Serializable {
 
 	public void setValorVendaDia(BigDecimal valorVendaDia) {
 		this.valorVendaDia = valorVendaDia != null ? valorVendaDia.setScale(4, RoundingMode.HALF_UP) : valorVendaDia;
+	}
+	
+	public BigDecimal getValorPago() {
+		return valorPago;
+	}
+
+	public void setValorPago(BigDecimal valorPago) {
+		this.valorPago = valorPago;
+	}
+
+	public BigDecimal getSaldo() {
+		return saldo;
+	}
+
+	public void setSaldo(BigDecimal saldo) {
+		this.saldo = saldo;
 	}
 
 	public String getSituacaoCadastro() {

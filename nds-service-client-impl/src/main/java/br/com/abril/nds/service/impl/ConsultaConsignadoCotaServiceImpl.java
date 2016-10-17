@@ -47,7 +47,21 @@ public class ConsultaConsignadoCotaServiceImpl implements ConsultaConsignadoCota
 		
 		return this.consignadoCotaRepository.buscarTotalGeralDaCota(filtro);
 	}
-
+	
+	@Override
+	@Transactional
+	public BigDecimal buscarTotalGeralAvistaCota(FiltroConsultaConsignadoCotaDTO filtro) {	
+		
+		return this.consignadoCotaRepository.buscarTotalGeralAvistaCota(filtro);
+	}
+	
+	@Override
+	@Transactional
+	public BigDecimal buscarTotalGeralConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro) {	
+		
+		return this.consignadoCotaRepository.buscarTotalGeralConsignadoCota(filtro);
+	}
+	
 	@Override
 	@Transactional
 	public List<TotalConsultaConsignadoCotaDetalhado> buscarTotalDetalhado(FiltroConsultaConsignadoCotaDTO filtro) {

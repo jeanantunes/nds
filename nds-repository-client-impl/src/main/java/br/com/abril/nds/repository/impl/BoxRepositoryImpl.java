@@ -14,6 +14,7 @@ import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
+import br.com.abril.nds.dto.filtro.FiltroBoletoAvulsoDTO;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
@@ -392,6 +393,29 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
         }
     }
 
+    private void setParametrosCotasBoletoAvulso(FiltroBoletoAvulsoDTO boletoAvulso, Query query) {
+        
+        if (boletoAvulso.getIdRota() != null && boletoAvulso.getIdRota() != 0){
+            query.setParameter("idRota", boletoAvulso.getIdRota());
+        }
+        
+        if (boletoAvulso.getIdRoteiro() != null && boletoAvulso.getIdRoteiro() != 0){
+            query.setParameter("idRoteiro", boletoAvulso.getIdRoteiro());
+        }
+        
+        if (boletoAvulso.getIdBox() != null && boletoAvulso.getIdBox() > 0){
+            query.setParameter("idBox", boletoAvulso.getIdBox());
+        }
+
+        if (boletoAvulso.getIdRegiao() != null && boletoAvulso.getIdRegiao() != 0){
+            query.setParameter("idRegiao", boletoAvulso.getIdRegiao());
+        }
+        
+        if(boletoAvulso.getNumeroCota() != null && !boletoAvulso.getNumeroCota().equals("")) {
+        	query.setParameter("numeroCota", boletoAvulso.getNumeroCota());
+        }
+    }
+    
     /**
 	 * Obtém Quantidade de Cotas por Box, Rota e Roteiro
 	 * @param idBox
@@ -565,5 +589,66 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		
 		return (Long) query.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Cota> obterCotasParaBoletoAvulso(FiltroBoletoAvulsoDTO boletoAvulso) {
+        
+	    StringBuilder hql = new StringBuilder("select distinct cota ");
+	    
+	    Query query = this.getSession().createQuery(this.obterQueryCotasBoletoAvulso(boletoAvulso, hql));
+		
+		this.setParametrosCotasBoletoAvulso(boletoAvulso, query);
+		
+		return query.list();
+	}
+	
+	private String obterQueryCotasBoletoAvulso(FiltroBoletoAvulsoDTO boletoAvulso, StringBuilder hql) {
+        
+	    hql.append(" from PDV pdv ")
+	       .append(" join pdv.cota cota ")
+	       .append(" join pdv.rotas rotaPDV ")
+	       .append(" join rotaPDV.rota rota ")
+	       .append(" join rota.roteiro roteiro ")
+	       .append(" join roteiro.roteirizacao roteirizacao ")
+	       .append(" join roteirizacao.box box ")
+	       .append(" where 1=1 "); 
+	    
+	    if (boletoAvulso.getIdRota() != null && boletoAvulso.getIdRota() != 0){
+	    	hql.append(" and rota.id = :idRota ");
+	    }
+
+        if (boletoAvulso.getIdRoteiro() != null && boletoAvulso.getIdRoteiro() != 0){
+        	hql.append(" and roteiro.id = :idRoteiro ");
+        }
+        
+        if (boletoAvulso.getIdBox() != null){
+            if (boletoAvulso.getIdBox() < 1){
+                
+                hql.append(" and roteirizacao.box is null ");
+            } else {
+                
+                hql.append(" and box.codigo = :idBox ");
+            }
+        }
+        
+        if(boletoAvulso.getIdRegiao() != null) {
+			hql.append(" AND cota.id in (SELECT ");
+			hql.append(" c.id ");
+			hql.append(" FROM RegistroCotaRegiao registroCotaRegiao ");
+			hql.append(" INNER JOIN registroCotaRegiao.cota c ");
+			hql.append(" INNER JOIN registroCotaRegiao.regiao regiao ");
+			hql.append(" WHERE regiao.id = :idRegiao) ");
+		}
+        
+        if(boletoAvulso.getNumeroCota() != null && !boletoAvulso.getNumeroCota().equals("")) {
+        	hql.append(" and cota.numeroCota = :numeroCota ");
+        }
+        
+        // hql.append(" and cota.numeroCota in ('100', '101', '102', '104') ");
+        hql.append("order by box.codigo, roteiro.ordem, rota.ordem, cota.numeroCota ");
+    
+        return hql.toString();
+    }
 	
 }

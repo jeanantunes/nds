@@ -6,7 +6,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -70,4 +72,11 @@ public interface NFeService {
 			List<Fornecedor> fornecedores);
 	
 	public NaturezaOperacao regimeEspecialParaCota(Cota cota);
+	
+	public  List<DebitoCreditoDTO> listaBoletoNFE(Date dataBoleto);
+	
+	NotaFiscal obterNFEPorID(Long idNota);
+	
+	boolean existeNotaNaData(Date dataReferencia);
+	
 }

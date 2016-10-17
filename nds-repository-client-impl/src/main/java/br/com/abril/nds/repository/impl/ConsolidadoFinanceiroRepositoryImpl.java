@@ -27,6 +27,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteDTO;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
@@ -37,9 +38,7 @@ import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
-public class ConsolidadoFinanceiroRepositoryImpl extends
-AbstractRepositoryModel<ConsolidadoFinanceiroCota, Long> implements
-ConsolidadoFinanceiroRepository {
+public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepositoryModel<ConsolidadoFinanceiroCota, Long> implements ConsolidadoFinanceiroRepository {
     
     public ConsolidadoFinanceiroRepositoryImpl() {
         
@@ -713,9 +712,9 @@ ConsolidadoFinanceiroRepository {
         
         .append("        ( ")
         
-        .append("      case when cota1_.alteracao_tipo_cota is not null then ")
+        .append("      case when cota1_.tipo_cota is not null then ")
         
-        .append("          case when movimentos4_.data <= cota1_.alteracao_tipo_cota then ")
+        .append("          case when movimentos4_.data <= cota1_.tipo_cota then ")
         
         .append("          coalesce( ")
         
@@ -842,9 +841,9 @@ ConsolidadoFinanceiroRepository {
         
         .append("        ( ")
         
-        .append("      case when cota1_.alteracao_tipo_cota is not null then ")
+        .append("      case when cota1_.tipo_cota is not null then ")
         
-        .append("          case when movimentos2_.data <= cota1_.alteracao_tipo_cota then ")
+        .append("          case when movimentos2_.data <= cota1_.tipo_cota then ")
         
         .append("          coalesce( ")
         
@@ -1286,7 +1285,7 @@ ConsolidadoFinanceiroRepository {
         query.setParameter("idCota", idCota);
         
         query.setParameterList("grupoIgnorar", Arrays.asList(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
-                                                             GrupoMovimentoFinaceiro.ENVIO_ENCALHE));
+                                                             GrupoMovimentoFinaceiro.ENVIO_ENCALHE, GrupoMovimentoFinaceiro.BOLETO_AVULSO));
         
         if (idFornecedor != null){
             
@@ -1296,25 +1295,19 @@ ConsolidadoFinanceiroRepository {
         return query.list();
     }
     
-    @SuppressWarnings("unchecked")
     @Override
-    public List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(final Long idCota, Date dataOperacao) {
-        
-        final StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c ");
-        
-        hql.append(" join c.cota cota ");
-        
-        hql.append(" where c.dataConsolidado = :dataOperacao ");
-            
-        hql.append(" and cota.id = :idCota ");
+    @SuppressWarnings("unchecked")
+    public List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(List<Long> idConsolidado) {
+       
+    	final StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c ");
+        hql.append(" where c.id in (:idConsolidado) ");
         
         final Query query = this.getSession().createQuery(hql.toString());
         
-        query.setParameter("idCota", idCota);
+		query.setParameterList("idConsolidado", idConsolidado);
         
-        query.setParameter("dataOperacao", dataOperacao);
-        
-        return query.list();
+		return query.list();
+		
     }
     
     @SuppressWarnings("unchecked")
@@ -1333,6 +1326,44 @@ ConsolidadoFinanceiroRepository {
 		sql.append(" encargos as encargos,");
 		sql.append(" pendente as pendente, ");
 		sql.append(" (total *-1) total, ");
+		
+		 //Valor Pago
+		sql.append(" ROUND(");
+               
+		sql.append("    COALESCE( ");
+        //divida paga em cota unificadora: valor pago = total na cota unificada
+		sql.append("    (SELECT CF.TOTAL ");
+		sql.append("     FROM DIVIDA D, DIVIDA_CONSOLIDADO DC, CONSOLIDADO_FINANCEIRO_COTA CF ");
+		sql.append("     WHERE DC.DIVIDA_ID = D.ID ");
+		sql.append("     AND DC.CONSOLIDADO_ID = CF.ID ");
+		sql.append("     AND CF.ID = a.ID ");
+		sql.append("     AND D.COTA_ID <> b.ID ");
+		sql.append("     AND D.STATUS = :statusDividaQuitada) * (-1) ");
+        
+		sql.append("    ,");
+        
+		sql.append("    (select SUM( coalesce(bc.VALOR_PAGO, 0) ) - ");
+        //consolidados de cotas unificadas subtraidos do valor pago na cota unificadora
+		sql.append("    COALESCE(((SELECT SUM(ROUND(CF.TOTAL,2)) ");
+		sql.append("               FROM DIVIDA_CONSOLIDADO DC, CONSOLIDADO_FINANCEIRO_COTA CF ");
+		sql.append("               WHERE DC.DIVIDA_ID = divida.ID ");
+		sql.append("               AND DC.CONSOLIDADO_ID = CF.ID ");
+		sql.append("               AND CF.ID <> a.ID ");
+		sql.append("               AND CF.COTA_ID <> b.ID) * (-1)),0) ");
+
+		sql.append("     from BAIXA_COBRANCA bc ");
+		sql.append("     inner join COBRANCA cobranca ON cobranca.ID = bc.COBRANCA_ID ");
+		sql.append("     inner join DIVIDA divida ON divida.ID = cobranca.DIVIDA_ID ");
+		sql.append("     inner join DIVIDA_CONSOLIDADO d_cons ON divida.ID = d_cons.DIVIDA_ID ");
+		sql.append("     where bc.STATUS not in (:statusBaixaCobranca) ");
+		sql.append("     and b.ID = cobranca.COTA_ID ");
+		sql.append("     and d_cons.CONSOLIDADO_ID = a.ID ");
+		sql.append("     and cfc.ID) ");
+ 
+        sql.append("    ,0)");
+        
+        sql.append(" ,2) as valorPago, ");
+		
 		sql.append(" b.situacao_cadastro as situacaoCadastro, ");
 		sql.append(" IFNULL(d.status, 'POSTEGADO') as legenda ");
 		sql.append(" from consolidado_financeiro_cota a ");
@@ -1346,7 +1377,16 @@ ConsolidadoFinanceiroRepository {
         final Query query = this.getSession().createSQLQuery(sql.toString());
         query.setParameter("inicioPeriodo", filtro.getInicioPeriodo());
         query.setParameter("fimPeriodo", filtro.getFimPeriodo());
-      
+        
+        final List<String> statusBaixaCobranca =
+                Arrays.asList(StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA.name(),
+                        StatusBaixa.NAO_PAGO_DIVERGENCIA_DATA.name(),
+                        StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR.name());
+        
+        query.setParameterList("statusBaixaCobranca", statusBaixaCobranca);
+        
+        query.setParameter("statusDividaQuitada", StatusDivida.QUITADA.name());
+        
         query.setResultTransformer(new AliasToBeanResultTransformer(ContaCorrenteVO.class));
         return  query.list();
     }
@@ -1506,7 +1546,9 @@ ConsolidadoFinanceiroRepository {
         
         .append(" case when divida.STATUS = :statusPendenteInadimplencia then 1 else 0 end as inadimplente ")
         
-        .append(", mf.DATA as dataMovimento ")
+        .append(", mf.DATA as dataMovimento, ")
+        //cobrado/postergado
+        .append(" (select cob.TIPO_COBRANCA from COBRANCA cob where cob.DIVIDA_ID = divida.ID and cob.COTA_ID = cota.ID) as tipoCobranca ")
         
         .append(" from CONSOLIDADO_FINANCEIRO_COTA cfc ")
         .append(" inner join consolidado_mvto_financeiro_cota cmfc on cmfc.CONSOLIDADO_FINANCEIRO_ID = cfc.ID")
@@ -1879,7 +1921,9 @@ ConsolidadoFinanceiroRepository {
         .append("),0) as valorVendaDia, ")
         
         .append(" 0 as inadimplente ")
-        .append(", null as dataMovimento ")
+        .append(", null as dataMovimento, ")
+        
+        .append(" '' as tipoCobranca ")
         
         .append(" from MOVIMENTO_FINANCEIRO_COTA mfc ")
         .append(" inner join COTA on COTA.ID = mfc.COTA_ID")
@@ -1938,6 +1982,7 @@ ConsolidadoFinanceiroRepository {
         
         query.addScalar("nomeBox");
         query.addScalar("detalharDebitoCredito", StandardBasicTypes.BOOLEAN);
+        query.addScalar("tipoCobranca", StandardBasicTypes.STRING);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(ContaCorrenteCotaVO.class));
         
@@ -2090,5 +2135,32 @@ ConsolidadoFinanceiroRepository {
         query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCota.class));
         
         return query.list();
-    }  
+    }
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Long> obterIdsConsolidadosDataOperacao(Long idCota, Date dataOperacao) {
+		
+		StringBuffer sql = new StringBuffer(" select cfc.id as id from CONSOLIDADO_FINANCEIRO_COTA cfc ");
+        sql.append(" inner join cota c on cfc.COTA_ID = c.id ");
+		sql.append(" left outer join divida_consolidado dc on cfc.ID = dc.CONSOLIDADO_ID ");
+		sql.append(" left outer join divida d on dc.DIVIDA_ID = d.ID ");
+		sql.append(" left outer join cobranca cb on cb.DIVIDA_ID = d.ID ");
+		sql.append(" where 1=1 ");
+		sql.append(" and cfc.DT_CONSOLIDADO = :dataOperacao ");
+		sql.append(" and (cb.COBRANCA_NFE is null or cb.COBRANCA_NFE = :boletoGerado) ");
+		sql.append(" and (cb.TIPO_COBRANCA is null or cb.TIPO_COBRANCA <> :tipoCobranca) ");
+		sql.append(" and c.id = :idCota ");
+       
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("idCota", idCota);
+		query.setParameter("boletoGerado", false);
+	    query.setParameter("tipoCobranca", TipoCobranca.BOLETO_AVULSO);
+	    query.setParameter("dataOperacao", dataOperacao);
+	    
+	    query.addScalar("id", StandardBasicTypes.LONG);
+	    
+        return query.list();
+	}  
 }

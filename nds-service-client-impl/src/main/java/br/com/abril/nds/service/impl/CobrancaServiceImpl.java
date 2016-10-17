@@ -771,7 +771,11 @@ public class CobrancaServiceImpl implements CobrancaService {
 				valorRestanteAuxiliar = valorPagamentoCobranca.setScale(2, RoundingMode.HALF_EVEN);
 				
 				this.acumuloDividasService.quitarDividasAcumuladas(itemCobranca.getDataPagamento(), itemCobranca.getDivida(),TipoBaixaCobranca.MANUAL);
-		    
+			
+				if(itemCobranca.isCobrancaNFe()) {
+					this.gerarCreditoBoletoNFe(pagamento.getUsuario(), itemCobranca, pagamento.getDataPagamento());					
+				}
+				
 			} else {
 		    	cobrancaParcial = itemCobranca;
 		    	break;
@@ -804,6 +808,48 @@ public class CobrancaServiceImpl implements CobrancaService {
 		}
 		
 	}
+	
+	private void gerarCreditoBoletoNFe(final Usuario usuario, final Cobranca cobranca, final Date dataPagamento) {
+		movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(
+				getMovimentoFinanceiroCotaDTO(cobranca.getCota(),
+						GrupoMovimentoFinaceiro.CREDITO,
+						usuario, cobranca.getValor(),
+						dataPagamento, null,
+						calendarioService.adicionarDiasUteis(dataPagamento, 1), null));
+	}
+	
+	private MovimentoFinanceiroCotaDTO getMovimentoFinanceiroCotaDTO(final Cota cota,
+            final GrupoMovimentoFinaceiro grupoMovimentoFinaceiro, final Usuario usuario,
+            final BigDecimal valorPagamento, final Date dataOperacao,
+            final BaixaCobranca baixaCobranca, final Date dataNovoMovimento, final String observacao) {
+        
+        final TipoMovimentoFinanceiro tipoMovimento = tipoMovimentoFinanceiroRepository
+                .buscarTipoMovimentoFinanceiro(grupoMovimentoFinaceiro);
+        
+        final MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
+        
+        movimentoFinanceiroCotaDTO.setCota(cota);
+        
+        movimentoFinanceiroCotaDTO.setUsuario(usuario);
+        
+        movimentoFinanceiroCotaDTO.setValor(valorPagamento);
+        
+        movimentoFinanceiroCotaDTO.setBaixaCobranca(baixaCobranca);
+        
+        movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimento);
+        
+        movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacao);
+        
+        movimentoFinanceiroCotaDTO.setDataCriacao(dataOperacao);
+        
+        movimentoFinanceiroCotaDTO.setDataVencimento(dataNovoMovimento);
+        
+        movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+        
+        movimentoFinanceiroCotaDTO.setObservacao("Credito referente a cobrança por nota fiscal!");
+        
+        return movimentoFinanceiroCotaDTO;
+    }
 	
 	private void validarBaixaCobranca(List<Cobranca> cobrancas, PagamentoDividasDTO pagamento) {
 		

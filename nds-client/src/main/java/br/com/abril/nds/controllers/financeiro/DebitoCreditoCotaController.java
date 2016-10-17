@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -17,10 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DebitoCreditoVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
+import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -40,6 +43,8 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
+import br.com.abril.nds.service.DocumentoCobrancaService;
+import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
@@ -47,6 +52,7 @@ import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -106,6 +112,12 @@ public class DebitoCreditoCotaController extends BaseController{
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
+    @Autowired
+    private FechamentoEncalheService fechamentoEncalheService;
+	
+    @Autowired
+    private DocumentoCobrancaService documentoCobrancaService;
+    
 	private static List<ItemDTO<Long,String>> listaRoteiros =  new ArrayList<ItemDTO<Long,String>>();
 
 	private static List<ItemDTO<Long,String>> listaRotas =  new ArrayList<ItemDTO<Long,String>>();
@@ -553,12 +565,16 @@ public class DebitoCreditoCotaController extends BaseController{
 
 		validarPreenchimentoCampos(listaNovosDebitoCredito, idTipoMovimento);
 		
+		this.existeFechamentoEncalhePorDataOperacao();
+		
+		boolean isFechamentoEncalheCota = false;
+		
 		Date dataCriacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		for (DebitoCreditoDTO debitoCredito : listaNovosDebitoCredito) {
 
 			TipoMovimentoFinanceiro tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
-
+			
 			tipoMovimentoFinanceiro.setId(idTipoMovimento);
 
 			debitoCredito.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
@@ -571,16 +587,32 @@ public class DebitoCreditoCotaController extends BaseController{
 			
 			debitoCredito.setDataCriacao(dataCriacao);
 			
-			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = 
-					debitoCreditoCotaService.gerarMovimentoFinanceiroCotaDTO(debitoCredito);
+			boolean existeFechamentoEncalheCota = fechamentoEncalheService.existeFechamentoEncalhePorCota(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()), debitoCredito.getNumeroCota());
 			
-			movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = null;
 			
-			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
+			if(existeFechamentoEncalheCota) {
+				movimentoFinanceiroCotaDTO = debitoCreditoCotaService.gerarMovimentoFinanceiroCotaCobrancaDTO(debitoCredito);
+				isFechamentoEncalheCota = true;
+			} else {
+				movimentoFinanceiroCotaDTO = debitoCreditoCotaService.gerarMovimentoFinanceiroCotaDTO(debitoCredito);
+				movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);				
+				this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
+			}
 		}
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro realizado com sucesso."), 
-				"result").recursive().serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro realizado com sucesso."), "result").recursive().serialize();
+	}
+
+	private void existeFechamentoEncalhePorDataOperacao() {
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		boolean fechamentoEncalheRealizado = fechamentoEncalheService.existeFechamentoEncalhePorDataOperacao(dataOperacao);
+		
+		if(fechamentoEncalheRealizado) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Fechamento de encalhe já realizado na data");
+		}
 	}
 	
 	@Post
@@ -644,8 +676,7 @@ public class DebitoCreditoCotaController extends BaseController{
 			throw new ValidacaoException(TipoMensagem.WARNING, "ID do movimento inválido.");
 		}
 
-		MovimentoFinanceiroCota movimentoFinanceiroCota = 
-				this.movimentoFinanceiroCotaService.obterMovimentoFinanceiroCotaPorId(idMovimento);
+		MovimentoFinanceiroCota movimentoFinanceiroCota = this.movimentoFinanceiroCotaService.obterMovimentoFinanceiroCotaPorId(idMovimento);
 
 		DebitoCreditoDTO debitoCredito = new DebitoCreditoDTO();
 		
@@ -653,8 +684,7 @@ public class DebitoCreditoCotaController extends BaseController{
 
 		Pessoa pessoa = movimentoFinanceiroCota.getCota().getPessoa();
 
-		String nomeCota = pessoa instanceof PessoaJuridica ? 
-						  ((PessoaJuridica) pessoa).getRazaoSocial() : ((PessoaFisica) pessoa).getNome();
+		String nomeCota = pessoa instanceof PessoaJuridica ? ((PessoaJuridica) pessoa).getRazaoSocial() : ((PessoaFisica) pessoa).getNome();
 
 		debitoCredito.setDataLancamento(formatField(movimentoFinanceiroCota.getDataCriacao()));
 		debitoCredito.setTipoMovimentoFinanceiro((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento());
@@ -866,11 +896,11 @@ public class DebitoCreditoCotaController extends BaseController{
 
 				linhasComErro.add(debitoCredito.getId());
 			
-			} else if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(DateUtil.adicionarDias(dataDistrib, 1)), dataVencimento)) {
+			} else if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(DateUtil.adicionarDias(dataDistrib, 0)), dataVencimento)) {
 
 				linhasComErro.add(debitoCredito.getId());
 				
-				msgsErros += ("\nO campo [Data] deve ser maior que a [Data de Operação: "+DateUtil.formatarDataPTBR(dataDistrib)+"] na linha ["+linha+"] !");
+				msgsErros += ("\nO campo [Data] deve ser maior ou igual a [Data de Operação: "+DateUtil.formatarDataPTBR(dataDistrib)+"] na linha ["+linha+"] !");
 			}
 
 			if (debitoCredito.getValor() == null) {
@@ -903,8 +933,7 @@ public class DebitoCreditoCotaController extends BaseController{
 
 		if (!linhasComErro.isEmpty()) {
 			
-			ValidacaoVO validacao = new ValidacaoVO(
-					TipoMensagem.WARNING, "Existe(m) movimento(s) preenchido(s) incorretamente.\n"+msgsErros);
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, "Existe(m) movimento(s) preenchido(s) incorretamente.\n"+msgsErros);
 					
 			validacao.setDados(linhasComErro);
 			
@@ -949,5 +978,30 @@ public class DebitoCreditoCotaController extends BaseController{
 		
 		return this.usuarioService.getUsuarioLogado().getId();
 	}
-}
+	
+	@Path("/imprimirBoleto")
+	public void imprimirBoleto(List<DebitoCreditoDTO> listaNovosDebitoCredito, Long idTipoMovimento) {
+    	
+    	byte[] arquivo = null; //this.documentoCobrancaService.gerarDocumentoCobrancaBoletoAvulso(listaBoletosAvulso);
+    	
+    	String nomeArquivo = "boleto-debito-credito"; 
+    	
+    	try {
+			
+    		this.httpResponse.setContentType("application/pdf");
+    		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=" + nomeArquivo + new Date()+ ".pdf");
 
+    		OutputStream output = this.httpResponse.getOutputStream();
+    		output.write(arquivo);
+
+    		this.httpResponse.getOutputStream().close();
+
+    		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS," sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
+	        
+		} catch (Exception e) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma informação encontrada para os filtros escolhidos.");
+		}
+
+    }
+}

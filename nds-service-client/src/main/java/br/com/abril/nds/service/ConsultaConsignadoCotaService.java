@@ -17,5 +17,9 @@ public interface ConsultaConsignadoCotaService {
 	BigDecimal buscarTotalGeralDaCota(FiltroConsultaConsignadoCotaDTO filtro);
 	
 	List<TotalConsultaConsignadoCotaDetalhado> buscarTotalDetalhado(FiltroConsultaConsignadoCotaDTO filtro);
+	
+	BigDecimal buscarTotalGeralAvistaCota(FiltroConsultaConsignadoCotaDTO filtro);
+	
+	BigDecimal buscarTotalGeralConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro);
 
 }

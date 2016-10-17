@@ -8,6 +8,7 @@ import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.ExportarCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -121,4 +122,6 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	public abstract Cobranca obterCobrancaPorNossoNumeroConsolidado(String nossoNumero);
 
 	public abstract Long qtdCobrancasConsolidadasBaixadas(Date dataOperacao);
+
+	Cobranca obterCobrancaBoletoAvulso(Integer idCota);
 }

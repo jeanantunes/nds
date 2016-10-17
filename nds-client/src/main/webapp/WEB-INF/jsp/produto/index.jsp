@@ -168,6 +168,12 @@
 											<td width="20"><input class="habilitarCampoInterface" type="radio" name="radioTributacaoFiscal" id="radioTributacaoOutros" value="OUTROS" /></td>
 											<td width="81"> Outros</td>
 										</tr>
+										<tr>
+											<td>
+												<input type="checkbox" id="selNotaFiscal" name="selNotaFiscal" style="float: left; margin-right: 25px;" />
+											</td>
+											<td width="59" colspan="5">N&atilde;o Gerar Movimento Fiscal</td>
+										</tr>
 									</table>
 								</fieldset>
 							</td>

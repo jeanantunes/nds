@@ -21,14 +21,20 @@ public class CotaAusenteDTO implements Serializable{
 	
 	@Export(label = "Data", alignment=Alignment.LEFT)
 	private String data;
+	
 	@Export(label = "Box", alignment=Alignment.LEFT)
 	private String box;
+	
 	@Export(label = "Cota", alignment=Alignment.LEFT)
 	private Integer cota;
+	
 	@Export(label = "Nome", alignment=Alignment.LEFT)
 	private String nome;
+	
 	@Export(label = "Valor NE R$", alignment=Alignment.RIGHT)
 	private String valorNe;
+	
+	private String cotaAvista;
 	
 	public CotaAusenteDTO(){
 		
@@ -37,30 +43,39 @@ public class CotaAusenteDTO implements Serializable{
 	public String getData() {
 		return data;
 	}
+	
 	public void setData(Date data) {		
 		this.data = DateUtil.formatarData(data, Constantes.DATE_PATTERN_PT_BR);
 	}
+	
 	public String getBox() {
 		return box;
 	}
+	
 	public void setBox(String box) {
 		this.box = box;
 	}
+	
 	public Integer getCota() {
 		return cota;
 	}
+	
 	public void setCota(Integer cota) {
 		this.cota = cota;
 	}
+	
 	public String getNome() {
 		return nome;
 	}
+	
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
+	
 	public String getValorNe() {
 		return valorNe;
 	}
+	
 	public void setValorNe(BigDecimal valorNe) {
 		
 		if(valorNe == null) {
@@ -81,5 +96,12 @@ public class CotaAusenteDTO implements Serializable{
 		}
 		this.idCotaAusente = idCotaAusente.longValue();
 	}
-	
+
+	public String getCotaAvista() {
+		return cotaAvista;
+	}
+
+	public void setCotaAvista(String cotaAvista) {
+		this.cotaAvista = cotaAvista;
+	}
 }

@@ -100,7 +100,13 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setCnae(distribuidor.getCnae());
 		
 		//FIXME: Obter o valor crt
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setRegimeTributario(RegimeTributario.REGIME_NORMAL);
+		if(distribuidor.getRegimeTributario().getCodigo().equals("3")) {
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setRegimeTributario(RegimeTributario.SIMPLES_NACIONAL);
+		} else {
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setRegimeTributario(RegimeTributario.REGIME_NORMAL);
+			
+		}
+		
 		
 		CNPJEmitente cnpj = new CNPJEmitente();
 		cnpj.setDocumento(distribuidor.getJuridica().getCnpj().replaceAll("/", "").replaceAll("\\.", "").replaceAll("-", ""));
@@ -176,7 +182,12 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setCnae(distribuidor.getCnae());
 		
 		//FIXME: Obter o valor crt
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setRegimeTributario(RegimeTributario.REGIME_NORMAL);
+		if(distribuidor.getRegimeTributario().getCodigo().equals("3")) {
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setRegimeTributario(RegimeTributario.SIMPLES_NACIONAL);
+		} else {
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setRegimeTributario(RegimeTributario.REGIME_NORMAL);
+			
+		}
 		
 		CNPJEmitente cnpj = new CNPJEmitente();
 		cnpj.setDocumento(distribuidor.getJuridica().getCnpj().replaceAll("/", "").replaceAll("\\.", "").replaceAll("-", ""));
@@ -255,7 +266,7 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setModeloDocumentoFiscal(parametrosSistema.get("NFE_INFORMACOES_MODELO_DOCUMENTO").getValor());
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setProcessoEmissao(ProcessoEmissao.valueOf(parametrosSistema.get("NFE_INFORMACOES_TIPO_EMISSOR").getValor()));
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setProcessoEmissao(ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE);
 		
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDataEmissao(new Date());
 		
@@ -324,7 +335,7 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setModeloDocumentoFiscal(parametrosSistema.get("NFE_INFORMACOES_MODELO_DOCUMENTO").getValor());
 		
 		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setProcessoEmissao(ProcessoEmissao.valueOf(parametrosSistema.get("NFE_INFORMACOES_TIPO_EMISSOR").getValor()));
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setProcessoEmissao(ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE);
 		
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDataEmissao(new Date());
 		

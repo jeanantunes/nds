@@ -99,4 +99,7 @@ public interface FechamentoEncalheService {
 
 	List<CotaDTO> obterListaCotaConferenciaPendenciaErro(Date dataOperacao);
 	
+	boolean existeFechamentoEncalhePorDataOperacao(Date dataOperacao);
+	
+	boolean existeFechamentoEncalhePorCota(Date dataOperacao, Integer numeroCota);
 }

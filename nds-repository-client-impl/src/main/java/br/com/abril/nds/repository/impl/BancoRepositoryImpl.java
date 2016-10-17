@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.BancoRepository;
 
@@ -257,5 +259,26 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
 		query.setParameter("idCobranca", idCobranca);
 		
 		return (Banco) query.uniqueResult();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Banco> obterBancoBoletoAvulso() {
+		
+		StringBuilder hql = new StringBuilder("select distinct b ");
+		
+		hql.append(" from FormaCobranca fc ");
+		hql.append(" JOIN fc.banco b ");		
+		hql.append(" where b.ativo = :ativo ");
+		hql.append(" and fc.ativa = :ativo ");
+		hql.append(" and fc.tipoCobranca in (:tipoCobranca) ");
+		hql.append(" and fc.parametroCobrancaCota is null ");
+		
+        Query query = super.getSession().createQuery(hql.toString());
+		
+        query.setParameter("ativo", true);
+        query.setParameterList("tipoCobranca", Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_AVULSO));
+        
+		return query.list();
 	}
 }

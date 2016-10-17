@@ -17,9 +17,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.SerializationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +48,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -79,8 +77,6 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.LancamentoDiferencaRepository;
-import br.com.abril.nds.repository.LancamentoRepository;
-import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.RateioDiferencaRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
@@ -100,6 +96,8 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -474,8 +472,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
             
             final Lancamento ultimoLancamento = this.obterUltimoLancamentoProduto(diferenca);
             
-            final boolean produtoRecolhido = this.verificarRecolhimentoProdutoEdicao(ultimoLancamento, diferenca.getDataMovimento());
-            
             diferenca.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
             
             List<MovimentoEstoqueCota> listaMovimentosEstoqueCota = null;
@@ -498,6 +494,10 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                                     usuario.getId(), isMovimentoDiferencaAutomatico,
                                     ultimoLancamento.getDataLancamentoDistribuidor());
                     
+                    if (movimentoEstoqueCota.getCota().getTipoCota().equals(TipoCota.A_VISTA)) {
+                        
+                        this.lancarDebitoCreditoCota(diferenca, rateioDiferenca, movimentoEstoqueCota, usuario);
+                    }
                     
                     listaMovimentosEstoqueCota.add(movimentoEstoqueCota);
                 }
@@ -679,7 +679,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         
         debitoCredito.setDataVencimento(
                 DateUtil.formatarDataPTBR(
-                        calendarioService.adicionarDiasUteis(diferenca.getDataMovimento(), 1)));
+                        calendarioService.adicionarDiasUteis(diferenca.getDataMovimento(), 0)));
         
         final Cota cota = rateioDiferenca.getCota();
         
@@ -698,6 +698,10 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         
         debitoCredito.setIdUsuario(usuario.getId());
         
+        ProdutoEdicao produtoEdicao = movimentoEstoqueCota.getProdutoEdicao();
+        
+        debitoCredito.setObservacao("Produto / Edição: "+produtoEdicao.toString());
+        
         final MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO =
                 debitoCreditoCotaService.gerarMovimentoFinanceiroCotaDTO(debitoCredito);
         
@@ -712,7 +716,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         GrupoMovimentoFinaceiro grupoMovimentoFinaceiro = null;
         OperacaoFinaceira operacaoFinaceira = null;
         
-        if (tipoDiferenca.isFalta() || tipoDiferenca.isAlteracaoReparte()) {
+        if (tipoDiferenca.isFalta() || tipoDiferenca.isFaltaParaCota() || tipoDiferenca.isAlteracaoReparte()) {
             
             grupoMovimentoFinaceiro = GrupoMovimentoFinaceiro.CREDITO;
             operacaoFinaceira = OperacaoFinaceira.CREDITO;
@@ -1393,7 +1397,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                 dataLancamento, diferenca.getProdutoEdicao(), rateioDiferenca.getCota().getId(),
                 idUsuario, rateioDiferenca.getQtde(), tipoMovimentoEstoqueCota, estudoCotaId, isAprovacaoAutomatica, 
                 contribuinteICMS,
-                exigeNFe);
+                exigeNFe, cota.getTipoCota());
     }
     
 	                                    /*
@@ -1841,4 +1845,5 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
         
         return identificador;
     }
+    
 }

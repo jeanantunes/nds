@@ -359,6 +359,9 @@
       			
       				<td><img src="${pageContext.request.contextPath}/images/seta_sobe.gif" alt="Dívida Acumulada"></td>
       				<td>Dívida Acumulada</td>
+      				
+      				<td><img src="${pageContext.request.contextPath}/images/bt_financeiro_boleto_avulso.png" alt="Dívida Acumulada"></td>
+      				<td>Dívida Boleto Avulso</td>
       			</tr>
       		</tbody>
       	</table>

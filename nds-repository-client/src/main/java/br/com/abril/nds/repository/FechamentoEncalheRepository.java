@@ -85,6 +85,9 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 	
     Integer obterDiaRecolhimento(Long produtoEdicao,Date dataRecolhimento);
 
-	BigInteger buscarQtdeFechamentoEncalhe(Date dataEncalhe,
-			Long produtoEdicaoId);
+	BigInteger buscarQtdeFechamentoEncalhe(Date dataEncalhe, Long produtoEdicaoId);
+	
+	boolean existeFechamentoEncalhePorData(Date dataOperacao);
+	
+	boolean existeFechamentoEncalhePorCota(Date dataOperacao, Integer numeroCota);
 }

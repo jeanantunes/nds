@@ -1,5 +1,7 @@
 var tipoEmissor = "";
 
+var existeNota;
+
 var retornoNFEController  = $.extend(true, {
 
 	path : contextPath +"/nfe/retornoNFe/",
@@ -140,6 +142,67 @@ var retornoNFEController  = $.extend(true, {
 		if (tipoMensagem && listaMensagens) {
 			exibirMensagem(tipoMensagem, listaMensagens);
 		}
+	},
+	
+	imprimirBoletoNFE : function() {
+		
+		var params = [];
+		
+		var dataReferencia = $("#retornoNFEDataReferencia", this.workspace).val();
+		
+		retornoNFEController.existeNotaNaData(dataReferencia)
+	},
+	
+	addLoteMix:function(){
+
+		GerarBoletoAvulsoController.initGrids();
+		
+		$("#modalUploadArquivoMix").dialog({
+			resizable: false,
+			height:'auto',
+			width:400,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					GerarBoletoAvulsoController.executarSubmitArquivo();
+					
+				},
+				"Cancelar": function() {
+					$("#excelFile").val("");
+					$(this).dialog("close");
+				}
+			},
+		});
+		
+	},
+	
+	existeNotaNaData : function(dataReferencia) {
+		
+		var params = [];
+		
+		var dataReferencia = $("#retornoNFEDataReferencia", this.workspace).val();
+		
+		params.push({name : "dataReferencia", value : dataReferencia});
+		
+		$.postJSON(contextPath + "/nfe/retornoNFe/existeNotaNaData", params, 
+		function(result){
+			
+			retornoNFEController.exibirMensagemSucesso(result);
+			
+			if(result.EXISTE_NFE) {
+				$.fileDownload(contextPath +'/nfe/retornoNFe/imprimirBoleto', {
+					httpMethod : "POST",
+					data : params,
+					
+					successCallback: function (url) {
+				    	console.log('success');
+				    },
+				    failCallback: function (result, url) {
+				    	retornoNFEController.exibirMensagemSucesso(result);
+				    }
+				});
+			}
+		});
 	},
 	
 }, BaseController);
