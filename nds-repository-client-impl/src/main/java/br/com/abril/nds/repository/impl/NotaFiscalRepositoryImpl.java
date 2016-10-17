@@ -1581,6 +1581,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		sql.append("   and nf.PROTOCOLO is not null ");
 		sql.append("   and nf.BOLETO_NFE_GERADO = :boletoNfeGerado ");
 		sql.append("   and c.GERAR_BOLETO_NFE = :boletoNFE ");
+		sql.append("   and nf.NATUREZA_OPERACAO_ID in (3, 11, 28, 33) ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		

@@ -411,6 +411,10 @@ public class RetornoNFEController extends BaseController {
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = this.tipoMovimentoFinanceiroService.obterTipoMovimentoFincanceiroPorGrupoFinanceiroEOperacaoFinanceira(GrupoMovimentoFinaceiro.BOLETO_NFE, OperacaoFinaceira.DEBITO);
 		
+		if(tipoMovimentoFinanceiro == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não existe um tipo financeiro cadastrado na base de dados.");
+		}
+		
 		// Obter Boleto Cota NFE
 		List<DebitoCreditoDTO> listaBoletosAvulso = nfeService.listaBoletoNFE(dataReferencia);
 		
