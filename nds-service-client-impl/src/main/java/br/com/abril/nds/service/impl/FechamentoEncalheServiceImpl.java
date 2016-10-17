@@ -1964,5 +1964,18 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         return fechamentoEncalheRepository.obterTotalCotasAusentesSemPostergado(dataEncalhe, diaSemanaRecolhimento,
                 isSomenteCotasSemAcao, null, null, 0, 0, ignorarUnificacao);
     }
-
+    
+    @Override
+    @Transactional
+    public boolean existeFechamentoEncalhePorDataOperacao(final Date dataOperacao) {
+    	return fechamentoEncalheRepository.existeFechamentoEncalhePorData(dataOperacao);
+    }
+    
+    @Override
+    @Transactional
+    public boolean existeFechamentoEncalhePorCota(Date dataOperacao, Integer numeroCota) {
+    	return fechamentoEncalheRepository.existeFechamentoEncalhePorCota(dataOperacao, numeroCota);
+    }
+    
+    
 }

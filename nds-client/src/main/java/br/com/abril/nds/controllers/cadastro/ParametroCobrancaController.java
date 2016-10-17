@@ -27,6 +27,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
@@ -46,7 +47,6 @@ import br.com.caelum.vraptor.view.Results;
  * @author Discover Technology
  *
  */
-
 @Resource
 @Path("/distribuidor/parametroCobranca")
 @Rules(Permissao.ROLE_FINANCEIRO_PARAMETROS_COBRANCA)
@@ -66,7 +66,7 @@ public class ParametroCobrancaController extends BaseController {
 	
 	@Autowired
 	private CotaService cotaService;
-		
+	
     private Result result;
     
     private HttpSession httpSession;
@@ -291,10 +291,13 @@ public class ParametroCobrancaController extends BaseController {
 	    }
 		else if ((parametros.getTipoCobranca()==TipoCobranca.CHEQUE)||(parametros.getTipoCobranca()==TipoCobranca.DINHEIRO)){
 			parametros.setIdBanco(null);
-		}    
-		else if (parametros.getTipoCobranca()==TipoCobranca.OUTROS){
+		} else if (parametros.getTipoCobranca()==TipoCobranca.OUTROS){
 			parametros.setIdBanco(null);
-		}    
+		} else if ((parametros.getTipoCobranca()==TipoCobranca.BOLETO_AVULSO)){
+			parametros.setTaxaJuros(null);
+			parametros.setTaxaMulta(null);
+			parametros.setValorMulta(null);
+	    }   
         
 		return parametros;
 		
@@ -366,5 +369,6 @@ public class ParametroCobrancaController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Semanal é necessário marcar ao menos um dia da semana.");      	
 			}
 		}
+		
 	}
 }

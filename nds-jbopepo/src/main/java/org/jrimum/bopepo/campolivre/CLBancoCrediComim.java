@@ -114,7 +114,7 @@ class CLBancoCrediComim extends AbstractCLCrediComim {
 
 		this.add(new Field<Integer>(109061, 6, Filler.ZERO_LEFT));
 		this.add(new Field<Integer>(dVConvenio, 1));
-		this.add(new Field<String>(nossoNumero.substring(2, 5), 3));
+		this.add(new Field<String>(nossoNumero.substring(0, 4), 4));
 		
 		this.add(new Field<Integer>(FIXO, 1));
 		
@@ -127,9 +127,9 @@ class CLBancoCrediComim extends AbstractCLCrediComim {
 			this.add(new Field<Integer>(COBRANCA_NAO_REGISTRADA, 1));
 		}
 
-		this.add(new Field<String>(nossoNumero.substring(3, 6), 3));
+		this.add(new Field<String>(nossoNumero.substring(5, 9), 5));
 		// this.add(new Field<Integer>(EMISSAO_CEDENTE, 1));
-		this.add(new Field<String>(nossoNumero.substring(8, 17), 9));
+		this.add(new Field<String>(nossoNumero.substring(9, 17), 8));
 
 		this.add(new Field<Integer>(calculeDigitoVerificador(gereCampoLivre()), 1));
 	}

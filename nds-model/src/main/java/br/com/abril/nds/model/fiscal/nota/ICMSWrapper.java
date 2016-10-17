@@ -22,7 +22,13 @@ public class ICMSWrapper extends ICMSBase implements Serializable {
 		@XmlElement(name="ICMS40", type=ICMS41.class)
 	})
 	private ICMS icms;
-
+	
+	
+	@XmlElements({
+		@XmlElement(name="ICMSSN102", type=ICMSST.class),
+	})
+	private ICMSST icmsst;
+	
 	public ICMS getIcms() {
 		return icms;
 	}
@@ -31,4 +37,11 @@ public class ICMSWrapper extends ICMSBase implements Serializable {
 		this.icms = icms;
 	}
 
+	public ICMSST getIcmsst() {
+		return icmsst;
+	}
+
+	public void setIcmsst(ICMSST icmsst) {
+		this.icmsst = icmsst;
+	}
 }

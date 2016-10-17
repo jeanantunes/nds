@@ -32,16 +32,19 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
+import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.BoletoCotaDTO;
 import br.com.abril.nds.dto.BoletoEmBrancoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.GeraDividaDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
+import br.com.abril.nds.dto.filtro.FiltroBoletoAvulsoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
@@ -96,6 +99,7 @@ import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.repository.BoletoAntecipadoRepository;
 import br.com.abril.nds.repository.BoletoEmailRepository;
 import br.com.abril.nds.repository.BoletoRepository;
+import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaBoletoEmBrancoRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
@@ -110,6 +114,7 @@ import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.AcumuloDividasService;
+import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
@@ -249,6 +254,12 @@ public class BoletoServiceImpl implements BoletoService {
     
     @Autowired
     private ParametrosDistribuidorService parametrosDistribuidorService;
+    
+    @Autowired
+    protected BoxRepository boxRepository;
+    
+    @Autowired
+	private BancoService bancoService;
     
     /**
      * Método responsável por obter boletos por numero da cota
@@ -1126,11 +1137,23 @@ public class BoletoServiceImpl implements BoletoService {
         
         // Baixa o boleto o gera baixa com status de pago
         
-        gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO, boleto, dataOperacao,
-                nomeArquivo, pagamento, usuario, banco, dataPagamento);
+        gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO, boleto, dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
         
         efetivarBaixaCobranca(boleto, dataPagamento);
+        
+        if(boleto.isCobrancaNFe()) {
+        	this.gerarCreditoBoletoNFe(usuario, boleto, dataPagamento);
+        }
     }
+
+	private void gerarCreditoBoletoNFe(final Usuario usuario, final Boleto boleto, final Date dataPagamento) {
+		movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(
+				getMovimentoFinanceiroCotaDTO(boleto.getCota(),
+						GrupoMovimentoFinaceiro.CREDITO,
+						usuario, boleto.getValor(),
+						dataPagamento, null,
+						calendarioService.adicionarDiasUteis(dataPagamento, 1), null));
+	}
     
     private void baixarBoletoValorAcima(final TipoBaixaCobranca tipoBaixaCobranca, final PagamentoDTO pagamento,
             final Usuario usuario, final String nomeArquivo,
@@ -1153,13 +1176,12 @@ public class BoletoServiceImpl implements BoletoService {
                 baixaCobranca = gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, boleto,
                         dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
                 
-                movimentoFinanceiroCotaService
-                .gerarMovimentosFinanceirosDebitoCredito(
+                movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(
                         getMovimentoFinanceiroCotaDTO(boleto.getCota(),
-                                GrupoMovimentoFinaceiro.CREDITO,
-                                usuario, pagamento.getValorPagamento(),
-                                dataOperacao, baixaCobranca,
-                                dataNovoMovimento, null));
+                        GrupoMovimentoFinaceiro.CREDITO,
+                        usuario, pagamento.getValorPagamento(),
+                        dataOperacao, baixaCobranca,
+                        dataNovoMovimento, null));
                 
                 return;
             }
@@ -2182,7 +2204,7 @@ public class BoletoServiceImpl implements BoletoService {
         return b;
     }
     
-	                                        /**
+	/**
      * Gera Impressão de Boletos em Branco apenas para a impressão - Sem
      * Cobrança e Sem Financeiro Cadastrado
      * 
@@ -2650,7 +2672,7 @@ public class BoletoServiceImpl implements BoletoService {
         }
     }
     
-	                                        /**
+    /**
      * Atualiza os campos Nosso Número e Dígito Nosso Número em
      * BoletoEmBrancoDTO conforme BoletoAntecipado persistido
      * 
@@ -3166,6 +3188,59 @@ public class BoletoServiceImpl implements BoletoService {
 		registro09.setSequencial(String.valueOf(sequencial));
 		
         return registro09;
+	}
+
+	@Override
+	@Transactional
+	public List<BoletoAvulsoDTO> obterDadosBoletoAvulso(FiltroBoletoAvulsoDTO boletoAvulso) {
+		 
+		List<Cota> cotas = this.boxRepository.obterCotasParaBoletoAvulso(boletoAvulso);
+		 
+		List<BoletoAvulsoDTO> listaBoleto = new ArrayList<BoletoAvulsoDTO>();
+		
+		List<ItemDTO<Integer, String>> bancos = null;
+		
+		if(boletoAvulso.getIdBanco() != null && boletoAvulso.getIdBanco() > 0 ) {
+			bancos = this.comboBoletoAvulso(boletoAvulso);
+		} else {
+			bancos = this.bancoService.getComboBancosBoletoAvulso();
+		}
+		
+		 
+		for (int index = 0 ; index < cotas.size() ; index++){
+			
+		    Cota itemCota = cotas.get(index);
+			    
+			listaBoleto.add(new BoletoAvulsoDTO(
+		                Long.valueOf(index),
+		                null,
+		                null,
+		                itemCota.getNumeroCota(),
+		                itemCota.getPessoa().getNome(),
+		                null,
+		                null,
+		                (boletoAvulso.getValor()!=null?CurrencyUtil.formatarValor(boletoAvulso.getValor().setScale(2, RoundingMode.HALF_UP)):null),
+		                boletoAvulso.getObservacao() == null ? "" : boletoAvulso.getObservacao(), bancos));	
+		}
+		
+		return listaBoleto;
+	}
+	
+	private List<ItemDTO<Integer, String>> comboBoletoAvulso(FiltroBoletoAvulsoDTO boletoAvulso) {
+		
+		List<ItemDTO<Integer,String>> comboBancos =  new ArrayList<ItemDTO<Integer,String>>();
+		
+		Banco banco = this.bancoService.obterBancoPorId(boletoAvulso.getIdBanco());
+
+		String descricaoBanco = 
+				(banco.getNumeroBanco() == null ? "" : banco.getNumeroBanco() + "-") 
+				+ (banco.getApelido() == null ? "" :  banco.getApelido() + " ")
+				+ (banco.getConta() == null ? "" : banco.getConta())
+				+ (banco.getDvConta() == null ? "" : "-" + banco.getDvConta());
+
+		comboBancos.add(new ItemDTO<Integer,String>(banco.getId().intValue(), descricaoBanco));
+		
+		return comboBancos;
 	}
 	
 }

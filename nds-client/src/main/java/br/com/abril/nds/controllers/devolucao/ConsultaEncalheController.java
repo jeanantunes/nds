@@ -335,14 +335,14 @@ public class ConsultaEncalheController extends BaseController {
 			String sortorder, String sortname,
 			int page, int rp) {
 
-	if (filtro != null) {
+		if (filtro != null) {
 	
-	PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 	
-	filtro.setPaginacao(paginacao);
+			filtro.setPaginacao(paginacao);
 	
-	filtro.setOrdenacaoColuna((Util.getEnumByStringValue(FiltroConsultaEncalheDTO.OrdenacaoColuna.values(),sortname)));
-	}
+			filtro.setOrdenacaoColuna((Util.getEnumByStringValue(FiltroConsultaEncalheDTO.OrdenacaoColuna.values(),sortname)));
+		}
 	}
 	
 	/**

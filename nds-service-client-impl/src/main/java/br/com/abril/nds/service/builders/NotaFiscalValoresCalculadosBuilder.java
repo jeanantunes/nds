@@ -68,7 +68,11 @@ public class NotaFiscalValoresCalculadosBuilder {
 		
 		BigDecimal valorICMS = BigDecimal.ZERO;
 		for(DetalheNotaFiscal dnf : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
-			valorICMS = NFeCalculatorImpl.calculate(dnf.getImpostos().getIcms());
+			if(dnf.getImpostos().getIcms() != null) {
+				valorICMS = NFeCalculatorImpl.calculate(dnf.getImpostos().getIcms());				
+			} else {
+				valorICMS = NFeCalculatorImpl.calculate(dnf.getImpostos().getIcmsst());		
+			}
 		}
 		
 		return valorICMS;

@@ -24,8 +24,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.NfeVO;
+import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.NfeImpressaoDTO;
 import br.com.abril.nds.dto.NfeImpressaoWrapper;
@@ -1111,7 +1113,9 @@ public class NFeServiceImpl implements NFeService {
 			
 			Map<String, TributoAliquota> tributoAliquota = new HashMap<String, TributoAliquota>();
 			
-			for(final TributoAliquota tributo : distribuidor.getRegimeTributarioTributoAliquota()){
+			distribuidor.getRegimeTributarioTributoAliquota();
+			
+			for(TributoAliquota tributo : distribuidor.getRegimeTributarioTributoAliquota()){
 				tributoAliquota.put(tributo.getNomeTributo(), tributo);
 			}
 			
@@ -1149,8 +1153,6 @@ public class NFeServiceImpl implements NFeService {
 			}
 			
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().setChaveAcesso(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(3, 47));
-			
-			
 			
 			// obter os movimentos da cota
 			final List<MovimentoFechamentoFiscal> movimentosFechamentoFiscal = new ArrayList<>();
@@ -1747,4 +1749,27 @@ public class NFeServiceImpl implements NFeService {
         return (resto == 0 || resto == 1) ? 0 : (11 - resto);  
     }
 
+	@Override
+	@Transactional
+	public List<DebitoCreditoDTO> listaBoletoNFE(Date dataBoleto) {
+		return this.notaFiscalRepository.listaBoletoNFE(dataBoleto);
+	}
+	
+	@Override
+	@Transactional
+	public NotaFiscal obterNFEPorID(Long idNota) {
+		NotaFiscal notaFiscal = this.notaFiscalRepository.obterNFEPorID(idNota);
+		
+		notaFiscal.getNotaFiscalInformacoes().setBoletoNfeGerado(true);
+		
+		notaFiscalRepository.merge(notaFiscal);
+		
+		return notaFiscal;
+	}
+	
+	@Override
+	@Transactional
+	public boolean existeNotaNaData(Date dataReferencia) {
+		return notaFiscalRepository.existeNotaNaData(dataReferencia);
+	}
 }

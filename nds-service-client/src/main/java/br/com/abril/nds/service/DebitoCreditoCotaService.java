@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
@@ -113,4 +114,8 @@ public interface DebitoCreditoCotaService {
 	 * @param dataOperacao TODO
 	 */
 	void processarDebitoDeDistribuicaoDeEntregaDaCota(Date dataOperacao);
+	
+	MovimentoFinanceiroCotaDTO gerarMovimentoFinanceiroBoletoAvulsoDTO(BoletoAvulsoDTO debitoCredito);
+	
+	MovimentoFinanceiroCotaDTO gerarMovimentoFinanceiroCotaCobrancaDTO(DebitoCreditoDTO debitoCreditoDTO);
 }

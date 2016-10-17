@@ -305,7 +305,6 @@ var debitoCreditoCotaController = $.extend(true, {
 					result.tipoMensagem, 
 					result.listaMensagens
 				);
-
 			},
 			function(result) {
 
@@ -330,10 +329,7 @@ var debitoCreditoCotaController = $.extend(true, {
 
 				$("#dialog-excluir", debitoCreditoCotaController.workspace).dialog( "close" );
 				
-				exibirMensagem(
-					result.tipoMensagem, 
-					result.listaMensagens
-				);
+				exibirMensagem(result.tipoMensagem, result.listaMensagens);
 			},
 			function(result) {
 

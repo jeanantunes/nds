@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -226,9 +227,7 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 	@Override
 	public FormaCobranca obterFormaCobranca() {
 		
-		
         StringBuilder hql = new StringBuilder();
-		
 		
         hql.append(" select f from FormaCobranca f ");		
 		
@@ -239,7 +238,6 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 		hql.append(" and p.principal = :principal ");
 
 		Query query = super.getSession().createQuery(hql.toString());
-		
         
         query.setParameter("indAtivo", true);
         
@@ -579,5 +577,44 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 
 		return query.list();
 	}
+
+	@Override
+	public FormaCobranca obterFormaCobrancaBoletoAvulso(TipoCobranca tipoCobranca) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select f from FormaCobranca f ");		
+		
+		hql.append(" where 1=1 ");
+		
+	    hql.append(" and f.tipoCobranca = :tipoCobranca ");
+			
+		Query query = super.getSession().createQuery(hql.toString());
+		
+        query.setParameter("tipoCobranca", tipoCobranca);
+        
+        query.setMaxResults(1);
+        
+        return (FormaCobranca) query.uniqueResult();
+	}
 	
+	public boolean validarFormaCobrancaPorBanco(Long idBanco) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select case when count(f.id) > 0 then true else false end ");
+		hql.append(" from FormaCobranca f ");
+		hql.append(" left join f.banco b ");
+		hql.append(" where f.ativa = :ativa ");
+		hql.append(" and b.id = :idBanco ");
+		hql.append(" and f.tipoCobranca not in (:tipoCobranca) ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("ativa", true);
+		query.setParameter("idBanco", idBanco);
+		query.setParameterList("tipoCobranca", Arrays.asList(TipoCobranca.DEPOSITO));
+		
+		return (boolean) query.uniqueResult();
+	}	
 }

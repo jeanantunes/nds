@@ -22,12 +22,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AlteracaoPrecoDTO;
+import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.FormaCobrancaFornecedorDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
 import br.com.abril.nds.dto.OutraMovimentacaoDTO;
 import br.com.abril.nds.enums.CodigoErro;
@@ -36,6 +38,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ImportacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -58,6 +61,9 @@ import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
@@ -81,15 +87,20 @@ import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
+import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.DebitoCreditoCotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.validation.CobrancaFornecedorValidator;
 import br.com.abril.nds.strategy.importacao.input.HistoricoVendaInput;
 import br.com.abril.nds.util.BigIntegerUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.Util;
 
@@ -159,7 +170,19 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     
     @Autowired
     private FormaCobrancaRepository formaCobrancaRepository;
-
+    
+    @Autowired
+    private CalendarioService calendarioService;
+    
+    @Autowired
+    private DebitoCreditoCotaService debitoCreditoCotaService;
+    
+    @Autowired
+    private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+    
+    @Autowired
+    private TipoMovimentoFinanceiroService tipoMovimentoFinanceiroService;
+    
     @Override
     @Transactional
     public void gerarMovimentoEstoqueFuroPublicacao(final Lancamento lancamento, final FuroProduto furoProduto, final Long idUsuario) {
@@ -462,7 +485,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
      */
     @Override
     @Transactional
-    public MovimentosEstoqueCotaSaldoDTO getMovimentosEstoqueCotaSaldo(final List<MovimentoEstoqueCota> listaMovimentoCota){
+    public MovimentosEstoqueCotaSaldoDTO getMovimentosEstoqueCotaSaldo(final List<MovimentoEstoqueCota> listaMovimentoCota, Long idUsuario){
         
         final List<MovimentoEstoqueCota> listaMovimentosEstoqueCotaReparte = new ArrayList<MovimentoEstoqueCota>();
         
@@ -506,16 +529,70 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                             produtoEdicaoQtdEntrada.put(movimentoCota.getProdutoEdicao().getId(), qtdProduto);
                 }
             }
+            
+            if(movimentoCota.getCota().getTipoCota().equals(TipoCota.A_VISTA)) {            	
+            	this.lancarDebitoCreditoCotaAusente(movimentoCota, idUsuario);
+            }
+            
         }
         
         return new MovimentosEstoqueCotaSaldoDTO(listaMovimentosEstoqueCotaReparte, produtoEdicaoQtdSaida, produtoEdicaoQtdEntrada);
     }
     
+    private void lancarDebitoCreditoCotaAusente(final MovimentoEstoqueCota movimentoEstoqueCota, Long idUsuario) {
+        
+        final DebitoCreditoDTO debitoCredito = new DebitoCreditoDTO();
+        
+        Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+        
+        debitoCredito.setDataVencimento(DateUtil.formatarDataPTBR(calendarioService.adicionarDiasUteis(dataOperacao, 0)));
+        
+        final Cota cota = movimentoEstoqueCota.getCota();
+        
+        debitoCredito.setNomeCota(cota.getPessoa().getNome());
+        debitoCredito.setNumeroCota(cota.getNumeroCota());
+        
+        debitoCredito.setTipoMovimentoFinanceiro(this.obterTipoMovimentoFinanceiro());
+        
+        //null
+        final BigDecimal valor =
+                movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto()
+                .multiply(new BigDecimal(movimentoEstoqueCota.getQtde()));
+        
+        debitoCredito.setValor(valor.toString());
+        
+        debitoCredito.setIdUsuario(idUsuario);
+        
+        ProdutoEdicao produtoEdicao = movimentoEstoqueCota.getProdutoEdicao();
+        
+        debitoCredito.setObservacao("Credito Cota Ausente: "+produtoEdicao.toString());
+        
+        final MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO =
+                debitoCreditoCotaService.gerarMovimentoFinanceiroCotaDTO(debitoCredito);
+        
+        movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+        
+        movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(
+                movimentoFinanceiroCotaDTO);
+    }
+	 
+	private TipoMovimentoFinanceiro obterTipoMovimentoFinanceiro() {
+	        
+        GrupoMovimentoFinaceiro grupoMovimentoFinaceiro = null;
+        OperacaoFinaceira operacaoFinaceira = null;
+        
+        grupoMovimentoFinaceiro = GrupoMovimentoFinaceiro.CREDITO;
+        operacaoFinaceira = OperacaoFinaceira.CREDITO;
+	        
+        return tipoMovimentoFinanceiroService.obterTipoMovimentoFincanceiroPorGrupoFinanceiroEOperacaoFinanceira(grupoMovimentoFinaceiro, operacaoFinaceira);
+    }
+    
+    
     @Override
     @Transactional
     public List<MovimentoEstoqueCota> enviarSuplementarCotaAusente(final Date data,
             final Long idCota,
-            final List<MovimentoEstoqueCota> listaMovimentoCota)
+            final List<MovimentoEstoqueCota> listaMovimentoCota, Long idUsuario)
                     throws TipoMovimentoEstoqueInexistenteException {
         
         final Cota cota = cotaRepository.buscarPorId(idCota);
@@ -539,7 +616,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             throw new TipoMovimentoEstoqueInexistenteException(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
         }
         
-        final MovimentosEstoqueCotaSaldoDTO movimentosSaldo = this.getMovimentosEstoqueCotaSaldo(listaMovimentoCota);
+        final MovimentosEstoqueCotaSaldoDTO movimentosSaldo = this.getMovimentosEstoqueCotaSaldo(listaMovimentoCota, idUsuario);
         
         final List<MovimentoEstoqueCota> listaMovimentoCotaEnvio = this.estornarMovimentosDaCotaAusente(movimentosSaldo.getMovimentosEstoqueCota(),
                 data,
@@ -566,8 +643,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                     && movimentoCota.getProdutoEdicao() != null
                     && movimentoCota.getUsuario() != null
                     && movimentoCota.getQtde() != null ) {
-                
-                
+            	
                 final BigInteger quantidadeSaidas = produtoEdicaoQtdSaida.get(movimentoCota.getProdutoEdicao().getId())!=null?
                         produtoEdicaoQtdSaida.get(movimentoCota.getProdutoEdicao().getId()):
                             BigInteger.ZERO;
@@ -586,6 +662,14 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                                         quantidade,
                                         tipoMovimento);
                                 
+                                FormaComercializacao formaComercializacao = null;
+                                
+                                if(movimentoCota.getCota().getTipoCota().equals(TipoCota.A_VISTA)) {
+                                	formaComercializacao = FormaComercializacao.CONTA_FIRME;
+                                } else {
+                                	formaComercializacao = FormaComercializacao.CONSIGNADO;
+                                }
+                                
                                 listaMovimentoCotaEnvio.add(criarMovimentoCota(data
                                 		, movimentoCota.getProdutoEdicao()
                                 		, movimentoCota.getCota().getId()
@@ -597,7 +681,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                                 		, movimentoCota.getLancamento() != null ? movimentoCota.getLancamento().getId() : null
                                 		, null
                                 		, false
-                                		, movimentoCota.getValoresAplicados(), FormaComercializacao.CONSIGNADO, false, false));
+                                		, movimentoCota.getValoresAplicados(), formaComercializacao, false, false));
                                 
             }
         }
@@ -1459,10 +1543,18 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             final BigInteger quantidade, 
             final TipoMovimentoEstoque tipoMovimentoEstoque,
             final Long idEstudoCota,
-            final boolean isMovimentoDiferencaAutomatico, boolean isContribuinte, boolean isExigeNota) {
+            final boolean isMovimentoDiferencaAutomatico, boolean isContribuinte, boolean isExigeNota, TipoCota tipoCota) {
         
+    	FormaComercializacao formaComercializacao = null;
+    	
+    	if(tipoCota.equals(TipoCota.A_VISTA)) {
+    		formaComercializacao = FormaComercializacao.CONTA_FIRME;
+    	} else {
+    		formaComercializacao = FormaComercializacao.CONSIGNADO;
+    	}
+    	
         return criarMovimentoCota(dataLancamento, produtoEdicao, idCota,
-                idUsuario, quantidade, tipoMovimentoEstoque, dataLancamento, null, null, idEstudoCota, isMovimentoDiferencaAutomatico, null, FormaComercializacao.CONSIGNADO, isContribuinte, isExigeNota);
+                idUsuario, quantidade, tipoMovimentoEstoque, dataLancamento, null, null, idEstudoCota, isMovimentoDiferencaAutomatico, null, formaComercializacao, isContribuinte, isExigeNota);
     }
     
     @Override
@@ -1882,7 +1974,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
         
         if(produtoEdicao.getProduto().getFormaComercializacao().equals(FormaComercializacao.CONTA_FIRME) 
-        		|| (estudoCotaDTO.getTipoCota().equals(TipoCota.A_VISTA) && !estudoCotaDTO.isDevolveEncalhe())){        	
+        		|| (estudoCotaDTO.getTipoCota().equals(TipoCota.A_VISTA))){        	
         	movimentoEstoqueCota.setFormaComercializacao(FormaComercializacao.CONTA_FIRME.name());
         } else {
     		movimentoEstoqueCota.setFormaComercializacao(FormaComercializacao.CONSIGNADO.name());

@@ -7,6 +7,7 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.xml.bind.annotation.XmlElement;
 
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
@@ -64,6 +65,16 @@ public class ICMSST extends ICMSBase implements Serializable {
 	 */
 	public void setPercentualAdicionado(BigDecimal percentualAdicionado) {
 		this.percentualAdicionado = percentualAdicionado;
+	}
+	
+	@XmlElement(name="orig")
+	public String getAOrig() {
+		return super.aOrig;
+	}
+	
+	@XmlElement(name="CSOSN")
+	public String getCst() {
+		return super.getCst();
 	}
 
 }

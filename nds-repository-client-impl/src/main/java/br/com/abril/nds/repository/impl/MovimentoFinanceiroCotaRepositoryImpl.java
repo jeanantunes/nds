@@ -235,6 +235,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		sql.append("	and movimentof0_.DATA IN (:datas)  ");
 		sql.append("	and movimentof0_.STATUS = :statusAprovado  ");
 		sql.append("	and cota3_.NUMERO_COTA = :numeroCota  ");
+		sql.append(" 	and tipomovime1_.GRUPO_MOVIMENTO_FINANCEIRO <> 'BOLETO_AVULSO' ");
 		
 		if(tiposMovimentoFinanceiroIgnorados!=null && !tiposMovimentoFinanceiroIgnorados.isEmpty()) {
 			

@@ -81,6 +81,9 @@ public class ContaCorrenteCotaVO implements Serializable {
 	@Export(label = "Saldo R$", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA)
 	private BigDecimal saldo;
 	
+	private String tipoCobranca;
+	
+	
 	private boolean detalharDebitoCredito;
 	
 	/**
@@ -371,4 +374,11 @@ public class ContaCorrenteCotaVO implements Serializable {
 		this.detalharDebitoCredito = detalharDebitoCredito;
 	}
 
+	public String getTipoCobranca() {
+		return tipoCobranca;
+	}
+
+	public void setTipoCobranca(String tipoCobranca) {
+		this.tipoCobranca = tipoCobranca;
+	}
 }

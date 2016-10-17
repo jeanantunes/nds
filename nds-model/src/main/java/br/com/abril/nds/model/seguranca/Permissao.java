@@ -353,9 +353,11 @@ public enum Permissao {
 	ROLE_FINANCEIRO_CONSULTA_NEGOCIACOES_ALTERACAO("Consulta negociações",									Permissao.ROLE_FINANCEIRO, true),
 	ROLE_FINANCEIRO_CONSULTA_NEGOCIACOES("Consulta negociações",									   		Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_CONSULTA_NEGOCIACOES_ALTERACAO, true, null),
 	
+	ROLE_FINANCEIRO_GERAR_BOLETO_AVULSO_ALETERACAO("Gerar Boleto Avulso",                                	Permissao.ROLE_FINANCEIRO, true), 
+	ROLE_FINANCEIRO_GERAR_BOLETO_AVULSO("Gerar Boleto Avulso",                                	 	   	    Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_GERAR_BOLETO_AVULSO_ALETERACAO, true, null),
+	
 	ROLE_FINANCEIRO_HELP_ALTERACAO("Help",           														Permissao.ROLE_FINANCEIRO, true),
 	ROLE_FINANCEIRO_HELP("Help",           															 	   	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_HELP_ALTERACAO, true, null),
-	
 	
 	ROLE_ADMINISTRACAO_ALTERACAO("Administração",														  	null, true),
 	ROLE_ADMINISTRACAO("Administração",														  			   	null, ROLE_ADMINISTRACAO_ALTERACAO, true, null),

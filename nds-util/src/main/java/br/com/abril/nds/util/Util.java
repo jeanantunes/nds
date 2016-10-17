@@ -922,4 +922,19 @@ public abstract class Util {
     		return true;
     	}
     }
+    
+	public static String getValorSemMascara(String valor) {
+
+		String chr = String.valueOf(valor.charAt(valor.length()-3));
+		if (",".equals(chr)){
+		    valor = valor.replaceAll("\\.", "");
+		    valor = valor.replaceAll(",", "\\.");
+		}
+		
+		if (".".equals(chr)){
+		    valor = valor.replaceAll(",", "");
+		}
+
+		return valor;
+	}
 }

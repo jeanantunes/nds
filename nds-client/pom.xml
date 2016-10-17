@@ -516,6 +516,56 @@
 				</plugins>
 			</build>
 		</profile>
+		
+		<profile>
+			<id>boletoAvulso</id>
+			<properties>
+				<jndi-name>java:comp/env/jdbc/nds-client-homolog</jndi-name>
+				<dataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client-homolog</dataSourceURL>
+				<dataSourceUsername>admin</dataSourceUsername>
+				<dataSourcePassword>abrildgb01</dataSourcePassword>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>jasperreports-maven-plugin</artifactId>
+						<configuration>
+							<outputDirectory>${project.build.directory}/classes/reports</outputDirectory>
+							<sourceDirectory>src/main/resources/reports</sourceDirectory>
+
+							<server>tomcat-server</server>
+							<url>http://localhost:8080/manager/text</url>
+						</configuration>
+						<version>1.0-beta-2</version>
+						<executions>
+							<execution>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>compile-reports</goal>
+								</goals>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>net.sf.jasperreports</groupId>
+								<artifactId>jasperreports</artifactId>
+								<version>5.0.0</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>tomcat-maven-plugin</artifactId>
+						<version>1.1</version>
+						<configuration>
+							<server>tomcat-server-homolog-abril</server>
+							<url>http://177.71.255.76:8080/manager/text</url>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>		
 				
 		<profile>
 			<id>nds-client-homolog-f2</id>

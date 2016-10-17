@@ -3,11 +3,14 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CertificadoNFEDTO;
+import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.model.fiscal.nota.Certificado;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CertificadoRepository;
@@ -23,11 +26,13 @@ public class CertificadoRepositoryImpl  extends AbstractRepositoryModel<Certific
 	@SuppressWarnings("unchecked")
 	public List<CertificadoNFEDTO> obterCertificado(CertificadoNFEDTO filtro) {
 		
-		Criteria criteria =  getSession().createCriteria(Certificado.class);	
-
-		// criteria.add(Restrictions.eq("codigo", codigo));
+		StringBuilder hql = new StringBuilder("select cert from Certificado as cert ");
+				
+		Query query = this.getSession().createQuery(hql.toString());
 		
-		return criteria.list();
+		query.setResultTransformer(new AliasToBeanResultTransformer(CertificadoNFEDTO.class));
+		
+		return query.list();
 	}
 
 	@Override

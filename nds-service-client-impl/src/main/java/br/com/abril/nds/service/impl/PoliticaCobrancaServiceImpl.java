@@ -584,17 +584,20 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
         
         //caso existam cotas que usam o parametro de cobranca do distribuidor
         if (pc.isPrincipal() || formaCobrancaRepository.obterFormasCobrancaAtivaCotas(true, fcDistrib.getId())){
+            desativar = parametroCobrancaCotaRepository.verificarCotaSemParametroCobrancaPorFormaCobranca(fcDistrib.getId());
             
-            desativar =
-                    parametroCobrancaCotaRepository.verificarCotaSemParametroCobrancaPorFormaCobranca(
-                            fcDistrib.getId());
+            pc.setAtivo(false);
+        }
+        
+        if(fcDistrib.getTipoCobranca().equals(TipoCobranca.BOLETO_AVULSO)) {
+        	desativar = parametroCobrancaCotaRepository.verificarCotaSemParametroCobrancaPorFormaCobranca(fcDistrib.getId());
         }
         
         if(desativar) {
             politicaCobrancaRepository.desativarPoliticaCobranca(idPolitica);
         } else {
             throw new ValidacaoException(TipoMensagem.WARNING,
-                    "Não foi possível desativar. \nExistem cotas utilizando esta forma de cobrança!");
+                    "Não foi possível excluir. \nExistem cotas utilizando esta forma de cobrança!");
         }
     }
     

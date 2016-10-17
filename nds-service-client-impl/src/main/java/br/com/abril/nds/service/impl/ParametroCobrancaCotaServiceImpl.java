@@ -259,6 +259,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			parametroCobrancaDTO.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
 			parametroCobrancaDTO.setDevolveEncalhe(cota.isDevolveEncalhe() != null ? cota.isDevolveEncalhe() : true);
+			parametroCobrancaDTO.setBoletoNFE(cota.isBoletoNFE());
 			parametroCobrancaDTO.setParametroDistribuidor(parametroDistribuidor);
 			
 			if (cota.isSugereSuspensaoDistribuidor()) {
@@ -280,7 +281,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			parametroCobrancaDTO.setSugereSuspensao(cota.isSugereSuspensao());
 			parametroCobrancaDTO.setSugereSuspensaoDistribuidor(cota.isSugereSuspensaoDistribuidor());
-			parametroCobrancaDTO.setIdFornecedor(parametroCobranca.getFornecedorPadrao()!=null?parametroCobranca.getFornecedorPadrao().getId():null);			
+			parametroCobrancaDTO.setIdFornecedor(parametroCobranca.getFornecedorPadrao()!=null?parametroCobranca.getFornecedorPadrao().getId():null);
+			
 		}
 
 		return parametroCobrancaDTO;
@@ -468,6 +470,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			cota.setSugereSuspensaoDistribuidor(parametroCobrancaDTO.isSugereSuspensaoDistribuidor());
 			cota.setPossuiContrato(parametroCobrancaDTO.isContrato());
 			cota.setValorMinimoCobranca(CurrencyUtil.converterValor(parametroCobrancaDTO.getValorMinimo()));
+			cota.setBoletoNFE(parametroCobrancaDTO.isBoletoNFE());
 						
 			this.cotaRepository.merge(cota);
 		}

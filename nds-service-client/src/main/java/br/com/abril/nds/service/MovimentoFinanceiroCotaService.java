@@ -194,5 +194,7 @@ public interface MovimentoFinanceiroCotaService {
     
     void processarDebitosParaCotasNoProcessoDeExpedicaoDeProdutoContaFirme(final ExpedicaoDTO expedicaoDTO, 
 			  															   final List<MovimentoEstoqueCotaDTO>movimentosEstoqueCota);
+    
+    List<MovimentoFinanceiroCota> gerarMovimentosFinanceirosDebitoCreditoCobrancaGerada(final MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO);
 
 }

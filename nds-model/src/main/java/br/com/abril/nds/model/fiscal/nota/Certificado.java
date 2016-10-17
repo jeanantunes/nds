@@ -1,9 +1,11 @@
 package br.com.abril.nds.model.fiscal.nota;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -18,8 +20,10 @@ import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
 @Table(name = "CERTIFICADO")
-public class Certificado {
+public class Certificado implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue
@@ -49,7 +53,7 @@ public class Certificado {
 	@Column(name = "DATA_FIM")
 	private Date dataFim;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(fetch=FetchType.LAZY, optional = false)
 	@JoinColumn(name = "DISTRIBUIDOR_ID")
 	private Distribuidor distribuidor;
 

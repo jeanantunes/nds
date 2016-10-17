@@ -255,15 +255,17 @@ var contaCorrenteCotaController = $.extend(true, {
             	   value.cell.saldo = value.cell.total;
                
                } else if (value.cell.cobrado){
-					
-					value.cell.cobrado = '<img src="'+ contextPath +'/images/bt_financeiro.png" alt="Cobrança Gerada" />';
-				
-				} else {
+            	   if(value.cell.tipoCobranca == "BOLETO_AVULSO") {
+            		   value.cell.cobrado = '<img src="'+ contextPath +'/images/bt_financeiro_boleto_avulso.png" alt="Boleto Avulso" />';	            		   
+            	   } else {            		   
+            		   value.cell.cobrado = '<img src="'+ contextPath +'/images/bt_financeiro.png" alt="Cobrança Gerada" />';
+            	   }
+               }else {
 					
 					value.cell.cobrado = '<img src="'+ contextPath +'/images/ico_boletos.gif" alt="Dívida Postergada" />';
 					value.cell.saldo = (value.cell.total != null && value.cell.total != 0)?
 					                   (formatMoneyValue(value.cell.total, 2)) : '0.00';
-				}
+			   }
 			});
 			
 			$("#cotanomeselecionado", contaCorrenteCotaController.workspace).html($("#cotaHidden", contaCorrenteCotaController.workspace).val()+" "+

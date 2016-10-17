@@ -68,6 +68,16 @@ public enum GrupoMovimentoFinaceiro {
 	COMPRA_NUMEROS_ATRAZADOS(OperacaoFinaceira.DEBITO, "Compra Números Atrasados"),
 	
 	/**
+	 * DEBITO de Numeros Atrazados(NA)
+	 */
+	BOLETO_AVULSO(OperacaoFinaceira.DEBITO, "Boleto Avulso"),
+	
+	/**
+	 * DEBITO de Numeros Atrazados(NA)
+	 */
+	BOLETO_NFE(OperacaoFinaceira.DEBITO, "Boleto Avulso"),
+	
+	/**
 	 * Venda total de reparte
 	 */
 	VENDA_TOTAL(OperacaoFinaceira.DEBITO, "Venda Total"),

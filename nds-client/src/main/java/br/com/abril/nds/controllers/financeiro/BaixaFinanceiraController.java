@@ -240,16 +240,14 @@ public class BaixaFinanceiraController extends BaseController {
 						 msg.append("</br>"+"Cobranca nao encontrada pelo nosso numero consolidado. NOSSO_NUMERO:"+
 					             baixaBancaria.getNossoNumeroConsolidado()+"  valor:"+ baixaBancaria.getValorDoBoleto()+" cota:"+baixaBancaria.getCodJornaleiro());
 						 continue;
-					   }
-					   else 
-					   {
+					   } else {
 						   LOGGER.warn("Cobranca nao encontrada pelo nosso numero consolidado.Valor zero. NOSSO NUMERO:"+
 					             baixaBancaria.getNossoNumeroConsolidado());
 						   msg.append("</br>"+"Cobranca nao encontrada mas valor menor ou igual a zero.Desconsiderando Boleto. NOSSO NUMERO:"+
 					             baixaBancaria.getNossoNumeroConsolidado()+"  valor:" + baixaBancaria.getValorDoBoleto());
 					       continue;
 					   }
-					}
+				}
 					  
 				PagamentoDTO pagamento = new PagamentoDTO();
 				
@@ -260,14 +258,11 @@ public class BaixaFinanceiraController extends BaseController {
 				pagamento.setValorJuros(BigDecimal.ZERO);
 				pagamento.setValorMulta(BigDecimal.ZERO);
 				pagamento.setValorDesconto(BigDecimal.ZERO);
-			   try {	
-				boletoService.baixarBoleto(TipoBaixaCobranca.CONSOLIDADA, pagamento, getUsuarioLogado(), null, baixaBancaria.getDataPagamento(), null, null, baixaBancaria.getDataPagamento());
-			   } catch (ValidacaoException ve ) {
-				        
-				   msg.append("</br>"+ve.getMessage()+"  "+
-						   baixaBancaria.getNossoNumeroConsolidado()+"  valor:"+ baixaBancaria.getValorDoBoleto()+" cota:"+baixaBancaria.getCodJornaleiro());
-						   
-				   
+				
+				try {	
+					boletoService.baixarBoleto(TipoBaixaCobranca.CONSOLIDADA, pagamento, getUsuarioLogado(), null, baixaBancaria.getDataPagamento(), null, null, baixaBancaria.getDataPagamento());
+				} catch (ValidacaoException ve ) {
+				   msg.append("</br>"+ve.getMessage()+"  "+ baixaBancaria.getNossoNumeroConsolidado()+"  valor:"+ baixaBancaria.getValorDoBoleto()+" cota:"+baixaBancaria.getCodJornaleiro());
 			   }
 			   
 				if(!bancos.contains(cobranca.getBanco())){
@@ -1204,9 +1199,7 @@ public class BaixaFinanceiraController extends BaseController {
 		List<CobrancaVO> cobrancasVO = filtro.isSomenteBaixadas() ? this.baixaCobrancaService.buscarCobrancasBaixadas(filtro)
 																  : this.cobrancaService.obterDadosCobrancasPorCota(filtro);
 		
-		FileExporter.to("dividas-cota", fileType)
-.inHTTPResponse(this.getNDSFileHeader(), filtro,
-					cobrancasVO, CobrancaVO.class, this.httpResponse);
+		FileExporter.to("dividas-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, cobrancasVO, CobrancaVO.class, this.httpResponse);
 		
 		this.result.nothing();
 	}
@@ -1430,9 +1423,7 @@ public class BaixaFinanceiraController extends BaseController {
 		
 		List<BaixaBoletoBaseVO> lista = (List<BaixaBoletoBaseVO>) this.obterBaixaBoletoExportacaoVO(filtro, tipoBaixaBoleto);		
 		
-		FileExporter.to(tipoBaixaBoleto.getNomeArquivo(), fileType)
-.inHTTPResponse(this.getNDSFileHeader(), filtro,
-					lista, tipoBaixaBoleto.getTipoImpressaoVO(), this.httpResponse);
+		FileExporter.to(tipoBaixaBoleto.getNomeArquivo(), fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, lista, tipoBaixaBoleto.getTipoImpressaoVO(), this.httpResponse);
 		
 		this.result.nothing();
 	}
@@ -1443,15 +1434,12 @@ public class BaixaFinanceiraController extends BaseController {
 		
 		if (idCobrancas == null || idCobrancas.isEmpty()) {
 			
-			throw new ValidacaoException(
-TipoMensagem.WARNING, "É necessário selecionar ao menos uma dívida!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "É necessário selecionar ao menos uma dívida!");
 		}
 		
 		this.cobrancaService.confirmarBaixaManualDividas(idCobrancas);
 		
-		this.result.use(Results.json()).from(
-			new ValidacaoVO(TipoMensagem.SUCCESS, "Baixa confirmada com sucesso!"),
-			Constantes.PARAM_MSGS).recursive().serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Baixa confirmada com sucesso!"), Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	@Post
@@ -1460,15 +1448,12 @@ TipoMensagem.WARNING, "É necessário selecionar ao menos uma dívida!");
 		
 		if (idCobrancas == null || idCobrancas.isEmpty()) {
 			
-			throw new ValidacaoException(
-TipoMensagem.WARNING, "É necessário selecionar ao menos uma dívida!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "É necessário selecionar ao menos uma dívida!");
 		}
 		
 		this.cobrancaService.reverterBaixaManualDividas(idCobrancas);
 		
-		this.result.use(Results.json()).from(
-			new ValidacaoVO(TipoMensagem.SUCCESS, "Baixa cancelada com sucesso!"),
-			Constantes.PARAM_MSGS).recursive().serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Baixa cancelada com sucesso!"), Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 }

@@ -21,6 +21,12 @@
 			<table class="consignadosCotaDetalhesGrid"></table>
 		</fieldset>
 	 </div>
+	 
+	 <div id="dialog-total-consignado-avista" title="Total consignado e a vista" style="display:none;">
+		<fieldset>
+	    	<legend>Total Consignado e a Vista</legend>
+		</fieldset>
+	 </div>
 
 	 <div class="areaBts">
 	 	<div class="area">
@@ -113,6 +119,7 @@
 			<div class="tabelaGeralDetalhado" style="display:none;">
 				<span name="totalGeralDetalhado" id="totalGeralDetalhado" ></span>
 			</div>
+			
 			<div class="tabelaGeralPorFornecedor" style="display:none;">
 				<span name="totalGeralPorFornecedor" id="totalGeralPorFornecedor" ></span>
 			</div>

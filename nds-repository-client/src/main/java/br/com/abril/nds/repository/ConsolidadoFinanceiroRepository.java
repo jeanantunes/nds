@@ -38,7 +38,7 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 
 	ConsolidadoFinanceiroCota buscarPorCotaEData(Long idCota, Date data);
 
-	List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(Long idCota, Date dataOperacao);
+	List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(List<Long> idConsolidados);
 
 	List<ContaCorrenteCotaVO> obterContaCorrente(FiltroViewContaCorrenteCotaDTO filtro,
 			List<Long> tiposMovimentoCredito, List<Long> tiposMovimentoDebito,
@@ -64,4 +64,6 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
             Long idCota, List<Date> datas, Long idFornecedor);
 
     List<DebitoCreditoCota> obterConsolidadosDataOperacaoSlip(Long idCota, Date dataOperacao);
+
+	List<Long> obterIdsConsolidadosDataOperacao(Long idCota, Date dataOperacao);
 }

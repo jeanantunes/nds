@@ -1,17 +1,19 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
-
-import javax.sql.DataSource;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.NfeDTO;
@@ -32,6 +34,7 @@ import br.com.abril.nds.model.fiscal.NotaFiscalTipoEmissaoRegimeEspecial;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
+import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -39,10 +42,7 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
 public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal, Long> implements NotaFiscalRepository {
-
-	@Autowired
-	private DataSource dataSource;
-
+	
 	public NotaFiscalRepositoryImpl() {
 		super(NotaFiscal.class);
 	}
@@ -536,7 +536,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getListIdFornecedor() != null) {
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
-
+		
+		hql.append(" AND produto.notaFiscal = :notaFiscalProduto ");
+		
 		if(!isGroup){
 			hql.append(" GROUP BY mec.cota.numeroCota, mec.cotaContribuinteExigeNF ");
 			
@@ -623,6 +625,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getIdRegiao() != null) {
 			query.setParameter("idRegiao", filtro.getIdRegiao());
 		}
+		
+		query.setParameter("notaFiscalProduto", false);
 		
 		return query;	
 	}
@@ -821,6 +825,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
 
+		hql.append(" AND produto.notaFiscal = :notaFiscalProduto ");
+		
 		if(!isGroup){
 			hql.append(" GROUP BY mffc.cota.numeroCota ");
 		} else {
@@ -901,6 +907,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getIdRegiao() != null) {
 			query.setParameter("idRegiao", filtro.getIdRegiao());
 		}
+		
+		query.setParameter("notaFiscalProduto", false);
 		
 		return query;	
 	}
@@ -993,6 +1001,10 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		hql.append(" and mfff.qtde > 0 ");
 		
+		hql.append(" and produto. ");
+		
+		hql.append(" and produto.notaFiscal = :notaFiscalProduto ");
+		
 		if(!isGroup){
 			if(filtro.isEmissaoPorEditor()) {
 				hql.append(" GROUP BY mfff.fornecedor.id ");
@@ -1056,6 +1068,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
 		}
 
+		query.setParameter("notaFiscalProduto", false);
+		
 		return query;	
 	}
 
@@ -1504,7 +1518,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	public NotaFiscal obterNotaFiscalNumeroChaveAcesso(RetornoNFEDTO dadosRetornoNFE) {
 
 		StringBuffer sql = new StringBuffer("SELECT notaFiscal")
-		.append(" FROM NotaFiscal as notaFiscal")
+		.append(" FROM NotaFiscal ")
 		.append(" JOIN notaFiscal.notaFiscalInformacoes as nfi ")
 		.append(" JOIN nfi.informacaoEletronica as infElet ")
 		.append(" JOIN nfi.identificacao as ident ");
@@ -1545,4 +1559,83 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		return (DestinoEncalhe) query.uniqueResult();
 		
 	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<DebitoCreditoDTO> listaBoletoNFE(Date dataBoleto) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("   select c.numero_cota as numeroCota, ");
+		sql.append("   p.nome as nomeCota, ");
+		sql.append("   nfc.VALOR_NF as valor, ");
+		sql.append("   concat('Boleto Gerado via Nota Fiscal Eletronica - N.', nf.numero_documento_fiscal) as observacao, ");
+		sql.append("   nf.id as idNota ");
+		sql.append("   from nota_fiscal_novo nf "); 
+		sql.append("   inner join cota c on c.ID=nf.cota_id ");
+		sql.append("   inner join pessoa p on c.pessoa_id = p.id ");
+		sql.append("   inner join nota_fiscal_valor_calculado nfc on nf.NOTA_FISCAL_VALOR_CALCULADO_ID = nfc.ID ");
+		sql.append("   where nf.protocolo is not null ");
+		sql.append("   and nf.data_emissao = :dataBoleto ");
+		sql.append("   and nf.STATUS_RETORNADO = :statusRetornado ");
+		sql.append("   and nf.PROTOCOLO is not null ");
+		sql.append("   and nf.BOLETO_NFE_GERADO = :boletoNfeGerado ");
+		sql.append("   and c.GERAR_BOLETO_NFE = :boletoNFE ");
+		sql.append("   and nf.NATUREZA_OPERACAO_ID in (3, 11, 28, 33) ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataBoleto", dataBoleto);
+		query.setParameter("statusRetornado", StatusRetornado.AUTORIZADO.name());
+		query.setParameter("boletoNfeGerado", false);
+		query.setParameter("boletoNFE", true);
+		
+		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		query.addScalar("nomeCota", StandardBasicTypes.STRING);
+		query.addScalar("valor", StandardBasicTypes.STRING);
+		query.addScalar("observacao", StandardBasicTypes.STRING);
+		query.addScalar("idNota", StandardBasicTypes.LONG);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoDTO.class));
+		
+		return query.list();
+		
+	}
+
+	@Override
+	public NotaFiscal obterNFEPorID(Long idNota) {
+		StringBuffer sql = new StringBuffer("SELECT notaFiscal ")
+		.append(" FROM NotaFiscal as notaFiscal ")
+		.append(" WHERE")
+		.append(" notaFiscal.id = :idNota ");
+		
+		Query query = this.getSession().createQuery(sql.toString());
+		query.setParameter("idNota", idNota);
+
+		return (NotaFiscal) query.uniqueResult();
+	}
+	
+	public boolean existeNotaNaData(Date dataReferencia) {
+
+		StringBuffer sql = new StringBuffer("SELECT count(nf.id) ");
+		sql.append("   from nota_fiscal_novo nf "); 
+		sql.append("   inner join cota c on c.ID=nf.cota_id ");
+		sql.append("   where nf.protocolo is not null ");
+		sql.append("   and nf.data_emissao = :dataReferencia ");
+		sql.append("   and c.GERAR_BOLETO_NFE = :boletoNFE ");
+		sql.append("   and nf.BOLETO_NFE_GERADO = :boletoNfeGerado ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+       
+		query.setParameter("dataReferencia", dataReferencia);
+       
+		query.setParameter("boletoNFE", true);
+		query.setParameter("boletoNfeGerado", false);
+		
+		BigInteger totalRegistros = (BigInteger) query.uniqueResult();
+		
+		return totalRegistros.intValue() > 0 ? true : false;
+
+	}
+	
 }

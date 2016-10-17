@@ -96,5 +96,9 @@ public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 	List<FormaCobrancaFornecedorDTO> obterFormasCobrancaDistribuidorFornecedor();
 
 	List<FormaCobrancaFornecedorDTO> obterFormasCobrancaCotaFornecedor();
+
+	FormaCobranca obterFormaCobrancaBoletoAvulso(TipoCobranca tipoCobranca);
+
+	boolean validarFormaCobrancaPorBanco(Long idBanco);
 	
 }

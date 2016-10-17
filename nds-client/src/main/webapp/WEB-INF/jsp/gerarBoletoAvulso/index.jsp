@@ -2,9 +2,17 @@
 <head>
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+<<<<<<< HEAD
 	<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/boletoAvulso.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
+=======
+	<script	src="${pageContext.request.contextPath}/scripts/jquery-upload/js/jquery.fileupload.js"	type="text/javascript"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
+	<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/boletoAvulso.js"></script>
+>>>>>>> boletoAvulso
 	
 	<script language="javascript" type="text/javascript">
 	$(function() {
@@ -20,15 +28,33 @@
           		<a isEdicao="true" id="boleto-avulso-Confirmar" onclick="GerarBoletoAvulsoController.confirmar();" rel="tipsy" title="Confirmar Gera&ccedil;&atilde;o do Boleto Avulso">
          		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif"></a>
             </span>
+<<<<<<< HEAD
 		</div>
+=======
+			
+			<span class="bt_novos" id="btAddLoteMixCota">
+				<a href="javascript:;" onclick="GerarBoletoAvulsoController.addLoteMix();" rel="tipsy" title="Adicionar em Lote">
+					<img src="images/ico_integrar.png" hspace="5" border="0" />
+				</a>
+			</span>
+		</div>
+		
+>>>>>>> boletoAvulso
 	</div>
 	<div class="linha_separa_fields">&nbsp;</div>
 	<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 		<legend>Boleto Avulso</legend>
+<<<<<<< HEAD
 		<table width="950px" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		    <tbody>
 		    	<tr>
 		    	
+=======
+		
+		<table width="950px" border="0" cellpadding="2" cellspacing="1" class="filtro">
+		    <tbody>
+		    	<tr>
+>>>>>>> boletoAvulso
 		    		<td width="100">
 		    			Cota:
 		    		</td>
@@ -125,7 +151,10 @@
 		<br clear="all" />
 		<form name="listaCotasBoletos" id="listaCotasBoletos">
 			<table  width="950" class="boleto-avulso-Grid_1" id="boleto-avulso-Grid_1"></table>
+<<<<<<< HEAD
 			
+=======
+>>>>>>> boletoAvulso
 			<table  width="950" border="0" cellspacing="2" cellpadding="2">
 			    <tr>
 				    <td width="65%"></td>    
@@ -138,9 +167,48 @@
 				    </td>
 	            </tr> 
 		    </table>
+<<<<<<< HEAD
 		
 		</form>
 	</fieldset>
 </div>		
 </form>
+=======
+		</form>
+	</fieldset>
+</div>		
+		
+<div id="modalUploadArquivoMix" title="Adicionar em Lote" style="display:none;">
+ 	<form action="${pageContext.request.contextPath}/financeiro/boletoAvulso/uploadArquivoLote" id="formUploadLoteMix" method="post" enctype="multipart/form-data">
+ 		<td width="91"><span>Banco:</span></td>
+		<td>
+			<select id="idBanco" name="idBanco" style="width:150px; font-size:11px!important">
+				<c:forEach items="${bancos}" var="roteiro">
+					<option value="${roteiro.key }">${roteiro.value }</option>
+				</c:forEach>
+			</select>
+		</td>
+ 		
+ 		<br><br><br>
+ 		<hr>
+ 		
+ 		<p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
+      	<p >
+      		<span class="bt_novos" title="Download Modelo">
+      			<a href="${pageContext.request.contextPath}/modelos/modelo_boleto_avulso.xls">
+      				<img align="center" src="images/ico_excel.png" hspace="5" border="0" />Modelo de exemplo
+      			</a>
+      		</span>
+      	</p>
+      	<br><br><br>
+      	<hr>
+      	<p>Selecione um arquivo para upload:</p>
+      	<br>
+      	<p align="center">
+      		<input type="file" id="excelFile" name="excelFile" style="width:200px"/>
+      	</p>
+     </form>
+</div>
+
+>>>>>>> boletoAvulso
 </body>

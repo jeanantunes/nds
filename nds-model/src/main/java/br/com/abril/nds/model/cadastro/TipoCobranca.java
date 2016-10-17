@@ -8,7 +8,9 @@ public enum TipoCobranca {
 	DEPOSITO("Deposito"), 
 	TRANSFERENCIA_BANCARIA("Transferencia Bancaria"),
 	DINHEIRO("Dinheiro"),
-	OUTROS("Outros");
+	OUTROS("Outros"),
+	BOLETO_AVULSO("Boleto Avulso"),
+	BOLETO_NFE("Boleto NF-e");
 	
 	private String descricao;
 	
