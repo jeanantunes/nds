@@ -81,9 +81,9 @@ public class GrupoServiceImpl implements GrupoService {
 			dto.setTipoCota(grupo.getTipoCota());
 			dto.setTipoGrupo(grupo.getTipoGrupo());
 			
-			dto.setDataInicioVigencia(DATE_FORMAT.format(grupo.getDataInicioVigencia()));
+			dto.setDataInicioVigencia(DateUtil.formatarDataPTBR(grupo.getDataInicioVigencia()));
 			if(grupo.getDataFimVigencia()!=null){
-			    dto.setDataFimVigencia(DATE_FORMAT.format(grupo.getDataFimVigencia()));
+			    dto.setDataFimVigencia(DateUtil.formatarDataPTBR(grupo.getDataFimVigencia()));
 			}
 			
 			gruposDTO.add(dto);			

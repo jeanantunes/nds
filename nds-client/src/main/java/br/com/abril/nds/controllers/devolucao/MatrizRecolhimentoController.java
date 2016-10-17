@@ -24,6 +24,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -274,6 +275,7 @@ public class MatrizRecolhimentoController extends BaseController {
         return dataPesquisa;
     }
     
+    @Transactional
     @Post
     @Path("/confirmar")
     @Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
@@ -1921,6 +1923,7 @@ public class MatrizRecolhimentoController extends BaseController {
         this.result.use(Results.json()).from(datasConfirmadasReabertura, "result").serialize();
     }
     
+    @Transactional
     @Post
     public void reabrirMatriz(List<Date> datasReabertura) {
         

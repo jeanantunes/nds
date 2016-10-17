@@ -551,11 +551,12 @@ public class ImpressaoBoletosController extends BaseController {
 
 		session.setAttribute(DIVIDA_SESSION_ATTRIBUTE, arquivo);
 		
-		if(!filtro.getMensagemValidacaoImpressao().isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, filtro.getMensagemValidacaoImpressao());
-		}
-
 		result.use(Results.json()).from(tipoImpressao, "result").serialize();
+
+//		if(!filtro.getMensagemValidacaoImpressao().isEmpty()){
+//			throw new ValidacaoException(TipoMensagem.WARNING, filtro.getMensagemValidacaoImpressao());
+//		}
+
 	}
 
 	@Get
@@ -699,71 +700,85 @@ public class ImpressaoBoletosController extends BaseController {
 		
 	}
 	
-//	@Post
-//	@Path("/enviarDividasPorEmail")
-//	@Rules(Permissao.ROLE_FINANCEIRO_IMPRESSAO_BOLETOS_ALTERACAO)
-//	public void enviarDividasPorEmail(String dataMovimento, Long box, Long rota, Long roteiro, Integer numCota, TipoCobranca tipoCobranca, Long banco, String sortorder, String sortname, int page, int rp) throws Exception {
-//
-//		if(!distribuidorService.verificarParametroDistribuidorEmissaoDocumentosEmailCheck(null, TipoParametrosDistribuidorEmissaoDocumento.BOLETO_SLIP)){
-//			throw new ValidacaoException(TipoMensagem.ERROR, "Boletos e Slip's não podem ser enviados por e-mail, distribuidor não aceita o envio deste documento.");
-//		}		
-//		
-//		FiltroDividaGeradaDTO filtro = validarFiltroConsulta(dataMovimento, box, rota, roteiro, numCota, tipoCobranca, banco);
-//		
-//		List<GeraDividaDTO> listaDividasGeradas = dividaService.obterDividasGeradas(filtro);
-//
-//		if (listaDividasGeradas == null || listaDividasGeradas.isEmpty()) {
-//			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-//		}
-//		
-//		String numeroCotasSemEmail = "";
-//		String numeroCotasNaoRecebemEmail = "";
-//		
-//		for (GeraDividaDTO dto : listaDividasGeradas) {
-//			
-//			Cota cota = cotaService.obterPorId(dto.getIdCota());
-//			
-//			if (cota.getParametroDistribuicao().getBoletoSlipEmail() == null || !cota.getParametroDistribuicao().getBoletoSlipEmail()) {
-//				if(numeroCotasNaoRecebemEmail.isEmpty()){
-//					numeroCotasNaoRecebemEmail = cota.getNumeroCota().toString();
-//				}else{
-//					numeroCotasNaoRecebemEmail += ", "+ cota.getNumeroCota().toString();
-//				}
-//				continue;
-//			} 
-//			
-//			if (cota.getPessoa().getEmail() == null) {
-//				if(numeroCotasSemEmail.isEmpty()){
-//					numeroCotasSemEmail = cota.getNumeroCota().toString();
-//				}else{
-//					numeroCotasSemEmail +=", "+ cota.getNumeroCota().toString();
-//				}
-//				continue;
-//			} 
-//			
-//			
-//			dividaService.enviarArquivoPorEmail(dto.getNossoNumero());
-//		}
-//		
-//		String mensagem = "";
-//		
-//		if (!numeroCotasSemEmail.isEmpty()) {
-//			mensagem = "E-mail enviado com sucesso.\n As cotas abaixo não possuem e-mail cadastrado: \n "+ numeroCotasSemEmail +"\n";
-//			mensagem += "-------------------------- \n";
-//		}
-//		
-//		if(!numeroCotasNaoRecebemEmail.isEmpty()){
-//			mensagem += "As Cotas abaixo não recebem e-mail: \n"+ numeroCotasNaoRecebemEmail;
-//		}
-//		
-//		if(!mensagem.isEmpty()){
-//			throw new ValidacaoException(TipoMensagem.WARNING, mensagem);
-//		}
-//		
-//		result.use(Results.nothing());
-//
-//		throw new ValidacaoException(TipoMensagem.SUCCESS, "Dividas enviadas com sucesso.");
-//
-//	}
+	@Post
+	@Path("/enviarDividasPorEmail")
+	@Rules(Permissao.ROLE_FINANCEIRO_IMPRESSAO_BOLETOS_ALTERACAO)
+	public void enviarDividasPorEmail(String dataMovimento, Long box, Long rota, Long roteiro, Integer numCota, TipoCobranca tipoCobranca, Long banco, String sortorder) throws Exception {
+
+		if(!distribuidorService.verificarParametroDistribuidorEmissaoDocumentosEmailCheck(null, TipoParametrosDistribuidorEmissaoDocumento.BOLETO_SLIP)){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Boletos e Slip's não podem ser enviados por e-mail, distribuidor não aceita o envio deste documento.");
+		}
+		
+		FiltroDividaGeradaDTO filtro = validarFiltroConsulta(dataMovimento, box, rota, roteiro, numCota, tipoCobranca, banco);
+		
+		filtro.setDistribEnviaEmail(true);
+		
+		List<GeraDividaDTO> listaDividasGeradas = dividaService.obterDividasGeradas(filtro);
+
+		if (listaDividasGeradas == null || listaDividasGeradas.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
+		String numeroCotasSemEmail = "";
+		String numeroCotasNaoRecebemEmail = "";
+		
+		for (GeraDividaDTO dto : listaDividasGeradas) {
+			
+			Cota cota = cotaService.obterPorId(dto.getIdCota());
+			
+			if(filtro.getNumeroCota() == null){
+				if(cota.getParametroDistribuicao().getUtilizaDocsParametrosDistribuidor()){
+					if(!filtro.isDistribEnviaEmail()){
+						if(numeroCotasNaoRecebemEmail.isEmpty()){
+							numeroCotasNaoRecebemEmail = cota.getNumeroCota().toString();
+						}else{
+							numeroCotasNaoRecebemEmail += ", "+ cota.getNumeroCota().toString();
+						}
+						continue;
+					}
+				}else{
+					if(!Util.validarBoolean(cota.getParametroDistribuicao().getBoletoSlipEmail())){
+						if(numeroCotasNaoRecebemEmail.isEmpty()){
+							numeroCotasNaoRecebemEmail = cota.getNumeroCota().toString();
+						}else{
+							numeroCotasNaoRecebemEmail += ", "+ cota.getNumeroCota().toString();
+						}
+						continue;
+					}
+				}
+			}
+			
+			if (cota.getPessoa().getEmail() == null) {
+				if(numeroCotasSemEmail.isEmpty()){
+					numeroCotasSemEmail = cota.getNumeroCota().toString();
+				}else{
+					numeroCotasSemEmail +=", "+ cota.getNumeroCota().toString();
+				}
+				continue;
+			} 
+			
+			dividaService.enviarArquivoPorEmail(dto.getNossoNumero());
+		}
+		
+		String mensagem = "";
+		
+		if (!numeroCotasSemEmail.isEmpty()) {
+			mensagem = "E-mail enviado com sucesso.\n As cotas abaixo não possuem e-mail cadastrado: \n "+ numeroCotasSemEmail +"\n";
+			mensagem += "-------------------------- \n";
+		}
+		
+		if(!numeroCotasNaoRecebemEmail.isEmpty()){
+			mensagem += "As Cotas abaixo não recebem e-mail: \n"+ numeroCotasNaoRecebemEmail;
+		}
+		
+		if(!mensagem.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, mensagem);
+		}
+		
+		result.use(Results.nothing());
+
+		throw new ValidacaoException(TipoMensagem.SUCCESS, "Dividas enviadas com sucesso.");
+
+	}
 	
 }

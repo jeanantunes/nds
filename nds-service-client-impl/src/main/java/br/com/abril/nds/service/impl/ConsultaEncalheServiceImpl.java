@@ -17,12 +17,14 @@ import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
+import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -39,6 +41,7 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.DebitoCreditoCotaVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
@@ -58,6 +61,9 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 	@Autowired
 	private DocumentoCobrancaService documentoCobrancaService;
 	
+	@Autowired
+	private ConferenciaEncalheRepository conferenciaEncalheRepository;
+
 	@Autowired
 	private CotaService cotaService;
 	
@@ -217,6 +223,11 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 
 		List<Integer> listaCotas = controleConferenciaEncalheCotaRepository.obterListaNumCotaConferenciaEncalheCota(filtro);
 		
+		
+		if(listaCotas.isEmpty()){
+			listaCotas = conferenciaEncalheRepository.obterCotasVarejoConferenciaEncalhe(filtro);
+		}
+		
 		if (listaCotas != null && !listaCotas.isEmpty() ) {
 
 			List<byte[]> arquivos = new ArrayList<byte[]>();
@@ -281,26 +292,61 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		retornoArquivoCota = arquivosCota.size() > 1 ? retornoArquivoCota = PDFUtil.mergePDFs(arquivosCota) : arquivosCota.get(0);
 		
-		/*
-		if (arquivosCota.size() == 1) {
-			
-			retornoArquivoCota = arquivosCota.get(0);
-		
-		} else if (arquivosCota.size() > 1) {
-
-			retornoArquivoCota = PDFUtil.mergePDFs(arquivosCota);
-		}
-		*/
-		
 		String[] listaDeDestinatarios = {cota.getPessoa().getEmail()};
-		AnexoEmail anexoPDF = new AnexoEmail("nota-envio", retornoArquivoCota, TipoAnexo.PDF);
+		
+		String nomeArquivo = "SLIP - Data "+DateUtil.formatarDataPTBR(new Date())+" - Cota "+cota.getNumeroCota();
+		
+		AnexoEmail anexoPDF = new AnexoEmail(nomeArquivo, retornoArquivoCota, TipoAnexo.PDF);
 		
 		try {
-			emailService.enviar("[NDS] - Consulta Encalhe", "Olá, segue em anexo o slip emitido pela consulta de encalhe.", listaDeDestinatarios, anexoPDF);
+			emailService.enviar("[NDS] - Emissão "+nomeArquivo, "Olá, o SLIP segue anexo.", listaDeDestinatarios, anexoPDF);
+			System.out.println("Envio EMAIL SLIP COTA - "+cota.getNumeroCota());
 		} catch (AutenticacaoEmailException e) {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	@Transactional
+	@Override
+	public void enviarEmailLoteSlip(FiltroConsultaEncalheDTO filtro){
+		
+		List<Integer> listaCotas = controleConferenciaEncalheCotaRepository.obterListaNumCotaConferenciaEncalheCota(filtro);
+		
+		if (listaCotas != null && !listaCotas.isEmpty() ) {
+
+			for (Integer numCota : listaCotas) {
+				
+				Cota cota = cotaService.obterPorNumeroDaCota(numCota);
+				
+				if(filtro.getNumCota() == null){
+					if(cota.getParametroDistribuicao().getUtilizaDocsParametrosDistribuidor()){
+						if(filtro.isDistribEnviaEmail()){
+							enviarSlipPorEmail(filtro, cota);
+						}else{
+							addMensagemValidacao(filtro, cota);
+						}
+					}else{
+						if(Util.validarBoolean(cota.getParametroDistribuicao().getSlipEmail())){
+							enviarSlipPorEmail(filtro, cota);
+						}else{
+							addMensagemValidacao(filtro, cota);
+						}
+					}
+				}else{
+					enviarSlipPorEmail(filtro, cota);
+				}
+			}
+		}
+		
+	}
+
+	private void addMensagemValidacao(FiltroConsultaEncalheDTO filtro, Cota cota) {
+		if(filtro.getValidacao() != null){
+			filtro.getValidacao().addMensagem("Cota "+cota.getNumeroCota()+", não recebe SLIP por e-mail! \n");
+		}else{
+			filtro.setValidacao(new ValidacaoVO(TipoMensagem.WARNING, "Cota "+cota.getNumeroCota()+", não recebe SLIP por e-mail! \n"));
+		}
 	}
 	
 	/**

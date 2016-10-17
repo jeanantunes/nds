@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import br.com.abril.nds.client.vo.baixaboleto.TipoEmissaoDocumento;
 import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
@@ -463,7 +461,11 @@ public interface CotaService {
 
 	boolean isCotaRecebeFornecedor(Long idProdutoEdicao, Long idCota);
 
+	boolean isCotaVarejo(Long idCota);
+
 	boolean isCotaParametro(Long idCota, Integer numCota, TipoEmissaoDocumento tipoDoc);
 
 	List<Integer> buscarNumeroCotasPorEnderecoLED(Integer enderecoLED);
+
+	DistribuicaoDTO buscarParametrosDistribEmissaoDoc();
 }

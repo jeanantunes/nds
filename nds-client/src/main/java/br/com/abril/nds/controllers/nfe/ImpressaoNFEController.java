@@ -3,7 +3,10 @@ package br.com.abril.nds.controllers.nfe;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,6 +39,7 @@ import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -169,13 +173,17 @@ public class ImpressaoNFEController extends BaseController {
 	}
 	
 	private PaginacaoVO carregarPaginacao(String sortname, String sortorder, int rp, int page) {
+		
 		PaginacaoVO paginacao = new PaginacaoVO();
 		paginacao.setOrdenacao(Ordenacao.ASC);
 	    paginacao.setPaginaAtual(page);
 	    paginacao.setQtdResultadosPorPagina(rp);
 	    paginacao.setSortOrder(sortorder);
 	    paginacao.setSortColumn(sortname);
-		return paginacao;
+	
+	    
+	    
+	    return paginacao;
 	}
 	
 	private void verificarFiltro(FiltroImpressaoNFEDTO filtro) {
@@ -284,39 +292,60 @@ public class ImpressaoNFEController extends BaseController {
 			throw new ValidacaoException(validacaoVO);
 		}
 		
-		
-		List<Integer> listaDeNumerosDeCota = filtro.getCotasDasNotasJaFiltradas();
-		
-		List<Long> listaDosNumerosDasNotas = filtro.getNumerosNotas();
-		
-		int cont = 0;
+		Map<Integer, List<Long>> mapNumeroNotasAgrupadasPorCota = new HashMap<>();
+		Map<Integer, Cota> mapCotaPesquisada = new HashMap<>();
 		
 		List<String> mensagens  = new ArrayList<>();
+		mensagens.add("Emails enviado com sucesso!");
 		
-		for (Integer numeroCota : listaDeNumerosDeCota) {
-			Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+		filtro.setPesquisarCotasParaImpressao(true);
+		List<NotasCotasImpressaoNfeDTO> listaCotasImpressaoNFe = impressaoNFEService.obterNotafiscalImpressao(filtro);
+		
+		for (NotasCotasImpressaoNfeDTO notaDTO : listaCotasImpressaoNFe) {
+			Cota cota = this.cotaService.obterPorId(notaDTO.getIdCota());
 			
-			List<Long> nota = new ArrayList<>();
-			nota.add(listaDosNumerosDasNotas.get(cont));
-			filtro.setNumerosNotas(nota);
-			cont++;
-			
-			if(cota.getParametrosCotaNotaFiscalEletronica() == null || cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() == null){
-				mensagens.add("[Erro ao enviar email para a cota: " + cota.getNumeroCota() + "]");
-				continue;
+			if(mapNumeroNotasAgrupadasPorCota.get(cota.getNumeroCota()) == null){
+				
+				List<Long> numeroIdNotas = new ArrayList<>();
+				numeroIdNotas.add(notaDTO.getIdNota());
+				
+				mapNumeroNotasAgrupadasPorCota.put(cota.getNumeroCota(), numeroIdNotas);
+				mapCotaPesquisada.put(cota.getNumeroCota(), cota);
+				
+			}else{
+				mapNumeroNotasAgrupadasPorCota.get(cota.getNumeroCota()).add(notaDTO.getIdNota());
 			}
 			
-			String[] listaDeDestinatarios = {cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica()};
+		}
+		
+		for (Integer numeroCota : mapNumeroNotasAgrupadasPorCota.keySet()) {
+			Cota cota = mapCotaPesquisada.get(numeroCota);
+			
+			if(cota.getParametrosCotaNotaFiscalEletronica() == null || cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() == null){
+				mensagens.add("Erro ao enviar email para a cota: " + cota.getNumeroCota());
+				continue;
+			}
 
+			List<Long> idNotas = new ArrayList<>();
+			
+			idNotas.addAll(mapNumeroNotasAgrupadasPorCota.get(numeroCota));
+			
+			filtro.setNumerosNotas(idNotas);
+			
+			String[] listaDeDestinatarios = {cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica()};
+			
 			byte[] report = this.impressaoNFEService.imprimirNFe(filtro);
 			
-			AnexoEmail anexoPDF = new AnexoEmail("impressao-nfe", report, TipoAnexo.PDF);
-	    	
-	    	try {
-				emailSerice.enviar("[NDS] - Geração NF-e", "Olá, segue em anexo a NF-e.", listaDeDestinatarios, anexoPDF);
+			String nomeAnexo = "NF-e - Data "+DateUtil.formatarDataPTBR(new Date())+" - Cota "+numeroCota;
+			
+			AnexoEmail anexoPDF = new AnexoEmail(nomeAnexo, report, TipoAnexo.PDF);
+			
+			try {
+				emailSerice.enviar("[NDS] - Impressão "+nomeAnexo, "Olá, a NF-e segue anexo.", listaDeDestinatarios, anexoPDF);
+				System.out.println("Email enviado, impressao NFE, cota - "+numeroCota);
 				
 			} catch (AutenticacaoEmailException e) {
-				mensagens.add("[Erro ao enviar email para a cota: " + cota.getNumeroCota() + "]");
+				mensagens.add("Erro ao enviar email para a cota: " + cota.getNumeroCota());
 			}
 		}
 		

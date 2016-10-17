@@ -60,6 +60,8 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		sql.append("             when eg.DATA_ALTERACAO is null then eg.DATA_CADASTRO ");
 		sql.append("             else eg.DATA_ALTERACAO ");
 		sql.append("         end as dataAlteracao, ");
+		sql.append("					case   when eg.DATA_ALTERACAO is null then date_format(eg.DATA_CADASTRO,'%H:%i')      ");        
+		sql.append("					else date_format(eg.DATA_ALTERACAO,'%H:%i') end as hora, ");
 		sql.append("         eg.ID as estudo, ");
 		sql.append("         eg.LIBERADO as estudoLiberado, ");
 		sql.append("         coalesce(eg.REPARTE_MINIMO,0) as reparteMinimo, ");
@@ -154,6 +156,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		query.addScalar("dataLcto", StandardBasicTypes.DATE);
 		query.addScalar("dataRcto", StandardBasicTypes.DATE);
 		query.addScalar("dataAlteracao", StandardBasicTypes.DATE);
+		query.addScalar("hora", StandardBasicTypes.STRING);
 		query.addScalar("estudo", StandardBasicTypes.LONG);
 		query.addScalar("estudoLiberado", StandardBasicTypes.BOOLEAN);
 		query.addScalar("reparteMinimo", StandardBasicTypes.BIG_INTEGER);

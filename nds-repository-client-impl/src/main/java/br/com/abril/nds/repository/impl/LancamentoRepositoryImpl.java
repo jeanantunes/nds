@@ -660,6 +660,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 		//Fim
 		sql.append(" 	  MOVIMENTO_ESTOQUE_COTA movimentoEstoqueCota ");
 		sql.append(" 	  		ON movimentoEstoqueCota.LANCAMENTO_ID = lancamento.ID ");
+		sql.append("  and   movimentoEstoqueCota.forma_comercializacao = 'CONSIGNADO' ");
 		//FIXED Conforme convessado com o Cesar 
 		//sql.append(" inner join ");
 		sql.append(" left join ");
@@ -678,6 +679,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 		sql.append("         ) ");
 		sql.append("     ) ");
 		sql.append("     and movimentoEstoqueCota.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
+	
 
 		return sql.toString();
 	}
@@ -790,7 +792,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 				.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao and mecMaxDate.lancamento.id =  lancamentoMaxDate.id   ");
 		
 		if(dataLimiteLancamento != null) {
-			hql.append(" and lancamento.dataLancamentoDistribuidor <= :dataLimiteLancamento");
+			hql.append(" and lancamentoMaxDate.dataLancamentoDistribuidor <= :dataLimiteLancamento");
 		}
 				hql.append(" ) ").append(" and lancamento.produtoEdicao.id = :idProdutoEdicao ");
 
@@ -822,7 +824,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 					.append("   from MovimentoEstoqueCota mecMaxDate ")
 					.append("   join mecMaxDate.produtoEdicao.lancamentos lancamentoMaxDate ")
 					.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao and mecMaxDate.lancamento.id =  lancamentoMaxDate.id  ");
-					hql.append(" and lancamento.dataLancamentoDistribuidor <= :dataLimiteLancamento");
+					hql.append(" and lancamentoMaxDate.dataLancamentoDistribuidor <= :dataLimiteLancamento");
 				hql.append(" )");	
 					
 			}
@@ -873,7 +875,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 				.append("   join mecMaxDate.produtoEdicao.lancamentos lancamentoMaxDate ")
 				.append("   join mecMaxDate.cota cotaMaxDate ")
 				.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao and mecMaxDate.lancamento.id =  lancamentoMaxDate.id  ")
-				.append("   and cotaMaxDate.id = :idCota  ");
+				.append("   and  cotaMaxDate.id = :idCota   ");
 		
 		if(dataLimiteLancamento != null) {
 				hql.append("   and lancamentoMaxDate.dataLancamentoDistribuidor <= :dataLimiteLancamento ");
@@ -2301,7 +2303,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 		hql.append(" left join produtoEdicao.descontoLogistica descontoLogisticaProdutoEdicao ");
 		hql.append(" left join produto.descontoLogistica descontoLogisticaProduto ");
 		hql.append(" left join lancamento.periodoLancamentoParcial periodoLancamentoParcial ");
-		hql.append(" join lancamento.estudo estudo, ");
+		hql.append(" left join lancamento.estudo estudo, ");
 		hql.append(" MovimentoEstoqueCota movimentoEstoqueCota join movimentoEstoqueCota.tipoMovimento tipoMovimento ");
 		hql.append(" join movimentoEstoqueCota.cota cota ");
 		hql.append(" join cota.box box ");
@@ -2577,7 +2579,8 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 			Long produtoEdicaoId) {
 		StringBuilder sql = new StringBuilder();
 
-		sql.append("from Lancamento l where l.dataLancamentoPrevista=:dtLancamento and l.produtoEdicao.id=:produtoEdicaoId");
+		
+		sql.append("from Lancamento l where l.dataLancamentoDistribuidor =:dtLancamento and l.produtoEdicao.id=:produtoEdicaoId");
 
 		Query query = getSession().createQuery(sql.toString());
 

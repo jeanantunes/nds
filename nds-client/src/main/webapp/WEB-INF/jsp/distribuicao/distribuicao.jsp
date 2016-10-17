@@ -354,28 +354,28 @@
    					<tr>
 						<td>Slip</td>
 						<td align="center">
-							<input id="${param.tela}slipImpresso" type="checkbox" name="checkbox4"/>
+							<input id="${param.tela}slipImpresso" type="checkbox" name="checkbox4" onchange="DISTRIB_COTA.uncheckUtilizaParametrosDistrib();"/>
 						</td>
 						<td align="center">
-							<input id="${param.tela}slipEmail" type="checkbox" name="checkbox"/>
+							<input id="${param.tela}slipEmail" type="checkbox" name="checkbox" onchange="DISTRIB_COTA.uncheckUtilizaParametrosDistrib();"/>
 						</td>
      					</tr>
    					<tr>
 						<td>Boleto / Recibo</td>
 						<td align="center">
-							<input id="${param.tela}boletoImpresso" type="checkbox" />
+							<input id="${param.tela}boletoImpresso" type="checkbox" onchange="DISTRIB_COTA.uncheckUtilizaParametrosDistrib();"/>
 						</td>
 						<td align="center">
-							<input id="${param.tela}boletoEmail" type="checkbox" />
+							<input id="${param.tela}boletoEmail" type="checkbox" onchange="DISTRIB_COTA.uncheckUtilizaParametrosDistrib();"/>
 						</td>
      					</tr>
    					<tr>
 						<td>Boleto + Slip</td>
 						<td align="center">
-							<input id="${param.tela}boletoSlipImpresso" type="checkbox" />
+							<input id="${param.tela}boletoSlipImpresso" type="checkbox" onchange="DISTRIB_COTA.uncheckUtilizaParametrosDistrib();"/>
 						</td>
 						<td align="center">
-							<input id="${param.tela}boletoSlipEmail" type="checkbox" />
+							<input id="${param.tela}boletoSlipEmail" type="checkbox" onchange="DISTRIB_COTA.uncheckUtilizaParametrosDistrib();"/>
 						</td>
      					</tr>
 <!--     					<tr> -->
@@ -388,21 +388,21 @@
 <!-- 							</td> -->
 <!--       					</tr> -->
 				    <tr>
-				      	<td>Note de Envio</td>
+				      	<td>Nota de Envio</td>
 					  	<td align="center">
-							<input id="${param.tela}neImpresso" type="checkbox" name="checkbox2" />
+							<input id="${param.tela}neImpresso" type="checkbox" name="checkbox2" onchange="DISTRIB_COTA.uncheckUtilizaParametrosDistrib();"/>
 						</td>
 					    <td align="center">
-					    	<input id="${param.tela}neEmail" type="checkbox" name="checkbox5"/>
+					    	<input id="${param.tela}neEmail" type="checkbox" name="checkbox5" onchange="DISTRIB_COTA.uncheckUtilizaParametrosDistrib();"/>
 					    </td>
 				    </tr>
 				    <tr>
-						<td>Chamda de encalhe:</td>
+						<td>Chamda de Encalhe:</td>
 						<td align="center">
-							<input id="${param.tela}ceImpresso" type="checkbox" name="checkbox3"/>
+							<input id="${param.tela}ceImpresso" type="checkbox"  onchange="DISTRIB_COTA.uncheckUtilizaParametrosDistrib();" name="checkbox3"/>
 						</td>
 						<td align="center">
-							<input id="${param.tela}ceEmail" type="checkbox" name="checkbox6" />
+							<input id="${param.tela}ceEmail" type="checkbox" name="checkbox6" onchange="DISTRIB_COTA.uncheckUtilizaParametrosDistrib();" />
 						</td>
      					</tr>
    				</table>
@@ -410,7 +410,7 @@
    				<table width="373" border="0" cellspacing="1" cellpadding="0" style="padding-top: 30px;">
    					<tr>
 						<td>Cota utiliza os parametros do distribuidor: 
-							<input id="${param.tela}cotaUtilizaParametrosDistrib" type="checkbox" name="isCotaUtilizaParametrosDistrib" checked="checked" style="width: 50px;">
+							<input id="${param.tela}cotaUtilizaParametrosDistrib" type="checkbox" name="isCotaUtilizaParametrosDistrib" class="isCotaUtilizaParametrosDistrib" checked="checked" style="width: 50px;">
 						</td>
    					</tr>
            		</table>

@@ -41,6 +41,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.CanalDistribuicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -417,6 +418,26 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		final List<Integer> diasSemanaDistribuidorOpera = this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(
 				OperacaoDistribuidor.RECOLHIMENTO, idFornecedor);
 		
+		if(indCotaOperacaoDiferenciada){
+			
+			final List<Date> datasAnteriores_opDif = distribuidorService.obterListaDataOperacional(dataOperacao, QUANTIDADE_DIAS_UTEIS, diasSemanaDistribuidorOpera, false);
+			final List<Date> datasPosteriores_opDif = distribuidorService.obterListaDataOperacional(dataOperacao,QUANTIDADE_DIAS_UTEIS, diasSemanaDistribuidorOpera, true);
+			
+			for (Date date : datasPosteriores_opDif) {
+				if(!dataCEConferivel.getListaDataConferivelProdutoNaoParcial().contains(DateUtil.removerTimestamp(date))) {
+					dataCEConferivel.getListaDataConferivelProdutoNaoParcial().add(DateUtil.removerTimestamp(date));
+				}
+			}
+			
+			for (Date date : datasAnteriores_opDif) {
+				if(!dataCEConferivel.getListaDataConferivelProdutoNaoParcial().contains(DateUtil.removerTimestamp(date))) {
+					dataCEConferivel.getListaDataConferivelProdutoNaoParcial().add(DateUtil.removerTimestamp(date));
+				}
+			}
+			
+			return;
+		}
+		
 		final List<Integer> listaDiasRecolheAtrasado = distribuidorService.getListaDiaOrdinalAceitaRecolhimento();
 		
 		carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataOperacao, numeroCota, listaIdFornecedor, indCotaOperacaoDiferenciada);
@@ -429,7 +450,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(datasAnteriores!=null && !datasAnteriores.isEmpty()) {
 			for(final Date dataAnterior : datasAnteriores) {
-				carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataAnterior, numeroCota, listaIdFornecedor, false);
+				carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataAnterior, numeroCota, listaIdFornecedor, indCotaOperacaoDiferenciada);
 			}
 		}
 
@@ -976,7 +997,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		} else {
 		
-			isDataRecolhimentoValida(dataOperacao, chamadaEncalheCota.getChamadaEncalhe().getDataRecolhimento(), produtoEdicao.getId(), false);
+			if(produtoEdicao.getProduto().getFornecedor().getCanalDistribuicao() != CanalDistribuicao.VAREJO){
+				isDataRecolhimentoValida(dataOperacao, chamadaEncalheCota.getChamadaEncalhe().getDataRecolhimento(), produtoEdicao.getId(), false);
+			}
 			
 		}	
 		
@@ -1027,7 +1050,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					
 				throw new ValidacaoException(
 						TipoMensagem.WARNING, 
-                        "Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao + "]. <br> "
+                        "Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao +" ed. "+produtoEdicao.getNumeroEdicao()+ "]. <br> "
                             + "Não é permitida antecipação de produtos pelo distribuidor. ");
 						
 			}
@@ -1035,13 +1058,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 		final List<Date> datasRecolhimento = 
-				distribuidorService.obterDatasAposFinalizacaoPrazoRecolhimento(dataPrimeiroRecolhimento,
+				distribuidorService.obterDatasAposFinalizacaoPrazoRecolhimento(dataPrimeiroRecolhimento, indOperacaoDiferenciada,
 																			   this.obterIdsFornecedorDoProduto(produtoEdicao));
 		if(datasRecolhimento == null || datasRecolhimento.isEmpty()){
 			throw new ValidacaoException(
 					TipoMensagem.WARNING, 
                     " Distribuidor não possui parametrização de dias de recolhimento para o "
-                        + "<br> fornecedor do produto edição [" + nomeProdutoEdicao + "].");
+                        + "<br> fornecedor do produto edição [" + nomeProdutoEdicao +" ed. "+produtoEdicao.getNumeroEdicao()+ "].");
 		}
 		
 		for(final Date item : datasRecolhimento){
@@ -1055,12 +1078,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(indOperacaoDiferenciada) {
 			throw new ValidacaoException(
 					TipoMensagem.WARNING, 
-                    " Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao + "]. <br>"
+                    " Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao +" ed. "+produtoEdicao.getNumeroEdicao()+ "]. <br>"
                         + " Data de operação excedendo ou fora dos dias de recolhimento de operação diferenciada. ");
 		} else {
 			throw new ValidacaoException(
 					TipoMensagem.WARNING, 
-                    " Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao + "]. <br>"
+                    " Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao +" ed. "+produtoEdicao.getNumeroEdicao()+ "]. <br>"
                         + " Data de operação excedendo ou fora dos dias de recolhimento possíveis. ");
 		}
 
@@ -1119,6 +1142,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
+		final boolean isOperacaoDiferenciada = cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacao); 
+		
 		final boolean indFechado = false;
 		final boolean indPostergado = false;
 		
@@ -1132,7 +1157,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				datasRecolhimento, 
 				indFechado, 
 				indPostergado, 
-				listaIdProdutoEdicao);
+				listaIdProdutoEdicao, isOperacaoDiferenciada);
 		
 		for(final ConferenciaEncalheDTO conferencia : listaConferenciaEncalheContingencia) {
 			final long id = (-1 * (idInicial++));
@@ -3685,6 +3710,19 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras, dataOperacao, datasRecolhimentoValidas);
 	}
+	
+	@Override
+	@Transactional
+	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_cotaVarejo(final String codigoBarras) {
+		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_CotaVarejo(codigoBarras);
+	}
+	
+	@Override
+	@Transactional
+	public List<ItemAutoComplete> obterProdutoPorCodigoOuNomeCotaVarejo(final String codigoOuNome) {
+		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoOuNome_CotaVarejo(codigoOuNome);
+	}
+	
 	
     /**
 	* Valida informações basicas antes de iniciar o recolhimento:

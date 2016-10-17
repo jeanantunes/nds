@@ -345,7 +345,7 @@ var fechamentoEncalheController = $.extend(true, {
 			}
 			
 			// row.cell.fisico = '<input tabindex="'+ index + '" class="numericInput" isEdicao="true" type="text" value="'+ (valorFisico != undefined ? valorFisico : "") +'" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',event); fechamentoEncalheController.retirarCheckBox('+index+', ' + row.cell.produtoEdicao + ');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ', ' +row.cell.produtoEdicao+')" ' + fechado + '/>';
-			row.cell.fisico = '<input tabindex="'+ index + '" class="" isEdicao="true" type="text" value="'+ (valorFisico != undefined ? valorFisico : "") +'" onkeyup="this.value = this.value.replace(/[^0-9]*/gi, \'\')" onkeydown="fechamentoEncalheController.nextInputExemplares(this, '+index+',event); fechamentoEncalheController.retirarCheckBox('+index+', ' + row.cell.produtoEdicao + ');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'" name="fisico" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ', ' +row.cell.produtoEdicao+')" ' + fechado + ' maxlength="6" />';
+			row.cell.fisico = '<input tabindex="'+ index + '" class="" isEdicao="true" type="text" value="'+ (valorFisico != undefined ? valorFisico : "") +'" onkeyup="this.value = this.value.replace(/[^0-9]*/gi, \'\')" onkeydown="fechamentoEncalheController.nextInputExemplares(this, '+index+',event); fechamentoEncalheController.retirarCheckBox('+index+', ' + row.cell.produtoEdicao + ');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'" name="fisico" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ', ' +row.cell.produtoEdicao+')" ' + fechado + ' maxlength="8" />';
 			
 				
 			row.cell.replicar = '<input isEdicao="true" type="checkbox" onchange="fechamentoEncalheController.selecionarLinha('+ row.cell.produtoEdicao +', this.checked)" id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index +', this, ' + row.cell.produtoEdicao + ');"' + fechado+ '/>';
@@ -418,7 +418,7 @@ var fechamentoEncalheController = $.extend(true, {
 		});
 	},
 	
-	xitao : function() {
+	checkAllRecalculo : function() {
 		
 		var index = 0;
 		
@@ -431,7 +431,7 @@ var fechamentoEncalheController = $.extend(true, {
 			var diferenca = tabela.rows[index].cells[11].firstChild;
 			var valor = tabela.rows[index].cells[7].firstChild.innerHTML;
 			var campo2 = tabela.rows[index].cells[10].firstChild.firstChild;
-			
+			var valorCalculado;
 			
 			if (campo2.disabled) {
 				
@@ -456,8 +456,10 @@ var fechamentoEncalheController = $.extend(true, {
 				}
 				
 				campo.value = valor - juramentado - vendaEncalhe;
+				valorCalculado = valor - juramentado - vendaEncalhe;
+				
 				diferenca.innerHTML = "0";
-				$("#"+fisico.id).val(devolucao);
+				$("#"+fisico.id).val(valorCalculado);
 			} else {
 				
 				campo2.value = "";
@@ -539,7 +541,7 @@ var fechamentoEncalheController = $.extend(true, {
 
 		checkAll(input,"checkgroupFechamento");
 		
-		fechamentoEncalheController.xitao();
+		fechamentoEncalheController.checkAllRecalculo();
 		
 		fechamentoEncalheController.checkAllGrid = input.checked;
 	},

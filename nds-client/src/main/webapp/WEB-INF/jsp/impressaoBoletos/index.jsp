@@ -4,6 +4,7 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/impressaoBoletos.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
 	<script language="javascript" type="text/javascript">
 
 	var pesquisaCotaImpressaoBoletos = new PesquisaCota();
@@ -80,13 +81,6 @@
 							<img src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0" />
 						</a>
 					</span>
-					<!-- 
-					<span class="bt_novos">
-						<a isEdicao="true" href="javascript:impressaoBoletosController.enviarEmailDividas('BOLETO_SLIP')" rel="tipsy" title="Enviar e-mail Boletos e Slips">
-							<img src="${pageContext.request.contextPath}/images/ico_email.png" hspace="5" border="0" />
-						</a>
-					</span>
-					 -->
 				</div>
  					
 				<span class="bt_arq">
@@ -102,6 +96,11 @@
  				<span class="bt_arq">
        				<a href="javascript:impressaoBoletosController.gerarArquivo()" rel="tipsy" title="Gerar Arquivo Cobran&ccedil;a Registrada">
        					<img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif"  hspace="5" border="0" />
+       				</a>
+       			</span>
+       			<span class="bt_arq">
+       				<a id="impressaoBoletos-btnEnviarEmail" href="javascript:void(0)" original-title="Enviar email">
+       					<img src="${pageContext.request.contextPath}/images/ico_email.png" alt="Enviar email" hspace="5" border="0">
        				</a>
        			</span>
 			</div>

@@ -1,5 +1,12 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -12,9 +19,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.imgscalr.Scalr;
+import org.imgscalr.Scalr.Mode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -267,11 +277,18 @@ public class ProdutoEdicaoController extends BaseController {
 		this.result.nothing();
 	}
 	
+	private static final int IMG_WIDTH = 300;
+	private static final int IMG_HEIGHT = 300;
+
+	
 	@Post
 	@Rules(Permissao.ROLE_CADASTRO_EDICAO_ALTERACAO)
 	public void salvar(UploadedFile imagemCapa,
 			ProdutoEdicaoDTO produtoEdicaoDTO, ModoTela modoTela, boolean istrac29) {
 			
+	//	if ( imagemCapa != null && imagemCapa.getSize() > 50000 ) {
+	//		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Imagem de capa muito grande("+imagemCapa.getSize()+" bytes)..Reduza o tamanho(limite de 50000 bytes)!"));
+	//	}
 		produtoEdicaoDTO.setModoTela(modoTela);
 		
 		if(FormaComercializacao.CONTA_FIRME.equals(produtoEdicaoDTO.getFormaComercializacao())){
@@ -296,6 +313,26 @@ public class ProdutoEdicaoController extends BaseController {
                			
 				contentType = imagemCapa.getContentType();
 				imgInputStream = imagemCapa.getFile();
+				
+				   if ( imagemCapa.getSize() > 50000 ) { // maior que 50k , reduzir
+				            // redimensionar imagem..
+					   LOGGER.warn("capa maior que 50k. sera reduzida tamanho="+imagemCapa.getSize());
+				           try {
+				            BufferedImage originalImage = ImageIO.read(imgInputStream);
+				    		int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+
+				    	//	BufferedImage resizeImageJpg = resizeImageWithHint(originalImage, type);
+				    		BufferedImage resizeImageJpg = Scalr.resize(originalImage, Mode.AUTOMATIC, IMG_WIDTH, IMG_HEIGHT);
+				    		
+				    		ByteArrayOutputStream os = new ByteArrayOutputStream();
+				    		ImageIO.write(resizeImageJpg, "jpg", os);
+				    	    imgInputStream = new ByteArrayInputStream(os.toByteArray());
+				           } catch ( Exception ee ){
+				        	   LOGGER.error("Erro redimensionando imagem ", ee);
+				        	   throw new ValidacaoException(TipoMensagem.WARNING, "Imagem muito grande(acima de 50k) e erro redimensionando a imagem !");
+				           }
+				   }
+
 			}
 			
 			produtoEdicaoService.salvarProdutoEdicao(produtoEdicaoDTO, produtoEdicaoDTO.getCodigoProduto(), contentType, imgInputStream, istrac29, modoTela);

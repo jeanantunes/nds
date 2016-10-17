@@ -224,8 +224,9 @@ public class GeracaoNotaEnvioController extends BaseController {
 	
 		List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro);
 	
-		if(notasEnvio == null || (notasEnvio != null && notasEnvio.size() < 1)) {
+		if(notasEnvio == null || notasEnvio.size() < 1) {
 	
+			filtro.setValidacaoVO(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
 		}
 	
@@ -237,6 +238,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 			if(e != null && e.getLocalizedMessage() != null) {
 				throw new ValidacaoException(TipoMensagem.ERROR, e.getLocalizedMessage());
 			} else if(e != null && e.getMessage() != null) {
+				filtro.setValidacaoVO(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
 				throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 			} else {
 				throw e;
@@ -246,19 +248,35 @@ public class GeracaoNotaEnvioController extends BaseController {
 		return notasGeradas;
 
     }
+    
+    @Post
+    public void getErrorGetArquivos(){
+    	FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+
+    	ValidacaoVO validacao = filtro.getValidacaoVO() != null ? filtro.getValidacaoVO() : new ValidacaoVO(TipoMensagem.ERROR, "Erro ao emitir NE");
+    	
+    	throw new ValidacaoException(validacao);
+    	
+    }
 
     @Post
     public void getArquivoNotaEnvio() {
 
-     	if(!distribuidorService.verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(null, TipoParametrosDistribuidorEmissaoDocumento.NOTA_ENVIO)){
-     		throw new ValidacaoException(TipoMensagem.ERROR, "Notas de envio não podem ser impressas, distribuidor não aceita impressão deste documento.");
-     	}
+    	FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+    	
+    	 filtro.getPaginacaoVO().setPaginaAtual(null);
+         filtro.getPaginacaoVO().setQtdResultadosPorPagina(null);
          
         try {
             
             byte[] notasGeradas = this.getNotas();
     
             if (notasGeradas != null) {
+            	
+            	if(!distribuidorService.verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(null, TipoParametrosDistribuidorEmissaoDocumento.NOTA_ENVIO)){
+             		filtro.setValidacaoVO(new ValidacaoVO(TipoMensagem.ERROR, "Notas de envio não podem ser impressas, distribuidor não aceita impressão deste documento."));
+             		throw new ValidacaoException(TipoMensagem.ERROR, "Notas de envio não podem ser impressas, distribuidor não aceita impressão deste documento.");
+             	}
     
                 DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
         
@@ -278,9 +296,11 @@ public class GeracaoNotaEnvioController extends BaseController {
             }
         } catch (ValidacaoException e) {
             LOGGER.error("Erro de validação ao gerar arquivos de notas de envio: " + e.getMessage(), e);
+            filtro.setValidacaoVO(e.getValidacao());
             result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
         } catch (Exception e) {
             LOGGER.error("Erro genérico ao gerar arquivos de notas de envio: " + e.getMessage(), e);
+            filtro.setValidacaoVO(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
             result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()),Constantes.PARAM_MSGS).recursive().serialize();
         }
     }
@@ -372,6 +392,7 @@ public class GeracaoNotaEnvioController extends BaseController {
     public void enviarEmail() {
     	
     	FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+    	
     	
     	filtro.setEnvioEmail(true);
     	

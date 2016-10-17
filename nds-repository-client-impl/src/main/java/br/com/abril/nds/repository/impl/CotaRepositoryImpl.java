@@ -64,6 +64,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
+import br.com.abril.nds.model.cadastro.CanalDistribuicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -183,6 +184,16 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         
         return mapCotas;
         
+    }
+    
+    @Override
+    public Long obterIdPorNumerDaCota(final Integer numeroCota) {
+        
+    	 final SQLQuery query = this.getSession().createSQLQuery("select id from Cota c where c.numero_cota = :numeroCota");
+         
+         query.setParameter("numeroCota", numeroCota);
+         BigInteger c = (BigInteger) query.uniqueResult();
+         return c.longValue();
     }
     
     @Override
@@ -308,7 +319,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
                      .append(" WHERE MOVIMENTOCOTA.COTA_ID = COTA_.ID ")
                      .append(" AND (MOVIMENTOCOTA.STATUS_ESTOQUE_FINANCEIRO IS NULL ")
                      .append(" OR MOVIMENTOCOTA.STATUS_ESTOQUE_FINANCEIRO =:statusEstoqueFinanceiro) ")
-                     .append(" AND TIPOMOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ")
+                     .append(" AND TIPOMOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE != (:tipoMovimentoEstorno) ")
                      .append(" AND MOVIMENTOCOTA.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
         
         final StringBuilder hqlDividaAcumulada = new StringBuilder();
@@ -511,7 +522,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append("         join cota cota  ")
            .append("         	on dv.cota_ID = cota.ID ")
            .append("         join distribuidor dist  ")
-           .append("         where ")
+           .append("         where COTA_.ID = cota.id AND  ")
            .append("         dv.STATUS in ('EM_ABERTO', 'PENDENTE_INADIMPLENCIA') ")
            .append("         	and cb.STATUS_COBRANCA = :statusCobrancaNaoPago ")
            .append("         	and (cota.SUGERE_SUSPENSAO = true or dist.SUGERE_SUSPENSAO = true )")
@@ -3968,6 +3979,24 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 	
 	@Override
+	public boolean validarCotaVarejo (Long idCota){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select if(count(cf.FORNECEDOR_ID) > 0, true, false) isVarejo  ");
+		sql.append(" from cota_fornecedor cf  ");
+		sql.append(" where cf.FORNECEDOR_ID in (select id from fornecedor where CANAL_DISTRIBUICAO = :canalDistrib) ");
+		sql.append("   AND cf.COTA_ID = :idCota ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("canalDistrib", CanalDistribuicao.VAREJO.toString());
+		query.setParameter("idCota", idCota);
+		
+		return (BigIntegerUtil.isMaiorQueZero((BigInteger)query.uniqueResult()));
+		
+	}
+	
 	public boolean isCotaParametro(Long idCota, Integer numeroCota, TipoEmissaoDocumento tipoDoc){
 		
 		StringBuilder sql = new StringBuilder();

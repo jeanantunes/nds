@@ -8,6 +8,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 @Exportable
 public class FiltroConsultaNotaEnvioDTO  implements Serializable{
@@ -35,6 +36,8 @@ public class FiltroConsultaNotaEnvioDTO  implements Serializable{
 	
 	private PaginacaoVO paginacaoVO;
 	
+	private ValidacaoVO validacaoVO;
+	
 	private String exibirNotasEnvio;
 	
 	private boolean filtroRoteiroEspecial;
@@ -45,6 +48,8 @@ public class FiltroConsultaNotaEnvioDTO  implements Serializable{
 	private boolean isEnvioEmail;
 	
 	private boolean isDistribEnviaEmail;
+	
+	private List<Integer> numeroCotasSemEmail;
 	
 	
 	/**
@@ -221,6 +226,22 @@ public class FiltroConsultaNotaEnvioDTO  implements Serializable{
 
 	public void setDistribEnviaEmail(boolean isDistribEnviaEmail) {
 		this.isDistribEnviaEmail = isDistribEnviaEmail;
+	}
+
+	public List<Integer> getNumeroCotasSemEmail() {
+		return numeroCotasSemEmail;
+	}
+
+	public void setNumeroCotasSemEmail(List<Integer> numeroCotasSemEmail) {
+		this.numeroCotasSemEmail = numeroCotasSemEmail;
+	}
+
+	public ValidacaoVO getValidacaoVO() {
+		return validacaoVO;
+	}
+
+	public void setValidacaoVO(ValidacaoVO validacaoVO) {
+		this.validacaoVO = validacaoVO;
 	}
 	
 }

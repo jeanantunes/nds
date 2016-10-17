@@ -84,7 +84,6 @@ import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
-import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -184,8 +183,6 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
             final String msg = "Erro ao enviar e-mail de arquivo de cobrança para nosso número: " + nossoNumero + " - "
                     + e.getMessage();
             LOGGER.error(msg, e);
-            throw new ValidacaoException(TipoMensagem.ERROR,
-                    msg );
         }
         
         cobrancaRepository.incrementarVia(nossoNumero);
@@ -467,9 +464,13 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
      */
     private void enviarDocumentoPorEmail(final Cobranca cobranca) throws AutenticacaoEmailException, Exception {
         
-        final String assunto = distribuidorService.assuntoEmailCobranca();
+//        final String assunto = distribuidorService.assuntoEmailCobranca();
+//        final String mensagem = distribuidorService.mensagemEmailCobranca();
+    	
+    	String nomeAnexo = cobranca.getTipoCobranca().getDescricao()+" - Data " +DateUtil.formatarDataPTBR(cobranca.getDataEmissao())+" - Cota " + cobranca.getCota().getNumeroCota();
+    	String assunto = "[NDS] - Emissão "+nomeAnexo;
         
-        final String mensagem = distribuidorService.mensagemEmailCobranca();
+    	String mensagem = "Olá, A cobrança segue anexo.";
         
         final String emailCota = cobranca.getCota().getPessoa().getEmail();
         final String[] destinatarios = new String[]{emailCota};
@@ -477,7 +478,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         final byte[] arquivo = getDocumentoCobranca(cobranca);
         
         final AnexoEmail anexoEmail = new AnexoEmail();
-        anexoEmail.setNome(cobranca.getNossoNumero());
+        anexoEmail.setNome(nomeAnexo);
         anexoEmail.setAnexo(arquivo);
         anexoEmail.setTipoAnexo(AnexoEmail.TipoAnexo.PDF);
         
@@ -1418,20 +1419,20 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
             
             byte[] slip = JasperRunManager.runReportToPdf(path, slipDTO.getParametersSlip(), jrDataSource);
             
-            Cota cota = cotaService.obterPorNumeroDaCota(slipDTO.getNumeroCota());
-            
-            if(cota.getParametroDistribuicao().getSlipEmail() != null && cota.getParametroDistribuicao().getSlipEmail() == true){
-            	if(cota.getPessoa().getEmail() != null){
-        			String[] listaDeDestinatarios = {cota.getPessoa().getEmail()};
-        			
-        			try {
-        				AnexoEmail anexoPDF = new AnexoEmail("nota-envio", slip, TipoAnexo.PDF);
-        				emailService.enviar("Emissão de Slip", "Olá, o documento de SLIP segue anexo.", listaDeDestinatarios, anexoPDF);
-        			} catch ( AutenticacaoEmailException e) {
-        				e.printStackTrace();
-        			}
-            	}
-            }
+//            Cota cota = cotaService.obterPorNumeroDaCota(slipDTO.getNumeroCota());
+//            
+//            if(cota.getParametroDistribuicao().getSlipEmail() != null && cota.getParametroDistribuicao().getSlipEmail() == true){
+//            	if(cota.getPessoa().getEmail() != null){
+//        			String[] listaDeDestinatarios = {cota.getPessoa().getEmail()};
+//        			
+//        			try {
+//        				AnexoEmail anexoPDF = new AnexoEmail("nota-envio", slip, TipoAnexo.PDF);
+//        				emailService.enviar("Emissão de Slip", "Olá, o documento de SLIP segue anexo.", listaDeDestinatarios, anexoPDF);
+//        			} catch ( AutenticacaoEmailException e) {
+//        				e.printStackTrace();
+//        			}
+//            	}
+//            }
             
             return slip;
             

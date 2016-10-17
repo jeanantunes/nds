@@ -71,6 +71,8 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 	
 	private List<Integer> cotasDasNotasJaFiltradas;
 	
+	private boolean isPesquisarCotasParaImpressao;
+	
 	public enum ColunaOrdenacaoImpressaoNFE {
 
 		COTA("cota");
@@ -426,6 +428,14 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 
 	public void setCotasDasNotasJaFiltradas(List<Integer> cotasDasNotasJaFiltradas) {
 		this.cotasDasNotasJaFiltradas = cotasDasNotasJaFiltradas;
+	}
+
+	public boolean isPesquisarCotasParaImpressao() {
+		return isPesquisarCotasParaImpressao;
+	}
+
+	public void setPesquisarCotasParaImpressao(boolean isPesquisarCotasParaImpressao) {
+		this.isPesquisarCotasParaImpressao = isPesquisarCotasParaImpressao;
 	}
 	
 }

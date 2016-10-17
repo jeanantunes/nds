@@ -38,6 +38,35 @@ function PesquisaProduto(workspace) {
 		}
 	},
 	
+	
+	//Pesquisa por código de produto
+	this.pesquisarPorCodigoProdutoIcd = function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
+		
+		var codigoProduto = $(idCodigo, pesquisaProduto.workspace).attr("value");
+		
+		codigoProduto = $.trim(codigoProduto);
+		
+		$(idCodigo, pesquisaProduto.workspace).val(codigoProduto);
+		
+		$(idProduto, pesquisaProduto.workspace).val("");
+		$(idEdicao, pesquisaProduto.workspace).val("");
+		$(idEdicao, pesquisaProduto.workspace).attr("disabled", "disabled");
+		
+		if (codigoProduto && codigoProduto.length > 0) {
+			
+			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProdutoIcd",
+					   {codigoProduto:codigoProduto},
+					   function(result) { pesquisaProduto.pesquisarPorCodigoSuccessCallBack(result, idProduto, idEdicao, successCallBack); },
+					   function() { pesquisaProduto.pesquisarPorCodigoErrorCallBack(idCodigo, errorCallBack); }, isFromModal);
+		
+		} else {
+		
+			if (errorCallBack) {
+				errorCallBack();
+			}
+		}
+	},
+	
 	//Mostrar auto complete por nome do produto
 	this.autoCompletarPorNomeProduto = function(idProduto, isFromModal) {
 		

@@ -996,36 +996,44 @@ public class CotaServiceImpl implements CotaService {
         if (parametroDistribuicaoCota == null) {
             return this.setDistribuicaoDefault(dto);
             
-        } else if ((parametroDistribuicaoCota.getSlipImpresso() == null || !parametroDistribuicaoCota.getSlipImpresso())
-                && (parametroDistribuicaoCota.getSlipEmail() == null || !parametroDistribuicaoCota.getSlipEmail())
-                && (parametroDistribuicaoCota.getBoletoImpresso() == null || !parametroDistribuicaoCota.getBoletoImpresso())
-                && (parametroDistribuicaoCota.getBoletoEmail() == null || !parametroDistribuicaoCota.getBoletoEmail())
-                && (parametroDistribuicaoCota.getBoletoSlipImpresso() == null || !parametroDistribuicaoCota.getBoletoSlipImpresso())
-                && (parametroDistribuicaoCota.getBoletoSlipEmail() == null || !parametroDistribuicaoCota.getBoletoSlipEmail())
-                && (parametroDistribuicaoCota.getReciboImpresso() == null || !parametroDistribuicaoCota.getReciboImpresso())
-                && (parametroDistribuicaoCota.getReciboEmail() == null || !parametroDistribuicaoCota.getReciboEmail())
-                && (parametroDistribuicaoCota.getChamadaEncalheImpresso() == null || !parametroDistribuicaoCota.getChamadaEncalheImpresso())
-                && (parametroDistribuicaoCota.getChamadaEncalheEmail() == null || !parametroDistribuicaoCota.getChamadaEncalheEmail())
-                && (parametroDistribuicaoCota.getNotaEnvioImpresso() == null || !parametroDistribuicaoCota.getNotaEnvioImpresso())
-                && (parametroDistribuicaoCota.getNotaEnvioEmail() == null || !parametroDistribuicaoCota.getNotaEnvioEmail()))
-        {
-            
-            dto = this.setDistribuicaoDefault(dto);
-            
-        } else {
-            dto.setNeImpresso(parametroDistribuicaoCota.getNotaEnvioImpresso());
-            dto.setNeEmail(parametroDistribuicaoCota.getNotaEnvioEmail());
-            dto.setCeImpresso(parametroDistribuicaoCota.getChamadaEncalheImpresso());
-            dto.setCeEmail(parametroDistribuicaoCota.getChamadaEncalheEmail());
-            dto.setSlipImpresso(parametroDistribuicaoCota.getSlipImpresso());
-            dto.setSlipEmail(parametroDistribuicaoCota.getSlipEmail());
-            dto.setBoletoImpresso(parametroDistribuicaoCota.getBoletoImpresso());
-            dto.setBoletoEmail(parametroDistribuicaoCota.getBoletoEmail());
-            dto.setBoletoSlipImpresso(parametroDistribuicaoCota.getBoletoSlipImpresso());
-            dto.setBoletoSlipEmail(parametroDistribuicaoCota.getBoletoSlipEmail());
-            dto.setReciboImpresso(parametroDistribuicaoCota.getReciboImpresso());
-            dto.setReciboEmail(parametroDistribuicaoCota.getReciboEmail());
+        } 
+        
+        if(parametroDistribuicaoCota.getUtilizaDocsParametrosDistribuidor() != null && parametroDistribuicaoCota.getUtilizaDocsParametrosDistribuidor() == true){
+        	
+        	getParametrosDistribuidorEmissaoDocs(dto);
+        	
+        }else{
+        	if ((parametroDistribuicaoCota.getSlipImpresso() == null || !parametroDistribuicaoCota.getSlipImpresso())
+        			&& (parametroDistribuicaoCota.getSlipEmail() == null || !parametroDistribuicaoCota.getSlipEmail())
+        			&& (parametroDistribuicaoCota.getBoletoImpresso() == null || !parametroDistribuicaoCota.getBoletoImpresso())
+        			&& (parametroDistribuicaoCota.getBoletoEmail() == null || !parametroDistribuicaoCota.getBoletoEmail())
+        			&& (parametroDistribuicaoCota.getBoletoSlipImpresso() == null || !parametroDistribuicaoCota.getBoletoSlipImpresso())
+        			&& (parametroDistribuicaoCota.getBoletoSlipEmail() == null || !parametroDistribuicaoCota.getBoletoSlipEmail())
+        			&& (parametroDistribuicaoCota.getReciboImpresso() == null || !parametroDistribuicaoCota.getReciboImpresso())
+        			&& (parametroDistribuicaoCota.getReciboEmail() == null || !parametroDistribuicaoCota.getReciboEmail())
+        			&& (parametroDistribuicaoCota.getChamadaEncalheImpresso() == null || !parametroDistribuicaoCota.getChamadaEncalheImpresso())
+        			&& (parametroDistribuicaoCota.getChamadaEncalheEmail() == null || !parametroDistribuicaoCota.getChamadaEncalheEmail())
+        			&& (parametroDistribuicaoCota.getNotaEnvioImpresso() == null || !parametroDistribuicaoCota.getNotaEnvioImpresso())
+        			&& (parametroDistribuicaoCota.getNotaEnvioEmail() == null || !parametroDistribuicaoCota.getNotaEnvioEmail())){
+        		
+        		dto = this.setDistribuicaoDefault(dto);
+        		
+        	} else {
+        		dto.setNeImpresso(parametroDistribuicaoCota.getNotaEnvioImpresso());
+        		dto.setNeEmail(parametroDistribuicaoCota.getNotaEnvioEmail());
+        		dto.setCeImpresso(parametroDistribuicaoCota.getChamadaEncalheImpresso());
+        		dto.setCeEmail(parametroDistribuicaoCota.getChamadaEncalheEmail());
+        		dto.setSlipImpresso(parametroDistribuicaoCota.getSlipImpresso());
+        		dto.setSlipEmail(parametroDistribuicaoCota.getSlipEmail());
+        		dto.setBoletoImpresso(parametroDistribuicaoCota.getBoletoImpresso());
+        		dto.setBoletoEmail(parametroDistribuicaoCota.getBoletoEmail());
+        		dto.setBoletoSlipImpresso(parametroDistribuicaoCota.getBoletoSlipImpresso());
+        		dto.setBoletoSlipEmail(parametroDistribuicaoCota.getBoletoSlipEmail());
+        		dto.setReciboImpresso(parametroDistribuicaoCota.getReciboImpresso());
+        		dto.setReciboEmail(parametroDistribuicaoCota.getReciboEmail());
+        	}
         }
+        
         
         dto.setUtilizaParametrosDocsDistribuidor(parametroDistribuicaoCota.getUtilizaDocsParametrosDistribuidor());
         
@@ -1071,6 +1079,59 @@ public class CotaServiceImpl implements CotaService {
 
         return dto;
     }
+    
+    @Transactional
+    @Override
+	public DistribuicaoDTO buscarParametrosDistribEmissaoDoc(){
+    	DistribuicaoDTO paramDistribDto = new DistribuicaoDTO();
+    	getParametrosDistribuidorEmissaoDocs(paramDistribDto);
+    	
+    	return paramDistribDto; 
+    }
+
+	private void getParametrosDistribuidorEmissaoDocs(DistribuicaoDTO dto) {
+		List<ParametrosDistribuidorEmissaoDocumento> parametrosDistribuicao = this.distribuidorRepository.parametrosDistribuidorEmissaoDocumentos();
+		
+		for (ParametrosDistribuidorEmissaoDocumento parametros : parametrosDistribuicao) {
+			
+			final String nomeDocumento = parametros.getTipoParametrosDistribuidorEmissaoDocumento().name();
+		    
+		    switch (nomeDocumento) {
+		    case "BOLETO":
+		        dto.setBoletoEmail(parametros.isUtilizaEmail());
+		        dto.setBoletoImpresso(parametros.isUtilizaImpressao());
+		        break;
+		        
+		    case "BOLETO_SLIP":
+		    	dto.setBoletoSlipEmail(parametros.isUtilizaEmail());
+		    	dto.setBoletoSlipImpresso(parametros.isUtilizaImpressao());
+		        break;
+		        
+		    case "CHAMADA_ENCALHE":
+		    	dto.setCeImpresso(parametros.isUtilizaImpressao());
+				dto.setCeEmail(parametros.isUtilizaEmail());
+		        break;
+		        
+		    case "NOTA_ENVIO":
+		    	dto.setNeImpresso(parametros.isUtilizaImpressao());
+				dto.setNeEmail(parametros.isUtilizaEmail());
+		        break;
+		        
+		    case "RECIBO":
+		    	dto.setReciboEmail(parametros.isUtilizaEmail());
+		    	dto.setReciboImpresso(parametros.isUtilizaImpressao());
+		        break;
+		        
+		    case "SLIP":
+		    	dto.setSlipEmail(parametros.isUtilizaEmail());
+		    	dto.setSlipImpresso(parametros.isUtilizaImpressao());
+		        break;
+		        
+		    default:
+		        break;
+		    }
+		}
+	}
     
     @Override
     @Transactional
@@ -3365,6 +3426,13 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional
 	public boolean isCotaRecebeFornecedor(Long idProdutoEdicao, Long idCota){
 		return cotaRepository.validarCotaRecebeFornecedor(idCota, idProdutoEdicao);
+	}
+	
+	@Override
+	@Transactional
+	public boolean isCotaVarejo(Long idCota){
+		return cotaRepository.validarCotaVarejo(idCota);
+
 	}
 	
 	@Override

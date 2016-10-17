@@ -96,11 +96,11 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		sql.append(" FROM (");
 		
-		sql.append("     SELECT SUM(innerQuery.qntReparte) + COALESCE( ")
+		sql.append("     SELECT SUM(innerQuery.qntReparte) + 1*COALESCE( ")
 		.append(this.getQntDiferencaResumoLancamento()).append(", 0) + ")
 		.append(this.getQntCotaAusente(false)).append(" as qntReparte, ");
 
-		sql.append("            innerQuery.precoCapa * ( SUM(innerQuery.qntReparte) + COALESCE( ")
+		sql.append("            innerQuery.precoCapa * ( SUM(innerQuery.qntReparte) + 1* COALESCE( ")
 		.append(this.getQntDiferencaResumoLancamento()).append(", 0) + ")
 		.append(this.getQntCotaAusente(false)).append(" ) AS totalValorFaturado ");
 		
@@ -205,7 +205,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		sql.append(" FROM (");
 
 		sql.append("     SELECT ");		
-		sql.append("            innerQuery.precoCapa * ( SUM(innerQuery.qntReparte) + COALESCE( ")
+		sql.append("            innerQuery.precoCapa * ( SUM(innerQuery.qntReparte) + 1*COALESCE( ")
 															.append(this.getQntDiferencaResumoLancamento()).append(", 0) - ")
 															.append(this.getQntCotaAusente(false)).append(" ) AS valorFaturado ");
 		sql.append("     FROM ");
@@ -427,7 +427,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 				  .append(" WHERE lancamento.DATA_LCTO_DISTRIBUIDOR = :dataLancamento ")
 				  .append(" AND lancamento.STATUS IN ( :statusAposExpedido ) ")
 				  .append(" AND tp.GRUPO_MOVIMENTO_ESTOQUE IN( :grupoMovimentoEstoque )")
-				  .append(" AND mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
+				  .append(" AND mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null group by mec.id ");
 				  
 		
 		return innerQuery;
@@ -472,10 +472,10 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		sql.append(" SELECT  innerQuery.precoCapa AS precoCapa, 				 	")
 				.append(" SUM(CASE WHEN innerQuery.grupoMovimento in (" + this.getGruposFalta() + ") ")
 				.append("			 THEN -innerQuery.qntReparte ")
-				.append("			 ELSE innerQuery.qntReparte END ) + ").append(this.getQntCotaAusente(false))
+				.append("			 ELSE innerQuery.qntReparte END ) +  1 * ").append(this.getQntCotaAusente(false))
 				.append("  AS qntReparte, 						    ")
 				.append(" COALESCE( "+ this.getQntDiferencaResumoLancamento() +", 0) AS qntDiferenca,")
-				.append(" sum(innerQuery.valorFaturado) + ").append(this.getQntCotaAusente(true)).append(" AS valorFaturado,")
+				.append(" sum(innerQuery.valorFaturado) + 1 * ").append(this.getQntCotaAusente(true)).append(" AS valorFaturado,")
 				.append(" innerQuery.codigoProduto AS codigoProduto, 			 ")
 				.append(" innerQuery.nomeProduto AS nomeProduto, 				 ")
 				.append(" innerQuery.numeroEdicao AS numeroEdicao, 				 ")

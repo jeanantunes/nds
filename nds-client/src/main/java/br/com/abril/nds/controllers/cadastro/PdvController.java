@@ -496,9 +496,11 @@ public class PdvController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"Tipo de Estabelecimento deve ser informado!");
 		}
 		
-		if(pdvDTO.isExpositor() && pdvDTO.getTipoExpositor().isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Tipo Expositor deve ser informado!");
+		if(pdvDTO.isExpositor() && (pdvDTO.getTipoExpositor() == null  || pdvDTO.getTipoExpositor().isEmpty()))
+		{
+            throw new ValidacaoException(TipoMensagem.WARNING,"Tipo Expositor deve ser informado!");
 		}
+
 		
 		 @SuppressWarnings("unchecked")
          List<EnderecoAssociacaoDTO> listaEnderecosExibicao = 

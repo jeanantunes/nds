@@ -78,6 +78,18 @@ $(function(){
 										</c:choose>
 										<input type="hidden" name="dto.autenticaEmail" id="autenticaEmailHidden" />
 									</td>
+									</tr>
+									<tr>
+									<td>
+									<span style="width:120px;" >
+					<a isEdicao="true" onclick="parametroSistemaController.testEmail();" href="javascript:;" rel="tipsy" title="Testar Envio de Email">
+					Testar Email Enviando para:
+					</a>
+					
+				</span>
+									</td>
+											<td><input type="emailTeste" name="dto.emailTest" id="emailTest" style="width:220px;" value="${parametroSistemaGeralDTO.emailTest}" /></td>
+							
 								</tr>
 								<tr>
 									<td>Interface CE Exporta&ccedil;&atilde;o:</td>

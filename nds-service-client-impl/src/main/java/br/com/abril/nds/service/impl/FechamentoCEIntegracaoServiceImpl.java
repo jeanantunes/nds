@@ -386,7 +386,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 					int valor = estoqueProduto.getMovimentos().size();
 					
 					if (valor == 0) {
-						throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao sem Movimento Estoque ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+"/"+itemFo.getProdutoEdicao().getNumeroEdicao());
+						// throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edicao sem Movimento Estoque ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+"/"+itemFo.getProdutoEdicao().getNumeroEdicao());
+						LOGGER.warn("Produto Edicao sem Movimento Estoque ("+itemFo.getProdutoEdicao().getProduto().getCodigo()+"/"+itemFo.getProdutoEdicao().getNumeroEdicao());
 					} else {
 						oimffdf.setMovimento(estoqueProduto.getMovimentos().get(0));
 						
@@ -968,7 +969,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			if(cef.getDataFechamentoNDS() == null || cef.getDataFechamentoNDS().compareTo(dataOperacao)!=0
 					|| StatusIntegracao.INTEGRADO.equals(cef.getStatusIntegracao())){
 				
-				fornecedorSemReabertura.append((cef.getFornecedor().getJuridica()!= null)
+				fornecedorSemReabertura.append((cef.getFornecedor() != null && cef.getFornecedor().getJuridica()!= null)
 						? cef.getFornecedor().getJuridica().getRazaoSocial()
 								:"").append(",");
 				continue;

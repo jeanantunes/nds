@@ -41,6 +41,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
@@ -325,7 +326,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		sql.append(" ROTEIRO roteiro13_ ");
 		sql.append(" on rota12_.ROTEIRO_ID=roteiro13_.ID ");
 		sql.append(" where 1=1 ");
-		sql.append(" and roteiro13_.tipo_roteiro <> 'ESPECIAL' "); 
+		sql.append(" and roteiro13_.tipo_roteiro <> 'ESPECIAL' ");
+		sql.append(" AND (cota3_.TIPO_COTA <> 'A_VISTA' OR cota3_.DEVOLVE_ENCALHE = true) "); 
+		
         
 		setParamsFilterSqlPostergado(filtro, sql, param);
 	}
@@ -413,6 +416,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		param.add(false);
 	}
 	
+	@SuppressWarnings("unused")
 	private void setQtdExamplaresVlrTotalCe(FiltroEmissaoCE filtro, CotaEmissaoDTO dto, boolean postergado) {
 		CotaEmissaoDTO ret = getTotalQtdeValorPrevistaDaEmissaoCE(filtro, dto.getIdCota(), postergado);
 		if(ret != null){
@@ -508,7 +512,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		   .append(" join rota.roteiro roteiro ")
 		   .append(" join roteiro.roteirizacao roteirizacao ")
 		   .append(" join roteirizacao.box box ")
-		   .append(" where cota.box.id = box.id ");
+		   .append(" where cota.box.id = box.id ")
+		   .append(" AND (cota.tipoCota <> 'A_VISTA' OR cota.devolveEncalhe = true) ");
 		
 		if(filtro.getCotasOperacaoDiferenciada()!=null) {
 			hql.append(" and cota.numeroCota in (:cotasOperacaoDiferenciada) ");
@@ -667,6 +672,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		return query.list();
 	}
 	
+	@SuppressWarnings("unused")
 	private String obterSubHqlQtdeReparte(FiltroEmissaoCE filtro) {
 		
 	StringBuffer hql = new StringBuffer();
@@ -699,9 +705,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		
-		StringBuilder hql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 		
-		hql.append(" select                                                                                     ")
+		sql.append(" select                                                                                     ")
 		.append(" cota4_.ID as idCota,                                                                          ")
         .append(" produtoedi5_.CODIGO_DE_BARRAS as codigoBarras,                                                ")
         .append(" produto6_.CODIGO as codigoProduto,                                                            ")
@@ -710,9 +716,10 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
         .append(" produtoedi5_.ID as idProdutoEdicao,                                                           ")
         .append(" produtoedi5_.NUMERO_EDICAO as edicao,                                                         ")
         .append(" coalesce(movimentoe16_.VALOR_DESCONTO,")
-		.append("      (select VALOR_DESCONTO from MOVIMENTO_ESTOQUE_COTA mec FORCE INDEX (NDX_PRODUTO_EDICAO) where ")
-        .append("  mec.PRODUTO_EDICAO_ID = produtoedi5_.ID														")
-        .append(" and mec.COTA_ID = chamadaenc0_.COTA_ID and mec.tipo_movimento_id = 21 order by mec.data desc limit 1 ), 0   ")
+		.append("      (select VALOR_DESCONTO from MOVIMENTO_ESTOQUE_COTA mec FORCE INDEX (NDX_PRODUTO_EDICAO) ")
+		.append("       inner join tipo_movimento tm on tm.id = mec.tipo_movimento_id ") 
+        .append("  where mec.PRODUTO_EDICAO_ID = produtoedi5_.ID														")
+        .append(" and mec.COTA_ID = chamadaenc0_.COTA_ID and tm.OPERACAO_ESTOQUE = 'ENTRADA' order by mec.data desc limit 1 ), 0   ")
 		.append(" ) as desconto,       								                                            ")
         .append(" produtoedi5_.PRECO_VENDA as precoVenda,                                                       ")
         .append(" periodolan11_.TIPO as tipoRecolhimento,                                                       ")
@@ -720,9 +727,10 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
         .append(" chamadaenc1_.DATA_RECOLHIMENTO as dataRecolhimento,                                           ")
         .append("  chamadaenc0_.qtde_prevista as encalhe_previsto,                                              ")
         .append(" coalesce(movimentoe16_.PRECO_COM_DESCONTO, movimentoe16_.PRECO_VENDA, ")
-        .append("      (select PRECO_COM_DESCONTO from MOVIMENTO_ESTOQUE_COTA mec FORCE INDEX (NDX_PRODUTO_EDICAO) where ")
-        .append("  mec.PRODUTO_EDICAO_ID = produtoedi5_.ID														")
-        .append(" and mec.COTA_ID = chamadaenc0_.COTA_ID and mec.tipo_movimento_id = 21 order by mec.data desc limit 1 )   ")
+        .append("      (select PRECO_COM_DESCONTO from MOVIMENTO_ESTOQUE_COTA mec FORCE INDEX (NDX_PRODUTO_EDICAO) ")
+		.append("        inner join tipo_movimento tm on tm.id = mec.tipo_movimento_id  ")
+        .append(" where  mec.PRODUTO_EDICAO_ID = produtoedi5_.ID														")
+        .append(" and mec.COTA_ID = chamadaenc0_.COTA_ID and tm.OPERACAO_ESTOQUE = 'ENTRADA' order by mec.data desc limit 1 )   ")
         .append(" ,0) as precoComDesconto, ")
         
         //.append(" (select sum(cec.qtde_prevista) ")
@@ -742,31 +750,31 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		// .append(" and mec.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME'                                                ")
 		.append(" and ((mec.FORMA_COMERCIALIZACAO = 'CONTA_FIRME' and c.tipo_cota = 'A_VISTA' and c.devolve_encalhe) or mec.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME') " )
 		
-		.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null                                                ");
-		
+		.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null                                                 ");
+
 		if(filtro.getDtRecolhimentoDe() != null) {
-			hql.append(" and ce.DATA_RECOLHIMENTO >=:dataDe ");
+			sql.append(" and ce.DATA_RECOLHIMENTO >=:dataDe ");
 		}
 		
 		if(filtro.getDtRecolhimentoAte() != null) {
-			hql.append(" and ce.DATA_RECOLHIMENTO <=:dataAte ");
+			sql.append(" and ce.DATA_RECOLHIMENTO <=:dataAte ");
 		}
 
-		hql.append(" ),0) as reparte,                                                                              ")
+		sql.append(" ),0) as reparte,                                                                              ")
         .append(" coalesce(conferenci2_.QTDE, 0 ) as quantidadeDevolvida,                                       ")
         .append(" case when count(conferenci2_.id) > 0 then 1 else 0 end as confereciaRealizada,                  ")
         .append(" chamadaenc1_.SEQUENCIA as sequencia,                                                          ")
         .append(" min(notaenvio15_.numero) as numeroNotaEnvio                                                   ");  
 		
-		gerarFromWhereProdutosCE(filtro, hql, param);
+		gerarFromWhereProdutosCE(filtro, sql, param);
 		
-		hql.append(" group by chamadaenc1_.ID , cota4_.ID ");
+		sql.append(" group by chamadaenc1_.ID , cota4_.ID ");
 		// hql.append(" having reparte > 0 "); 
 		
-		hql.append(" having (reparte > if (periodolan11_.TIPO = 'FINAL',-1,0)) or encalhe_previsto = 0 "); 
-		hql.append(" order by chamadaenc1_.DATA_RECOLHIMENTO, sequencia ");
+		sql.append(" having (reparte > if (periodolan11_.TIPO = 'FINAL',-1,0)) or encalhe_previsto = 0 "); 
+		sql.append(" order by chamadaenc1_.DATA_RECOLHIMENTO, sequencia ");
 		
-		SQLQuery query =  getSession().createSQLQuery(hql.toString());
+		SQLQuery query =  getSession().createSQLQuery(sql.toString());
 		
 		setParameters(query, param);
 		
@@ -1273,9 +1281,16 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 
 	@Override
     public Date obterMaxDataRecolhimento(final TipoChamadaEncalhe tipoChamadaEncalhe){
-	    final Criteria criteria = getSession().createCriteria(ChamadaEncalhe.class);
+	    final Criteria criteria = getSession().createCriteria(ChamadaEncalhe.class,"chamadaEncalhe");
 	    
 	    criteria.add(Restrictions.eq("tipoChamadaEncalhe", tipoChamadaEncalhe));
+	    criteria.add(Restrictions.sqlRestriction(" data_recolhimento < '3000-01-01'"));
+	    criteria.createAlias("chamadaEncalhe.lancamentos", "lancamentos"); 
+	    criteria.add(Restrictions.ne("lancamentos.status", StatusLancamento.FECHADO));
+	    criteria.add(Restrictions.ne("lancamentos.status", StatusLancamento.RECOLHIDO));
+	    criteria.add(Restrictions.ne("lancamentos.status", StatusLancamento.CANCELADO));
+	    criteria.add(Restrictions.ne("lancamentos.status", StatusLancamento.FURO));
+	    
 	    criteria.setProjection(Projections.max("dataRecolhimento"));
 	    
 	    return (Date) criteria.uniqueResult();
