@@ -1050,7 +1050,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					
 				throw new ValidacaoException(
 						TipoMensagem.WARNING, 
-                        "Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao + "]. <br> "
+                        "Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao +" ed. "+produtoEdicao.getNumeroEdicao()+ "]. <br> "
                             + "Não é permitida antecipação de produtos pelo distribuidor. ");
 						
 			}
@@ -1064,7 +1064,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			throw new ValidacaoException(
 					TipoMensagem.WARNING, 
                     " Distribuidor não possui parametrização de dias de recolhimento para o "
-                        + "<br> fornecedor do produto edição [" + nomeProdutoEdicao + "].");
+                        + "<br> fornecedor do produto edição [" + nomeProdutoEdicao +" ed. "+produtoEdicao.getNumeroEdicao()+ "].");
 		}
 		
 		for(final Date item : datasRecolhimento){
@@ -1078,12 +1078,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(indOperacaoDiferenciada) {
 			throw new ValidacaoException(
 					TipoMensagem.WARNING, 
-                    " Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao + "]. <br>"
+                    " Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao +" ed. "+produtoEdicao.getNumeroEdicao()+ "]. <br>"
                         + " Data de operação excedendo ou fora dos dias de recolhimento de operação diferenciada. ");
 		} else {
 			throw new ValidacaoException(
 					TipoMensagem.WARNING, 
-                    " Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao + "]. <br>"
+                    " Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao +" ed. "+produtoEdicao.getNumeroEdicao()+ "]. <br>"
                         + " Data de operação excedendo ou fora dos dias de recolhimento possíveis. ");
 		}
 
