@@ -3196,7 +3196,7 @@ public class BoletoServiceImpl implements BoletoService {
 		 
 		List<Cota> cotas = this.boxRepository.obterCotasParaBoletoAvulso(boletoAvulso);
 		 
-		List<BoletoAvulsoDTO> listaDC = new ArrayList<BoletoAvulsoDTO>();
+		List<BoletoAvulsoDTO> listaBoleto = new ArrayList<BoletoAvulsoDTO>();
 		
 		List<ItemDTO<Integer, String>> bancos = null;
 		
@@ -3211,7 +3211,7 @@ public class BoletoServiceImpl implements BoletoService {
 			
 		    Cota itemCota = cotas.get(index);
 			    
-			listaDC.add(new BoletoAvulsoDTO(
+			listaBoleto.add(new BoletoAvulsoDTO(
 		                Long.valueOf(index),
 		                null,
 		                null,
@@ -3223,7 +3223,7 @@ public class BoletoServiceImpl implements BoletoService {
 		                boletoAvulso.getObservacao() == null ? "" : boletoAvulso.getObservacao(), bancos));	
 		}
 		
-		return listaDC;
+		return listaBoleto;
 	}
 	
 	private List<ItemDTO<Integer, String>> comboBoletoAvulso(FiltroBoletoAvulsoDTO boletoAvulso) {
