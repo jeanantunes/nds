@@ -33,7 +33,7 @@
 	</div>
 	<div class="linha_separa_fields">&nbsp;</div>
 	<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
-		<legend>Boleto Avulso</legend>
+		<legend>Gerar Boleto Avulso</legend>
 		
 		<table width="950px" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		    <tbody>
