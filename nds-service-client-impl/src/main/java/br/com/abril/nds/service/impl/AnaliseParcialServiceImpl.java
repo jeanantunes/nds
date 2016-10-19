@@ -902,7 +902,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	}
     	
     	if((estudoGerado.getQtdeReparte().compareTo(sumReparteCotas) != 0) || (estudoGerado.getQtdeReparte().compareTo(sumQtdEfetivaCotas) != 0)){
-    		validacao =  new ValidacaoException(TipoMensagem.WARNING,"Não é possível liberar estudo com saldo de reparte. Total de reparte das cotas("+sumReparteCotas+") != Estudo ("+estudoGerado.getQtdeReparte()+")");
+    		validacao =  new ValidacaoException(TipoMensagem.WARNING,"Não é possível liberar estudo com saldo de reparte. Total de reparte das cotas("+sumReparteCotas+") ou Total reparte efetivo das cotas ("+sumQtdEfetivaCotas+") != Estudo ("+estudoGerado.getQtdeReparte()+")");
     		return validacao;
     	}
     	
