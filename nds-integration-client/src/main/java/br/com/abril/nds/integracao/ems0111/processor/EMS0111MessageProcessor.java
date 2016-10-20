@@ -259,6 +259,16 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 		
 		// lancamento ja existe 
 
+        if(produtoEdicao.isParcial()) // se parcial retorna sem nada alterar pois pode ter mais de um lancamento
+        {
+        	this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Produto Parcial. Nao atualizando dados do lancamento do"
+							+ " Produto "+codigoProduto
+							+ " Edição " + edicao);
+        	return;
+        }
+
 			BigInteger repartePromocional = BigInteger.valueOf(input.getRepartePromocional());
 
 			if (null != lancamento.getRepartePromocional() && !lancamento.getRepartePromocional().equals(repartePromocional)) {
@@ -270,11 +280,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 								+ " Produto "+codigoProduto
 								+ " Edição " + edicao);
 				lancamento.setRepartePromocional(repartePromocional);
-				
-				
-				
+
 			}
 			
+
 			Date dataOriginal = input.getDataLancamento();
 			Date dataSugerida = lancamentoService.obterDataLancamentoValido(dataOriginal, produtoEdicao.getProduto().getFornecedor().getId());
 			

@@ -660,7 +660,8 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 		//Fim
 		sql.append(" 	  MOVIMENTO_ESTOQUE_COTA movimentoEstoqueCota ");
 		sql.append(" 	  		ON movimentoEstoqueCota.LANCAMENTO_ID = lancamento.ID ");
-		sql.append("  and   movimentoEstoqueCota.forma_comercializacao = 'CONSIGNADO' ");
+		sql.append("  and movimentoEstoqueCota.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
+		sql.append("  and movimentoEstoqueCota.forma_comercializacao = 'CONSIGNADO' ");
 		//FIXED Conforme convessado com o Cesar 
 		//sql.append(" inner join ");
 		sql.append(" left join ");

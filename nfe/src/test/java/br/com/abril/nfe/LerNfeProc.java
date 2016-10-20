@@ -18,6 +18,8 @@ import org.xml.sax.SAXException;
 
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.inf.portalfiscal.nfe.v310.TNFe;
+import br.inf.portalfiscal.nfe.v310.TNFe.InfNFe.Det;
 import br.inf.portalfiscal.nfe.v310.TNfeProc;
 import br.inf.portalfiscal.nfe.v310.TProcEvento;
 
@@ -26,29 +28,41 @@ public class LerNfeProc {
 	private static Logger LOGGER = LoggerFactory.getLogger(LerNfeProc.class); 
 	
 	private static String versaoNFE = "3.10";
-	private static String PATH_IMPORTACAO = "/opt/parametros_nds/notas/importado/";
+	private static String PATH_IMPORTACAO = "/opt/parametros_nds/nfe-terceiros/";
 	private static final String XSD_PROC_CANC_NFE = "/procEventoCancNFe_v";
 
 	@Test
 	public void lerArquivoRetorno() {  
+		
+		File notaFile = new File(PATH_IMPORTACAO +"NF-e-345-3-00000021-lucro-real.xml");  
+		JAXBContext context;	
+        Unmarshaller unmarshaller;
+			
+		try {
+				
+			context = JAXBContext.newInstance(TNFe.class);  
+			unmarshaller = context.createUnmarshaller();  
+			TNFe nfeProc = unmarshaller.unmarshal(new StreamSource(notaFile), TNFe.class).getValue();  
+				//TNfeProc nfeProc = unmarshaller.unmarshal(new StreamSource(new StringReader(arquivo.getPath())), TNfeProc.class).getValue();
+			
+			LOGGER.debug("Informaçoes nota fiscal " + nfeProc.getInfNFe().getDet());
+			
+			
+			for(Det detalheProduto : nfeProc.getInfNFe().getDet()) {
+				
+				LOGGER.debug("iten 1 - " + detalheProduto.getNItem());
+				LOGGER.debug("produto - " + detalheProduto.getProd().getCProd());
+				
+			}
+			
+			
+		} catch (Exception e){
+			LOGGER.debug("Erro ao realizar o parser do arquivo de retorno: " + notaFile.getName());
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao realizar o parser do arquivo de retorno:");
+		}
 
-		try {              
-			File notaFile = new File(PATH_IMPORTACAO +"35150411411415000174550210000035091000035094-procNfe.xml");  
-			JAXBContext context = JAXBContext.newInstance(TNfeProc.class);  
-
-			Unmarshaller unmarshaller = context.createUnmarshaller();  
-
-			TNfeProc nfeProc = unmarshaller.unmarshal(new StreamSource(notaFile), TNfeProc.class).getValue();  
-
-			LOGGER.info("Número da chave de acesso: {}", nfeProc.getProtNFe().getInfProt().getChNFe());  
-
-		} catch (Exception e) {  
-			e.printStackTrace();
-			LOGGER.info("Erro ao recurperar o arquivo: ", PATH_IMPORTACAO);
-		}  
 	}
 
-	@Test
 	public void lerArquivoEventoCancelamento() {
 		
 		JAXBContext context;
