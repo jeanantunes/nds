@@ -131,14 +131,7 @@ var movimentoFinanceiroCotaController = $.extend(true, {
 			    checkBox = '<input isEdicao="true" title="Selecionar Dívida" type="checkbox" name="checkboxGrid" id="checkbox_'+ row.cell.numeroCota +'" onchange="movimentoFinanceiroCotaController.calculaSelecionados(this.checked,'+ valorSaldo +'); dataHolder.hold(\'baixaManual\', '+ row.cell.numeroCota +', \'checado\', this.checked); " />';
 			}
 			
-			if (valorSaldo!=0){
-	
-		        row.cell.check = checkBox;
-			}
-			else{
-				
-				row.cell.check = '<img title="Financeiro Processado" src="' + contextPath + '/images/ico_check.gif" border="0px" />'
-			}
+	        row.cell.check = checkBox;
 		});
 
 		$("#totalDividasHidden", movimentoFinanceiroCotaController.workspace).val(totalDividas);
