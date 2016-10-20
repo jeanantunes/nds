@@ -1164,16 +1164,28 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			lancamentoDTO.setDataDistribuidor(lancamento.getDataLancamentoDistribuidor());
 		}
 		
-		MovimentoEstoqueCota movimentoEstoqueCota = 
-				movimentoEstoqueService.gerarMovimentoCota(
-						lancamentoDTO.getDataDistribuidor(), 
-						chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao(), 
-						idCota, 
-						usuario.getId(), 
-						BigInteger.ZERO, 
-						tipoMovimentoEstoqueCota,
-						this.distribuidorService.obterDataOperacaoDistribuidor(),
-						valoresAplicados, FormaComercializacao.CONSIGNADO, cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(), cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
+		FormaComercializacao formaComercializacao = null;
+		
+		if(cota.getTipoCota().equals(TipoCota.CONSIGNADO)) {
+			formaComercializacao = FormaComercializacao.CONSIGNADO;
+		} else {
+			formaComercializacao = FormaComercializacao.CONTA_FIRME;
+		}
+		
+		
+		MovimentoEstoqueCota movimentoEstoqueCota = movimentoEstoqueService.gerarMovimentoCota(
+					lancamentoDTO.getDataDistribuidor(), 
+					chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao(), 
+					idCota, 
+					usuario.getId(), 
+					BigInteger.ZERO, 
+					tipoMovimentoEstoqueCota,
+					this.distribuidorService.obterDataOperacaoDistribuidor(),
+					valoresAplicados, 
+					formaComercializacao, 
+					cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(), 
+					cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
+		
 		return movimentoEstoqueCota;
 	}
     
