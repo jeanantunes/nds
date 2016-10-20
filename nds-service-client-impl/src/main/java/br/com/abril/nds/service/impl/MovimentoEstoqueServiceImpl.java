@@ -1607,13 +1607,20 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         movimentoEstoqueCota.setQtde(quantidade);
         movimentoEstoqueCota.setUsuario(new Usuario(idUsuario));
        
-        if ( (GrupoMovimentoEstoque.COMPRA_ENCALHE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque()) ||
-        		GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque()))
-            &&  FormaComercializacao.CONTA_FIRME.equals(formaComercializacao))
+        if ((GrupoMovimentoEstoque.COMPRA_ENCALHE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque()) ||
+    		GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque()) ||
+			GrupoMovimentoEstoque.SOBRA_EM_COTA.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque()) ||
+			GrupoMovimentoEstoque.SOBRA_DE_COTA.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())
+            &&  FormaComercializacao.CONTA_FIRME.equals(formaComercializacao))) {
+        	
            movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO);
-        else
+           
+        } else {
+        	
           movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
-       
+          
+        }
+          
         if (idEstudoCota != null) {
             
             movimentoEstoqueCota.setEstudoCota(new EstudoCota(idEstudoCota));

@@ -3192,6 +3192,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
         LancamentoDTO lancamentoDTO = this.obtemLancamentoDTO(conferenciaEncalheDTO, chamadaEncalheCota);
         
+        FormaComercializacao formaComercializacao = null;
+        
+        if(cota.getTipoCota().equals(TipoCota.CONSIGNADO)) {
+        	formaComercializacao = FormaComercializacao.CONSIGNADO;
+        } else {
+        	formaComercializacao = FormaComercializacao.CONTA_FIRME;
+        }
+        
 		MovimentoEstoqueCota movimentoEstoqueCota = 
 				movimentoEstoqueService.gerarMovimentoCota(
 						lancamentoDTO.getDataDistribuidor(), 
@@ -3201,7 +3209,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						conferenciaEncalheDTO.getQtdExemplar(), 
 						tipoMovimentoEstoqueCota,
 						this.distribuidorService.obterDataOperacaoDistribuidor(),
-						valoresAplicados, FormaComercializacao.CONSIGNADO, cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(), cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
+						valoresAplicados, formaComercializacao, cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(), cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
 		
 		return movimentoEstoqueCota;
 	}
