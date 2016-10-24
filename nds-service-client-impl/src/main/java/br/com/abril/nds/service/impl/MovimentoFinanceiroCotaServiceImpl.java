@@ -979,7 +979,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     private void gerarMovimentoFinanceiro(final Cota cota, final Fornecedor fornecedor,
             final List<MovimentosEstoqueEncalheDTO> movimentosEstoqueCota, final List<MovimentoEstoqueCota> movimentosEstorno,
             final TipoMovimentoFinanceiro tipoMovimentoFinanceiro, final BigDecimal valor, final Date dataOperacao,
-            final Usuario usuario) {
+            final Usuario usuario, String observacao) {
         
         final MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
         
@@ -997,7 +997,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(true);
         movimentoFinanceiroCotaDTO.setLancamentoManual(false);
         movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
-       
+        movimentoFinanceiroCotaDTO.setObservacao(observacao);
         
         if (movimentosEstoqueCota != null) {
             
@@ -1429,7 +1429,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         totalGeral = totalGeral.subtract(totalEstorno != null ? totalEstorno : BigDecimal.ZERO);
         
         this.gerarMovimentoFinanceiro(cota, fornecedor, movimentosEstoqueCota, movimentosEstorno,
-                tipoMovimentoFinanceiro, totalGeral, dataOperacao, usuario);
+                tipoMovimentoFinanceiro, totalGeral, dataOperacao, usuario, "Cota a vista");
     }
     
     /**
@@ -1519,7 +1519,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
                 							  tipoMovimentoFinanceiro,
                 							  valorTotalEncalheOperacaoConferenciaEncalhe, 
                 							  dataOperacao, 
-                							  usuario);
+                							  usuario, "Cota consignado");
                 
                 BigDecimal percentualTaxaExtra = distribuidorService.obter().getPercentualTaxaExtra();
                 if(percentualTaxaExtra != null) {
@@ -1578,7 +1578,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
             		                      tipoMovimentoFinanceiro, 
             		                      valorTotalEncalheOperacaoConferenciaEncalhe, 
             		                      dataOperacao, 
-            		                      usuario);
+            		                      usuario, "Encalhe da cota");
             
             BigDecimal percentualTaxaExtra = distribuidorService.obter().getPercentualTaxaExtra();
             if(percentualTaxaExtra != null) {
