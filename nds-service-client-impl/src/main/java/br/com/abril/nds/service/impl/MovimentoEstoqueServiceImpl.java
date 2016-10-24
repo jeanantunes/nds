@@ -1835,7 +1835,15 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoEnvioReparte, dataOperacao, true);
             
-            gerarMovimentoCota(null, edicao, cota.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoRecebimentoReparte, dataOperacao, null, FormaComercializacao.CONSIGNADO, false, false);
+            FormaComercializacao formaComercializacao = null;
+            
+            if(cota.getTipoCota().equals(TipoCota.CONSIGNADO)) {
+            	formaComercializacao = FormaComercializacao.CONSIGNADO;
+            } else {
+            	formaComercializacao = FormaComercializacao.CONTA_FIRME;
+            }
+            
+            gerarMovimentoCota(null, edicao, cota.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoRecebimentoReparte, dataOperacao, null, formaComercializacao, false, false);
         }
     }
     
@@ -1882,7 +1890,15 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoRecebimentoEncalhe, dataOperacao, true);
             
-            gerarMovimentoCota(null, edicao, cota.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoEnvioEncalhe, dataOperacao, null, FormaComercializacao.CONSIGNADO, false, false);
+            FormaComercializacao formaComercializacao = null;
+            
+            if(cota.getTipoCota().equals(TipoCota.CONSIGNADO)) {
+            	formaComercializacao = FormaComercializacao.CONSIGNADO;
+            } else {
+            	formaComercializacao = FormaComercializacao.CONTA_FIRME;
+            }
+            
+            gerarMovimentoCota(null, edicao, cota.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoEnvioEncalhe, dataOperacao, null, formaComercializacao, false, false);
         }
     }
     

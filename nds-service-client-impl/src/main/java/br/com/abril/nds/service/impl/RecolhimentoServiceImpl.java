@@ -585,7 +585,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			List<CotaReparteDTO> cotasReparte =	this.movimentoEstoqueCotaRepository.obterReparte(idsLancamento, null);
 			
-	
 			List<ChamadaEncalhe> listaChamadaEncalhe = this.chamadaEncalheRepository.obterChamadasEncalheLancamentos(idsLancamento, false);
 
 			for (Long idLancamento : idsLancamento) {
@@ -600,20 +599,14 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				// ver se 'e produto parcial, se periodo do lancamento 'e final
 				// entao buscar cotas que nao teve reparte neste lancamento mas teve nos anteriores
 				
-				 if (produtoEdicao.isParcial() && lancamento.getPeriodoLancamentoParcial() != null && 
-					 TipoLancamentoParcial.FINAL.equals(lancamento.getPeriodoLancamentoParcial().getTipo())) {
-					 LOGGER.warn("Produto parcial com lancamento FINAL pe=" +produtoEdicao.getId());
+				 if (produtoEdicao.isParcial() && lancamento.getPeriodoLancamentoParcial() != null && TipoLancamentoParcial.FINAL.equals(lancamento.getPeriodoLancamentoParcial().getTipo())) {
+					LOGGER.warn("Produto parcial com lancamento FINAL pe=" +produtoEdicao.getId());
+					
 					// buscar cotas que nao teve reparte neste lancamento mas teve nos anteriores
 					List <CotaReparteDTO> cotasRepartePeriodosAnteriores= this.movimentoEstoqueCotaRepository.obterRepartePeriodosAnteriores(lancamento);
-					 LOGGER.warn("QTDE DE COTAS SEM REPARTE NA FINAL MAS COM REPARTES ANTERIORES=" +cotasRepartePeriodosAnteriores.size());
-					 /*
-					 Cota c = cotaRepository.buscarCotaPorID(1L);
-					 CotaReparteDTO cr = new CotaReparteDTO();
-					 cr.setCota(c);
-					 cr.setReparte(new BigInteger("1000"));
-					 cr.setParcialFinal(true);
-					 cotasRepartePeriodosAnteriores.add(cr);
-					 */
+					
+					LOGGER.warn("QTDE DE COTAS SEM REPARTE NA FINAL MAS COM REPARTES ANTERIORES=" +cotasRepartePeriodosAnteriores.size());
+					 
 					 // incluir em cotasReparteLancamento
 					for (CotaReparteDTO cotaRepartePeriodosAnteriores :cotasRepartePeriodosAnteriores ) {
 						CotaReparteDTO cr1=null;
@@ -623,8 +616,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 						if ( cr1 != null )
 							LOGGER.warn("COTA "+cotaRepartePeriodosAnteriores.getCota().getId() +" ja tem em reparte na chamada final com qtd="+cr1.getReparte());
 						if (!cotasReparteLancamento.contains(cotaRepartePeriodosAnteriores) && cotaRepartePeriodosAnteriores.getReparte().intValue() > 0 ) {
-							    LOGGER.warn("PARCIAL FINAL COM REPARTE 0.. INSERINDO COTA="+cotaRepartePeriodosAnteriores.getCota().getId()+ "PRODUTOEDICAo=" +produtoEdicao.getId()+" qtde="+
-							    		cotaRepartePeriodosAnteriores.getReparte().intValue());
+							    
+							LOGGER.warn("PARCIAL FINAL COM REPARTE 0.. INSERINDO COTA="
+							    		+cotaRepartePeriodosAnteriores.getCota().getId() 
+							    		+ "PRODUTOEDICAo=" +produtoEdicao.getId()+" qtde="
+							    		+ cotaRepartePeriodosAnteriores.getReparte().intValue());
+							    
 							    cotaRepartePeriodosAnteriores.setReparte(BigInteger.ZERO);
 							    cotaRepartePeriodosAnteriores.setParcialFinal(true);
 								cotasReparteLancamento.add(cotaRepartePeriodosAnteriores);
@@ -641,10 +638,16 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 					Cota cota = cotaReparte.getCota();
 					
+					if(cota.getNumeroCota().equals("10000")) {
+						LOGGER.warn("REPARTE = "+cotaReparte.getCota());
+					} else if (cota.getNumeroCota().equals("10001")) {
+						LOGGER.warn("REPARTE = "+cotaReparte.getCota());
+					} else {
+						LOGGER.warn("tranquilo");
+					}
+					
 					BigInteger qtdPrevista = cotaReparte.getReparte();
 
-				//	this.removerChamadaEncalheCotaAntecipadaChamadao(cota, new ArrayList<>(chamadasEncalheProdutoEdicao));
-					
 					ChamadaEncalhe chamadaEncalhe = this.getChamadaEncalheMatrizRecolhimento(new ArrayList<>(chamadasEncalheProdutoEdicao), dataRecolhimento);
 
 					if (chamadaEncalhe == null) {
@@ -673,8 +676,14 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 						
 					}
 					
-					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor(), cotaReparte.isCotaContribuinteExigeNF(), 
-							usuario,cotaReparte.isParcialFinal(),cotasChamadao);
+					this.criarChamadaEncalheCota(qtdPrevista, 
+								cota, 
+								chamadaEncalhe, 
+								lancamento.getDataLancamentoDistribuidor(), 
+								cotaReparte.isCotaContribuinteExigeNF(), 
+								usuario,
+								cotaReparte.isParcialFinal(), 
+								cotasChamadao);
 				
 					this.chamadaEncalheRepository.merge(chamadaEncalhe);
 				}
@@ -768,8 +777,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		    return;
 		}
-		
-		
 		
 		ChamadaEncalheCota chamadaEncalheCota = this.getChamadaEncalheCota(chamadaEncalhe, cota.getId());
 		
