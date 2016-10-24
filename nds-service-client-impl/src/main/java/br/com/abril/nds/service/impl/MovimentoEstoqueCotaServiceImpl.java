@@ -19,6 +19,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -269,9 +270,17 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 			
 			ProdutoEdicao produtoEdicao = entry.getKey();
 			
+			FormaComercializacao formaComercializacao = null;
+			
+			if(cota.getTipoCota().equals(TipoCota.CONSIGNADO)) {
+				formaComercializacao = FormaComercializacao.CONSIGNADO;
+			} else {
+				formaComercializacao = FormaComercializacao.CONTA_FIRME;
+			}
+			
 			this.movimentoEstoqueService.gerarMovimentoCota(
 				null, produtoEdicao, cota.getId(), usuario.getId(), 
-					transferencia.getQuantidadeTransferir(), tipoMovimento, dataOperacao, null, FormaComercializacao.CONSIGNADO, false, false);
+					transferencia.getQuantidadeTransferir(), tipoMovimento, dataOperacao, null, formaComercializacao, false, false);
 		}
 	}
 

@@ -4175,7 +4175,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append(" where lancamento.id IN (:idsLancamento) ");
         
         if(cotaId != null) {
-        	
         	sql.append(" and mec.cota.id = :cotaId ");
         }
         
@@ -4204,7 +4203,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameter("processado", StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO);
         
         if(cotaId != null) {
-        	
         	query.setParameter("cotaId", cotaId);
         }
         
