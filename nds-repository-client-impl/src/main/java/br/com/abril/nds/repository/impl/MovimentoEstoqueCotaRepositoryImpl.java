@@ -452,6 +452,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append("WHERE ");
         sql.append("mec.STATUS = :statusAprovacao AND "); 
         sql.append("mec.cota_id = :idCota AND ");
+        sql.append("mec.FORMA_COMERCIALIZACAO = :formaComercializacao AND ");
         sql.append("(mec.STATUS_ESTOQUE_FINANCEIRO IS NULL OR mec.STATUS_ESTOQUE_FINANCEIRO = :statusFinanceiro) AND ");
         sql.append("mec.TIPO_MOVIMENTO_ID IN :idTiposMovimentoEstoque AND ");
         sql.append("mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL AND ");
@@ -476,6 +477,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameter("idCota", idCota);
         query.setParameterList("datas", datas);
         query.setParameter("formaComercializacaoProduto", FormaComercializacao.CONTA_FIRME.name());
+        query.setParameter("formaComercializacao", FormaComercializacao.CONSIGNADO.name());
         query.setResultTransformer(new AliasToBeanResultTransformer(MovimentosEstoqueEncalheDTO.class));
         
         return query.list();
