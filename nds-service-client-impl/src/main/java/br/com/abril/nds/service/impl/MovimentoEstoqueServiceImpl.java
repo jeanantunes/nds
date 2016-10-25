@@ -205,6 +205,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             movimento = (MovimentoEstoqueCota) movimentoEstoqueCota.clone();
             
+            if(movimento.getCota().getTipoCota().equals(TipoCota.A_VISTA)) {
+            	this.movimentoFinanceiroCotaService.processarCreditosParaCotasNoProcessoDeFuroDeProdutoContaFirme(movimento.getLancamento().getId(), idUsuario);
+            }
+            
             movimento = gerarMovimentoCota(
             		null, 
             		lancamento.getProdutoEdicao(), 
