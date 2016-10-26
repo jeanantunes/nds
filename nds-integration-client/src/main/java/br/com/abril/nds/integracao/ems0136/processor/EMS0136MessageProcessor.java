@@ -338,6 +338,11 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 
 	private void tratarDatasInput(EMS0136Input input, ProdutoEdicao produtoEdicao, Message message) {
 
+		if ( "R".equalsIgnoreCase(input.getTipoRecolhimento())) { // ja recolhidos nao mudar datas.
+			LOGGER.warn("LANCAMENTO TIPO R. NAO ALTERAR DATAS");
+			return;
+		    }
+		
 		Date dataOriginal = input.getDataLancamento();
 		Date dataSugerida = lancamentoService.obterDataLancamentoValido(dataOriginal, produtoEdicao.getProduto().getFornecedor().getId());
 		
