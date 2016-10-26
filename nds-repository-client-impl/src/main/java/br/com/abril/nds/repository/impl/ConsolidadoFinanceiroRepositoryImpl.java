@@ -1358,7 +1358,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepositoryModel
 		sql.append("     where bc.STATUS not in (:statusBaixaCobranca) ");
 		sql.append("     and b.ID = cobranca.COTA_ID ");
 		sql.append("     and d_cons.CONSOLIDADO_ID = a.ID ");
-		sql.append("     and cfc.ID) ");
+		sql.append("     ) ");
  
         sql.append("    ,0)");
         
