@@ -546,7 +546,8 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("       CAST(ROUND(pe.PRECO_VENDA, 2) AS CHAR) AS precoCapa, ");
 
 		sql.append("       pe.CHAMADA_CAPA AS chamadaCapa, ");
-		sql.append("       DATE_FORMAT((eg.DATA_LANCAMENTO), '%Y%m%d') AS dataLancamento, ");
+		sql.append("       DATE_FORMAT((lct.DATA_LCTO_DISTRIBUIDOR), '%Y%m%d') AS dataLancamento, ");
+		// trocado apos chamado 4666108 -- date_format (((eg.DATA_LANCAMENTO), '%Y%m%d') AS dataLancamento, ");
 		//sql.append("       DATE_FORMAT(((select l.DATA_LCTO_DISTRIBUIDOR from lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1)), '%Y%m%d') AS dataPrimeiroLancamentoParcial, ");
 		sql.append("   '        '  as dataPrimeiroLancamentoParcial,");
 		sql.append("       CAST(lct.ID AS CHAR) as idLancamento, ");
