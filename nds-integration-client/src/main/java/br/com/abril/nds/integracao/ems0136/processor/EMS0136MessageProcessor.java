@@ -253,9 +253,12 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 				}
 
 				lancamentoAtual.setNumeroLancamento(numeroLancamento);
-				lancamentoAtual.setDataRecolhimentoPrevista(input.getDataRecolhimento());
-				lancamentoAtual.setDataRecolhimentoDistribuidor(input.getDataRecolhimento());
-
+				
+				if ( !"R".equalsIgnoreCase(input.getTipoRecolhimento())) { // nao recolhido. mudar
+					LOGGER.warn("LANCAMENTO NAO 'E TIPO R. NAO ALTERAR DATAS");
+					lancamentoAtual.setDataRecolhimentoPrevista(input.getDataRecolhimento());
+					lancamentoAtual.setDataRecolhimentoDistribuidor(input.getDataRecolhimento());
+				}
 				helper.addLancamentoManter(lancamentoAtual);
 
 			} else if (LANCAMENTO_ABERTO.contains(lancamentoAtual.getStatus())) {
