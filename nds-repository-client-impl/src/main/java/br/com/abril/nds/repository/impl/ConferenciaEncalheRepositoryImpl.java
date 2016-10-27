@@ -627,7 +627,7 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_CotaVarejo(final String codigoBarras) {
+	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_CotaVarejo(final String codigoBarras, Integer numeroCota) {
 		
 		final StringBuilder sql = new StringBuilder();
 		
@@ -636,19 +636,25 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 		sql.append("   pe.CODIGO_DE_BARRAS as value, ");
 		sql.append("   CONCAT(pe.CODIGO_DE_BARRAS, ' - ', pd.NOME,' - Ed.:', pe.NUMERO_EDICAO) as label ");
 		sql.append(" FROM produto_edicao pe  ");
-		sql.append(" JOIN produto pd ");
-		sql.append("   ON pe.PRODUTO_ID = pd.ID ");
-		sql.append(" JOIN produto_fornecedor pf ");
-		sql.append("   ON pf.PRODUTO_ID = pd.ID ");
-		sql.append(" JOIN fornecedor f ");
-		sql.append("   ON pf.fornecedores_ID = f.ID ");
+		sql.append(" JOIN produto pd ON pe.PRODUTO_ID = pd.ID ");
+		sql.append(" JOIN produto_fornecedor pf ON pf.PRODUTO_ID = pd.ID ");
+		sql.append(" JOIN fornecedor f ON pf.fornecedores_ID = f.ID ");
+		sql.append(" JOIN lancamento l ON l.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" JOIN CHAMADA_ENCALHE ce ON ce.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" JOIN CHAMADA_ENCALHE_LANCAMENTO cel on cel.LANCAMENTO_ID = l.ID and cel.CHAMADA_ENCALHE_ID = ce.id ");
+		sql.append(" JOIN CHAMADA_ENCALHE_COTA cec on cec.CHAMADA_ENCALHE_ID = ce.ID "); 
+		sql.append(" JOIN COTA c on cec.COTA_ID = c.ID ");
 		sql.append(" WHERE f.CANAL_DISTRIBUICAO = :canalVarejo ");
 		sql.append(" 	and upper(pe.CODIGO_DE_BARRAS) like upper(:codigoBarras)  ");
-
+		sql.append("    and c.numero_cota = :numeroCota ");
+		sql.append(" GROUP BY pe.ID, pd.ID, pe.CODIGO_DE_BARRAS ");
+		sql.append(" order by pd.nome, pe.numero_edicao desc ");
+		
 		final Query query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("codigoBarras", codigoBarras + "%" );
 		query.setParameter("canalVarejo", CanalDistribuicao.VAREJO.toString());
+		query.setParameter("numeroCota", numeroCota);
 		
 		query.setResultTransformer(Transformers.aliasToBean(ItemAutoComplete.class));
 		
@@ -658,7 +664,7 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoOuNome_CotaVarejo(String codigoOuNome) {
+	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoOuNome_CotaVarejo(String codigoOuNome, Integer numeroCota) {
 		
 		final StringBuilder sql = new StringBuilder();
 		
@@ -667,22 +673,28 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 		sql.append("   pe.CODIGO_DE_BARRAS as value, ");
 		sql.append("   CONCAT(pe.CODIGO_DE_BARRAS, ' - ', pd.NOME,' - Ed.:', pe.NUMERO_EDICAO) as label ");
 		sql.append(" FROM produto_edicao pe  ");
-		sql.append(" JOIN produto pd ");
-		sql.append("   ON pe.PRODUTO_ID = pd.ID ");
-		sql.append(" JOIN produto_fornecedor pf ");
-		sql.append("   ON pf.PRODUTO_ID = pd.ID ");
-		sql.append(" JOIN fornecedor f ");
-		sql.append("   ON pf.fornecedores_ID = f.ID ");
-		sql.append(" JOIN lancamento l  ");
-		sql.append("   ON l.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" JOIN produto pd ON pe.PRODUTO_ID = pd.ID ");
+		sql.append(" JOIN produto_fornecedor pf ON pf.PRODUTO_ID = pd.ID ");
+		sql.append(" JOIN fornecedor f ON pf.fornecedores_ID = f.ID ");
+		sql.append(" JOIN lancamento l ON l.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" JOIN CHAMADA_ENCALHE ce ON ce.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" JOIN CHAMADA_ENCALHE_LANCAMENTO cel on cel.LANCAMENTO_ID = l.ID and cel.CHAMADA_ENCALHE_ID = ce.id ");
+		sql.append(" JOIN CHAMADA_ENCALHE_COTA cec on cec.CHAMADA_ENCALHE_ID = ce.ID "); 
+		sql.append(" JOIN COTA c on cec.COTA_ID = c.ID ");
+		
 		sql.append(" WHERE f.CANAL_DISTRIBUICAO = :canalVarejo ");
 		sql.append(" 	and (pd.nome like :codigoOuNome or pd.CODIGO like :codigoOuNome)  ");
 		sql.append("    and l.STATUS in ('EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO') ");
-
+		sql.append("    and c.numero_cota = :numeroCota ");
+		sql.append(" GROUP BY pe.ID, pd.ID, pe.CODIGO_DE_BARRAS ");
+		sql.append(" order by pd.nome, pe.numero_edicao desc ");
+		
+		
 		final Query query = this.getSession().createSQLQuery(sql.toString());
 		
-		query.setParameter("codigoOuNome", codigoOuNome+"%");
+		query.setParameter("codigoOuNome", "%"+codigoOuNome+"%");
 		query.setParameter("canalVarejo", CanalDistribuicao.VAREJO.toString());
+		query.setParameter("numeroCota", numeroCota);
 		
 		query.setResultTransformer(Transformers.aliasToBean(ItemAutoComplete.class));
 		

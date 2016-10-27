@@ -1303,7 +1303,9 @@ public class ConferenciaEncalheController extends BaseController {
 			
 		}else{
 			
-			listaProdutos =  this.conferenciaEncalheService.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_cotaVarejo(codigoBarra);
+			Integer numeroCota = cota.getNumeroCota();
+			
+			listaProdutos =  this.conferenciaEncalheService.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_cotaVarejo(codigoBarra, numeroCota);
 			
 			if (listaProdutos == null || listaProdutos.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Nehum produto Encontrado.");
@@ -2326,7 +2328,7 @@ public class ConferenciaEncalheController extends BaseController {
     }
 	
 	@Post
-	public void autocompletarProdutoPorCodigoNome(final String codigoNomeProduto){
+	public void autocompletarProdutoPorCodigoNome(final String codigoNomeProduto, Integer numeroCota){
 
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		
@@ -2344,7 +2346,7 @@ public class ConferenciaEncalheController extends BaseController {
 			}
 		}else{
 			
-			listaProdutos = this.conferenciaEncalheService.obterProdutoPorCodigoOuNomeCotaVarejo(codigoNomeProduto.trim());
+			listaProdutos = this.conferenciaEncalheService.obterProdutoPorCodigoOuNomeCotaVarejo(codigoNomeProduto.trim(), numeroCota);
 			
 		}
 		
@@ -2352,7 +2354,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
-	public void pesquisarProdutoPorCodigoNome(final String codigoNomeProduto){
+	public void pesquisarProdutoPorCodigoNome(final String codigoNomeProduto, Integer numeroCota){
 		
 		final Map<Long, DataCEConferivelDTO> mapaDataCEConferivelDTO = obterFromSessionMapaDatasEncalheConferiveis();
 		
@@ -2375,7 +2377,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 		}else{
 			
-			listaProdutos = this.conferenciaEncalheService.obterProdutoPorCodigoOuNomeCotaVarejo(codigoNomeProduto.trim());
+			listaProdutos = this.conferenciaEncalheService.obterProdutoPorCodigoOuNomeCotaVarejo(codigoNomeProduto.trim(), numeroCota);
 			
 		}
 		

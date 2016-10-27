@@ -283,8 +283,8 @@ public interface ConferenciaEncalheService {
 	void verificarControleConferenciaEncalheCotaDuplicaca(
 			ControleConferenciaEncalheCota ccec);
 
-	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_cotaVarejo(final String codigoBarras);
+	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_cotaVarejo(final String codigoBarras, Integer numeroCota);
 
-	List<ItemAutoComplete> obterProdutoPorCodigoOuNomeCotaVarejo(final String codigoOuNome);
+	List<ItemAutoComplete> obterProdutoPorCodigoOuNomeCotaVarejo(final String codigoOuNome, Integer numeroCota);
 	
 }
