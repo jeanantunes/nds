@@ -306,6 +306,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                 LEFT JOIN ");
 		sql.append("                     conferencia_encalhe confEnc  ");
 		sql.append("                         on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID             ");
+		sql.append("                         and  ce.DATA_RECOLHIMENTO = lanc.data_rec_distrib       "); // chamado 4667129
 		sql.append("                 LEFT JOIN ");
 		sql.append("                     movimento_estoque_cota mecEncalhe  ");
 		sql.append("                         on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
