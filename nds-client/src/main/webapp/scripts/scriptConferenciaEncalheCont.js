@@ -1081,8 +1081,12 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		var functionBuscaProduto = function(url, term, successCallback) { 
 		
+			var numeroCota = $("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).val();
+			
 			$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/' + url, 
-				{codigoNomeProduto: term}, 
+				//{codigoNomeProduto: term},
+				
+				[{name: "codigoNomeProduto", value: term}, {name: "numeroCota", value: numeroCota}],	
 				function(result){
 						
 					successCallback(result);

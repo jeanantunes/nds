@@ -917,6 +917,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
         
         if (lancamento.getStatus().equals(StatusLancamento.FECHADO)) {
             
+            CanalDistribuicao canal = produtoEdicao.getProduto().getFornecedor().getCanalDistribuicao();
+        	
+        	if(canal.equals(CanalDistribuicao.VAREJO)){
+        		return;
+        	}
+        	
             throw new ValidacaoException(
                 TipoMensagem.WARNING, 
                 "Não é possível realizar a conferência do produto edição [" + produtoEdicao.getNomeComercial()
@@ -3721,14 +3727,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Override
 	@Transactional
-	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_cotaVarejo(final String codigoBarras) {
-		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_CotaVarejo(codigoBarras);
+	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_cotaVarejo(final String codigoBarras, Integer numeroCota) {
+		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_CotaVarejo(codigoBarras, numeroCota);
 	}
 	
 	@Override
 	@Transactional
-	public List<ItemAutoComplete> obterProdutoPorCodigoOuNomeCotaVarejo(final String codigoOuNome) {
-		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoOuNome_CotaVarejo(codigoOuNome);
+	public List<ItemAutoComplete> obterProdutoPorCodigoOuNomeCotaVarejo(final String codigoOuNome, Integer numeroCota) {
+		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoOuNome_CotaVarejo(codigoOuNome, numeroCota) ;
 	}
 	
 	

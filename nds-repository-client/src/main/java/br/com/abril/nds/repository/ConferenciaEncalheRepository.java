@@ -140,9 +140,9 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 
 	List<CotaDTO> obterListaCotaConferenciaPendenciaErro(Date dataOperacao);
 
-	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_CotaVarejo(final String codigoBarras);
+	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_CotaVarejo(final String codigoBarras, Integer numeroCota);
 
-	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoOuNome_CotaVarejo(String codigoOuNome);
+	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoOuNome_CotaVarejo(String codigoOuNome, Integer numeroCota);
 
 	List<Integer> obterCotasVarejoConferenciaEncalhe(FiltroConsultaEncalheDTO filtro);
 
