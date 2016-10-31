@@ -44,6 +44,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -568,10 +569,18 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		Cota cota = vendaProduto.getCota();
 		
+		FormaComercializacao formaComercializacao = null;
+		
+		if(cota.getTipoCota().equals(TipoCota.CONSIGNADO)) {
+			formaComercializacao = FormaComercializacao.CONSIGNADO;
+		} else {
+			formaComercializacao = FormaComercializacao.CONTA_FIRME;
+		}
+		
 		MovimentoEstoqueCota movimentoEstoqueCota =
 						 gerarMovimentoCompraConsignadoCota(produtoEdicao, vendaProduto.getCota().getId(), 
 															usuario.getId(), qntProduto, TipoVendaEncalhe.ENCALHE,
-															dataOperacao, FormaComercializacao.CONSIGNADO, cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(), cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
+															dataOperacao, formaComercializacao, cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(), cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
 		
 		movimentoEstoqueCota.setValoresAplicados(vendaProduto.getValoresAplicados());
 		movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
@@ -763,10 +772,19 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		Cota cota = vendaProduto.getCota();
 		
+		
+		FormaComercializacao formaComercializacao = null;
+		
+		if(cota.getTipoCota().equals(TipoCota.CONSIGNADO)) {
+			formaComercializacao = FormaComercializacao.CONSIGNADO;
+		} else {
+			formaComercializacao = FormaComercializacao.CONTA_FIRME;
+		}
+		
 		MovimentoEstoqueCota movimentoEstoqueCota = 
 				gerarMovimentoCompraConsignadoCota(produtoEdicao, vendaProduto.getCota().getId(), 
 										   		   usuario.getId(), qntProduto, TipoVendaEncalhe.SUPLEMENTAR,
-										   		   dataOperacao, FormaComercializacao.CONSIGNADO, cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(), cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
+										   		   dataOperacao, formaComercializacao, cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(), cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
 		
 		movimentoEstoqueCota.setValoresAplicados(vendaProduto.getValoresAplicados());
 		movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);

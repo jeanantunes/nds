@@ -1610,18 +1610,27 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         movimentoEstoqueCota.setProdutoEdicao(new ProdutoEdicao(produtoEdicao.getId()));
         movimentoEstoqueCota.setQtde(quantidade);
         movimentoEstoqueCota.setUsuario(new Usuario(idUsuario));
-       
-        if ((GrupoMovimentoEstoque.COMPRA_ENCALHE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque()) ||
-    		GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())
-            &&  FormaComercializacao.CONTA_FIRME.equals(formaComercializacao))) {
+        
+        
+        if(FormaComercializacao.CONTA_FIRME.equals(formaComercializacao)) {
         	
-           movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO);
-           
+        	movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO);
+        	
         } else {
         	
-          movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
-          
+        	if (GrupoMovimentoEstoque.COMPRA_ENCALHE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque()) ||
+        		GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
+        		
+        		movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO);
+        		
+        	} else {
+        		
+        		movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
+        		
+        	}
         }
+        
+        
           
         if (idEstudoCota != null) {
             
