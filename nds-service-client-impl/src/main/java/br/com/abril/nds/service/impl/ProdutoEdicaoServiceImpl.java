@@ -501,9 +501,18 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
     	if ( dtoAnterior != null && dto.getDataLancamentoPrevisto() != null &&  dto.getDataLancamentoPrevisto().equals(dtoAnterior.getDataLancamentoPrevisto()))
     			return false;
+       
 		if( dto.getDataLancamentoPrevisto() != null && 
 			dto.getDataLancamentoPrevisto().compareTo(lancamento.getDataLancamentoPrevista()) == 0 ) {
 			return false;
+		}
+		
+		if ( dto.isParcial() ) {
+			LancamentoParcial lancamentoParcial  = lancamentoParcialRepository.obterLancamentoPorProdutoEdicao(dto.getId());
+			if( dto.getDataLancamentoPrevisto() != null && lancamentoParcial != null &&
+			dto.getDataLancamentoPrevisto().compareTo(lancamentoParcial.getLancamentoInicial()) == 0 ) {
+			return false;
+			}
 		}
 		
 		return true;
