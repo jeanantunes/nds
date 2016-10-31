@@ -300,6 +300,14 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 																	   qtdeARestaurarCotaAusenteSuplementar, 
 																	   tipoMovimento);
 					
+					FormaComercializacao formaComercializacao = null;
+					
+					if(movimento.getCota().getTipoCota().equals(TipoCota.CONSIGNADO)) {
+						formaComercializacao = FormaComercializacao.CONSIGNADO;
+					} else {
+						formaComercializacao = FormaComercializacao.CONTA_FIRME;
+					}
+					
 					//Lança movimento para restituir o saldo da cota ausente
 					this.movimentoEstoqueService.gerarMovimentoCota(cotaAusente.getData(), 
 							                                        movimento.getProdutoEdicao(),
@@ -307,7 +315,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 															        idUsuario, 
 															        qtdeARestaurarCotaAusenteSuplementar, 
 															        tipoMovimentoCota,
-																	dataOperacaoDistribuidor, null, FormaComercializacao.CONSIGNADO, false, false);
+																	dataOperacaoDistribuidor, null, formaComercializacao, false, false);
 				}	
 			}	
 		}
