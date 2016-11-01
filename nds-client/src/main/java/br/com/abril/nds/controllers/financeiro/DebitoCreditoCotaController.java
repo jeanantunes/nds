@@ -565,9 +565,15 @@ public class DebitoCreditoCotaController extends BaseController{
 
 		validarPreenchimentoCampos(listaNovosDebitoCredito, idTipoMovimento);
 		
-		this.existeFechamentoEncalhePorDataOperacao();
+		for (DebitoCreditoDTO debito : listaNovosDebitoCredito) {
+			
+			boolean isFechamentoEncalheGeral = existeFechamentoEncalhePorDataOperacao(DateUtil.parseDataPTBR(debito.getDataVencimento()));
+			
+			if(isFechamentoEncalheGeral) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Fechamento de encalhe já realizado na data do movimento");
+			}
+		}
 		
-		boolean isFechamentoEncalheCota = false;
 		
 		Date dataCriacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
@@ -593,7 +599,6 @@ public class DebitoCreditoCotaController extends BaseController{
 			
 			if(existeFechamentoEncalheCota) {
 				movimentoFinanceiroCotaDTO = debitoCreditoCotaService.gerarMovimentoFinanceiroCotaCobrancaDTO(debitoCredito);
-				isFechamentoEncalheCota = true;
 			} else {
 				movimentoFinanceiroCotaDTO = debitoCreditoCotaService.gerarMovimentoFinanceiroCotaDTO(debitoCredito);
 				movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);				
@@ -604,15 +609,8 @@ public class DebitoCreditoCotaController extends BaseController{
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro realizado com sucesso."), "result").recursive().serialize();
 	}
 
-	private void existeFechamentoEncalhePorDataOperacao() {
-		
-		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
-		
-		boolean fechamentoEncalheRealizado = fechamentoEncalheService.existeFechamentoEncalhePorDataOperacao(dataOperacao);
-		
-		if(fechamentoEncalheRealizado) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Fechamento de encalhe já realizado na data");
-		}
+	private boolean existeFechamentoEncalhePorDataOperacao(Date dataVencimento) {
+		return this.fechamentoEncalheService.existeFechamentoEncalhePorDataOperacao(dataVencimento);
 	}
 	
 	@Post
