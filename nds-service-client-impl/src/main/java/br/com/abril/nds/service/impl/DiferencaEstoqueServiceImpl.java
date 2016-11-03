@@ -1726,7 +1726,7 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
         
       //  lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId(), null);
         lancamento = lancamentoService.obterUltimoLancamentoDaEdicao(produtoEdicao.getId(),distribuidorService.obterDataOperacaoDistribuidor());
-        if(lancamento != null && !TipoLancamento.REDISTRIBUICAO.equals(lancamento.getTipoLancamento())
+        if(lancamento == null || ( !TipoLancamento.REDISTRIBUICAO.equals(lancamento.getTipoLancamento())
                 && Arrays.asList(
                 		StatusLancamento.PLANEJADO,
                 		StatusLancamento.CONFIRMADO,
@@ -1735,10 +1735,26 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
                 		StatusLancamento.BALANCEADO_RECOLHIMENTO,
                         StatusLancamento.EM_RECOLHIMENTO,
                         StatusLancamento.RECOLHIDO,
-                        StatusLancamento.FECHADO).contains(lancamento.getStatus())){
-            
-        	throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, String.format("Ação não permitida. Lançamento com status {%s}.", lancamento.getStatus().name())));
-        }
+                        StatusLancamento.FECHADO).contains(lancamento.getStatus()))){
+        	
+        	   lancamento = lancamentoService.obterProximoLancamentoDaEdicao(produtoEdicao.getId(),distribuidorService.obterDataOperacaoDistribuidor());
+        	    
+        	   if(lancamento == null || ( !TipoLancamento.REDISTRIBUICAO.equals(lancamento.getTipoLancamento())
+                       && Arrays.asList(
+                       		StatusLancamento.PLANEJADO,
+                       		StatusLancamento.CONFIRMADO,
+                       		StatusLancamento.FURO,
+                       		StatusLancamento.EM_BALANCEAMENTO,
+                       		StatusLancamento.BALANCEADO_RECOLHIMENTO,
+                               StatusLancamento.EM_RECOLHIMENTO,
+                               StatusLancamento.RECOLHIDO,
+                               StatusLancamento.FECHADO).contains(lancamento.getStatus()))){
+        		   if ( lancamento != null)
+        	           throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, String.format("Ação não permitida. Lançamento com status {%s}.", lancamento.getStatus().name())));
+        		   else
+        			   throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, String.format("Ação não permitida. Nao encontrado Lancamento Expedido.")));
+        	   }
+        	   }
         
         return true;
         

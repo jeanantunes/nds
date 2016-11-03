@@ -342,6 +342,16 @@ public class LancamentoServiceImpl implements LancamentoService {
 		return lancamentoRepository.obterUltimoLancamentoDaEdicao(idProdutoEdicao, dataLimiteLancamento);
 	}
 	
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Lancamento obterProximoLancamentoDaEdicao(Long idProdutoEdicao, Date dataLimiteLancamento) {
+	
+		
+		return lancamentoRepository.obterProximoLancamentoDaEdicao(idProdutoEdicao, dataLimiteLancamento);
+	
+	}
+	
 	@Override
 	@Transactional(readOnly=true)
 	public Lancamento obterPrimeiroLancamentoDaEdicao(Long idProdutoEdicao) {
