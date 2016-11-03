@@ -2007,6 +2007,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					chamadaEncalheCotaRepository.obterIdChamadaEncalheCotaNaData(
 							cota.getId(), 
 							conferenciaEncalheDTO.getIdProdutoEdicao(), conferenciaEncalheDTO.getDataRecolhimento());
+			if ( idChamadaEncalheCota == null ) {
+				throw new ValidacaoException(TipoMensagem.ERROR,
+						"Produto ["
+								+ conferenciaEncalheDTO.getCodigo() + " - "
+								+ conferenciaEncalheDTO.getNomeProduto()
+								+ " - " + conferenciaEncalheDTO.getNumeroEdicao()
+	                + "] não possui chamada encalhe ou tem chamada encalhe postergada.");
+			 }
 			
 			ChamadaEncalheCota cec = new ChamadaEncalheCota();
 			cec.setId(idChamadaEncalheCota);
