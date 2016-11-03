@@ -451,5 +451,8 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	List<Long> getIdUltimoLancamentoFechado(String codigoProduto);
 
 	List<InformeLancamentoDTO> buscarInformeLancamento(Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento, PaginacaoVO paginacao);
+
+	Lancamento obterProximoLancamentoDaEdicao(Long idProdutoEdicao,
+			Date dataLimiteLancamento);
 	
 }
