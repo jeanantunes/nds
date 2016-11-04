@@ -332,10 +332,10 @@ var impressaoBoletosController = $.extend(true, {
     
     downloadArquivo : function () {
     	
-    	var banco = $("#impressao-boleto-banco").val();
+    	var banco = $("#impressao-boleto-banco-dialog").val();
     	
     	if(banco == '-1') {
-    		$("#impressao-dialog-banco").dialog("close");
+    		$("#impressao-boleto-banco-dialog").dialog("close");
     		
 			exibirMensagem('WARNING', 'Favor selecionar um Banco');
 			return false;

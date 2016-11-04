@@ -31,7 +31,7 @@
 							Banco:
 						</td>
 						<td>
-							<select name="impressao-boleto-banco" id="impressao-boleto-banco" style="width:70px; float:left; margin-right:5px;" onchange="impressaoBoletosController.recarregarComboRoteiroRotas(this.value)">
+							<select name="impressao-boleto-banco-dialog" id="impressao-boleto-banco-dialog" style="width:70px; float:left; margin-right:5px;" onchange="impressaoBoletosController.recarregarComboRoteiroRotas(this.value)">
 						    	<option selected="selected" value="-1">Todos</option>
 						      		<c:forEach var="banco" items="${listaBancos}">
 										<option value="${banco.key}">${banco.value}</option>
