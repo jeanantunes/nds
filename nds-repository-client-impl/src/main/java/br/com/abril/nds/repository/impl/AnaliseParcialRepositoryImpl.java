@@ -96,7 +96,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("     and mec.produto_edicao_id = pe.id) juramento, ");
 
 /*      ## Comentário necessário, pois pediram pra deixar a solução antiga em background
- 		sql.append("    (select epc.qtde_recebida ");
+ * 		sql.append("    (select epc.qtde_recebida ");
 		sql.append("     from lancamento l ");
 		sql.append("     inner join produto_edicao _ped on l.produto_edicao_id = _ped.id ");
 		sql.append("     inner join estoque_produto_cota epc on epc.produto_edicao_id = _ped.id ");
@@ -107,13 +107,13 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		sql.append("     and l.data_lcto_distribuidor = (select max(_ul.data_lcto_distribuidor) ");
 		sql.append("                                     from lancamento _ul ");
 		sql.append("                                     where _ul.produto_edicao_id = _ped.id and _ul.status in (:statusLancamento)) ");
-		sql.append("                                     order by l.data_lcto_distribuidor desc limit 1) ultimoReparte, ");
- */       
-        sql.append("  sum(coalesce((SELECT  ");
+		sql.append("                                     order by l.data_lcto_distribuidor desc limit 1) ultimoReparte, ");*/
+        
+        sql.append(" (SELECT  ");
         sql.append("       cast(sum(case ");
         sql.append("                   when tipo.OPERACAO_ESTOQUE = 'ENTRADA'                    ");
         sql.append("                     THEN if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0)                   ");
-        sql.append("                   ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is not null, -mecReparte.QTDE, 0)               ");
+        sql.append("                   ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, -mecReparte.QTDE, 0)               ");
         sql.append("                 end) as unsigned int) AS reparte ");
         sql.append("       FROM ");
         sql.append("           lancamento l                 ");
@@ -146,9 +146,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     		sql.append("                           order by lct.DATA_LCTO_DISTRIBUIDOR desc  ");
     		sql.append("                           limit 1) ");
     	}
-    	// alterado chamado 4632345
-    	//  AND mecReparte.cota_id = c.id group by c.id),0)) ultimoReparte,
-        sql.append("           and mecReparte.cota_id = c.id group by c.id),0)) ultimoReparte,  ");
+
+        sql.append("           and mecReparte.cota_id = c.id) ultimoReparte,  ");
         
         sql.append("     (coalesce(ec.reparte_inicial,0) <> coalesce(ec.reparte,0)) ajustado, ");
         
@@ -160,7 +159,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         
         sql.append("  inner join pessoa pes on (c.pessoa_id = pes.id) ");
         
-        sql.append("  inner join estudo_gerado e on (ec.estudo_id = e.id) "); // sql.append("  inner join estudo_gerado e on (e.id = ec.estudo_id) ");
+        sql.append("  inner join estudo_gerado e on (e.id = ec.estudo_id) ");
         
         sql.append("  inner join produto_edicao pe on (pe.id = e.produto_edicao_id) ");
         
