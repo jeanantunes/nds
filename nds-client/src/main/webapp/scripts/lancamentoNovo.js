@@ -29,6 +29,7 @@ var lancamentoNovoController = $.extend(true, {
 		$("#diferencaProdutoInput", lancamentoNovoController.workspace).justInput(/[0-9]/);
 		$("#cotaInput1", lancamentoNovoController.workspace).numeric();
 		$("#cotaInputAlteracaoReparte", lancamentoNovoController.workspace).numeric();
+		$("#diferencaProdutoInputAlteracaoReparte", lancamentoNovoController.workspace).justInput(/[0-9]/);
 		$("#diferencaInput1", lancamentoNovoController.workspace).justInput(/[0-9]/);
 		$("#cotaInputNota", lancamentoNovoController.workspace).numeric();
 		$("#dateNotaEnvio", lancamentoNovoController.workspace).mask("99/99/9999");
@@ -1537,7 +1538,7 @@ limparCota : function(index) {
 			var numeroCota = $("#cotaInput" + index, lancamentoNovoController.workspace).val();
 			$("#diferencaInput" + index, lancamentoNovoController.workspace).val("");
 			valorReparte = "";
-			exibirMensagemDialog('WARNING', ['O campo[Diferença não pode ser maior que o campo [Reparte] da Cota número['+numeroCota+']'],'');
+			exibirMensagemDialog('WARNING', ['O campo[Diferença] não pode ser maior que o campo [Reparte] da Cota número['+numeroCota+']'],'');
 		}
 		
 		$("#reparteAtualText" + index, lancamentoNovoController.workspace).text(valorReparte);
@@ -1601,7 +1602,7 @@ limparCota : function(index) {
 				$("#inputDiferencaProduto" + indexDiv, lancamentoNovoController.workspace).val("");
 				valorReparteAtual = "";
 				var codigoProduto = $("#codigoProdutoNota" + indexDiv, lancamentoNovoController.workspace).text();
-				exibirMensagemDialog('WARNING', ['O campo[Diferença não pode ser maior que o campo [Reparte Total] da Produro com código['+codigoProduto+']'],'');
+				exibirMensagemDialog('WARNING', ['O campo[Diferença] não pode ser maior que o campo [Reparte Total] da Produro com código['+codigoProduto+']'],'');
 			}
 		}
 		
@@ -1736,6 +1737,7 @@ limparCota : function(index) {
 			reparte = eval($('#alteracaoReparteProduto', this.workspace).text());
 		}
 		
+	
 		var reparteDevolvido = 0;
 		
 		if ($('#diferencaProdutoInputAlteracaoReparte', this.workspace).val() != 0) {
@@ -1743,9 +1745,22 @@ limparCota : function(index) {
 			reparteDevolvido = eval($('#diferencaProdutoInputAlteracaoReparte', this.workspace).val());
 		}
 		
+		if ( reparteDevolvido < 0  ) { // NAO PODE REPARTE NEGAVITO
+			$('#diferencaProdutoInputAlteracaoReparte', this.workspace).val(undefined);
+			$('#saldoConsignado', this.workspace).text();
+			exibirMensagemDialog('WARNING', ['O campo[Reparte Devolvido] não pode ser negativo'],'');
+			return;
+		}
+		
 		var saldoConsignado = reparte - reparteDevolvido;
 		
+		if ( saldoConsignado < 0  ) { // NAO PODE FICAR COM ESTOQUE DE CONSIGNADO NEGATIVO
+			$('#diferencaProdutoInputAlteracaoReparte', this.workspace).val(undefined);
+			$('#saldoConsignado', this.workspace).text();
+			exibirMensagemDialog('WARNING', ['O campo[Reparte Devolvido] não pode ser maior que o campo [Reparte]'],'');
+		} else {
 		$('#saldoConsignado', this.workspace).text(saldoConsignado);
+		}
 	},
 	
 	buscarEstoquesAlteracaoReparte : function(estoqueAlteracaoReparte) {
@@ -1963,7 +1978,7 @@ limparCota : function(index) {
 			if(valorReparte<0){
 				$("#diferencaInput" + index, lancamentoNovoController.workspace).val("");
 				valorReparte = "";
-				mensagens.push('O campo[Diferença não pode ser maior que o campo [Reparte] da Cota número['+numeroCota+']');
+				mensagens.push('O campo[Diferença] não pode ser maior que o campo [Reparte] da Cota número['+numeroCota+']');
 			}
 			
 			$("#reparteAtualText" + index, lancamentoNovoController.workspace).text(valorReparte);
@@ -2042,7 +2057,7 @@ limparCota : function(index) {
 						$("#inputDiferencaProduto" + index, lancamentoNovoController.workspace).val("");
 						valorReparteAtual = "";
 						var codigoProduto = $("#codigoProdutoNota" + index, lancamentoNovoController.workspace).text();
-						mensagens.push('O campo[Diferença não pode ser maior que o campo [Reparte Total] da Produro com código['+codigoProduto+']');
+						mensagens.push('O campo[Diferença] não pode ser maior que o campo [Reparte Total] da Produro com código['+codigoProduto+']');
 					}
 				}
 				
