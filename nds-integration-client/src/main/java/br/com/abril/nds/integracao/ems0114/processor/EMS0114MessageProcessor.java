@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.jaxen.function.IdFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +27,9 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.RecolhimentoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.SemanaUtil;
 
 @Component
 public class EMS0114MessageProcessor extends AbstractRepository implements
@@ -50,6 +51,9 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 	
 	@Autowired
 	private RecolhimentoService recolhimentoService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -120,7 +124,15 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		}
 		
 		final Date dtRecolhimentoDistribuidor = this.normalizarDataSemHora(lancamento.getDataRecolhimentoDistribuidor());
-		final Date dtRecolhimentoArquivo = recolhimentoService.obterDataRecolhimentoValido(this.normalizarDataSemHora(input.getDataRecolhimento()),produtoEdicao.getProduto().getFornecedor().getId());
+		
+    //   nao usar a data de recolhimento, e sim a data do primeiro dia da semana  para  obter a matriz de recolhimento
+	//	 final Date dtRecolhimentoArquivo = recolhimentoService.obterDataRecolhimentoValido(this.normalizarDataSemHora(input.getDataRecolhimento()),produtoEdicao.getProduto().getFornecedor().getId());
+	//   obter a data do  primeiro dia da semana e  usar esta data para procurar a data de recolhimento
+		
+        int inicioSemanaRecolhimento = distribuidorService.inicioSemanaRecolhimento().getCodigoDiaSemana();
+		Date dataRecolhimentoInicioSemana = SemanaUtil.obterDataInicioSemana(inicioSemanaRecolhimento, 
+				this.normalizarDataSemHora(input.getDataRecolhimento()));
+		final Date dtRecolhimentoArquivo = recolhimentoService.obterDataRecolhimentoValido(dataRecolhimentoInicioSemana,produtoEdicao.getProduto().getFornecedor().getId());
 
 		if (!dtRecolhimentoDistribuidor.equals(dtRecolhimentoArquivo)) {
 			
