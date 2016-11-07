@@ -408,7 +408,7 @@
             <tr>
               <td width="104">Data da Operação:</td>
               <td width="111"><input onchange="fecharDiaController.tratarExibicaoPesquisa();" id="dataDaOperacao" type="text" value="${dataOperacao}" style="width: 70px;"/></td>
-              <td width="185">
+              <td width="285">
               	<span class="bt_novos" title="Iniciar Fechamento do Dia" id="idTituloBoataoFechamentoDiario">
               		<a isEdicao="true" href="javascript:void(0)" onclick="fecharDiaController.popup_processos();">
               			<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/bt_devolucao.png" id="idImgBotaoFecamentoDiario">
@@ -422,6 +422,16 @@
               			<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar</a>
               	</span>
              </td>
+               <td width="129">
+             <span class="bt_arq"  id="btExportarConsulta">
+						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0" />
+					<a href="#"    onclick="fecharDiaController.exportarConsulta();"   rel="tipsy" title="Relat�rio">
+						</a>
+						
+						
+					
+				</span>
+			</td>
             </tr>
           </table>
 

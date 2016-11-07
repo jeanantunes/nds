@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.exception.FechamentoDiarioException;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public interface FecharDiaService {
@@ -221,5 +222,7 @@ public interface FecharDiaService {
 	List<AlteracaoPrecoDTO> obterAlteracaoPreco(Date dataFechamento);
 	
 	List<OutraMovimentacaoDTO> obterOutraMovimentacao(final Date dataFechamento);
+	
+	FechamentoDiarioDTO obterResumoFechamentoDiario( Date dataFechamento)throws FechamentoDiarioException;
 	
 }

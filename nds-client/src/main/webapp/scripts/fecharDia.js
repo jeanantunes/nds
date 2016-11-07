@@ -6,6 +6,7 @@ var ModoDownload = {
 var fecharDiaController =  $.extend(true, {
 	
 	init : function() {
+		$("#btExportarConsulta").hide();
 		
 		$("#totalFaltas", fecharDiaController.workspace).attr("title","Faltas pendentes de aprovação do GFS");
 		$("#totalFaltas", fecharDiaController.workspace).tooltip();
@@ -1826,11 +1827,13 @@ var fecharDiaController =  $.extend(true, {
 					$("#idBotaoFechamentoDiario").text("Pesquisar");
 					$("#idTituloBoataoFechamentoDiario").attr("title","Pesquisar Fechamento do Dia");
 					$("#idImgBotaoFecamentoDiario").attr("src",contextPath+'/images/ico_pesquisar.png');
+					$("#btExportarConsulta").show();
 				}
 				else{
 					$("#idBotaoFechamentoDiario").text("Iniciar Fechamento do Dia");
 					$("#idImgBotaoFecamentoDiario").attr("src",contextPath+'/images/bt_devolucao.png');
 					$("#idTituloBoataoFechamentoDiario").attr("title","Iniciar Fechamento do Dia");
+					$("#btExportarConsulta").hide();
 				}
 			}
 		);
@@ -1850,9 +1853,26 @@ var fecharDiaController =  $.extend(true, {
 				fecharDiaController.popup_processos();
 			}
 		);
-	}
+	},
 	
-	
+	exportarConsulta : function(){
+		
+		var data = [{name : 'dataFechamento', value:$("#dataDaOperacao").val()}];
+
+		exibirMensagem("SUCCESS", ["Aguarde .."]);
+		
+		$.fileDownload(contextPath + "/administracao/fecharDia/exportarRelatorio", {
+            httpMethod : "GET",
+            data : data,
+            failCallback : function(arg) {
+                exibirMensagem("WARNING", ["Erro gerar o relatorio!"]);
+            },
+            
+		});
+		
+		return false;
+		
+	},
 	
 }, BaseController);
 //@ sourceURL=fecharDia.js

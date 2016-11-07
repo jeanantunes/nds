@@ -1,6 +1,8 @@
 package br.com.abril.nds.controllers.administracao;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -46,6 +48,7 @@ import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
@@ -56,6 +59,7 @@ import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
 import br.com.abril.nds.service.ResumoReparteFecharDiaService;
 import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
@@ -101,6 +105,9 @@ public class FecharDiaController extends BaseController {
     
     @Autowired
     private Result result;
+    
+    @Autowired
+    private ParametroSistemaService parametroSistemaService;
     
     @Autowired
     private HttpServletResponse httpResponse;
@@ -537,6 +544,28 @@ public class FecharDiaController extends BaseController {
                 
                 setFechamentoDiarioDTO(dto);
                 
+               // gerar relatorio
+                final byte[] relatorio = RelatorioFechamentoDiario.exportPdf(dto);
+                
+                LOGGER.info("FECHAMENTO DIARIO - gerando relatorio em arquivo");
+                
+                if (relatorio != null) {
+                	
+        	   				// gravar arquivo no diretorio do web ftp
+        	    	try {	
+        	        		String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();   		
+        	        		String path  = dirBanca+"/../generico/fechamento-diario"+DateUtil.formatarData(new Date(),"ddMMyyyy")+".pdf";
+        	        		File fs = new File(dirBanca+"/../generico") ;
+        	        		if ( !fs.exists() ) 
+        	        			fs.mkdir();
+        	        		FileOutputStream arq = new FileOutputStream(path);           	   
+        	        		arq.write(relatorio);
+        	        		arq.close();
+        	        	} catch (Exception e) {
+        	        		LOGGER.error("Erro gravando relatorio fechar dia  no diretorio /opt/ambientexx/parametros_nds/generico ");
+        	        	}  
+                }
+                
                 //this.session.removeAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
                 
                 result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, " Fechamento do Dia efetuado com sucesso."),
@@ -554,6 +583,7 @@ public class FecharDiaController extends BaseController {
                                         Constantes.PARAM_MSGS).recursive().serialize();
                 
             }
+           
             
         } catch (final RuntimeException ex) {
             
@@ -616,6 +646,9 @@ public class FecharDiaController extends BaseController {
         result.use(CustomMapJson.class).put("resumo", resumoFechamentoDiarioEstoque).serialize();
     }
     
+    
+    
+    
     @Post
     public Download gerarRelatorioFechamentoDiario(final ModoDownload modoDownload) {
         
@@ -637,6 +670,7 @@ public class FecharDiaController extends BaseController {
         LOGGER.info("FECHAMENTO DIARIO - OBTIDO BYTES RELATORIO FECHAR DIA");
         
         if (relatorio != null) {
+        	
             final long size = relatorio.length;
             final InputStream inputStream = new ByteArrayInputStream(relatorio);
             
@@ -658,6 +692,39 @@ public class FecharDiaController extends BaseController {
         
         LOGGER.info("FECHAMENTO DIARIO - RELATORIO NAO GERADO");
         
+        return null;
+    }
+    
+    
+    @Get
+    public Download exportarRelatorio(Date dataFechamento) {
+        
+    try {
+        final FechamentoDiarioDTO dto = fecharDiaService.obterResumoFechamentoDiario(dataFechamento);
+        
+        if ( dto == null ) {
+        	throw new ValidacaoException(TipoMensagem.WARNING,
+        			"Fechamento do Dia para data " + DateUtil.formatarDataPTBR(dataFechamento) + " nao encontrado!" );
+        }
+        final byte[] relatorio = RelatorioFechamentoDiario.exportPdf(dto);
+        
+         
+        if (relatorio != null) {
+        	
+            final long size = relatorio.length;
+            final InputStream inputStream = new ByteArrayInputStream(relatorio);
+            
+          
+            final InputStreamDownload download = new InputStreamDownload(inputStream, FileType.PDF.getContentType(),
+                    FECHAMENTO_DIARIO_REPORT_EXPORT_NAME, true, size);
+           
+            
+            return download;
+        }
+        
+    } catch ( Exception e ) {
+        LOGGER.error("Erro gerando relatorio fechamento diario",e);
+    }
         return null;
     }
     
@@ -755,4 +822,6 @@ public class FecharDiaController extends BaseController {
 		result.use(FlexiGridJson.class).from(lista).page(1).total(1).serialize();
 		
     }
+	
+
 }
