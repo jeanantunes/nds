@@ -975,6 +975,64 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	return builder.build();
     }
 
+    @Transactional
+ public FechamentoDiarioDTO obterResumoFechamentoDiario( Date dataFechamento) throws FechamentoDiarioException{
+    	
+    
+    	FechamentoDiario fechamento = fechamentoDiarioRepository.obterFechamentoDiario(dataFechamento);
+    	
+    	
+    	FechamentoDiarioDTO.Builder builder = new FechamentoDiarioDTO.Builder(dataFechamento);
+    	
+      
+    	SumarizacaoReparteDTO resumoReparte = resumoReparteFecharDiaService.obterSumarizacaoReparte(fechamento.getDataFechamento());
+		builder.resumoReparte(resumoReparte);
+	 
+    	
+		ResumoEncalheFecharDiaDTO resumoEncalhe = this.resumoEncalheFecharDiaService.obterResumoGeralEncalhe(fechamento.getDataFechamento());
+		builder.resumoEncalhe(resumoEncalhe);
+    	
+		ResumoSuplementarFecharDiaDTO resumoSuplementar = resumoSuplementarFecharDiaService.obterResumoGeralSuplementar(fechamento.getDataFechamento());
+		builder.resumoSuplementar(resumoSuplementar);
+    	
+		List<SumarizacaoDividasDTO> resumoDividas = dividaService.sumarizacaoDividasReceberEm(fechamento.getDataFechamento());
+		
+    	builder.dividasReceber(resumoDividas);
+    	
+    	List<SumarizacaoDividasDTO> dividasVencer = dividaService.sumarizacaoDividasVencerApos(fechamento.getDataFechamento());
+		
+    	builder.dividasVencer(dividasVencer);
+    	
+    	ResumoFechamentoDiarioCotasDTO resumoCotas = obterResumoCotas(fechamento.getDataFechamento());
+		
+    	builder.resumoCotas(resumoCotas);
+    	
+    	ResumoEstoqueDTO resumoEstoque = obterResumoEstoque(fechamento.getDataFechamento());
+    	builder.resumoEstoque(resumoEstoque);
+    	
+    	ResumoFechamentoDiarioConsignadoDTO resumoConsignado = obterResumoConsignado(fechamento.getDataFechamento());
+    	builder.resumoConsignado(resumoConsignado);
+    	
+    	List<DiferencaDTO> diferencasDTO = obterFaltasSobras(fechamento);
+    	builder.faltasSobras(diferencasDTO);
+    	
+    	
+    	 List<ReparteFecharDiaDTO> lancamentosReparte = resumoReparteFecharDiaService.obterResumoReparte(fechamento.getDataFechamento(), null);
+ 	     builder.reparte(lancamentosReparte);
+ 	   
+ 		List<EncalheFecharDiaDTO> lancamentosEncalhe = this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(fechamento.getDataFechamento(), null);
+		builder.encalhe(lancamentosEncalhe); 
+		
+		
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(fechamento.getDataFechamento(), null);
+		builder.suplementar(listaSuplementar);
+		
+		
+		
+    	
+    	return builder.build();
+    }
+ 
     private void processarSituacoesCota(Date novaDataOperacaoDistribuidor, 
     									Date antigaDataOperacaoDistribuidor) {
 
@@ -1144,6 +1202,22 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	
     	for (Diferenca diferenca : diferencas) {
     	    fechamento.addDiferenca(FechamentoDiarioDiferenca.fromDiferenca(diferenca));
+    	    DiferencaDTO dto = DiferencaDTO.fromDiferenca(diferenca);
+    	    diferencasDTO.add(dto);
+    	}
+        
+    	return diferencasDTO;
+    }
+    
+    
+    protected List<DiferencaDTO> obterFaltasSobras(FechamentoDiario fechamento) {
+        Date dataFechamento = fechamento.getDataFechamento();
+        
+        List<Diferenca> diferencas = obterDiferencas(dataFechamento);
+    	List<DiferencaDTO> diferencasDTO = new ArrayList<>(diferencas.size());
+    	
+    	for (Diferenca diferenca : diferencas) {
+    	  
     	    DiferencaDTO dto = DiferencaDTO.fromDiferenca(diferenca);
     	    diferencasDTO.add(dto);
     	}

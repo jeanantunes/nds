@@ -29,6 +29,20 @@ public class FechamentoDiarioRepositoryImpl extends AbstractRepositoryModel<Fech
 		
 	}
 	
+	
+public FechamentoDiario obterFechamentoDiario(Date dataFechamento){
+		
+		String hql = " select fechamentoDiario from FechamentoDiario fechamentoDiario where fechamentoDiario.dataFechamento = :dataFechamento ";
+		
+		Query query = getSession().createQuery(hql);
+		
+		query.setParameter("dataFechamento", dataFechamento);
+		query.setMaxResults(1);
+		
+		return (FechamentoDiario) query.uniqueResult();
+		
+	}
+	
 	public Date obterDataUltimoFechamento(){
 		
 		String hql = " select max(fechamentoDiario.dataFechamento) from FechamentoDiario fechamentoDiario ";
