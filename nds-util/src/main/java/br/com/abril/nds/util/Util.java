@@ -937,4 +937,19 @@ public abstract class Util {
 
 		return valor;
 	}
+	
+	public static String getValorString(String valor) {
+
+		String chr = String.valueOf(valor.charAt(valor.length()-3));
+		if (",".equals(chr)){
+		    valor = valor.replaceAll("\\.", "");
+		    valor = valor.replaceAll(",", "");
+		} else {
+			valor = valor.replaceAll(",", "");
+			valor = valor.replaceAll("\\.", "");
+		}
+
+		return valor;
+	}
+	
 }
