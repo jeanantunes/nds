@@ -548,6 +548,8 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         Query query = getSession().createQuery(hql.toString());
         
         query.setParameter("idProdutoEdicao", idProdutoEdicao);
+       
+        query.setMaxResults(1); // garatindo que, mesmo em caso de haver várias datas iguais só escolhe uma
         
         Object lancamento = query.uniqueResult();
         
@@ -564,6 +566,8 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
              query = getSession().createQuery(hql.toString());
              
              query.setParameter("idProdutoEdicao", idProdutoEdicao);
+             
+             query.setMaxResults(1); // garatindo que, mesmo em caso de haver várias datas iguais só escolhe uma
              
              lancamento = query.uniqueResult();
         	
