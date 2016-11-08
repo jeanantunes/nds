@@ -14,6 +14,8 @@ public class UtilitarioCNAB {
 	
 	public static final String BANCO_SANTANDER = "033";
 	
+	public static final String CREDCOMIM = "085";
+	
 	public static final String SEGMENTO_J = "J";
 	public static final String SEGMENTO_J52 = "J52";
 	public static final String SEGMENTO_T = "T";
@@ -235,12 +237,5 @@ public class UtilitarioCNAB {
 			return formatoDataArquivoCNAB;
 		}
 		
-	}
-	
-	
-
-   
-    
-
-	
+	}	
 }
