@@ -197,6 +197,9 @@ public class EmailServiceImpl implements EmailService {
 			mailSender.getJavaMailProperties().setProperty("mail.smtps.auth", "false");
 			mailSender.getJavaMailProperties().setProperty("mail.smtps.starttls.enable", "false");
 		}
+	
+		if ( mailSender.getPort() == 587 ) 
+			mailSender.getJavaMailProperties().setProperty("mail.smtp.starttls.enable", "true");
 	}
 	
 	/**
