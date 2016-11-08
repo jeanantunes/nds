@@ -158,6 +158,7 @@ public class VendaEncalheController extends BaseController {
 	public void confirmaNovaVenda(List<VendaEncalheDTO> listaVendas, Integer numeroCota, Date dataDebito){
 		
 		confirmaVenda(listaVendas, numeroCota, dataDebito, Boolean.TRUE);
+	
 	}
 	
 	@Post
