@@ -25,6 +25,16 @@ function InformeEncalhe() {
 			$("#semanaRecolhimentoBox", _this.workspace).val("");
 		 }
 	});
+	
+		
+
+		// evitar que apos fechar a imagem da capa, ele faca scroll para o inicio da tela
+		// ( o padrao para todos dialog )
+
+		$(document).unbind("dialogclose");
+
+		
+
 };
 
 InformeEncalhe.prototype.path = contextPath + "/devolucao/informeEncalhe/";
