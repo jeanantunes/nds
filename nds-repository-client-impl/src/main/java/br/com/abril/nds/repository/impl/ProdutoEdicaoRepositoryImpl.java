@@ -194,10 +194,18 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	@SuppressWarnings("unchecked")
 	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoBarra(final String codigoBarra) {
 
-		final Criteria criteria = this.getSession().createCriteria(ProdutoEdicao.class);
-		criteria.add(Restrictions.eq("codigoDeBarras", codigoBarra));
+		//final Criteria criteria = this.getSession().createCriteria(ProdutoEdicao.class);
+		// criteria.add(Restrictions.eq("codigoDeBarras", codigoBarra));
+    	
+    	final String hql = "from ProdutoEdicao produtoEdicao " 
+				   + " join fetch produtoEdicao.produto " 
+				   + " where produtoEdicao.codigoDeBarras = :codigoDeBarras ";
 
-		return criteria.list();
+		final Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("codigoDeBarras", codigoBarra);
+
+		return query.list();
 	}
 
 

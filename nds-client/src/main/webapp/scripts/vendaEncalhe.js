@@ -342,17 +342,38 @@ var VENDA_PRODUTO = {
 			height:510,
 			width:1030,
 			modal: true,
-			buttons: [
-			         {id:"btn_confirmar_venda",text:"Confirmar",
-		        	  click: function() {
-		        		  VENDA_PRODUTO.confirmaVenda();		
-			         }},
-		        	{id:"btn_cancelar_venda",text:"Cancelar",
-			         click:function(){
-		        				$( this ).dialog( "close" );
-		        		}	  
-		        	}  
-				],
+			
+			buttons : {
+				"Confirmar" : function() {
+					
+					$(".ui-button-text").click(function() {
+						
+						  VENDA_PRODUTO.confirmaVenda(true);
+					});
+					
+				},
+				"Cancelar" : function() {
+					
+					
+				}
+			}, 
+//			
+//			buttons: [
+//			         {id:"btn_confirmar_venda",text:"Confirmar",
+//		        	  click: function() {
+//		        		  
+//		        		  if (e.keyCode != 13) {		        			  
+//		        			  VENDA_PRODUTO.confirmaVenda();	
+//		        		  }
+//
+//		        	
+//			         }},
+//		        	{id:"btn_cancelar_venda",text:"Cancelar",
+//			         click:function(){
+//		        				$( this ).dialog( "close" );
+//		        		}	  
+//		        	}  
+//				],
 			form: $("#dialog-venda-encalhe-cota", this.workspace).parents("form")
 		});
 	},
@@ -391,7 +412,7 @@ var VENDA_PRODUTO = {
 			
 			var hiddenId = '<input type="hidden" name="idVendaEncalhe" value="' + row.cell.idVendaEncalhe + '" />';
 			
-			var inputCodBarras ='<input type="text" id="codBarras0" name="codBarras" style="width:90px;" disabled="disabled" value="'+row.cell.codigoBarras+'"/>';
+			var inputCodBarras ='<input type="text" id="codBarras0" onkeypress="return event.keyCode != 13;" name="codBarras" style="width:90px;" disabled="disabled" value="'+row.cell.codigoBarras+'"/>';
 			
 			var inputCodProduto='<input type="text" id="codProduto0" value="'+row.cell.codigoProduto+'" disabled="disabled" name="codProduto" style="width:55px; float:left; margin-right:10px;"/>';
 			
@@ -468,8 +489,11 @@ var VENDA_PRODUTO = {
 			var inputHiddenTipoComercailizacao = '<input id="hiddenComercializacao'+index+'" name="hiddenComercializacao" type="hidden" value="'+row.cell.formaComercializacao+'">';
 			
 			$("#codBarras"+index, VENDA_PRODUTO.workspace).keypress(function(e) {
+				//alert(e.keyCode);
 				if (e.keyCode == 13) {
 					VENDA_PRODUTO.pesquisarProdutoCodBarra("#codBarras"+index, index);
+					e.preventDefault();
+					return false;
 				}
 			});
 			
@@ -477,6 +501,8 @@ var VENDA_PRODUTO = {
 				if (e.keyCode == 13) {
 					VENDA_PRODUTO.totalizarValorProdutoSelecionado(index);
 					$("#codBarras"+index+1, VENDA_PRODUTO.workspace).focus();
+					e.preventDefault();
+					return false;
 				}
 			});
 			
@@ -514,7 +540,7 @@ var VENDA_PRODUTO = {
 		}
 		var parametroPesCodBarra ='\'#codBarras'+ index+ '\',' + index;
 		
-		return '<input type="text" id="codBarras'+index+'" name="codBarras" style="width:90px;" value="'+valor+'" onkeyup="VENDA_PRODUTO.pesquisarProdutoCodBarra('+parametroPesCodBarra+')"/>';
+		return '<input type="text" id="codBarras'+index+'" onkeypress="return event.keyCode != 13;" name="codBarras" style="width:90px;" value="'+valor+'" onkeyup="VENDA_PRODUTO.pesquisarProdutoCodBarra('+parametroPesCodBarra+')"/>';
 	},
 	
 	getInputCodigoProduto:function(index,result,parametroPesquisaProduto){
@@ -1066,7 +1092,14 @@ var VENDA_PRODUTO = {
 		}
 	},
 	
-	confirmaVenda:function(){
+	confirmaVenda:function(valor){
+
+		
+		$("#btn_confirmar_venda", VENDA_PRODUTO.workspace).keypress(function(e) {
+			if (e.keyCode == 13) {
+				VENDA_PRODUTO.confirmaVenda(false);
+			}
+		});
 		
 		var metodo = (VENDA_PRODUTO.vendaNova == true)?"confirmaNovaVenda":"confirmaEdicaoVenda";
 		
@@ -1229,12 +1262,20 @@ $(function() {
 		buttonImageOnly: true,
 		dateFormat: "dd/mm/yy"
 	});
+//	
+//	$("#btn_confirmar_venda", VENDA_PRODUTO.workspace).keypress(function(e) {
+//		if (e.keyCode == 13) {
+//			VENDA_PRODUTO.confirmaVenda();
+//		}
+//	});
+//	
+//	$('#btn_confirmar_venda').keyup(function(event) {
+//		  if (event.keyCode == 13 ) {
+//		     event.preventDefault();
+//		   }
+//		});
 	
-	$("#btn_confirmar_venda", VENDA_PRODUTO.workspace).keypress(function(e) {
-		if (e.keyCode == 13) {
-			VENDA_PRODUTO.confirmaVenda();
-		}
-	});
+	
 		
 	$(".vendaEncalheGridCota", VENDA_PRODUTO.workspace).flexigrid({
 		preProcess:VENDA_PRODUTO.executarPreProcessamento,
