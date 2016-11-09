@@ -554,7 +554,7 @@ public class FecharDiaController extends BaseController {
         	   				// gravar arquivo no diretorio do web ftp
         	    	try {	
         	        		String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();   		
-        	        		String path  = dirBanca+"/../generico/fechamento-diario"+DateUtil.formatarData(new Date(),"ddMMyyyy")+".pdf";
+        	        		String path  = dirBanca+"/../generico/fechamento-diario"+DateUtil.formatarData(_dataOperacao,"ddMMyyyy")+".pdf";
         	        		File fs = new File(dirBanca+"/../generico") ;
         	        		if ( !fs.exists() ) 
         	        			fs.mkdir();
