@@ -148,6 +148,7 @@ public class NotaFiscalInformacoes implements Serializable {
 	@Column(name = "PESO_BRUTO_LIQUIDO", nullable = false)
 	private BigDecimal pesoBrutoLiquido;
 	
+	@XmlTransient
 	@Column(name = "BOLETO_NFE_GERADO")
 	private boolean boletoNfeGerado;
 	
