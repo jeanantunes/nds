@@ -3058,7 +3058,8 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			for (CobRegBaseDTO dto : list) {
 				cobParser.parseCobrancaReg(dto, bw);
-				bw.newLine();
+				bw.append("\r");
+				bw.append("\n");
 			}
 			
 			bw.flush();
