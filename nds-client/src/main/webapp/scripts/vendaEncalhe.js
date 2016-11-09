@@ -343,37 +343,24 @@ var VENDA_PRODUTO = {
 			width:1030,
 			modal: true,
 			
-			buttons : {
-				"Confirmar" : function() {
-					
-					$(".ui-button-text").click(function() {
-						
-						  VENDA_PRODUTO.confirmaVenda(true);
-					});
-					
-				},
-				"Cancelar" : function() {
-					
-					
-				}
-			}, 
-//			
-//			buttons: [
-//			         {id:"btn_confirmar_venda",text:"Confirmar",
-//		        	  click: function() {
-//		        		  
-//		        		  if (e.keyCode != 13) {		        			  
-//		        			  VENDA_PRODUTO.confirmaVenda();	
-//		        		  }
-//
-//		        	
-//			         }},
-//		        	{id:"btn_cancelar_venda",text:"Cancelar",
-//			         click:function(){
-//		        				$( this ).dialog( "close" );
-//		        		}	  
-//		        	}  
-//				],
+
+			
+			buttons: [
+			         {id:"btn_confirmar_venda",text:"Confirmar",
+		        	  click: function(event) {
+		        		  
+		        		  if (event.originalEvent !== undefined)
+						    VENDA_PRODUTO.confirmaVenda(true);
+	        	
+			         }},
+		        	{id:"btn_cancelar_venda",text:"Cancelar",
+			         click:function(){
+			       // 	 if (event.originalEvent !== undefined)
+						   $( this ).dialog( "close" );
+						  
+		        		}	  
+		        	}  
+				],
 			form: $("#dialog-venda-encalhe-cota", this.workspace).parents("form")
 		});
 	},
