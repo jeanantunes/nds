@@ -424,8 +424,9 @@
              </td>
                <td width="129">
              <span class="bt_arq"  id="btExportarConsulta">
-						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0" />
-					<a href="#"    onclick="fecharDiaController.exportarConsulta();"   rel="tipsy" title="Relatório">
+						<a href="#"    onclick="fecharDiaController.exportarConsulta();"   rel="tipsy" title="Relatorio">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0" onclick="fecharDiaController.exportarConsulta();"/>
+		
 						</a>
 						
 						
