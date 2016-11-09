@@ -195,7 +195,7 @@ public class HomeController {
 	        for (final GrantedAuthority grantedAuthority : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
 	            try {
 	            	
-	            	if ( grantedAuthority != null && grantedAuthority.getAuthority() != null )
+	            	if ( grantedAuthority != null && grantedAuthority.getAuthority() != null  && !"null".equals(grantedAuthority.getAuthority()))
 	                   permissoes.add(Permissao.valueOf(grantedAuthority.getAuthority()));
 	            } catch (final IllegalArgumentException e) {
 	                LOGGER.warn("Não foi encontrado a seguinte permissao: " + grantedAuthority.getAuthority(), e);
