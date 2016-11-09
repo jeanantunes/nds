@@ -3147,9 +3147,9 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		String nomeCliente = obterNomeCliente(pessoaCedente);
 		
-		registro00.setNomeCliente(nomeCliente);
+		registro00.setNomeCliente(TirarAcento.removerAcentuacao(nomeCliente));
 		registro00.setNumeroBanco(banco.getNumeroBanco());
-		registro00.setNomeBanco(banco.getNome());
+		registro00.setNomeBanco("BANCO ITAU SA");
 		
 		setarDataFomatada(registro00);
 		
@@ -3388,7 +3388,7 @@ public class BoletoServiceImpl implements BoletoService {
             documentoSacado = ((PessoaJuridica) pessoaSacado).getCnpj();
         }
         
-        registro01.setNumeroCNPJCPF(documentoSacado);
+        registro01.setNumeroCNPJCPF(documentoSacado.replace(".", "").replace("-", "").replace("/", ""));
                 
         registro01.setNomeSacado(TirarAcento.removerAcentuacao(nomeSacado));
         
@@ -3421,7 +3421,7 @@ public class BoletoServiceImpl implements BoletoService {
             documentoSacado = ((PessoaJuridica) pessoaSacado).getCnpj();
         }
         
-        registro01.setNumeroCNPJCPF(documentoSacado);
+        registro01.setNumeroCNPJCPF(documentoSacado.replace(".", "").replace("-", "").replace("/", ""));
                 
         registro01.setNomeSacado(TirarAcento.removerAcentuacao(nomeSacado));
         
@@ -3437,19 +3437,19 @@ public class BoletoServiceImpl implements BoletoService {
 		registro01.setCEP(enderecoSacado.getCep());
 		registro01.setCidade(enderecoSacado.getCidade());
 		registro01.setUF(enderecoSacado.getUf());
-		registro01.setMensagemCedenteNomeSacadorAvalista(nomeSacado);
+		registro01.setMensagemCedenteNomeSacadorAvalista(TirarAcento.removerAcentuacao(nomeSacado));
 		registro01.setPrazoProtesto("99");
 		registro01.setCodigoMoeda("00");
 	}
 	
 	private void enderecoSacado(CobRegEnvTipoRegistroItau01 registro01, Endereco enderecoSacado, String nomeSacado) {
 		//ENDERECO DO SACADO
-        registro01.setEnderecoSacado(enderecoSacado.getTipoLogradouro() +". "+ enderecoSacado.getLogradouro().trim() + "," + enderecoSacado.getNumero() +" " + enderecoSacado.getComplemento() == null ? "" : enderecoSacado.getComplemento());
-        registro01.setBairro(enderecoSacado.getBairro());
-		registro01.setCEP(enderecoSacado.getCep());
-		registro01.setCidade(enderecoSacado.getCidade());
+        registro01.setEnderecoSacado(TirarAcento.removerAcentuacao(enderecoSacado.getTipoLogradouro().trim()) +". "+ TirarAcento.removerAcentuacao(enderecoSacado.getLogradouro().trim()) + "," + enderecoSacado.getNumero().trim());
+        registro01.setBairro(TirarAcento.removerAcentuacao(enderecoSacado.getBairro().trim()));
+		registro01.setCEP(enderecoSacado.getCep().replace("-", "").replace(".", ""));
+		registro01.setCidade(TirarAcento.removerAcentuacao(enderecoSacado.getCidade()));
 		registro01.setUF(enderecoSacado.getUf());
-		registro01.setSacadoAvalista(nomeSacado);
+		registro01.setSacadoAvalista(TirarAcento.removerAcentuacao(nomeSacado));
 		registro01.setBracos01("");
 	}
 	
