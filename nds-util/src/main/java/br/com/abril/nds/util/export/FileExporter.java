@@ -156,7 +156,8 @@ public class FileExporter {
 		BMP(".bmp", "image/vnd.wap.wbmp"),
 		JKS(".jks", "application/octet-stream"),
 		RET(".RET", "application/text"),
-		PFX(".pfx", "application/x-pkcs12");
+		PFX(".pfx", "application/x-pkcs12"),
+		REM(".txt", "application/text"),;
 
 		private String extension;
 		

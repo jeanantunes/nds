@@ -666,7 +666,7 @@ public class ImpressaoBoletosController extends BaseController {
 	@Path("/gerarArquivo")
 	public void gerarArquivo(final FiltroDividaGeradaDTO filtro) {
 		
-		FileType fileType = FileType.TXT;
+		FileType fileType = FileType.REM;
 		
 		if(!fechamentoEncalheService.validarEncerramentoOperacaoEncalhe(filtro.getDataMovimento())) {
 			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Favor realizar o fechamento de encalhe."), Constantes.PARAM_MSGS).recursive().serialize();
@@ -684,7 +684,7 @@ public class ImpressaoBoletosController extends BaseController {
 				
 				this.httpResponse.setContentType("application/txt");
 				
-				this.httpResponse.setHeader("Content-Disposition", "attachment; filename=COBRANCAREG"+DateUtil.formatarData(new Date(),"ddMMyyHHmm") + fileType.getExtension());
+				this.httpResponse.setHeader("Content-Disposition", "attachment; filename=CR"+DateUtil.formatarData(new Date(),"ddMMyy") + fileType.getExtension());
 				
 				OutputStream output = this.httpResponse.getOutputStream();
 				
