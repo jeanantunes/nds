@@ -29,6 +29,9 @@ public class CNAB {
 	public int indiceNumeroContaInicio;
 	public int indiceNumeroContaFim;
 	
+	public int indiceCodigoOcorrenciaInicio ;
+	public int indiceCodigoOcorrenciaFim ;
+	
 	public int indiceTarifaCobrancaInicio;
 	public int indiceTarifaCobrancaFim;
 
@@ -56,6 +59,12 @@ public class CNAB {
 		return linha.substring(indiceNumeroRegistroInicio, indiceNumeroRegistroFim);
 	}
 	
+
+	public String obterCodigoOcorrencia(String linha) {
+		return linha.substring(indiceCodigoOcorrenciaInicio, indiceCodigoOcorrenciaFim); 
+	}
+	
+
 	public String obterNumeroAgencia(String linha) {
 		return linha.substring(indiceNumeroAgenciaInicio, indiceNumeroAgenciaFim); 
 	}
@@ -351,6 +360,10 @@ public class CNAB {
 		cnab.indiceNumeroContaInicio = 24;
 		cnab.indiceNumeroContaFim = 33;
 		
+		
+		cnab.indiceCodigoOcorrenciaInicio = 108;
+		cnab.indiceCodigoOcorrenciaFim = 110;
+		
 		cnab.indiceTarifaCobrancaInicio = 175;
 		cnab.indiceTarifaCobrancaFim = 188;
 		
@@ -387,6 +400,9 @@ public class CNAB {
 		cnab.indiceTarifaCobrancaInicio = 175;
 		cnab.indiceTarifaCobrancaFim = 188;
 		
+		cnab.indiceCodigoOcorrenciaInicio = 108;
+		cnab.indiceCodigoOcorrenciaFim = 110;
+		
 		return cnab;
 	}
 	
@@ -418,6 +434,9 @@ public class CNAB {
     	
     	cnab.indiceTarifaCobrancaInicio = 175;
 		cnab.indiceTarifaCobrancaFim = 188;
+		
+		cnab.indiceCodigoOcorrenciaInicio = 108;
+		cnab.indiceCodigoOcorrenciaFim = 110;
     	
     	return cnab;
 	}
@@ -450,6 +469,11 @@ public class CNAB {
 		
 		cnab.indiceTarifaCobrancaInicio = 175;
 		cnab.indiceTarifaCobrancaFim = 188;
+		
+		
+		cnab.indiceCodigoOcorrenciaInicio = 108;
+		cnab.indiceCodigoOcorrenciaFim = 110;
+
 		
 		return cnab;
 	}

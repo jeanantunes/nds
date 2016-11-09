@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
@@ -31,6 +33,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(LeitorArquivoBancoServiceImpl.class);
 	
 	private static final String[] EXTENSOES_ARQUIVO_VALIDAS = {"dat", "ret","txt"};
 	
@@ -134,6 +137,11 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		
 		for(String line: lines) {
 			
+		
+			String strCodigoOcorrencia	= bancoCNAB.obterCodigoOcorrencia(line);
+			
+			
+			
 			if (padraoCNAB.isHeader(line)) {
 				
 				if ( !UtilitarioCNAB.BANCO_BRADESCO.equals(codigoBanco)  &&
@@ -147,6 +155,15 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 				}
 			    
 			} else if (padraoCNAB.isDetalhe(line)) {
+				
+				if (  UtilitarioCNAB.BANCO_ITAU.equals(codigoBanco) &&
+					!"06".equals(strCodigoOcorrencia) && 
+					!"07".equals(strCodigoOcorrencia) && 
+					!"08".equals(strCodigoOcorrencia) &&
+					!"09".equals(strCodigoOcorrencia) ) {
+					LOGGER.warn("RETORNO NAO EH BAIXA NORMAL(CODIGOS 06 07 08 09). DESCONSIDERANDO LINHA. CODIGO="+strCodigoOcorrencia + " linha="+line);
+					continue;
+				}
 				
 				if ( UtilitarioCNAB.BANCO_BRADESCO.equals(codigoBanco) ||
 					 UtilitarioCNAB.BANCO_CAIXA_ECONOMICA_FEDERAL.equals(codigoBanco)	){
@@ -172,6 +189,7 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 					strDataPagamento 	= bancoCNAB.obterDataPagamento(line);
 					pagamento.setDataPagamento(DateUtil.parseData(strDataPagamento, padraoCNAB.getFormatoDataArquivoCNAB()));
 				}
+			
 				
 				if(bancoCNAB.containsNossoNumero(line)) {
 					strNossoNumero 		= bancoCNAB.obterNossoNumero(line);
@@ -271,24 +289,25 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 			
 		}
 		
-		if (!ignorarDataPagamento && pagamento.getDataPagamento() == null) {
-			
-			listaMensagens.add("Falha ao processar o arquivo: data de pagamento inválida!");
-		}
-		
 		if (pagamento.getNossoNumero() == null) {
 
 			listaMensagens.add("Falha ao processar o arquivo: nosso número inválido!");
 		}
 		
+		if (!ignorarDataPagamento && pagamento.getDataPagamento() == null) {
+			
+			listaMensagens.add("Falha ao processar o arquivo: data de pagamento inválida! Nosso número="+pagamento.getNossoNumero());
+		}
+		
+
 		if (pagamento.getNumeroRegistro() == null) {
 
-			listaMensagens.add("Falha ao processar o arquivo: número do registro inválido!");
+			listaMensagens.add("Falha ao processar o arquivo: número do registro inválido! Nosso número="+pagamento.getNossoNumero());
 		}
 		
 		if (pagamento.getValorPagamento() == null) {
 
-			listaMensagens.add("Falha ao processar o arquivo: valor de pagameno inválido!");
+			listaMensagens.add("Falha ao processar o arquivo: valor de pagameno inválido! Nosso número="+pagamento.getNossoNumero());
 		}
 		
 		if (!listaMensagens.isEmpty()) {
