@@ -1,9 +1,17 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,16 +22,23 @@ import br.com.abril.nds.dto.filtro.FiltroAlteracaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroModalDistribuicao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaCobrancaBoleto;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.repository.AlteracaoCotaRepository;
+import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.service.AlteracaoCotaService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -48,6 +63,13 @@ public class AlteracaoCotaServiceImpl implements AlteracaoCotaService {
 
 	@Autowired
 	private ParametroCobrancaCotaService parametroCobrancaCotaService;
+	
+	@Autowired
+	private FormaCobrancaRepository formaCobrancaRepository;
+	
+	
+	@Autowired
+	private FormaCobrancaService formaCobrancaService;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -167,7 +189,57 @@ public class AlteracaoCotaServiceImpl implements AlteracaoCotaService {
 				
 				cota.setPoliticaSuspensao(politicaSuspensao);
 			}
-
+			
+			//incluir ou ativar  forma cobranca tipo BOLETO  para a cota
+			
+			Set <FormaCobranca> formas = cota.getParametroCobranca().getFormasCobrancaCota();
+			FormaCobranca fcBoleto=null;
+			for (FormaCobranca fc:formas )
+				 if ( fc.getTipoCobranca().equals(TipoCobranca.BOLETO)) {
+					 fcBoleto = fc;
+					 break;
+				 }
+			
+			if ( fcBoleto == null ) {		
+				FormaCobranca formaPrincipal = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();		    		
+				FormaCobranca formaCobranca = new FormaCobranca();
+				formaCobranca.setTipoFormaCobranca(formaPrincipal.getTipoFormaCobranca());
+				formaCobranca.setTipoCobranca(formaPrincipal.getTipoCobranca());
+				formaCobranca.setRecebeCobrancaEmail(formaPrincipal.isRecebeCobrancaEmail());
+				formaCobranca.setFormaCobrancaBoleto(formaPrincipal.getFormaCobrancaBoleto());
+				formaCobranca.setBanco(formaPrincipal.getBanco());
+				formaCobranca.setParametroCobrancaCota(cota.getParametroCobranca());
+		        formaCobranca.setTaxaMulta(formaPrincipal.getTaxaMulta());
+				formaCobranca.setValorMulta(formaPrincipal.getValorMulta());
+				formaCobranca.setTaxaJurosMensal(formaPrincipal.getTaxaJurosMensal());
+				formaCobranca.setVencimentoDiaUtil(formaPrincipal.isVencimentoDiaUtil());
+				formaCobranca.setPrincipal(true);
+				formaCobranca.setInstrucoes(formaPrincipal.getInstrucoes());
+				formaCobranca.setAtiva(true);
+				
+				Set <Fornecedor>	fc =  new HashSet<Fornecedor>();
+				for ( Fornecedor f:cota.getFornecedores()) {
+					formaCobranca.getFornecedores().remove(f);
+					fc.add(f);
+				}
+				
+				formaCobranca.setFornecedores(fc);
+				formaCobrancaRepository.adicionar(formaCobranca);
+				
+			} else {
+				
+				Set <Fornecedor>	fc =  new HashSet<Fornecedor>();
+				for ( Fornecedor f:cota.getFornecedores()) {
+					fcBoleto.getFornecedores().remove(f);
+					fc.add(f);
+				}
+				
+				fcBoleto.setFornecedores(fc);	
+				fcBoleto.setAtiva(true);
+				formaCobrancaRepository.alterar(fcBoleto);
+				
+			}
+			
 		} catch (NumberFormatException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Valor inválido");
 		}

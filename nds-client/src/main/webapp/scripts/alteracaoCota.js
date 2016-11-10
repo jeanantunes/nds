@@ -210,8 +210,8 @@ var alteracaoCotaController = $.extend(true, {
 			sortname : "numeroCota",
 			sortorder : "asc",
 			usepager : true,
-			useRp : true,
-			rp : 15,
+			useRp : false,
+			rp : 10000,
 			showTableToggleBtn : true,
 			width : 960
 		});
