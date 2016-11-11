@@ -124,16 +124,25 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		}
 		
 		final Date dtRecolhimentoDistribuidor = this.normalizarDataSemHora(lancamento.getDataRecolhimentoDistribuidor());
+				
+       
+		 Date dtRecolhimentoArquivoInput = this.normalizarDataSemHora(input.getDataRecolhimento());
+		 Date dtRecolhimentoArquivo = recolhimentoService.obterDataRecolhimentoValido(dtRecolhimentoArquivoInput,produtoEdicao.getProduto().getFornecedor().getId());
+       
+		// se nada valida nao 'e igual a data do input , ver se data esta na mesma semana, senao, tentar alguma data
+		// a partir do inicio da semana
+		if (!dtRecolhimentoArquivo.equals(dtRecolhimentoArquivoInput) ) { 
+			
+			int inicioSemanaRecolhimento = distribuidorService.inicioSemanaRecolhimento().getCodigoDiaSemana();
+				
+			Date dtRecolhimentoInicioSemanaInput = SemanaUtil.obterDataInicioSemana(inicioSemanaRecolhimento,dtRecolhimentoArquivoInput);
+			Date dtRecolhimentoInicioSemanaValido = SemanaUtil.obterDataInicioSemana(inicioSemanaRecolhimento,dtRecolhimentoArquivo);
+			if (!dtRecolhimentoInicioSemanaInput.equals(dtRecolhimentoInicioSemanaValido) ) { // nao estao na mesma semana. buscar pelo inicio da semana
+				dtRecolhimentoArquivo = recolhimentoService.obterDataRecolhimentoValido(dtRecolhimentoInicioSemanaInput,produtoEdicao.getProduto().getFornecedor().getId());
+			}
+			
+		}
 		
-    //   nao usar a data de recolhimento, e sim a data do primeiro dia da semana  para  obter a matriz de recolhimento
-	//	 final Date dtRecolhimentoArquivo = recolhimentoService.obterDataRecolhimentoValido(this.normalizarDataSemHora(input.getDataRecolhimento()),produtoEdicao.getProduto().getFornecedor().getId());
-	//   obter a data do  primeiro dia da semana e  usar esta data para procurar a data de recolhimento
-		
-        int inicioSemanaRecolhimento = distribuidorService.inicioSemanaRecolhimento().getCodigoDiaSemana();
-		Date dataRecolhimentoInicioSemana = SemanaUtil.obterDataInicioSemana(inicioSemanaRecolhimento, 
-				this.normalizarDataSemHora(input.getDataRecolhimento()));
-		final Date dtRecolhimentoArquivo = recolhimentoService.obterDataRecolhimentoValido(dataRecolhimentoInicioSemana,produtoEdicao.getProduto().getFornecedor().getId());
-
 		if (!dtRecolhimentoDistribuidor.equals(dtRecolhimentoArquivo)) {
 			
 			final Date dtRecolhimentoPrevista = this.normalizarDataSemHora(
