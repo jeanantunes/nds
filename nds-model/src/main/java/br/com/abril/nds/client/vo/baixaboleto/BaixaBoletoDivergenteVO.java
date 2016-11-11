@@ -21,6 +21,12 @@ public class BaixaBoletoDivergenteVO extends BaixaBoletoBaseVO {
 
 	private static final long serialVersionUID = -9188939992448279466L;
 
+	@Export(label="Cota", exhibitionOrder=-3, widthPercent = 5)
+	private Integer numeroCota;
+	
+	@Export(label="Nome", exhibitionOrder=-2, widthPercent = 30)
+	private String nomeCota;
+
 	@Export(label = "Motivo", exhibitionOrder=-1)
 	private String motivoDivergencia;
 
@@ -110,6 +116,21 @@ public class BaixaBoletoDivergenteVO extends BaixaBoletoBaseVO {
 
 	public void setDataVencimento(String dataVencimento) {
 		this.dataVencimento = dataVencimento;
+	}
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
+	
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
 	}
 	
 }

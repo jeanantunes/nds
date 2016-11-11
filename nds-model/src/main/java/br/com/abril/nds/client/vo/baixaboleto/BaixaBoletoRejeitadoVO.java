@@ -20,6 +20,13 @@ public class BaixaBoletoRejeitadoVO extends BaixaBoletoBaseVO {
 
 	private static final long serialVersionUID = 5156198122887009066L;
 
+	 
+	@Export(label="Cota", exhibitionOrder=-3, widthPercent = 5)
+	private Integer numeroCota;
+	
+	@Export(label="Nome", exhibitionOrder=-2, widthPercent = 30)
+	private String nomeCota;
+	
 	@Export(label = "Histórico", exhibitionOrder=-1)
 	private String motivoRejeitado;
 	
@@ -52,6 +59,22 @@ public class BaixaBoletoRejeitadoVO extends BaixaBoletoBaseVO {
 	 */
 	public void setValorBoleto(BigDecimal valorBoleto) {
 		this.valorBoleto = valorBoleto;
+	}
+	
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
+	
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
 	}
 	
 }
