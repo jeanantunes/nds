@@ -649,7 +649,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select baixaAutomatica.status as motivoRejeitado, ")
+		hql.append(" select coalesce(cota.numeroCota,'') as numeroCota, baixaAutomatica.status as motivoRejeitado, ")
 		   .append(" 		baixaAutomatica.banco.apelido as nomeBanco, ")
 		   .append(" 		concat(baixaAutomatica.banco.conta, case when baixaAutomatica.banco.dvConta is not null then concat('-',baixaAutomatica.banco.dvConta) else '' end) as numeroConta, ")
 		   .append(" 		baixaAutomatica.valorPago as valorBoleto ")
@@ -678,9 +678,9 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		StringBuilder hql = new StringBuilder("");
 		
-		hql.append(" select baixaAutomatica.status as motivoDivergencia, ")
-		   .append(" 		baixaAutomatica.banco.apelido as nomeBanco, ")
-		   .append(" 		concat(baixaAutomatica.banco.conta, case when baixaAutomatica.banco.dvConta is not null then concat('-',baixaAutomatica.banco.dvConta) else '' end) as numeroConta, ")
+		hql.append(" select cota.numeroCota as numeroCota, baixaAutomatica.status as motivoDivergencia, ")
+		   .append(" 		coalesce(banco.apelido,cobranca.tipoCobranca) as nomeBanco, ")
+		   .append(" 		concat(coalesce(banco.conta,''), case when banco.dvConta is not null then concat('-',banco.dvConta) else '' end) as numeroConta, ")
 		   .append(" 		cobranca.valor as valorBoleto, ")
 		   .append(" 		baixaAutomatica.valorPago as valorPago, ")
 		   .append(" 		cobranca.valor - baixaAutomatica.valorPago as valorDiferenca, ")
@@ -713,8 +713,8 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		hql.append(" 		(case when (cobranca.cota.pessoa.nome is not null)");
 		hql.append("			then cobranca.cota.pessoa.nome");
 		hql.append("			else cobranca.cota.pessoa.razaoSocial end) as nomeCota, ");
-		hql.append("  cobranca.banco.apelido as nomeBanco, ");
-		hql.append("  concat(cobranca.banco.conta, case when cobranca.banco.dvConta is not null then concat('-', cobranca.banco.dvConta) else '' end) as numeroConta, ");
+		hql.append("  coalesce(banco.apelido,cobranca.tipoCobranca) as nomeBanco, ");
+		hql.append("  concat(coalesce(banco.conta,''), case when banco.dvConta is not null then concat('-', banco.dvConta) else '' end) as numeroConta, ");
 		hql.append("  cobranca.nossoNumeroCompleto as nossoNumero, ");
 		hql.append("  cobranca.valor as valorBoleto, ");
 		hql.append("  cobranca.dataVencimento as dataVencimento, ");
@@ -744,8 +744,8 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select banco.apelido as nomeBanco, ")
-		   .append(" 		concat(banco.conta, case when banco.dvConta is not null then concat('-', banco.dvConta) else '' end) as numeroConta, ")
+		hql.append(" select coalesce(banco.apelido,'') as nomeBanco, ")
+		   .append(" 		concat(coalesce(banco.conta,''), case when banco.dvConta is not null then concat('-', banco.dvConta) else '' end) as numeroConta, ")
   		   .append(" 		sum(baixaAutomatica.valorPago) as valorPago, ")
   		   .append(" 		baixaAutomatica.dataPagamento as dataVencimento ")
   		   .append(this.obterFromWhereConsultaTotalBancario())
@@ -796,6 +796,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		hql.append(" from BaixaAutomatica baixaAutomatica ");
 		hql.append(" left join baixaAutomatica.cobranca cobranca ");
+		hql.append(" left join cobranca.cota cota ");
 		hql.append(" where baixaAutomatica.dataPagamento = :data ");
 		hql.append(" and baixaAutomatica.status in (:statusBaixa) ");
 		hql.append(" and ( cobranca.tipoCobranca is null or cobranca.tipoCobranca in (:tipoCobranca) ) ");
@@ -809,6 +810,8 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		hql.append(" from BaixaAutomatica baixaAutomatica ");
 		hql.append(" left join baixaAutomatica.cobranca cobranca ");
+		hql.append(" left join cobranca.cota cota ");
+		hql.append(" left join cobranca.banco banco ");
 		hql.append(" where baixaAutomatica.dataPagamento = :data ");
 		hql.append(" and baixaAutomatica.status in (:statusBaixa) ");
 		// hql.append(" and cobranca.tipoCobranca in (:tipoCobranca) ");
@@ -823,6 +826,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		hql.append(" from Cobranca cobranca ");
 		hql.append(" join cobranca.divida divida ");
+		hql.append(" left join cobranca.banco banco ");
 		hql.append(" where cobranca.dataVencimento = :data ");
 		hql.append(" and cobranca.statusCobranca =:statusCobranca");
 		// hql.append(" and cobranca.tipoCobranca in (:tipoCobranca) ");
@@ -835,7 +839,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" from BaixaAutomatica baixaAutomatica ");
-		hql.append(" join baixaAutomatica.banco banco ");
+		hql.append(" left join baixaAutomatica.banco banco ");
 		hql.append(" left join baixaAutomatica.cobranca cobranca ");
 		hql.append(" where baixaAutomatica.dataPagamento = :data ");
 		hql.append(" and (cobranca.tipoCobranca is null or cobranca.tipoCobranca in (:tipoCobranca)) ");

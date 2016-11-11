@@ -209,6 +209,12 @@ var baixaFinanceiraController = $.extend(true, {
 			preProcess: baixaFinanceiraController.getDataFromResult,
 			dataType : 'json',
 			colModel : [ {
+				display : 'Cota',
+				name : 'numeroCota',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			}, {
 				display : 'Motivo',
 				name : 'motivoRejeitado',
 				width : 420,
@@ -239,7 +245,7 @@ var baixaFinanceiraController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 750,
+			width : 1050,
 			height : 220
 		});
 	},
@@ -249,6 +255,12 @@ var baixaFinanceiraController = $.extend(true, {
 			preProcess: baixaFinanceiraController.getDataFromResult,
 			dataType : 'json',
 			colModel : [ {
+				display : 'Cota',
+				name : 'numeroCota',
+				width : 55,
+				sortable : true,
+				align : 'left'
+			},{
 				display : 'Motivo',
 				name : 'motivoDivergencia',
 				width : 255,
@@ -303,7 +315,7 @@ var baixaFinanceiraController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 750,
+			width : 1050,
 			height : 220
 		});
 	},
@@ -367,7 +379,7 @@ var baixaFinanceiraController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 750,
+			width : 950,
 			height : 220
 		});
 	},
@@ -1517,7 +1529,7 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 		$("#dialog-baixados-rejeitados", baixaFinanceiraController.workspace).dialog({
 			resizable: false,
 			height:430,
-			width:800,
+			width:1050,
 			modal: true,
 			buttons: [
 			    {
@@ -1548,7 +1560,7 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 		$("#dialog-baixados-divergentes", baixaFinanceiraController.workspace).dialog({
 			resizable: false,
 			height:430,
-			width:800,
+			width:1050,
 			modal: true,
 			buttons: [
 			    {
