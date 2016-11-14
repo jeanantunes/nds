@@ -519,9 +519,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
                 
                 Roteiro roteiro = null;
                 
+               
                 for (final Roteiro r : roteiros) {
                     
-                    if (!TipoRoteiro.ESPECIAL.equals(r.getTipoRoteiro())) {
+                    if (r != null && !TipoRoteiro.ESPECIAL.equals(r.getTipoRoteiro())) {
                         
                         roteiro = r;
                         
