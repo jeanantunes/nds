@@ -1001,8 +1001,6 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		hql.append(" and mfff.qtde > 0 ");
 		
-		hql.append(" and produto. ");
-		
 		hql.append(" and produto.notaFiscal = :notaFiscalProduto ");
 		
 		if(!isGroup){
