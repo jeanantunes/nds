@@ -407,7 +407,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	public void verificarCotaExigeNFe(final Integer numeroCota) {
 				
-		final boolean exigeNfe = false; /// conferenciaEncalheService.isCotaExigeNfe(numeroCota);
+		final boolean exigeNfe = conferenciaEncalheService.isCotaExigeNfe(numeroCota);
 		
 		this.result.use(CustomMapJson.class).put(IND_COTA_EXIGE_NFE, exigeNfe).serialize();
 	}
