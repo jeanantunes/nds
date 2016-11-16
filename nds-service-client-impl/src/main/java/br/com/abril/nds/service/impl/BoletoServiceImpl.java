@@ -1050,7 +1050,7 @@ public class BoletoServiceImpl implements BoletoService {
         final BigDecimal valorJurosCalculado =
                 cobrancaService.calcularJuros(null, boleto.getCota().getId(),
                         boleto.getValor(), boleto.getDataVencimento(),
-                        pagamento.getDataPagamento(),
+                        dataPagamento,
                         formaCobrancaPrincipal);
         
         if (valorJurosCalculado.compareTo(BigDecimal.ZERO) == 1) {
