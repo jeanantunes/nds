@@ -1184,7 +1184,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		.append(" 	, mec.PRODUTO_EDICAO_ID ")
 		.append(" 	, mec.DATA ")
 		.append(" 	, null ")
-		.append(" 	, mec.QTDE ")
+		.append(" 	,SUM(CASE WHEN OPERACAO_ESTOQUE = 'ENTRADA' THEN QTDE ELSE - QTDE END) as QTDE ")
 		.append("   , tm.OPERACAO_ESTOQUE ")
 		.append("   , tm.GRUPO_MOVIMENTO_ESTOQUE")
 	    .append(" from movimento_estoque_cota mec 			 ")
@@ -1241,7 +1241,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 
 		sql.append("    and tm.GRUPO_MOVIMENTO_ESTOQUE in (:movimentoFaltaCota, :alteracaoReparteCota, :movimentoRecebimentoReparte, :movimentoCompraSuplementar) ")  
 		.append("		and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ")
-		.append("       and  l.status not in ( 'FECHADO','RECOLHIDO')")
+		.append("       and  l.status not in ( 'FECHADO','RECOLHIDO') GROUP BY 1,2,3,4, rs1.pedId")
 		.append(" ) rs1 ")
 		.append(" group by numeroCota, id, idProdutoEdicao, DATA, numeroNotaEnvio")
 		.append(" having reparte > 0 ")
