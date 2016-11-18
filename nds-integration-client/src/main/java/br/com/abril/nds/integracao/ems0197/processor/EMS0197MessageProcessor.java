@@ -96,7 +96,10 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		this.quantidadeArquivosGerados = 0;
 
 		List<EMS0197Header> listHeaders = this.criarHeader(dataLctoDistrib);
-
+        if ( listHeaders == null || listHeaders.isEmpty() ) {
+        	LOGGER.warn("Nenhum registro encontrado para esta data"+dataLctoDistrib);
+        	return;
+        }
 		final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(dataLctoDistrib);
 
 		for (EMS0197Header outheader : listHeaders) {
@@ -429,7 +432,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append(" SELECT DISTINCT (c.id) AS idCota, ");
 		sql.append("                 c.numero_cota AS numeroCota, ");
 		sql.append("                 pdv.NOME AS nomePDV, ");
-		sql.append("                 eg.DATA_LANCAMENTO AS dataLctoDistrib, ");
+		sql.append("                  lan.DATA_LCTO_DISTRIBUIDOR AS dataLctoDistrib, ");
 		sql.append("                 (SELECT if (d.COD_DISTRIBUIDOR_DINAP != 0,d.COD_DISTRIBUIDOR_DINAP,d.COD_DISTRIBUIDOR_FC) FROM distribuidor d LIMIT 1) AS codDistribuidor ");
 		sql.append("   FROM cota c ");
 		sql.append("        JOIN pdv pdv ");
@@ -438,8 +441,8 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("           ON ecg.COTA_ID = c.ID ");
 		sql.append("        JOIN estudo_gerado eg  ");
 		sql.append("           ON ecg.ESTUDO_ID = eg.ID ");
-		sql.append("        ");
-		sql.append("  WHERE eg.DATA_LANCAMENTO = :data  ");
+		sql.append("       JOIN lancamento lan ON lan.ESTUDO_ID = eg.id       ");
+		sql.append("  WHERE  lan.DATA_LCTO_DISTRIBUIDOR = :data and lan.STATUS in ('BALANCEADO', 'EXPEDIDO') ");
 		sql.append("           AND pdv.PONTO_PRINCIPAL = :true ");
 		sql.append("           AND ecg.QTDE_EFETIVA > 0 ");
 		sql.append("           AND c.UTILIZA_IPV = :true ");
@@ -536,7 +539,8 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("       CAST(coalesce(c.numero_jornaleiro_ipv,c.PESSOA_ID) AS CHAR) AS codJornaleiro, ");
 		sql.append("       CAST(c.NUMERO_COTA AS CHAR) AS codCota, ");
 		sql.append("       CAST(coalesce(pdvs.numero_pdv,pdvs.ID) AS CHAR )  AS codPDV, ");
-		sql.append("       DATE_FORMAT((eg.DATA_LANCAMENTO), '%Y%m%d') AS dataMovimento, ");
+//		sql.append("       DATE_FORMAT((eg.DATA_LANCAMENTO), '%Y%m%d') AS dataMovimento, ");
+		sql.append("       DATE_FORMAT((lct.DATA_LCTO_DISTRIBUIDOR), '%Y%m%d') AS dataMovimento, ");
 		sql.append("       CAST(SUBSTRING(p.CODIGO, -8) AS CHAR) AS codProduto, ");
 		sql.append("       CAST(pe.NUMERO_EDICAO AS CHAR) AS numEdicao, ");
 		sql.append("       CAST(pe.CODIGO_DE_BARRAS AS CHAR) AS codBarras, ");
