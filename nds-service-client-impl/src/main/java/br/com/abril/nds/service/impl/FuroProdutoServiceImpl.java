@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.CotaFuroDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
@@ -320,4 +321,11 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
         
         return data;
     }
+
+
+	@Override
+	@Transactional
+	public List<CotaFuroDTO> obterCobrancaRealizadaParaCotaVista(Long idProdutoEdicao, Date dataFuro, Long idLancamento) {
+		return this.furoProdutoRepository.obterCobrancaRealizadaParaCotaVista(idProdutoEdicao, dataFuro, idLancamento); 
+	}
 }

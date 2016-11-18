@@ -1,6 +1,9 @@
 package br.com.abril.nds.service;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
+import br.com.abril.nds.dto.CotaFuroDTO;
 
 public interface FuroProdutoService {
 
@@ -29,4 +32,6 @@ public interface FuroProdutoService {
      * @return Date
      */
     public Date obterProximaDataDiaOperante(String codigoProduto, Long idProdutoEdicao, Date data);
+
+    List<CotaFuroDTO> obterCobrancaRealizadaParaCotaVista(Long idProdutoEdicao, Date dataFuro, Long idLancamento);
 }
