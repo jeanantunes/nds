@@ -12,13 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.CotaFuroDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FuroProdutoService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -54,6 +58,9 @@ public class FuroProdutoController extends BaseController {
 	@Autowired
 	private CalendarioService calendarioService;
 
+	@Autowired
+	private LancamentoService lancamentoService;
+	
 	private Result result;
 	
 	public FuroProdutoController(Result result){
@@ -261,7 +268,6 @@ public class FuroProdutoController extends BaseController {
 			        new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), 
 			        getUsuarioLogado().getId());
 			
-			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
 		} catch (Exception e){
 			if (e instanceof ValidacaoException){
 				throw e;
@@ -270,7 +276,32 @@ public class FuroProdutoController extends BaseController {
 			}
 		}
 		
+		Lancamento lancamento = this.lancamentoService.buscarPorId(idLancamento);
+		
+		List<CotaFuroDTO> listaCotaAvista = this.furoProdutoService.obterCobrancaRealizadaParaCotaVista(idProdutoEdicao, lancamento.getDataLancamentoDistribuidor(), idLancamento);
+		
+		debitoCreditoCotaAvista(listaCotaAvista);
+
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
+		
 		result.forwardTo(FuroProdutoController.class).index();
+	}
+
+	private void debitoCreditoCotaAvista(List<CotaFuroDTO> listaCotaAvista) {
+		
+		List<String> listaMensagemValidacao = new ArrayList<String>();
+		
+		if (!listaCotaAvista.isEmpty()){
+			listaMensagemValidacao.add("Verifique possíveis debito e crédito, pois a cobrança já foi gerada para as cotas a vista abaixo:");
+			for(CotaFuroDTO cotaDTO : listaCotaAvista) {
+				listaMensagemValidacao.add("Cota: "+ cotaDTO.getNumeroCota() + " - " + cotaDTO.getNome() + " - " + "Nosso Numero: " + cotaDTO.getNossoNumero());
+			}
+		}
+		
+		if (!listaMensagemValidacao.isEmpty()){
+			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.WARNING, listaMensagemValidacao);
+			throw new ValidacaoException(validacaoVO);
+		}
 	}
 	
 	@Post
