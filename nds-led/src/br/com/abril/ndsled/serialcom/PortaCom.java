@@ -140,7 +140,12 @@ public class PortaCom {
 	 */
 	public void FecharCom() {
 		try {
-			porta.close();
+			if(porta != null){
+				porta.close();
+			}
+			else{
+				logger.error("A porta COM ja estava fechada.");
+			}
 		} catch (Exception e) {
 			System.out.println("Erro fechando porta: " + e);
 			logger.error("Erro fechando porta: " + e);

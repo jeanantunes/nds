@@ -28,7 +28,7 @@ import com.google.gson.JsonObject;
 /**
  * Classe com Metodos Statics para realizar acoes.
  * 
- * @author t40080
+ * @author Andre W Silva
  * @since 19/07/2016
  * 
  */
@@ -115,7 +115,6 @@ public class AppActions {
 		String dataFormatada = new SimpleDateFormat("ddMMyyyy").format(date);
 		String docName = "pickingLed_" + dataFormatada;
 		JsonObject jsonDoc = new JsonObject();
-
 		try {
 			jsonDoc = couchDbClient.find(JsonObject.class, docName);
 		} catch (NoDocumentException e) {
@@ -199,6 +198,7 @@ public class AppActions {
 				break;
 			}
 		}
+		iCotas = null;
 		return retorno;
 	}
 
@@ -212,8 +212,7 @@ public class AppActions {
 		String valor = "";
 		if (str.length() > tamanho) {
 			valor = str.substring(0, tamanho);
-			str = valor;
 		}
-		return str;
+		return valor;
 	}
 }

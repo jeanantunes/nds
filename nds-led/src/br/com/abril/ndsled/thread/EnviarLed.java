@@ -18,6 +18,7 @@ import br.com.abril.ndsled.serialcom.PortaCom;
 
 /**
  * Classe Thread para manipulacao dos leds em processo paralelo.
+ * 
  * @author Andre W Silva
  * @since 16/09/2016
  */
@@ -31,11 +32,12 @@ public class EnviarLed extends Thread {
 	private List<Cota> lstCotas;
 	private JLabel lblStatusBarMessage;
 	private JButton btnEnviar;
+	private JTextField txtCodigoDeBarras;
 
 	public EnviarLed(JComboBox cbxPortaSerial, JComboBox cbxListaProdutos,
 			List<Lancamento> lstLancamentos,
 			JTextField txtCatactereReparteZero, List<Cota> lstCotas,
-			JLabel lblStatusBarMessage, JButton btnEnviar) {
+			JLabel lblStatusBarMessage, JButton btnEnviar, JTextField txtCodigoDeBarras) {
 		super();
 		this.cbxPortaSerial = cbxPortaSerial;
 		this.cbxListaProdutos = cbxListaProdutos;
@@ -44,6 +46,7 @@ public class EnviarLed extends Thread {
 		this.lstCotas = lstCotas;
 		this.lblStatusBarMessage = lblStatusBarMessage;
 		this.btnEnviar = btnEnviar;
+		this.txtCodigoDeBarras = txtCodigoDeBarras;
 	}
 
 	@Override
@@ -58,7 +61,7 @@ public class EnviarLed extends Thread {
 		pCom.AbrirPorta();
 
 		// limparLeds();
-		String charZerado = "0";
+		String charZerado = " ";
 		if (!txtCatactereReparteZero.getText().isEmpty()) {
 			charZerado = txtCatactereReparteZero.getText();
 		}
@@ -77,6 +80,7 @@ public class EnviarLed extends Thread {
 					logger.error(e.getMessage());
 				}
 			}
+			cotaIterator = null;
 		}
 
 		// enviarLeds
@@ -86,7 +90,8 @@ public class EnviarLed extends Thread {
 		while (iLanc.hasNext()) {
 			Lancamento lanc = iLanc.next();
 			if (lanc.getCodigoProduto().compareTo(
-					produtoSelecionado.getCodigoProduto()) == 0) {
+					produtoSelecionado.getCodigoProduto()) == 0 && lanc.getEdicaoProduto().compareTo(
+							produtoSelecionado.getEdicaoProduto()) == 0) {
 				String codLed = String.format("%04d", lanc.getCodigoLed());
 				String qtde = String
 						.format("%04d", lanc.getQuantidadeReparte());
@@ -99,9 +104,19 @@ public class EnviarLed extends Thread {
 				}
 			}
 		}
+		
+		produtoSelecionado.setDistribuido(true);
+		cbxListaProdutos.showPopup();
+		cbxListaProdutos.hidePopup();
+		cbxListaProdutos.setSelectedItem(cbxListaProdutos);
+		txtCodigoDeBarras.requestFocus();
+		
+		iLanc = null;
 
 		pCom.FecharCom();
 
+		lstCotas = null;
+		lstLancamentos = null;
 		btnEnviar.setEnabled(true);
 		lblStatusBarMessage.setText("");
 	}

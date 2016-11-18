@@ -2,8 +2,11 @@ package br.com.abril.ndsled.swing;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -30,6 +33,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
@@ -58,7 +62,7 @@ import br.com.abril.ndsled.thread.LimparLed;
  * Classe da Janela Principal do aplicativo
  * 
  * @author André W da Silva
- * @since 19/07/2016
+ * @since 1.0
  */
 public class Janela {
 
@@ -95,6 +99,8 @@ public class Janela {
 	private JScrollPane pnlBoxQuantidade;
 	private JTable tblBoxQuantidade;
 	private JButton btnAcenderCota;
+	private JTextField txtCodigoDeBarras;
+	private JLabel lblCodigoDeBarras;
 
 	// ================================================================================
 	// Constructors
@@ -110,6 +116,10 @@ public class Janela {
 		while (iPortas.hasNext()) {
 			cbxPortaSerial.addItem(iPortas.next());
 		}
+
+		portas = null;
+		iPortas = null;
+		serial = null;
 	}
 
 	// ================================================================================
@@ -126,7 +136,7 @@ public class Janela {
 	 * Método utilizado para inicializar todos os objetos da Janela.
 	 * 
 	 * @author André W da Silva
-	 * @since 19/07/2016
+	 * @since 1.0
 	 * @param Nothing
 	 * @return Nothing
 	 */
@@ -145,7 +155,7 @@ public class Janela {
 				.setTitle(props.getProperty("app.title") + " Distribuidor: "
 						+ props.getProperty("app.cod_distribuidor"));
 		frmProjetoLedV.setResizable(false);
-		frmProjetoLedV.setBounds(100, 100, 720, 387);
+		frmProjetoLedV.setBounds(100, 100, 920, 540);
 		frmProjetoLedV.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		menuBar = new JMenuBar();
@@ -160,69 +170,73 @@ public class Janela {
 		frmProjetoLedV.getContentPane().setLayout(null);
 
 		lblData = new JLabel("Data Lan\u00E7amento:");
-		lblData.setBounds(10, 10, 277, 14);
+		lblData.setFont(new Font("Tahoma", Font.BOLD, 18));
+		lblData.setBounds(10, 10, 277, 23);
 		frmProjetoLedV.getContentPane().add(lblData);
 
 		lblListaProdutos = new JLabel("Lista Produtos:");
-		lblListaProdutos.setBounds(10, 64, 277, 14);
+		lblListaProdutos.setFont(new Font("Tahoma", Font.BOLD, 18));
+		lblListaProdutos.setBounds(10, 66, 277, 14);
 		frmProjetoLedV.getContentPane().add(lblListaProdutos);
 
 		cbxListaProdutos = new JComboBox();
+		cbxListaProdutos.setFont(new Font("Tahoma", Font.BOLD, 14));
 
-		cbxListaProdutos.setBounds(10, 83, 477, 20);
+		cbxListaProdutos.setBounds(10, 91, 477, 20);
 		frmProjetoLedV.getContentPane().add(cbxListaProdutos);
 
 		btnEnviar = new JButton("Enviar");
-		btnEnviar.setBounds(398, 110, 89, 23);
+		btnEnviar.setFont(new Font("Tahoma", Font.BOLD, 18));
+		btnEnviar.setBounds(151, 122, 131, 54);
 		frmProjetoLedV.getContentPane().add(btnEnviar);
 
 		pnlConfiguracao = new JPanel();
 		pnlConfiguracao.setBorder(new TitledBorder(UIManager
 				.getBorder("TitledBorder.border"), "Configura\u00E7\u00E3o",
 				TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
-		pnlConfiguracao.setBounds(10, 114, 175, 191);
+		pnlConfiguracao.setBounds(10, 214, 277, 240);
 		frmProjetoLedV.getContentPane().add(pnlConfiguracao);
 		pnlConfiguracao.setLayout(null);
 
 		cbxPortaSerial = new JComboBox();
+		cbxPortaSerial.setFont(new Font("Tahoma", Font.BOLD, 14));
 		cbxPortaSerial.setBounds(10, 47, 131, 20);
 		pnlConfiguracao.add(cbxPortaSerial);
 
 		btnAcenderLeds = new JButton("Acender Leds");
+		btnAcenderLeds.setFont(new Font("Tahoma", Font.BOLD, 16));
 		btnAcenderLeds
-				.setToolTipText("Acende todos com 8888 os Leds por 10 segundos para verificar os luminosos.");
-		btnAcenderLeds.setBounds(10, 78, 131, 23);
+				.setToolTipText("Acende todos com 8888 os Leds para verificar os luminosos.");
+		btnAcenderLeds.setBounds(10, 78, 168, 34);
 		pnlConfiguracao.add(btnAcenderLeds);
 
 		lblPortaSerial = new JLabel("Porta Serial");
-		lblPortaSerial.setBounds(10, 22, 89, 14);
+		lblPortaSerial.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblPortaSerial.setBounds(10, 22, 142, 14);
 		pnlConfiguracao.add(lblPortaSerial);
 		lblPortaSerial.setHorizontalAlignment(SwingConstants.LEFT);
 
 		btnApagarLeds = new JButton("Apagar Leds");
+		btnApagarLeds.setFont(new Font("Tahoma", Font.BOLD, 16));
 		btnApagarLeds.setToolTipText("");
-		btnApagarLeds.setBounds(10, 112, 131, 23);
+		btnApagarLeds.setBounds(10, 123, 168, 34);
 		pnlConfiguracao.add(btnApagarLeds);
 
 		lblCaractereReparteZero = new JLabel("Caractere Reparte Zero:");
-		lblCaractereReparteZero.setBounds(10, 146, 155, 14);
+		lblCaractereReparteZero.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblCaractereReparteZero.setBounds(10, 184, 213, 14);
 		pnlConfiguracao.add(lblCaractereReparteZero);
 
 		txtCatactereReparteZero = new JTextField();
-		txtCatactereReparteZero.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				txtCatactereReparteZero.setText(AppActions.maxlength(
-						txtCatactereReparteZero.getText(), 1));
-			}
-		});
-		txtCatactereReparteZero.setText("0");
-		txtCatactereReparteZero.setBounds(10, 160, 22, 20);
+		txtCatactereReparteZero.setFont(new Font("Tahoma", Font.BOLD, 16));
+
+		txtCatactereReparteZero.setText(" ");
+		txtCatactereReparteZero.setBounds(10, 209, 22, 20);
 		pnlConfiguracao.add(txtCatactereReparteZero);
 		txtCatactereReparteZero.setColumns(10);
 
 		pnlCotaLed = new JScrollPane();
-		pnlCotaLed.setBounds(497, 10, 207, 294);
+		pnlCotaLed.setBounds(583, 6, 313, 448);
 		frmProjetoLedV.getContentPane().add(pnlCotaLed);
 
 		Properties p = new Properties();
@@ -232,36 +246,46 @@ public class Janela {
 		datePanel = new JDatePanelImpl(new UtilDateModel(), p);
 		pckDataLancamento = new JDatePickerImpl(datePanel,
 				new DateLabelFormatter());
-		pckDataLancamento.setBounds(10, 30, 126, 25);
+
+		SpringLayout springLayout = (SpringLayout) pckDataLancamento
+				.getLayout();
+		springLayout.putConstraint(SpringLayout.SOUTH,
+				pckDataLancamento.getJFormattedTextField(), 0,
+				SpringLayout.SOUTH, pckDataLancamento);
+		pckDataLancamento.getJFormattedTextField().setFont(
+				new Font("Tahoma", Font.PLAIN, 16));
+		pckDataLancamento.setBounds(10, 35, 175, 25);
 		frmProjetoLedV.getContentPane().add(pckDataLancamento);
 
 		pnlStatusBar = new JPanel();
 		pnlStatusBar.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null,
 				null, null));
-		pnlStatusBar.setBounds(0, 313, 714, 25);
+		pnlStatusBar.setBounds(0, 465, 914, 25);
 		frmProjetoLedV.getContentPane().add(pnlStatusBar);
 		pnlStatusBar.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 2));
 
 		lblStatusBarMessage = new JLabel("");
 		pnlStatusBar.add(lblStatusBarMessage);
 
-		tblCotaLed = new JTable(new Object[][] { { "", "" } }, new String[] {
-				"Cota", "Led" });
+		tblCotaLed = new JTable(new Object[][] { { "", "", "" } },
+				new String[] { "Cota", "Reparte", "Led" });
+		tblCotaLed.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		tblCotaLed.setBounds(0, 0, 100, 100);
 		pnlCotaLed.setViewportView(tblCotaLed);
 
 		tblCotaLed
 				.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		tblCotaLed.setRowSelectionAllowed(false);
-		tblCotaLed.setModel(new DefaultTableModel(new Object[][] {},
-				new String[] { "Cota", "Led" }) {
-			Class[] columnTypes = new Class[] { Integer.class, Integer.class };
+		tblCotaLed.setModel(new DefaultTableModel(new Object[][][] {},
+				new String[] { "Cota", "Reparte", "Led" }) {
+			Class[] columnTypes = new Class[] { Integer.class, Integer.class,
+					Integer.class };
 
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
 			}
 
-			boolean[] columnEditables = new boolean[] { false, false };
+			boolean[] columnEditables = new boolean[] { false, false, false };
 
 			public boolean isCellEditable(int row, int column) {
 				return columnEditables[column];
@@ -269,28 +293,51 @@ public class Janela {
 		});
 		tblCotaLed.getColumnModel().getColumn(0).setResizable(false);
 		tblCotaLed.getColumnModel().getColumn(1).setResizable(false);
+		tblCotaLed.getColumnModel().getColumn(2).setResizable(false);
 		tblCotaLed
 				.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 
+		btnAcenderCota = new JButton(
+				"<html><center>Acender<br>Cota</center></html>");
+		btnAcenderCota.setFont(new Font("Tahoma", Font.BOLD, 18));
+		btnAcenderCota.setBounds(10, 122, 131, 54);
+		frmProjetoLedV.getContentPane().add(btnAcenderCota);
+
 		pnlBoxQuantidade = new JScrollPane();
-		pnlBoxQuantidade.setBounds(191, 109, 200, 196);
+		pnlBoxQuantidade.setBounds(311, 122, 250, 332);
 		frmProjetoLedV.getContentPane().add(pnlBoxQuantidade);
 
 		tblBoxQuantidade = new JTable();
+		tblBoxQuantidade.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		tblBoxQuantidade.setModel(new DefaultTableModel(new Object[][] {},
 				new String[] { "BOX", "Quantidade" }));
 		tblBoxQuantidade.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null,
 				null));
 		pnlBoxQuantidade.setViewportView(tblBoxQuantidade);
 
-		btnAcenderCota = new JButton(
-				"<html><center>Acender<br>Cota</center></html>");
-		btnAcenderCota.setBounds(398, 144, 89, 54);
-		frmProjetoLedV.getContentPane().add(btnAcenderCota);
+		txtCodigoDeBarras = new JTextField();
+
+		txtCodigoDeBarras.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		txtCodigoDeBarras.setBounds(233, 35, 200, 25);
+		frmProjetoLedV.getContentPane().add(txtCodigoDeBarras);
+		txtCodigoDeBarras.setColumns(10);
+
+		lblCodigoDeBarras = new JLabel("C\u00F3digo de Barras");
+		lblCodigoDeBarras.setFont(new Font("Tahoma", Font.BOLD, 18));
+		lblCodigoDeBarras.setBounds(233, 10, 277, 23);
+		frmProjetoLedV.getContentPane().add(lblCodigoDeBarras);
 
 		// ================================================================================
 		// Events
 		// ================================================================================
+		txtCatactereReparteZero.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				txtCatactereReparteZero.setText(AppActions.maxlength(
+						txtCatactereReparteZero.getText(), 1));
+			}
+		});
+
 		mnitSair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				LimparLed limparLed = new LimparLed(txtCatactereReparteZero,
@@ -302,15 +349,25 @@ public class Janela {
 			}
 		});
 
-		cbxListaProdutos.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				carregaTblBoxQuantidade();
+		cbxListaProdutos.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				carregaTblBoxQuantidade(((Produto) cbxListaProdutos
+						.getSelectedItem()).getCodigoProduto(),
+						((Produto) cbxListaProdutos.getSelectedItem())
+								.getEdicaoProduto());
+				if (lstCotas != null) {
+					carregaTblCotaLed(((Produto) cbxListaProdutos
+							.getSelectedItem()).getCodigoProduto(),
+							((Produto) cbxListaProdutos.getSelectedItem())
+									.getEdicaoProduto());
+				}
+				txtCodigoDeBarras.requestFocus();
 			}
 		});
 
 		btnApagarLeds.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String charZerado = "0";
+				String charZerado = " ";
 				if (!txtCatactereReparteZero.getText().isEmpty()) {
 					charZerado = txtCatactereReparteZero.getText();
 				}
@@ -330,11 +387,13 @@ public class Janela {
 						Thread.sleep(50);
 					}
 					Thread.sleep(50);
+					cotaIterator = null;
 					pCom.FecharCom();
 				} catch (Exception ex) {
 					// System.out.println(ex.getMessage());
 					logger.error(ex.getMessage());
 				}
+				txtCodigoDeBarras.requestFocus();
 			}
 		});
 
@@ -354,11 +413,13 @@ public class Janela {
 						Thread.sleep(50);
 					}
 					Thread.sleep(50);
+					cotaIterator = null;
 					pCom.FecharCom();
 				} catch (Exception ex) {
 					// System.out.println(ex.getMessage());
 					logger.error(ex.getMessage());
 				}
+				txtCodigoDeBarras.requestFocus();
 			}
 		});
 
@@ -380,11 +441,13 @@ public class Janela {
 						Thread.sleep(50);
 					}
 					Thread.sleep(50);
+					cotaIterator = null;
 					pCom.FecharCom();
 				} catch (Exception ex) {
 					// System.out.println(ex.getMessage());
 					logger.error(ex.getMessage());
 				}
+				txtCodigoDeBarras.requestFocus();
 			}
 		});
 
@@ -399,8 +462,10 @@ public class Janela {
 			public void actionPerformed(ActionEvent e) {
 				EnviarLed enviarLed = new EnviarLed(cbxPortaSerial,
 						cbxListaProdutos, lstLancamentos,
-						txtCatactereReparteZero, lstCotas, lblStatusBarMessage, btnEnviar);
+						txtCatactereReparteZero, lstCotas, lblStatusBarMessage,
+						btnEnviar, txtCodigoDeBarras);
 				enviarLed.start();
+				txtCodigoDeBarras.requestFocus();
 			}
 		});
 
@@ -416,6 +481,15 @@ public class Janela {
 			}
 		});
 
+		txtCodigoDeBarras.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == 10) {
+
+				}
+			}
+		});
+
 		desabilitarObjetosView();
 	}
 
@@ -424,36 +498,53 @@ public class Janela {
 	 * os dados carregados do couchDB para os objetos da tela.
 	 * 
 	 * @author André W da Silva
-	 * @since 19/07/2016
+	 * @since 1.0
 	 * @param date
 	 *            Deve vir da data selecionada no calendario.
 	 */
 	private void carregarLancamento(Date date) {
 		try {
 			// Reset carregamentos anteriores.
-			limparObjetosView();
+			Thread.sleep(50);
+			try {
+				limparObjetosView();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				System.out.println(ex.getMessage());
+			}
 
-			String charZerado = "0";
+			Thread.sleep(50);
+			try {
+				limparObjetosView();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				System.out.println(ex.getMessage());
+			}
+
+			String charZerado = " ";
 			if (!txtCatactereReparteZero.getText().isEmpty()) {
 				charZerado = txtCatactereReparteZero.getText();
 			}
 
 			// Iniciando leitura serial.
 			try {
-				PortaCom pCom = new PortaCom(cbxPortaSerial.getSelectedItem()
-						.toString(), 9600, 6000);
-				pCom.ObterIdDaPorta();
-				pCom.AbrirPorta();
-				Iterator<Cota> cotaIterator = lstCotas.iterator();
-				while (cotaIterator.hasNext()) {
-					String codLed = String.format("%04d", cotaIterator.next()
-							.getCodLed());
-					pCom.EnviarComando("p" + codLed + charZerado + charZerado
-							+ charZerado + charZerado);
-					Thread.sleep(50);
+				if (lstCotas != null) {
+					PortaCom pCom = new PortaCom(cbxPortaSerial
+							.getSelectedItem().toString(), 9600, 0);
+					pCom.ObterIdDaPorta();
+					pCom.AbrirPorta();
+					Iterator<Cota> cotaIterator = lstCotas.iterator();
+					while (cotaIterator.hasNext()) {
+						String codLed = String.format("%04d", cotaIterator
+								.next().getCodLed());
+						pCom.EnviarComando("p" + codLed + charZerado
+								+ charZerado + charZerado + charZerado);
+						Thread.sleep(5);
+					}
+					Thread.sleep(5);
+					pCom.FecharCom();
+					cotaIterator = null;
 				}
-				Thread.sleep(50);
-				pCom.FecharCom();
 			} catch (Exception ex) {
 				// System.out.println(ex.getMessage());
 				logger.error(ex.getMessage());
@@ -477,14 +568,15 @@ public class Janela {
 					pd.setPrecoCusto(it1.getPrecoCusto());
 					pd.setQuantidade(it1.getQuantidadeReparte());
 					lstProdutosAgrupados.add(pd);
-
 				} else {
 					Iterator<Produto> it2 = lstProdutosAgrupados.iterator();
 					boolean jaExiste = false;
 					while (it2.hasNext()) {
 						Produto pd2 = it2.next();
 						if (pd2.getCodigoProduto().compareTo(
-								it1.getCodigoProduto()) == 0) {
+								it1.getCodigoProduto()) == 0
+								&& pd2.getEdicaoProduto().compareTo(
+										it1.getEdicaoProduto()) == 0) {
 							pd2.setQuantidade(pd2.getQuantidade()
 									+ it1.getQuantidadeReparte());
 							jaExiste = true;
@@ -502,8 +594,9 @@ public class Janela {
 						pd.setQuantidade(it1.getQuantidadeReparte());
 						lstProdutosAgrupados.add(pd);
 					}
+					it2 = null;
 				}
-
+				it1 = null;
 			}
 
 			// Ordena a lista de produtos agrupados por nome.
@@ -525,6 +618,8 @@ public class Janela {
 				cbxListaProdutos.addItem(prd);
 			}
 
+			itListProdutosAgrupados = null;
+
 			// Filtra em Lista as Cotas que estao no Lancamento.
 			iListLancamentos = lstLancamentos.iterator();
 			lstCotas = new ArrayList<Cota>();
@@ -532,9 +627,8 @@ public class Janela {
 				Lancamento it1 = iListLancamentos.next();
 
 				if (lstCotas.size() == 0) {
-					Cota ct = new Cota();
-					ct.setCodigoCota(it1.getCodigoCota());
-					ct.setCodLed(it1.getCodigoLed());
+					Cota ct = new Cota(it1.getCodigoCota(), it1.getCodigoLed(),
+							0);
 					lstCotas.add(ct);
 				} else {
 					Iterator<Cota> it2 = lstCotas.iterator();
@@ -546,31 +640,14 @@ public class Janela {
 							break;
 						}
 					}
+					it2 = null;
 					if (!jaExiste) {
-						Cota ct = new Cota();
-						ct.setCodigoCota(it1.getCodigoCota());
-						ct.setCodLed(it1.getCodigoLed());
+						Cota ct = new Cota(it1.getCodigoCota(),
+								it1.getCodigoLed(), 0);
 						lstCotas.add(ct);
 					}
 				}
-			}
-
-			// Ordena a lista de cota por numero da cota.
-			Collections.sort(lstCotas, new Comparator<Cota>() {
-				@Override
-				public int compare(Cota o1, Cota o2) {
-					return o1.getCodigoCota().compareTo(o2.getCodigoCota());
-				}
-			});
-
-			// Alimenta a Tabela (JTable) com a Cotas/LEDs do Lancamento do dia
-			// selecionado.
-			DefaultTableModel dtm = (DefaultTableModel) tblCotaLed.getModel();
-			Iterator<Cota> itListCota = lstCotas.iterator();
-			while (itListCota.hasNext()) {
-				Cota cota = itListCota.next();
-				dtm.addRow(new Object[] { cota.getCodigoCota(),
-						cota.getCodLed() });
+				it1 = null;
 			}
 
 			// Verificar Cota Sem Led.
@@ -585,7 +662,18 @@ public class Janela {
 				habilitarObjetosView();
 			}
 
-			carregaTblBoxQuantidade();
+			carregaTblBoxQuantidade(
+					((Produto) cbxListaProdutos.getSelectedItem())
+							.getCodigoProduto(),
+					((Produto) cbxListaProdutos.getSelectedItem())
+							.getEdicaoProduto());
+			carregaTblCotaLed(
+					((Produto) cbxListaProdutos.getSelectedItem())
+							.getCodigoProduto(),
+					((Produto) cbxListaProdutos.getSelectedItem())
+							.getEdicaoProduto());
+
+			iListLancamentos = null;
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -595,13 +683,63 @@ public class Janela {
 	}
 
 	/**
+	 * Metodo utilizado para carregar a JTable com os dados da Cota do dia pelo
+	 * Produto selecionado.
+	 * 
+	 * @param codigoProdutoSelecionado
+	 *            codigo do produto selecionado
+	 * @param edicaoProdutoSelecionado
+	 *            edicao do produto selecionado
+	 * @author Andre W Silva
+	 * @since 1.0
+	 */
+	private void carregaTblCotaLed(Integer codigoProdutoSelecionado,
+			Integer edicaoProdutoSelecionado) {
+
+		// Limpa a Tabela (JTable) com a Cotas/LEDs de outros dados carregados.
+		DefaultTableModel dtm = (DefaultTableModel) tblCotaLed.getModel();
+		for (int i = dtm.getRowCount() - 1; i >= 0; i--) {
+			dtm.removeRow(i);
+		}
+
+		// Filtra em Lista as Cotas para a JTable Cota Led do produto
+		// selecionado.
+		Iterator<Cota> iListCotas = lstCotas.iterator();
+		while (iListCotas.hasNext()) {
+			Cota cota = iListCotas.next();
+			cota.setReparte(getQuantidadeReparteProdutoCota(
+					codigoProdutoSelecionado, edicaoProdutoSelecionado,
+					cota.getCodigoCota()));
+		}
+
+		// Ordena a lista de Cotas pelo numero da Cota.
+		Collections.sort(lstCotas, new Comparator<Cota>() {
+			@Override
+			public int compare(Cota o1, Cota o2) {
+				return o1.getCodigoCota().compareTo(o2.getCodigoCota());
+			}
+		});
+
+		// Alimenta a Tabela (JTable) com a Cota/Led do Lancamento do dia
+		// pelo produto selecionado.
+		iListCotas = lstCotas.iterator();
+		while (iListCotas.hasNext()) {
+			Cota cota = iListCotas.next();
+			dtm.addRow(new Object[] { cota.getCodigoCota(), cota.getReparte(),
+					cota.getCodLed() });
+		}
+		iListCotas = null;
+	}
+
+	/**
 	 * Metodo utilizado para carregar a JTable com os dados do lancamento do dia
 	 * pelo produto selecionado com codigo do box e quantidade.
 	 * 
 	 * @author Andre W Silva
-	 * @since 16/09/2016
+	 * @since 1.0
 	 */
-	private void carregaTblBoxQuantidade() {
+	private void carregaTblBoxQuantidade(Integer codigoProdutoSelecionado,
+			Integer edicaoProdutoSelecionado) {
 		// Limpa a Tabela (JTable) com a Box/Quantidade de outros dados
 		// carregados.
 		DefaultTableModel dtm = (DefaultTableModel) tblBoxQuantidade.getModel();
@@ -617,9 +755,9 @@ public class Janela {
 		while (iListLancamentos.hasNext()) {
 			Lancamento it1 = iListLancamentos.next();
 
-			if (it1.getCodigoProduto().compareTo(
-					((Produto) cbxListaProdutos.getSelectedItem())
-							.getCodigoProduto()) == 0) {
+			if (it1.getCodigoProduto().compareTo(codigoProdutoSelecionado) == 0
+					&& it1.getEdicaoProduto().compareTo(
+							edicaoProdutoSelecionado) == 0) {
 				if (lstBox.size() == 0) {
 					Box box = new Box();
 					box.setCodigoBox(it1.getCodigoBox());
@@ -637,6 +775,7 @@ public class Janela {
 							break;
 						}
 					}
+					it2 = null;
 					if (!jaExiste) {
 						Box box = new Box();
 						box.setCodigoBox(it1.getCodigoBox());
@@ -645,11 +784,11 @@ public class Janela {
 					}
 				}
 			}
+			it1 = null;
 		}
 
 		// Ordena a lista de box pelo numero da box.
 		Collections.sort(lstBox, new Comparator<Box>() {
-
 			@Override
 			public int compare(Box o1, Box o2) {
 				return o1.getCodigoBox().compareTo(o2.getCodigoBox());
@@ -658,13 +797,13 @@ public class Janela {
 
 		// Alimenta a Tabela (JTable) com a Box/Quantidade do Lancamento do dia
 		// pelo produto selecionado.
-		DefaultTableModel dtm2 = (DefaultTableModel) tblBoxQuantidade
-				.getModel();
 		Iterator<Box> itListBox = lstBox.iterator();
 		while (itListBox.hasNext()) {
 			Box box = itListBox.next();
-			dtm2.addRow(new Object[] { box.getCodigoBox(), box.getQuantidade() });
+			dtm.addRow(new Object[] { box.getCodigoBox(), box.getQuantidade() });
 		}
+		itListBox = null;
+		iListLancamentos = null;
 	}
 
 	/**
@@ -672,7 +811,7 @@ public class Janela {
 	 * manipulado quando um lançamento não foi carregado.
 	 * 
 	 * @author Andre W Silva
-	 * @since 16/09/2016
+	 * @since 1.0
 	 */
 	private void desabilitarObjetosView() {
 		btnEnviar.setEnabled(false);
@@ -680,6 +819,7 @@ public class Janela {
 		btnApagarLeds.setEnabled(false);
 		btnAcenderCota.setEnabled(false);
 		pnlConfiguracao.setEnabled(false);
+		txtCodigoDeBarras.setEnabled(false);
 	}
 
 	/**
@@ -687,7 +827,7 @@ public class Janela {
 	 * manipulado quando um lancamento foi carregado.
 	 * 
 	 * @author Andre W Silva
-	 * @since 16/09/2016
+	 * @since 1.0
 	 */
 	private void habilitarObjetosView() {
 		btnEnviar.setEnabled(true);
@@ -695,30 +835,61 @@ public class Janela {
 		btnApagarLeds.setEnabled(true);
 		btnAcenderCota.setEnabled(true);
 		pnlConfiguracao.setEnabled(true);
+		txtCodigoDeBarras.setEnabled(true);
+		txtCodigoDeBarras.requestFocus();
 	}
 
 	/**
 	 * Metodo utilizado para limpar os dados dos objetos quando o dia do
-	 * lancamento pe alterado.
+	 * lancamento e alterado.
 	 * 
 	 * @author Andre W Silva
-	 * @since 16/09/2016
+	 * @since 1.0
 	 */
 	private void limparObjetosView() {
 		// Limpa Barra de Status.
 		lblStatusBarMessage.setText("");
 		// Limpa Combobox de Produtos.
 		cbxListaProdutos.removeAllItems();
+
 		// Limpa a Tabela (JTable) com a Cotas/LEDs de outros dados carregados.
 		DefaultTableModel dtm = (DefaultTableModel) tblCotaLed.getModel();
 		for (int i = dtm.getRowCount() - 1; i >= 0; i--) {
 			dtm.removeRow(i);
 		}
 		// Limpa a Tabela (JTable) com a Box / Quantidade.
-		DefaultTableModel dtm2 = (DefaultTableModel) tblBoxQuantidade
-				.getModel();
-		for (int i = dtm2.getRowCount() - 1; i >= 0; i--) {
-			dtm2.removeRow(i);
+		dtm = (DefaultTableModel) tblBoxQuantidade.getModel();
+		for (int i = dtm.getRowCount() - 1; i >= 0; i--) {
+			dtm.removeRow(i);
 		}
+	}
+
+	/**
+	 * Metodo utilizado para obter a quantidade de reparte do produto para uma
+	 * cota.
+	 * 
+	 * @param codigoProduto
+	 * @param edicaoProduto
+	 * @param codigoCota
+	 * @return Integer - Quantidade de Reparte para Cota
+	 * @author t40080 Andre
+	 * @since 1.0
+	 */
+	private Integer getQuantidadeReparteProdutoCota(Integer codigoProduto,
+			Integer edicaoProduto, Integer codigoCota) {
+		Iterator<Lancamento> iListLancamentos = lstLancamentos.iterator();
+
+		while (iListLancamentos.hasNext()) {
+			Lancamento it1 = iListLancamentos.next();
+
+			if (it1.getCodigoProduto().compareTo(codigoProduto) == 0
+					&& it1.getEdicaoProduto().compareTo(edicaoProduto) == 0
+					&& it1.getCodigoCota().compareTo(codigoCota) == 0) {
+				return it1.getQuantidadeReparte();
+			}
+			it1 = null;
+		}
+		iListLancamentos = null;
+		return 0;
 	}
 }

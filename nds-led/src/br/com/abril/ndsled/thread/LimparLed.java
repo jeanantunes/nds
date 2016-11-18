@@ -41,7 +41,7 @@ public class LimparLed extends Thread {
 
 		lblStatusBarMessage.setText("Aguarde, processando...");
 
-		String charZerado = "0";
+		String charZerado = " ";
 		if (!txtCatactereReparteZero.getText().isEmpty()) {
 			charZerado = txtCatactereReparteZero.getText();
 		}
@@ -64,8 +64,11 @@ public class LimparLed extends Thread {
 					logger.error(e.getMessage());
 				}
 			}
+			cotaIterator = null;
 			portaCom.FecharCom();
 		}
+		
+		lstCotas = null;
 
 		lblStatusBarMessage.setText("");
 	}
