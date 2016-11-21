@@ -53,6 +53,7 @@ import br.com.abril.nds.service.ControleCotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.TirarAcento;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
@@ -399,7 +400,10 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 			
 			LOGGER.error("Erro no parse do Arquivo", e);
 		}
-		
+		int i=1;
+		if (detalhe.contains("LUAN"))
+			 i=0;
+		detalhe=TirarAcento.removerAcentuacao(detalhe);
 		outDetalhe.setDetalhes(detalhe);
 		
 //		outDetalhe.setCodigoCota(pickingDTO.getNumeroCota().toString());
