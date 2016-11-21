@@ -400,9 +400,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 			
 			LOGGER.error("Erro no parse do Arquivo", e);
 		}
-		int i=1;
-		if (detalhe.contains("LUAN"))
-			 i=0;
+		
 		detalhe=TirarAcento.removerAcentuacao(detalhe);
 		outDetalhe.setDetalhes(detalhe);
 		
