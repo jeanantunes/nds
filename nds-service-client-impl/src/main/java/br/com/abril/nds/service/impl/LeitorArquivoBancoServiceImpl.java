@@ -159,8 +159,7 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 				if (  UtilitarioCNAB.BANCO_ITAU.equals(codigoBanco) &&
 					!"06".equals(strCodigoOcorrencia) && 
 					!"07".equals(strCodigoOcorrencia) && 
-					!"08".equals(strCodigoOcorrencia) &&
-					!"09".equals(strCodigoOcorrencia) ) {
+					!"08".equals(strCodigoOcorrencia) ) {
 					LOGGER.warn("RETORNO NAO EH BAIXA NORMAL(CODIGOS 06 07 08 09). DESCONSIDERANDO LINHA. CODIGO="+strCodigoOcorrencia + " linha="+line);
 					continue;
 				}
