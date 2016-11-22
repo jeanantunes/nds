@@ -174,7 +174,7 @@ public class CobRegEnvTipoRegistroItau01 extends CobRegBaseDTO {
 	}
 
 	public void setContaCliente(String contaCliente) {
-		this.contaCliente = StringUtils.leftPad(contaCliente, 7, '0');
+		this.contaCliente = StringUtils.leftPad(contaCliente, 5, '0');
 	}
 
 	public String getDigitoConta() {
