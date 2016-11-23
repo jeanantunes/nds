@@ -62,9 +62,10 @@ public class FuroProdutoRepositoryImpl extends AbstractRepositoryModel<FuroProdu
 		.append(" where consolidado.COTA_ID=cota.ID ")
 		.append(" and mec.STATUS_ESTOQUE_FINANCEIRO = 'FINANCEIRO_PROCESSADO' ")
 		.append(" and cota.TIPO_COTA = :tipoCota ")
-		.append(" and c.DT_EMISSAO = :dataFuro ")
+		.append(" and consolidado.DT_CONSOLIDADO = :dataFuro ")
 		.append(" and mec.LANCAMENTO_ID = :idLancamento ")
-		.append(" and mec.PRODUTO_EDICAO_ID = :idProdutoEdicao ");
+		.append(" and mec.PRODUTO_EDICAO_ID = :idProdutoEdicao ")
+		.append(" group by cota.ID ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
 		
