@@ -203,9 +203,7 @@ var furoProdutoController = $.extend(true, {
 					$(this).dialog("close");
 					$.postJSON(contextPath + "/lancamento/furoProduto/confirmarFuro", data, furoProdutoController.limparCampos(),
 							function(result){
-								if (result && result.mensagem != ""){
-									
-								} 
+								
 							}
 					);
 				},
