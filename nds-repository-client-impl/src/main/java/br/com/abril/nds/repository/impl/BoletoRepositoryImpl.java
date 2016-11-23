@@ -587,7 +587,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
   		   .append("			else cobranca.cota.pessoa.razaoSocial end) as nomeCota, ")
   		   .append(" 		cobranca.banco.apelido as nomeBanco, ")
 		   .append(" 		concat(cobranca.banco.conta, case when cobranca.banco.dvConta is not null then concat('-', cobranca.banco.dvConta) else '' end) as numeroConta, ")
-  		   .append(" 		cobranca.nossoNumeroCompleto as nossoNumero, ")
+  		   .append(" 		cobranca.nossoNumero as nossoNumero, ")
 		   .append(" 		cobranca.valor as valorBoleto, ")
 		   .append(" 		cobranca.dataVencimento as dataVencimento, ")
 		   .append(" 		cobranca.dataEmissao as dataEmissao ")
@@ -715,7 +715,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		hql.append("			else cobranca.cota.pessoa.razaoSocial end) as nomeCota, ");
 		hql.append("  coalesce(banco.apelido,cobranca.tipoCobranca) as nomeBanco, ");
 		hql.append("  concat(coalesce(banco.conta,''), case when banco.dvConta is not null then concat('-', banco.dvConta) else '' end) as numeroConta, ");
-		hql.append("  cobranca.nossoNumeroCompleto as nossoNumero, ");
+		hql.append("  cobranca.nossoNumero as nossoNumero, ");
 		hql.append("  cobranca.valor as valorBoleto, ");
 		hql.append("  cobranca.dataVencimento as dataVencimento, ");
 		hql.append("  cobranca.dataEmissao as dataEmissao ");
