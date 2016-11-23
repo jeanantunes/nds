@@ -697,6 +697,10 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		buffer.write(dados);
 		 
 	 	buffer.close();
+	 	
+	 	fileWriter.close();
+	 
+	 	
 	}
 
 	private String gerarArquivoNota(List<NotaFiscal> notasFiscaisParaExportacao) throws Exception {
