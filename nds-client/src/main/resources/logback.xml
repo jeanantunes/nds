@@ -47,7 +47,7 @@
     	</rollingPolicy>
 		
 	 <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-        <level>ERROR</level>
+        <level>WARN</level>
     </filter>
 
 		<encoder>
@@ -57,23 +57,25 @@
 		</encoder>
 		
 	</appender>
-	
+
 	  <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
-      <smtpHost>smtp3.treelog.com.br</smtpHost>
+      <smtpHost>smtp3.totalexpress.com.br</smtpHost>
        <smtpPort>25</smtpPort>
       <from>novodistrib@dgb.com.br</from>
     
        <to>odemir.olivatti_vector@abril.com.br</to>
+       <to>luiz.moreira_VECTOR@abril.com.br</to>
+       <to>felipe.ballario_VECTOR@abril.com.br</to>
     
-      <username>teste</username>
-    <password>rTZ0PAtThz</password>
+      <username>Relay_NDS</username>
+    <password>$QZNr5m%H34WATSc</password>
       <subject>ERRO NDS SERVIDOR=%property{HOSTNAME} %property{SSH_CONNECTION} %m APLICACAO %property{catalina.base} </subject>
       <layout class="ch.qos.logback.classic.PatternLayout">
       <pattern>%date %-5level %logger - %message%n</pattern>
     </layout> 
 
       <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-          <level>ERROR</level>
+          <level>WARN</level>
       </filter>
   </appender>
 	
