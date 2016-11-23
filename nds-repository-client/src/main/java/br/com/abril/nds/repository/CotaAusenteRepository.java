@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +17,8 @@ public interface CotaAusenteRepository extends Repository<CotaAusente,Long> {
 	 List<CotaAusenteDTO> obterCotasAusentes(FiltroCotaAusenteDTO filtro);
 	 
 	 Long obterCountCotasAusentes(FiltroCotaAusenteDTO filtro);
+	 
+	 List<BigInteger> obterCountCotasAusentesNaMatrizDeRecolhimento(FiltroCotaAusenteDTO filtro);
 	 
 	 CotaAusente obterCotaAusentePor(Long idCota, Date data);
 	 

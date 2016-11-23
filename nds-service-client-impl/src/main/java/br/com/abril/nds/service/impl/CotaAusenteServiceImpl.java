@@ -78,7 +78,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 													 Date data, 
 													 Long idUsuario) 
 													 throws TipoMovimentoEstoqueInexistenteException {
-		
+		// data = data de operacao
 		this.enviarParaSuplementar(numCotas, data, idUsuario);
 	}
 	
@@ -114,16 +114,46 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 		}
 	}
 	
+	private Boolean validarNaMatrizDeRecolhimento(Integer numCota, Date data)
+	{
+		// chamado 	4683970
+		//List<CotaAusente> cotasAusentes = new ArrayList<CotaAusente>();
+		String listagem = " - ";
+		FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO();
+		
+			filtro.setData(data);
+			filtro.setNumCota(numCota);
+			// chamado 4683970
+			List<BigInteger> coletados = this.cotaAusenteRepository.obterCountCotasAusentesNaMatrizDeRecolhimento(filtro);
+			
+			if (coletados.size() > 0)
+			{
+				for (int i = 0; i < coletados.size(); i++) 
+				{
+					listagem = listagem + coletados.get(i) + " - ";
+				}
+//Não é possível confirmar a cota ausente. Produto 38973001 ed. 92 em matriz de recolhimento.
+				throw new ValidacaoException(
+						TipoMensagem.ERROR, "Não é possível confirmar a cota ausente. Produto "
+						+ listagem + " em Matriz de Recolhimento.");
+			}
+			else 
+				return true;
+	}
+	
 	private List<CotaAusente> enviarParaSuplementar(List<Integer> numerosCotasAusentes, 
 													Date data, 
 													Long idUsuario)
 													throws TipoMovimentoEstoqueInexistenteException {
 
 		List<CotaAusente> cotasAusentes = new ArrayList<CotaAusente>();
+		// data = data de operacao
 
 		for (Integer numeroCotaAusente : numerosCotasAusentes) {
 
 			validarCotaAusenteNaData(numeroCotaAusente, data);
+			// chamado 	4683970
+			validarCotaAusenteNaMatrizRecolhimento(numeroCotaAusente, data);
 			
 			Cota cota = this.cotaRepository.obterPorNumeroDaCota(numeroCotaAusente);
 
@@ -169,6 +199,34 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 				TipoMensagem.WARNING, "Cota de número '" 
 					+ numCota + "' já está declarada como ausente.");
 		}
+
+	}
+	
+	public void validarCotaAusenteNaMatrizRecolhimento(Integer numCota, Date data) 
+	{
+		FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO();
+		String listagem = " - ";
+		BigInteger codigo = new BigInteger("0");
+		
+		filtro.setData(data);
+		filtro.setNumCota(numCota);
+		
+		// chamado 4683970
+		List<BigInteger> coletados = this.cotaAusenteRepository.obterCountCotasAusentesNaMatrizDeRecolhimento(filtro);
+		
+		if (coletados.size() > 0)
+		{
+
+			for (int i = 0; i < coletados.size(); i++) 
+			{
+				listagem = listagem + coletados.get(i) + " - ";
+			}
+		
+			throw new ValidacaoException(
+					TipoMensagem.ERROR, "Não será possível confirmar a cota ausente. Produto "
+					+ listagem + " em Matriz de Recolhimento.");
+		}
+
 	}
 	
 	/**
@@ -481,6 +539,9 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 			throw new ValidacaoException(
 				TipoMensagem.WARNING, "Cota '" + cota.getNumeroCota() + "' não possui reparte na data de lancamento "+DateUtils.format(data, "dd/MM/yyyy"));
 		}
+		// chamado 	4683970
+		validarNaMatrizDeRecolhimento(numeroCota, data);
+		
 	}
 	
 	@Transactional(readOnly = true)
