@@ -191,6 +191,8 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		return queryNative;
 	}
 	
+
+	
 	
 	public CotaAusente obterCotaAusentePor(Long idCota, Date data) {
 
@@ -225,6 +227,47 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		List<BigInteger> result = query.list();
 		
 		return (long) result.size();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<BigInteger> obterCountCotasAusentesNaMatrizDeRecolhimento(FiltroCotaAusenteDTO filtro) {
+
+		Date dataOp = filtro.getData();
+		Integer idCota = filtro.getNumCota();
+
+		StringBuilder qu = new StringBuilder();	
+		qu.append(" select concat(codigo,' ed. ', numero_edicao) from pe where id in ( ");
+		qu.append(" select lancamento.produto_edicao_id from LANCAMENTO lancamento ");
+		qu.append(" inner join MOVIMENTO_ESTOQUE_COTA mec where mec.produto_edicao_id = lancamento.produto_edicao_id ");
+		qu.append(" and mec.lancamento_id = lancamento.id and mec.TIPO_MOVIMENTO_ID = 21 ");
+		qu.append(" and lancamento.status in( 'BALANCEADO_RECOLHIMENTO' ,'EM_BALANCEAMENTO_RECOLHIMENTO', 'EM_RECOLHIMENTO', 'CANCELADO', 'RECOLHIDO', 'FECHADO') ");
+		qu.append(" and mec.data = lancamento.data_lcto_distribuidor ");	
+		if(dataOp != null)
+		{	
+			qu.append("AND mec.data = :data ");
+		}		
+		if(idCota > 0)
+		{			
+			qu.append("and mec.cota_id in (select id from cota where numero_cota = :idCota ) ");
+		}
+		qu.append(" ) ");
+		// and mec.cota_id in (select id from cota where numero_cota = 10000)
+		Query query = getSession().createSQLQuery(qu.toString());
+		if(dataOp != null)
+		{	
+			query.setParameter("data", dataOp);
+		}
+		if(idCota > 0)
+		{			
+			query.setParameter("idCota", idCota);
+		}
+
+		List<BigInteger> result = query.list();
+		
+		//return (long) result.size();
+		
+		return result;
 	}
 	
 	@Override
