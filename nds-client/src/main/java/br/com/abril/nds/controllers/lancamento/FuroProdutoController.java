@@ -261,6 +261,12 @@ public class FuroProdutoController extends BaseController {
 		
 		codigoProduto = obterCodigoProdutoFormatado(codigoProduto);
 		
+		Lancamento lancamento = this.lancamentoService.buscarPorId(idLancamento);
+		
+		List<CotaFuroDTO> listaCotaAvista = this.furoProdutoService.obterCobrancaRealizadaParaCotaVista(idProdutoEdicao, lancamento.getDataLancamentoDistribuidor(), idLancamento);
+		
+		List<String> listaMensagemFuro = debitoCreditoCotaAvista(listaCotaAvista);
+		
 		try {
 			this.furoProdutoService.efetuarFuroProduto(codigoProduto, 
 			        idProdutoEdicao, 
@@ -276,32 +282,27 @@ public class FuroProdutoController extends BaseController {
 			}
 		}
 		
-		Lancamento lancamento = this.lancamentoService.buscarPorId(idLancamento);
-		
-		List<CotaFuroDTO> listaCotaAvista = this.furoProdutoService.obterCobrancaRealizadaParaCotaVista(idProdutoEdicao, lancamento.getDataLancamentoDistribuidor(), idLancamento);
-		
-		debitoCreditoCotaAvista(listaCotaAvista);
-
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
+		if(listaMensagemFuro !=null && !listaMensagemFuro.isEmpty()) {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, listaMensagemFuro), Constantes.PARAM_MSGS).recursive().serialize();
+		} else {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
+		}
 		
 		result.forwardTo(FuroProdutoController.class).index();
 	}
 
-	private void debitoCreditoCotaAvista(List<CotaFuroDTO> listaCotaAvista) {
+	private List<String> debitoCreditoCotaAvista(List<CotaFuroDTO> listaCotaAvista) {
 		
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 		
 		if (!listaCotaAvista.isEmpty()){
 			listaMensagemValidacao.add("Verifique possíveis debito e crédito, pois a cobrança já foi gerada para as cotas a vista abaixo:");
 			for(CotaFuroDTO cotaDTO : listaCotaAvista) {
-				listaMensagemValidacao.add("Cota: "+ cotaDTO.getNumeroCota() + " - " + cotaDTO.getNome() + " - " + "Nosso Numero: " + cotaDTO.getNossoNumero());
+				listaMensagemValidacao.add("Cota: "+ cotaDTO.getNumeroCota() + " - " + cotaDTO.getNome());
 			}
 		}
 		
-		if (!listaMensagemValidacao.isEmpty()){
-			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.WARNING, listaMensagemValidacao);
-			throw new ValidacaoException(validacaoVO);
-		}
+		return listaMensagemValidacao;
 	}
 	
 	@Post
