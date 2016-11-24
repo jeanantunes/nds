@@ -767,7 +767,13 @@ public class ParciaisServiceImpl implements ParciaisService{
 		}
 		
 		PeriodoLancamentoParcial periodoAnterior = periodoLancamentoParcialRepository.obterPeriodoPorNumero(periodo.getNumeroPeriodo()-1, periodo.getLancamentoParcial().getId());
-		
+		if ( periodoAnterior == null ) {  // numeracao errada em periodo_lancamento_parcial ? buscar imediamente anterior
+				int i =  periodo.getNumeroPeriodo()-2;
+				while ( periodoAnterior == null && i > 0 ) {
+					periodoAnterior = periodoLancamentoParcialRepository.obterPeriodoPorNumero(i, periodo.getLancamentoParcial().getId());
+			    i--; 
+			}
+		}
 		if(TipoLancamentoParcial.FINAL.equals(periodo.getTipo())) {
 			
 			if(periodoAnterior != null) {
@@ -804,12 +810,12 @@ public class ParciaisServiceImpl implements ParciaisService{
 	}
 
 	private void atualizarRecolhimentosPeriodoAnterior(PeriodoLancamentoParcial periodoAnterior, Date dataRecolhimento) {
-
-		for (Lancamento lancamento : periodoAnterior.getLancamentos()) {
-
-			lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
-			lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
-		}
+       if ( periodoAnterior != null )
+			for (Lancamento lancamento : periodoAnterior.getLancamentos()) {
+	
+				lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
+				lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+			}
 	}
 
 	private void validarStatusLancamentoPeriodo(Lancamento lancamento, String mensagem) {
