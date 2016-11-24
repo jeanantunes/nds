@@ -1398,6 +1398,8 @@ public class MatrizLancamentoController extends BaseController {
         
         produtoBalanceamentoVO.setRepartePrevisto(produtoLancamentoDTO.getRepartePrevisto().toString());
         
+        produtoBalanceamentoVO.setDescontoLogistica(produtoLancamentoDTO.getDescontoLogistica());
+        
         produtoBalanceamentoVO.setValorTotal(CurrencyUtil.formatarValor(produtoLancamentoDTO.getValorTotal()));
         
         if (produtoLancamentoDTO.getReparteFisico() == null) {

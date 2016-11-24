@@ -97,6 +97,9 @@ public class ProdutoLancamentoDTO implements Serializable {
   	private boolean produtoContaFirme;
   	
   	
+  	private String descontoLogistica;
+  	
+  	
 	public Date getDataRecolhimentoDistribuidor() {
 		return dataRecolhimentoDistribuidor;
 	}
@@ -634,6 +637,14 @@ public class ProdutoLancamentoDTO implements Serializable {
 
 	public void setPeb(Long peb) {
 		this.peb = peb;
+	}
+
+	public String getDescontoLogistica() {
+		return descontoLogistica;
+	}
+
+	public void setDescontoLogistica(String descontoLogistica) {
+		this.descontoLogistica = descontoLogistica;
 	}
 	
 }

@@ -1527,8 +1527,11 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 
 		sql.append(" produtoEdicao.peb as peb, ");
 		
-		sql.append(" if(produto.FORMA_COMERCIALIZACAO != 'CONSIGNADO',true,false) as produtoContaFirme ");
+		sql.append(" if(produto.FORMA_COMERCIALIZACAO != 'CONSIGNADO',true,false) as produtoContaFirme, ");
 
+		sql.append(" coalesce(desconto_produto_edicao.percentual_desconto, desconto_produto.percentual_desconto, 0 ) as descontoLogistica ");
+		
+		
 		sql.append(montarClausulaFromConsultaBalanceamentoLancamento(filtroFisicoLancamento));
 
 		return sql.toString();
@@ -1543,11 +1546,16 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 		sql.append(" inner join ");
 		sql.append(" PRODUTO_EDICAO produtoEdicao ");
 		sql.append(" on lancamento.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
+		   
 		sql.append(" left join ESTOQUE_PRODUTO estoqueProduto ");
 		sql.append(" on estoqueProduto.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
 		sql.append(" inner join ");
 		sql.append(" PRODUTO produto ");
 		sql.append(" on produtoEdicao.PRODUTO_ID = produto.ID ");
+		
+		sql.append(" left outer join DESCONTO_LOGISTICA desconto_produto on produto.DESCONTO_LOGISTICA_ID=desconto_produto.ID ");
+	    sql.append(" left outer join DESCONTO_LOGISTICA desconto_produto_edicao on produtoEdicao.DESCONTO_LOGISTICA_ID=desconto_produto_edicao.ID ");
+	 
 
 		sql.append(" inner join ");
 		sql.append("     PRODUTO_FORNECEDOR produtoFornecedor ");
@@ -1637,7 +1645,8 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 				.addScalar("idFornecedor", StandardBasicTypes.LONG)
 				.addScalar("peb", StandardBasicTypes.LONG)
 				.addScalar("nomeFantasia")
-				.addScalar("produtoContaFirme", StandardBasicTypes.BOOLEAN);
+				.addScalar("produtoContaFirme", StandardBasicTypes.BOOLEAN)
+				.addScalar("descontoLogistica", StandardBasicTypes.STRING);
 					
 
 		this.aplicarParametros(query,dataPesquisada, periodoDistribuicao, fornecedores);

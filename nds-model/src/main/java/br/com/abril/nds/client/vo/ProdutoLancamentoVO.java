@@ -42,27 +42,32 @@ public class ProdutoLancamentoVO  implements Serializable {
 	@Export(label="PEB", exhibitionOrder = 9, widthPercent = 3)
 	private Long peb;
 	
-	@Export(label="Físico", exhibitionOrder = 10, widthPercent = 4)
+	@Export(label="Desc Logistica", exhibitionOrder = 10, widthPercent = 6)
+	private String descontoLogistica;
+	
+	@Export(label="Físico", exhibitionOrder = 11, widthPercent = 4)
 	private String reparteFisico;
 	
-	@Export(label="Distrib.", exhibitionOrder = 11, widthPercent = 0)
+	@Export(label="Distrib.", exhibitionOrder = 12, widthPercent = 0)
 	private String distribuicao;
 	
-	@Export(label="Previsto", exhibitionOrder = 12, widthPercent = 6)
+	@Export(label="Previsto", exhibitionOrder = 13, widthPercent = 6)
 	private String dataLancamentoPrevista;
 	
 	//@Export(label="Excluir", exhibitionOrder = 13, widthPercent = 0)
 	private boolean cancelado;
 	
-	@Export(label="Status", exhibitionOrder = 13, widthPercent = 9)
+	@Export(label="Status", exhibitionOrder = 14, widthPercent = 9)
 	private String statusLancamento;
 	
-	@Export(label="Fornec.", exhibitionOrder = 14, widthPercent = 5)
+	@Export(label="Fornec.", exhibitionOrder = 15, widthPercent = 5)
 	private String nomeFantasia;
 	
 	
-	@Export(label="Sequencia", exhibitionOrder = 15, widthPercent = 8)
+	@Export(label="Sequencia", exhibitionOrder = 16, widthPercent = 8)
 	private String sequenciaMatriz;
+	
+
 
 	private Long fornecedorId;
 
@@ -287,6 +292,15 @@ public class ProdutoLancamentoVO  implements Serializable {
 	public void setNovaDataLancamento(String novaDataLancamento) {
 		this.novaDataLancamento = novaDataLancamento;
 	}
+	
+	public String getDescontoLogistica() {
+		return descontoLogistica;
+	}
+
+	public void setDescontoLogistica(String descontoLogistica) {
+		this.descontoLogistica = descontoLogistica;
+	}
+	
 
 	@Override
 	public int hashCode() {
