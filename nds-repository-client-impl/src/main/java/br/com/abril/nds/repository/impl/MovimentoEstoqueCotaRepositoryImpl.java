@@ -316,17 +316,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append("edicao.PRECO_VENDA AS precoVenda,");
         hql.append("movimentoe1_.VALOR_DESCONTO AS valorDesconto ");
         hql.append("FROM CONFERENCIA_ENCALHE conferenci0_ ");
-        hql.append("INNER JOIN MOVIMENTO_ESTOQUE_COTA movimentoe1_ ");
-        hql.append("ON conferenci0_.MOVIMENTO_ESTOQUE_COTA_ID=movimentoe1_.ID ");
-        hql.append("INNER JOIN produto_edicao edicao ");
-        hql.append("ON movimentoe1_.produto_edicao_id = edicao.id ");
-        hql.append("INNER JOIN PRODUTO prod ");
-        hql.append("ON edicao.PRODUTO_ID = prod.id ");
-        hql.append("INNER JOIN produto_fornecedor prodForn ");
-        hql.append("on prod.id = prodForn.PRODUTO_ID ");
-        hql.append("INNER JOIN fornecedor forn ");
-        hql.append("on prodForn.fornecedores_ID = forn.id ");
-        hql.append("WHERE conferenci0_.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID=:idControleConferenciaEncalheCota");
+        hql.append("INNER JOIN MOVIMENTO_ESTOQUE_COTA movimentoe1_ ON conferenci0_.MOVIMENTO_ESTOQUE_COTA_ID=movimentoe1_.ID ");
+        hql.append("INNER JOIN produto_edicao edicao ON movimentoe1_.produto_edicao_id = edicao.id ");
+        hql.append("INNER JOIN PRODUTO prod ON edicao.PRODUTO_ID = prod.id ");
+        hql.append("INNER JOIN produto_fornecedor prodForn ON prod.id = prodForn.PRODUTO_ID ");
+        hql.append("INNER JOIN fornecedor forn ON prodForn.fornecedores_ID = forn.id ");
+        hql.append("WHERE conferenci0_.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID=:idControleConferenciaEncalheCota ");
+        hql.append("AND movimentoe1_.FORMA_COMERCIALIZACAO = :formaComercializacao ");
+        
         final Query query = getSession().createSQLQuery(hql.toString())
         		.addScalar("idMovimentoEstoqueCota",LongType.INSTANCE)
         		.addScalar("idCota",LongType.INSTANCE)
@@ -337,7 +334,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         		.addScalar("precoComDesconto",BigDecimalType.INSTANCE)
         		.addScalar("precoVenda",BigDecimalType.INSTANCE)
         		.addScalar("valorDesconto",BigDecimalType.INSTANCE);
+        
         query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
+        query.setParameter("formaComercializacao", FormaComercializacao.CONSIGNADO.name());
+        
         query.setResultTransformer(new AliasToBeanResultTransformer(MovimentosEstoqueEncalheDTO.class));
         
         
@@ -493,7 +493,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<MovimentoEstoqueCota> obterMovimentosEstornadosPorChamadaEncalhe(final Long idCota, final List<Long> idsTipoMovimentoEstorno, List<Date> datas) {
+	public List<MovimentoEstoqueCota> obterMovimentosEstornadosPorChamadaEncalhe(final Long idCota, final List<Long> idsTipoMovimentoEstorno, List<Date> datas) {
         
         final StringBuilder sql = new StringBuilder();
         
@@ -506,7 +506,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append(" inner join lancamento l on l.id = mec.lancamento_id and l.id = cel.lancamento_id ");
         sql.append(" where mec.TIPO_MOVIMENTO_ID in (:idsTipoMovimentoEstorno) ");
         sql.append(" and mec.cota_id = :idCota ");
-        sql.append(" and mec.STATUS_ESTOQUE_FINANCEIRO = 'FINANCEIRO_NAO_PROCESSADO' ");
+        // sql.append(" and mec.STATUS_ESTOQUE_FINANCEIRO = 'FINANCEIRO_NAO_PROCESSADO' ");
         
         if(datas != null && !datas.isEmpty()) {
         	
@@ -3556,6 +3556,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" from MovimentoEstoqueCota movimentoEstoqueCota ");
         hql.append(" join movimentoEstoqueCota.tipoMovimento tipoMovimento ");
         hql.append(" where movimentoEstoqueCota.produtoEdicao.id = :idProdutoEdicao ");
+        hql.append(" and movimentoEstoqueCota.movimentoEstoqueCotaFuro is null "); 
         
         if(idCota != null) {
             hql.append(" and movimentoEstoqueCota.cota.id = :idCota ");

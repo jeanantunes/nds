@@ -1986,7 +1986,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
     	
     	.append("  SELECT DISTINCT  MFC.*   FROM ")
     	.append("   MOVIMENTO_FINANCEIRO_COTA MFC ")
-    	.append("   INNER JOIN  CONSOLIDADO_MVTO_FINANCEIRO_COTA CMFC ON MFC.ID = CMFC.MVTO_FINANCEIRO_COTA_ID AND CONSOLIDADO_FINANCEIRO_ID = :idConsolidado ");
+    	.append("   INNER JOIN CONSOLIDADO_MVTO_FINANCEIRO_COTA CMFC ON MFC.ID = CMFC.MVTO_FINANCEIRO_COTA_ID AND CMFC.CONSOLIDADO_FINANCEIRO_ID = :idConsolidado ");
 
         Query query = this.getSession().createSQLQuery(hql.toString()).addEntity(MovimentoFinanceiroCota.class);
 
