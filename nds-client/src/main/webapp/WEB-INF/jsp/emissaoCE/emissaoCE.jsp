@@ -6,6 +6,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/emissaoCE.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/utils.js"></script>
 
 <style type="text/css">
   .dados, .dadosFiltro{display:none;}
@@ -208,7 +209,11 @@
        <fieldset class="fieldGrid">
        	  <legend> Emissão CE</legend>
         <div class="grids" style="display:none;">
-		  <table class="ceEmissaoGrid"></table>
+		  <table class="ceEmissaoGrid">
+		  	
+		  </table>
+		  	<td width="168"><strong>TOTAL GERAL R$:</strong><span id="totalEmissaoCE"></span></td>
+ 			<td width="141"></td>
 		  		      
         </div>
 		

@@ -1,3 +1,4 @@
+var vlrTotalEmissaoCE = 0;
 var EmissaoCEController = $.extend(true, {
 	
 	emissoes : [],
@@ -228,15 +229,22 @@ var EmissaoCEController = $.extend(true, {
 			return result;
 		}
 		
+		var aux = 0;
+		
 		$.each(result.rows, function(index, row) {
 	
 			if(!row.cell.nomeCota){
 				row.cell.nomeCota = "";
 			}
+			
+			vlrTotalEmissaoCE = (parseFloat(aux) + parseFloat(row.cell.totalEmissaoCE));
+						
+			aux = vlrTotalEmissaoCE;
+			
 		});
 		
 		$(".grids", this.workspace).show();
-		
+		$("#totalEmissaoCE", this.workspace).text(floatToPrice(parseFloat(vlrTotalEmissaoCE).toFixed(2)));
 		return result;
 	},
 		
