@@ -138,8 +138,11 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/salvarCE',
 				 fechamentoCEIntegracaoController.getItensAlteradosCE(),
 				 function(resultado) {
-				 	exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
-					fechamentoCEIntegracaoController.itensCEIntegracao = [];
+			        	exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+				 //  fechamentoCEIntegracaoController.itensCEIntegracao = [];
+				    	$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
+								itemCEIntegracao.alteracao = false;
+							});
 					return resultado;
 				 },
 				null,
@@ -693,7 +696,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	},
 	
 	atualizarItensCEIntegracao : function(idItemCeIntegracao, encalhe, venda, diferenca, estoque, qtdeDevSemCE) {
-		
+		var achou=false;
 		$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
 			
 			if(itemCEIntegracao.id == idItemCeIntegracao) {
@@ -703,14 +706,17 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				itemCEIntegracao.diferenca = diferenca;
 				itemCEIntegracao.estoque = estoque;
 				itemCEIntegracao.alteracao = true;
-				
+				achou=true;
 				return false;
 			}
 		});
+		if (! achou )
+		exibirMensagem("WARNING", ["ERRO:ITEM NAO ATUALIZADO"]);
 	},
 	
 	atualizarItensCEIntegracaoSemCE : function(idItemCeIntegracao, encalhe, venda, diferenca, estoque, codigoProduto, nomeProduto, numeroEdicao, precoCapa) {
 		
+		var achou=false;
 		$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
 			
 			if(itemCEIntegracao.id == idItemCeIntegracao) {
@@ -724,10 +730,12 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				itemCEIntegracao.estoque = estoque;
 				itemCEIntegracao.alteracao = true;
 				itemCEIntegracao.precoCapa = precoCapa;
-				
+				achou=true;
 				return false;
 			}
 		});
+		if( !achou )
+		  exibirMensagem("WARNING", ["ERRO:ITEM NAO ATUALIZADO"]);
 	},
 	
 	atualizarEncalheCalcularTotais : function(idItemChamadaFornecedor, encalhe, venda) {
