@@ -10,6 +10,7 @@ public class Produto {
 	private BigDecimal precoCapa;
 	private BigDecimal desconto;
 	private Integer quantidade;
+	private Long codigoBarras;
 	private boolean distribuido;
 
 	public Produto() {
@@ -72,6 +73,14 @@ public class Produto {
 		this.quantidade = quantidade;
 	}
 
+	public Long getCodigoBarras() {
+		return codigoBarras;
+	}
+
+	public void setCodigoBarras(Long codigoBarras) {
+		this.codigoBarras = codigoBarras;
+	}
+
 	public boolean isDistribuido() {
 		return distribuido;
 	}
@@ -80,14 +89,14 @@ public class Produto {
 		this.distribuido = distribuido;
 	}
 
-	
 	@Override
 	public String toString() {
-		if(distribuido){
-			return "* " + codigoProduto + " - " + edicaoProduto + " - " + nomeProduto + " - Reparte: " + quantidade + " Exs";
-		}
-		else{
-			return codigoProduto + " - " + edicaoProduto + " - " + nomeProduto + " - Reparte: " + quantidade + " Exs";
+		if (distribuido) {
+			return "* " + codigoProduto + " - " + edicaoProduto + " - "
+					+ nomeProduto + " - Reparte: " + quantidade + " Exs";
+		} else {
+			return codigoProduto + " - " + edicaoProduto + " - " + nomeProduto
+					+ " - Reparte: " + quantidade + " Exs";
 		}
 	}
 
@@ -95,6 +104,8 @@ public class Produto {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result
+				+ ((codigoBarras == null) ? 0 : codigoBarras.hashCode());
 		result = prime * result
 				+ ((codigoProduto == null) ? 0 : codigoProduto.hashCode());
 		result = prime * result
@@ -122,6 +133,11 @@ public class Produto {
 		if (!(obj instanceof Produto))
 			return false;
 		Produto other = (Produto) obj;
+		if (codigoBarras == null) {
+			if (other.codigoBarras != null)
+				return false;
+		} else if (!codigoBarras.equals(other.codigoBarras))
+			return false;
 		if (codigoProduto == null) {
 			if (other.codigoProduto != null)
 				return false;
@@ -161,6 +177,5 @@ public class Produto {
 			return false;
 		return true;
 	}
-	
 
 }

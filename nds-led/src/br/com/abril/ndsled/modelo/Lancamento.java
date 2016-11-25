@@ -16,6 +16,7 @@ public class Lancamento {
 	private Integer QuantidadeReparte;
 	private Date dataLacamento;
 	private Integer codigoLed;
+	private Long codigoBarras;
 
 	public Integer getCodigoCota() {
 		return codigoCota;
@@ -103,6 +104,14 @@ public class Lancamento {
 
 	public void setCodigoLed(Integer codigoLed) {
 		this.codigoLed = codigoLed;
+	}
+
+	public Long getCodigoBarras() {
+		return codigoBarras;
+	}
+
+	public void setCodigoBarras(Long codigoBarras) {
+		this.codigoBarras = codigoBarras;
 	}
 
 	@Override

@@ -463,7 +463,7 @@ public class Janela {
 				EnviarLed enviarLed = new EnviarLed(cbxPortaSerial,
 						cbxListaProdutos, lstLancamentos,
 						txtCatactereReparteZero, lstCotas, lblStatusBarMessage,
-						btnEnviar, txtCodigoDeBarras);
+						btnEnviar, txtCodigoDeBarras, lstProdutosAgrupados);
 				enviarLed.start();
 				txtCodigoDeBarras.requestFocus();
 			}
@@ -484,8 +484,18 @@ public class Janela {
 		txtCodigoDeBarras.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
+				// System.out.println(e.getKeyCode());
 				if (e.getKeyCode() == 10) {
-
+					try {
+						Produto produto = AppActions.getProdutoByCodBarras(
+								txtCodigoDeBarras.getText(),
+								lstProdutosAgrupados);
+						cbxListaProdutos.setSelectedItem(produto);
+						btnEnviar.doClick();
+					} catch (Exception ex) {
+						System.out.println(ex.getMessage());
+						logger.error(ex.getMessage());
+					}
 				}
 			}
 		});
@@ -567,6 +577,7 @@ public class Janela {
 					pd.setPrecoCapa(it1.getPrecoCapa());
 					pd.setPrecoCusto(it1.getPrecoCusto());
 					pd.setQuantidade(it1.getQuantidadeReparte());
+					pd.setCodigoBarras(it1.getCodigoBarras());
 					lstProdutosAgrupados.add(pd);
 				} else {
 					Iterator<Produto> it2 = lstProdutosAgrupados.iterator();
@@ -592,6 +603,7 @@ public class Janela {
 						pd.setPrecoCapa(it1.getPrecoCapa());
 						pd.setPrecoCusto(it1.getPrecoCusto());
 						pd.setQuantidade(it1.getQuantidadeReparte());
+						pd.setCodigoBarras(it1.getCodigoBarras());
 						lstProdutosAgrupados.add(pd);
 					}
 					it2 = null;

@@ -26,6 +26,8 @@ public class DetalhesPickingPorCotaModelo04DTO implements Serializable{
 	
 	private String quantidade;
 	
+	private String codigoDeBarras;
+	
 	public String getCodigoCota() {
 		return codigoCota;
 	}
@@ -104,6 +106,14 @@ public class DetalhesPickingPorCotaModelo04DTO implements Serializable{
 
 	public void setIdentificadorLinha(String identificadorLinha) {
 		this.identificadorLinha = identificadorLinha;
+	}
+
+	public String getCodigoDeBarras() {
+		return codigoDeBarras;
+	}
+
+	public void setCodigoDeBarras(String codigoDeBarras) {
+		this.codigoDeBarras = codigoDeBarras;
 	}
 
 }

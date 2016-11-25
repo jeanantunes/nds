@@ -1,5 +1,7 @@
 package br.com.abril.ndsled.thread;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,6 +32,7 @@ public class EnviarLed extends Thread {
 	private Logger logger = LogManager.getLogger(EnviarLed.class);
 	private JTextField txtCatactereReparteZero;
 	private List<Cota> lstCotas;
+	private List<Produto> lstProdutosAgrupados;
 	private JLabel lblStatusBarMessage;
 	private JButton btnEnviar;
 	private JTextField txtCodigoDeBarras;
@@ -37,7 +40,8 @@ public class EnviarLed extends Thread {
 	public EnviarLed(JComboBox cbxPortaSerial, JComboBox cbxListaProdutos,
 			List<Lancamento> lstLancamentos,
 			JTextField txtCatactereReparteZero, List<Cota> lstCotas,
-			JLabel lblStatusBarMessage, JButton btnEnviar, JTextField txtCodigoDeBarras) {
+			JLabel lblStatusBarMessage, JButton btnEnviar,
+			JTextField txtCodigoDeBarras, List<Produto> lstProdutosAgrupados) {
 		super();
 		this.cbxPortaSerial = cbxPortaSerial;
 		this.cbxListaProdutos = cbxListaProdutos;
@@ -47,6 +51,7 @@ public class EnviarLed extends Thread {
 		this.lblStatusBarMessage = lblStatusBarMessage;
 		this.btnEnviar = btnEnviar;
 		this.txtCodigoDeBarras = txtCodigoDeBarras;
+		this.lstProdutosAgrupados = lstProdutosAgrupados;
 	}
 
 	@Override
@@ -90,7 +95,8 @@ public class EnviarLed extends Thread {
 		while (iLanc.hasNext()) {
 			Lancamento lanc = iLanc.next();
 			if (lanc.getCodigoProduto().compareTo(
-					produtoSelecionado.getCodigoProduto()) == 0 && lanc.getEdicaoProduto().compareTo(
+					produtoSelecionado.getCodigoProduto()) == 0
+					&& lanc.getEdicaoProduto().compareTo(
 							produtoSelecionado.getEdicaoProduto()) == 0) {
 				String codLed = String.format("%04d", lanc.getCodigoLed());
 				String qtde = String
@@ -104,13 +110,54 @@ public class EnviarLed extends Thread {
 				}
 			}
 		}
-		
+
 		produtoSelecionado.setDistribuido(true);
+		produtoSelecionado.setNomeProduto("* "
+				+ produtoSelecionado.getNomeProduto());
+		
+
+		// Ordena a lista de produtos agrupados por nome.
+		Collections.sort(lstProdutosAgrupados, new Comparator<Produto>() {
+			@Override
+			public int compare(Produto o1, Produto o2) {
+				return o1.getNomeProduto().compareToIgnoreCase(
+						o2.getNomeProduto());
+			}
+		});
+
+		// Remove todos itens para adicionar com a nova ordenacao.
+		try {
+			cbxListaProdutos.removeAllItems();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			System.out.println(ex.getMessage());
+		}
+		
+		try {
+			cbxListaProdutos.removeAllItems();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			System.out.println(ex.getMessage());
+		}
+		
+		
+		// Alimenta o Combobox de Produtos com a lista de produtos agrupado
+		// do dia selecionado.
+		Iterator<Produto> itListProdutosAgrupados = lstProdutosAgrupados
+				.iterator();
+
+		while (itListProdutosAgrupados.hasNext()) {
+			Produto prd = itListProdutosAgrupados.next();
+			cbxListaProdutos.addItem(prd);
+		}
+
+		itListProdutosAgrupados = null;
+		
+		cbxListaProdutos.setSelectedItem(produtoSelecionado);
 		cbxListaProdutos.showPopup();
 		cbxListaProdutos.hidePopup();
-		cbxListaProdutos.setSelectedItem(cbxListaProdutos);
 		txtCodigoDeBarras.requestFocus();
-		
+
 		iLanc = null;
 
 		pCom.FecharCom();

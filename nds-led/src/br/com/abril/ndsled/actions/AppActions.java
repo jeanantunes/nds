@@ -19,6 +19,7 @@ import br.com.abril.ndsled.modelo.Cota;
 import br.com.abril.ndsled.modelo.DetalhesPickingPorCotaModelo04DTO;
 import br.com.abril.ndsled.modelo.Lancamento;
 import br.com.abril.ndsled.modelo.PickingLEDFullDTO;
+import br.com.abril.ndsled.modelo.Produto;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -159,6 +160,8 @@ public class AppActions {
 						.getQuantidade().replace(";", "")));
 				lancamento.setCodigoLed(new Integer(det.getEnderecoLED()
 						.replace(";", "")));
+				lancamento.setCodigoBarras(new Long(item.getCodigoDeBarras()
+						.replace(";", "")));
 				lancamentos.add(lancamento);
 			}
 
@@ -214,5 +217,21 @@ public class AppActions {
 			valor = str.substring(0, tamanho);
 		}
 		return valor;
+	}
+
+	public static Produto getProdutoByCodBarras(String codigoBarras,
+			List<Produto> lstProdutosAgrupados) throws Exception {
+		Long codBarras = new Long(codigoBarras);
+		
+		
+		Iterator<Produto> iProduto = lstProdutosAgrupados.iterator();
+		while (iProduto.hasNext()) {
+			Produto produto = iProduto.next();
+			if(produto.getCodigoBarras().compareTo(codBarras) == 0){
+				return produto;
+			} 
+		}
+
+		return null;
 	}
 }
