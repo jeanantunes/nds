@@ -21,13 +21,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.ValidationException;
 
-import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.mchange.v2.beans.BeansUtils;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.DataHolder;
@@ -56,6 +53,7 @@ import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.SemaforoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -115,6 +113,9 @@ public class FechamentoEncalheController extends BaseController {
 	
 	@Autowired
 	private DocumentoCobrancaService documentoCobrancaService;
+	
+	@Autowired
+	private SemaforoService semaforoService;
 	
 	@Autowired
 	protected HttpSession session;
@@ -394,6 +395,15 @@ public class FechamentoEncalheController extends BaseController {
                     "A Data de Postergação deve ser maior que a data de operação!");
 		} 
 		
+		ValidacaoVO validacaoCotaConferenciaNaoFinalizada = getValidacaoCotaConferenciaNaoFinalizada(dataEncalhe);
+		
+		if(validacaoCotaConferenciaNaoFinalizada != null) {
+			
+			this.result.use(Results.json()).withoutRoot().from(validacaoCotaConferenciaNaoFinalizada).recursive().serialize();
+			
+			return;
+		}
+		
 		try {
 			List<CotaAusenteEncalheDTO> listaCotasAusentes = this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, true, null, null, 0, 0);
 			if (postergarTodasCotas) {
@@ -465,6 +475,12 @@ public class FechamentoEncalheController extends BaseController {
 		if (!cobrarTodasCotas && (idsCotas == null || idsCotas.isEmpty())) {
 			this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.WARNING, "Selecine pelo menos uma Cota para cobrar!"), "result").recursive().serialize();
+			return;
+		}
+		ValidacaoVO validacaoCotaConferenciaNaoFinalizada = getValidacaoCotaConferenciaNaoFinalizada(dataOperacao);
+		
+		if(validacaoCotaConferenciaNaoFinalizada != null) {
+			this.result.use(Results.json()).withoutRoot().from(validacaoCotaConferenciaNaoFinalizada).recursive().serialize();
 			return;
 		}
 		
