@@ -127,7 +127,7 @@ public class ItemNotaFiscalBuilder  {
 		
 		if(detalheNotaFiscal.getProdutoServico() == null) {
 			
-			if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
+			if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(ProcessoEmissao.valueOf(ps.getValor())) || ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
 				try {
 					
 					if(movimentoEstoque.getProdutoEdicao().getCodigoDeBarras() == null) {
@@ -457,14 +457,20 @@ public class ItemNotaFiscalBuilder  {
 								pis.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));	
 								pis.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 							} else {
-								
-								pis.setValorBaseCalculo(produtoServico.getValorTotalBruto());
-								pis.setPercentualAliquota(tributoPis.getValor());
-								
-								BigDecimal valorCalculado = NFeCalculatorImpl.calculate(pis);
-								
-								pis.setValor(valorCalculado);
-								
+								if(produtoServico.getNcm() == 49019100L) {
+									pis.setCst("06");
+									pis.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+									pis.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+									pis.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));	
+									pis.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));									
+								} else {									
+									pis.setValorBaseCalculo(produtoServico.getValorTotalBruto());
+									pis.setPercentualAliquota(tributoPis.getValor());
+									
+									BigDecimal valorCalculado = NFeCalculatorImpl.calculate(pis);
+									
+									pis.setValor(valorCalculado);
+								}
 							}
 							break;
 						}
@@ -537,11 +543,21 @@ public class ItemNotaFiscalBuilder  {
 								cofins.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 								cofins.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 							} else {
-								cofins.setValorBaseCalculo(produtoServico.getValorTotalBruto());
-								cofins.setPercentualAliquota(tributoCofins.getValor());
-								BigDecimal valorCofinsCalculado = NFeCalculatorImpl.calculate(cofins);								
-								cofins.setValor(valorCofinsCalculado);
-								cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoCofins.getValor()));
+								
+								if(produtoServico.getNcm() == 49019100L) {
+									cofins.setCst("06");
+									cofins.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+									cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+									cofins.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+									cofins.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+								} else {									
+									cofins.setValorBaseCalculo(produtoServico.getValorTotalBruto());
+									cofins.setPercentualAliquota(tributoCofins.getValor());
+									BigDecimal valorCofinsCalculado = NFeCalculatorImpl.calculate(cofins);								
+									cofins.setValor(valorCofinsCalculado);
+									cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoCofins.getValor()));
+								}
+								
 							}
 							break;
 						}
@@ -695,7 +711,7 @@ public class ItemNotaFiscalBuilder  {
 		ProdutoServico produtoServico = null;
 		if(detalheNotaFiscal.getProdutoServico() == null) {
 			
-			if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
+			if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(ProcessoEmissao.valueOf(ps.getValor())) || ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
 				try {
 					
 					if(movimentoFechamentoFiscal.getProdutoEdicao().getCodigoDeBarras() == null) {
