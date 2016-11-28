@@ -167,6 +167,8 @@ public class CotaEmissaoDTO implements Serializable{
 	
 	private Long qtdGrupoCota;
 	
+	private BigDecimal totalEmissaoCE = new BigDecimal(0);
+	
 	public String getDestinatarioCNPJ() {
 		return destinatarioCNPJ;
 	}
@@ -445,6 +447,7 @@ public class CotaEmissaoDTO implements Serializable{
 	 */
 	public void setVlrTotalCe(BigDecimal vlrTotalCe) {
 		this.vlrTotalCe = CurrencyUtil.formatarValor( (vlrTotalCe == null)?BigDecimal.ZERO:vlrTotalCe);
+		this.totalEmissaoCE = totalEmissaoCE.add((vlrTotalCe == null)?BigDecimal.ZERO:vlrTotalCe);
 	}
 	
 	/**
@@ -881,5 +884,8 @@ public class CotaEmissaoDTO implements Serializable{
     public void setQtdGrupoCota(Long qtdGrupoCota) {
         this.qtdGrupoCota = qtdGrupoCota;
     }
-	
+
+	public BigDecimal getTotalEmissaoCE() {
+		return totalEmissaoCE;
+	}
 }
