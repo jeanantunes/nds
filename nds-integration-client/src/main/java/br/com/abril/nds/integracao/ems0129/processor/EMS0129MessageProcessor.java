@@ -91,9 +91,10 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	
 	@Override
 	public void processMessage(Message message) {
-		
+
 		this.setMensagemValidacao(null);
 		
+		LOGGER.info("obter o distribuidor");
 		Distribuidor distribuidor = distribuidorRepository.obter();
 		
 		if (distribuidor.getTipoImpressaoInterfaceLED().equals(TipoImpressaoInterfaceLED.MODELO_1)) {
@@ -220,10 +221,10 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 				print.println(fixedFormatManager.export(linha01Modelo04) + "\r");
 				
 				// LINHA 02 - OK
-				List<DetalhesPickingPorCotaModelo03DTO> listaLinha02Modelo04 = getLinha02Modelo03(linha01Modelo04.getCodigoCota(), dataLancamento);
+				List<DetalhesPickingPorCotaModelo03DTO> listaLinha02Modelo04 = getLinha02Modelo03(linha01Modelo04.getCodigoCota(), dataLancamento, true);
 				
 				for (DetalhesPickingPorCotaModelo03DTO detalhesPickingPorCotaModelo03DTO : listaLinha02Modelo04) {
-					EMS0129Picking3Trailer2 linha02Modelo03 = criarLinha02Modelo03(detalhesPickingPorCotaModelo03DTO);
+					EMS0129Picking3Trailer2 linha02Modelo03 = criarLinha02Modelo03(detalhesPickingPorCotaModelo03DTO, true);
 					print.println(fixedFormatManager.export(linha02Modelo03) + "\r");
 				}
 				
@@ -875,10 +876,10 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 				
 				print.println(fixedFormatManager.export(linha01Modelo03) + "\r");
 				
-				List<DetalhesPickingPorCotaModelo03DTO> listaLinha02Modelo03 = getLinha02Modelo03(linha01Modelo03.getCodigoCota(), dataLancamento);
+				List<DetalhesPickingPorCotaModelo03DTO> listaLinha02Modelo03 = getLinha02Modelo03(linha01Modelo03.getCodigoCota(), dataLancamento, false);
 				
 				for (DetalhesPickingPorCotaModelo03DTO detalhesPickingPorCotaModelo03DTO : listaLinha02Modelo03) {
-					EMS0129Picking3Trailer2 linha02Modelo03 = criarLinha02Modelo03(detalhesPickingPorCotaModelo03DTO);
+					EMS0129Picking3Trailer2 linha02Modelo03 = criarLinha02Modelo03(detalhesPickingPorCotaModelo03DTO, false);
 					print.println(fixedFormatManager.export(linha02Modelo03) + "\r");
 				}
 				
@@ -986,7 +987,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<DetalhesPickingPorCotaModelo03DTO> getLinha02Modelo03(String numeroCota, Date dataLancamento) {
+	private List<DetalhesPickingPorCotaModelo03DTO> getLinha02Modelo03(String numeroCota, Date dataLancamento, boolean isModelo4) {
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select '2;' as identificadorLinha ");
@@ -995,6 +996,11 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		sql.append(" ,concat(lpad(k.codigo,10,0), ';') as produto ");
 		sql.append(" ,concat(lpad(j.numero_edicao,4,0), ';') as edicao ");
 		sql.append(" ,concat(rpad(j.nome_comercial,20,' '), ';') as nome  ");
+		
+		if(isModelo4){
+			sql.append(" ,concat(lpad(j.codigo_de_barras,20,0), ';') as codigoDeBarras ");
+		}
+		
 		sql.append(" ,concat(replace(lpad(truncate(j.PRECO_VENDA,2),11,0),'.',''), ';') as preco ");
 		sql.append(" ,concat(replace(lpad(truncate(j.PRECO_VENDA,2),11,0),'.',''), ';') as precoDesconto ");
 		sql.append(" ,concat('02500', ';' ) as desconto ");
@@ -1062,13 +1068,21 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		
 	}
 	
-	private EMS0129Picking3Trailer2 criarLinha02Modelo03(DetalhesPickingPorCotaModelo03DTO detalhesPickingPorCotaModelo03DTO) {
+	private EMS0129Picking3Trailer2 criarLinha02Modelo03(DetalhesPickingPorCotaModelo03DTO detalhesPickingPorCotaModelo03DTO, boolean isModelo4) {
 		
-		return new EMS0129Picking3Trailer2(detalhesPickingPorCotaModelo03DTO.getIdentificadorLinha(), detalhesPickingPorCotaModelo03DTO.getCodigoCota(), 
+		if(isModelo4){
+			return new EMS0129Picking3Trailer2(detalhesPickingPorCotaModelo03DTO.getIdentificadorLinha(), detalhesPickingPorCotaModelo03DTO.getCodigoCota(), 
+				detalhesPickingPorCotaModelo03DTO.getSequencia(), detalhesPickingPorCotaModelo03DTO.getProduto(),
+				detalhesPickingPorCotaModelo03DTO.getEdicao(), detalhesPickingPorCotaModelo03DTO.getNome(),
+				detalhesPickingPorCotaModelo03DTO.getPreco(), detalhesPickingPorCotaModelo03DTO.getPrecoDesconto(),
+				detalhesPickingPorCotaModelo03DTO.getDesconto(), detalhesPickingPorCotaModelo03DTO.getQuantidade(), detalhesPickingPorCotaModelo03DTO.getCodigoDeBarras());
+		}else{
+			return new EMS0129Picking3Trailer2(detalhesPickingPorCotaModelo03DTO.getIdentificadorLinha(), detalhesPickingPorCotaModelo03DTO.getCodigoCota(), 
 				detalhesPickingPorCotaModelo03DTO.getSequencia(), detalhesPickingPorCotaModelo03DTO.getProduto(),
 				detalhesPickingPorCotaModelo03DTO.getEdicao(), detalhesPickingPorCotaModelo03DTO.getNome(),
 				detalhesPickingPorCotaModelo03DTO.getPreco(), detalhesPickingPorCotaModelo03DTO.getPrecoDesconto(),
 				detalhesPickingPorCotaModelo03DTO.getDesconto(), detalhesPickingPorCotaModelo03DTO.getQuantidade());
+		}
 	}
 	
 	

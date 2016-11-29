@@ -22,6 +22,8 @@ public class DetalhesPickingPorCotaModelo03DTO {
 	
 	private String quantidade;
 	
+	private String codigoDeBarras;
+	
 	public String getCodigoCota() {
 		return codigoCota;
 	}
@@ -102,5 +104,11 @@ public class DetalhesPickingPorCotaModelo03DTO {
 		this.identificadorLinha = identificadorLinha;
 	}
 	
-	
+	public String getCodigoDeBarras() {
+		return codigoDeBarras;
+	}
+
+	public void setCodigoDeBarras(String codigoDeBarras) {
+		this.codigoDeBarras = codigoDeBarras;
+	}
 }
