@@ -21,12 +21,16 @@ public class BaixaBoletoRejeitadoVO extends BaixaBoletoBaseVO {
 	private static final long serialVersionUID = 5156198122887009066L;
 
 	 
-	@Export(label="Cota", exhibitionOrder=-3, widthPercent = 5)
+	@Export(label="Cota", exhibitionOrder=-4, widthPercent = 5)
 	private Integer numeroCota;
 	
-	@Export(label="Nome", exhibitionOrder=-2, widthPercent = 30)
+	@Export(label="Nome", exhibitionOrder=-3, widthPercent = 30)
 	private String nomeCota;
 	
+	@Export(label="NossoNumero", exhibitionOrder=-3, widthPercent = 10)
+	private String nossoNumero;
+	
+
 	@Export(label = "Histórico", exhibitionOrder=-1)
 	private String motivoRejeitado;
 	
@@ -75,6 +79,14 @@ public class BaixaBoletoRejeitadoVO extends BaixaBoletoBaseVO {
 
 	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
+	}
+	
+	public String getNossoNumero() {
+		return nossoNumero;
+	}
+
+	public void setNossoNumero(String nossoNumero) {
+		this.nossoNumero = nossoNumero;
 	}
 	
 }

@@ -649,7 +649,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select coalesce(cota.numeroCota,'') as numeroCota, baixaAutomatica.status as motivoRejeitado, ")
+		hql.append(" select coalesce(cota.numeroCota,'') as numeroCota,baixaAutomatica.nossoNumero as nossoNumero, baixaAutomatica.status as motivoRejeitado, ")
 		   .append(" 		baixaAutomatica.banco.apelido as nomeBanco, ")
 		   .append(" 		concat(baixaAutomatica.banco.conta, case when baixaAutomatica.banco.dvConta is not null then concat('-',baixaAutomatica.banco.dvConta) else '' end) as numeroConta, ")
 		   .append(" 		baixaAutomatica.valorPago as valorBoleto ")
@@ -684,7 +684,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		   .append(" 		cobranca.valor as valorBoleto, ")
 		   .append(" 		baixaAutomatica.valorPago as valorPago, ")
 		   .append(" 		cobranca.valor - baixaAutomatica.valorPago as valorDiferenca, ")
-		   .append("  		cobranca.dataVencimento as dataVencimento, ")
+		   .append("  		cobranca.dataVencimento as dataVencimento,baixaAutomatica.nossoNumero as nossoNumero, ")
 		   .append("  		cobranca.dataEmissao as dataEmissao ")
 		   .append(this.obterFromWhereConsultaBoletosBaixadosComDivergencia());
 		

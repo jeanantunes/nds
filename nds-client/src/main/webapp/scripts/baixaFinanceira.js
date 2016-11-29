@@ -214,7 +214,13 @@ var baixaFinanceiraController = $.extend(true, {
 				width : 50,
 				sortable : true,
 				align : 'left'
-			}, {
+			},{
+				display : 'Nosso Numero',
+				name : 'nossoNumero',
+				width : 120,
+				sortable : true,
+				align : 'left'
+			},  {
 				display : 'Motivo',
 				name : 'motivoRejeitado',
 				width : 420,
@@ -258,6 +264,12 @@ var baixaFinanceiraController = $.extend(true, {
 				display : 'Cota',
 				name : 'numeroCota',
 				width : 55,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Nosso Numero',
+				name : 'nossoNumero',
+				width : 120,
 				sortable : true,
 				align : 'left'
 			},{
