@@ -1345,6 +1345,7 @@ public class BaixaFinanceiraController extends BaseController {
 			BaixaBoletoDivergenteVO baixa = new BaixaBoletoDivergenteVO();
 			
 			baixa.setNumeroCota(detalhe.getNumeroCota());
+			baixa.setNossoNumero(detalhe.getNossoNumero());
 			baixa.setNomeCota(detalhe.getNomeCota());
 			baixa.setDiferencaValor(detalhe.getValorDiferenca());
 			baixa.setMotivoDivergencia(detalhe.getMotivoDivergencia());
@@ -1378,6 +1379,7 @@ public class BaixaFinanceiraController extends BaseController {
 			baixa.setMotivoRejeitado(detalhe.getMotivoRejeitado());
 			baixa.setNomeBanco(detalhe.getNomeBanco());
 			baixa.setNumeroConta(detalhe.getNumeroConta());
+			baixa.setNossoNumero(detalhe.getNossoNumero());
 			baixa.setValorBoleto(detalhe.getValorBoleto() == null ? null : 
 				detalhe.getValorBoleto().setScale(2, RoundingMode.HALF_EVEN));
 			
