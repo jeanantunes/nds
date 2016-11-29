@@ -32,7 +32,8 @@ public class EMS0129Picking3Trailer2 implements Serializable {
 	
 	private String quantidade;
 	
-
+	private String codigoDeBarras;
+	
 	public EMS0129Picking3Trailer2(String identificadorLinha, String codigoCota, String sequencia, String produto, String edicao, String nome,
 			String preco, String precoDesconto, String desconto, String quantidade) {
 		this.identificadorLinha = identificadorLinha;
@@ -45,6 +46,21 @@ public class EMS0129Picking3Trailer2 implements Serializable {
 		this.precoDesconto = precoDesconto;
 		this.desconto = desconto;
 		this.quantidade = quantidade;
+	}
+	
+	public EMS0129Picking3Trailer2(String identificadorLinha, String codigoCota, String sequencia, String produto, String edicao, String nome,
+			String preco, String precoDesconto, String desconto, String quantidade, String codigoDeBarras) {
+		this.identificadorLinha = identificadorLinha;
+		this.codigoCota = codigoCota;
+		this.sequencia = sequencia;
+		this.produto = produto;
+		this.edicao = edicao;
+		this.nome = TirarAcento.removerAcentuacao(nome);
+		this.preco = preco;
+		this.precoDesconto = precoDesconto;
+		this.desconto = desconto;
+		this.quantidade = quantidade;
+		this.codigoDeBarras = codigoDeBarras;
 	}
 	
 	@Field(offset = 1, length = 2)
@@ -97,6 +113,11 @@ public class EMS0129Picking3Trailer2 implements Serializable {
 		return quantidade;
 	}
 
+	@Field(offset = 84, length = 20)
+	public String getCodigoDeBarras() {
+		return codigoDeBarras;
+	}
+	
 	public void setCodigoCota(String codigoCota) {
 		this.codigoCota = codigoCota;
 	}
@@ -137,7 +158,8 @@ public class EMS0129Picking3Trailer2 implements Serializable {
 		this.identificadorLinha = identificadorLinha;
 	}
 	
-	
-	
+	public void setCodigoDeBarras(String codigoDeBarras) {
+		this.codigoDeBarras = codigoDeBarras;
+	}
 	
 }

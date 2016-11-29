@@ -44,7 +44,9 @@ public class PickingLEDFullDTO implements Serializable {
 	private String dataLancamentoLinha3;
 	
 	private String enderecoLED;
-
+	
+	private String codigoDeBarras;
+	
 	public List<DetalhesPickingPorCotaModelo03DTO> getListTrailer2() {
 		return listTrailer2;
 	}
@@ -195,6 +197,14 @@ public class PickingLEDFullDTO implements Serializable {
 
 	public void setEnderecoLED(String enderecoLED) {
 		this.enderecoLED = enderecoLED;
+	}
+	
+	public String getCodigoDeBarras() {
+		return codigoDeBarras;
+	}
+
+	public void setCodigoDeBarras(String codigoDeBarras) {
+		this.codigoDeBarras = codigoDeBarras;
 	}
 	
 }
