@@ -8,8 +8,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -1237,6 +1240,12 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         	final List<Long> listaIdCotas = new ArrayList<>();
         	
         	List<ConsultaNotaEnvioDTO> listaCotaExemplares = busca(filtro);
+        	
+        	// eliminar duplicados Chamado 4717058
+        	Set<ConsultaNotaEnvioDTO> hs = new LinkedHashSet<>();
+        	hs.addAll(listaCotaExemplares);
+        	listaCotaExemplares.clear();
+        	listaCotaExemplares.addAll(hs);
 
         	for (ConsultaNotaEnvioDTO dto : listaCotaExemplares) {
         		listaIdCotas.add(dto.getIdCota());
