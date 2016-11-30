@@ -34,6 +34,7 @@ import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoFechamentoFisc
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoFechamentoFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.COFINS;
+import br.com.abril.nds.model.fiscal.nota.CofinsNTWrapper;
 import br.com.abril.nds.model.fiscal.nota.CofinsOutrWrapper;
 import br.com.abril.nds.model.fiscal.nota.CofinsWrapper;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
@@ -45,6 +46,7 @@ import br.com.abril.nds.model.fiscal.nota.Impostos;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.OrigemProduto;
 import br.com.abril.nds.model.fiscal.nota.PIS;
+import br.com.abril.nds.model.fiscal.nota.PISNTWrapper;
 import br.com.abril.nds.model.fiscal.nota.PISOutrWrapper;
 import br.com.abril.nds.model.fiscal.nota.PISWrapper;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
@@ -432,10 +434,16 @@ public class ItemNotaFiscalBuilder  {
 			
 			PISWrapper pisWrapper = null;
 			
-			if(!tributacaoProduto.get("PIS").isIsentoOuNaoTributado()) {
-				pisOutWrapper = new PISOutrWrapper();
-			} else {
-				pisWrapper = new PISWrapper();
+			PISNTWrapper pisWrapperNT = null;
+			
+			if(produtoServico.getNcm() == 49019100L) {
+				pisWrapperNT = new PISNTWrapper();
+			} else {				
+				if(!tributacaoProduto.get("PIS").isIsentoOuNaoTributado()) {
+					pisOutWrapper = new PISOutrWrapper();
+				} else {
+					pisWrapper = new PISWrapper();
+				}
 			}
 			
 			PIS pis = new PIS();
@@ -459,10 +467,10 @@ public class ItemNotaFiscalBuilder  {
 							} else {
 								if(produtoServico.getNcm() == 49019100L) {
 									pis.setCst("06");
-									pis.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
-									pis.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
-									pis.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));	
-									pis.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));									
+									pis.setValorBaseCalculo(null);
+									pis.setValorAliquota(null);
+									pis.setPercentualAliquota(null);	
+									pis.setValor(null);									
 								} else {									
 									pis.setValorBaseCalculo(produtoServico.getValorTotalBruto());
 									pis.setPercentualAliquota(tributoPis.getValor());
@@ -479,14 +487,19 @@ public class ItemNotaFiscalBuilder  {
 				
 			}
 			
-			if(pisOutWrapper != null) {
-				pisOutWrapper.setPis(pis);
-				
-				detalheNotaFiscal.getImpostos().setPisOutr(pisOutWrapper);
+			if(produtoServico.getNcm() == 49019100L) {
+				pisWrapperNT.setPis(pis);
+				detalheNotaFiscal.getImpostos().setPisNT(pisWrapperNT);
 			} else {
-				pisWrapper.setPis(pis);
-				detalheNotaFiscal.getImpostos().setPis(pisWrapper);
-			}			
+				if(pisOutWrapper != null) {
+					pisOutWrapper.setPis(pis);
+					
+					detalheNotaFiscal.getImpostos().setPisOutr(pisOutWrapper);
+				} else {
+					pisWrapper.setPis(pis);
+					detalheNotaFiscal.getImpostos().setPis(pisWrapper);
+				}							
+			}
 			
 		} else {
 			
@@ -517,10 +530,16 @@ public class ItemNotaFiscalBuilder  {
 			
 			CofinsWrapper cofinsWrapper = null;
 			
-			if(!tributacaoProduto.get("COFINS").isIsentoOuNaoTributado()) {
-				cofinsOutrWrapper = new CofinsOutrWrapper();	
-			} else {
-				cofinsWrapper = new CofinsWrapper();
+			CofinsNTWrapper cofinsNTWrapper = null;
+			
+			if(produtoServico.getNcm() == 49019100L) {
+				cofinsNTWrapper = new CofinsNTWrapper();
+			} else {				
+				if(!tributacaoProduto.get("COFINS").isIsentoOuNaoTributado()) {
+					cofinsOutrWrapper = new CofinsOutrWrapper();	
+				} else {
+					cofinsWrapper = new CofinsWrapper();
+				}
 			}
 			
 			COFINS cofins = new COFINS();
@@ -546,10 +565,10 @@ public class ItemNotaFiscalBuilder  {
 								
 								if(produtoServico.getNcm() == 49019100L) {
 									cofins.setCst("06");
-									cofins.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
-									cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
-									cofins.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
-									cofins.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+									cofins.setValorBaseCalculo(null);
+									cofins.setValorAliquota(null);
+									cofins.setPercentualAliquota(null);
+									cofins.setValor(null);
 								} else {									
 									cofins.setValorBaseCalculo(produtoServico.getValorTotalBruto());
 									cofins.setPercentualAliquota(tributoCofins.getValor());
@@ -566,17 +585,20 @@ public class ItemNotaFiscalBuilder  {
 				
 			}
 			
-			
-			
-			if(cofinsWrapper != null) {
-				cofinsWrapper.setCofins(cofins);
-				detalheNotaFiscal.getImpostos().setCofins(cofinsWrapper);
-				
+			if(produtoServico.getNcm() == 49019100L) {
+				cofinsNTWrapper.setCofins(cofins);
+				detalheNotaFiscal.getImpostos().setCofinsNT(cofinsNTWrapper);
 			} else {
-				cofinsOutrWrapper.setCofins(cofins);
-				detalheNotaFiscal.getImpostos().setCofinsOutr(cofinsOutrWrapper);
-				
+				if(cofinsWrapper != null) {
+					cofinsWrapper.setCofins(cofins);
+					detalheNotaFiscal.getImpostos().setCofins(cofinsWrapper);
+					
+				} else {
+					cofinsOutrWrapper.setCofins(cofins);
+					detalheNotaFiscal.getImpostos().setCofinsOutr(cofinsOutrWrapper);
+				}				
 			}
+			
 			
 		} else {
 			
