@@ -56,6 +56,8 @@ import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
 import br.com.abril.nds.service.impl.NFeCalculatorImpl;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Util;
 
 public class ItemNotaFiscalBuilder  {
 	
@@ -158,10 +160,24 @@ public class ItemNotaFiscalBuilder  {
 			produtoServico.setValorTotalBruto(BigDecimal.ZERO);
 			produtoServico.setQuantidade(BigInteger.ZERO);
 			
+			
+			try {
+				produtoServico.setDataRecolhimento(DateUtil.formatarData(movimentoEstoque.getData(),"dd/MM/yyyy"));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 		} else {
 			
 			produtoServico = detalheNotaFiscal.getProdutoServico();
 		}
+		
+		try {
+			produtoServico.setDataRecolhimento(DateUtil.formatarData(movimentoEstoque.getData(),"dd/MM/yyyy"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		BigDecimal pesoBrutoLiquido = BigDecimal.ZERO;
 		BigDecimal valorUnitario = BigDecimal.ZERO;
 		BigDecimal valorDesconto = BigDecimal.ZERO;
@@ -356,7 +372,6 @@ public class ItemNotaFiscalBuilder  {
 				icms.setCst(icmsProduto.getCst().toString());
 				icms.setAliquota(CurrencyUtil.arredondarValorParaDuasCasas(icmsProduto.getValorAliquota()));
 				icms.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(icmsProduto.getBaseCalculo()));
-				
 				
 				detalheNotaFiscal.getImpostos().setIcms(icms);
 			}
@@ -768,6 +783,12 @@ public class ItemNotaFiscalBuilder  {
 		BigDecimal valorTotalBruto = BigDecimal.ZERO;
 		BigDecimal valorUnitario = BigDecimal.ZERO;
 		BigDecimal valorDesconto = BigDecimal.ZERO;
+		
+		try {
+			produtoServico.setDataRecolhimento(DateUtil.formatarData(movimentoFechamentoFiscal.getData(),"dd/MM/yyyy"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		if(movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalCota) {
 			
