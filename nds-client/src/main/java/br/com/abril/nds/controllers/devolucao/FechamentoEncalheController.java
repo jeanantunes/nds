@@ -33,8 +33,10 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.ExtracaoContaCorrenteDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTOCego;
+import br.com.abril.nds.dto.filtro.FiltroExtracaoContaCorrenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
@@ -119,6 +121,9 @@ public class FechamentoEncalheController extends BaseController {
 	
 	@Autowired
 	protected HttpSession session;
+	
+	@Autowired
+	private HttpServletResponse httpResponse;
 	
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaFechamentoEncalhe";
 	
@@ -694,7 +699,36 @@ public class FechamentoEncalheController extends BaseController {
 		
 		this.result.use(Results.nothing());
 	}
+	
+	@Get
+	public void exportarExtracaoCC(FiltroExtracaoContaCorrenteDTO filtro) throws IOException {
+		
+		if(filtro.getDataDe().equals(filtro.getDataAte())){
+			Integer semanaDe = distribuidorService.obterNumeroSemana(filtro.getDataDe());
+			
+			filtro.setTituloRelatorio(" - "+DateUtil.formatarDataPTBR(filtro.getDataDe())+" a "
+					+DateUtil.formatarDataPTBR(filtro.getDataAte())+" - SEMANA "+semanaDe.toString().substring(4, 6));
+		}else{
+			Integer semanaDe = distribuidorService.obterNumeroSemana(filtro.getDataDe());
+			Integer semanaAte = distribuidorService.obterNumeroSemana(filtro.getDataAte());
+			
+			if(semanaDe.equals(semanaAte)){
+				filtro.setTituloRelatorio(" - "+DateUtil.formatarDataPTBR(filtro.getDataDe())+" a "
+						+DateUtil.formatarDataPTBR(filtro.getDataAte())+" - SEMANA "+semanaDe.toString().substring(4, 6));
+			}else{
+				filtro.setTituloRelatorio(" - "+DateUtil.formatarDataPTBR(filtro.getDataDe())+" a "
+						+DateUtil.formatarDataPTBR(filtro.getDataAte())+" - SEMANA "+semanaDe.toString().substring(4, 6) + " a " + semanaAte.toString().substring(4, 6));
+			}
+		}
+		
+		List<ExtracaoContaCorrenteDTO> listExtracoes = this.fechamentoEncalheService.extracaoContaCorrente(filtro);
+		
+		FileExporter.to("Extracao_conta_corrente", FileType.XLS).inHTTPResponse(this.getNDSFileHeader(), filtro,
+				listExtracoes, ExtracaoContaCorrenteDTO.class, this.httpResponse);
 
+		result.nothing();
+	}
+	
 	@Path("/encerrarOperacaoEncalhe")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO)
 	public void encerrarOperacaoEncalhe(Date dataEncalhe) {

@@ -6,9 +6,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Query;
+
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
+import br.com.abril.nds.dto.ExtracaoContaCorrenteDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
+import br.com.abril.nds.dto.filtro.FiltroExtracaoContaCorrenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -90,4 +94,6 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 	boolean existeFechamentoEncalhePorData(Date dataOperacao);
 	
 	boolean existeFechamentoEncalhePorCota(Date dataOperacao, Integer numeroCota);
+
+	List<ExtracaoContaCorrenteDTO> extracaoContaCorrente(FiltroExtracaoContaCorrenteDTO filtro);
 }

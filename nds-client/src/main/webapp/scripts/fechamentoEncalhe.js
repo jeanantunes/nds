@@ -276,6 +276,7 @@ var fechamentoEncalheController = $.extend(true, {
 		$('.divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
 		$('#bt_cotas_ausentes', fechamentoEncalheController.workspace).hide();
 		$('#btAnaliticoEncalhe', fechamentoEncalheController.workspace).hide();
+		
 
 		fechamentoEncalheController.fechamentosManuais = [];
 		
@@ -625,6 +626,77 @@ var fechamentoEncalheController = $.extend(true, {
 		});
 		
 		$(".cotasGrid", fechamentoEncalheController.workspace).flexReload();
+		
+	},
+	
+	popup_extracaoCC : function() {
+
+		$("#dialog-extracaoCC").dialog({
+			resizable: false,
+			height: 200,
+			width:450,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					
+					var dateDe = $("#extracaocc-datepickerDe").val();
+					var dateAte = $("#extracaocc-datepickerAte").val();
+					
+					if(dateDe == '' || dateDe == undefined){
+						exibirMensagem("WARNING", ["Escolha uma data inicial!"]);
+						return;
+					}
+					
+					if(dateAte == '' || dateAte == undefined){
+						exibirMensagem("WARNING", ["Escolha uma data final!"]);
+						return;
+					}
+					
+					var params = [];
+					
+					params.push({name : 'filtro.dataDe', value: dateDe});
+					params.push({name : 'filtro.dataAte', value: dateAte});
+					
+					$.fileDownload(contextPath + '/devolucao/fechamentoEncalhe/exportarExtracaoCC', {
+						httpMethod : "GET",
+						data : params,
+						failCallback: function (result) {
+							
+							result = $.parseJSON($(result).text());
+
+							if((typeof result != "undefined") && result.mensagens) {
+								
+								result = result.mensagens;
+								var tipoMensagem = result.tipoMensagem;
+								var listaMensagens = result.listaMensagens;
+								
+								if (tipoMensagem && listaMensagens) {
+									exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+								}
+							}
+					    }
+					});
+					
+					$(this).dialog("close");
+				},
+				
+				"Cancelar": function() {
+					$(this).dialog("close");
+				}
+			},
+			open: function() {
+				$("#extracaocc-datepickerDe").datepicker({
+					showOn: "button",
+					buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+					buttonImageOnly: true
+				});
+				$("#extracaocc-datepickerAte").datepicker({
+					showOn: "button",
+					buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+					buttonImageOnly: true
+				});
+			},
+		});
 		
 	},
 	

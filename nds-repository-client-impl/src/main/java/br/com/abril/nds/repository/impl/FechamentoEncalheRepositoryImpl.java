@@ -28,7 +28,9 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
+import br.com.abril.nds.dto.ExtracaoContaCorrenteDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
+import br.com.abril.nds.dto.filtro.FiltroExtracaoContaCorrenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
@@ -36,7 +38,6 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
@@ -494,7 +495,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     
     
     @Override
-    @SuppressWarnings("unchecked")
     public BigInteger buscarQtdeFechamentoEncalhe(final Date dataEncalhe,Long produtoEdicaoId) {
         
     	   final StringBuilder sql = new StringBuilder();
@@ -1579,7 +1579,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     }
     
     @Override
-    @SuppressWarnings("unchecked")
     public Integer obterDiaRecolhimento(Long produtoEdicao,Date dataRecolhimento) {
        
        // obter  chamada de encalhe deste produto/edicao, de acordo com a data de recolhimento
@@ -1938,5 +1937,104 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         query.setParameter("dataOperacao", dataOperacao);
         
         return (Long) query.uniqueResult() != 0;
-    }        
+    }
+    
+    @Override
+	@SuppressWarnings("unchecked")
+	public List<ExtracaoContaCorrenteDTO> extracaoContaCorrente(FiltroExtracaoContaCorrenteDTO filtro){
+
+    	StringBuilder sql = new StringBuilder();
+    	
+    	sql.append(" select ");
+    	sql.append("    che.sequencia as sequenciaMatriz, ");
+    	sql.append(" 	pd.codigo as codigoProduto, ");
+    	sql.append(" 	pe.NOME_COMERCIAL as nomeProduto, ");
+    	sql.append(" 	pe.numero_edicao as numeroEdicao, ");
+    	sql.append(" 	mec.PRECO_VENDA as precoCapa, ");
+    	sql.append(" 	pe.pacote_padrao as pacotePadrao, ");
+    	sql.append(" 	mec.VALOR_DESCONTO as desconto, ");
+    	sql.append(" 	sum(ce.qtde) as reparte, ");
+    	sql.append(" 	coalesce(sum(vp.QNT_produto), 0) as vendaEncalhe, ");
+    	sql.append(" 	(select sum(ce2.qtde) ");
+    	sql.append(" 		from conferencia_encalhe ce2 ");
+    	sql.append(" 		join controle_conferencia_encalhe_cota ccec2 ");
+    	sql.append(" 			on ce2.controle_conferencia_encalhe_cota_id = ccec2.id ");
+    	sql.append(" 		where ce2.data >= :dataDe and ce2.data <= :dataAte");
+    	sql.append(" 			  and ccec2.status = 'CONCLUIDO' ");
+    	sql.append(" 			  and ccec2.cota_id = ccec.cota_id ");
+    	sql.append(" 			  and ce2.produto_edicao_id = ce.produto_edicao_id) as encalhe, ");
+    	sql.append(" 	 ((sum(ce.qtde)) - coalesce(sum(vp.QNT_produto), 0) -  ");
+    	sql.append(" 		 	(select sum(ce2.qtde) ");
+    	sql.append(" 				from conferencia_encalhe ce2 ");
+    	sql.append(" 				join controle_conferencia_encalhe_cota ccec2 ");
+    	sql.append(" 					on ce2.controle_conferencia_encalhe_cota_id = ccec2.id ");
+    	sql.append(" 				where ce2.data >= :dataDe and ce2.data <= :dataAte ");
+    	sql.append(" 					  and ccec2.status = 'CONCLUIDO' ");
+    	sql.append(" 					  and ccec2.cota_id = ccec.cota_id ");
+    	sql.append(" 					  and ce2.produto_edicao_id = ce.produto_edicao_id)) as venda, ");
+    	sql.append(" 	  ((sum(ce.qtde)) - coalesce(sum(vp.QNT_produto), 0) -  ");
+    	sql.append(" 		 	(select sum(ce2.qtde) ");
+    	sql.append(" 				from conferencia_encalhe ce2 ");
+    	sql.append(" 				join controle_conferencia_encalhe_cota ccec2 ");
+    	sql.append(" 					on ce2.controle_conferencia_encalhe_cota_id = ccec2.id ");
+    	sql.append(" 				where ce2.data >= :dataDe and ce2.data <= :dataAte ");
+    	sql.append(" 					  and ccec2.status = 'CONCLUIDO' ");
+    	sql.append(" 					  and ccec2.cota_id = ccec.cota_id ");
+    	sql.append(" 					  and ce2.produto_edicao_id = ce.produto_edicao_id))*mec.preco_venda as vendaTotal ");
+    	sql.append(" from ");
+    	sql.append(" 	produto pd ");
+    	sql.append(" 	join produto_edicao pe ");
+    	sql.append(" 		ON 	pd.id = pe.produto_id ");
+    	sql.append(" 	join conferencia_encalhe ce ");
+    	sql.append(" 		on ce.produto_edicao_id = pe.id ");
+    	sql.append(" 	join controle_conferencia_encalhe_cota ccec ");
+    	sql.append(" 		on ce.controle_conferencia_encalhe_cota_id = ccec.id  ");
+    	sql.append(" 	join cota ct ");
+    	sql.append(" 		on ct.id = ccec.cota_id ");
+    	sql.append(" 	join movimento_estoque_cota mec ");
+    	sql.append(" 		on mec.id = ce.MOVIMENTO_ESTOQUE_COTA_ID ");
+    	sql.append(" 		and mec.PRODUTO_EDICAO_ID = pe.id ");
+    	sql.append(" 	join chamada_encalhe_cota cec ");
+    	sql.append(" 		on cec.id = ce.CHAMADA_ENCALHE_COTA_ID ");
+    	sql.append(" 	join chamada_encalhe che ");
+    	sql.append(" 		on che.ID = cec.CHAMADA_ENCALHE_ID ");
+    	sql.append(" 		and che.PRODUTO_EDICAO_ID = pe.id ");
+    	sql.append(" 		and che.DATA_RECOLHIMENTO = ce.`DATA` ");
+    	sql.append(" 	left join venda_produto vp ");
+    	sql.append(" 		on (vp.data_venda >= :dataDe and vp.data_venda <= :dataAte)");
+    	sql.append(" 		and vp.id_produto_edicao = pe.produto_id ");
+    	sql.append(" 		and vp.id_cota = ct.id ");
+    	sql.append(" 		and vp.tipo_venda_encalhe = 'ENCALHE' ");
+    	sql.append(" where ");
+    	
+    	sql.append(" 	ce.data >= :dataDe ");
+    	sql.append(" 	and ce.data <= :dataAte ");
+    	
+    	sql.append(" 	group by pe.id ");
+    	sql.append(" 	order by sequencia, numero_cota, codigo, numero_edicao ");
+    	
+    	SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+        
+    	query.setParameter("dataDe", filtro.getDataDe());
+        query.setParameter("dataAte", filtro.getDataAte());
+        
+        query.setResultTransformer(new AliasToBeanResultTransformer(ExtracaoContaCorrenteDTO.class));
+        
+        ((SQLQuery) query).addScalar("sequenciaMatriz", StandardBasicTypes.INTEGER);
+        ((SQLQuery) query).addScalar("codigoProduto", StandardBasicTypes.STRING);
+        ((SQLQuery) query).addScalar("nomeProduto", StandardBasicTypes.STRING);
+        ((SQLQuery) query).addScalar("numeroEdicao", StandardBasicTypes.LONG);
+        ((SQLQuery) query).addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
+        ((SQLQuery) query).addScalar("pacotePadrao", StandardBasicTypes.INTEGER);
+        ((SQLQuery) query).addScalar("desconto", StandardBasicTypes.BIG_DECIMAL);
+        ((SQLQuery) query).addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
+        ((SQLQuery) query).addScalar("vendaEncalhe", StandardBasicTypes.BIG_INTEGER);
+        ((SQLQuery) query).addScalar("encalhe", StandardBasicTypes.BIG_INTEGER);
+        ((SQLQuery) query).addScalar("venda", StandardBasicTypes.BIG_INTEGER);
+        ((SQLQuery) query).addScalar("vendaTotal", StandardBasicTypes.BIG_DECIMAL);
+        
+    	
+        return query.list();
+    }
+    
 }

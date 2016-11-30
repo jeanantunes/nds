@@ -33,6 +33,7 @@ import br.com.abril.nds.client.job.AtualizaEstoqueJob;
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.ExtracaoContaCorrenteDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorCodigo;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorDia;
@@ -49,6 +50,7 @@ import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorexemplaresVendaEnc
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.fechamentoencalhe.GridFechamentoEncalheDTO;
+import br.com.abril.nds.dto.filtro.FiltroExtracaoContaCorrenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
@@ -112,19 +114,13 @@ import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoFechamentoFiscalRepository;
-import br.com.abril.nds.repository.NaturezaOperacaoRepository;
-import br.com.abril.nds.repository.NotaFiscalRepository;
-import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
-import br.com.abril.nds.repository.ProcessoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFiscalRepository;
 import br.com.abril.nds.service.BoletoEmailService;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
-import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EstudoCotaService;
 import br.com.abril.nds.service.EstudoService;
@@ -135,9 +131,7 @@ import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
-import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.NegociacaoDividaService;
-import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.UsuarioService;
@@ -183,18 +177,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     private FechamentoEncalheBoxRepository fechamentoEncalheBoxRepository;
     
     @Autowired
-    private NaturezaOperacaoRepository naturezaOperacaoRepository;
-    
-    @Autowired
-    private NotaFiscalService notaFiscalService;
-    
-    @Autowired
-    private NotaFiscalRepository notaFiscalRepository;
-    
-    @Autowired
-    private ProdutoServicoRepository produtoServicoRepository;
-    
-    @Autowired
     private MovimentoEstoqueService movimentoEstoqueService;
     
     @Autowired
@@ -214,9 +196,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     @Autowired
     private ConferenciaEncalheRepository conferenciaEncalheRepository;
-    
-    @Autowired
-    private CotaService cotaService;
     
     @Autowired
     private BoletoService boletoService;
@@ -249,15 +228,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     private LancamentoService lancamentoService;
 
 	@Autowired
-	private ProcessoRepository processoRepository;
-	
-	@Autowired
-	private NFeService nFeService;
-    
-	@Autowired
-	private ParametroSistemaRepository parametroSistemaRepository;
-	
-	@Autowired
 	private ParametrosDistribuidorService parametrosDistribuidorService;
 	
 	@Autowired
@@ -289,7 +259,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     @Autowired
     private UsuarioService usuarioService;
-    
     
     
     @Override
@@ -1987,6 +1956,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     @Transactional
     public boolean existeFechamentoEncalhePorCota(Date dataOperacao, Integer numeroCota) {
     	return fechamentoEncalheRepository.existeFechamentoEncalhePorCota(dataOperacao, numeroCota);
+    }
+    
+    @Override
+	@Transactional
+    public List<ExtracaoContaCorrenteDTO> extracaoContaCorrente(FiltroExtracaoContaCorrenteDTO filtro){
+    	return fechamentoEncalheRepository.extracaoContaCorrente(filtro);
     }
     
     
