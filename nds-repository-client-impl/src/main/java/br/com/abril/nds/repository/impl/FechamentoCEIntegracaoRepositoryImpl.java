@@ -42,6 +42,13 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" SELECT ");
 		
+		hql.append("			COALESCE((select desconto_logistica.PERCENTUAL_DESCONTO  ");
+		hql.append("				from desconto_logistica ");
+		hql.append("				where desconto_logistica.ID = COALESCE(PROD_EDICAO.DESCONTO_LOGISTICA_ID,PROD.DESCONTO_LOGISTICA_ID)");
+		hql.append("			),0) as desconto,");
+		
+		
+		
 		hql.append("    PROD_EDICAO.ID AS idProdutoEdicao, ");
 		
 		hql.append("    ITEM_CH_ENC_FORNECEDOR.NUEMRO_ITEM AS sequencial, ");
@@ -174,6 +181,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 						.addScalar("sequencial", StandardBasicTypes.LONG)
 						.addScalar("codigoProduto", StandardBasicTypes.STRING)
 						.addScalar("nomeProduto", StandardBasicTypes.STRING)
+						.addScalar("desconto", StandardBasicTypes.STRING)
 						.addScalar("numeroEdicao", StandardBasicTypes.LONG)
 						.addScalar("qtdeDevSemCE", StandardBasicTypes.BIG_INTEGER)
 						.addScalar("reparte", StandardBasicTypes.BIG_INTEGER)

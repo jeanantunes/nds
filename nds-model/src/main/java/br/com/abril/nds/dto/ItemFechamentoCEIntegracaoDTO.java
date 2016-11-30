@@ -32,10 +32,11 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 
 	@Export(label = "Venda", alignment = Alignment.CENTER, exhibitionOrder = 11 )
 	private BigInteger venda;
+	
 
 	private BigDecimal precoCapa;
 	
-	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder =12 )
+	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder =13 )
 	private String precoCapaFormatado;
 
 	private BigDecimal valorVenda;
@@ -66,6 +67,7 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	
 	private boolean integracaoNFEAprovado;
 	
+	@Export(label = "Desconto", alignment = Alignment.CENTER, exhibitionOrder = 14 )
 	private String desconto;
 	
 	

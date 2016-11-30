@@ -196,13 +196,15 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		tableModel.setTotal(dto.getQntItensCE());
 		
-		FechamentoCEIntegracaoVO fechamentoCEIntegracaoVO = new FechamentoCEIntegracaoVO();
-
+		FechamentoCEIntegracaoVO fechamentoCEIntegracaoVO = getTotal(); ///new FechamentoCEIntegracaoVO();
+/*
 		FechamentoCEIntegracaoConsolidadoDTO totalFechamento = dto.getConsolidado();
 		fechamentoCEIntegracaoVO.setTotalBruto(CurrencyUtil.formatarValor(totalFechamento.getTotalBruto()));
 		fechamentoCEIntegracaoVO.setTotalDesconto(CurrencyUtil.formatarValor(totalFechamento.getTotalDesconto()));
 		fechamentoCEIntegracaoVO.setTotalLiquido(CurrencyUtil.formatarValor(totalFechamento.getTotalBruto().subtract(totalFechamento.getTotalDesconto())));
 		
+		
+		*/
 		fechamentoCEIntegracaoVO.setListaFechamento(tableModel);
 		
 		fechamentoCEIntegracaoVO.setSemanaFechada(dto.isSemanaFechada());
@@ -317,13 +319,15 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		List<ItemFechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarItensFechamentoCeIntegracao(filtro);
 		
+		for ( ItemFechamentoCEIntegracaoDTO item: listaFechamento )
+			item.setValorVenda(new BigDecimal(item.getPrecoCapa().doubleValue() * item.getVenda().intValue()));
 		if(listaFechamento.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 		}
 		
 		FechamentoCEIntegracaoVO fechamentoCEIntegracao = new FechamentoCEIntegracaoVO();
 		
-		FechamentoCEIntegracaoConsolidadoDTO fechamentoConsolidado = 
+		FechamentoCEIntegracaoConsolidadoDTO fechamentoConsolidado =  
 			this.fechamentoCEIntegracaoService.obterConsolidadoCE(filtro);
 		
 		if(fechamentoConsolidado == null){
@@ -340,10 +344,54 @@ public class FechamentoCEIntegracaoController extends BaseController{
 					.subtract(fechamentoConsolidado.getTotalDesconto())));
 		}
 		
+		fechamentoCEIntegracao = getTotal();
+		
 		FileExporter.to("fechamento", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, fechamentoCEIntegracao, 
 				listaFechamento, ItemFechamentoCEIntegracaoDTO.class, this.httpResponse);
 			
 		result.nothing();
+	}
+	
+	
+	
+public FechamentoCEIntegracaoVO getTotal() {
+		
+		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		
+		if(filtro == null || filtro.getPaginacao() == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro inválido. Por favor, refaça a pesquisa.");
+		}
+		
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setPaginaAtual(null);
+		
+		FechamentoCEIntegracaoDTO fechamentoCEIntegracaox = fechamentoCEIntegracaoService.obterCEIntegracaoFornecedor(filtro); 
+		List<ItemFechamentoCEIntegracaoDTO> listaFechamento = fechamentoCEIntegracaox.getItensFechamentoCE();
+		
+		BigDecimal totalBruto= BigDecimal.ZERO;
+		BigDecimal totalDesconto= BigDecimal.ZERO;
+		
+		for ( ItemFechamentoCEIntegracaoDTO item: listaFechamento ) {
+			if ( item.getVenda() != null ) {
+			totalBruto=totalBruto.add(new BigDecimal(item.getPrecoCapa().doubleValue() * item.getVenda().intValue()));
+			
+		    totalDesconto=totalDesconto.add(new BigDecimal((item.getPrecoCapa().doubleValue() * Double.parseDouble(item.getDesconto()!= null?item.getDesconto():"0")/100.00) * (item.getVenda() != null ?item.getVenda().intValue():0)));
+		}
+		}
+		if(listaFechamento.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+		}
+		
+		FechamentoCEIntegracaoVO fechamentoCEIntegracao = new FechamentoCEIntegracaoVO();
+		
+		
+		fechamentoCEIntegracao.setTotalBruto(CurrencyUtil.formatarValor(totalBruto));
+		fechamentoCEIntegracao.setTotalDesconto(CurrencyUtil.formatarValor(totalDesconto));
+		fechamentoCEIntegracao.setTotalLiquido(CurrencyUtil.formatarValor(totalBruto
+				.subtract(totalDesconto)));
+		
+		return fechamentoCEIntegracao;
 	}
 	
 	private void tratarFiltro(FiltroFechamentoCEIntegracaoDTO filtroAtual) {
