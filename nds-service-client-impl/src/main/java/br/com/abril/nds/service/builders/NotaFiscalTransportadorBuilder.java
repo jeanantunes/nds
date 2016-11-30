@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.builders;
 
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.model.cadastro.EnderecoTransportador;
 import br.com.abril.nds.model.cadastro.Transportador;
@@ -9,11 +10,13 @@ import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.TransportadorWrapper;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 
 public class NotaFiscalTransportadorBuilder {
 	
-	public static NotaFiscal montarTransportador(NotaFiscal notaFiscal, NaturezaOperacao naturezaOperacao, List<Transportador> transportadores){
+	public static NotaFiscal montarTransportador(NotaFiscal notaFiscal, NaturezaOperacao naturezaOperacao, List<Transportador> transportadores, ParametroSistema ps){
 		
 		NaturezaOperacao naOperacao = new NaturezaOperacao();
 		
@@ -42,7 +45,12 @@ public class NotaFiscalTransportadorBuilder {
 		*/
 		if(transportadores == null || transportadores.isEmpty()) {
 			
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(0);
+			if(ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
+				notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(9);
+			} else {
+				notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(0);
+			}
+			
 		} else {
 			
 			for (Transportador transportador : transportadores) {
