@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.estoque;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
@@ -26,6 +27,13 @@ public class EstoqueProdutoRecolimentoDTO implements Serializable {
 	
 	@Export(label="Edição", widthPercent=7, alignment=Alignment.CENTER)
 	private Long numeroEdicao;
+	
+	@Export(label="Preco Capa",  alignment=Alignment.CENTER)
+	private BigDecimal precoCapa;
+	
+
+	@Export(label="Desc Logistica", widthPercent=7, alignment=Alignment.CENTER)
+	private BigDecimal descontoLogistica;
 	
 	@Export(label="Lançamento", alignment=Alignment.CENTER)
 	private BigInteger lancamento;
@@ -124,4 +132,21 @@ public class EstoqueProdutoRecolimentoDTO implements Serializable {
 	public void setTotal(BigInteger total) {
 		this.total = total;
 	}
+	
+	public BigDecimal getPrecoCapa() {
+		return precoCapa;
+	}
+
+	public void setPrecoCapa(BigDecimal precoCapa) {
+		this.precoCapa = precoCapa;
+	}
+	public BigDecimal getDescontoLogistica() {
+		return descontoLogistica;
+	}
+
+	public void setDescontoLogistica(BigDecimal descontoLogistica) {
+		this.descontoLogistica = descontoLogistica;
+	}
+
+
 }

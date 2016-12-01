@@ -43,6 +43,18 @@ var EstoqueProdutosRecolhimentoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
+				display : 'Preco Capa',
+				name : 'precoCapa',
+				width : 100,
+				sortable : true,
+				align : 'center'
+			} , {
+				display : 'Desc Logistica',
+				name : 'descontoLogistica',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			},{
 				display: 'Lançamento',
 				name: 'lancamento',
 				width: 70,
@@ -79,7 +91,7 @@ var EstoqueProdutosRecolhimentoController = $.extend(true, {
 				sortable: true,
 				align: 'center'
 			}],
-				width : 960,
+				width : 1160,
 				height : 300,
 				sortname : "sequencia",
 				sortorder : "asc",

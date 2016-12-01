@@ -200,6 +200,8 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		   .append(" produto.codigo as codigo, ")
 		   .append(" produto.nome as produto, ")
 		   .append(" produtoEdicao.numeroEdicao as numeroEdicao, ")
+		   .append(" produtoEdicao.precoVenda as precoCapa, ")
+		   .append(" coalesce( produtoEdicao.descontoLogistica.percentualDesconto,produtoEdicao.produto.descontoLogistica.percentualDesconto,0) as descontoLogistica, ")
 		   .append(" coalesce(estoqueProduto.qtde, 0) as lancamento, ")
 		   .append(" coalesce(estoqueProduto.qtdeSuplementar, 0) as suplementar, ")
 		   .append(" coalesce(estoqueProduto.qtdeDanificado, 0) as danificado, ")
