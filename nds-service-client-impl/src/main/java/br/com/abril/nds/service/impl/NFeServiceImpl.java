@@ -565,7 +565,7 @@ public class NFeServiceImpl implements NFeService {
 			
 			NotaFiscalBuilder.popularDadosEmissor(notaFiscal, distribuidor);
 			
-			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
+			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores, ps);
 			
 			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, parametrosSistema, naturezaOperacao);
 			
@@ -657,7 +657,7 @@ public class NFeServiceImpl implements NFeService {
 			
 			NotaFiscalBuilder.popularDadosEmissor(notaFiscal, distribuidor);
 			
-			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
+			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores, ps);
 			
 			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, parametrosSistema, naturezaOperacao);
 			
@@ -910,7 +910,7 @@ public class NFeServiceImpl implements NFeService {
 			
 			NotaFiscalBuilder.popularDadosEmissor(notaFiscal, distribuidor);
 			
-			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
+			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores, ps);
 			
 			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, parametrosSistema, naturezaOperacao);
 			
@@ -1047,7 +1047,7 @@ public class NFeServiceImpl implements NFeService {
 			    
 			    NotaFiscalBuilder.popularDadosEmissor(notaFiscalSubdividida, distribuidor);
 			    
-			    NotaFiscalTransportadorBuilder.montarTransportador(notaFiscalSubdividida, naturezaOperacao, transportadores);
+			    NotaFiscalTransportadorBuilder.montarTransportador(notaFiscalSubdividida, naturezaOperacao, transportadores, parametrosSistema.get("EMISSAO_NFE_INFO_FISCO"));
 			    
 			    NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscalSubdividida, parametrosSistema, naturezaOperacao);
 			    
@@ -1125,7 +1125,7 @@ public class NFeServiceImpl implements NFeService {
 			
 			NotaFiscalBuilder.popularDadosEmissor(notaFiscal, distribuidor);
 			
-			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
+			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores, ps);
 			
 			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, parametrosSistema, naturezaOperacao);
 			
@@ -1258,10 +1258,9 @@ public class NFeServiceImpl implements NFeService {
 		
 		NotaFiscalBuilder.popularDadosTransportadora(notaFiscal, distribuidor);
 		
-		
 		NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 		
-		NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
+		NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores, ps);
 		
 		montaChaveAcesso(notaFiscal);
 		
@@ -1513,7 +1512,7 @@ public class NFeServiceImpl implements NFeService {
 			
 			NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor);
 			
-			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores);
+			NotaFiscalTransportadorBuilder.montarTransportador(notaFiscal, naturezaOperacao, transportadores, ps);
 			
 			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, parametrosSistema, naturezaOperacao);
 			

@@ -228,6 +228,10 @@ public class ProdutoServico implements Serializable {
 	@XmlTransient
 	private List<OrigemItemNotaFiscal> origemItemNotaFiscal;
 	
+	@XmlTransient
+	@Transient
+	private String dataRecolhimento;
+	
 	/**
 	 * @return the produtoEdicao
 	 */
@@ -510,6 +514,14 @@ public class ProdutoServico implements Serializable {
 	 */
 	public void setOrigemItemNotaFiscal(List<OrigemItemNotaFiscal> origemItemNotaFiscal) {
 		this.origemItemNotaFiscal = origemItemNotaFiscal;
+	}
+	
+	public String getDataRecolhimento() {
+		return dataRecolhimento;
+	}
+
+	public void setDataRecolhimento(String dataRecolhimento) {
+		this.dataRecolhimento = dataRecolhimento;
 	}
 
 	@Override
