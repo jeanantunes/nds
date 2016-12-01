@@ -1516,7 +1516,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	public NotaFiscal obterNotaFiscalNumeroChaveAcesso(RetornoNFEDTO dadosRetornoNFE) {
 
 		StringBuffer sql = new StringBuffer("SELECT notaFiscal")
-		.append(" FROM NotaFiscal ")
+		.append(" FROM NotaFiscal notaFiscal ")
 		.append(" JOIN notaFiscal.notaFiscalInformacoes as nfi ")
 		.append(" JOIN nfi.informacaoEletronica as infElet ")
 		.append(" JOIN nfi.identificacao as ident ");
