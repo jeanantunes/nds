@@ -2954,33 +2954,42 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
                 (Set<DiferencaVO>) httpSession.getAttribute(
                         LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
         
-        if (listaNovasDiferencas != null) {
-            
-            for (final DiferencaVO diferencaVO : listaNovasDiferencas) {
-                
-                if (tipoEstoque != null
+        if (listaNovasDiferencas != null) 
+        {
+            for (final DiferencaVO diferencaVO : listaNovasDiferencas)
+            {
+            	// chamado 4719124
+            	//String x = diferencaVO.getCodigoProduto();
+            	String y = codigoProduto; // y pode ter lenght maior
+            	String result = StringUtils.leftPad(diferencaVO.getCodigoProduto(), codigoProduto.length(),"0");
+            	if(result.equals(codigoProduto))
+            	{
+            		if (tipoEstoque != null
                         && diferencaVO.getTipoEstoque() != null
-                        && diferencaVO.getTipoEstoque().equals(tipoEstoque)) {
+                        && diferencaVO.getTipoEstoque().equals(tipoEstoque)) 
+            		{
                     
-                    if (diferencaVO.getTipoDiferenca().isFalta()) {
-                    	LOGGER.debug("Tela Produto/ED: "+ codigoProduto +"-"+numeroEdicao);
-                    	
-                    	LOGGER.debug("Tela Produto/ED: "+ StringUtils.leftPad(diferencaVO.getCodigoProduto(), 8, '0') +"-"+diferencaVO.getNumeroEdicao());
-                    	if(StringUtils.leftPad(diferencaVO.getCodigoProduto(), 8, '0').equals(codigoProduto)
+            			if (diferencaVO.getTipoDiferenca().isFalta()) 
+            			{
+            				LOGGER.debug("Tela Produto/ED: "+ codigoProduto +"-"+numeroEdicao);
+            				LOGGER.debug("Tela Produto/ED: "+ StringUtils.leftPad(diferencaVO.getCodigoProduto(), 8, '0') +"-"+diferencaVO.getNumeroEdicao());
+            				
+            				if(StringUtils.leftPad(diferencaVO.getCodigoProduto(), 8, '0').equals(codigoProduto)
                                 && diferencaVO.getNumeroEdicao().equals(numeroEdicao.toString())
-                                && diferencaVO.getTipoEstoque().equals(tipoEstoque)){
-                    		
+                                && diferencaVO.getTipoEstoque().equals(tipoEstoque))
+            				{
                     		quantidadeEstoqueAtual = quantidadeEstoqueAtual.subtract(diferencaVO.getQuantidade());
-                    	} 
+            				} 
                     	
-                    } else {
-                        
+            			} 
+            			else 
+            			{
                         quantidadeEstoqueAtual = quantidadeEstoqueAtual.add(diferencaVO.getQuantidade());
-                    }
-                }
+            			}
+            		}
+            	}
             }
         }
-        
         return quantidadeEstoqueAtual;
     }
     
