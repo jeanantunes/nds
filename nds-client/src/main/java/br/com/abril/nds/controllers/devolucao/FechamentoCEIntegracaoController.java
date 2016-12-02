@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.devolucao;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -60,9 +63,14 @@ import com.google.common.collect.Maps;
 @Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO)
 public class FechamentoCEIntegracaoController extends BaseController{
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(FechamentoCEIntegracaoController.class);
+	
+	
 	private static final String BOLETO_GERADO = "boletoDistribuidorGerado";
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO = "filtroFechamentoCEIntegracao";
+	
+	private static final String ALTERADOS_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO = "alteradosFechamentoCEIntegracao";
 
 	private static final String CHAMADA_CE_GERADO = "chamadaCeIntegracao";
 
@@ -96,6 +104,8 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		this.carregarComboFornecedores();
 		
 		this.setUpTiposCobranca();
+		
+		session.removeAttribute(ALTERADOS_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 	}
 	
 	private void setUpTiposCobranca() {
@@ -161,6 +171,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	@Path("/pesquisaPrincipal")
 	public void pesquisaPrincipal(String semana, Long idFornecedor, String comboCEIntegracao,String idChamadaEncalhe, String sortorder, String sortname, int page, int rp){
 		
+		session.removeAttribute(ALTERADOS_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		validarAnoSemana(semana);
 		
 		
@@ -319,11 +330,24 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		List<ItemFechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarItensFechamentoCeIntegracao(filtro);
 		
-		for ( ItemFechamentoCEIntegracaoDTO item: listaFechamento )
-			item.setValorVenda(new BigDecimal(item.getPrecoCapa().doubleValue() * item.getVenda().intValue()));
 		if(listaFechamento.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 		}
+		
+		Map <Long,BigInteger> map= (Map <Long,BigInteger>) session.getAttribute(ALTERADOS_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		
+		
+			
+		for ( ItemFechamentoCEIntegracaoDTO item: listaFechamento ) {
+			BigInteger venda = null;
+			if ( map != null )
+				 venda = map.get(item.getIdItemCeIntegracao());
+			if ( venda == null )
+				venda = item.getVenda();
+			item.setValorVenda(new BigDecimal(item.getPrecoCapa().doubleValue() * venda.intValue()));
+		   }
+		
+		
 		
 		FechamentoCEIntegracaoVO fechamentoCEIntegracao = new FechamentoCEIntegracaoVO();
 		
@@ -357,12 +381,6 @@ public class FechamentoCEIntegracaoController extends BaseController{
 public FechamentoCEIntegracaoVO getTotal() {
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
-		
-		if(filtro == null || filtro.getPaginacao() == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro inválido. Por favor, refaça a pesquisa.");
-		}
-		
 		filtro.getPaginacao().setQtdResultadosPorPagina(null);
 		filtro.getPaginacao().setPaginaAtual(null);
 		
@@ -372,11 +390,18 @@ public FechamentoCEIntegracaoVO getTotal() {
 		BigDecimal totalBruto= BigDecimal.ZERO;
 		BigDecimal totalDesconto= BigDecimal.ZERO;
 		
+		Map <Long,BigInteger> map= (Map <Long,BigInteger>) session.getAttribute(ALTERADOS_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		
 		for ( ItemFechamentoCEIntegracaoDTO item: listaFechamento ) {
-			if ( item.getVenda() != null ) {
-			totalBruto=totalBruto.add(new BigDecimal(item.getPrecoCapa().doubleValue() * item.getVenda().intValue()));
+			BigInteger venda = null;
+			if ( map != null )
+				 venda = map.get(item.getIdItemCeIntegracao());
+			if ( venda == null )
+				venda = item.getVenda();
+			if ( venda != null ) {
+				totalBruto=totalBruto.add(new BigDecimal(item.getPrecoCapa().doubleValue() * venda.intValue()));
 			
-		    totalDesconto=totalDesconto.add(new BigDecimal((item.getPrecoCapa().doubleValue() * Double.parseDouble(item.getDesconto()!= null?item.getDesconto():"0")/100.00) * (item.getVenda() != null ?item.getVenda().intValue():0)));
+		    totalDesconto=totalDesconto.add(new BigDecimal((item.getPrecoCapa().doubleValue() * Double.parseDouble(item.getDesconto()!= null?item.getDesconto():"0")/100.00) * (venda != null ?venda.intValue():0)));
 		}
 		}
 		if(listaFechamento.isEmpty()) {
@@ -414,26 +439,27 @@ public FechamentoCEIntegracaoVO getTotal() {
 		result.include("listaFornecedores",listaFornecedoresCombo );
 	}
 	
-	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, String vendaStr) {
-		BigDecimal venda = BigDecimal.ZERO;
+	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, String encalhe,String venda) {
+		BigInteger qvenda = BigInteger.ZERO;
 		try {
-		 venda = 	 new BigDecimal(vendaStr.replaceAll("\\.","").replaceAll(",","."));
+		 qvenda = 	 new BigInteger(venda.replaceAll("\\.","").replaceAll(",",""));
 		} catch (Exception e ) {
-			
+			LOGGER.error("ERRO DIGITANDO QUANTIDADE DE VENDA.VALOR INVALIDO="+venda,e);
+			qvenda=BigInteger.ZERO;
+		}		
+		Map <Long,BigInteger> map= (Map <Long,BigInteger>) session.getAttribute(ALTERADOS_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		if ( map == null ) {
+			map = new  HashMap<Long,BigInteger>();
+			session.setAttribute(ALTERADOS_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO, map);
 		}
-		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		map.put(idItemChamadaFornecedor, qvenda);
+	//	FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
-		filtro.setPaginacao(null);
-		filtro.setIdItemChamadaEncalheFornecedor(idItemChamadaFornecedor);
+		//filtro.setPaginacao(null);
+	//	filtro.setIdItemChamadaEncalheFornecedor(idItemChamadaFornecedor);
 		
-		FechamentoCEIntegracaoVO fechamentoCEIntegracao = new FechamentoCEIntegracaoVO();
-			
-		FechamentoCEIntegracaoConsolidadoDTO fechamentoConsolidado = this.fechamentoCEIntegracaoService.buscarConsolidadoItensFechamentoCeIntegracao(filtro, venda);
-		
-		fechamentoCEIntegracao.setTotalBruto(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalBruto()));
-		fechamentoCEIntegracao.setTotalDesconto(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalDesconto()));
-		fechamentoCEIntegracao.setTotalLiquido(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalLiquido()));
-		
+		FechamentoCEIntegracaoVO fechamentoCEIntegracao = getTotal();
+					
 		result.use(Results.json()).withoutRoot().from(fechamentoCEIntegracao).recursive().serialize();
 	}
 	

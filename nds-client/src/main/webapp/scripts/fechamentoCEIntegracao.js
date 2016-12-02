@@ -814,7 +814,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							' value="' + row.cell.venda + '" size="5px"' +
 							' tabindex="' + (++index) +'"' +
 							' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
-							' onblur="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +row.cell.idItemCeIntegracao + ', '+isFinal +', this)"/>';
+							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +row.cell.idItemCeIntegracao + ', '+isFinal +', this)"/>';
 						
 					} else if (isFinal) {
 						
@@ -834,7 +834,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							' value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
 							' tabindex="' + (++index) +'"' +
 							' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
-							' onblur="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
+							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
 							row.cell.idItemCeIntegracao + ', this,'+isFinal+')"/>';
 							
 							colunaVenda =
@@ -843,7 +843,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 								' value="' + row.cell.venda + '" size="5px"' +
 								' tabindex="' + (++index) +'"' +
 								' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
-								' onblur="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' + row.cell.idItemCeIntegracao + ', '+isFinal +' , this)"/>';
+								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' + row.cell.idItemCeIntegracao + ', '+isFinal +' , this)"/>';
 							
 					} else {
 						
@@ -863,7 +863,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							' value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
 							' tabindex="' + (++index) +'"' +
 							' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
-							' onblur="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
+							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
 							row.cell.idItemCeIntegracao + ', this,'+isFinal+')"/>';
 						
 						colunaVenda =	
@@ -1026,7 +1026,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							' value="' + row.cell.venda + '" size="5px"' +
 							' tabindex="' + (++index) +'"' +
 							' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
-							' onblur="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +row.cell.idItemCeIntegracao + ', '+isFinal +' , this)"/>';
+							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +row.cell.idItemCeIntegracao + ', '+isFinal +' , this)"/>';
 						
 					} else if (isFinal) {
 												
@@ -1041,7 +1041,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							' value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
 							' tabindex="' + (++index) +'"' +
 							' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
-							' onblur="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
+							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
 							row.cell.idItemCeIntegracao + ', this,'+isFinal+')"/>';
 							
 							colunaVenda =
@@ -1050,7 +1050,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 								' value="' + row.cell.venda + '" size="5px"' +
 								' tabindex="' + (++index) +'"' +
 								' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
-								' onblur="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' + row.cell.idItemCeIntegracao + ', '+isFinal +' , this)"/>';
+								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' + row.cell.idItemCeIntegracao + ', '+isFinal +' , this)"/>';
 							
 						} else {
 						
@@ -1089,7 +1089,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 								' value="' + row.cell.encalhe + '" size="5px"' +
 								' tabindex="' + (++index) +'"' +
 								' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
-								' onblur="fechamentoCEIntegracaoController.tratarAlteracaoEncalheSemCE(' +
+								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalheSemCE(' +
 								row.cell.idItemCeIntegracao + ', this)"/>';
 
 						if(row.cell.diferenca == undefined){
