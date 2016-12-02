@@ -273,7 +273,7 @@ public class ItemNotaFiscalBuilder  {
 		}
 		
 		// Aplica / calcula a tributacao do item
-		aplicarTributacaoItem(detalheNotaFiscal, notaFiscal, tributoAliquota, produtoServico, tributacaoProduto);
+		aplicarTributacaoItem(detalheNotaFiscal, notaFiscal, tributoAliquota, produtoServico, tributacaoProduto, ps);
 		
 		movimentoEstoque.setNotaFiscalEmitida(true);
 		
@@ -309,9 +309,12 @@ public class ItemNotaFiscalBuilder  {
 		return detalheNotaFiscal;
 	}
 
-	private static void aplicarTributacaoItem(DetalheNotaFiscal detalheNotaFiscal, NotaFiscal notaFiscal,
-			Map<String, TributoAliquota> tributoAliquota, ProdutoServico produtoServico,
-			Map<String, Tributacao> tributacaoProduto) {
+	private static void aplicarTributacaoItem(DetalheNotaFiscal detalheNotaFiscal, 
+			NotaFiscal notaFiscal,
+			Map<String, TributoAliquota> tributoAliquota, 
+			ProdutoServico produtoServico,
+			Map<String, Tributacao> tributacaoProduto,
+			ParametroSistema ps) {
 		
 		
 		TributoAliquota tributoSimples = tributoAliquota.get("SIMPLES");
@@ -326,21 +329,7 @@ public class ItemNotaFiscalBuilder  {
 			if(tributoSimples != null) {
 				
 				ICMSST icmssn102 = new ICMSST();
-				
-//				try {
-//					// clazz = Class.forName("br.com.abril.nds.model.fiscal.nota.ICMS"+ icmsProduto.getCst().toString());
-//					// icmssn102 = (ICMSSN) clazz.newInstance();
-//				} catch (ClassNotFoundException e) {
-//					LOGGER.error("Classe de tributo não encontrada: "+ "br.com.abril.nds.model.fiscal.nota.ICMS"+ icmsProduto.getCst().toString(), e);
-//					throw new ValidacaoException(TipoMensagem.ERROR, "Tributo não encontrada: ICMS"+ icmsProduto.getCst().toString());
-//				} catch (InstantiationException e) {
-//					LOGGER.error("Erro ao instanciar classe: "+ "br.com.abril.nds.model.fiscal.nota.ICMS"+ icmsProduto.getCst().toString(), e);
-//					throw new ValidacaoException(TipoMensagem.ERROR, "Tributo não encontrada: ICMS"+ icmsProduto.getCst().toString());
-//				} catch (IllegalAccessException e) {
-//					LOGGER.error("Erro ao acessar classe: "+ "br.com.abril.nds.model.fiscal.nota.ICMS"+ icmsProduto.getCst().toString(), e);
-//					throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao acessar classe: ICMS"+ icmsProduto.getCst().toString());
-//				}
-				
+								
 				//FIXME: Ajustar o produto para trazer a origem (nacional / estrangeira)
 				icmssn102.setOrigem(OrigemProduto.NACIONAL);
 				icmssn102.setCst("400");
@@ -452,7 +441,15 @@ public class ItemNotaFiscalBuilder  {
 			PISNTWrapper pisWrapperNT = null;
 			
 			if(produtoServico.getNcm() == 49019100L) {
-				pisWrapperNT = new PISNTWrapper();
+				if(ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
+					pisWrapperNT = new PISNTWrapper();
+				} else {
+					if(!tributacaoProduto.get("PIS").isIsentoOuNaoTributado()) {
+						pisOutWrapper = new PISOutrWrapper();
+					} else {
+						pisWrapper = new PISWrapper();
+					}
+				}
 			} else {				
 				if(!tributacaoProduto.get("PIS").isIsentoOuNaoTributado()) {
 					pisOutWrapper = new PISOutrWrapper();
@@ -503,8 +500,20 @@ public class ItemNotaFiscalBuilder  {
 			}
 			
 			if(produtoServico.getNcm() == 49019100L) {
-				pisWrapperNT.setPis(pis);
-				detalheNotaFiscal.getImpostos().setPisNT(pisWrapperNT);
+				if(ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
+					pisWrapperNT.setPis(pis);
+					detalheNotaFiscal.getImpostos().setPisNT(pisWrapperNT);
+				} else {
+					if(pisOutWrapper != null) {
+						pisOutWrapper.setPis(pis);
+						
+						detalheNotaFiscal.getImpostos().setPisOutr(pisOutWrapper);
+					} else {
+						pisWrapper.setPis(pis);
+						detalheNotaFiscal.getImpostos().setPis(pisWrapper);
+					}
+				}
+				
 			} else {
 				if(pisOutWrapper != null) {
 					pisOutWrapper.setPis(pis);
@@ -548,7 +557,15 @@ public class ItemNotaFiscalBuilder  {
 			CofinsNTWrapper cofinsNTWrapper = null;
 			
 			if(produtoServico.getNcm() == 49019100L) {
-				cofinsNTWrapper = new CofinsNTWrapper();
+				if(ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
+					cofinsNTWrapper = new CofinsNTWrapper();					
+				} else {
+					if(!tributacaoProduto.get("COFINS").isIsentoOuNaoTributado()) {
+						cofinsOutrWrapper = new CofinsOutrWrapper();	
+					} else {
+						cofinsWrapper = new CofinsWrapper();
+					}
+				}
 			} else {				
 				if(!tributacaoProduto.get("COFINS").isIsentoOuNaoTributado()) {
 					cofinsOutrWrapper = new CofinsOutrWrapper();	
@@ -601,8 +618,22 @@ public class ItemNotaFiscalBuilder  {
 			}
 			
 			if(produtoServico.getNcm() == 49019100L) {
-				cofinsNTWrapper.setCofins(cofins);
-				detalheNotaFiscal.getImpostos().setCofinsNT(cofinsNTWrapper);
+				
+				if(ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
+					cofinsNTWrapper.setCofins(cofins);
+					detalheNotaFiscal.getImpostos().setCofinsNT(cofinsNTWrapper);
+					
+				} else {
+					if(cofinsWrapper != null) {
+						cofinsWrapper.setCofins(cofins);
+						detalheNotaFiscal.getImpostos().setCofins(cofinsWrapper);
+						
+					} else {
+						cofinsOutrWrapper.setCofins(cofins);
+						detalheNotaFiscal.getImpostos().setCofinsOutr(cofinsOutrWrapper);
+					}
+				}
+				
 			} else {
 				if(cofinsWrapper != null) {
 					cofinsWrapper.setCofins(cofins);
@@ -848,7 +879,7 @@ public class ItemNotaFiscalBuilder  {
 		}
 		
 		// Aplica / calcula a tributacao do item
-		aplicarTributacaoItem(detalheNotaFiscal, notaFiscal, tributoAliquota, produtoServico, tributacaoProduto);
+		aplicarTributacaoItem(detalheNotaFiscal, notaFiscal, tributoAliquota, produtoServico, tributacaoProduto, ps);
 		
 		List<OrigemItemNotaFiscal> origemItens = produtoServico.getOrigemItemNotaFiscal() != null ? produtoServico.getOrigemItemNotaFiscal() : new ArrayList<OrigemItemNotaFiscal>();
 		
