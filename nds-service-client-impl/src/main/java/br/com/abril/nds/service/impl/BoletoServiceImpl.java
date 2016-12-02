@@ -137,6 +137,7 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.GeradorBoleto;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.NomeBanco;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.util.TirarAcento;
@@ -3339,7 +3340,9 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		registro01.setCodigoInstrucao2("00");
 		
-		BigDecimal valorJurosCalculado = CurrencyUtil.truncateDecimal((boleto.getValor().multiply(banco.getJuros()).divide(new BigDecimal("100"))), 2);
+		BigDecimal taxaJurosDiaria = MathUtil.divide(banco.getJuros(), new BigDecimal(30));
+		
+		BigDecimal valorJurosCalculado = CurrencyUtil.truncateDecimal((boleto.getValor().multiply(MathUtil.divide(taxaJurosDiaria, new BigDecimal(100)))), 2);
 		
 		registro01.setJurosDia(Util.getValorString(valorJurosCalculado.toEngineeringString()));
 		
