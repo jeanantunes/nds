@@ -1238,18 +1238,19 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         try {
             
         	final List<Long> listaIdCotas = new ArrayList<>();
-        	
-        	List<ConsultaNotaEnvioDTO> listaCotaExemplares = busca(filtro);
-        	
-        	// eliminar duplicados Chamado 4717058
-        	Set<ConsultaNotaEnvioDTO> hs = new LinkedHashSet<>();
-        	hs.addAll(listaCotaExemplares);
-        	listaCotaExemplares.clear();
-        	listaCotaExemplares.addAll(hs);
 
-        	for (ConsultaNotaEnvioDTO dto : listaCotaExemplares) {
+        	List<ConsultaNotaEnvioDTO> listaCotaExemplares = busca(filtro);
+
+        	for (ConsultaNotaEnvioDTO dto : listaCotaExemplares) 
+        	{
         		listaIdCotas.add(dto.getIdCota());
 			}
+        	
+        	// eliminar duplicados Chamado 4717058
+        	Set<Long> hs = new LinkedHashSet<>();
+        	hs.addAll(listaIdCotas);
+        	listaIdCotas.clear();
+        	listaIdCotas.addAll(hs);
             
             final List<Long> listaIdCotasImpressaoEnvioEmail = new ArrayList<>();
             
@@ -1303,9 +1304,12 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             TRAVA_GERACAO_NE.remove("neCotasSendoGeradas");
         }
         
-        // if(true){        	
-        	// throw new ValidacaoException(TipoMensagem.ERROR, "não gerar nota envio!!!!");
-        // }
+        // Odemir - quando tiver chamado acerca descomentar esse trecho
+        /*
+         if(true){        	
+        	 throw new ValidacaoException(TipoMensagem.ERROR, "não gerar nota envio!!!!");
+         }
+         */
         
         return listaNotaEnvio;
     }
