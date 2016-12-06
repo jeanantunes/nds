@@ -286,5 +286,7 @@ public interface ConferenciaEncalheService {
 	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras_cotaVarejo(final String codigoBarras, Integer numeroCota);
 
 	List<ItemAutoComplete> obterProdutoPorCodigoOuNomeCotaVarejo(final String codigoOuNome, Integer numeroCota);
+
+	boolean isCobrancaNegociada(Long numeroCota);
 	
 }

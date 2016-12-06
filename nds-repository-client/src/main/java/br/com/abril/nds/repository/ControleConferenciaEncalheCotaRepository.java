@@ -90,4 +90,6 @@ public interface ControleConferenciaEncalheCotaRepository  extends Repository<Co
 	ControleConferenciaEncalheCota obterControleConferenciaEncalheCotaPorIdCobranca(Long idCobranca);
 
 	List<Integer> obterListaNumCotaConferenciaEncalheCota(FiltroConsultaEncalheDTO filtro);
+
+	boolean isCobrancaNegociada(Long idCota, Date dataOperacao);
 }

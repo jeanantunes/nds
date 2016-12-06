@@ -491,4 +491,40 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		
 		return (ControleConferenciaEncalheCota) query.uniqueResult();
 	}
+    
+    
+    /**
+	 * Verifica se a cota possui cobranca negociada no dia
+	 * @param idCota
+	 * @param dataOperacao
+	 * @return boolean
+	 */
+    @Override
+	public boolean isCobrancaNegociada(Long idCota, Date dataOperacao) {
+		
+		StringBuffer hql = new StringBuffer("");
+	
+
+
+		hql.append(" select c.* from cobranca c ");		
+		
+		hql.append(" inner join negociacao_cobranca_originaria nco on nco.cobranca_Id = c.id ");
+		
+		hql.append("  inner join negociacao n on n.id = nco.negociacao_id ");
+		
+		hql.append(" where c.dt_pagamento  = :dataOperacao  and n.negociacao_avulsa = true");
+		
+		hql.append(" and c.cota_id = :idCota ");
+		
+		
+		Query query = getSession().createSQLQuery(hql.toString());
+
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		query.setParameter("idCota", idCota);
+		
+	
+		
+		return (query.list().size() > 0);
+	}
 }
