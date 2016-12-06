@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,11 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.CopiaProporcionalDeDistribuicaoVO;
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.client.vo.TotalizadorProdutoDistribuicaoVO;
+import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
@@ -47,8 +51,10 @@ import br.com.abril.nds.repository.InformacoesReparteEstudoComplementarRepositor
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
+import br.com.abril.nds.repository.impl.CotaRepositoryImpl;
 import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -56,6 +62,10 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService {
 
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(MatrizDistribuicaoServiceImpl.class);
+	  
+	
 	@Autowired
 	protected CalendarioService calendarioService;
 
@@ -64,6 +74,10 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 	@Autowired
 	private EstudoRepository estudoRepository;
+	
+	
+	@Autowired
+	private EstudoService estudoService;
 
 	@Autowired
 	private EstudoCotaGeradoRepository estudoCotaGeradoRepository;
@@ -577,6 +591,15 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	
 		for (EstudoCotaGerado estudoCota : lista) {
 			
+			if(estudoCota.getReparte() == null || !cotaRepository.validarCotaRecebeFornecedor(estudoCota.getCota().getId(), estudo.getProdutoEdicao().getId())){
+				continue;
+			}
+			
+		    if ( SituacaoCadastro.INATIVO.equals(estudoCota.getCota().getSituacaoCadastro())) {
+				LOGGER.warn("COTA INATIVA . NAO SERA INCLUIDO NO ESTUDO="+estudoCota.getCota().getNumeroCota());
+		    	continue; // nao pegar cotas inativas
+		     } 
+			
 			EstudoCotaGerado cota = new EstudoCotaGerado();
 		    BeanUtils.copyProperties(estudoCota, cota, new String[] {"id", "estudo", "classificacao", "rateiosDiferenca", "movimentosEstoqueCota", "itemNotaEnvios"});
 		    cota.setEstudo(estudo);
@@ -791,14 +814,24 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 				}
 			}
 		}
-
+		
+		for (EstudoCotaGerado cotaSelecionada : cotasSelecionadas) {
+			if(cotaSelecionada.getReparte() != null){
+				cotas.add(cotaSelecionada);
+			}
+		}
+		
+		cotasSelecionadas.removeAll(cotas);
+		
 		BigInteger soma = BigInteger.ZERO;
+		
 		for (EstudoCotaGerado cota : cotas) {
 			soma = soma.add(cota.getReparte());
 			if (!vo.isFixacao() && cota.getClassificacao().equals("FX")) {
 				cota.setClassificacao(ClassificacaoCota.BancaSemHistorico.getCodigo());
 			}
 		}
+		
 		reparteDistribuir = vo.getReparteDistribuido().subtract(soma);
 
 		// distribuicao de sobras caso exista
@@ -813,10 +846,18 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		if (pacotePadrao != null && pacotePadrao.compareTo(BigInteger.ZERO) > 0) {
 			reparte = pacotePadrao;
 		}
+		
+		int countValorReparte = 0;
+		BigInteger reparteAtual = BigInteger.ZERO;
+		BigInteger reparteAnterior = BigInteger.ZERO;
+		
 		while ((reparteDistribuir.compareTo(BigInteger.ZERO) > 0 && reparteDistribuir
 				.compareTo(reparte) >= 0)
 				|| (reparteDistribuir.compareTo(BigInteger.ZERO) < 0 && reparteDistribuir
 						.compareTo(reparte.negate()) <= 0)) {
+			
+			reparteAnterior = reparteDistribuir;
+			
 			for (EstudoCotaGerado cota : cotas) {
 				if (!cota.getClassificacao().equals("FX")
 						&& !cota.getClassificacao().equals("MX")) {
@@ -842,8 +883,22 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 					break;
 				}
 			}
+			
+			reparteAtual = reparteDistribuir;
+			
+			if(reparteAnterior.compareTo(reparteAtual) == 0){
+				++countValorReparte;
+			}
+			
+			if(countValorReparte >= 3){
+				break;
+			}
+			
 		}
 
+		if(cotasSelecionadas.size() > 0){
+			cotas.addAll(cotasSelecionadas);
+		}
 		// salvando no banco
 		for (EstudoCotaGerado cota : cotas) {
 			if (cota.getReparte() == null) {
@@ -864,6 +919,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 				}
 				
 			} else {
+				
 				cota.setQtdeEfetiva(cota.getReparte());
 				cota.setQtdePrevista(cota.getReparte());
 				cota.setReparteInicial(cota.getReparte());
@@ -872,28 +928,21 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			estudoCotaGeradoRepository.adicionar(cota);
 		}
 
-		for (EstudoCotaGerado cota : cotasSelecionadas) {
-			if (cota.getReparte() == null) {
-				cota.setQtdePrevista(null);
-				cota.setQtdeEfetiva(null);
-				
-				if((cota.getClassificacao() == null) || (cota.getClassificacao().equalsIgnoreCase(""))){
-					cota.setClassificacao(ClassificacaoCota.BancaSemHistorico.getCodigo());
-				}
-				
-			}
-			if (!vo.isFixacao() && cota.getClassificacao().equals("FX")) {
-				cota.setClassificacao(ClassificacaoCota.BancaSemHistorico.getCodigo());
-			}
-			
-			estudoCotaGeradoRepository.adicionar(cota);
-		}
 		estudoCopia.setEstudoCotas(new HashSet<EstudoCotaGerado>(cotas));
 		estudoCotaGeradoRepository.inserirProdutoBase(estudoCopia);
 		
 		this.atualizarPercentualAbrangencia(estudoCopia.getId());
 		
-		return estudoCopia;
+		
+		ResumoEstudoHistogramaPosAnaliseDTO resumo = estudoService.obterResumoEstudo(estudoCopia.getId(), null, null);
+	        
+	      if(resumo.getSaldo() != null){
+	        	estudoCopia.setSobra(resumo.getSaldo().toBigInteger());
+	        } else {
+	        	estudoCopia.setSobra(BigInteger.ZERO);
+	        }
+
+      return estudoCopia;
 	}
 
 	private Map<Long, CotaEstudo> carregarInformacoesCotaEstudo(
