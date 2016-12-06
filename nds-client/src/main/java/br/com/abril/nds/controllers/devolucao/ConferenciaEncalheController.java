@@ -448,6 +448,10 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		carregarMapaDatasEncalheConferiveis(numeroCota);
 		
+		// verificar se ja tem divida negociada no dia 
+		if ( conferenciaEncalheService.isCobrancaNegociada(cota.getId()) )
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("A Cota %s teve negociação.O encalhe não pode ser reaberto.", numeroCota));
+		
 		if(this.conferenciaEncalheService.verificarCotaComConferenciaEncalheFinalizada(numeroCota)) {
 			
 			this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").put("IND_REABERTURA", "S").serialize();
