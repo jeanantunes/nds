@@ -113,9 +113,27 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	    this.criarLancamento(edicao, message, produto.getFormaComercializacao());	    
 	}
 
-	} else {
-
-	this.atualizaProdutoEdicaoConformeInput(edicao, message);
+	} 
+	else
+	{
+		// verificacao se lancamento tem algum status EM_RECOLHIMENTO || BALANCEADO_RECOLHIMENTO || RECOLHIDO || FECHADO = impeditivo
+		Lancamento lanca = this.getLancamentoStatusEvitar(edicao);
+	
+		if(lanca != null && lanca.getId() > 0)
+		{
+			EMS0110FilialInput input = (EMS0110FilialInput) message.getBody();
+			
+			this.ndsiLoggerFactory.getLogger().logInfo(
+					message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Produto/Edicao nao sera ALTERADO.Ja esta em processo de recolhimento"
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
+		}
+		else
+		{
+			this.atualizaProdutoEdicaoConformeInput(edicao, message);
+		}
 	}
 
 	} else {
@@ -126,6 +144,30 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 //	throw new RuntimeException("Distribuidor nao encontrado.");
 	}
 	}
+	
+	
+	private Lancamento getLancamentoStatusEvitar(
+			ProdutoEdicao produtoEdicao) {
+	   
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("SELECT lcto FROM Lancamento lcto ");
+		sql.append(" WHERE lcto.produtoEdicao.id = :produtoEdicaoId ");
+		sql.append(" AND lcto.dataLancamentoPrevista < :dataOperacao ");
+		sql.append(" AND lcto.status in ('EM_RECOLHIMENTO','BALANCEADO_RECOLHIMENTO','RECOLHIDO','FECHADO')");
+		
+		Query query = getSession().createQuery(sql.toString());
+
+		Date dataOperacao = new Date();
+		query.setParameter("produtoEdicaoId", produtoEdicao.getId());
+		query.setDate("dataOperacao", dataOperacao);
+		
+		query.setMaxResults(1);
+		query.setFetchSize(1);
+		
+		return (Lancamento) query.uniqueResult();
+	}
+	
 	
 	private void criarLancamento(ProdutoEdicao edicao, Message message, FormaComercializacao formaComercializacaoDoProduto) {
 
