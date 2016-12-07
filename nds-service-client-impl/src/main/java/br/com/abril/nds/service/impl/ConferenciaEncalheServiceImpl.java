@@ -612,6 +612,26 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return false;
 	}
 	
+	
+	@Override
+	@Transactional(readOnly = true)
+	public boolean isCobrancaNegociada(final Long idCota) {
+		
+		final Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		boolean negociada = false; 
+		try {
+			
+			negociada = controleConferenciaEncalheCotaRepository.isCobrancaNegociada(idCota, dataOperacao);
+		} catch (Exception e) {
+			
+			LOGGER.error("Verificar a duplicidade de conferência cota=."+idCota, e);
+			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao obter a Conferência de Encalhe. Contate o Administrador do sistema.");
+		}
+		
+		return negociada;
+	}
+	
 	@Override
 	@Transactional(readOnly = true)
 	public void verificarControleConferenciaEncalheCotaDuplicaca(ControleConferenciaEncalheCota ccec) {
