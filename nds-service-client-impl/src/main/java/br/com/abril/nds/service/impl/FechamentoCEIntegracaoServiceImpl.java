@@ -15,23 +15,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.itextpdf.text.pdf.PdfPage;
-
 import br.com.abril.nds.client.assembler.ChamadaEncalheFornecedorDTOAssembler;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.ItemFechamentoCEIntegracaoDTO;
+import br.com.abril.nds.dto.VendaProdutoDTO;
 import br.com.abril.nds.dto.chamadaencalhe.ChamadasEncalheFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
@@ -58,6 +60,7 @@ import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
@@ -83,13 +86,15 @@ import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.service.VendaProdutoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.Util;
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.itextpdf.text.pdf.PdfPage;
 
 @Service
 public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracaoService {
@@ -151,6 +156,9 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 
 	@Autowired
 	private LancamentoService lancamentoService;
+	
+	@Autowired
+	private VendaProdutoService vendaProdutoService;
 
 	@Autowired
 	private MovimentoFechamentoFiscalRepository movimentoFechamentoFiscalRepository;
@@ -164,6 +172,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		filtro.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtro));
 		
 		return this.fechamentoCEIntegracaoRepository.buscarItensFechamentoCeIntegracao(filtro);
+		
 	}
 	
 	@Transactional(readOnly=true)
@@ -1256,7 +1265,10 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
                                 
                                if(lancamento.getPeriodoLancamentoParcial()==null ) {
                                           lancamentoService.alterarStatus(lancamento, status);
-                                }
+                                } else
+                               if ( TipoLancamentoParcial.FINAL.equals(lancamento.getPeriodoLancamentoParcial().getTipo())) {
+                            	   lancamentoService.alterarStatus(lancamento, status);
+                               }
                         }
                         
                         
