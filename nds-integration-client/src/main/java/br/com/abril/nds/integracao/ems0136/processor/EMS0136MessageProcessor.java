@@ -77,7 +77,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 	private SessionFactory sessionFactoryIcd;
 	
 	private static final int PEB_MINIMA = 10;
-
+	
 	private static final ImmutableList<StatusLancamento> LANCAMENTO_EXPEDIDO = 
 			ImmutableList.of(
 				StatusLancamento.FURO, 
@@ -92,6 +92,14 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 				StatusLancamento.CONFIRMADO
 			);
 
+	// status EM_RECOLHIMENTO || BALANCEADO_RECOLHIMENTO || RECOLHIDO || FECHADO = impeditivo
+	private static final ImmutableList<StatusLancamento> LANCAMENTO_IMPEDITIVO = 
+			ImmutableList.of(
+				StatusLancamento.EM_RECOLHIMENTO,
+				StatusLancamento.BALANCEADO_RECOLHIMENTO,
+				StatusLancamento.RECOLHIDO,
+				StatusLancamento.FECHADO
+			);
 	
 	protected Session getSessionIcd() {
 
@@ -254,11 +262,23 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 
 				lancamentoAtual.setNumeroLancamento(numeroLancamento);
 				
+				/*
 				if ( !"R".equalsIgnoreCase(input.getTipoRecolhimento())) { // nao recolhido. mudar
 					LOGGER.warn("LANCAMENTO NAO 'E TIPO R. NAO ALTERAR DATAS");
 					lancamentoAtual.setDataRecolhimentoPrevista(input.getDataRecolhimento());
 					lancamentoAtual.setDataRecolhimentoDistribuidor(input.getDataRecolhimento());
 				}
+				*/
+				
+				// status EM_RECOLHIMENTO || BALANCEADO_RECOLHIMENTO || RECOLHIDO || FECHADO = impeditivo
+				// se chegou aqui no minimo tem estudo
+				if (!"R".equalsIgnoreCase(input.getTipoRecolhimento()) && !LANCAMENTO_IMPEDITIVO.contains(lancamentoAtual.getStatus())) 
+				{
+					LOGGER.warn("LANCAMENTO EM STATUS FINAIS (Em_Recolhimento++) OU NAO TIPO R, DATA NAO ALTERADA");
+					lancamentoAtual.setDataRecolhimentoPrevista(input.getDataRecolhimento());
+					lancamentoAtual.setDataRecolhimentoDistribuidor(input.getDataRecolhimento());
+				}
+				
 				helper.addLancamentoManter(lancamentoAtual);
 
 			} else if (LANCAMENTO_ABERTO.contains(lancamentoAtual.getStatus())) {
