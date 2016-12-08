@@ -807,7 +807,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         // data da negociacao
         Date data = new Date();
         data = negociacao.getDataCriacao();
-       	impressaoNegociacaoDTO.setDataCriacao(data);
+       	impressaoNegociacaoDTO.setDataCriacao(data); 
                 
        	// lista de Boletos por Cota
        	List<CobrancaVO> cobrancaVo = cobrancaRepository.obterCobrancasPorCota(negociacao.getId());
