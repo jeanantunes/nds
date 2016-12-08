@@ -182,6 +182,7 @@ var produtoController = $.extend(true, {
 	//Pesquisar Fornecedor
 	pesquisarProdutosSuccessCallBack:function() {
 		
+		produtoController.pesquisar();
 		produtoController.pesquisarFornecedor(produtoController.getCodigoProdutoPesquisa());
 
 	},

@@ -11,7 +11,9 @@ import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
+import br.com.abril.nds.dto.FiadorDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
 import br.com.abril.nds.dto.ImovelDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -310,48 +312,48 @@ public class CotaGarantiaController extends BaseController {
 	public void getByCota(Long idCota, ModoTela modoTela, Long idHistorico) {
 		
 		
-		this.result.use(Results.json()).from("OK").serialize();
+		//this.result.use(Results.json()).from("OK").serialize();
 		
 		
-//	    if (ModoTela.CADASTRO_COTA == modoTela) {
-//
-//	        CotaGarantiaDTO<CotaGarantia> cotaGarantia = cotaGarantiaService.getByCota(idCota);
-//	        
-//	        if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {	
-//	        	
-//	            this.result.use(PlainJSONSerialization.class).from(cotaGarantia, "result").serialize();
-//	        
-//	        } else {
-//	        	
-//	        	this.result.use(Results.json()).from("OK").serialize();
-//	        }	
-//	    } 
-//	    else {
-//	    	
-//	        CotaGarantiaDTO<?> cotaGarantia = cotaGarantiaService.obterGarantiaHistoricoTitularidadeCota(idCota, idHistorico);
-//	        
-//	        if (cotaGarantia != null) {
-//	        	
-//	        	if(cotaGarantia.getCotaGarantia().getClass().getName().equals("br.com.abril.nds.dto.FiadorDTO")) {
-//	        		CotaGarantiaDTO<FiadorDTO> cotaGarantiaFiadorDTO = (CotaGarantiaDTO<FiadorDTO>) cotaGarantia;
-//	        		
-//	        		if( cotaGarantiaFiadorDTO.getCotaGarantia().getEnderecoPrincipal().getLogradouro() == null &&
-//	        				cotaGarantiaFiadorDTO.getCotaGarantia().getEnderecoPrincipal().getNumero() == null) {
-//	        			this.result.use(Results.json()).from("OK").serialize();
-//	        		} else {
-//		        		this.result.use(PlainJSONSerialization.class).from(cotaGarantia, "result").serialize();
-//		        	}
-//	        		
-//	        	} 
-//	        	
-//	        	
-//	        	
-//	        	
-//	        } else {
-//	        	
-//	        	this.result.use(Results.json()).from("OK").serialize();      
-//	        }
-//	    }
+	    if (ModoTela.CADASTRO_COTA == modoTela) {
+
+	        CotaGarantiaDTO<CotaGarantia> cotaGarantia = cotaGarantiaService.getByCota(idCota);
+	        
+	        if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {	
+	        	
+	            this.result.use(PlainJSONSerialization.class).from(cotaGarantia, "result").serialize();
+	        
+	        } else {
+	        	
+	        	this.result.use(Results.json()).from("OK").serialize();
+	        }	
+	    } 
+	    else {
+	    	
+	        CotaGarantiaDTO<?> cotaGarantia = cotaGarantiaService.obterGarantiaHistoricoTitularidadeCota(idCota, idHistorico);
+	        
+	        if (cotaGarantia != null) {
+	        	
+	        	if(cotaGarantia.getCotaGarantia().getClass().getName().equals("br.com.abril.nds.dto.FiadorDTO")) {
+	        		CotaGarantiaDTO<FiadorDTO> cotaGarantiaFiadorDTO = (CotaGarantiaDTO<FiadorDTO>) cotaGarantia;
+	        		
+	        		if( cotaGarantiaFiadorDTO.getCotaGarantia().getEnderecoPrincipal().getLogradouro() == null &&
+	        				cotaGarantiaFiadorDTO.getCotaGarantia().getEnderecoPrincipal().getNumero() == null) {
+	        			this.result.use(Results.json()).from("OK").serialize();
+	        		} else {
+		        		this.result.use(PlainJSONSerialization.class).from(cotaGarantia, "result").serialize();
+		        	}
+	        		
+	        	} 
+	        	
+	        	
+	        	
+	        	
+	        } else {
+	        	
+	        	this.result.use(Results.json()).from("OK").serialize();      
+	        }
+	    }
 	}
 	
 	/**

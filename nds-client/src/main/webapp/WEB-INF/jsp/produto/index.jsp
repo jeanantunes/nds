@@ -307,7 +307,7 @@
 				<td width="123" >
 			    	<input type="text" name="produto-codigoProduto" id="produto-codigoProduto"
 						   style="width: 80px; float: left; margin-right: 5px;" maxlength="10"
-						   onkeyup="this.value = this.value.replace(/[^0-9\.]/g,'');"
+						   onkeyup="this.value = this.value.replace(/[^0-9\.]/g,''); if (event.keyCode==13){pesquisaProdutoCadastroProduto.pesquisarPorCodigoProduto('#produto-codigoProduto', '#produto-produto', '', false,produtoController.pesquisarProdutosSuccessCallBack);}"
 						   onchange="pesquisaProdutoCadastroProduto.pesquisarPorCodigoProduto('#produto-codigoProduto', '#produto-produto', '', false,
 								   									   produtoController.pesquisarProdutosSuccessCallBack);" />
 				</td>
