@@ -36,7 +36,7 @@
 	<columnHeader>
 		<band height="20">
 			<staticText>
-				<reportElement uuid="ab6b28db-2ec4-46d8-b06d-400d941eb10a" mode="Opaque" x="0" y="0" width="91" height="20" forecolor="#000000" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="0" y="0" width="91" height="20" forecolor="#000000" backcolor="#999999" uuid="ab6b28db-2ec4-46d8-b06d-400d941eb10a"/>
 				<box leftPadding="3" rightPadding="3">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -49,7 +49,7 @@
 				<text><![CDATA[Parcela]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="66fbf456-5946-443a-98ea-0fb2cdd84217" mode="Opaque" x="273" y="0" width="91" height="20" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="273" y="0" width="91" height="20" backcolor="#999999" uuid="66fbf456-5946-443a-98ea-0fb2cdd84217"/>
 				<box leftPadding="3" rightPadding="3">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -62,7 +62,7 @@
 				<text><![CDATA[Encargos]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="6d089e34-4b77-4284-b08a-c315eb47ede6" mode="Opaque" x="455" y="0" width="100" height="20" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="455" y="0" width="100" height="20" backcolor="#999999" uuid="6d089e34-4b77-4284-b08a-c315eb47ede6"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -75,7 +75,7 @@
 				<text><![CDATA[Ativar ao Pagar?]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="91228429-5d44-461e-a282-5beecfb9d781" mode="Opaque" x="364" y="0" width="91" height="20" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="364" y="0" width="91" height="20" backcolor="#999999" uuid="91228429-5d44-461e-a282-5beecfb9d781"/>
 				<box leftPadding="3" rightPadding="3">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -88,7 +88,7 @@
 				<text><![CDATA[Parcela Total]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="1bf4e47a-7497-44f4-9747-76ad03837be2" mode="Opaque" x="91" y="0" width="91" height="20" forecolor="#000000" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="91" y="0" width="91" height="20" forecolor="#000000" backcolor="#999999" uuid="1bf4e47a-7497-44f4-9747-76ad03837be2"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -101,7 +101,7 @@
 				<text><![CDATA[Vencimento]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="06e709d5-3448-4fb9-9cdc-e9dcbbb06007" mode="Opaque" x="182" y="0" width="91" height="20" forecolor="#000000" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="182" y="0" width="91" height="20" forecolor="#000000" backcolor="#999999" uuid="06e709d5-3448-4fb9-9cdc-e9dcbbb06007"/>
 				<box leftPadding="3" rightPadding="3">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -118,7 +118,7 @@
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField>
-				<reportElement uuid="481361c5-f39e-4eca-8dd7-13a8f406465f" style="zebrado" x="0" y="0" width="91" height="20"/>
+				<reportElement style="zebrado" x="0" y="0" width="91" height="20" uuid="481361c5-f39e-4eca-8dd7-13a8f406465f"/>
 				<box leftPadding="3" rightPadding="3">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -129,7 +129,7 @@
 				<textFieldExpression><![CDATA[$F{numeroParcela} + " ª"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="845db4f8-fdb6-4eb8-b4e1-2cef825c0953" style="zebrado" x="91" y="0" width="91" height="20"/>
+				<reportElement style="zebrado" x="91" y="0" width="91" height="20" uuid="845db4f8-fdb6-4eb8-b4e1-2cef825c0953"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -140,7 +140,7 @@
 				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{dataVencimento})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="7d42308d-ec24-4466-a11f-c5dd014ae78d" style="zebrado" x="182" y="0" width="91" height="20"/>
+				<reportElement style="zebrado" x="182" y="0" width="91" height="20" uuid="7d42308d-ec24-4466-a11f-c5dd014ae78d"/>
 				<box leftPadding="3" rightPadding="3">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -151,7 +151,7 @@
 				<textFieldExpression><![CDATA[new DecimalFormat("#,##0.00").format($F{valor}.setScale(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="9b34917a-af9d-43e9-b1a3-0f098394e08b" style="zebrado" x="273" y="0" width="91" height="20"/>
+				<reportElement style="zebrado" x="273" y="0" width="91" height="20" uuid="9b34917a-af9d-43e9-b1a3-0f098394e08b"/>
 				<box leftPadding="3" rightPadding="3">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -162,7 +162,7 @@
 				<textFieldExpression><![CDATA[new DecimalFormat("#,##0.00").format($F{encagos}.setScale(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="a5018c73-3bac-4575-bd85-88a22f6114bd" style="zebrado" x="364" y="0" width="91" height="20"/>
+				<reportElement style="zebrado" x="364" y="0" width="91" height="20" uuid="a5018c73-3bac-4575-bd85-88a22f6114bd"/>
 				<box leftPadding="3" rightPadding="3">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -173,7 +173,7 @@
 				<textFieldExpression><![CDATA[new DecimalFormat("#,##0.00").format($F{parcelaTotal}.setScale(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="a868def5-e0dd-4bd7-933f-f67841dd8c8d" style="zebrado" x="455" y="0" width="100" height="20"/>
+				<reportElement style="zebrado" x="455" y="0" width="100" height="20" uuid="a868def5-e0dd-4bd7-933f-f67841dd8c8d"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>

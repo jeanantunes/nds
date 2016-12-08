@@ -24,7 +24,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.CalculaParcelasVO;
+import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
+import br.com.abril.nds.dto.CobrancaImpressaoDTO;
+import br.com.abril.nds.dto.ConsultaCotaDTO;
 import br.com.abril.nds.dto.ConsultaNegociacaoDividaDTO;
 import br.com.abril.nds.dto.DetalheConsultaNegociacaoDividaDTO;
 import br.com.abril.nds.dto.ImpressaoNegociacaoDTO;
@@ -33,6 +36,7 @@ import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCalculaParcelas;
+import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacoesDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -55,6 +59,7 @@ import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
 import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
+import br.com.abril.nds.model.financeiro.CobrancaOutros;
 import br.com.abril.nds.model.financeiro.CobrancaTransferenciaBancaria;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
@@ -80,6 +85,7 @@ import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.NegociacaoDividaRepository;
 import br.com.abril.nds.repository.ParcelaNegociacaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.repository.impl.CobrancaRepositoryImpl;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DescontoService;
@@ -171,7 +177,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     private AcumuloDividasRepository acumuloDividasRepository;
     
     @Autowired
-    private ImpressaoDividaService impressaoDividaService;
+    private ImpressaoDividaService impressaoDividaService;    
     
     @Override
     @Transactional(readOnly = true)
@@ -222,7 +228,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         }
         
         return dividas;
-    }
+    }   
     
     @Override
     @Transactional
@@ -711,9 +717,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
             throw new ValidacaoException(TipoMensagem.WARNING, "Negociação não encontrada.");
         }
         
-        final Cota cota = negociacao.getCobrancasOriginarias().get(0).getCota();
+        final Cota cota = negociacao.getCobrancasOriginarias().get(0).getCota();                   
         
         final ImpressaoNegociacaoDTO impressaoNegociacaoDTO = new ImpressaoNegociacaoDTO();
+       
         // campo cota(numero)
         impressaoNegociacaoDTO.setNumeroCota(cota.getNumeroCota());
         // campo nome
@@ -721,7 +728,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         
         // campo Comissão da Cota para pagamento da dívida
         impressaoNegociacaoDTO.setComissaoParaPagamento(negociacao.getComissaoParaSaldoDivida());
-        
+                
         if (negociacao.getParcelas() == null || negociacao.getParcelas().isEmpty()) {
             
             BigDecimal comissaoAtual = descontoService.obterComissaoCota(cota.getNumeroCota());
@@ -736,7 +743,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
             
             // campo Comissão da Cota enquanto houver saldo de dívida
             impressaoNegociacaoDTO.setComissaoCotaEnquantoHouverSaldo(comissaoAtual.subtract(negociacao
-                    .getComissaoParaSaldoDivida()));
+                    .getComissaoParaSaldoDivida()));                    
         }
         
         // campo frequencia de pagamento
@@ -786,6 +793,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
             impressaoNegociacaoDTO.setAgenciaBanco(banco.getAgencia());
             impressaoNegociacaoDTO.setContaBanco(banco.getConta());
         }
+      
         
         // campo negociacao avulsa
         impressaoNegociacaoDTO.setNegociacaoAvulsa(TipoNegociacao.PAGAMENTO_AVULSO.equals(negociacao.getTipoNegociacao()));
@@ -794,6 +802,26 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         
         impressaoNegociacaoDTO.setParcelasCheques(new ArrayList<ImpressaoNegociacaoParecelaDTO>());
         
+        impressaoNegociacaoDTO.setBoletosCobranca(new ArrayList<ImpressaoNegociacaoParecelaDTO>());
+        
+        // data da negociacao
+        Date data = new Date();
+        data = negociacao.getDataCriacao();
+       	impressaoNegociacaoDTO.setDataCriacao(data);
+                
+       	// lista de Boletos por Cota
+       	List<CobrancaVO> cobrancaVo = cobrancaRepository.obterCobrancasPorCota(negociacao.getId());
+       	for(int i=0; i < cobrancaVo.size(); i++) {
+       		
+       		final ImpressaoNegociacaoParecelaDTO vo = new ImpressaoNegociacaoParecelaDTO();
+       		vo.setNossoNumeroCobranca(cobrancaVo.get(i).getNossoNumero());
+       		vo.setDataEmissaoCobranca(cobrancaVo.get(i).getDataEmissao());
+       		vo.setDataVencimentoCobranca(cobrancaVo.get(i).getDataVencimento());
+       		vo.setValorCobranca(cobrancaVo.get(i).getValor());   
+       		
+       		impressaoNegociacaoDTO.getBoletosCobranca().add(vo);
+       	}
+       	
         BigDecimal totalParcelas = BigDecimal.ZERO;
         for (final ParcelaNegociacao parcela : negociacao.getParcelas()) {
             

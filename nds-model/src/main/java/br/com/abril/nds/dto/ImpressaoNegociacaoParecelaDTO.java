@@ -24,7 +24,15 @@ public class ImpressaoNegociacaoParecelaDTO implements Serializable {
 	private boolean ativarAoPagar;
 	
 	private int numeroParcela;
-
+	
+	private String nossoNumeroCobranca;
+	
+	private String dataEmissaoCobranca;
+	
+	private String dataVencimentoCobranca;
+	
+	private String valorCobranca;	
+	
 	public Date getDataVencimento() {
 		return dataVencimento;
 	}
@@ -79,5 +87,37 @@ public class ImpressaoNegociacaoParecelaDTO implements Serializable {
 
 	public void setNumeroParcela(int numeroParcela) {
 		this.numeroParcela = numeroParcela;
+	}
+
+	public String getNossoNumeroCobranca() {
+		return nossoNumeroCobranca;
+	}
+
+	public void setNossoNumeroCobranca(String nossoNumeroCobranca) {
+		this.nossoNumeroCobranca = nossoNumeroCobranca;
+	}
+
+	public String getDataEmissaoCobranca() {
+		return dataEmissaoCobranca;
+	}
+
+	public void setDataEmissaoCobranca(String dataEmissaoCobranca) {
+		this.dataEmissaoCobranca = dataEmissaoCobranca;
+	}
+
+	public String getDataVencimentoCobranca() {
+		return dataVencimentoCobranca;
+	}
+
+	public void setDataVencimentoCobranca(String dataVencimentoCobranca) {
+		this.dataVencimentoCobranca = dataVencimentoCobranca;
+	}
+
+	public String getValorCobranca() {
+		return valorCobranca;
+	}
+
+	public void setValorCobranca(String valorCobranca) {
+		this.valorCobranca = valorCobranca;
 	}
 }

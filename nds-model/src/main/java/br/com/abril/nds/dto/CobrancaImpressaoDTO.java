@@ -17,6 +17,7 @@ public class CobrancaImpressaoDTO implements Serializable {
 	private String rota;
 	private String roteiro;
 	private BigDecimal valor;
+	private Date emissao;
 	private Date vencimento;
 	private String nomeBanco;
 	private String agencia;
@@ -85,6 +86,14 @@ public class CobrancaImpressaoDTO implements Serializable {
 		this.valor = valor;
 	}
 	
+	public Date getEmissao() {
+		return emissao;
+	}
+
+	public void setEmissao(Date emissao) {
+		this.emissao = emissao;
+	}
+
 	public Date getVencimento() {
 		return vencimento;
 	}
@@ -132,5 +141,4 @@ public class CobrancaImpressaoDTO implements Serializable {
 	public void setTipoCobranca(TipoCobranca tipoCobranca) {
 		this.tipoCobranca = tipoCobranca;
 	}
-	
 }

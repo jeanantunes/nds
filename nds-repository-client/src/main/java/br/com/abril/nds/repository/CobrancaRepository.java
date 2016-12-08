@@ -72,7 +72,13 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	 * @return query.list(): lista de cobrancas
 	 */
 	public List<CobrancaVO> obterCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro);
-
+	
+	/**
+	 * Método responsável por obter uma lista de cobrancas
+	 * @param numeroCota
+	 * @return query.list(): lista de cobrancas
+	 */	
+	public List<CobrancaVO> obterCobrancasPorCota(Long negociacaoId);
 
 	void excluirCobrancaPorIdDivida(Long idDivida);
 

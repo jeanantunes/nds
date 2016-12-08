@@ -8,6 +8,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.cache.ehcache.internal.util.HibernateUtil;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -15,13 +16,13 @@ import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.ExportarCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -258,6 +259,38 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		return ((SQLQuery) query).list();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<CobrancaVO> obterCobrancasPorCota(Long negociacaoId) {
+		
+		StringBuilder hql = this.obterConsultaCobrancasPorCota(negociacaoId);
+
+		Query query = this.createQueryCobrancasPorCota(negociacaoId, hql.toString());
+		
+		((SQLQuery) query).addScalar("codigo", StandardBasicTypes.BIG_INTEGER);
+		((SQLQuery) query).addScalar("dataEmissao", StandardBasicTypes.DATE);
+        ((SQLQuery) query).addScalar("dataVencimento", StandardBasicTypes.DATE);
+		((SQLQuery) query).addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
+		((SQLQuery) query).addScalar("nossoNumero", StandardBasicTypes.STRING);
+		
+        try {
+        	
+			query.setResultTransformer(new AliasToBeanConstructorResultTransformer(
+					CobrancaVO.class.getConstructor(BigInteger.class, Date.class, Date.class, BigDecimal.class, String.class)
+				)
+			);
+
+		} catch (NoSuchMethodException e) {
+			
+			throw new IllegalArgumentException("Construtor inválido");
+			
+		} catch (SecurityException e) {
+
+			throw new IllegalArgumentException("Construtor inválido");
+		}		
+		
+		return ((SQLQuery) query).list();
+	}	
+	
 	private StringBuilder obterConsultaCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -307,6 +340,24 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 		return hql;
 	}
+
+	private StringBuilder obterConsultaCobrancasPorCota(Long negociacaoId) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT "); 
+		hql.append(" c.ID as codigo, ");
+		hql.append(" c.DT_EMISSAO as dataEmissao, ");
+		hql.append(" c.DT_VENCIMENTO as dataVencimento, "); 
+		hql.append(" c.VALOR as valor, ");
+		hql.append(" c.NOSSO_NUMERO as nossoNumero ");
+		hql.append(" FROM cobranca c ");
+		hql.append(" INNER JOIN negociacao_cobranca_originaria ct on ct.COBRANCA_ID = c.ID ");
+		hql.append(" INNER JOIN negociacao n on n.ID=ct.NEGOCIACAO_ID ");
+		hql.append(" WHERE n.ID = :nId ");
+		
+		return hql;
+	}	
 	
 	private Query createQueryCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro, String consulta) {
 	
@@ -331,6 +382,15 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 
 		return query;
 	}
+
+	private Query createQueryCobrancasPorCota(Long negociacaoId, String consulta) {
+		
+		Query query = super.getSession().createSQLQuery(consulta);
+		
+		query.setParameter("nId", negociacaoId);
+		
+		return query;
+	}	
 	
 	@Override
 	public void excluirCobrancaPorIdDivida(Long idDivida) {
@@ -341,7 +401,6 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 		query.executeUpdate();
 	}
-
 	
 	/**
 	 * Método responsável por obter uma lista de cobrancas ordenadas por data de vencimento
@@ -406,6 +465,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	public List<Cobranca> obterCobrancasEfetuadaNaDataOperacaoDistribuidor(Date dataOperacao) {
 		
 		Criteria criteria = this.getSession().createCriteria(Cobranca.class);
+		
 		criteria.add(Restrictions.eq("dataEmissao", dataOperacao));
 	
 		return criteria.list();

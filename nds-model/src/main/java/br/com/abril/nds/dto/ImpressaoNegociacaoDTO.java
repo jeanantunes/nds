@@ -2,7 +2,10 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
+
+import br.com.abril.nds.client.vo.CobrancaVO;
 
 public class ImpressaoNegociacaoDTO implements Serializable {
 
@@ -39,7 +42,13 @@ public class ImpressaoNegociacaoDTO implements Serializable {
 	
 	private boolean isentaEncargos;
 	
+	private Date dataCriacao;
+	
+	private String nossoNumero;
+	
 	private List<ImpressaoNegociacaoParecelaDTO> parcelasCheques;
+	
+	private List<ImpressaoNegociacaoParecelaDTO> boletosCobranca;
 
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -158,8 +167,34 @@ public class ImpressaoNegociacaoDTO implements Serializable {
 		return parcelasCheques;
 	}
 
-	public void setParcelasCheques(
-			List<ImpressaoNegociacaoParecelaDTO> parcelasCheques) {
+	public void setParcelasCheques(List<ImpressaoNegociacaoParecelaDTO> parcelasCheques) {
 		this.parcelasCheques = parcelasCheques;
 	}
+
+	public Date getDataCriacao() {
+		return dataCriacao;
+	}
+
+	public void setDataCriacao(Date dataCriacao) {
+		this.dataCriacao = dataCriacao;
+	}
+
+	public List<ImpressaoNegociacaoParecelaDTO> getBoletosCobranca() {
+		return boletosCobranca;
+	}
+
+	public void setBoletosCobranca(
+		List<ImpressaoNegociacaoParecelaDTO> boletosCobranca) {
+		this.boletosCobranca = boletosCobranca;
+	}
+
+	public String getNossoNumero() {
+		return nossoNumero;
+	}
+
+	public void setNossoNumero(String nossoNumero) {
+		this.nossoNumero = nossoNumero;
+	}
+
+	
 }

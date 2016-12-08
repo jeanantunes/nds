@@ -72,7 +72,14 @@ public class CobrancaVO implements Serializable  {
 		this.boletoAntecipado = boletoAntecipado;
 		this.nossoNumero = nossoNumero;
 	}
-	
+
+	public CobrancaVO(BigInteger codigo, Date dataEmissao, Date dataVencimento, BigDecimal valor, String nossoNumero) {		
+		this.codigo = codigo == null ? "" : codigo.toString();
+		this.dataEmissao = DateUtil.formatarDataPTBR(dataEmissao);
+		this.dataVencimento = DateUtil.formatarDataPTBR(dataVencimento);
+		this.valor = CurrencyUtil.formatarValor(valor);
+		this.nossoNumero = nossoNumero;
+	}	
 
 	public String getCota() {
 		return cota;
