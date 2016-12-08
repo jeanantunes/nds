@@ -661,6 +661,7 @@ public class FiadorServiceImpl implements FiadorService {
 			CotaGarantiaFiador cotaGarantiaFiador = new CotaGarantiaFiador();
 			cotaGarantiaFiador.setData(Calendar.getInstance().getTime());
 			cotaGarantiaFiador.setFiador(fiador);
+			cotaGarantiaFiador.setCota(cota);
 			
 			cotaGarantiaRepository.adicionar(cotaGarantiaFiador);
 			cota.setCotaGarantia(cotaGarantiaFiador);

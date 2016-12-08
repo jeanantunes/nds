@@ -618,6 +618,7 @@ fieldset {
 					<td width="65"><input type="text" name="pCodigoProduto"
 						id="produtoEdicaoController-pCodigoProduto" maxlength="30"
 						style="width: 60px;"
+						onkeyup="this.value = this.value.replace(/[^0-9\.]/g,'');"
 						onchange="produtoEdicaoController.pesquisarPorCodigoProduto('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNome', false,
 										undefined,
 										undefined);" />
