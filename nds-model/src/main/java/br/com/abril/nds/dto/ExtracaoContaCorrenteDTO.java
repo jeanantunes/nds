@@ -48,6 +48,10 @@ public class ExtracaoContaCorrenteDTO implements Serializable {
 	
 	@Export(label = "R$ VENDA TOTAL", alignment=Alignment.LEFT, exhibitionOrder = 12)
 	private BigDecimal vendaTotal;
+	
+	private BigDecimal descLogistica;
+	
+	private BigDecimal descCota;
 
 	public Integer getSequenciaMatriz() {
 		return sequenciaMatriz;
@@ -142,7 +146,27 @@ public class ExtracaoContaCorrenteDTO implements Serializable {
 	}
 
 	public void setVendaTotal(BigDecimal vendaTotal) {
-		this.vendaTotal = vendaTotal;
+		if(vendaTotal.toString().equalsIgnoreCase("0E-8")){
+			this.vendaTotal = BigDecimal.ZERO;
+		}else{
+			this.vendaTotal = vendaTotal;
+		}
+	}
+
+	public BigDecimal getDescLogistica() {
+		return descLogistica;
+	}
+
+	public void setDescLogistica(BigDecimal descLogistica) {
+		this.descLogistica = descLogistica;
+	}
+
+	public BigDecimal getDescCota() {
+		return descCota;
+	}
+
+	public void setDescCota(BigDecimal descCota) {
+		this.descCota = descCota;
 	}
 
 }

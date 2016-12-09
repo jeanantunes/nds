@@ -652,6 +652,10 @@ var fechamentoEncalheController = $.extend(true, {
 						return;
 					}
 					
+					exibirMensagem("WARNING", ["Aguarde... o arquivo está sendo gerado!"]);
+					
+					setTimeout(function(){ esconde(false, $('#effectWarning'))}, 2500);
+					
 					var params = [];
 					
 					params.push({name : 'filtro.dataDe', value: dateDe});

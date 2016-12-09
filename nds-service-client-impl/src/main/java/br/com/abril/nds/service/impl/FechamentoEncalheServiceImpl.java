@@ -1964,5 +1964,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     	return fechamentoEncalheRepository.extracaoContaCorrente(filtro);
     }
     
+    @Override
+	@Transactional
+    public List<Integer> extracaoContaCorrente_BuscarCotasObservacoes(FiltroExtracaoContaCorrenteDTO filtro){
+    	return fechamentoEncalheRepository.extracaoContaCorrente_BuscarCotasObservacoes(filtro);
+    }
+    
     
 }

@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -14,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -21,6 +23,19 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.ValidationException;
 
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -50,7 +65,6 @@ import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CalendarioService;
-import br.com.abril.nds.service.ChamadaAntecipadaEncalheService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FornecedorService;
@@ -106,9 +120,6 @@ public class FechamentoEncalheController extends BaseController {
 	
 	@Autowired
 	private CalendarioService calendarioService;
-	
-	@Autowired
-	private ChamadaAntecipadaEncalheService chamadaAntecipadaEncalheService;
 	
 	@Autowired
 	private GerarCobrancaService gerarCobrancaService;
@@ -706,7 +717,7 @@ public class FechamentoEncalheController extends BaseController {
 		if(filtro.getDataDe().equals(filtro.getDataAte())){
 			Integer semanaDe = distribuidorService.obterNumeroSemana(filtro.getDataDe());
 			
-			filtro.setTituloRelatorio(" - "+DateUtil.formatarDataPTBR(filtro.getDataDe())+" a "
+			filtro.setTituloRelatorio(DateUtil.formatarDataPTBR(filtro.getDataDe())+" a "
 					+DateUtil.formatarDataPTBR(filtro.getDataAte())+" - SEMANA "+semanaDe.toString().substring(4, 6));
 		}else{
 			Integer semanaDe = distribuidorService.obterNumeroSemana(filtro.getDataDe());
@@ -723,10 +734,618 @@ public class FechamentoEncalheController extends BaseController {
 		
 		List<ExtracaoContaCorrenteDTO> listExtracoes = this.fechamentoEncalheService.extracaoContaCorrente(filtro);
 		
-		FileExporter.to("Extracao_conta_corrente", FileType.XLS).inHTTPResponse(this.getNDSFileHeader(), filtro,
-				listExtracoes, ExtracaoContaCorrenteDTO.class, this.httpResponse);
+		List<Integer> cotasNaoProcessadas = this.fechamentoEncalheService.extracaoContaCorrente_BuscarCotasObservacoes(filtro);
+		
+		filtro.setBuscarCotasPostergadas(true);
+		List<Integer> cotasPostergadas = this.fechamentoEncalheService.extracaoContaCorrente_BuscarCotasObservacoes(filtro);
+		
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		
+		HSSFSheet aba = workbook.createSheet("Extrato Conta Corrente ");
+		
+		HSSFRow row;
+			
+		Map<Integer, Object[]> mapDadosPlanilha = new TreeMap<Integer, Object[]>();
+		
+		mapDadosPlanilha.put(1, new Object[] {
+				"FECHAMENTO ENCALHE "+filtro.getTituloRelatorio().toUpperCase(),"", "", "", "", "", "", "", "", "", "", "" });
+		
+		mapDadosPlanilha.put(2, new Object[] {
+				"", "", "", "", "", "", "", "","", "","", "" });
+		
+		mapDadosPlanilha.put(3, new Object[] {
+				"SM", "CÓDIGO", "PRODUTO", "EDIÇÃO","R$ CAPA", "PP", "DESCONTO", "REPARTE","VENDA DE ENC.", "ENCALHE","VENDA", "R$ VENDA TOTAL"});
+		
+		Integer id = 4;
+		Integer idSubLines;
+		Integer idPrimeiroQuadro;
+		Integer idSegundoQuadro;
+		
+		BigInteger totalReparte = BigInteger.ZERO;
+		BigInteger totalVendaEnc = BigInteger.ZERO;
+		BigInteger totalEncalhe = BigInteger.ZERO;
+		BigInteger totalVenda = BigInteger.ZERO;
+		BigDecimal totalVendaTotal = BigDecimal.ZERO;
+		
+		BigInteger qtdRemessa = BigInteger.ZERO;
+		BigInteger qtdDevolucao = BigInteger.ZERO;
+		BigInteger qtdVenda = BigInteger.ZERO;
+		BigDecimal brutoRemessa = BigDecimal.ZERO;
+		BigDecimal brutoDevolucao = BigDecimal.ZERO;
+		BigDecimal brutoVenda = BigDecimal.ZERO;
+		BigDecimal descontoCotaRemessa = BigDecimal.ZERO;
+		BigDecimal descontoCotaDevolucao = BigDecimal.ZERO;
+		BigDecimal descontoCotaVenda = BigDecimal.ZERO;
+		BigDecimal descontoDistribRemessa = BigDecimal.ZERO;
+		BigDecimal descontoDistribDevolucao = BigDecimal.ZERO;
+		BigDecimal descontoDistribVenda = BigDecimal.ZERO;
+		BigDecimal liquidoCotaRemessa = BigDecimal.ZERO;
+		BigDecimal liquidoCotaDevolucao = BigDecimal.ZERO;
+		BigDecimal liquidoCotaVenda = BigDecimal.ZERO;
+		BigDecimal liquidoDistribRemessa = BigDecimal.ZERO;
+		BigDecimal liquidoDistribDevolucao = BigDecimal.ZERO;
+		BigDecimal liquidoDistribVenda = BigDecimal.ZERO;
+		
+		for (ExtracaoContaCorrenteDTO dto : listExtracoes) {
+			mapDadosPlanilha.put(id, new Object[] {
+					dto.getSequenciaMatriz().toString(), 
+					dto.getCodigoProduto(),
+					dto.getNomeProduto(),
+					dto.getNumeroEdicao().toString(),
+					formatarCelularValorMonetario(dto.getPrecoCapa()),
+					dto.getPacotePadrao().toString(),
+					formatarCelularValorMonetario(dto.getDesconto()),
+					dto.getReparte().toString(),
+					dto.getVendaEncalhe().toString(),
+					dto.getEncalhe().toString(),
+					dto.getVenda().toString(),
+					formatarCelularValorMonetario(dto.getVendaTotal())
+					});
+			
+			//Totais quadros
+			
+			qtdRemessa = qtdRemessa.add(dto.getReparte());
+			qtdDevolucao = qtdDevolucao.add(dto.getEncalhe());
+			brutoRemessa = brutoRemessa.add(dto.getPrecoCapa().multiply(new BigDecimal(dto.getReparte())));
+			brutoDevolucao = brutoDevolucao.add(dto.getPrecoCapa().multiply(new BigDecimal(dto.getEncalhe())));
+			descontoCotaRemessa = descontoCotaRemessa.add(dto.getDescCota().multiply(new BigDecimal(dto.getReparte())));
+			descontoCotaDevolucao = descontoCotaDevolucao.add(dto.getDescCota().multiply(new BigDecimal(dto.getEncalhe())));
+			descontoDistribRemessa = descontoDistribRemessa.add(dto.getDescLogistica().multiply(new BigDecimal(dto.getReparte())));
+			descontoDistribDevolucao = descontoDistribDevolucao.add(dto.getDescLogistica().multiply(new BigDecimal(dto.getEncalhe())));
+			
+			totalReparte = totalReparte.add(dto.getReparte());
+			totalVendaEnc = totalVendaEnc.add(dto.getVendaEncalhe());
+			totalEncalhe = totalEncalhe.add(dto.getEncalhe());
+			totalVenda = totalVenda.add(dto.getVenda());
+			totalVendaTotal = totalVendaTotal.add(dto.getVendaTotal());
+			
+			++id;
+		}
+		
+		qtdVenda = qtdRemessa.subtract(qtdDevolucao);
+		brutoVenda = brutoRemessa.subtract(brutoDevolucao);
+		descontoCotaVenda = descontoCotaRemessa.subtract(descontoCotaDevolucao);
+		descontoDistribVenda = descontoDistribRemessa.subtract(descontoDistribVenda);
+		
+		liquidoCotaRemessa = brutoRemessa.subtract(descontoCotaRemessa);
+		liquidoCotaDevolucao = brutoDevolucao.subtract(descontoCotaDevolucao);
+		liquidoCotaVenda = brutoVenda.subtract(descontoCotaVenda);
+		
+		liquidoDistribRemessa = brutoRemessa.subtract(descontoDistribRemessa);
+		liquidoDistribDevolucao = brutoDevolucao.subtract(descontoDistribDevolucao);
+		liquidoDistribVenda = brutoVenda.subtract(descontoDistribVenda);
+		
+		idSubLines = id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "TOTAL GERAL", "", "", "", "", "", totalReparte.toString(), totalVendaEnc.toString(),
+					totalEncalhe.toString(), totalVenda.toString(), formatarCelularValorMonetario(totalVendaTotal)});
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "", "", "", "", "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "", "", "", "", "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "", "", "", "", "", "","", "","", "" });
+		++id;
+		
+		idPrimeiroQuadro = id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "VISÃO - COTA", "", "", "", "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "TOTAL", "REMESSA", "DEVOLUÇÃO", "VENDA", "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "QUANTIDADE", qtdRemessa.toString(), qtdDevolucao.toString(), qtdVenda.toString(), "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "BRUTO", formatarCelularValorMonetario(brutoRemessa), formatarCelularValorMonetario(brutoDevolucao), formatarCelularValorMonetario(brutoVenda), "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "DESCONTO_COTA", formatarCelularValorMonetario(descontoCotaRemessa), formatarCelularValorMonetario(descontoCotaDevolucao), formatarCelularValorMonetario(descontoCotaVenda), "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "LIQUIDO", formatarCelularValorMonetario(liquidoCotaRemessa), formatarCelularValorMonetario(liquidoCotaDevolucao), formatarCelularValorMonetario(liquidoCotaVenda), "", "","", "","", "" });
+		
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "", "", "", "", "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "", "", "", "", "", "","", "","", "" });
+		++id;
+		
+		idSegundoQuadro = id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "VISÃO - DISTRIBUIDOR", "", "", "", "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "TOTAL", "REMESSA", "DEVOLUÇÃO", "VENDA", "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "QUANTIDADE", qtdRemessa.toString(), qtdDevolucao.toString(), qtdVenda.toString(), "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "BRUTO", formatarCelularValorMonetario(brutoRemessa), formatarCelularValorMonetario(brutoDevolucao), formatarCelularValorMonetario(brutoVenda), "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "DESCONTO_DISTRIBUIDOR", formatarCelularValorMonetario(descontoDistribRemessa), formatarCelularValorMonetario(descontoDistribDevolucao), formatarCelularValorMonetario(descontoDistribVenda), "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "LIQUIDO", formatarCelularValorMonetario(liquidoDistribRemessa), formatarCelularValorMonetario(liquidoDistribDevolucao), formatarCelularValorMonetario(liquidoDistribVenda), "", "","", "","", "" });
+		
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "", "", "", "", "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "MARGEM DISTRIBUIDOR", "", "", "", "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "", "", "", "", "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "", "", "", "", "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "*Encalhe ainda não processado - Cotas: "+concatenarCotasObservacoes(cotasNaoProcessadas), "", "", "", "", "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "", "", "", "", "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "", "", "", "", "", "", "","", "","", "" });
+		++id;
+		
+		mapDadosPlanilha.put(id, new Object[] {
+				"", "*Encalhe postergado (Fechamento Encalhe) - Cotas: "+concatenarCotasObservacoes(cotasPostergadas), "", "", "", "", "", "","", "","", "" });
+		++id;
+		
+		Set<Integer> keyId = mapDadosPlanilha.keySet();
+		
+		int rowid = 0;
+		
+		List<Cell> referenceFirstLine = new ArrayList<>();
+		List<Cell> referenceSubHeader = new ArrayList<>();
+		
+		for (Integer key : keyId) {
+			row = aba.createRow(rowid++);
+			Object [] objectArr = mapDadosPlanilha.get(key);
+			int cellid = 0;
+			
+			for (Object obj : objectArr) {
+				Cell cell = row.createCell(cellid++);
+				cell.setCellValue((String)obj);
+				
+				aba.autoSizeColumn(cell.getColumnIndex());
+				
+				if(key.equals(1) || key.equals(2)){
+					referenceFirstLine.add(cell);
+					continue;
+				}
+				
+				if(key.equals(3)){
+					referenceSubHeader.add(cell);
+					continue;
+				}
+				
+				if(key.equals(idSubLines)){
+			        cell.setCellStyle(getStyleSubLines(aba));
+			        continue;
+				}
+				
+				if(key <= (listExtracoes.size()+3)){
+					CellStyle style = aba.getWorkbook().createCellStyle();
+			        setBorderPadrao(style);
+					cell.setCellStyle(style);
+				}
+				
+				if(key.equals(idPrimeiroQuadro+1)){
+					CellStyle cellStyle = aba.getWorkbook().createCellStyle();
+					cellStyle.setFont(getFontPadrao(aba, 10));
+					cell.setCellStyle(cellStyle);
+				}
+				
+			}
+		}
+		
+		for (Cell cell : referenceFirstLine){
+			CellStyle cellStyle = this.getHeaderColumnCellStyle(aba);
+			cell.setCellStyle(cellStyle);
+		}
+		
+		for (Cell cell : referenceSubHeader) {
+			CellStyle cellStyle = this.getSubHeaderColumnCellStyle(aba);
+			cell.setCellStyle(cellStyle);
+		}
+		
+		// getStyleHeaderPrimeiroQuadro
+		aba.addMergedRegion(CellRangeAddress.valueOf("C"+idPrimeiroQuadro+":F"+idPrimeiroQuadro));
+		aba.addMergedRegion(CellRangeAddress.valueOf("C"+idSegundoQuadro+":F"+idSegundoQuadro));
+		
+		this.setStyleHeaderPrimeiroQuadro(aba, idPrimeiroQuadro);
+		this.setStyleSubHeaderPrimeiroQuadro(aba, idPrimeiroQuadro);
+		
+		this.setStyleHeaderSegundoQuadro(aba, idSegundoQuadro);
+		this.setStyleSubHeaderSegundoQuadro(aba, idSegundoQuadro);
+		
+		this.setStyleLinhasQuadro(aba, idPrimeiroQuadro);
+		this.setStyleLinhasQuadro(aba, idSegundoQuadro);
+		
+		this.setStyleLinhasResumo(aba, idSegundoQuadro);
+		
+		this.setFormulaMargemDistribuidor(aba, idSegundoQuadro);
+		
+		this.setFormatCurrencyRangerCell(aba, "D"+(idPrimeiroQuadro+3)+":F"+(idPrimeiroQuadro+5));
+		
+		this.setFormatCurrencyRangerCell(aba, "D"+(idSegundoQuadro+3)+":F"+(idSegundoQuadro+5));
+		
+		this.setFormatLineFrameRangerCell(aba, "D"+(idPrimeiroQuadro+2)+":F"+(idPrimeiroQuadro+2));
+		
+		this.setFormatLineFrameRangerCell(aba, "D"+(idSegundoQuadro+2)+":F"+(idSegundoQuadro+2));
+		
+		this.setObservacoes(aba, idSegundoQuadro+10);
+		
+		this.setObservacoes(aba, idSegundoQuadro+13);
+		
+		this.autoSizeColumns(workbook);
+		
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=Extracao_conta_corrente.xls");
+		
+		OutputStream output;
 
-		result.nothing();
+        output = this.httpResponse.getOutputStream();
+        
+        ByteArrayOutputStream outBA = new ByteArrayOutputStream();
+        workbook.write(outBA);
+		
+        output.write(outBA.toByteArray());
+        
+        output.flush();
+        output.close();
+
+        httpResponse.getOutputStream().close();
+		
+	}
+	
+	private String formatarCelularValorMonetario(BigDecimal valor){
+		
+		return CurrencyUtil.arredondarValorParaDuasCasas(valor).toString().replace('.', ',');
+	}
+	
+	private String concatenarCotasObservacoes(List<Integer> cotas){
+		
+		String cotasConcatenadas = "";
+		
+		if(!cotas.isEmpty()){
+			for (int i = 0; i < cotas.size(); i++) {
+				if(i==0){
+					cotasConcatenadas += ""+cotas.get(i);
+				}else{
+					cotasConcatenadas += ", "+cotas.get(i);
+				}
+				if(i == (cotas.size()-1)){
+					cotasConcatenadas += ".";
+				}
+			}
+		}
+		
+		return cotasConcatenadas;
+	}
+
+	private void setStyleHeaderPrimeiroQuadro(HSSFSheet aba, Integer idPrimeiroQuadro) {
+		
+		CellRangeAddress region = CellRangeAddress.valueOf("C"+idPrimeiroQuadro+":F"+idPrimeiroQuadro);
+		
+		setStyleHeaderQuadro(aba, region, false, true);
+	}
+	
+	private void setStyleSubHeaderPrimeiroQuadro(HSSFSheet aba, Integer idPrimeiroQuadro) {
+		
+		CellRangeAddress region = CellRangeAddress.valueOf("C"+(idPrimeiroQuadro+1)+":G"+(idPrimeiroQuadro+1));
+		
+		setStyleHeaderQuadro(aba, region, true, true);
+	}
+	
+	private void setStyleHeaderSegundoQuadro(HSSFSheet aba, Integer idPrimeiroQuadro) {
+		
+		CellRangeAddress region = CellRangeAddress.valueOf("C"+idPrimeiroQuadro+":F"+idPrimeiroQuadro);
+		
+		setStyleHeaderQuadro(aba, region, false, false);
+	}
+	
+	private void setStyleSubHeaderSegundoQuadro(HSSFSheet aba, Integer idPrimeiroQuadro) {
+		
+		CellRangeAddress region = CellRangeAddress.valueOf("C"+(idPrimeiroQuadro+1)+":G"+(idPrimeiroQuadro+1));
+		
+		setStyleHeaderQuadro(aba, region, true, false);
+	}
+
+	private void setStyleHeaderQuadro(HSSFSheet aba, CellRangeAddress region, boolean isSubHead, boolean isPrimeiro) {
+		
+		CellStyle style = aba.getWorkbook().createCellStyle();
+		
+		style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+		style.setAlignment(CellStyle.ALIGN_CENTER_SELECTION);
+		style.setFont(getFontPadrao(aba, 10));
+		
+		if(isPrimeiro){
+			style.setFillForegroundColor(HSSFColor.PALE_BLUE.index);
+		}else{
+			style.setFillForegroundColor(HSSFColor.LIME.index);
+		}
+		
+		style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		
+		if(isSubHead){
+			style.setBorderBottom(CellStyle.BORDER_THIN);
+		}
+		
+		for(int i=region.getFirstRow();i<=region.getLastRow();i++){
+			Row rowRager = aba.getRow(i);
+			for(int j=region.getFirstColumn();j<region.getLastColumn();j++){
+				Cell cellRanger = rowRager.getCell(j);
+				cellRanger.setCellStyle(style);
+			}
+		}
+	}
+	
+	private void setStyleLinhasQuadro(HSSFSheet aba, Integer idPrimeiroQuadro) {
+		
+		CellRangeAddress region = CellRangeAddress.valueOf("C"+(idPrimeiroQuadro+2)+":C"+(idPrimeiroQuadro+5));
+		
+		CellStyle style = aba.getWorkbook().createCellStyle();
+		
+		style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+		style.setAlignment(CellStyle.ALIGN_CENTER_SELECTION);
+		
+		style.setBorderBottom(CellStyle.BORDER_THIN);
+		
+		for(int i=region.getFirstRow();i<=region.getLastRow();i++){
+			Row rowRager = aba.getRow(i);
+			for(int j=region.getFirstColumn();j<=region.getLastColumn();j++){
+				Cell cellRanger = rowRager.getCell(j);
+				cellRanger.setCellStyle(style);
+			}
+		}
+	}
+	
+	private void setStyleLinhasResumo(HSSFSheet aba, Integer idSegundoQuadro) {
+		
+		CellRangeAddress region = CellRangeAddress.valueOf("C"+(idSegundoQuadro+7)+":F"+(idSegundoQuadro+7));
+		
+		CellStyle style = aba.getWorkbook().createCellStyle();
+		
+		style.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+		style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		
+		style.setFont(getFontPadrao(aba, 10));
+		
+		for(int i=region.getFirstRow();i<=region.getLastRow();i++){
+			Row rowRager = aba.getRow(i);
+			for(int j=region.getFirstColumn();j<=region.getLastColumn();j++){
+				Cell cellRanger = rowRager.getCell(j);
+				cellRanger.setCellStyle(style);
+			}
+		}
+	}
+	
+	private void setFormulaMargemDistribuidor(HSSFSheet aba, Integer idSegundoQuadro) {
+		
+		CellRangeAddress region = CellRangeAddress.valueOf("F"+(idSegundoQuadro+7)+":F"+(idSegundoQuadro+7));
+		
+		CellStyle style = aba.getWorkbook().createCellStyle();
+		
+		style.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+		style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		
+		style.setFont(getFontPadrao(aba, 10));
+		
+		DataFormat df = aba.getWorkbook().createDataFormat();
+		style.setDataFormat(df.getFormat("$#.###,##"));
+		
+		for(int i=region.getFirstRow();i<=region.getLastRow();i++){
+			Row rowRager = aba.getRow(i);
+			for(int j=region.getFirstColumn();j<=region.getLastColumn();j++){
+				Cell cellRanger = rowRager.getCell(j);
+				cellRanger.setCellFormula("F"+(idSegundoQuadro+5)+"-F"+(idSegundoQuadro-3));
+				cellRanger.setCellStyle(style);
+			}
+		}
+	}
+	
+	private void setFormatCurrencyRangerCell(HSSFSheet aba, String rangerCell) {
+		
+		CellRangeAddress region = CellRangeAddress.valueOf(rangerCell);
+		
+		CellStyle style = aba.getWorkbook().createCellStyle();
+		
+		style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+		style.setAlignment(CellStyle.ALIGN_CENTER_SELECTION);
+		
+		style.setBorderBottom(CellStyle.BORDER_THIN);
+		
+		DataFormat df = aba.getWorkbook().createDataFormat();
+		style.setDataFormat(df.getFormat("$#.###,##"));
+		
+		for(int i=region.getFirstRow();i<=region.getLastRow();i++){
+			Row rowRager = aba.getRow(i);
+			for(int j=region.getFirstColumn();j<=region.getLastColumn();j++){
+				Cell cellRanger = rowRager.getCell(j);
+				cellRanger.setCellFormula(1+"*"+new BigDecimal(cellRanger.getStringCellValue().replace(',', '.')));
+				cellRanger.setCellStyle(style);
+			}
+		}
+	}
+	
+	private void setFormatLineFrameRangerCell(HSSFSheet aba, String rangerCell) {
+		
+		CellRangeAddress region = CellRangeAddress.valueOf(rangerCell);
+		
+		CellStyle style = aba.getWorkbook().createCellStyle();
+		
+		style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+		style.setAlignment(CellStyle.ALIGN_CENTER_SELECTION);
+		
+		style.setBorderBottom(CellStyle.BORDER_THIN);
+		
+		for(int i=region.getFirstRow();i<=region.getLastRow();i++){
+			Row rowRager = aba.getRow(i);
+			for(int j=region.getFirstColumn();j<=region.getLastColumn();j++){
+				Cell cellRanger = rowRager.getCell(j);
+				cellRanger.setCellStyle(style);
+			}
+		}
+	}
+	
+	private CellStyle getStyleSubLines(HSSFSheet aba) {
+		CellStyle style = aba.getWorkbook().createCellStyle();
+		
+		style.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+		style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		
+		style.setFont(getFontPadrao(aba, 10));
+		
+		return style;
+	}
+	
+	private CellStyle getHeaderColumnCellStyle(HSSFSheet sheet) {
+
+		sheet.addMergedRegion(CellRangeAddress.valueOf("A1:L2"));
+		
+		final CellStyle style = sheet.getWorkbook().createCellStyle();
+
+        style.setFillForegroundColor(HSSFColor.WHITE.index);
+
+        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        
+        style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        style.setAlignment(CellStyle.ALIGN_CENTER_SELECTION);
+        
+        style.setFont(getFontPadrao(sheet, 13));
+        
+		return style;
+	}
+	
+	private CellStyle getSubHeaderColumnCellStyle(HSSFSheet sheet) {
+
+		final CellStyle style = sheet.getWorkbook().createCellStyle();
+
+        style.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+
+        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        
+        setBorderPadrao(style);
+        
+        style.setAlignment((short)1);
+
+        style.setFont(getFontPadrao(sheet, 10));
+		
+		return style;
+	}
+	
+	private void setObservacoes(HSSFSheet aba, Integer idObservacoes) {
+		
+		aba.addMergedRegion(CellRangeAddress.valueOf("B"+idObservacoes+":L"+(idObservacoes+1)));
+
+		CellRangeAddress region = CellRangeAddress.valueOf("B"+idObservacoes+":L"+idObservacoes);
+		
+		CellStyle style = aba.getWorkbook().createCellStyle();
+		style.setWrapText(true);
+		style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+		
+//		style.setAlignment(CellStyle.ALIGN_RIGHT);
+		
+		for(int i=region.getFirstRow();i<=region.getLastRow();i++){
+			Row rowRager = aba.getRow(i);
+			for(int j=region.getFirstColumn();j<=region.getLastColumn();j++){
+				Cell cellRanger = rowRager.getCell(j);
+				cellRanger.setCellStyle(style);
+			}
+		}
+	}
+	
+	private void setBorderPadrao(final CellStyle style) {
+		style.setBorderBottom(CellStyle.BORDER_THIN);
+        style.setBorderLeft(CellStyle.BORDER_THIN);
+        style.setBorderRight(CellStyle.BORDER_THIN);
+        style.setBorderTop(CellStyle.BORDER_THIN);
+	}
+
+	private Font getFontPadrao(HSSFSheet sheet, int sizeFont) {
+		
+		final Font font = sheet.getWorkbook().createFont();
+        
+        font.setFontName("Arial");
+        font.setFontHeightInPoints((short)sizeFont);
+        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        font.setItalic(false);
+        font.setColor(HSSFColor.BLACK.index);
+        
+		return font;
+	}
+	
+	private void autoSizeColumns(Workbook workbook) {
+	    int numberOfSheets = workbook.getNumberOfSheets();
+	    for (int i = 0; i < numberOfSheets; i++) {
+	        Sheet sheet = workbook.getSheetAt(i);
+	        if (sheet.getPhysicalNumberOfRows() > 0) {
+	            Row row = sheet.getRow(0);
+	            Iterator<Cell> cellIterator = row.cellIterator();
+	            while (cellIterator.hasNext()) {
+	                Cell cell = cellIterator.next();
+	                int columnIndex = cell.getColumnIndex();
+	                sheet.autoSizeColumn(columnIndex);
+	            }
+	        }
+	    }
 	}
 	
 	@Path("/encerrarOperacaoEncalhe")

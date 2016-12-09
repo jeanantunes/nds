@@ -108,4 +108,6 @@ public interface FechamentoEncalheService {
 	boolean existeFechamentoEncalhePorCota(Date dataOperacao, Integer numeroCota);
 
 	List<ExtracaoContaCorrenteDTO> extracaoContaCorrente(FiltroExtracaoContaCorrenteDTO filtro);
+
+	List<Integer> extracaoContaCorrente_BuscarCotasObservacoes(FiltroExtracaoContaCorrenteDTO filtro);
 }

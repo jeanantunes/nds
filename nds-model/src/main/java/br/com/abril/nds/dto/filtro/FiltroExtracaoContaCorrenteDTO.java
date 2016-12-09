@@ -18,6 +18,8 @@ public class FiltroExtracaoContaCorrenteDTO extends FiltroDTO implements Seriali
 	private Date dataDe;
 	private Date dataAte;
 	
+	private boolean buscarCotasPostergadas;
+	
 	public String getTituloRelatorio() {
 		return tituloRelatorio;
 	}
@@ -36,6 +38,11 @@ public class FiltroExtracaoContaCorrenteDTO extends FiltroDTO implements Seriali
 	public void setDataAte(Date dataAte) {
 		this.dataAte = dataAte;
 	}
+	public boolean isBuscarCotasPostergadas() {
+		return buscarCotasPostergadas;
+	}
+	public void setBuscarCotasPostergadas(boolean buscarCotasPostergadas) {
+		this.buscarCotasPostergadas = buscarCotasPostergadas;
+	}
 	
-
 }

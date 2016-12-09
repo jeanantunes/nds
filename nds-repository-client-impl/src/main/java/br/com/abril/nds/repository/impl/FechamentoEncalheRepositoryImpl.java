@@ -1954,6 +1954,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     	sql.append(" 	pe.pacote_padrao as pacotePadrao, ");
     	sql.append(" 	mec.VALOR_DESCONTO as desconto, ");
     	sql.append(" 	sum(ce.qtde) as reparte, ");
+    	sql.append("    (mec.PRECO_VENDA - ((mec.PRECO_VENDA * descLog.percentual_desconto)/100)) as descLogistica, ");
+		sql.append(" 	(mec.PRECO_VENDA - ((mec.PRECO_VENDA * mec.VALOR_DESCONTO)/100)) as descCota, ");
     	sql.append(" 	coalesce(sum(vp.QNT_produto), 0) as vendaEncalhe, ");
     	sql.append(" 	(select sum(ce2.qtde) ");
     	sql.append(" 		from conferencia_encalhe ce2 ");
@@ -1972,7 +1974,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     	sql.append(" 					  and ccec2.status = 'CONCLUIDO' ");
     	sql.append(" 					  and ccec2.cota_id = ccec.cota_id ");
     	sql.append(" 					  and ce2.produto_edicao_id = ce.produto_edicao_id)) as venda, ");
-    	sql.append(" 	  ((sum(ce.qtde)) - coalesce(sum(vp.QNT_produto), 0) -  ");
+    	sql.append(" 	  coalesce(((sum(ce.qtde)) - coalesce(sum(vp.QNT_produto), 0) -  ");
     	sql.append(" 		 	(select sum(ce2.qtde) ");
     	sql.append(" 				from conferencia_encalhe ce2 ");
     	sql.append(" 				join controle_conferencia_encalhe_cota ccec2 ");
@@ -1980,7 +1982,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     	sql.append(" 				where ce2.data >= :dataDe and ce2.data <= :dataAte ");
     	sql.append(" 					  and ccec2.status = 'CONCLUIDO' ");
     	sql.append(" 					  and ccec2.cota_id = ccec.cota_id ");
-    	sql.append(" 					  and ce2.produto_edicao_id = ce.produto_edicao_id))*mec.preco_venda as vendaTotal ");
+    	sql.append(" 					  and ce2.produto_edicao_id = ce.produto_edicao_id))*mec.preco_venda, 0) as vendaTotal ");
     	sql.append(" from ");
     	sql.append(" 	produto pd ");
     	sql.append(" 	join produto_edicao pe ");
@@ -2005,6 +2007,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     	sql.append(" 		and vp.id_produto_edicao = pe.produto_id ");
     	sql.append(" 		and vp.id_cota = ct.id ");
     	sql.append(" 		and vp.tipo_venda_encalhe = 'ENCALHE' ");
+    	sql.append(" 	join desconto_logistica descLog ");
+    	sql.append(" 		on pe.desconto_logistica_id = descLog.id ");
+    	
     	sql.append(" where ");
     	
     	sql.append(" 	ce.data >= :dataDe ");
@@ -2028,12 +2033,49 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         ((SQLQuery) query).addScalar("pacotePadrao", StandardBasicTypes.INTEGER);
         ((SQLQuery) query).addScalar("desconto", StandardBasicTypes.BIG_DECIMAL);
         ((SQLQuery) query).addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
+        ((SQLQuery) query).addScalar("descLogistica", StandardBasicTypes.BIG_DECIMAL);
+        ((SQLQuery) query).addScalar("descCota", StandardBasicTypes.BIG_DECIMAL);
         ((SQLQuery) query).addScalar("vendaEncalhe", StandardBasicTypes.BIG_INTEGER);
         ((SQLQuery) query).addScalar("encalhe", StandardBasicTypes.BIG_INTEGER);
         ((SQLQuery) query).addScalar("venda", StandardBasicTypes.BIG_INTEGER);
         ((SQLQuery) query).addScalar("vendaTotal", StandardBasicTypes.BIG_DECIMAL);
         
     	
+        return query.list();
+    }
+    
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Integer> extracaoContaCorrente_BuscarCotasObservacoes(FiltroExtracaoContaCorrenteDTO filtro){
+
+    	StringBuilder sql = new StringBuilder();
+    	
+    	sql.append(" select c.numero_cota ");
+    	sql.append(" 	from chamada_encalhe ce ");
+    	sql.append(" 		join chamada_encalhe_cota cec ");
+    	sql.append(" 			on cec.chamada_encalhe_id = ce.id ");
+    	sql.append(" 		join cota c ");
+    	sql.append(" 			on cec.cota_id = c.id ");
+    	sql.append(" 	where ce.data_recolhimento >= :dataDe and ce.data_recolhimento <= :dataAte ");
+    	
+    	if(filtro.isBuscarCotasPostergadas()){
+    		sql.append(" 		and cec.postergado is true ");
+    	}else{
+    		sql.append(" and cec.cota_id not in (select ccec.cota_id from conferencia_encalhe cfe ");
+    		sql.append(" 				join controle_conferencia_encalhe_cota ccec ");
+    		sql.append(" 					on cfe.controle_conferencia_encalhe_cota_id = ccec.id ");
+    		sql.append(" 				where cfe.`DATA` = ce.data_recolhimento ");
+    		sql.append(" 					and cfe.chamada_encalhe_cota_id = cec.id) ");
+    	}
+    	
+    	sql.append(" 	group by c.numero_cota; ");
+    	
+    	
+    	SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+        
+    	query.setParameter("dataDe", filtro.getDataDe());
+        query.setParameter("dataAte", filtro.getDataAte());
+        
         return query.list();
     }
     
