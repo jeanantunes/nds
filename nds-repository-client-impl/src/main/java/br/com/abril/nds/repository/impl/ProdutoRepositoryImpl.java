@@ -18,6 +18,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
+import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -477,5 +478,19 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		
 		return (Produto) query.uniqueResult();
 		
+	}
+	
+
+	
+	@Override
+	public List<Produto> obterProdutosPorDescontoLogistica(DescontoLogistica descontoLogistica) {
+		
+		List<Produto> list = getSession().createCriteria(Produto.class)
+				.add(Restrictions.eq("descontoLogistica", descontoLogistica))
+				.addOrder(Order.asc("nome"))
+				//.setMaxResults(1)
+				.list();
+		
+        return list;
 	}
 }

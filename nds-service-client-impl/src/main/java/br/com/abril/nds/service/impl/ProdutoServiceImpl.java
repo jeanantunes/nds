@@ -506,4 +506,10 @@ public class ProdutoServiceImpl implements ProdutoService {
     		return false;
     	}
 	}
+	
+	@Override
+	@Transactional
+	public List<Produto> obterProdutosPorDescontoLogistica(DescontoLogistica descontoLogistica){
+		return produtoRepository.obterProdutosPorDescontoLogistica(descontoLogistica);
+	}
 }
