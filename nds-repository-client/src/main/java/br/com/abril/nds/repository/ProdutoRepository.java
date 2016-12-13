@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
+import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 
@@ -94,5 +95,7 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	Produto obterProdutoPorICDBaseadoNoPrimeiroBarra(String codigo_icd);
 	
 	Produto obterProdutoPorICDSegmentoNotNull(String codigo_icd);
+	
+	List<Produto> obterProdutosPorDescontoLogistica(DescontoLogistica descontoLogistica);
 	
 }
