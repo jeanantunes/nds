@@ -1,7 +1,10 @@
 package br.com.abril.nds.client.vo;
 
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Footer;
+import br.com.abril.nds.util.export.FooterType;
 
 @Exportable
 public class ConsultaEncalheVO {
@@ -37,17 +40,45 @@ public class ConsultaEncalheVO {
 	@Export(label="Encalhe")
 	private String encalhe;
 	
+	@Export(label="Venda")
+	@Footer(type = FooterType.COUNT)
+	private String venda;
+	
 	@Export(label="Fornecedor")
 	private String fornecedor;
 	
-	@Export(label="Valor R$")
-	private String valor;
+	@Export(label="Rep Capa")
+	@Footer(type = FooterType.SUM,columnType = ColumnType.MOEDA_QUATRO_CASAS)
+	private String valorRepartePrecoCapa;
 	
-	@Export(label="Valor c/ Desc.")
-	private String valorComDesconto;
+	@Export(label="Encalhe Valor R$")
+	@Footer(type = FooterType.SUM,columnType = ColumnType.MOEDA_QUATRO_CASAS)
+	private String valorEncalhePrecoCapa;
+	
+	@Export(label="Venda Capa")
+	@Footer(type = FooterType.SUM,columnType = ColumnType.MOEDA_QUATRO_CASAS)
+	private String valorVenda;
+	
+	@Export(label="Rep Desc.")
+	@Footer(type = FooterType.SUM,columnType = ColumnType.MOEDA_QUATRO_CASAS)
+	private String valorReparteDesconto;
+
+	@Export(label="Encalhe valor c/ Desc.")
+	@Footer(type = FooterType.SUM,columnType = ColumnType.MOEDA_QUATRO_CASAS)
+	private String valorEncalheDesconto;
+	
+	@Export(label="Venda c/ Desc")
+	@Footer(type = FooterType.SUM,columnType = ColumnType.MOEDA_QUATRO_CASAS)
+	private String valorVendaDesc;
 	
 	@Export(label="Recolhimento")
 	private String recolhimento;
+	
+	private String valorComDesconto;
+	
+	private String valor;
+	
+	private Integer totalQtdeVenda;
 
 	private boolean indPossuiObservacaoConferenciaEncalhe;
 	
@@ -186,6 +217,14 @@ public class ConsultaEncalheVO {
 	public void setEncalhe(String encalhe) {
 		this.encalhe = encalhe;
 	}
+	
+	public String getVenda() {
+		return venda;
+	}
+
+	public void setVenda(String venda) {
+		this.venda = venda;
+	}
 
 	/**
 	 * Obtém fornecedor
@@ -202,6 +241,30 @@ public class ConsultaEncalheVO {
 	 */
 	public void setFornecedor(String fornecedor) {
 		this.fornecedor = fornecedor;
+	}
+	
+	public String getValorRepartePrecoCapa() {
+		return valorRepartePrecoCapa;
+	}
+
+	public void setValorRepartePrecoCapa(String valorRepartePrecoCapa) {
+		this.valorRepartePrecoCapa = valorRepartePrecoCapa;
+	}
+	
+	public String getValorEncalhePrecoCapa() {
+		return valorEncalhePrecoCapa;
+	}
+
+	public void setValorEncalhePrecoCapa(String valorEncalhePrecoCapa) {
+		this.valorEncalhePrecoCapa = valorEncalhePrecoCapa;
+	}
+	
+	public String getValorVenda() {
+		return valorVenda;
+	}
+
+	public void setValorVenda(String valorVenda) {
+		this.valorVenda = valorVenda;
 	}
 
 	/**
@@ -220,19 +283,13 @@ public class ConsultaEncalheVO {
 	public void setRecolhimento(String recolhimento) {
 		this.recolhimento = recolhimento;
 	}
-
-	/**
-	 * @return the valor
-	 */
-	public String getValor() {
-		return valor;
+	
+	public String getValorVendaDesc() {
+		return valorVendaDesc;
 	}
 
-	/**
-	 * @param valor the valor to set
-	 */
-	public void setValor(String valor) {
-		this.valor = valor;
+	public void setValorVendaDesc(String valorVendaDesc) {
+		this.valorVendaDesc = valorVendaDesc;
 	}
 
 	/**
@@ -247,6 +304,38 @@ public class ConsultaEncalheVO {
 	 */
 	public void setValorComDesconto(String valorComDesconto) {
 		this.valorComDesconto = valorComDesconto;
+	}
+	
+	public String getValorReparteDesconto() {
+		return valorReparteDesconto;
+	}
+	
+	public String getValor() {
+		return valor;
+	}
+
+	public void setValor(String valor) {
+		this.valor = valor;
+	}
+	
+	public Integer getTotalQtdeVenda() {
+		return totalQtdeVenda;
+	}
+
+	public void setTotalQtdeVenda(Integer totalQtdeVenda) {
+		this.totalQtdeVenda = totalQtdeVenda;
+	}
+
+	public void setValorReparteDesconto(String valorReparteDesconto) {
+		this.valorReparteDesconto = valorReparteDesconto;
+	}
+
+	public String getValorEncalheDesconto() {
+		return valorEncalheDesconto;
+	}
+
+	public void setValorEncalheDesconto(String valorEncalheDesconto) {
+		this.valorEncalheDesconto = valorEncalheDesconto;
 	}
 
 	/**
@@ -304,7 +393,20 @@ public class ConsultaEncalheVO {
 	public void setIdCota(String idCota) {
 		this.idCota = idCota;
 	}
-
+	
+//	@Export(label = "Total Desc $", alignment= Alignment.RIGHT, exhibitionOrder = 11, columnType = ColumnType.MOEDA_QUATRO_CASAS, widthPercent = 12.5f)
+//	@Footer(type = FooterType.SUM, columnType = ColumnType.MOEDA_QUATRO_CASAS)
+//	public Integer getTotalDesconto() {
+//		return totalDesconto;
+//	}
+//
+//	public void setTotalDesconto(BigDecimal totalDesconto) {
+//		this.totalDesconto = totalDesconto;
+//		if(totalDesconto != null){
+//			totalDescontoFormatado = CurrencyUtil.formatarValorQuatroCasas(totalDesconto);
+//		}
+//	}
+	
 	public boolean getIndPossuiObservacaoConferenciaEncalhe() {
 		return indPossuiObservacaoConferenciaEncalhe;
 	}

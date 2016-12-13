@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -777,14 +778,22 @@ public class ConsultaEncalheController extends BaseController {
 		String precoComDesconto 	= null;
 		String reparte 				= null;
 		String encalhe 				= null;
+		String venda 				= null;
 		String idFornecedor			= null;
 		String idCota				= null;
 		String fornecedor			= null;
-		String valor 				= null;
+		String valorRepartePrecoCapa = null;
+		String valorEncalhePrecoCapa = null;
+		String valorVenda           = null;
+		String valorRepartePrecoDesc = null;
+		String valorEncalhePrecoDes = null;
+		String valorVendaDesc		= null;
 		String valorComDesconto		= null;
 		String recolhimento 		= null;
 		String dataRecolhimento		= null;
 		String dataMovimento		= null;
+		String valor  		        = null;
+		Integer totalQtdeVenda      = 0;
 		
 		for(ConsultaEncalheDTO consultaEncalheDTO : listaConsultaEncalheDTO) {
 			
@@ -796,15 +805,32 @@ public class ConsultaEncalheController extends BaseController {
 			precoComDesconto 	= CurrencyUtil.formatarValorQuatroCasas(consultaEncalheDTO.getPrecoComDesconto());
 			reparte 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getReparte() == null ? 0 : consultaEncalheDTO.getReparte().intValue());
 			encalhe 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getEncalhe() == null ? 0 : consultaEncalheDTO.getEncalhe().intValue());
+			valor               = CurrencyUtil.formatarValor(consultaEncalheDTO.getValor());
+			
+			if(consultaEncalheDTO.getEncalhe() != null && consultaEncalheDTO.getReparte() != null) {				
+				venda 			    = getValorQtdeIntegerFormatado(consultaEncalheDTO.getReparte().intValue() - consultaEncalheDTO.getEncalhe().intValue());
+				BigDecimal calculoVenda = new BigDecimal(consultaEncalheDTO.getReparte().intValue() - consultaEncalheDTO.getEncalhe().intValue());
+				valorVenda          = CurrencyUtil.formatarValor(calculoVenda.multiply(consultaEncalheDTO.getPrecoVenda()));				
+				valorVendaDesc 		= CurrencyUtil.formatarValor(calculoVenda.multiply(consultaEncalheDTO.getPrecoComDesconto()));
+				totalQtdeVenda = totalQtdeVenda + (consultaEncalheDTO.getReparte().intValue() - consultaEncalheDTO.getEncalhe().intValue());
+			}
+			
+			if(consultaEncalheDTO.getEncalhe() != null && consultaEncalheDTO.getReparte() != null) {		
+				valorRepartePrecoDesc = CurrencyUtil.formatarValor(consultaEncalheDTO.getReparte().multiply(consultaEncalheDTO.getPrecoComDesconto()));
+				valorEncalhePrecoDes  = CurrencyUtil.formatarValor(consultaEncalheDTO.getEncalhe().multiply(consultaEncalheDTO.getPrecoComDesconto()));
+			}
+			
 			idFornecedor		= (consultaEncalheDTO.getIdFornecedor()!=null) ? consultaEncalheDTO.getIdFornecedor().toString() : "";
 			idCota				= (consultaEncalheDTO.getIdCota()!=null) ? consultaEncalheDTO.getIdCota().toString() : "";
 			fornecedor			= (consultaEncalheDTO.getFornecedor()!=null) ? consultaEncalheDTO.getFornecedor() : "";
-			valor 				= CurrencyUtil.formatarValor(consultaEncalheDTO.getValor());
+			valorRepartePrecoCapa = CurrencyUtil.formatarValor(consultaEncalheDTO.getPrecoVenda().multiply(consultaEncalheDTO.getReparte()));
+			valorEncalhePrecoCapa = CurrencyUtil.formatarValor(consultaEncalheDTO.getPrecoVenda().multiply(consultaEncalheDTO.getEncalhe()));
 			valorComDesconto	= CurrencyUtil.formatarValorQuatroCasas(consultaEncalheDTO.getValorComDesconto());
 			dataRecolhimento	= (consultaEncalheDTO.getDataDoRecolhimentoDistribuidor() != null) ? DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor()) : "" ;
 			dataMovimento		= (consultaEncalheDTO.getDataMovimento() != null) ? DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataMovimento()) : "" ;
 			
 			boolean diaUnico = DateUtils.isSameDay(filtro.getDataRecolhimentoInicial(), filtro.getDataRecolhimentoFinal());
+			
 			
 			if( !diaUnico ) {
 				
@@ -840,15 +866,24 @@ public class ConsultaEncalheController extends BaseController {
 			consultaEncalheVO.setPrecoComDesconto(precoComDesconto);
 			consultaEncalheVO.setReparte(reparte);
 			consultaEncalheVO.setEncalhe(encalhe);
+			consultaEncalheVO.setVenda(venda);
 			consultaEncalheVO.setIdCota(idCota);
 			consultaEncalheVO.setIdFornecedor(idFornecedor);
 			consultaEncalheVO.setFornecedor(fornecedor);
-			consultaEncalheVO.setValor(valor);
+			consultaEncalheVO.setValorRepartePrecoCapa(valorRepartePrecoCapa);
+			consultaEncalheVO.setValorEncalhePrecoCapa(valorEncalhePrecoCapa);
+			consultaEncalheVO.setValorVenda(valorVenda);
+			consultaEncalheVO.setValorVendaDesc(valorVendaDesc);
 			consultaEncalheVO.setValorComDesconto(valorComDesconto);
+			consultaEncalheVO.setValor(valor);
+			consultaEncalheVO.setValorReparteDesconto(valorRepartePrecoDesc);
+			consultaEncalheVO.setValorEncalheDesconto(valorEncalhePrecoDes);
 			consultaEncalheVO.setRecolhimento(recolhimento);
 			consultaEncalheVO.setDataMovimento(dataMovimento);
 			consultaEncalheVO.setDataRecolhimento(dataRecolhimento);
 			consultaEncalheVO.setIndPossuiObservacaoConferenciaEncalhe(consultaEncalheDTO.getIndPossuiObservacaoConferenciaEncalhe());
+			consultaEncalheVO.setTotalQtdeVenda(totalQtdeVenda);
+			
 			listaResultadosVO.add(consultaEncalheVO);
 		}
 		
@@ -860,9 +895,6 @@ public class ConsultaEncalheController extends BaseController {
 		List<ConsultaEncalheDetalheReparteVO> listaResultadosVO = new ArrayList<ConsultaEncalheDetalheReparteVO>();
 		
 		ConsultaEncalheDetalheReparteVO consultaEncalheDetalheReparteVO = null;
-		
-	
-		
 		
 		for(CotaReparteProdutoDTO consultaEncalheDetalheDTO: listaConsultaEncalheDetalheDTO) {
 			

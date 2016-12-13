@@ -11,7 +11,6 @@ public class ConsultaEncalheDTO {
 	
 	private Long idProdutoEdicao;
 	
-	
 	private Long idBox;
 	
 	private String codigoProduto;
