@@ -131,7 +131,7 @@ public class ItemNotaFiscalBuilder  {
 		
 		if(detalheNotaFiscal.getProdutoServico() == null) {
 			
-			if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(ProcessoEmissao.valueOf(ps.getValor())) || ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
+			if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
 				try {
 					
 					if(movimentoEstoque.getProdutoEdicao().getCodigoDeBarras() == null) {
@@ -779,7 +779,7 @@ public class ItemNotaFiscalBuilder  {
 		ProdutoServico produtoServico = null;
 		if(detalheNotaFiscal.getProdutoServico() == null) {
 			
-			if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(ProcessoEmissao.valueOf(ps.getValor())) || ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
+			if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
 				try {
 					
 					if(movimentoFechamentoFiscal.getProdutoEdicao().getCodigoDeBarras() == null) {
