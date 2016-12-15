@@ -3,6 +3,7 @@ package br.com.abril.nds.model.cadastro.garantia;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -13,11 +14,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 
 
@@ -52,6 +59,11 @@ public abstract class CotaGarantia implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name="TIPO_GARANTIA")
 	private TipoGarantia tipoGarantia;
+	
+	@Fetch(FetchMode.JOIN)
+	@OneToOne(cascade={CascadeType.ALL},orphanRemoval=true)
+	@JoinColumn(name = "COTA_ID")
+	private Cota cota;
 
 	public Long getId() {
 		return id;
@@ -75,6 +87,14 @@ public abstract class CotaGarantia implements Serializable {
 
 	public void setTipoGarantia(TipoGarantia tipoGarantia) {
 		this.tipoGarantia = tipoGarantia;
+	}
+	
+	public Cota getCota() {
+		return cota;
+	}
+
+	public void setCota(Cota cota) {
+		this.cota = cota;
 	}
 	
 }

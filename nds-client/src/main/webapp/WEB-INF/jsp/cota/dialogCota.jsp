@@ -65,7 +65,7 @@
 		</div>
 		
 		<div id="tabCota-5">
-			<!-- jsp:include page="../cotaGarantia/index.jsp" include -->
+			<jsp:include page="../cotaGarantia/index.jsp"></jsp:include>
 		</div>
 		
 		<div id="tabCota-6">

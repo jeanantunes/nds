@@ -9,6 +9,8 @@
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cotaBloqueada.js"></script>
 	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
+	
 	<script language="javascript" type="text/javascript">
 	
 		$(function(){
@@ -110,6 +112,11 @@
 					<img src="${pageContext.request.contextPath}/images/bt_lancamento.png" hspace="5" border="0" />
 				</a>
 			</span>
+			<span class="bt_novos" id="bt_extracao_cc" >
+				<a href="javascript:;" onclick="fechamentoEncalheController.popup_extracaoCC();" rel="tipsy" title="extra&ccedil;&atilde;o Conta Corrente">
+					<img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" hspace="5" border="0" />
+				</a>
+			</span>
 			<div class="divBotoesPrincipais" style="display:none; float:left;">
 				<span class="bt_novos"><a id="btnEncerrarOperacaoEncalhe" isEdicao="true" href="javascript:;" onclick="fechamentoEncalheController.salvarNoEncerrementoOperacao();" rel="tipsy" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" /></a></span>
 			</div>
@@ -167,5 +174,17 @@
 	<form id="fechamento-encalhe-cotas-bloqueadas">
 		<jsp:include page="../cota/cotaBloqueada.jsp" />
 	</form>
+	
+	<div id="dialog-extracaoCC" title="Extra&ccedil;&atilde;o Conta Corrente" style="display:none;">
+		<fieldset style="width: 350px !important; height: 50px !important;">
+			<legend> Dados para extra&ccedil;&atilde;o</legend>
+			<td width="75">Per&iacute;odo:</td>
+			<td width="114"><input name="extracaocc-datepickerDe" type="text" id="extracaocc-datepickerDe" value="${dataOperacao}" style="width:80px;" /></td>
+			<td width="75">&nbsp;&nbsp;&nbsp;At&eacute;:</td>
+			<td width="114"><input name="extracaocc-datepickerAte" type="text" id="extracaocc-datepickerAte" value="${dataOperacao}" style="width:80px;" /></td>
+				
+		</fieldset>
+	
+	</div>
 	
 </body>

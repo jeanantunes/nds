@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.ems0113.processor;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +12,13 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0113Input;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.service.DescontoLogisticaService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
 /**
@@ -37,10 +40,14 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private FornecedorRepository fornecedorRepository;
 	
+	@Autowired
+	private ProdutoService produtoService;
+	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
 	}
+	
 
 	@Override
 	public void processMessage(Message message) {
@@ -84,11 +91,14 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 	    
 		if(descontoLogistica == null) {
 			
+			DescontoLogistica descontoLogisticaVigente = descontoLogisticaService.obterDescontoLogisticaVigente(input.getTipoDesconto(), fornecedor.getId(), input.getDataInicioDesconto());
+					
 			descontoLogistica = new DescontoLogistica();
 			descontoLogistica.setTipoDesconto(input.getTipoDesconto());
 			descontoLogistica.setPercentualDesconto(input.getPercentDesconto());
 			descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico());
 			descontoLogistica.setDataInicioVigencia(input.getDataInicioDesconto());
+			descontoLogistica.setDescricao(input.getTipoDesconto()+" "+fornecedor.getId());
 			descontoLogistica.setFornecedor(fornecedor);
 						
 			getSession().persist(descontoLogistica);
@@ -96,6 +106,9 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 			ndsiLoggerFactory.getLogger().logInfo(message
 					, EventoExecucaoEnum.INF_DADO_ALTERADO
 					, "Desconto logística incluido com sucesso. Tipo Desconto: "+ descontoLogistica.getTipoDesconto());
+			
+			this.atualizarDescontoLogisticaProdutos(input, message, descontoLogisticaVigente,descontoLogistica);
+			
 		}else{
 			
 			ndsiLoggerFactory.getLogger().logInfo(message
@@ -105,6 +118,24 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 		}
 	}
 
+	/*
+	 * Atualiza descontos logistica com descontoLogistica 
+	 */
+	private void atualizarDescontoLogisticaProdutos(EMS0113Input input,Message message, DescontoLogistica descontoLogisticaVigente, DescontoLogistica descontoLogistica){
+		
+		//produtoService.obterProdutosPorDescontoLogistica(descontoLogisticaVigente);
+		
+		List<Produto> produtosLista = produtoService.obterProdutosPorDescontoLogistica(descontoLogisticaVigente);
+		
+		for(Produto produtoItem : produtosLista){
+			
+			if(produtoItem.getFornecedor() != null && produtoItem.getFornecedor().getId() == descontoLogisticaVigente.getFornecedor().getId()){
+			  produtoItem.setDescontoLogistica(descontoLogistica);
+			  getSession().merge(produtoItem);
+			}
+		}
+		
+	}
 	@Override
 	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
