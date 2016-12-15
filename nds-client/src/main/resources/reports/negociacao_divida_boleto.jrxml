@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="negociacao_divida_boleto" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="5aa6ca31-4d9d-4491-bbba-e7cc7f9433be">
 	<property name="ireport.zoom" value="1.771561000000001"/>
 	<property name="ireport.x" value="21"/>
-	<property name="ireport.y" value="44"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<parameter name="TOTAL_PARCELAS" class="java.lang.String"/>
 	<parameter name="LOGO_DISTRIBUIDOR" class="java.io.InputStream"/>
@@ -61,6 +61,7 @@
 		<fieldDescription><![CDATA[dataCriacao]]></fieldDescription>
 	</field>
 	<field name="boletosCobranca" class="java.util.List"/>
+	<field name="dataOperacao" class="java.lang.String"/>
 	<title>
 		<band height="79" splitType="Stretch">
 			<rectangle>
@@ -87,18 +88,6 @@
 				<reportElement x="15" y="1" width="115" height="78" uuid="a8af9759-eca0-4c02-bf05-27cb6b0d6056"/>
 				<imageExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></imageExpression>
 			</image>
-			<textField>
-				<reportElement x="465" y="59" width="72" height="20" uuid="1b1eba96-0414-4d67-bf9d-6470ad84e40e"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{dataCriacao})]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="377" y="59" width="88" height="20" uuid="cf5f85d9-8a0f-4ce2-97bb-72a9553f04b1"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Data Negociação: ]]></text>
-			</staticText>
 		</band>
 	</title>
 	<pageHeader>

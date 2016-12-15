@@ -807,7 +807,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         // data da negociacao
         Date data = new Date();
         data = negociacao.getDataCriacao();
-       	impressaoNegociacaoDTO.setDataCriacao(data); 
+       	impressaoNegociacaoDTO.setDataCriacao(data);        	
                 
        	// lista de Boletos por Cota
        	List<CobrancaVO> cobrancaVo = cobrancaRepository.obterCobrancasPorCota(negociacao.getId());
@@ -817,10 +817,13 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
        		vo.setNossoNumeroCobranca(cobrancaVo.get(i).getNossoNumero());
        		vo.setDataEmissaoCobranca(cobrancaVo.get(i).getDataEmissao());
        		vo.setDataVencimentoCobranca(cobrancaVo.get(i).getDataVencimento());
-       		vo.setValorCobranca(cobrancaVo.get(i).getValor());   
+       		vo.setValorCobranca(cobrancaVo.get(i).getValor());
+       		vo.setDataOperacao(cobrancaVo.get(0).getDataOperacao());
+       		
+       		impressaoNegociacaoDTO.setDataOperacao(String.valueOf(cobrancaVo.get(0).getDataOperacao()));
        		
        		impressaoNegociacaoDTO.getBoletosCobranca().add(vo);
-       	}
+       	}   		
        	
         BigDecimal totalParcelas = BigDecimal.ZERO;
         for (final ParcelaNegociacao parcela : negociacao.getParcelas()) {

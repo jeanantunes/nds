@@ -33,6 +33,8 @@ public class ImpressaoNegociacaoParecelaDTO implements Serializable {
 	
 	private String valorCobranca;	
 	
+	private String dataOperacao;
+	
 	public Date getDataVencimento() {
 		return dataVencimento;
 	}
@@ -119,5 +121,13 @@ public class ImpressaoNegociacaoParecelaDTO implements Serializable {
 
 	public void setValorCobranca(String valorCobranca) {
 		this.valorCobranca = valorCobranca;
+	}
+
+	public String getDataOperacao() {
+		return dataOperacao;
+	}
+
+	public void setDataOperacao(String dataOperacao) {
+		this.dataOperacao = dataOperacao;
 	}
 }

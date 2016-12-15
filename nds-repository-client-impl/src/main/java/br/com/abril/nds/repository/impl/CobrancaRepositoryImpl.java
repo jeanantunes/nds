@@ -271,11 +271,12 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
         ((SQLQuery) query).addScalar("dataVencimento", StandardBasicTypes.DATE);
 		((SQLQuery) query).addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
 		((SQLQuery) query).addScalar("nossoNumero", StandardBasicTypes.STRING);
+		((SQLQuery) query).addScalar("dataOperacao", StandardBasicTypes.DATE);		
 		
         try {
         	
 			query.setResultTransformer(new AliasToBeanConstructorResultTransformer(
-					CobrancaVO.class.getConstructor(BigInteger.class, Date.class, Date.class, BigDecimal.class, String.class)
+					CobrancaVO.class.getConstructor(BigInteger.class, Date.class, Date.class, BigDecimal.class, String.class, Date.class)
 				)
 			);
 
@@ -350,8 +351,10 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		hql.append(" c.DT_EMISSAO as dataEmissao, ");
 		hql.append(" c.DT_VENCIMENTO as dataVencimento, "); 
 		hql.append(" c.VALOR as valor, ");
-		hql.append(" c.NOSSO_NUMERO as nossoNumero ");
+		hql.append(" c.NOSSO_NUMERO as nossoNumero, ");
+		hql.append(" dt.DATA_OPERACAO as dataOperacao ");
 		hql.append(" FROM cobranca c ");
+		hql.append(" INNER JOIN distribuidor dt ON (SELECT data_operacao FROM distribuidor) ");
 		hql.append(" INNER JOIN negociacao_cobranca_originaria ct on ct.COBRANCA_ID = c.ID ");
 		hql.append(" INNER JOIN negociacao n on n.ID=ct.NEGOCIACAO_ID ");
 		hql.append(" WHERE n.ID = :nId ");

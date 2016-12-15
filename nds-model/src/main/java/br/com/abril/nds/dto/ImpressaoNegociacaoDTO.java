@@ -46,6 +46,8 @@ public class ImpressaoNegociacaoDTO implements Serializable {
 	
 	private String nossoNumero;
 	
+	private String dataOperacao;
+	
 	private List<ImpressaoNegociacaoParecelaDTO> parcelasCheques;
 	
 	private List<ImpressaoNegociacaoParecelaDTO> boletosCobranca;
@@ -196,5 +198,11 @@ public class ImpressaoNegociacaoDTO implements Serializable {
 		this.nossoNumero = nossoNumero;
 	}
 
-	
+	public String getDataOperacao() {
+		return dataOperacao;
+	}
+
+	public void setDataOperacao(String data) {
+		this.dataOperacao = data;
+	}
 }

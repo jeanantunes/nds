@@ -39,7 +39,7 @@ public class CobrancaVO implements Serializable  {
 	
 	private String cota;
 	private String banco;
-	private String nossoNumero;
+	private String nossoNumero;	
 	
 	//DIVIDA
 	private String dividaTotal;
@@ -47,6 +47,7 @@ public class CobrancaVO implements Serializable  {
 	private String desconto;
 	private String juros;
 	private String valorTotal;
+	private String dataOperacao;
 	
 	
 	private boolean check;
@@ -73,12 +74,13 @@ public class CobrancaVO implements Serializable  {
 		this.nossoNumero = nossoNumero;
 	}
 
-	public CobrancaVO(BigInteger codigo, Date dataEmissao, Date dataVencimento, BigDecimal valor, String nossoNumero) {		
+	public CobrancaVO(BigInteger codigo, Date dataEmissao, Date dataVencimento, BigDecimal valor, String nossoNumero, Date dataOperacao) {		
 		this.codigo = codigo == null ? "" : codigo.toString();
 		this.dataEmissao = DateUtil.formatarDataPTBR(dataEmissao);
 		this.dataVencimento = DateUtil.formatarDataPTBR(dataVencimento);
 		this.valor = CurrencyUtil.formatarValor(valor);
 		this.nossoNumero = nossoNumero;
+		this.dataOperacao = DateUtil.formatarDataPTBR(dataOperacao);		
 	}	
 
 	public String getCota() {
@@ -351,4 +353,11 @@ public class CobrancaVO implements Serializable  {
 		this.boletoAntecipado = boletoAntecipado;
 	}
 
+	public String getDataOperacao() {
+		return dataOperacao;
+	}
+
+	public void setDataOperacao(String dataOperacao) {
+		this.dataOperacao = dataOperacao;
+	}
 }
