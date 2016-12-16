@@ -35,9 +35,11 @@ public class ConsultaEncalheVO {
 	private String precoComDesconto;
 	
 	@Export(label="Reparte")
+	@Footer(type = FooterType.COUNT)
 	private String reparte;
 	
 	@Export(label="Encalhe")
+	@Footer(type = FooterType.COUNT)
 	private String encalhe;
 	
 	@Export(label="Venda")
