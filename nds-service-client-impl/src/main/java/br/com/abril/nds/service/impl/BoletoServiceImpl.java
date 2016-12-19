@@ -146,8 +146,14 @@ import br.com.abril.nds.util.cnab.UtilitarioCNAB;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro00;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro01;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro09;
+import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroBradesco00;
+import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroBradesco01;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroItau00;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroItau01;
+import br.com.abril.nds.util.export.cobranca.registrada.builders.DetalheRegistroRegistroPorBancoBuilder;
+import br.com.abril.nds.util.export.cobranca.registrada.builders.EnderecoSacadoBuilder;
+import br.com.abril.nds.util.export.cobranca.registrada.builders.PopularSacadoBuilder;
+import br.com.abril.nds.util.export.cobranca.registrada.builders.RegistroPorBancoBuilder;
 import br.com.abril.nds.util.export.cobranca.util.CobRegBaseDTO;
 import br.com.abril.nds.util.export.cobranca.util.CobRegParser;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -162,10 +168,6 @@ import br.com.abril.nds.vo.ValidacaoVO;
 public class BoletoServiceImpl implements BoletoService {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(BoletoServiceImpl.class);
-    
-    private static final String CODIGO_INSCRICAO_FISICA = "01";
-    
-    private static final String CODIGO_INSCRICAO_JURIDICA = "02";
     
     @Autowired
     protected EmailService email;
@@ -986,7 +988,7 @@ public class BoletoServiceImpl implements BoletoService {
             final Date dataOperacao, final Boleto boleto, final ResumoBaixaBoletosDTO resumoBaixaBoletos,
             final Banco banco, final Date dataPagamento) {
         
-		                                                                                /*
+		 /*
          * Não baixa o boleto, gera baixa com status de boleto pago
          * anteriormente e gera movimento de crédito
          */
@@ -995,13 +997,21 @@ public class BoletoServiceImpl implements BoletoService {
                 gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA, boleto,
                         dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
         
-        movimentoFinanceiroCotaService
-        .gerarMovimentosFinanceirosDebitoCredito(
+        String dataFormatada = null;
+		
+        try {
+			dataFormatada = Util.formataData(boleto.getDataEmissao());
+		} catch (Exception e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Problema ao formatar a data do boleto!");
+		}
+        
+        movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(
                 getMovimentoFinanceiroCotaDTO(boleto.getCota(),
-                        GrupoMovimentoFinaceiro.CREDITO,
-                        usuario, pagamento.getValorPagamento(),
-                        dataOperacao, baixaCobranca,
-                        dataNovoMovimento, null));
+                GrupoMovimentoFinaceiro.CREDITO,
+                usuario, pagamento.getValorPagamento(),
+                dataOperacao, baixaCobranca,
+                dataNovoMovimento, 
+                "Boleto Negociado no dia ("+dataFormatada+") e pago"));
     }
     
     private void baixarBoletoVencidoAutomatico(final TipoBaixaCobranca tipoBaixaCobranca, final PagamentoDTO pagamento,
@@ -2989,13 +2999,15 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		CobRegEnvTipoRegistroItau00 registroItau = null;
 		
+		CobRegEnvTipoRegistroBradesco00 registroBradesco = null;
+		
 		switch (banco.getNumeroBanco()) {
 		
 			case UtilitarioCNAB.BANCO_HSBC:
 				registro00 = this.montarRegistro00(banco, pessoaCedente);
 				break;
 			case UtilitarioCNAB.BANCO_BRADESCO:
-				registro00 = this.montarRegistro00(banco, pessoaCedente);
+				registroBradesco = this.montarRegistroBradesco(banco, pessoaCedente);
 				break;
 			case UtilitarioCNAB.BANCO_ITAU:
 				registroItau = this.montarRegistroItau(banco, pessoaCedente);
@@ -3013,13 +3025,13 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		if(registro00 != null) {
 			list.add(registro00);
-			
-		} else {
+		} else if(registroItau != null) {
 			list.add(registroItau);
+		} else if(registroBradesco != null) {
+			list.add(registroBradesco);
 		}
 		
-		
-		int count = Integer.valueOf(registro00 == null ? registroItau.getSequencial() : registro00.getSequencial())+1;
+		int count = qtdeSequenciaRegistro(registro00, registroItau);
 		
 		int somaSquencial = 0;
 		
@@ -3034,6 +3046,10 @@ public class BoletoServiceImpl implements BoletoService {
         				CobRegEnvTipoRegistroItau01 detalheItau = this.montarRegistroItau01(boleto, pessoaCedente, banco, count);
         				list.add(detalheItau);
         				break;
+        			case UtilitarioCNAB.BANCO_BRADESCO:
+        				CobRegEnvTipoRegistroBradesco01 detalheBradesco = this.montarRegistroBradesco01(boleto, pessoaCedente, banco, count);
+        				list.add(detalheBradesco);
+        				break;	
         			default :
         				CobRegEnvTipoRegistro01 registro01 = this.montarRegistro01(boleto, pessoaCedente, banco, count);
         				list.add(registro01);
@@ -3071,124 +3087,23 @@ public class BoletoServiceImpl implements BoletoService {
 			
 		return baos.toByteArray();	
 	}
-	
-	private CobRegEnvTipoRegistro00 montarRegistro00 (Banco banco, Pessoa pessoaCedente) throws ValidationException {
-		
-		CobRegEnvTipoRegistro00 registro00 = new CobRegEnvTipoRegistro00();
-		
-		switch (banco.getNumeroBanco()) {
-		
-			case UtilitarioCNAB.BANCO_HSBC:
-				return registroPorBanco(banco, pessoaCedente, registro00);
-			
-			case UtilitarioCNAB.BANCO_BRADESCO:
-				return registroPorBanco(banco, pessoaCedente, registro00);
-				
-			case UtilitarioCNAB.BANCO_DO_BRASIL:
-				registroPorBanco(banco, pessoaCedente, registro00);
-				
-			case UtilitarioCNAB.BANCO_CAIXA_ECONOMICA_FEDERAL:
-				return registroPorBanco(banco, pessoaCedente, registro00);
-				
-			case UtilitarioCNAB.BANCO_SANTANDER:
-				return registroPorBanco(banco, pessoaCedente, registro00);
-		
-		}
-		return registro00;
-		
+
+	private int qtdeSequenciaRegistro(CobRegEnvTipoRegistro00 registro00, CobRegEnvTipoRegistroItau00 registroItau) {
+		int count = Integer.valueOf(registro00 == null ? registroItau.getSequencial() : registro00.getSequencial())+1;
+		return count;
 	}
 	
-	private CobRegEnvTipoRegistroItau00 montarRegistroItau (Banco banco, Pessoa pessoaCedente) throws ValidationException {
-		
-		CobRegEnvTipoRegistroItau00 registroItau = new CobRegEnvTipoRegistroItau00();
-				
-		return registroPorBancoItau(banco, pessoaCedente, registroItau);
-		
+	// metodo comum a todos os arquivos
+	private CobRegEnvTipoRegistro00 montarRegistro00(Banco banco, Pessoa pessoaCedente) throws ValidationException {
+		return RegistroPorBancoBuilder.registroPorBanco(banco, pessoaCedente);
 	}
 	
-	private CobRegEnvTipoRegistro00 registroPorBanco(Banco banco, Pessoa pessoaCedente, CobRegEnvTipoRegistro00 registro00) throws ValidationException {
-		
-		registro00.setTipoRegistro("0");
-		registro00.setIdentificacaoArquivoRemessa("1");
-		registro00.setIdentificacaoExtenso("REMESSA");
-		registro00.setCodigoServico("01");
-		registro00.setLiteralServicos("COBRANCA");
-		registro00.setAgenciaCedente(String.valueOf(banco.getAgencia()));
-		registro00.setFiller("");
-		registro00.setContaCliente(String.valueOf(banco.getConta()));
-		registro00.setDigitoConta(banco.getDvConta());
-		registro00.setFiller2("");
-		
-		String nomeCliente = obterNomeCliente(pessoaCedente);
-		
-		registro00.setNomeCliente(nomeCliente);
-		registro00.setNumeroBanco(banco.getNumeroBanco());
-		registro00.setNomeBanco(banco.getNome());
-		
-		setarDataFomatada(registro00);
-		
-		registro00.setCodigoUsuario("");
-		registro00.setFiller3("");
-		registro00.setSequencial("01");
-		
-		 return registro00;
+	private CobRegEnvTipoRegistroItau00 montarRegistroItau(Banco banco, Pessoa pessoaCedente) throws ValidationException {
+		return RegistroPorBancoBuilder.registroPorBancoItau(banco, pessoaCedente);
 	}
 	
-	private CobRegEnvTipoRegistroItau00 registroPorBancoItau(Banco banco, Pessoa pessoaCedente, CobRegEnvTipoRegistroItau00 registro00) throws ValidationException {
-		
-		registro00.setTipoRegistro("0");
-		registro00.setIdentificacaoArquivoRemessa("1");
-		registro00.setIdentificacaoExtenso("REMESSA");
-		registro00.setCodigoServico("01");
-		registro00.setLiteralServicos("COBRANCA");
-		registro00.setAgenciaCedente(String.valueOf(banco.getAgencia()));
-		registro00.setContaCliente(String.valueOf(banco.getConta()));
-		registro00.setDigitoConta(banco.getDvConta());
-		registro00.setFiller2("");
-		
-		String nomeCliente = obterNomeCliente(pessoaCedente);
-		
-		registro00.setNomeCliente(TirarAcento.removerAcentuacao(nomeCliente));
-		registro00.setNumeroBanco(banco.getNumeroBanco());
-		registro00.setNomeBanco("BANCO ITAU SA");
-		
-		setarDataFomatada(registro00);
-		
-		registro00.setCodigoUsuario("");
-		registro00.setFiller3("");
-		registro00.setSequencial("01");
-		
-		return registro00;
-		
-	}
-	
-	private String obterNomeCliente(Pessoa pessoaCedente) {
-		
-		if(pessoaCedente instanceof PessoaJuridica) {
-		    
-		   return ((PessoaJuridica) pessoaCedente).getRazaoSocial();
-		   
-		} else {
-		    
-			return ((PessoaFisica) pessoaCedente).getNome();
-		   
-		}
-	}
-	
-	private void setarDataFomatada(CobRegEnvTipoRegistro00 registro00) throws ValidationException {
-		try {
-			registro00.setDataGravacaoArquivo(Util.formataData(new Date()));
-		} catch (Exception e) {
-			throw new ValidationException("Não formatar a data do arquivo");
-		}
-	}
-	
-	private void setarDataFomatada(CobRegEnvTipoRegistroItau00 registro00) throws ValidationException {
-		try {
-			registro00.setDataGravacaoArquivo(Util.formataData(new Date()));
-		} catch (Exception e) {
-			throw new ValidationException("Não formatar a data do arquivo");
-		}
+	private CobRegEnvTipoRegistroBradesco00 montarRegistroBradesco(Banco banco, Pessoa pessoaCedente) throws ValidationException {
+		return RegistroPorBancoBuilder.registroPorBancoBradesco(banco, pessoaCedente);
 	}
 	
 	private CobRegEnvTipoRegistro01 montarRegistro01(Boleto boleto, Pessoa pessoaCedente, Banco banco, int count) throws ValidationException {
@@ -3221,7 +3136,11 @@ public class BoletoServiceImpl implements BoletoService {
 	}
 	
 	private CobRegEnvTipoRegistroItau01 montarRegistroItau01(Boleto boleto, Pessoa pessoaCedente, Banco banco, int count) throws ValidationException {
-		return detalheRegistroPorBancoItau(boleto, banco, count);
+		return DetalheRegistroRegistroPorBancoBuilder.detalheRegistroPorBancoItau(boleto, banco, count);
+	}
+	
+	private CobRegEnvTipoRegistroBradesco01 montarRegistroBradesco01(Boleto boleto, Pessoa pessoaCedente, Banco banco, int count) throws ValidationException {
+		return DetalheRegistroRegistroPorBancoBuilder.detalheRegistroPorBancoBradesco(boleto, banco, count);
 	}
 	
 	private CobRegEnvTipoRegistro01 detalheRegistroPorBanco(Boleto boleto, Banco banco, int count, CobRegEnvTipoRegistro01 registro01) throws ValidationException {
@@ -3268,193 +3187,16 @@ public class BoletoServiceImpl implements BoletoService {
 		registro01.setValorIOC("0");;
 		registro01.setValorAbatimento("0");
 		
-		this.popularSacadoCobrana(registro01, boleto);
+		PopularSacadoBuilder.popularSacadoCobrana(registro01, boleto);
 		
 		registro01.setSequencialRegistro(String.valueOf(count));
 		
 		return registro01;
 	}
 	
-	private CobRegEnvTipoRegistroItau01 detalheRegistroPorBancoItau(Boleto boleto, Banco banco, int count) throws ValidationException {
-		
-		CobRegEnvTipoRegistroItau01 registro01 = new CobRegEnvTipoRegistroItau01();
-		
-		registro01.setTipoRegistro("1");
-		registro01.setCodigoInscricao("02");
-		
-		Pessoa pessoaCedente = banco.getPessoaJuridicaCedente();
-		
-		
-		String nomeCedente = "";
-        String documentoCedente = "";
-        
-        if(pessoaCedente instanceof PessoaJuridica) {
-            
-            nomeCedente = ((PessoaJuridica) pessoaCedente).getRazaoSocial();
-            documentoCedente = ((PessoaJuridica) pessoaCedente).getCnpj();
-            
-        } else {
-            
-            nomeCedente = ((PessoaFisica) pessoaCedente).getNome();
-            documentoCedente = ((PessoaFisica) pessoaCedente).getCpf();
-            
-        }
-		
-		registro01.setNumeroInscricao(documentoCedente.replace(".", "").replace("/", "").replace("-", ""));
-		registro01.setAgenciaCedente(String.valueOf(banco.getAgencia()));
-		registro01.setZeros("00");
-		registro01.setContaCliente(String.valueOf(banco.getConta()));
-		registro01.setDigitoConta(String.valueOf(banco.getDvConta()));
-		registro01.setBrancos("");
-		registro01.setInstrucao("0000");
-		registro01.setUsoDaEmpresa("");
-		registro01.setNossoNumero(boleto.getNossoNumero());
-		registro01.setQtdeMoeda("0");
-		registro01.setNumeroCarteira(String.valueOf(banco.getCarteira()));
-		registro01.setUsoBanco("");
-		registro01.setCarteira("I");
-		registro01.setCodOcerrencia("01");
-		registro01.setNumeroDocumento(boleto.getNossoNumero());
-		
-		try {
-			registro01.setDataVencimento(Util.formataData(boleto.getDataVencimento()));
-			registro01.setDataDeMora(Util.formataData(boleto.getDataVencimento()));
-			registro01.setDataEmissao(Util.formataData(boleto.getDataEmissao()));
-		} catch (Exception e) {
-			throw new ValidationException("Erro ao Formatar a Data Vencimento / Emissão");
-		}
-		
-		BigDecimal valorDuasCadasDecimais = CurrencyUtil.truncateDecimal(boleto.getValor(), 2);
-        
-		registro01.setValorTitulo(Util.getValorString(valorDuasCadasDecimais.toEngineeringString()));
-		
-		registro01.setNumeroBanco(banco.getNumeroBanco());
-		
-		registro01.setEspecie("01");
-		
-		registro01.setAceite("N");
-		
-		registro01.setAgencia(String.valueOf("00000"));
-		
-		registro01.setCodigoInstrucao("09");
-		
-		registro01.setCodigoInstrucao2("00");
-		
-		BigDecimal taxaJurosDiaria = MathUtil.divide(banco.getJuros(), new BigDecimal(30));
-		
-		BigDecimal valorJurosCalculado = CurrencyUtil.truncateDecimal((boleto.getValor().multiply(MathUtil.divide(taxaJurosDiaria, new BigDecimal(100)))), 2);
-		
-		registro01.setJurosDia(Util.getValorString(valorJurosCalculado.toEngineeringString()));
-		
-		registro01.setDataDesconto("0");
-		
-		registro01.setValorDesconto("0");
-		
-		registro01.setValorIOC("0");
-		
-		registro01.setValorAbatimento("0");
-		
-		registro01.setPrazo("10");
-		
-		registro01.setBranco2("");
-		
-		this.popularSacadoCobrana(registro01, boleto);
-		
-		registro01.setSequencialRegistro(String.valueOf(count));
-		
-		return registro01;
-	}
 	
-	private void popularSacadoCobrana(CobRegEnvTipoRegistro01 registro01, Boleto boleto) {
-		
-		final Cota cota = boleto.getCota(); 
-		
-		final Pessoa pessoaSacado = cota.getPessoa();
-		
-		Endereco enderecoSacado = cota.getEnderecoPrincipal().getEndereco();
-		
-		//DADOS DO SACADO
-        String nomeSacado = null;
-        
-        String documentoSacado = null;
-        
-        if (pessoaSacado instanceof PessoaFisica) {
-        	
-            nomeSacado = ((PessoaFisica) pessoaSacado).getNome();
-            documentoSacado = ((PessoaFisica) pessoaSacado).getCpf();
-        	registro01.setCodigoInscricaoSacado(CODIGO_INSCRICAO_FISICA);
-
-        }
-        if (pessoaSacado instanceof PessoaJuridica) {
-        	registro01.setCodigoInscricaoSacado(CODIGO_INSCRICAO_JURIDICA);
-            nomeSacado = ((PessoaJuridica) pessoaSacado).getRazaoSocial();
-            documentoSacado = ((PessoaJuridica) pessoaSacado).getCnpj();
-        }
-        
-        registro01.setNumeroCNPJCPF(documentoSacado.replace(".", "").replace("-", "").replace("/", ""));
-                
-        registro01.setNomeSacado(TirarAcento.removerAcentuacao(nomeSacado));
-        
-        this.enderecoSacado(registro01, enderecoSacado, nomeSacado);
-	}
 	
-	private void popularSacadoCobrana(CobRegEnvTipoRegistroItau01 registro01, Boleto boleto) {
-		
-		final Cota cota = boleto.getCota(); 
-		
-		final Pessoa pessoaSacado = cota.getPessoa();
-		
-		Endereco enderecoSacado = cota.getEnderecoPrincipal().getEndereco();
-		
-		//DADOS DO SACADO
-        String nomeSacado = null;
-        
-        String documentoSacado = null;
-        
-        if (pessoaSacado instanceof PessoaFisica) {
-        	
-            nomeSacado = ((PessoaFisica) pessoaSacado).getNome();
-            documentoSacado = ((PessoaFisica) pessoaSacado).getCpf();
-        	registro01.setCodigoInscricaoSacado(CODIGO_INSCRICAO_FISICA);
-
-        }
-        if (pessoaSacado instanceof PessoaJuridica) {
-        	registro01.setCodigoInscricaoSacado(CODIGO_INSCRICAO_JURIDICA);
-            nomeSacado = ((PessoaJuridica) pessoaSacado).getRazaoSocial();
-            documentoSacado = ((PessoaJuridica) pessoaSacado).getCnpj();
-        }
-        
-        registro01.setNumeroCNPJCPF(documentoSacado.replace(".", "").replace("-", "").replace("/", ""));
-                
-        registro01.setNomeSacado(TirarAcento.removerAcentuacao(nomeSacado));
-        
-        registro01.setBracos01("");
-        
-        this.enderecoSacado(registro01, enderecoSacado, nomeSacado);
-	}
 	
-	private void enderecoSacado(CobRegEnvTipoRegistro01 registro01, Endereco enderecoSacado, String nomeSacado) {
-		//ENDERECO DO SACADO
-        registro01.setEnderecoSacado(enderecoSacado.getLogradouro());
-		registro01.setComplemento(enderecoSacado.getComplemento());
-		registro01.setCEP(enderecoSacado.getCep());
-		registro01.setCidade(enderecoSacado.getCidade());
-		registro01.setUF(enderecoSacado.getUf());
-		registro01.setMensagemCedenteNomeSacadorAvalista(TirarAcento.removerAcentuacao(nomeSacado));
-		registro01.setPrazoProtesto("99");
-		registro01.setCodigoMoeda("00");
-	}
-	
-	private void enderecoSacado(CobRegEnvTipoRegistroItau01 registro01, Endereco enderecoSacado, String nomeSacado) {
-		//ENDERECO DO SACADO
-        registro01.setEnderecoSacado(TirarAcento.removerAcentuacao(enderecoSacado.getTipoLogradouro().trim()) +". "+ TirarAcento.removerAcentuacao(enderecoSacado.getLogradouro().trim()) + "," + enderecoSacado.getNumero().trim());
-        registro01.setBairro(TirarAcento.removerAcentuacao(enderecoSacado.getBairro().trim()));
-		registro01.setCEP(enderecoSacado.getCep().replace("-", "").replace(".", ""));
-		registro01.setCidade(TirarAcento.removerAcentuacao(enderecoSacado.getCidade()));
-		registro01.setUF(enderecoSacado.getUf());
-		registro01.setSacadoAvalista(TirarAcento.removerAcentuacao(nomeSacado));
-		registro01.setBracos01("");
-	}
 	
 	private CobRegEnvTipoRegistro09 montarRegistro09(int sequencial) throws ValidationException {
 		
