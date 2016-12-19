@@ -35,15 +35,15 @@ public class ConsultaEncalheVO {
 	private String precoComDesconto;
 	
 	@Export(label="Reparte")
-	@Footer(type = FooterType.COUNT)
+	@Footer(type = FooterType.SUM)
 	private String reparte;
 	
 	@Export(label="Encalhe")
-	@Footer(type = FooterType.COUNT)
+	@Footer(type = FooterType.SUM)
 	private String encalhe;
 	
 	@Export(label="Venda")
-	@Footer(type = FooterType.COUNT)
+	@Footer(type = FooterType.SUM)
 	private String venda;
 	
 	@Export(label="Fornecedor")
