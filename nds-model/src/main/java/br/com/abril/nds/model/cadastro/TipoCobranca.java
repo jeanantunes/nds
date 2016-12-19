@@ -10,7 +10,7 @@ public enum TipoCobranca {
 	DINHEIRO("Dinheiro"),
 	OUTROS("Outros"),
 	BOLETO_AVULSO("Boleto Avulso"),
-	BOLETO_NFE("Boleto NF-e");
+	BOLETO_NFE("Boleto NFe");
 	
 	private String descricao;
 	
