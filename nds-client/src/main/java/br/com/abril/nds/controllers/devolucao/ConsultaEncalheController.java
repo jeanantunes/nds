@@ -197,7 +197,8 @@ public class ConsultaEncalheController extends BaseController {
 		filtroConsultaEncalhe.setNumeroEdicao(null);
 		filtroConsultaEncalhe.setIdProdutoEdicao(null);
 		InfoConsultaEncalheDTO infoConsultaEncalhe = consultaEncalheService.pesquisarEncalhe(filtroConsultaEncalhe);
-
+		
+		// obter valores para relatorio
 		List<ConsultaEncalheVO> listaConsultaEncalheVO =  getListaConsultaEncalheVO(infoConsultaEncalhe.getListaConsultaEncalhe(), filtroConsultaEncalhe);
 		
 		ResultadoConsultaEncalheVO resultadoPesquisa = new ResultadoConsultaEncalheVO();
