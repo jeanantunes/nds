@@ -440,7 +440,7 @@ public class ItemNotaFiscalBuilder  {
 			
 			PISNTWrapper pisWrapperNT = null;
 			
-			if(produtoServico.getNcm() == 49019100L) {
+			if(produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L) {
 				if(ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
 					pisWrapperNT = new PISNTWrapper();
 				} else {
@@ -477,7 +477,7 @@ public class ItemNotaFiscalBuilder  {
 								pis.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));	
 								pis.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 							} else {
-								if(produtoServico.getNcm() == 49019100L) {
+								if(produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L) {
 									pis.setCst("06");
 									pis.setValorBaseCalculo(null);
 									pis.setValorAliquota(null);
@@ -499,7 +499,7 @@ public class ItemNotaFiscalBuilder  {
 				
 			}
 			
-			if(produtoServico.getNcm() == 49019100L) {
+			if(produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L) {
 				if(ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
 					pisWrapperNT.setPis(pis);
 					detalheNotaFiscal.getImpostos().setPisNT(pisWrapperNT);
@@ -556,7 +556,7 @@ public class ItemNotaFiscalBuilder  {
 			
 			CofinsNTWrapper cofinsNTWrapper = null;
 			
-			if(produtoServico.getNcm() == 49019100L) {
+			if(produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L) {
 				if(ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
 					cofinsNTWrapper = new CofinsNTWrapper();					
 				} else {
@@ -595,7 +595,7 @@ public class ItemNotaFiscalBuilder  {
 								cofins.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 							} else {
 								
-								if(produtoServico.getNcm() == 49019100L) {
+								if(produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L) {
 									cofins.setCst("06");
 									cofins.setValorBaseCalculo(null);
 									cofins.setValorAliquota(null);
@@ -617,7 +617,7 @@ public class ItemNotaFiscalBuilder  {
 				
 			}
 			
-			if(produtoServico.getNcm() == 49019100L) {
+			if(produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L) {
 				
 				if(ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
 					cofinsNTWrapper.setCofins(cofins);
