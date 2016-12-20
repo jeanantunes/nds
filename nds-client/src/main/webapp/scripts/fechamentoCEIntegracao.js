@@ -304,25 +304,25 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			colModel : [ {
 				display : 'Seq',
 				name : 'sequencial',
-				width : 30,
+				width : 15,
 				sortable : true,
 				align : 'left'
 			},  {
 				display : 'Código',
 				name : 'codigoProduto',
-				width : 80,
+				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
-				width : 200,
+				width : 170,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
-				width : 60,
+				width : 30,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -334,49 +334,49 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			}, {
 				display : 'Qtde Dev Inf',
 				name : 'qtdeDevSemCE',
-				width : 100,
+				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Reparte',
 				name : 'reparte',
-				width : 100,
+				width : 55,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Estoque',
 				name : 'estoque',
-				width : 100,
+				width : 55,
 				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Encalhe',
 				name : 'encalhe',
-				width : 100,
+				width : 55,
 				sortable : false,
 				align : 'center'
 			},  {
 				display : 'Diferenca',
 				name : 'diferenca',
-				width : 100,
+				width : 55,
 				sortable : false,
 				align : 'center'
 			},  {
 				display : 'Venda',
 				name : 'venda',
-				width : 80,
+				width : 60,
 				sortable : false,
 				align : 'center'
 			},  {
 				display : 'Preço Capa R$',
 				name : 'precoCapaFormatado',
-				width : 100,
+				width : 60,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Valor Venda R$',
 				name : 'valorVendaFormatado',
-				width : 100,
+				width : 60,
 				sortable : false,
 				align : 'right'
 			}],

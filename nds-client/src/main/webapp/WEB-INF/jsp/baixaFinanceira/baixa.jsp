@@ -469,8 +469,9 @@
 					  <tr>
 					    <td><strong>Forma Recebimento:</strong></td>
 					    <td colspan="3">
+					        <!--  forçar carregar o valor 'Dinheiro' -->
 					        <select name="formaRecebimentoDividas" id="formaRecebimentoDividas"  onchange="baixaFinanceiraController.mostrarBancos(this.value);" style="width:150px;">
-		                        <option value="">Selecione</option>
+		                        <!--  *option value=""*Selecione*/option* -->
 		                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
 				                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
 				                </c:forEach>

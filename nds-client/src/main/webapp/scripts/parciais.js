@@ -950,19 +950,19 @@ var ParciaisController = $.extend(true, {
 				colModel : [ {
 					display : 'Data Lancto',
 					name : 'dataLancamento',
-					width : 100,
+					width : 95,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Data Recolhimento',
 					name : 'dataRecolhimento',
-					width : 100,
+					width : 95,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Código',
 					name : 'codigoProduto',
-					width : 80,
+					width : 65,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -974,7 +974,7 @@ var ParciaisController = $.extend(true, {
 				}, {
 					display : 'Edição',
 					name : 'numEdicao',
-					width : 80,
+					width : 50,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -983,13 +983,13 @@ var ParciaisController = $.extend(true, {
 					width : 180,
 					sortable : true,
 					align : 'left'
-				}, /*{
+				}, {
 					display : 'Status',
 					name : 'statusParcial',
 					width : 80,
 					sortable : true,
 					align : 'left'
-				},*/ {
+				}, {
 					display : 'Ação',
 					name : 'acao',
 					width : 40,

@@ -28,7 +28,7 @@ init : function() {
 		colModel : [ {
 			display : 'Nº NF',
 			name : 'numero',
-			width : 30,
+			width : 50,
 			sortable : true,
 			align : 'left'
 		}, {
@@ -46,7 +46,7 @@ init : function() {
 		}, {
 			display : 'Chave Acesso',
 			name : 'chaveAcesso',
-			width : 260,
+			width : 210,
 			sortable : true,
 			align : 'left'
 		},{

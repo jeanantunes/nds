@@ -491,6 +491,47 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
+	public List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCotaUsuario(
+			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
+
+		String hql = " select  movimentoFinanceiroCota "+getQueryObterMovimentosFinanceiroCotaUsuario(filtroDebitoCreditoDTO) +
+					 getOrderByObterMovimentosFinanceiroCota(filtroDebitoCreditoDTO); 
+
+		Query query = criarQueryObterMovimentosFinanceiroCota(hql, filtroDebitoCreditoDTO);
+
+		if (filtroDebitoCreditoDTO.getPaginacao() != null 
+				&& filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial() != null) { 
+			
+			boolean selecionouFiltro = false;
+			if(filtroDebitoCreditoDTO.getNumeroCota() != null || filtroDebitoCreditoDTO.getIdTipoMovimento() != null ||
+					filtroDebitoCreditoDTO.getDataLancamentoInicio() != null || filtroDebitoCreditoDTO.getDataLancamentoFim() != null ||
+					filtroDebitoCreditoDTO.getDataVencimentoInicio() != null || filtroDebitoCreditoDTO.getDataVencimentoFim() != null){
+				selecionouFiltro = true;
+			}
+			
+			if(!selecionouFiltro){
+				query.setFirstResult(filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial());
+			}else{
+				
+				int obterContagemMovimentosFinanceiroCota = obterContagemMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+				
+				if(filtroDebitoCreditoDTO.getPaginacao().getQtdResultadosPorPagina() < obterContagemMovimentosFinanceiroCota){
+					
+					query.setFirstResult(filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial());
+				}
+			}
+		
+			query.setMaxResults(filtroDebitoCreditoDTO.getPaginacao().getQtdResultadosPorPagina());
+		}
+		
+		return query.list();
+	}
+	
+	/**
+	 * @see br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository#obterMovimentosFinanceiroCota()
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
 	public List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 
@@ -527,11 +568,46 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		return query.list();
 	}
 	
+	private String getQueryObterMovimentosFinanceiroCotaUsuario(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" from MovimentoFinanceiroCota movimentoFinanceiroCota JOIN FETCH movimentoFinanceiroCota.usuario as u");
+
+		String conditions = " where movimentoFinanceiroCota.tipoMovimento.id in ( " + getTipoMovimentoPorGrupoFinanceiros()+" ) ";
+
+		if (filtroDebitoCreditoDTO.getIdTipoMovimento() != null) {
+
+			conditions += " and movimentoFinanceiroCota.tipoMovimento.id in ( :idTipoMovimento) ";
+		}
+
+		if (filtroDebitoCreditoDTO.getDataLancamentoInicio() != null && 
+				filtroDebitoCreditoDTO.getDataLancamentoFim() != null) {
+			
+			conditions += " and movimentoFinanceiroCota.dataCriacao between :dataLancamentoInicio and :dataLancamentoFim ";
+		}
+		
+		if (filtroDebitoCreditoDTO.getDataVencimentoInicio() != null && 
+				filtroDebitoCreditoDTO.getDataVencimentoFim() != null) {
+			
+			conditions += " and movimentoFinanceiroCota.data between :dataVencimentoInicio and :dataVencimentoFim ";
+		}
+
+		if (filtroDebitoCreditoDTO.getNumeroCota() != null) {
+
+			conditions += " and movimentoFinanceiroCota.cota.numeroCota = :numeroCota ";
+		}
+
+		hql.append(conditions);
+		
+		return hql.toString();
+	}
+	
 	private String getQueryObterMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" from MovimentoFinanceiroCota movimentoFinanceiroCota ");
+		hql.append(" from MovimentoFinanceiroCota movimentoFinanceiroCota");
 
 		String conditions = " where movimentoFinanceiroCota.tipoMovimento.id in ( " + getTipoMovimentoPorGrupoFinanceiros()+" ) ";
 

@@ -30,6 +30,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
+import br.com.abril.nds.dto.ConsultaProdutoEdicaoDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
@@ -333,6 +334,52 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return query.list();
 	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ConsultaProdutoEdicaoDTO> pesquisarConsultaEdicoes(final String codigoProduto, final String nome,
+			final Intervalo<Date> dataLancamento, final Intervalo<Double> preco , final StatusLancamento statusLancamento,
+			final String codigoDeBarras, final boolean brinde,
+			final String sortorder, final String sortname, final int initialResult, final int maxResults) {
+			
+		final StringBuilder hql = new StringBuilder()
+		
+		.append(" SELECT pe.id as id, p.codigo as codigoProduto, p.NOME_COMERCIAL as nomeComercial, ")
+		.append("        pe.NUMERO_EDICAO as numeroEdicao, coalesce(if(pessoa.tipo = 'F',pessoa.nome, pessoa.RAZAO_SOCIAL),pessoa.nome_fantasia,'') as nomeFornecedor, ")
+		.append("        l.TIPO_LANCAMENTO as statusLancamento, ") 
+//		.append("        l.status as statusSituacao , ")
+		
+		.append("        if(pe.PARCIAL = false, ")
+		.append("                      l.status, ")
+		.append("                      coalesce((select l.STATUS from lancamento l  ")
+		.append("                          join periodo_lancamento_parcial plp ON plp.ID = l.PERIODO_LANCAMENTO_PARCIAL_ID ")
+		.append("                       where  l.PRODUTO_EDICAO_ID = pe.id  ")
+		.append("                          and ((select DATA_OPERACAO from distribuidor) between l.DATA_LCTO_DISTRIBUIDOR and l.DATA_REC_DISTRIB OR plp.TIPO = 'FINAL') ")
+		.append("                          order by plp.NUMERO_PERIODO limit 1), l.status)) as statusSituacao, ")
+		
+		.append("        pe.possui_brinde as temBrinde, ")
+		.append("        pe.parcial as parcial ");
+		
+		// Corpo da consulta com os filtros:
+		final SQLQuery query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortname, sortorder);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ConsultaProdutoEdicaoDTO.class));
+		
+		query.setFirstResult(initialResult);
+		query.setMaxResults(maxResults);
+		
+		query.addScalar("id", StandardBasicTypes.LONG);
+		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+		query.addScalar("nomeComercial", StandardBasicTypes.STRING);
+		query.addScalar("numeroEdicao", StandardBasicTypes.LONG);
+		query.addScalar("nomeFornecedor", StandardBasicTypes.STRING);
+		query.addScalar("statusLancamento", StandardBasicTypes.STRING);
+		query.addScalar("statusSituacao", StandardBasicTypes.STRING);
+		query.addScalar("temBrinde", StandardBasicTypes.BOOLEAN);
+		query.addScalar("parcial", StandardBasicTypes.BOOLEAN);
+		
+		return query.list();
+	}
+	
 	/**
 	 * Obtem tuplas para pesquisas de edições
 	 * 
@@ -355,18 +402,18 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		StringBuilder sql = new StringBuilder();
 
-		if (dataLancamento != null) {
+		if (dataLancamento != null && dataLancamento.getDe() !=null && dataLancamento.getAte() !=null) {
 			
 			sql.append("  AND (l.DATA_LCTO_DISTRIBUIDOR between :dataLancamentoDe and :dataLancamentoAte) ");
 		}
 		
-		if (preco != null) {
-			
+		if (preco != null && preco.getDe()!=null && preco.getAte()!=null) {																																																																																																																																																																																																																																																														
+										
 			sql.append("  AND (pe.PRECO_VENDA between :precoDe and :precoAte) ");
 		}
 		if (statusLancamento != null) {
 			
-			sql.append("  AND l.status = :situacaoLancamento ");
+			sql.append("  AND l.status = :situacaoLancamento ");																														
 
 		}		
 		if (!StringUtil.isEmpty(codigoProduto)) {
@@ -413,14 +460,14 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
         query.setParameter("indAtivo", true);
 		
-		if (dataLancamento != null) {
+		if (dataLancamento != null && dataLancamento.getDe()!=null && dataLancamento.getAte()!=null) {
 			
 			query.setDate("dataLancamentoDe", dataLancamento.getDe());
 			
 			query.setDate("dataLancamentoAte", dataLancamento.getAte());
 		}
 		
-		if (preco != null) {
+		if (preco != null && preco.getDe()!=null && preco.getAte()!=null) {
 			
 			query.setDouble("precoDe", preco.getDe());
 			
