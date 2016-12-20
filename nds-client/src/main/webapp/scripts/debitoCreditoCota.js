@@ -76,45 +76,50 @@ var debitoCreditoCotaController = $.extend(true, {
 			onSuccess: function() {bloquearItensEdicao(debitoCreditoCotaController.workspace);},
 			preProcess: debitoCreditoCotaController.processarResultadoConsultaDebitosCreditos,
 			colModel : [  {
-				display : 'Data de Lançamento',
+				display : 'Data de Lanç.',
 				name : 'dataLancamento',
-				width : 115,
+				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Data Vencimento',
+				display : 'Data Venci.',
 				name : 'dataVencimento',
-				width : 90,
+				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Cota',
 				name : 'numeroCota',
-				width : 50,
+				width : 30,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
 				name : 'nomeCota',
-				width : 140,
+				width : 160,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Tipo de Lançamento',
 				name : 'tipoLancamento',
-				width : 140,
+				width : 120,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Valor R$',
 				name : 'valor',
-				width : 60,
+				width : 50,
 				sortable : true,
 				align : 'right'
 			},{
 				display : 'Observação',
 				name : 'observacao',
 				width : 190,
+				sortable : true,
+				align : 'left'
+			}, {	display : 'Usuário',
+				name : 'usuario',
+				width : 80,
 				sortable : true,
 				align : 'left'
 			}, {

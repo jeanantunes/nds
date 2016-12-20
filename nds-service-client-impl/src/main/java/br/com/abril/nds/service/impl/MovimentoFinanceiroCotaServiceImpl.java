@@ -444,6 +444,26 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
      */
     @Override
     @Transactional
+    public List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCotaUsuario(
+            final FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
+        
+    	List<GrupoMovimentoFinaceiro> 
+    		gruposMovimentoFinanceiro = this.getGrupoMovimentosFinanceirosDebitosCreditos();
+    	
+    	gruposMovimentoFinanceiro.add(GrupoMovimentoFinaceiro.DEBITO_COTA_TAXA_DE_ENTREGA_ENTREGADOR);
+    	gruposMovimentoFinanceiro.add(GrupoMovimentoFinaceiro.DEBITO_COTA_TAXA_DE_ENTREGA_TRANSPORTADOR);
+    	// incluso para nova opcao no dropdown na tela de debito credito cota -- tipo de lancamento
+    	gruposMovimentoFinanceiro.add(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+    	
+        filtroDebitoCreditoDTO.setGrupoMovimentosFinanceirosDebitosCreditos(gruposMovimentoFinanceiro); 
+        
+        this.aplicarParametrosDebitoTaxaDeEntrega(filtroDebitoCreditoDTO);
+        
+        return movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCotaUsuario(filtroDebitoCreditoDTO);
+    }
+    
+    @Override
+    @Transactional
     public List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
             final FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
         

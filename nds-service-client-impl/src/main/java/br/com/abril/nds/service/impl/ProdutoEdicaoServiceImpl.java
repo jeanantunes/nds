@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
+import br.com.abril.nds.dto.ConsultaProdutoEdicaoDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
@@ -378,6 +379,18 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         final int initialResult = ((page * maxResults) - maxResults);
         
         final List<ProdutoEdicaoDTO> edicoes = produtoEdicaoRepository.pesquisarEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, initialResult, maxResults);
+        
+        return edicoes;
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<ConsultaProdutoEdicaoDTO> pesquisarConsultaEdicoes(final String codigoProduto, final String nome, final Intervalo<Date> dataLancamento, final Intervalo<Double> preco, final StatusLancamento statusLancamento,
+            final String codigoDeBarras, final boolean brinde, final String sortorder, final String sortname, final int page, final int maxResults) {
+        
+        final int initialResult = ((page * maxResults) - maxResults);
+        
+        final List<ConsultaProdutoEdicaoDTO> edicoes = produtoEdicaoRepository.pesquisarConsultaEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, initialResult, maxResults);
         
         return edicoes;
     }

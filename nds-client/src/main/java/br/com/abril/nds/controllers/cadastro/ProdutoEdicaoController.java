@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
@@ -33,10 +34,13 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DetalheProdutoVO;
 import br.com.abril.nds.client.vo.PeriodoLancamentosProdutoEdicaoVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.ConsultaProdutoDTO;
+import br.com.abril.nds.dto.ConsultaProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO.ModoTela;
 import br.com.abril.nds.dto.filtro.FiltroProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroProdutoEdicaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
@@ -65,6 +69,8 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -108,8 +114,13 @@ public class ProdutoEdicaoController extends BaseController {
 	@Autowired
 	private HttpSession session;
 	
+	@Autowired
+	private HttpServletResponse response;
+	
 	
 	public static String DTO_ANTERIOR="DTO_ANTERIOR";
+	
+	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroListaCadastroDeProdutoEdicoes";
 	
 	/** Traz a página inicial. */
 	@Get
@@ -247,6 +258,28 @@ public class ProdutoEdicaoController extends BaseController {
 		} else {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Registros não encontrados."));
 		}
+
+
+		FiltroProdutoEdicaoDTO filtroProdutoEdicaoDTO =
+		new FiltroProdutoEdicaoDTO(
+				filtro.getCodigo(),
+				filtro.getNome(),
+				filtro.getFornecedor(),
+				null,
+				null,
+				situacaoLancamento,
+				brinde,
+				dataLancamentoDe,
+				dataLancamentoAte,
+				precoDe,
+				precoAte,
+				codigoDeBarras,
+				sortorder,
+				sortname,
+				page,
+				rp);
+		
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroProdutoEdicaoDTO);
 	}
 	
 	@Post
@@ -830,7 +863,42 @@ public class ProdutoEdicaoController extends BaseController {
                 .from(new ValidacaoVO(TipoMensagem.SUCCESS, "Lançamento excluido com Sucesso."), "result").recursive()
                 .serialize();
     }
-
+    
+    @Get
+	public void exportar(FileType fileType) throws IOException {
+		
+    	FiltroProdutoEdicaoDTO filtro = (FiltroProdutoEdicaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		List<ConsultaProdutoEdicaoDTO> listaProdutoEdicoes = null;
+		
+		if (filtro != null){
+			
+			listaProdutoEdicoes =this.produtoEdicaoService.pesquisarConsultaEdicoes(
+					StringUtils.leftPad(filtro.getCodigo(), 8, '0'), 
+					filtro.getNome(), 
+					new Intervalo<Date>(filtro.getDataLancamentoDe(),filtro.getDataLancamentoAte()),
+					new Intervalo<Double>(filtro.getPrecoDe(),filtro.getPrecoAte()),
+					filtro.getStatusLancamento(), 
+					filtro.getCodigoBarras(), 
+					filtro.getBrinde(),
+					filtro.getSortOrder(), 
+					filtro.getSortName(), 
+					filtro.getPage(), //page, 
+					filtro.getRp() //maxResults
+					);		
+		}
+		
+		if (listaProdutoEdicoes == null || listaProdutoEdicoes.isEmpty()){
+			
+			listaProdutoEdicoes = new ArrayList<ConsultaProdutoEdicaoDTO>();
+		}
+		
+		
+		FileExporter.to("produtoEdicoes", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
+				listaProdutoEdicoes, ConsultaProdutoEdicaoDTO.class, this.response);
+		
+		result.nothing();
+	}
 	
 
 }

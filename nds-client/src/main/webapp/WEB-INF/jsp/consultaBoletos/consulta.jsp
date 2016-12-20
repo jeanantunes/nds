@@ -68,11 +68,11 @@
 
               <td width="114">Data de Vencimento:</td>
               <td width="113">
-              	<input name="boleto-dataDe" id="boleto-dataDe" value="${data}" type="text" style="width:80px; float:left; margin-right:5px;" />
+              	<input name="boleto-dataDe" id="boleto-dataDe" value="" type="text" style="width:80px; float:left; margin-right:5px;" />
               </td>
               <td width="26">Até:</td>
               <td width="113">
-              	<input name="boleto-dataAte" id="boleto-dataAte" value="${data}" type="text" style="width:80px; float:left; margin-right:5px;" />
+              	<input name="boleto-dataAte" id="boleto-dataAte" value="" type="text" style="width:80px; float:left; margin-right:5px;" />
               </td>
               <td width="44">Status:</td>
               <td width="128">

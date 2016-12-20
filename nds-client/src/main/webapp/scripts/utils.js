@@ -195,7 +195,10 @@ $(document).ready(function() {
 		    }else{
 		    	return false;
 		    }
-		} else {
+		}
+		
+		/*
+		else {
 			
 			//Navegação pelas abas por CTRL+(Seta Esquerda | Direita)
 			
@@ -231,7 +234,7 @@ $(document).ready(function() {
 					}
 				}
 			}
-		}
+		}*/
 	});
 	
 	//Move foco para primeiro campo do modal ao abrir modal

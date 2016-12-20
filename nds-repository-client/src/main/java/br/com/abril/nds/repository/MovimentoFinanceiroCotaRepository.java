@@ -54,6 +54,9 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);	
 	
+	List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCotaUsuario(
+			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);	
+	
 	Integer obterContagemMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
 	
 	BigDecimal obterSomatorioValorMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);

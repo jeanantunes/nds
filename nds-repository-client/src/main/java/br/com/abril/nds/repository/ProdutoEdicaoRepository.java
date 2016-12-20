@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
+import br.com.abril.nds.dto.ConsultaProdutoEdicaoDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
@@ -152,6 +153,11 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @return
 	 */
 	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeProduto,
+			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
+			String codigoDeBarras, boolean brinde,
+			String sortorder, String sortname, int initialResult, int maxResults);
+	
+	public List<ConsultaProdutoEdicaoDTO> pesquisarConsultaEdicoes(String codigoProduto, String nomeProduto,
 			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int initialResult, int maxResults);

@@ -19,15 +19,15 @@ var EstoqueProdutosRecolhimentoController = $.extend(true, {
 			preProcess: EstoqueProdutosRecolhimentoController.getDataFromResult,
 			dataType : 'json',
 			colModel : [ {
-				display : 'Sequência',
+				display : 'Seq',
 				name : 'sequencia',
-				width : 70,
+				width : 15,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Código',
 				name : 'codigo',
-				width : 70,
+				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -39,13 +39,13 @@ var EstoqueProdutosRecolhimentoController = $.extend(true, {
 			}, {
 				display : 'Edicao',
 				name : 'numeroEdicao',
-				width : 70,
+				width : 40,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Preco Capa',
 				name : 'precoCapa',
-				width : 100,
+				width : 70,
 				sortable : true,
 				align : 'center'
 			} , {
@@ -55,15 +55,15 @@ var EstoqueProdutosRecolhimentoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			},{
-				display: 'Lançamento',
+				display: 'Lançamento.',
 				name: 'lancamento',
-				width: 70,
+				width: 60,
 				sortable: true,
 				align: 'center'
 			}, {
 				display: 'Suplementar',
 				name: 'suplementar',
-				width: 70,
+				width: 60,
 				sortable: true,
 				align: 'center'
 			}, {
@@ -87,11 +87,11 @@ var EstoqueProdutosRecolhimentoController = $.extend(true, {
 			}, {
 				display: 'Total',
 				name: 'total',
-				width: 70,
+				width: 60,
 				sortable: true,
 				align: 'center'
 			}],
-				width : 1160,
+				width : 960,
 				height : 300,
 				sortname : "sequencia",
 				sortorder : "asc",

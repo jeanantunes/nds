@@ -43,6 +43,9 @@ public interface MovimentoFinanceiroCotaService {
 	List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
 	
+	List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCotaUsuario(
+			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
+	
 	Integer obterContagemMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
 	
 	void removerMovimentoFinanceiroCota(Long idMovimento);

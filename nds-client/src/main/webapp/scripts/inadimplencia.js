@@ -38,61 +38,61 @@ var inadimplenciaController = $.extend(true, {
 			colModel : [ {
 					display : 'Cota',
 					name : 'numCota',
-					width : 50,
+					width : 70,
 					sortable : true,
 					align : 'left'
 				},{
 					display : 'Nome',
 					name : 'nome',
-					width : 130,
+					width : 180,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Status',
 					name : 'status',
-					width : 70,
+					width : 80,
 					sortable : true,
 					align : 'left'
-				}, {
+				}, /*{
 					display : 'Consignado at&eacute Data',
 					name : 'consignado',
 					width : 110,
 					sortable : true,
 					align : 'center'
-				}, {
+				},*/ {
 					display : 'Data Vencimento',
 					name : 'dataVencimento',
-					width : 80,
+					width : 90,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Data Pagamento',
 					name : 'dataPagamento',
-					width : 80,
+					width : 90,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Situa&ccedil&atildeo da D&iacutevida',
 					name : 'situacao',
-					width : 100,
+					width : 110,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Divida Acumulada',
 					name : 'dividaAcumulada',
-					width : 85,
+					width : 95,
 					sortable : true,
 					align : 'right'
 				}, {
 					display : 'Dias em Atraso',
 					name : 'diasAtraso',
-					width : 75,
+					width : 85,
 					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Detalhes',
 					name : 'detalhe',
-					width : 40,
+					width : 50,
 					align : 'center',
 				}],
 				sortname : "dataVencimento",

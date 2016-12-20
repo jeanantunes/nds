@@ -40,6 +40,7 @@ import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
@@ -509,7 +510,7 @@ public class DebitoCreditoCotaController extends BaseController{
 		validarFiltroDebitoCredito(filtroDebitoCredito);
 		
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
-				this.movimentoFinanceiroCotaService.obterMovimentosFinanceiroCota(filtroDebitoCredito);
+				this.movimentoFinanceiroCotaService.obterMovimentosFinanceiroCotaUsuario(filtroDebitoCredito);
 		
 		if (listaMovimentoFinanceiroCota == null || listaMovimentoFinanceiroCota.isEmpty()) {
 			
@@ -692,6 +693,7 @@ public class DebitoCreditoCotaController extends BaseController{
 		debitoCredito.setValor(CurrencyUtil.formatarValor(movimentoFinanceiroCota.getValor()));
 		debitoCredito.setId(movimentoFinanceiroCota.getId());
 		debitoCredito.setNomeCota(nomeCota);
+		debitoCredito.setIdUsuario(movimentoFinanceiroCota.getUsuario().getId());
 
 		this.result.use(Results.json()).from(debitoCredito, "result").recursive().serialize();
 	}
@@ -722,6 +724,12 @@ public class DebitoCreditoCotaController extends BaseController{
 
 			Pessoa pessoa = movimentoFinanceiroCota.getCota().getPessoa();
 			
+			String usuario = "";
+			 
+			 if(movimentoFinanceiroCota!=null && movimentoFinanceiroCota.getUsuario()!=null && movimentoFinanceiroCota.getUsuario().getNome() !=null){
+				 usuario = movimentoFinanceiroCota.getUsuario().getNome();
+			 }
+			
 			String nomeCota = pessoa instanceof PessoaJuridica ? 
 							  ((PessoaJuridica) pessoa).getRazaoSocial() : ((PessoaFisica) pessoa).getNome();
 
@@ -734,7 +742,9 @@ public class DebitoCreditoCotaController extends BaseController{
 				tipoMovimento,
 				valor,
 				observacao,
+				usuario,
 				isEditavel
+				
 			);
 
 			listaCellModel.add(cellModel);
