@@ -37,6 +37,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -777,10 +778,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					
 					OutputStream os = null;
 					
-					if(numeroCota != null ) {
-						os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + numeroCota + "-" + serieNF + "-" + numeroNF + ".xml");						
-					} else {
-						os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + serieNF + "-" + numeroNF + ".xml");
+					if(dto.getNfeInformacoesTipoEmissor().equals(ProcessoEmissao.EMISSAO_NFE_NFE_FLEX.name())) {
+						os = new FileOutputStream(diretorioSaida.getValor() + "/" + "nota" + StringUtils.leftPad(numeroNF, 9, '0') + "#"+ notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getDocumento().getDocumento() + ".xml");
+					} else {						
+						if(numeroCota != null ) {
+							os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + numeroCota + "-" + serieNF + "-" + numeroNF + ".xml");						
+						} else {
+							os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + serieNF + "-" + numeroNF + ".xml");
+						}
 					}
 					
 					TransformerFactory tf = TransformerFactory.newInstance();
@@ -793,10 +798,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					os.flush();
 					os.close();
 					
-					if(numeroCota != null ) {
-						ajustaXml(new File(diretorioSaida.getValor() +"/"+ "NF-e-" + numeroCota + "-" + serieNF + "-" + numeroNF + ".xml"));
+					if(dto.getNfeInformacoesTipoEmissor().equals(ProcessoEmissao.EMISSAO_NFE_NFE_FLEX.name())) {
+						ajustaXml(new File(diretorioSaida.getValor() + "/" + "nota" + StringUtils.leftPad(numeroNF, 9, '0') + "#"+ notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getDocumento().getDocumento() + ".xml"));
 					} else {
-						ajustaXml(new File(diretorioSaida.getValor() +"/"+ "NF-e-" + serieNF + "-" + numeroNF + ".xml"));
+						if(numeroCota != null ) {
+							ajustaXml(new File(diretorioSaida.getValor() +"/"+ "NF-e-" + numeroCota + "-" + serieNF + "-" + numeroNF + ".xml"));
+						} else {
+							ajustaXml(new File(diretorioSaida.getValor() +"/"+ "NF-e-" + serieNF + "-" + numeroNF + ".xml"));
+						}
 					}
 					
 					// Instantiate the document to be signed.   
@@ -805,25 +814,35 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					
 					Document doc = null;
 					
-					if(numeroCota != null ) {						
-						doc = dbf.newDocumentBuilder().parse(new FileInputStream(new File(diretorioSaida.getValor() +"/"+ "NF-e-" + numeroCota + "-" + serieNF + "-" + numeroNF + ".xml")));   
-					} else {
-						doc = dbf.newDocumentBuilder().parse(new FileInputStream(new File(diretorioSaida.getValor() +"/"+ "NF-e-" + serieNF + "-" + numeroNF + ".xml")));
+					if(dto.getNfeInformacoesTipoEmissor().equals(ProcessoEmissao.EMISSAO_NFE_NFE_FLEX.name())) {
+						doc = dbf.newDocumentBuilder().parse(new FileInputStream(new File(diretorioSaida.getValor() +"/"+ "nota" + StringUtils.leftPad(numeroNF, 9, '0') + "#"+ notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getDocumento().getDocumento() + ".xml")));
+					} else {						
+						if(numeroCota != null ) {						
+							doc = dbf.newDocumentBuilder().parse(new FileInputStream(new File(diretorioSaida.getValor() +"/"+ "NF-e-" + numeroCota + "-" + serieNF + "-" + numeroNF + ".xml")));   
+						} else {
+							doc = dbf.newDocumentBuilder().parse(new FileInputStream(new File(diretorioSaida.getValor() +"/"+ "NF-e-" + serieNF + "-" + numeroNF + ".xml")));
+						}
 					}
+					
 					
 					NodeList elementos = doc.getElementsByTagName("infNFe");
 					Element elo = (Element) elementos.item(0);
 					elo.setIdAttribute("Id", true);
 					
 					if(!dto.getNfeInformacoesTipoEmissor().equals(ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.name())) {
-						signatureHandler.sign(new DOMStructure(doc.getDocumentElement()), "infNFe");						
+						//signatureHandler.sign(new DOMStructure(doc.getDocumentElement()), "infNFe");						
 					}
 					
-					if(numeroCota != null ) {						
-						os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + numeroCota + "-" + serieNF + "-" + numeroNF + ".xml");
-					} else {
-						os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + serieNF + "-" + numeroNF + ".xml");
+					if(dto.getNfeInformacoesTipoEmissor().equals(ProcessoEmissao.EMISSAO_NFE_NFE_FLEX.name())) {
+						os = new FileOutputStream(diretorioSaida.getValor() + "/" + "nota" + StringUtils.leftPad(numeroNF, 9, '0') + "#"+ notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getDocumento().getDocumento() + ".xml");
+					} else {						
+						if(numeroCota != null ) {						
+							os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + numeroCota + "-" + serieNF + "-" + numeroNF + ".xml");
+						} else {
+							os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + serieNF + "-" + numeroNF + ".xml");
+						}
 					}
+					
 					
 					tf = TransformerFactory.newInstance();
 					trans = null;
