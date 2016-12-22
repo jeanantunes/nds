@@ -662,7 +662,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			} catch (Exception e) {
 				throw new ValidacaoException(TipoMensagem.ERROR, "Erro fatal ao gerar aqrquivo TXT: ");
 			}
-			this.arquivoNotasTXT(dados.toString());
+			
+			String cnpj = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getDocumento().getDocumento();
+			
+			Long numeroNota = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNumeroDocumentoFiscal();
+			
+			this.arquivoNotasTXT(dados.toString(), cnpj, numeroNota);
 		}
 		
 		
@@ -671,10 +676,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		}
 	}
 
-	private void arquivoNotasTXT(String dados) throws FileNotFoundException, IOException {
+	private void arquivoNotasTXT(String dados, String cnpj, Long numeroNota) throws FileNotFoundException, IOException {
 		
 		ParametroSistema pathNFEExportacao = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO_TXT);
-
+		
+		ParametroSistemaGeralDTO dto = parametroSistemaService.buscarParametroSistemaGeral();
+		
 		if (pathNFEExportacao == null) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Informe o diretório de exportação das notas na tela de parametros do sistema"));
 		}
@@ -687,7 +694,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		Long time = new Date().getTime(); 
 		
-		File notaExportacao = new File(diretorioExportacaoNFE + File.separator + new File("NFeExportacao" + time + ".txt"));
+		File notaExportacao = null;
+		
+		if(dto.getNfeInformacoesTipoEmissor().equals(ProcessoEmissao.EMISSAO_NFE_NFE_FLEX.name())) {
+			notaExportacao = new File(diretorioExportacaoNFE + File.separator + new File("nota" + StringUtils.leftPad(numeroNota.toString(), 9, '0') + "#"+ cnpj + ".txt"));
+		} else {
+			notaExportacao = new File(diretorioExportacaoNFE + File.separator + new File("NFeExportacao" + time + ".txt"));
+		}
+		
+		
 		 
 		FileWriter fileWriter;
 		 
