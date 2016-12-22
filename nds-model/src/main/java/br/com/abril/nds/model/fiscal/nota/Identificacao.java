@@ -196,7 +196,8 @@ public class Identificacao implements Serializable {
 		EMISSAO_NFE_AVULSA_PELO_FISCO(1, "Avulsa pelo Fisco"),
 		EMISSAO_NFE_AVULSA_PELO_FISCO_COM_CERTIFICADO(2, "Avulsa pelo Fisco com Certificado"),
 		EMISSAO_NFE_APLICATIVO_FORNECIDO_PELO_FISCO(3, "Aplicativo fornecido pelo fisco"),
-		EMISSAO_NFE_INFO_FISCO(4, "Aplicativo info fisco");
+		EMISSAO_NFE_INFO_FISCO(4, "Aplicativo info fisco"),
+		EMISSAO_NFE_NFE_FLEX(5, "Aplicativo NFe Flex");
 		
 		private Integer processoEmissao;
 		private String descricao; 
