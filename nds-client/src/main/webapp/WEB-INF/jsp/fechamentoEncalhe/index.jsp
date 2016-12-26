@@ -175,7 +175,7 @@
 		<jsp:include page="../cota/cotaBloqueada.jsp" />
 	</form>
 	
-	<div id="dialog-extracaoCC" title="Extra&ccedil;&atilde;o Conta Corrente" style="display:none;">
+	<div id="dialog-extracaoCC" title="Extra&ccedil;&atilde;o Fechamento de Encalhe" style="display:none;">
 		<fieldset style="width: 350px !important; height: 50px !important;">
 			<legend> Dados para extra&ccedil;&atilde;o</legend>
 			<td width="75">Per&iacute;odo:</td>

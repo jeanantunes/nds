@@ -1037,7 +1037,7 @@ public class FechamentoEncalheController extends BaseController {
 		
 		this.autoSizeColumns(workbook);
 		
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=Extracao_conta_corrente.xls");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=Extracao_Fechamento_Encalhe.xls");
 		
 		OutputStream output;
 
