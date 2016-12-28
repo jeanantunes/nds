@@ -92,14 +92,16 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		long value = sequence;
 		String output = myFormatter.format(value);
 
+		String nomeOrigem = nomeCodigoOrigem();
+		
 		String codigoDistribuidor = distribuidor.getCodigoDistribuidorDinap();
 		if(StringUtil.isEmpty(codigoDistribuidor) || codigoDistribuidor.equals("0")) {
 			codigoDistribuidor = distribuidor.getCodigoDistribuidorFC();
 		}
 
-		reg00.setNomeArquivo(String.format("NDS%s%s.PED", output, codigoDistribuidor));
+		reg00.setNomeArquivo(String.format(nomeOrigem+"%s%s.PED", output, codigoDistribuidor));
 		reg00.setNumSequencia(output);
-		reg00.setNovoNomeArquivo(String.format("NDS%s%s.PED", output, codigoDistribuidor));
+		reg00.setNovoNomeArquivo(String.format(nomeOrigem+"%s%s.PED", output, codigoDistribuidor));
 		return reg00;
 
 	}
@@ -736,26 +738,35 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		
 	}
 	 
-	 @Override
-	 @Transactional
-		public void atualizarQtdVolumePallet(Integer numero,Integer serie, Integer qtd) {
+	@Override
+	@Transactional
+	public void atualizarQtdVolumePallet(Integer numero,Integer serie, Integer qtd) {
 
-			StringBuilder sql  = new StringBuilder("");
-			sql.append("  UPDATE nota_fiscal_novo ") 
-			.append(" SET ") 
-			.append(" qtd_volume_pallet = :qtd ")
-			.append(" WHERE NUMERO_DOCUMENTO_FISCAL = :numero and SERIE = :serie ");
-			SQLQuery query=getSession().createSQLQuery(sql.toString());
-			query.setParameter("qtd",qtd);
-			query.setParameter("numero",numero);
-			query.setParameter("serie",serie);
-			query.executeUpdate();
+		StringBuilder sql  = new StringBuilder("");
+		sql.append("  UPDATE nota_fiscal_novo ") 
+		.append(" SET ") 
+		.append(" qtd_volume_pallet = :qtd ")
+		.append(" WHERE NUMERO_DOCUMENTO_FISCAL = :numero and SERIE = :serie ");
+		SQLQuery query=getSession().createSQLQuery(sql.toString());
+		query.setParameter("qtd",qtd);
+		query.setParameter("numero",numero);
+		query.setParameter("serie",serie);
+		query.executeUpdate();
 
+	}
+
+	@Override
+	public String nomeCodigoOrigem() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(" select ")
+		.append(" CODIGO_ORIGEM as origem ")
+		.append(" from parametros_ftf_geracao ");
+
+		SQLQuery query = getSession().createSQLQuery(sb.toString());
 		
-
-
-		}
-
-
+		query.setMaxResults(1);
+		
+		return (String) query.uniqueResult();
+	}
 }
-
