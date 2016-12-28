@@ -150,6 +150,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 				}
 			}
 		}
+
 		if ( !permiteReabertura ) {
 			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING,"Reabertura não Permitida pois já foram emitidas notas fiscais."),"result").recursive().serialize();
 			return;
@@ -203,12 +204,12 @@ public class FechamentoCEIntegracaoController extends BaseController{
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(dto.getItensFechamentoCE()));
 		
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		tableModel.setPage(dto.getItensFechamentoCE().size());
 		
 		tableModel.setTotal(dto.getQntItensCE());
 		
 		FechamentoCEIntegracaoVO fechamentoCEIntegracaoVO = getTotal(); ///new FechamentoCEIntegracaoVO();
-/*
+		/*
 		FechamentoCEIntegracaoConsolidadoDTO totalFechamento = dto.getConsolidado();
 		fechamentoCEIntegracaoVO.setTotalBruto(CurrencyUtil.formatarValor(totalFechamento.getTotalBruto()));
 		fechamentoCEIntegracaoVO.setTotalDesconto(CurrencyUtil.formatarValor(totalFechamento.getTotalDesconto()));

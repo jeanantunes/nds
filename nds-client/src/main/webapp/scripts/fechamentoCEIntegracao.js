@@ -65,6 +65,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				);
 		}
 	},
+	
 	verificarDataFechamentoCE : function(fechada) {
 			
 			$("#btnReabertura", fechamentoCEIntegracaoController.workspace).unbind("click");
@@ -181,10 +182,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		var itens = [];
 		
 		$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
-		
 			if(itemCEIntegracao.alteracao) 
 			{
-
 				itens.push({name:"itens[" + index + "].idItemCeIntegracao",value:itemCEIntegracao.id});
 				itens.push({name:"itens[" + index + "].encalhe",value:itemCEIntegracao.encalhe});
 				itens.push({name:"itens[" + index + "].venda",value:itemCEIntegracao.venda});
@@ -201,8 +200,35 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				} else {
 					itens.push({name:"itens[" + index + "].qtdeDevSemCE", value:itemCEIntegracao.qtdeDevSemCE});
 				}
+			}	
+		});
+		
+		return itens;
+	},
+	
+	getItensAlteradosCOMCE : function() {
+		
+		var itens = [];
+		
+		$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
+			
+			itens.push({name:"itens[" + index + "].idItemCeIntegracao",value:itemCEIntegracao.id});
+			itens.push({name:"itens[" + index + "].encalhe",value:itemCEIntegracao.encalhe});
+			itens.push({name:"itens[" + index + "].venda",value:itemCEIntegracao.venda});
+			itens.push({name:"itens[" + index + "].diferenca",value:itemCEIntegracao.diferenca});
+			itens.push({name:"itens[" + index + "].estoque",value:itemCEIntegracao.estoque});
+			
+			if($("#combo-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val() == "SEM") {
 				
+				itens.push({name:"itens[" + index + "].codigoProduto", value:itemCEIntegracao.codigoProduto});
+				itens.push({name:"itens[" + index + "].nomeProduto", value:itemCEIntegracao.nomeProduto});
+				itens.push({name:"itens[" + index + "].numeroEdicao", value:itemCEIntegracao.numeroEdicao});
+				itens.push({name:"itens[" + index + "].precoCapa", value:itemCEIntegracao.precoCapa});
+				itens.push({name:"itens[" + index + "].isProdutoSemCe", value:true});
+			} else {
+				itens.push({name:"itens[" + index + "].qtdeDevSemCE", value:itemCEIntegracao.qtdeDevSemCE});
 			}
+			
 		});
 		
 		return itens;
@@ -478,10 +504,10 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 	
 		
-		if ( isFinal) {
-			fechamentoCEIntegracaoController.atualizarDiferenca(campo.value, idItemCeIntegracao);
-			return;
-		}
+//		if ( isFinal) {
+//			fechamentoCEIntegracaoController.atualizarDiferenca(campo.value, idItemCeIntegracao);
+//			return;
+//		}
 		
 		var encalhe = campo.value;
 		
@@ -618,7 +644,9 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			
 			var qtdeDevSemCE = $("#qtdeDevSemCE" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 			
-			$("#venda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(eval(reparte) - ( eval(encalhe) + eval(qtdeDevSemCE)));
+			var vendaCECOM = eval(reparte) - ( eval(encalhe) + eval(qtdeDevSemCE));
+			
+			$("#venda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(vendaCECOM);
 			
 		} else {
 			
@@ -647,12 +675,16 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		if(isFinal) {
 			
 			encalhe = $("#inputEncalhe" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val();
+			alert($("#inputVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val());
 			
+			venda = $("#inputVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val(venda);
 		} else {
 			
 			encalhe = $("#encalhe" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 			
 		}
+		
+		console.log(venda);
 		
 		var diferenca = $("#diferenca" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		var estoque = $("#estoque" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
@@ -895,6 +927,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 						
 						var valorDiferencaAux = row.cell.encalhe - row.cell.estoque;
 						
+						console.log(row.cell.venda);
+						
 						colunaDiferenca =
 							'<span id="diferenca' + row.cell.idItemCeIntegracao + '">' 
 							+ valorDiferencaAux +
@@ -1044,7 +1078,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
 							row.cell.idItemCeIntegracao + ', this,'+isFinal+')"/>';
 							
-							colunaVenda =
+						colunaVenda =
 								' <input style="width:45px;" isEdicao="true" type="text" name="inputVenda"' +
 								' id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
 								' value="' + row.cell.venda + '" size="5px"' +
@@ -1052,7 +1086,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 								' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
 								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' + row.cell.idItemCeIntegracao + ', '+isFinal +' , this)"/>';
 							
-						} else {
+					} else {
 						
 							colunaCodigoProduto =
 								'<span id="codigoProduto' + row.cell.idItemCeIntegracao + '">' +
@@ -1507,7 +1541,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	fecharCE : function(){
 		
 		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/fecharCE',
-				 fechamentoCEIntegracaoController.getItensAlteradosCE(),
+				 fechamentoCEIntegracaoController.getItensAlteradosCOMCE(),
 				 function(resultado) {
 				 	exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
 					$(".grids", fechamentoCEIntegracaoController.workspace).hide();
