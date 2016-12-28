@@ -88,7 +88,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		hql.append("           movimento_estoque movimento ");
 		hql.append("       where ");
 		hql.append("          movimento.ESTOQUE_PRODUTO_ID = ESTOQUE_PROD.ID ");
-		hql.append("             and movimento.TIPO_MOVIMENTO_ID in( '66','210') ");
+		hql.append("             and movimento.TIPO_MOVIMENTO_ID in( '66','210') and movimento.ORIGEM not in ('TRANSFERENCIA_ESTORNO_PERDA_EM_DEVOLUCAO_ENCALHE_FORNECEDOR') ");
 		hql.append("            and movimento.INTEGRADO_COM_CE = false) ");
 //		hql.append("			- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,0)");
 //		hql.append("					COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
@@ -203,18 +203,6 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		query.setParameter("envioJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name());
 		query.setParameter("recebimentoEncalhe", GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE.name());
 		
-		
-		if(filtro.getPaginacao()!=null) {
-			
-			if(filtro.getPaginacao().getPosicaoInicial() != null) {
-				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-			}
-			
-			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
-				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-			}
-		}
-			
 		return query.list();
 	}
 	
@@ -226,6 +214,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" from movimento_estoque movimento ");
 		sql.append(" where movimento.ESTOQUE_PRODUTO_ID = ESTOQUE_PROD.ID ");
 		sql.append(" and movimento.TIPO_MOVIMENTO_ID in ('66','210') ");
+		sql.append(" and movimento.ORIGEM not in ('TRANSFERENCIA_ESTORNO_PERDA_EM_DEVOLUCAO_ENCALHE_FORNECEDOR') ");
 		sql.append(" and movimento.INTEGRADO_COM_CE = false ) as qtdeDevSemCE, ");
 		
 		return sql.toString();

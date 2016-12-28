@@ -351,6 +351,10 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				
 				EstoqueProduto estoqueProduto = itemFo.getProdutoEdicao().getEstoqueProduto();
 				
+				if(itemFo.getProdutoEdicao().getProduto().getCodigo().equals("53853001")) {
+					System.out.println("ola !!!");
+				}
+				
 				itemFo = this.atualizarItemCE(itemFo, itensAlterados, estoqueProduto);
 				
 				this.validarEncalheOuVendaInformado(itemFo);
@@ -786,8 +790,6 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	private ItemChamadaEncalheFornecedor atualizarItemCE(ItemChamadaEncalheFornecedor item,
 			Map<Long,ItemFechamentoCEIntegracaoDTO> itensAlterados, EstoqueProduto estoqueProduto) {
 		
-	
-		
 		if(item == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Item de Fechamento inválido.");
@@ -795,8 +797,6 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		Long qntVenda = Util.nvl(item.getQtdeVendaInformada(), 0L);
 		Long qntEncalhe = item.getQtdeDevolucaoInformada();
-		
-		
 		
 		if(itensAlterados != null && itensAlterados.containsKey(item.getId())) {
 			
