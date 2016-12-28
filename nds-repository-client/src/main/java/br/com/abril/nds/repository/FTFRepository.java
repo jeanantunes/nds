@@ -49,4 +49,6 @@ public interface FTFRepository {
 	public void atualizarQtdVolumePallet(Integer numero,Integer serie, Integer qtd) ;
 	
 	FTFEnvTipoRegistro05 obterRegistroTipo05(Long idNF);
+
+	String nomeCodigoOrigem();
 }

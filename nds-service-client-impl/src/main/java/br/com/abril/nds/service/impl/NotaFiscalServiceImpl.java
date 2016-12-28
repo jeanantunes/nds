@@ -845,7 +845,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					elo.setIdAttribute("Id", true);
 					
 					if(!dto.getNfeInformacoesTipoEmissor().equals(ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.name())) {
-						//signatureHandler.sign(new DOMStructure(doc.getDocumentElement()), "infNFe");						
+						signatureHandler.sign(new DOMStructure(doc.getDocumentElement()), "infNFe");						
 					}
 					
 					if(dto.getNfeInformacoesTipoEmissor().equals(ProcessoEmissao.EMISSAO_NFE_NFE_FLEX.name())) {
