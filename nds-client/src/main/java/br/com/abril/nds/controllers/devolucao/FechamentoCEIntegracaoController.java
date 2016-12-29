@@ -150,11 +150,11 @@ public class FechamentoCEIntegracaoController extends BaseController{
 				}
 			}
 		}
-
-		if ( !permiteReabertura ) {
-			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING,"Reabertura não Permitida pois já foram emitidas notas fiscais."),"result").recursive().serialize();
-			return;
-		}
+		
+		//if ( !permiteReabertura ) {
+			//result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING,"Reabertura não Permitida pois já foram emitidas notas fiscais."),"result").recursive().serialize();
+			//return;
+		//}
 		
 		String mensagemReaberturaNaoRealizada = fechamentoCEIntegracaoService.reabrirCeIntegracao(filtro); 
 		
@@ -377,9 +377,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		result.nothing();
 	}
 	
-	
-	
-public FechamentoCEIntegracaoVO getTotal() {
+	public FechamentoCEIntegracaoVO getTotal() {
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		filtro.getPaginacao().setQtdResultadosPorPagina(null);

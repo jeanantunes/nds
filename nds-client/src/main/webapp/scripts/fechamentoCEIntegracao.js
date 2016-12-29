@@ -675,9 +675,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		if(isFinal) {
 			
 			encalhe = $("#inputEncalhe" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val();
-			alert($("#inputVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val());
 			
-			venda = $("#inputVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val(venda);
+			venda = $("#inputVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val();
 		} else {
 			
 			encalhe = $("#encalhe" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
