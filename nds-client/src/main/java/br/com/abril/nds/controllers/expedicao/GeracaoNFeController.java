@@ -322,6 +322,7 @@ public class GeracaoNFeController extends BaseController {
 	
 	@Post
     @Rules(Permissao.ROLE_NFE_GERACAO_NFE_ALTERACAO)
+	@Transactional
 	public void exportar(final FiltroNFeDTO filtro, NotaFiscalTipoEmissaoRegimeEspecial notaFiscalTipoEmissaoRegimeEspecial, final String sortname, final String sortorder, final int rp, final int page, FileType fileType) throws IOException {
 		
 	    List<CotaExemplaresDTO> cotaExemplaresDTOs = null;
