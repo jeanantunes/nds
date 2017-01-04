@@ -69,7 +69,7 @@ import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GerarCobrancaService;
-import br.com.abril.nds.service.SemaforoService;
+import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -128,7 +128,7 @@ public class FechamentoEncalheController extends BaseController {
 	private DocumentoCobrancaService documentoCobrancaService;
 	
 	@Autowired
-	private SemaforoService semaforoService;
+	private RecolhimentoService recolhimentoService;
 	
 	@Autowired
 	protected HttpSession session;
@@ -714,6 +714,12 @@ public class FechamentoEncalheController extends BaseController {
 	@Get
 	public void exportarExtracaoCC(FiltroExtracaoContaCorrenteDTO filtro) throws IOException {
 		
+		filtro.setPeriodoRecolhimento(this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
+		
+		filtro.setTituloRelatorio(DateUtil.formatarDataPTBR(filtro.getPeriodoRecolhimento().getDe())+" a "
+				+DateUtil.formatarDataPTBR(filtro.getPeriodoRecolhimento().getAte())+" - SEMANA "+filtro.getSemana().toString().substring(4, 6));
+		
+		/*
 		if(filtro.getDataDe().equals(filtro.getDataAte())){
 			Integer semanaDe = distribuidorService.obterNumeroSemana(filtro.getDataDe());
 			
@@ -731,6 +737,7 @@ public class FechamentoEncalheController extends BaseController {
 						+DateUtil.formatarDataPTBR(filtro.getDataAte())+" - SEMANA "+semanaDe.toString().substring(4, 6) + " a " + semanaAte.toString().substring(4, 6));
 			}
 		}
+		*/
 		
 		List<ExtracaoContaCorrenteDTO> listExtracoes = this.fechamentoEncalheService.extracaoContaCorrente(filtro);
 		
@@ -825,7 +832,7 @@ public class FechamentoEncalheController extends BaseController {
 		qtdVenda = qtdRemessa.subtract(qtdDevolucao);
 		brutoVenda = brutoRemessa.subtract(brutoDevolucao);
 		descontoCotaVenda = descontoCotaRemessa.subtract(descontoCotaDevolucao);
-		descontoDistribVenda = descontoDistribRemessa.subtract(descontoDistribVenda);
+		descontoDistribVenda = descontoDistribRemessa.subtract(descontoDistribDevolucao);
 		
 		liquidoCotaRemessa = brutoRemessa.subtract(descontoCotaRemessa);
 		liquidoCotaDevolucao = brutoDevolucao.subtract(descontoCotaDevolucao);

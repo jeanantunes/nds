@@ -3,6 +3,7 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -17,6 +18,8 @@ public class FiltroExtracaoContaCorrenteDTO extends FiltroDTO implements Seriali
 	
 	private Date dataDe;
 	private Date dataAte;
+	private String semana;
+	private Intervalo<Date> periodoRecolhimento;
 	
 	private boolean buscarCotasPostergadas;
 	
@@ -43,6 +46,18 @@ public class FiltroExtracaoContaCorrenteDTO extends FiltroDTO implements Seriali
 	}
 	public void setBuscarCotasPostergadas(boolean buscarCotasPostergadas) {
 		this.buscarCotasPostergadas = buscarCotasPostergadas;
+	}
+	public String getSemana() {
+		return semana;
+	}
+	public void setSemana(String semana) {
+		this.semana = semana;
+	}
+	public Intervalo<Date> getPeriodoRecolhimento() {
+		return periodoRecolhimento;
+	}
+	public void setPeriodoRecolhimento(Intervalo<Date> periodoRecolhimento) {
+		this.periodoRecolhimento = periodoRecolhimento;
 	}
 	
 }

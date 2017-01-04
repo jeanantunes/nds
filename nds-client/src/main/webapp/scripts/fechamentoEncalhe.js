@@ -639,16 +639,10 @@ var fechamentoEncalheController = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 					
-					var dateDe = $("#extracaocc-datepickerDe").val();
-					var dateAte = $("#extracaocc-datepickerAte").val();
+					var semana = $("#extracaocc-semana").val();
 					
-					if(dateDe == '' || dateDe == undefined){
-						exibirMensagem("WARNING", ["Escolha uma data inicial!"]);
-						return;
-					}
-					
-					if(dateAte == '' || dateAte == undefined){
-						exibirMensagem("WARNING", ["Escolha uma data final!"]);
+					if(semana == '' || semana == undefined || semana.length != 6){
+						exibirMensagem("WARNING", ["Insira uma semana válida!"]);
 						return;
 					}
 					
@@ -658,8 +652,7 @@ var fechamentoEncalheController = $.extend(true, {
 					
 					var params = [];
 					
-					params.push({name : 'filtro.dataDe', value: dateDe});
-					params.push({name : 'filtro.dataAte', value: dateAte});
+					params.push({name : 'filtro.semana', value: semana});
 					
 					$.fileDownload(contextPath + '/devolucao/fechamentoEncalhe/exportarExtracaoCC', {
 						httpMethod : "GET",
@@ -689,6 +682,21 @@ var fechamentoEncalheController = $.extend(true, {
 				}
 			},
 			open: function() {
+					var dataOperacao = $("#fechamentoEncalhe-datepickerDe", fechamentoEncalheController.workspace).val();
+					//var dataAtual = $.format.date(new Date(), "dd/MM/yyyy");
+					var data = [{name: 'data', value:dataOperacao}];
+							
+							$.getJSON(
+									contextPath + '/cadastro/distribuidor/obterNumeroSemana', 
+								data,
+								function(result) {	
+									if (result) {	
+										
+										$("#extracaocc-semana").val(result.int);
+									}
+								}
+							);
+				/*
 				$("#extracaocc-datepickerDe").datepicker({
 					showOn: "button",
 					buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -699,6 +707,7 @@ var fechamentoEncalheController = $.extend(true, {
 					buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 					buttonImageOnly: true
 				});
+				*/
 			},
 		});
 		
