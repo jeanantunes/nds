@@ -5,9 +5,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Footer;
+import br.com.abril.nds.util.export.FooterType;
 
 @Exportable
 public class CotaExemplaresDTO implements Serializable {
@@ -41,12 +44,15 @@ public class CotaExemplaresDTO implements Serializable {
 	private String nomeCota;
 	
 	@Export(label="Total Exemplares", alignment=Alignment.CENTER)
+	@Footer(type = FooterType.SUM,columnType = ColumnType.INTEGER)
 	private BigInteger exemplares;
 	
-	@Export(label="Total R$", alignment=Alignment.RIGHT)
+	@Export(label="Total R$", alignment=Alignment.RIGHT, columnType = ColumnType.MOEDA_QUATRO_CASAS)
+	@Footer(type = FooterType.SUM, columnType = ColumnType.MOEDA_QUATRO_CASAS)
 	private BigDecimal total;
 	
-	@Export(label="Total Desconto R$", alignment=Alignment.RIGHT)
+	@Export(label="Total Desconto R$", alignment=Alignment.RIGHT, columnType = ColumnType.MOEDA_QUATRO_CASAS)
+	@Footer(type = FooterType.SUM,columnType = ColumnType.MOEDA_QUATRO_CASAS)
 	private BigDecimal totalDesconto;
 	
 	private SituacaoCadastro situacaoCadastro;
