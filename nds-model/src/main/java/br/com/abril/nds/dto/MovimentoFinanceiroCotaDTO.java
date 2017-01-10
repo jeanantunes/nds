@@ -31,6 +31,8 @@ public class MovimentoFinanceiroCotaDTO implements Serializable {
 	
 	private Usuario usuario;
 	
+	private String nome;
+	
 	@Export(label="Valor", exhibitionOrder=6,columnType=ColumnType.MOEDA_QUATRO_CASAS)
 	private BigDecimal valor;
 	
@@ -46,7 +48,7 @@ public class MovimentoFinanceiroCotaDTO implements Serializable {
 	@Export(label="Data de Lançamento", exhibitionOrder=1)
 	private Date dataCriacao;
 	
-	@Export(label="Observação", exhibitionOrder=7)
+	@Export(label="Observação", exhibitionOrder=8)
 	private String observacao;
 	
 	private TipoEdicao tipoEdicao;
@@ -140,6 +142,19 @@ public class MovimentoFinanceiroCotaDTO implements Serializable {
 	 */
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+
+	@Export(label="Usuário", exhibitionOrder=7)
+	public String getNome() {
+		if(usuario == null){
+			return nome;
+		} else {
+			return usuario.getNome();
+		}
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
 	/**

@@ -883,8 +883,8 @@ public class ProdutoEdicaoController extends BaseController {
 					filtro.getBrinde(),
 					filtro.getSortOrder(), 
 					filtro.getSortName(), 
-					filtro.getPage(), //page, 
-					filtro.getRp() //maxResults
+					0, // filtro.getPage(),  -- page, 
+					0  // filtro.getRp() -- maxResults
 					);		
 		}
 		

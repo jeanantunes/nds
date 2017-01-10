@@ -186,7 +186,11 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 			String nomeFornecedor, 
 			String statusLancamento, 
 			String statusSituacao, 
-			String temBrinde) {
+			String temBrinde,
+			BigDecimal precoVenda,
+			BigDecimal desconto,
+			Date dataLancamento,
+			Date getDataRecolhimentoReal) {
 		this.id = id;
 		this.codigoProduto  = codigoProduto;
 		this.nomeComercial  = nomeComercial;
@@ -194,7 +198,8 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 		this.nomeFornecedor = nomeFornecedor;
 		this.statusLancamento  = statusLancamento;
 		this.statusSituacao = statusSituacao; 
-		this.temBrinde = temBrinde;		
+		this.temBrinde = temBrinde;
+		this.precoVenda = precoVenda;		
 	};
 	
 	
