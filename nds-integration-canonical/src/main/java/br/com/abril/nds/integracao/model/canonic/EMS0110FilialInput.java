@@ -277,7 +277,12 @@ public class EMS0110FilialInput extends EMS0110Input implements Serializable {
     public void setSegmento(final String segmento) {
         this.segmento = segmento;
     }
-
+    
+    @Field(offset = 205, length = 10)
+    public Long getcodNCM() {
+        return codNCM;
+    }
+    
 	@Override
 	public int hashCode() {
 		final int prime = 31;

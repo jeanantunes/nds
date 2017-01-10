@@ -76,6 +76,7 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
     protected String formaComercializacao;
     protected String classificacao;
     protected String segmento;
+    protected Long codNCM;
     
     @Field(offset = 1, length = 7)
     public String getCodDistrib() {
@@ -603,7 +604,16 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
         this.segmento = segmento;
     }
     
-    @Override
+    @Field(offset = 187, length=10)
+    public Long getCodNCM() {
+		return codNCM;
+	}
+
+	public void setCodNCM(Long codNCM) {
+		this.codNCM = codNCM;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
