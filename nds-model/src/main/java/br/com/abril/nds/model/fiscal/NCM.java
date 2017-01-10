@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * @author francisco.garcia
@@ -37,7 +38,13 @@ public class NCM implements Serializable {
 	
 	@Column(name = "UNIDADE_MEDIDA", nullable = false)
 	private String unidadeMedida;
-
+	
+	@Column(name = "GRUPO", nullable = false)
+	private Long grupo;
+	
+	@Column(name = "IMPOSTO", nullable = false)
+	private boolean imposto;
+	
 	/**
 	 * @return the id
 	 */
@@ -92,6 +99,22 @@ public class NCM implements Serializable {
 	 */
 	public void setUnidadeMedida(String unidadeMedida) {
 		this.unidadeMedida = unidadeMedida;
+	}
+	
+	public Long getGrupo() {
+		return grupo;
+	}
+
+	public void setGrupo(Long grupo) {
+		this.grupo = grupo;
+	}
+	
+	public boolean isImposto() {
+		return imposto;
+	}
+
+	public void setImposto(boolean imposto) {
+		this.imposto = imposto;
 	}
 
 	/* (non-Javadoc)
