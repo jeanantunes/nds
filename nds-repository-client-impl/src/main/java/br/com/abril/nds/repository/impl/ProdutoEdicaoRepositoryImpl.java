@@ -346,7 +346,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		.append(" SELECT pe.id as id, p.codigo as codigoProduto, p.NOME_COMERCIAL as nomeComercial, ")
 		.append("        pe.NUMERO_EDICAO as numeroEdicao, coalesce(if(pessoa.tipo = 'F',pessoa.nome, pessoa.RAZAO_SOCIAL),pessoa.nome_fantasia,'') as nomeFornecedor, ")
 		.append("        l.TIPO_LANCAMENTO as statusLancamento, ") 
-//		.append("        l.status as statusSituacao , ")
+  		.append("        l.status as statusSituacao , ")
 		
 		.append("        if(pe.PARCIAL = false, ")
 		.append("                      l.status, ")
@@ -357,15 +357,21 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		.append("                          order by plp.NUMERO_PERIODO limit 1), l.status)) as statusSituacao, ")
 		
 		.append("        pe.possui_brinde as temBrinde, ")
-		.append("        pe.parcial as parcial ");
+		.append("        pe.parcial as parcial, ")
+		.append("        pe.preco_venda as precoVenda, ")
+		.append("        descontoLogistica.percentual_desconto as desconto, ")
+		.append("        l.data_lcto_distribuidor as dataLancamento, ")
+		.append("        l.data_rec_distrib as dataRecolhimentoReal ");
 		
 		// Corpo da consulta com os filtros:
 		final SQLQuery query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortname, sortorder);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ConsultaProdutoEdicaoDTO.class));
 		
-		query.setFirstResult(initialResult);
-		query.setMaxResults(maxResults);
+		if(initialResult!=0){
+			query.setFirstResult(initialResult);
+			query.setMaxResults(maxResults);
+		}
 		
 		query.addScalar("id", StandardBasicTypes.LONG);
 		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
@@ -376,6 +382,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.addScalar("statusSituacao", StandardBasicTypes.STRING);
 		query.addScalar("temBrinde", StandardBasicTypes.BOOLEAN);
 		query.addScalar("parcial", StandardBasicTypes.BOOLEAN);
+		query.addScalar("precoVenda", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("desconto", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("dataLancamento", StandardBasicTypes.DATE);
+		query.addScalar("dataRecolhimentoReal", StandardBasicTypes.DATE);
 		
 		return query.list();
 	}
@@ -609,6 +619,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append("   left join FORNECEDOR f on pf.fornecedores_ID=f.ID ");
 		
 		hql.append("   left join PESSOA pessoa on f.JURIDICA_ID=pessoa.ID ");
+		
+		hql.append("   left join DESCONTO_LOGISTICA descontoLogistica on pe.DESCONTO_LOGISTICA_ID=descontoLogistica.ID ");
 		
 		hql.append("   join LANCAMENTO l on pe.ID=l.PRODUTO_EDICAO_ID "); 
 		

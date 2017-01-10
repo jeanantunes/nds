@@ -51,6 +51,18 @@ public class ConsultaProdutoEdicaoDTO implements Serializable {
 	@Export(label="Lançamento", alignment=Alignment.CENTER, widthPercent=16)
 	private String statusLancamento;
 	
+	@Export(label="Preço Capa", alignment=Alignment.CENTER, widthPercent=16)
+	private BigDecimal precoVenda;
+	
+	@Export(label="Desconto Logística", alignment=Alignment.CENTER, widthPercent=16)
+	private BigDecimal desconto;
+	
+	@Export(label="Data Lancamento", alignment=Alignment.CENTER, widthPercent=16)
+	private Date dataLancamento;
+	
+	@Export(label="Data Recolhimento", alignment=Alignment.CENTER, widthPercent=16)
+	private Date dataRecolhimentoReal;
+	
 	@Export(label="Situação", alignment=Alignment.CENTER, widthPercent=16)
 	private String statusSituacao;
 	
@@ -161,6 +173,46 @@ public class ConsultaProdutoEdicaoDTO implements Serializable {
 
 	public void setTemBrinde(Boolean temBrinde) {
 		this.temBrinde = temBrinde;
+	}
+
+
+	public BigDecimal getPrecoVenda() {
+		return precoVenda;
+	}
+
+
+	public void setPrecoVenda(BigDecimal precoVenda) {
+		this.precoVenda = precoVenda;
+	}
+
+
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
+	}
+
+
+	public Date getDataLancamento() {
+		return dataLancamento;
+	}
+
+
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = dataLancamento;
+	}
+
+
+	public Date getDataRecolhimentoReal() {
+		return dataRecolhimentoReal;
+	}
+
+
+	public void setDataRecolhimentoReal(Date dataRecolhimentoReal) {
+		this.dataRecolhimentoReal = dataRecolhimentoReal;
 	}
 
 	
