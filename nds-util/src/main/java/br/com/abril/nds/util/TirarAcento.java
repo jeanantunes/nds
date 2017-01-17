@@ -49,7 +49,10 @@ public class TirarAcento {
         mapCharSubstituir.put('Ñ', 'N');
         mapCharSubstituir.put('º', ' ');
         mapCharSubstituir.put('°', ' ');
-        
+        mapCharSubstituir.put('*', ' ');
+        mapCharSubstituir.put('&', ' ');
+        mapCharSubstituir.put('´', ' ');
+        mapCharSubstituir.put('/', ' ');
     }
 
     public static String removerAcentuacao(String texto) {

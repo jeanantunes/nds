@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFfield;
+import br.com.abril.nds.util.TirarAcento;
 
 public class IpvLancamentoDTO extends FTFBaseDTO {
 	
@@ -155,7 +156,7 @@ public class IpvLancamentoDTO extends FTFBaseDTO {
 	}
 
 	public void setNomeProduto(String nomeProduto) {
-		this.nomeProduto = nomeProduto;
+		this.nomeProduto = (nomeProduto == null || nomeProduto.isEmpty()) ?  "" :  TirarAcento.removerAcentuacao(nomeProduto);
 	}
 
 	public String getReparte() {
