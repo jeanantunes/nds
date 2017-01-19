@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.NotaFiscalDTO;
+import br.com.abril.nds.dto.RelatorioNFeExemplaresDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.dto.TipoMovimentoDTO.Operacao;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
@@ -30,6 +31,7 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalTipoEmissaoRegimeEspecial;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -1634,6 +1636,126 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		return totalRegistros.intValue() > 0 ? true : false;
 
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<RelatorioNFeExemplaresDTO> consultaRelatorioNotaFiscalSumarizados(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao) {
+		
+		StringBuilder hql = new StringBuilder("SELECT ");
+		hql.append(" mffc.cota.id as idCota, ");
+		hql.append(" mffc.cota.numeroCota as numeroCota, ");
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') as nomeCota,");
+		hql.append(" SUM(mffc.qtde) as exemplares, ");
+		hql.append(" SUM(mffc.valoresAplicados.precoVenda) as precoCapa, ");
+		hql.append(" SUM(mffc.valoresAplicados.precoComDesconto) as precoDesconto, "); 
+		hql.append(" SUM(mffc.valoresAplicados.precoVenda * mffc.qtde) as valorCapa, "); 
+		hql.append(" SUM(mffc.valoresAplicados.precoComDesconto * mffc.qtde) as valorTotalDesconto, "); 	
+		hql.append(" produto.codigo as codigoProduto, ");
+		hql.append(" produto.nomeComercial as nomeProduto, ");
+		hql.append(" produtoEdicao.numeroEdicao as edicao, ");
+		hql.append(" ncm.codigo as ncm, ");
+		hql.append(" ncm.imposto as imposto ");
+		// hql.append(" chamadaEncalheCota.processoUtilizaNfe as contribuinteICMSExigeNFe ");
+		//hql.append(" CASE WHEN cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS = true THEN true else cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica END as contribuinteICMSExigeNFe");
+		
+		Query query = queryConsultaCotaMFFNfeParameters(queryConsultaRelatorioCotaMFFNfe(filtro, hql), filtro);
+			
+		query.setResultTransformer(new AliasToBeanResultTransformer(RelatorioNFeExemplaresDTO.class));
+
+		return query.list();
+		
+	}
+	
+	private StringBuilder queryConsultaRelatorioCotaMFFNfe(FiltroNFeDTO filtro, StringBuilder hql) {
+
+		hql.append(" FROM MovimentoFechamentoFiscalCota mffc ")
+		.append(" JOIN mffc.tipoMovimento tipoMovimento ")
+		.append(" LEFT OUTER JOIN mffc.chamadaEncalheCota chamadaEncalheCota ")
+		.append(" LEFT OUTER JOIN chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
+		.append(" LEFT OUTER JOIN chamadaEncalhe.lancamentos lancamentos ")
+		.append(" JOIN mffc.cota cota ")
+		.append(" JOIN cota.pessoa pessoa ")
+		.append(" LEFT OUTER JOIN cota.box box ")
+		.append(" LEFT OUTER JOIN box.roteirizacao roteirizacao ")
+		.append(" LEFT OUTER JOIN roteirizacao.roteiros roteiro ")
+		.append(" JOIN mffc.produtoEdicao produtoEdicao")
+		.append(" JOIN produtoEdicao.produto produto ")
+		.append(" JOIN produto.tipoProduto tp ")
+		.append(" JOIN tp.ncm ncm ")
+		.append(" JOIN produto.fornecedores fornecedor")
+		.append(" WHERE mffc.data BETWEEN :dataInicial AND :dataFinal ")
+		.append(" AND mffc.notaFiscalLiberadaEmissao = :true ")
+		.append(" AND mffc.qtde > 0 ");
+		
+		if(filtro.isNotaFiscalVendaConsignado() != null && filtro.isNotaFiscalVendaConsignado()) {
+			hql.append(" AND mffc.notaFiscalVendaEmitida = :false ");
+		}
+		
+		if(filtro.isNotaFiscalDevolucaoSimbolica() != null && filtro.isNotaFiscalDevolucaoSimbolica()) {
+			hql.append(" AND mffc.notaFiscalDevolucaoSimbolicaEmitida = :false ");
+		}
+
+		// Tipo de Nota:		
+		if(filtro.getIdNaturezaOperacao() != null) {
+			
+			hql.append(" AND mffc.tipoMovimento.id in (SELECT tm.id ");
+			hql.append("FROM NaturezaOperacao no ");
+			hql.append("JOIN no.tipoMovimento tm ");
+			hql.append("WHERE no.id in(:idNaturezaOperacao)) ");
+			
+		}
+
+		if(filtro.getIdRegiao() != null) {
+			hql.append(" AND cota.id in (SELECT ");
+			hql.append(" c.id ");
+			hql.append(" FROM RegistroCotaRegiao registroCotaRegiao ");
+			hql.append(" INNER JOIN registroCotaRegiao.cota c ");
+			hql.append(" INNER JOIN registroCotaRegiao.regiao regiao ");
+			hql.append(" WHERE regiao.id = :idRegiao) ");
+		}
+		
+		// Data Emissão:	...		
+		if(filtro.getDataEmissao() != null) {
+			hql.append(" ");
+		}
+
+		// Cota:		
+		if(filtro.getIdCota() != null) {
+			hql.append(" AND cota.id = :cotaId ");
+		}
+
+		// Intervalo de Cota:
+		if(filtro.getIntervalorCotaInicial() != null && filtro.getIntervalorCotaFinal() != null) {
+			hql.append(" AND cota.numeroCota BETWEEN :numeroCotaInicial AND :numeroCotaFinal ");
+		}
+
+		// Roteiro:
+		if(filtro.getIdRoteiro() != null) {
+			hql.append(" AND roteiro.id = :roteiroId ");
+		}
+
+		// Rota:		
+		if(filtro.getIdRota() != null) {
+			hql.append(" AND rota.id = :rotaId ");
+		}
+
+		// Cota de:	 Até   
+		if(filtro.getIntervaloBoxInicial() != null && filtro.getIntervaloBoxFinal() != null) {
+			hql.append(" AND box.codigo between :codigoBoxInicial AND :codigoBoxFinal ");
+		}
+
+		if(filtro.getListIdFornecedor() != null) {
+			hql.append(" AND fornecedor.id in (:fornecedor) ");
+		}
+
+		hql.append(" AND produto.notaFiscal = :notaFiscalProduto ");
+		
+		hql.append(" GROUP BY mffc.cota.numeroCota, produto.codigo, produtoEdicao.numeroEdicao ");
+		
+		hql.append(" order by mffc.cota.numeroCota, produto.codigo, produtoEdicao.numeroEdicao ");
+		
+		return hql;
 	}
 	
 }

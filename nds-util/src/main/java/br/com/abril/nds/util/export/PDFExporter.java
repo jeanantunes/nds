@@ -367,6 +367,8 @@ public class PDFExporter implements Exporter {
 
         		paragraph.setAlignment(exportColumn.getAlignment().getValue());
         		
+        		// pdfCell.setFixedHeight(15);
+        		
         		pdfCell.addElement(paragraph);
         		
         		pdfTable.addCell(pdfCell);
@@ -543,7 +545,7 @@ public class PDFExporter implements Exporter {
 			
 			PdfPCell emptyCell = new PdfPCell();
 			
-			emptyCell.setFixedHeight(20);
+			emptyCell.setFixedHeight(10);
 			
 			pdfTable.addCell(emptyCell);
 		}

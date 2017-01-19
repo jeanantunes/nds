@@ -13,7 +13,7 @@ public @interface Export {
 	
 	Alignment alignment() default Alignment.LEFT;
 	
-	String alignWithHeader() default "";
+	String alignWithHeader() default "10";
 	
 	int exhibitionOrder() default 1000;
 	

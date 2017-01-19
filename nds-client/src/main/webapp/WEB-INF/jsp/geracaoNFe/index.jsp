@@ -52,19 +52,29 @@ $(function(){
 </div>
 <div class="areaBts">
 	<div class="area">
-		<span class="bt_novos"><a isEdicao="true" href="javascript:;"
-			id="geracaoNfe-btnGerar" rel="tipsy"
-			title="Confirma  Gera&ccedil;&atilde;o de Nf-e?"><img
-				src="${pageContext.request.contextPath}/images/ico_check.gif"
-				width="16" height="16" border="0" hspace="5" /></a></span> <span
-			class="bt_arq"><a href="javascript:;"
-			id="geracaoNfe-btnImprimirXLS" rel="tipsy" title="Gerar Arquivo"><img
-				src="${pageContext.request.contextPath}/images/ico_excel.png"
-				hspace="5" border="0" /></a></span> <span class="bt_arq"><a
-			href="javascript:;" id="geracaoNfe-btnImprimirPDF" rel="tipsy"
-			title="Imprimir"><img
-				src="${pageContext.request.contextPath}/images/ico_impressora.gif"
-				alt="Imprimir" hspace="5" border="0" /></a></span>
+		<span class="bt_novos"><a isEdicao="true" href="javascript:;" id="geracaoNfe-btnGerar" rel="tipsy" title="Confirma  Gera&ccedil;&atilde;o de Nf-e?">
+			<img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" border="0" hspace="5" /></a>
+		</span>
+		<span class="bt_arq">
+			<a href="javascript:;" id="geracaoNfe-btnImprimirXLS" rel="tipsy" title="Gerar Arquivo">
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+			</a>
+		</span>
+		<span class="bt_arq">
+			<a href="javascript:;" id="geracaoNfe-btnRelatorioXLS" rel="tipsy" title="Extração Relatorio Fiscal EXCEL">
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+			</a>
+		</span>
+		<span class="bt_arq">
+			<a href="javascript:;" id="geracaoNfe-btnImprimirPDF" rel="tipsy" title="Imprimir">
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+			</a>
+		</span>
+		<span class="bt_arq">
+			<a href="javascript:;" id="geracaoNfe-btnRelatorioPDF" rel="tipsy" title="Extração Relatorio Fiscal PDF">
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Extração Relatorio Fiscal" hspace="5" border="0" />
+			</a>
+		</span>
 	</div>
 </div>
 <div class="linha_separa_fields">&nbsp;</div>

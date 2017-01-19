@@ -12,6 +12,7 @@ import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
+import br.com.abril.nds.dto.RelatorioNFeExemplaresDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -162,5 +163,9 @@ public interface NotaFiscalService {
 	
 	
 	DestinoEncalhe obterDestinoEncalhe(String codigoProduto,Long numeroEdicao);
+	
+	List<CotaExemplaresDTO> geracaoRelatorioNotaFiscal(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
+
+	List<RelatorioNFeExemplaresDTO> consultaRelatorioNotaFiscalSumarizados(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
 
 }

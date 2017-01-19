@@ -530,6 +530,7 @@ public class ItemNotaFiscalBuilder  {
 			PISOutrWrapper pisOutWrapper = new PISOutrWrapper();
 			
 			PIS pis = new PIS();
+			pis.setCst("01");
 			pis.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 			pis.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 			pis.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));	
@@ -651,6 +652,7 @@ public class ItemNotaFiscalBuilder  {
 			CofinsOutrWrapper cofinsOutrWrapper = new CofinsOutrWrapper();
 			
 			COFINS cofins = new COFINS();
+			cofins.setCst("01");
 			cofins.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 			cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 			cofins.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));

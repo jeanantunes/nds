@@ -53,6 +53,7 @@ import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
+import br.com.abril.nds.dto.RelatorioNFeExemplaresDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.enums.Dominio;
@@ -64,12 +65,15 @@ import br.com.abril.nds.model.cadastro.DestinoEncalhe;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal.DistribuidorGrupoNotaFiscal;
+import br.com.abril.nds.model.cadastro.Tributacao.TributacaoTipoOperacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
+import br.com.abril.nds.model.cadastro.Tributacao;
+import br.com.abril.nds.model.cadastro.TributoAliquota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -85,6 +89,7 @@ import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.fiscal.nota.COFINS;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiroProduto;
@@ -97,6 +102,7 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
+import br.com.abril.nds.model.fiscal.nota.PIS;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
@@ -126,8 +132,10 @@ import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.TributacaoService;
 import br.com.abril.nds.service.builders.NFeGerarTxt;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.service.xml.nfe.signature.SignatureHandler;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
@@ -214,6 +222,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Autowired(required=true)
 	private SignatureHandler signatureHandler;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	/*
 	 * (non-Javadoc)
@@ -702,8 +713,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			notaExportacao = new File(diretorioExportacaoNFE + File.separator + new File("NFeExportacao" + time + ".txt"));
 		}
 		
-		
-		 
 		FileWriter fileWriter;
 		 
 		fileWriter = new FileWriter(notaExportacao);
@@ -1820,7 +1829,30 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			return this.notaFiscalRepository.consultaCotaExemplaresMECSumarizados(filtro);
 		}
 	}
+	
+	@Override
+	@Transactional
+	public List<CotaExemplaresDTO> geracaoRelatorioNotaFiscal(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao) {
 
+		validarFiltrosNFe(filtro);
+		
+		if(naturezaOperacao == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Natureza de Operação incorreta.");
+		}
+		
+		List<TipoMovimento> itensMovimentosFiscais = obterMovimentosFiscaisNaturezaOperacao(naturezaOperacao);
+		
+		if(itensMovimentosFiscais.size() > 0) {
+			
+			ajustarFiltroNaturezaDevSimbolicaVenda(filtro, naturezaOperacao);
+			
+			return this.notaFiscalRepository.consultaCotaExemplaresMFFSumarizados(filtro);
+		} else {
+		
+			return this.notaFiscalRepository.consultaCotaExemplaresMECSumarizados(filtro);
+		}
+	}
+	
 	private void ajustarFiltroNaturezaDevSimbolicaVenda(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao) {
 		
 		if(naturezaOperacao.isNotaFiscalDevolucaoSimbolica()) {
@@ -1985,6 +2017,57 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Override
 	@Transactional
 	public DestinoEncalhe obterDestinoEncalhe(String codigoProduto,Long numeroEdicao) {
-	return this.notaFiscalRepository.obterDestinoEncalhe(codigoProduto,numeroEdicao);
+		return this.notaFiscalRepository.obterDestinoEncalhe(codigoProduto,numeroEdicao);
+	}
+
+	@Override
+	public List<RelatorioNFeExemplaresDTO> consultaRelatorioNotaFiscalSumarizados(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao) {
+		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		List<RelatorioNFeExemplaresDTO> relatorioNFe = new ArrayList<RelatorioNFeExemplaresDTO>();
+		
+		List<RelatorioNFeExemplaresDTO> listaRetorno = this.notaFiscalRepository.consultaRelatorioNotaFiscalSumarizados(filtro, naturezaOperacao);
+		
+		Map<String, TributoAliquota> tributoAliquota = new HashMap<String, TributoAliquota>();
+		
+		for(final TributoAliquota tributo : distribuidor.getRegimeTributarioTributoAliquota()){
+			tributoAliquota.put(tributo.getNomeTributo(), tributo);
+		}
+		
+		TributoAliquota tributoPis = tributoAliquota.get("PIS");
+		TributoAliquota tributoCofins = tributoAliquota.get("COFINS");
+		
+		for (RelatorioNFeExemplaresDTO relatorioNFeExemplaresDTO : listaRetorno) {
+			if(relatorioNFeExemplaresDTO.isImposto()) {
+				relatorioNFeExemplaresDTO.setValorPis(NFeCalculatorImpl.calculate(this.pis(relatorioNFeExemplaresDTO, tributoPis)));
+				relatorioNFeExemplaresDTO.setValorConfins(NFeCalculatorImpl.calculate(this.cofins(relatorioNFeExemplaresDTO, tributoCofins)));
+				relatorioNFe.add(relatorioNFeExemplaresDTO);
+			} else {
+				relatorioNFeExemplaresDTO.setValorPis(BigDecimal.ZERO);
+				relatorioNFeExemplaresDTO.setValorConfins(BigDecimal.ZERO);
+				relatorioNFe.add(relatorioNFeExemplaresDTO);
+			}
+		}
+		
+		return relatorioNFe;
+	}
+	
+	private PIS pis(RelatorioNFeExemplaresDTO relatorio, TributoAliquota tributoPis) {
+		
+		PIS pis = new PIS();
+		pis.setValorBaseCalculo(relatorio.getValorTotalDesconto());
+		pis.setPercentualAliquota(tributoPis.getValor());
+		
+		return pis;
+	}
+	
+	private COFINS cofins(RelatorioNFeExemplaresDTO relatorio, TributoAliquota tributoCofins) {
+		
+		COFINS cofins = new COFINS();
+		cofins.setValorBaseCalculo(relatorio.getValorTotalDesconto());
+		cofins.setPercentualAliquota(tributoCofins.getValor());
+		
+		return cofins;
 	}
 }

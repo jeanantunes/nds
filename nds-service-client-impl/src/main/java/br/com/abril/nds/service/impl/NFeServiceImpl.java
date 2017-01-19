@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.NfeVO;
-import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
@@ -33,6 +32,7 @@ import br.com.abril.nds.dto.NfeImpressaoDTO;
 import br.com.abril.nds.dto.NfeImpressaoWrapper;
 import br.com.abril.nds.dto.NotaFiscalDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
+import br.com.abril.nds.dto.RelatorioNFeExemplaresDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
@@ -86,6 +86,7 @@ import br.com.abril.nds.service.FTFService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MonitorNFEService;
 import br.com.abril.nds.service.NFeService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.TransportadorService;
@@ -156,6 +157,9 @@ public class NFeServiceImpl implements NFeService {
 
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private NaturezaOperacaoService naturezaOperacaoService;
 	
 	// Trava para evitar duplicidade ao gerar notas por mais de um usuario simultaneamente
     // O HashMap suporta mais detalhes e pode ser usado futuramente para restricoes mais finas
@@ -1349,7 +1353,131 @@ public class NFeServiceImpl implements NFeService {
 			return this.listaRegimeEspecial(filtro, naturezaOperacao, distribuidor);	
 		}
 	}
-
+	
+	@Override
+	@Transactional
+	public List<RelatorioNFeExemplaresDTO> consultaRelatorioNotaFiscalSumarizados(final FiltroNFeDTO filtro) {
+		
+		Distribuidor distribuidor = this.obterInformacaoDistribuidor();
+		
+		final NaturezaOperacao naturezaOperacao = this.naturezaOperacaoService.obterNaturezaOperacaoPorId(filtro.getIdNaturezaOperacao());
+		
+		if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+			
+			return notaFiscalService.consultaRelatorioNotaFiscalSumarizados(filtro, naturezaOperacao);
+			
+		} else {
+			
+			return this.listaRegimeEspecialRelatorio(filtro, naturezaOperacao, distribuidor);	
+		}
+	}
+	
+	private List<RelatorioNFeExemplaresDTO> listaRegimeEspecialRelatorio(final FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao, Distribuidor distribuidor) {
+		
+		List<RelatorioNFeExemplaresDTO> cotasContribuinteEmitente = new ArrayList<RelatorioNFeExemplaresDTO>();
+		
+		List<RelatorioNFeExemplaresDTO> cotas = notaFiscalService.consultaRelatorioNotaFiscalSumarizados(filtro, naturezaOperacao);
+		
+		if(cotas == null || cotas.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados itens para gerar nota fiscal.");
+		}
+		
+//		for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+//			if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
+//				
+//				if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)
+//						|| (filtro.getNotaFiscalTipoEmissao() != null 
+//							&& filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE))) {
+//					for (RelatorioNFeExemplaresDTO cota : cotas) {
+//						if((naturezaOperacao.isGerarCotaContribuinteICMS()
+//								&& ((cota.isContribuinteICMS() != null && cota.isContribuinteICMS()))) && cota.isContribuinteICMSExigeNFe()) {
+//							cotasContribuinteEmitente.add(cota);
+//						}  else if((!naturezaOperacao.isGerarCotaContribuinteICMS()
+//								&& ((cota.isContribuinteICMS() != null && !cota.isContribuinteICMS()))
+//								&& (naturezaOperacao.isGerarCotaExigeNFe() 
+//										|| (cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica() )))
+//								&& cota.isContribuinteICMSExigeNFe()) {
+//							cotasContribuinteEmitente.add(cota);
+//						} else if(((cota.isContribuinteICMS() != null && !cota.isContribuinteICMS()))
+//								&& (naturezaOperacao.isGerarCotaExigeNFe() 
+//										|| (cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica() ))
+//								&& cota.isContribuinteICMSExigeNFe()) {
+//							cotasContribuinteEmitente.add(cota);
+//						}
+//					}
+//				} else if(filtro.getNotaFiscalTipoEmissao() != null && filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
+//					for (RelatorioNFeExemplaresDTO cota : cotas) {
+//						if(naturezaOperacao.isGerarCotaNaoExigeNFe() 
+//								&& (cota.isContribuinteICMS() == null || !cota.isContribuinteICMS()) 
+//								&& (cota.isExigeNotaFiscalEletronica() == null || !cota.isExigeNotaFiscalEletronica() )) {
+//							cota.setNotaFiscalConsolidada(true);
+//							cotasContribuinteEmitente.add(cota);
+//						} else if((!naturezaOperacao.isGerarCotaContribuinteICMS()
+//								&& ((cota.isContribuinteICMS() != null && !cota.isContribuinteICMS()))
+//								&& (naturezaOperacao.isGerarCotaExigeNFe() 
+//										|| (cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica() ))
+//								&& !cota.isContribuinteICMSExigeNFe() )) {
+//							cota.setNotaFiscalConsolidada(true);
+//							cotasContribuinteEmitente.add(cota);
+//						} else if(((cota.isContribuinteICMS() != null && !cota.isContribuinteICMS()))
+//								&& (naturezaOperacao.isGerarCotaExigeNFe() 
+//										|| (cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica() )) 
+//								&& !cota.isContribuinteICMSExigeNFe()) {
+//							cota.setNotaFiscalConsolidada(true);
+//							cotasContribuinteEmitente.add(cota);
+//						} else if(((cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica()))
+//								&& (naturezaOperacao.isGerarCotaExigeNFe() 
+//										|| (cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica() )) 
+//								&& !cota.isContribuinteICMSExigeNFe()) {
+//							cota.setNotaFiscalConsolidada(true);
+//							cotasContribuinteEmitente.add(cota);
+//						}
+//					}
+//				} else if(filtro.getNotaFiscalTipoEmissao() != null && filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.AMBOS)) {
+//					for (RelatorioNFeExemplaresDTO cota : cotas) {
+//						if(naturezaOperacao.isGerarCotaNaoExigeNFe() 
+//								&& (cota.isContribuinteICMS() == null || !cota.isContribuinteICMS()) 
+//								&& (cota.isExigeNotaFiscalEletronica() == null || !cota.isExigeNotaFiscalEletronica() )) {
+//							cota.setNotaFiscalConsolidada(true);
+//							cotasContribuinteEmitente.add(cota);
+//						} else if((naturezaOperacao.isGerarCotaContribuinteICMS()
+//								&& ((cota.isContribuinteICMS() != null && cota.isContribuinteICMS())))) {
+//							cotasContribuinteEmitente.add(cota);
+//						} else if((!naturezaOperacao.isGerarCotaContribuinteICMS()
+//								&& ((cota.isContribuinteICMS() != null && !cota.isContribuinteICMS()))
+//								&& (naturezaOperacao.isGerarCotaExigeNFe() 
+//										|| (cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica() ))
+//								&& cota.isContribuinteICMSExigeNFe() )) {
+//							cotasContribuinteEmitente.add(cota);
+//						} else if((!naturezaOperacao.isGerarCotaContribuinteICMS()
+//								&& ((cota.isContribuinteICMS() != null && !cota.isContribuinteICMS()))
+//								&& (naturezaOperacao.isGerarCotaExigeNFe() 
+//										|| (cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica() ))
+//								&& !cota.isContribuinteICMSExigeNFe() )) {
+//							cota.setNotaFiscalConsolidada(true);
+//							cotasContribuinteEmitente.add(cota);
+//						} else if(((cota.isContribuinteICMS() != null && !cota.isContribuinteICMS()))
+//								&& (naturezaOperacao.isGerarCotaExigeNFe() 
+//										|| (cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica() )) 
+//								&& cota.isContribuinteICMSExigeNFe()) {
+//							cotasContribuinteEmitente.add(cota);
+//						} else if(((cota.isContribuinteICMS() != null && !cota.isContribuinteICMS()))
+//								&& (naturezaOperacao.isGerarCotaExigeNFe() 
+//										|| (cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica() )) 
+//								&& !cota.isContribuinteICMSExigeNFe()) {
+//							cota.setNotaFiscalConsolidada(true);
+//							cotasContribuinteEmitente.add(cota);
+//						}
+//					}
+//					
+//					break;
+//				}
+//			}
+//		}
+		return cotasContribuinteEmitente;
+	}
+	
 	private List<CotaExemplaresDTO> listaRegimeEspecial(final FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao, Distribuidor distribuidor) {
 		
 		List<CotaExemplaresDTO> cotasContribuinteEmitente = new ArrayList<CotaExemplaresDTO>();
@@ -1770,5 +1898,23 @@ public class NFeServiceImpl implements NFeService {
 	@Transactional
 	public boolean existeNotaNaData(Date dataReferencia) {
 		return notaFiscalRepository.existeNotaNaData(dataReferencia);
+	}
+	
+	@Override
+	@Transactional
+	public List<RelatorioNFeExemplaresDTO> geracaoRelatorioNotaFiscal(final FiltroNFeDTO filtro) {
+		
+		Distribuidor distribuidor = this.obterInformacaoDistribuidor();
+		
+		final NaturezaOperacao naturezaOperacao = this.naturezaOperacaoService.obterNaturezaOperacaoPorId(filtro.getIdNaturezaOperacao());
+		
+		if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+			
+			return notaFiscalService.consultaRelatorioNotaFiscalSumarizados(filtro, naturezaOperacao);
+			
+		} else {
+			
+			return this.listaRegimeEspecialRelatorio(filtro, naturezaOperacao, distribuidor);	
+		}
 	}
 }
