@@ -346,39 +346,62 @@ public class NFeGerarTxt {
 	                        .append(det.getImpostos().getIcms().getValor()).append("|")
 	                        .append(det.getImpostos().getIcms().getMotivoDesoneracao()).append(System.getProperty("line.separator"));
 	            }
+	        } else if (det.getImpostos().getIcmsst() != null) {
+	        	if (det.getImpostos().getIcmsst() != null && det.getImpostos().getIcmsst().getCst().equals("00")) {
+	                m.append("N02|")
+	                        .append(det.getImpostos().getIcmsst().getAOrig()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getCst()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getModelidade()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getValorBaseCalculo()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getPercentualReducao()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getValor()).append(System.getProperty("line.separator"));
+	            } else if (det.getImpostos().getIcmsst() != null && det.getImpostos().getIcmsst().getCst().equals("10")) {
+	                m.append("N03|")
+	                        .append(det.getImpostos().getIcmsst().getAOrig()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getCst()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getModelidade()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getValor()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getPercentualReducao()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getValor()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getModelidade()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getPercentualReducao()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getPercentualReducao()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getValorBaseCalculo()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getPercentualReducao()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getValorBaseCalculo()).append(System.getProperty("line.separator"));
+	            } else if (det.getImpostos().getIcmsst() != null &&det.getImpostos().getIcmsst().getCst().equals("20")) {
+	                m.append("N04|")
+	                        .append(det.getImpostos().getIcmsst().getOrigem()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getCst()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getModelidade()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getPercentualReducao()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getValorBaseCalculo()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getPercentualReducao()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getValor()).append(System.getProperty("line.separator"));
+	            } else if (det.getImpostos().getIcmsst() != null && det.getImpostos().getIcmsst().getCst().equals("30")) {
+	                m.append("N05|")
+	                        .append(det.getImpostos().getIcmsst().getOrigem()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getCst()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getModelidade()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getPercentualAdicionado()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getPercentualReducao()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getValorBaseCalculo()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getPercentualAdicionado()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getValor()).append(System.getProperty("line.separator"));
+	            } else if (det.getImpostos().getIcmsst() != null
+	                    && det.getImpostos().getIcmsst().getCst().equals("40")
+	                    || det.getImpostos().getIcmsst().getCst().equals("41")
+	                    || det.getImpostos().getIcmsst().getCst().equals("50")) {
+	                m.append("N06|")
+	                        .append(det.getImpostos().getIcmsst().getOrigem().getId()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getCst()).append("|")
+	                        .append(det.getImpostos().getIcmsst().getValor()).append("|")
+	                        .append("9").append(System.getProperty("line.separator"));
+	            }
 	        }
 
 	        return m.toString();
 
-//	        if ((n.getN12Cst().equals("40")) || (n.getN12Cst().equals("41")) || (n.getN12Cst().equals("50"))) {
-//	            linha = linha + "N06|" + n.getN11Orig() + "|" + n.getN12Cst() + "|" + n.getN17Vicms() + "|" + n.getN28Motdesicms() + System.getProperty("line.separator");
-//	        } else if (n.getN12Cst().equals("51")) {
-//	            linha = linha + "N07|" + n.getN11Orig() + "|" + n.getN12Cst() + "|" + n.getN13Modbc() + "|" + n.getN14Predbc() + "|" + n.getN15Vbc() + "|" + n.getN16Picms() + "|" + n.getN17Vicms() + System.getProperty("line.separator");
-//	        } else if (n.getN12Cst().equals("60")) {
-//	            linha = linha + "N08|" + n.getN11Orig() + "|" + n.getN12Cst() + "|" + n.getN21Vbcst() + "|" + n.getN23Vicmsst() + System.getProperty("line.separator");
-//	        } else if (n.getN12Cst().equals("70")) {
-//	            linha = linha + "N09|" + n.getN11Orig() + "|" + n.getN12Cst() + "|" + n.getN13Modbc() + "|" + n.getN14Predbc() + "|" + n.getN15Vbc() + "|" + n.getN16Picms() + "|" + n.getN17Vicms() + "|" + n.getN18Modbcst() + "|" + n.getN19Pmvast() + "|" + n.getN20Predbcst() + "|" + n.getN21Vbcst() + "|" + n.getN22Picmsst() + "|" + n.getN23Vicmsst() + System.getProperty("line.separator");
-//	        } else if (n.getN12Cst().equals("90")) {
-//	            linha = linha + "N10|" + n.getN11Orig() + "|" + n.getN12Cst() + "|" + n.getN13Modbc() + "|" + n.getN14Predbc() + "|" + n.getN15Vbc() + "|" + n.getN16Picms() + "|" + n.getN17Vicms() + "|" + n.getN18Modbcst() + "|" + n.getN19Pmvast() + "|" + n.getN20Predbcst() + "|" + n.getN21Vbcst() + "|" + n.getN22Picmsst() + "|" + n.getN23Vicmsst() + System.getProperty("line.separator");
-//	        } else if ((n.getN12Cst().toUpperCase().equals("10A")) || (n.getN12Cst().toUpperCase().equals("90A"))) {
-//	            linha = linha + "N10a|" + n.getN11Orig() + "|" + n.getN12Cst() + "|" + n.getN13Modbc() + "|" + n.getN14Predbc() + "|" + n.getN15Vbc() + "|" + n.getN16Picms() + "|" + n.getN17Vicms() + "|" + n.getN18Modbcst() + "|" + n.getN19Pmvast() + "|" + n.getN20Predbcst() + "|" + n.getN21Vbcst() + "|" + n.getN22Picmsst() + "|" + n.getN23Vicmsst() + "|" + n.getN25Pbcop() + "|" + n.getN24Ufst() + System.getProperty("line.separator");
-//	        } else if (n.getN12Cst().toUpperCase().equals("41B")) {
-//	            linha = linha + "N10b|" + n.getN11Orig() + "|" + n.getN12Cst() + "|" + n.getN26Vbcstret() + "|" + n.getN27Vicmsstret() + "|" + n.getN31Vbcstdest() + "|" + n.getN32Vicmsstdest() + System.getProperty("line.separator");
-//	        } else if (n.getN12ACSosn().equals("101")) {
-//	            linha = linha + "N10c|" + n.getN11Orig() + "|" + n.getN12ACSosn() + "|" + n.getN29Pcredsn() + "|" + n.getN30Vcredicmssn() + System.getProperty("line.separator");
-//	        } else if ((n.getN12ACSosn().equals("102")) || (n.getN12ACSosn().equals("103")) || (n.getN12ACSosn().equals("300")) || (n.getN12ACSosn().equals("400"))) {
-//	            linha = linha + "N10d|" + n.getN11Orig() + "|" + n.getN12ACSosn() + System.getProperty("line.separator");
-//	        } else if (n.getN12ACSosn().equals("201")) {
-//	            linha = linha + "N10e|" + n.getN11Orig() + "|" + n.getN12ACSosn() + "|" + n.getN18Modbcst() + "|" + n.getN19Pmvast() + "|" + n.getN20Predbcst() + "|" + n.getN21Vbcst() + "|" + n.getN22Picmsst() + "|" + n.getN23Vicmsst() + "|" + n.getN29Pcredsn() + "|" + n.getN30Vcredicmssn() + System.getProperty("line.separator");
-//	        } else if ((n.getN12ACSosn().equals("202")) || (n.getN12ACSosn().equals("203"))) {
-//	            linha = linha + "N10f|" + n.getN11Orig() + "|" + n.getN12ACSosn() + "|" + n.getN18Modbcst() + "|" + n.getN19Pmvast() + "|" + n.getN20Predbcst() + "|" + n.getN21Vbcst() + "|" + n.getN22Picmsst() + "|" + n.getN23Vicmsst() + System.getProperty("line.separator");
-//	        } else if (n.getN12ACSosn().equals("500")) {
-//	            linha = linha + "N10g|" + n.getN11Orig() + "|" + n.getN12ACSosn() + "|" + n.getN18Modbcst() + "|" + n.getN26Vbcstret() + "|" + n.getN27Vicmsstret() + System.getProperty("line.separator");
-//	        } else if (n.getN12ACSosn().equals("900")) {
-//	            linha = linha + "N10h|" + n.getN11Orig() + "|" + n.getN12ACSosn() + "|" + n.getN13Modbc() + "|" + n.getN15Vbc() + "|" + n.getN14Predbc() + "|" + n.getN16Picms() + "|" + n.getN17Vicms() + "|" + n.getN18Modbcst() + "|" + n.getN19Pmvast() + "|" + n.getN20Predbcst() + "|" + n.getN21Vbcst() + "|" + n.getN22Picmsst() + "|" + n.getN23Vicmsst() + "|" + n.getN29Pcredsn() + "|" + n.getN30Vcredicmssn() + System.getProperty("line.separator");
-//	        }
-	//
-//	        return linha;
 	    }
 
 	    /**

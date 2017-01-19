@@ -45,11 +45,16 @@ public class NotaFiscalTransportadorBuilder {
 		*/
 		if(transportadores == null || transportadores.isEmpty()) {
 			
-			if(ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
-				notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(9);
+			if(ps != null ){
+				if(ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
+					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(9);
+				} else {
+					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(0);
+				}
 			} else {
 				notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(0);
 			}
+			
 			
 		} else {
 			

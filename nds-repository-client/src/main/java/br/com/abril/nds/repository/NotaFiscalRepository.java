@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.NotaFiscalDTO;
+import br.com.abril.nds.dto.RelatorioNFeExemplaresDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
@@ -21,6 +22,7 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
@@ -112,4 +114,8 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 	NotaFiscal obterNFEPorID(Long idNota);
 	
 	boolean existeNotaNaData(Date dataReferencia);
+
+	List<RelatorioNFeExemplaresDTO> consultaRelatorioNotaFiscalSumarizados(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
+	
+	
 }

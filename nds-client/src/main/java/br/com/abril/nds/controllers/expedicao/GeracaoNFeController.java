@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
+import br.com.abril.nds.dto.RelatorioNFeExemplaresDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -348,14 +349,50 @@ public class GeracaoNFeController extends BaseController {
 	    }
 	    
 	    if(cotaExemplaresDTOs != null ){
-	        FileExporter.to("consignado-encalhe", fileType).inHTTPResponse(this.getNDSFileHeader(), null, cotaExemplaresDTOs, CotaExemplaresDTO.class, this.httpServletResponse);
+	        FileExporter.to("cotas-exemplares", fileType).inHTTPResponse(this.getNDSFileHeader(), null, cotaExemplaresDTOs, CotaExemplaresDTO.class, this.httpServletResponse);
 	    } else if (fornecedorExemplaresDTOs != null) {
-	        FileExporter.to("consignado-encalhe", fileType).inHTTPResponse(this.getNDSFileHeader(), null, fornecedorExemplaresDTOs, FornecedorExemplaresDTO.class, this.httpServletResponse);
+	        FileExporter.to("fornecedor-exemplares", fileType).inHTTPResponse(this.getNDSFileHeader(), null, fornecedorExemplaresDTOs, FornecedorExemplaresDTO.class, this.httpServletResponse);
 	    } else {
-	        throw new ValidacaoException(TipoMensagem.WARNING ,"Problema ao expostar as informções para excel.");
+	        throw new ValidacaoException(TipoMensagem.WARNING ,"Problema ao exportar as informções para excel.");
 	    } 
 		
 	    result.use(Results.nothing());
 		
 	}
+	
+	@Post
+    @Rules(Permissao.ROLE_NFE_GERACAO_NFE_ALTERACAO)
+	@Transactional
+	public void exportarRelatorio(final FiltroNFeDTO filtro, NotaFiscalTipoEmissaoRegimeEspecial notaFiscalTipoEmissaoRegimeEspecial, final String sortname, final String sortorder, final int rp, final int page, FileType fileType) throws IOException {
+		
+	    List<RelatorioNFeExemplaresDTO> relatorioNFEDTO = null;
+	    
+        filtro.setNotaFiscalTipoEmissao(notaFiscalTipoEmissaoRegimeEspecial);
+        
+	    final NaturezaOperacao naturezaOperacao = this.naturezaOperacaoService.obterNaturezaOperacaoPorId(filtro.getIdNaturezaOperacao());
+	    
+	    switch (naturezaOperacao.getTipoDestinatario()) {
+        
+            case COTA:
+                relatorioNFEDTO = nfeService.geracaoRelatorioNotaFiscal(filtro);            
+                break;
+                
+            case DISTRIBUIDOR:
+                relatorioNFEDTO = nfeService.consultaRelatorioNotaFiscalSumarizados(filtro);            
+                break;
+                
+            case FORNECEDOR:            
+            	throw new ValidacaoException(TipoMensagem.WARNING ,"Para o tipo de nota forncedor não e necessario e exportar as informções para excel.");
+	    }
+	    
+	    if(relatorioNFEDTO != null ){
+	        FileExporter.to("relatorio-nfe", fileType).inHTTPResponse(this.getNDSFileHeader(), null, relatorioNFEDTO, RelatorioNFeExemplaresDTO.class, this.httpServletResponse);
+	    }  else {
+	        throw new ValidacaoException(TipoMensagem.WARNING ,"Problema ao exportar as informções para excel.");
+	    } 
+		
+	    result.use(Results.nothing());
+		
+	}
+	
 }

@@ -178,10 +178,19 @@ var geracaoNFeController = $.extend({
 		$("#geracaoNfe-btnImprimirXLS", this.workspace).click(function() {
 			_this.imprimir('XLS');
 		});
+		
+		$("#geracaoNfe-btnRelatorioXLS", this.workspace).click(function() {
+			_this.imprimirRelatorio('XLS');
+		});
+		
 		$("#geracaoNfe-btnImprimirPDF", this.workspace).click(function() {
 			_this.imprimir('PDF');
 		});
 
+		$("#geracaoNfe-btnRelatorioPDF", this.workspace).click(function() {
+			_this.imprimirRelatorio('PDF');
+		});
+		
 		$('#geracaoNfe-checkboxCheckAllCotasSuspensas', this.workspace).change(function() {
 			$(".checkboxCheckCotasSuspensas", this.workspace).attr('checked',
 					$(this).attr('checked') == 'checked');
@@ -233,6 +242,44 @@ var geracaoNFeController = $.extend({
 		});
 	},
 	
+	imprimirRelatorio : function(fileType) {
+		
+		var params = new Array();
+		
+		params.push({name:"filtro.idNaturezaOperacao" , value: $("#geracaoNfe-filtro-naturezaOperacao").val()});
+		params.push({name:"filtro.dataInicial" , value: $("#geracaoNfe-filtro-movimentoDe").val()});
+		params.push({name:"filtro.dataFinal" , value: $("#geracaoNfe-filtro-movimentoAte").val()});
+		params.push({name:"filtro.intervaloBoxInicial" , value: $("#geracaoNfe-filtro-inputIntervaloBoxDe").val()});
+		params.push({name:"filtro.intervaloBoxFinal" , value: $("#geracaoNfe-filtro-inputIntervaloBoxAte").val()});
+		params.push({name:"filtro.intervalorCotaInicial" , value: $("#geracaoNfe-filtro-inputIntervaloCotaDe").val()});
+		params.push({name:"filtro.intervalorCotaFinal" , value: $("#geracaoNfe-filtro-inputIntervaloCotaAte").val()});
+		params.push({name:"filtro.dataEmissao" , value: $("#geracaoNfe-filtro-dataEmissao").val()});
+		params.push({name:"filtro.idNaturezaOperacao" , value: $("#geracaoNfe-filtro-naturezaOperacao").val()});
+		params.push({name:"filtro.idRoteiro" , value: $("#geracaoNfe-filtro-listRoteiro").val()});
+		params.push({name:"filtro.idRota" , value: $("#geracaoNfe-filtro-listRota").val()});
+		
+		// Por limitacao do vRaptor, nao instancia dentro do filtro
+		if($('input[name^="geracaoNfe-tipoDestinatario"]:checked').val() != 'FORNECEDOR') {
+			
+			if($(".emissaoRegimeEspecial").is(":visible")) {
+				
+				params.push({name:"notaFiscalTipoEmissaoRegimeEspecial", value: $("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").val()});
+			}
+		}
+		
+		if ($('#geracaoNfe-filtro-selectFornecedores').val()) {
+			$.each($("#geracaoNfe-filtro-selectFornecedores").val(), function(index, v) {
+				params.push({name : "filtro.listIdFornecedor[]", value : v});
+			});
+		}
+		
+		params.push({name:'fileType', value: fileType});
+		
+		$.fileDownload(this.path + 'exportarRelatorio', {
+			httpMethod : "POST",
+			data : params
+		});
+	},
 	
 	processCotasSuspensas : function(tdDiv, pid) {
 		var idCota = tdDiv.innerHTML;
