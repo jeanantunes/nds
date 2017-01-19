@@ -605,6 +605,7 @@ public class ItemNotaFiscalBuilder  {
 								} else {									
 									cofins.setValorBaseCalculo(produtoServico.getValorTotalBruto());
 									cofins.setPercentualAliquota(tributoCofins.getValor());
+									
 									BigDecimal valorCofinsCalculado = NFeCalculatorImpl.calculate(cofins);								
 									cofins.setValor(valorCofinsCalculado);
 									cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoCofins.getValor()));
