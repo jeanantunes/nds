@@ -2164,6 +2164,7 @@ if ( dto.getRepartePrevisto() != null) {
     }
     
     @Override
+    @Transactional
 	public List<ProdutoEdicao> obterProdutosEdicaoPorId(final Set<Long> idsProdutoEdicao) {
     	
     	return this.produtoEdicaoRepository.obterProdutosEdicaoPorId(idsProdutoEdicao);
