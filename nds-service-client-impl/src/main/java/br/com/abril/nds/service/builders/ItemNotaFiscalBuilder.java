@@ -478,11 +478,18 @@ public class ItemNotaFiscalBuilder  {
 								pis.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
 							} else {
 								if(produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L) {
-									pis.setCst("06");
-									pis.setValorBaseCalculo(null);
-									pis.setValorAliquota(null);
-									pis.setPercentualAliquota(null);	
-									pis.setValor(null);									
+									if(ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
+										pis.setCst("06");
+										pis.setValorBaseCalculo(null);
+										pis.setValorAliquota(null);
+										pis.setPercentualAliquota(null);	
+										pis.setValor(null);									
+									} else {
+										pis.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+										pis.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+										pis.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));	
+										pis.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+									}
 								} else {									
 									pis.setValorBaseCalculo(produtoServico.getValorTotalBruto());
 									pis.setPercentualAliquota(tributoPis.getValor());
@@ -597,11 +604,18 @@ public class ItemNotaFiscalBuilder  {
 							} else {
 								
 								if(produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L) {
-									cofins.setCst("06");
-									cofins.setValorBaseCalculo(null);
-									cofins.setValorAliquota(null);
-									cofins.setPercentualAliquota(null);
-									cofins.setValor(null);
+									if(ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {										
+										cofins.setCst("06");
+										cofins.setValorBaseCalculo(null);
+										cofins.setValorAliquota(null);
+										cofins.setPercentualAliquota(null);
+										cofins.setValor(null);
+									} else {										
+										cofins.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+										cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+										cofins.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+										cofins.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+									}
 								} else {									
 									cofins.setValorBaseCalculo(produtoServico.getValorTotalBruto());
 									cofins.setPercentualAliquota(tributoCofins.getValor());
