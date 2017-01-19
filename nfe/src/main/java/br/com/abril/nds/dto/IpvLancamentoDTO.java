@@ -196,7 +196,7 @@ public class IpvLancamentoDTO extends FTFBaseDTO {
 	}
 
 	public void setChamadaCapa(String chamadaCapa) {
-		this.chamadaCapa = chamadaCapa;
+		this.chamadaCapa = (chamadaCapa == null || chamadaCapa.isEmpty()) ?  "" :  TirarAcento.removerAcentuacao(chamadaCapa);;
 	}
 
 	public String getDataLancamento() {
