@@ -1,6 +1,9 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -36,10 +39,27 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font.FontFamily;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfImportedPage;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.DataHolder;
@@ -49,16 +69,19 @@ import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.ExtracaoContaCorrenteDTO;
+import br.com.abril.nds.dto.ExtracaoContaCorrenteTotaisDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTOCego;
 import br.com.abril.nds.dto.filtro.FiltroExtracaoContaCorrenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
@@ -71,6 +94,7 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -129,6 +153,9 @@ public class FechamentoEncalheController extends BaseController {
 	
 	@Autowired
 	private RecolhimentoService recolhimentoService;
+	
+	@Autowired
+	private ParametroSistemaService parametroSistemaService;
 	
 	@Autowired
 	protected HttpSession session;
@@ -712,40 +739,213 @@ public class FechamentoEncalheController extends BaseController {
 	}
 	
 	@Get
-	public void exportarExtracaoCC(FiltroExtracaoContaCorrenteDTO filtro) throws IOException {
+	public void exportarExtracaoCC(FiltroExtracaoContaCorrenteDTO filtro) throws IOException, DocumentException {
 		
 		filtro.setPeriodoRecolhimento(this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
 		
 		filtro.setTituloRelatorio(DateUtil.formatarDataPTBR(filtro.getPeriodoRecolhimento().getDe())+" a "
 				+DateUtil.formatarDataPTBR(filtro.getPeriodoRecolhimento().getAte())+" - SEMANA "+filtro.getSemana().toString().substring(4, 6));
 		
-		/*
-		if(filtro.getDataDe().equals(filtro.getDataAte())){
-			Integer semanaDe = distribuidorService.obterNumeroSemana(filtro.getDataDe());
-			
-			filtro.setTituloRelatorio(DateUtil.formatarDataPTBR(filtro.getDataDe())+" a "
-					+DateUtil.formatarDataPTBR(filtro.getDataAte())+" - SEMANA "+semanaDe.toString().substring(4, 6));
-		}else{
-			Integer semanaDe = distribuidorService.obterNumeroSemana(filtro.getDataDe());
-			Integer semanaAte = distribuidorService.obterNumeroSemana(filtro.getDataAte());
-			
-			if(semanaDe.equals(semanaAte)){
-				filtro.setTituloRelatorio(" - "+DateUtil.formatarDataPTBR(filtro.getDataDe())+" a "
-						+DateUtil.formatarDataPTBR(filtro.getDataAte())+" - SEMANA "+semanaDe.toString().substring(4, 6));
-			}else{
-				filtro.setTituloRelatorio(" - "+DateUtil.formatarDataPTBR(filtro.getDataDe())+" a "
-						+DateUtil.formatarDataPTBR(filtro.getDataAte())+" - SEMANA "+semanaDe.toString().substring(4, 6) + " a " + semanaAte.toString().substring(4, 6));
-			}
-		}
-		*/
-		
 		List<ExtracaoContaCorrenteDTO> listExtracoes = this.fechamentoEncalheService.extracaoContaCorrente(filtro);
 		
 		List<Integer> cotasNaoProcessadas = this.fechamentoEncalheService.extracaoContaCorrente_BuscarCotasObservacoes(filtro);
 		
 		filtro.setBuscarCotasPostergadas(true);
+		
 		List<Integer> cotasPostergadas = this.fechamentoEncalheService.extracaoContaCorrente_BuscarCotasObservacoes(filtro);
 		
+		ExtracaoContaCorrenteTotaisDTO totaisExtracao = ExtracaoContaCorrenteTotaisDTO.processarTotais(listExtracoes);
+		
+		if(filtro.isExportarPDF()){
+			
+			String pathSystem = getPathFileSystem();
+			
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			
+			FileExporter.to("Extracao_Fechamento_Encalhe - "+ DateUtil.formatarDataPTBR(new Date()), FileType.PDF)
+			.inOutputStream(this.getNDSFileHeader(), filtro, null, listExtracoes, ExtracaoContaCorrenteDTO.class, os);
+			
+			try {
+				OutputStream out = new FileOutputStream(pathSystem+"out.pdf"); 
+				out.write(os.toByteArray());
+				out.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			
+			
+			PdfReader readerFileExtracao = new PdfReader(pathSystem+"out.pdf");
+			
+		    Document documentMerge = new Document(PageSize.A4);
+		    
+		    String filePathName = pathSystem+"extracaoCC.pdf";
+		    
+		    PdfWriter writerMergeFiles = PdfWriter.getInstance(documentMerge, new FileOutputStream(filePathName));
+
+		    documentMerge.open();
+
+		    PdfContentByte cb = writerMergeFiles.getDirectContent();
+		    
+		    int countNumberOfPagesExtracao = readerFileExtracao.getNumberOfPages();
+		    
+		    Rectangle pagesizeImported;
+			PdfImportedPage page;
+		    
+		    for (int i = 1; i <= countNumberOfPagesExtracao; i++) {
+				
+		    	pagesizeImported = getPageSize(readerFileExtracao, i);
+		    	documentMerge.setPageSize(pagesizeImported.rotate());
+		    	documentMerge.newPage();
+		    	
+				page = writerMergeFiles.getImportedPage(readerFileExtracao, i);
+				
+				float pageHeight = readerFileExtracao.getPageSizeWithRotation(i).getHeight();
+				
+				cb.addTemplate(page, 0, -1f, 1f, 0, 0, pageHeight);
+			}
+		    
+		    // Add Page totais - visao cota
+		    
+		    com.itextpdf.text.Font bfBold12 = new com.itextpdf.text.Font(FontFamily.TIMES_ROMAN, 12, Font.BOLDWEIGHT_NORMAL, new BaseColor(0, 0, 0)); 
+		    
+		    float[] columnWidths = {5f, 3f, 3f, 3f};
+	    	
+		    PdfPTable table = new PdfPTable(columnWidths);
+	    	
+	    	Paragraph paragraph = new Paragraph("");
+	    	
+	    	insertCell(table, "VISÃO - COTA", Element.ALIGN_CENTER, 4, bfBold12);
+	    	
+	    	insertCell(table, "TOTAL", Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(table, "REMESSA", Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(table, "DEVOLUÇÃO", Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(table, "VENDA", Element.ALIGN_CENTER, 1, bfBold12);
+	    	
+	    	insertCell(table, "QUANTIDADE", Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(table, totaisExtracao.getQtdRemessa().toString(), Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(table, totaisExtracao.getQtdDevolucao().toString(), Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(table, totaisExtracao.getQtdVenda().toString(), Element.ALIGN_CENTER, 1, bfBold12);
+	    	
+	    	insertCell(table, "BRUTO", Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(table, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getBrutoRemessa()), Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(table, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getBrutoDevolucao()), Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(table, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getBrutoVenda()), Element.ALIGN_CENTER, 1, bfBold12);
+	    	
+	    	insertCell(table, "DESCONTO_COTA", Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(table, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getDescontoCotaRemessa()), Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(table, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getDescontoCotaDevolucao()), Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(table, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getDescontoCotaVenda()), Element.ALIGN_CENTER, 1, bfBold12);
+	    	
+	    	
+	    	insertCell(table, "LIQUIDO", Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(table, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getLiquidoCotaRemessa()), Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(table, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getLiquidoCotaDevolucao()), Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(table, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getLiquidoCotaVenda()), Element.ALIGN_CENTER, 1, bfBold12);
+	    	
+	    	table.setHeaderRows(1);
+	    	
+	    	paragraph.add(table);
+	    	documentMerge.newPage();
+	    	
+	    	documentMerge.add(paragraph);
+	    	
+	    	// FIM TOTAIS COTA
+	    	
+	    	addLinhaParaSepararQuadros(documentMerge, columnWidths);
+	    	
+	    	// Add Page totais - visao Distrib
+		    
+		    PdfPTable tableDistrib = new PdfPTable(columnWidths);
+	    	
+	    	Paragraph paragraphDistrib = new Paragraph("");
+	    	
+	    	insertCell(tableDistrib, "VISÃO - DISTRIBUIDOR", Element.ALIGN_CENTER, 4, bfBold12);
+	    	
+	    	insertCell(tableDistrib, "TOTAL", Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(tableDistrib, "REMESSA", Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(tableDistrib, "DEVOLUÇÃO", Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(tableDistrib, "VENDA", Element.ALIGN_CENTER, 1, bfBold12);
+	    	
+	    	insertCell(tableDistrib, "QUANTIDADE", Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(tableDistrib, totaisExtracao.getQtdRemessa().toString(), Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(tableDistrib, totaisExtracao.getQtdDevolucao().toString(), Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(tableDistrib, totaisExtracao.getQtdVenda().toString(), Element.ALIGN_CENTER, 1, bfBold12);
+	    	
+	    	insertCell(tableDistrib, "BRUTO", Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(tableDistrib, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getBrutoRemessa()), Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(tableDistrib, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getBrutoDevolucao()), Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(tableDistrib, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getBrutoVenda()), Element.ALIGN_CENTER, 1, bfBold12);
+	    	
+	    	insertCell(tableDistrib, "DESCONTO_DISTRIBUIDOR", Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(tableDistrib, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getDescontoDistribRemessa()), Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(tableDistrib, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getDescontoDistribDevolucao()), Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(tableDistrib, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getDescontoDistribVenda()), Element.ALIGN_CENTER, 1, bfBold12);
+	    	
+	    	insertCell(tableDistrib, "LIQUIDO", Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(tableDistrib, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getLiquidoDistribRemessa()), Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(tableDistrib, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getLiquidoDistribDevolucao()), Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(tableDistrib, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getLiquidoDistribVenda()), Element.ALIGN_CENTER, 1, bfBold12);
+	    	
+	    	tableDistrib.setHeaderRows(1);
+	    	
+	    	paragraphDistrib.add(tableDistrib);
+
+	    	documentMerge.add(paragraphDistrib);
+	    	
+	    	// FIM TOTAIS Distrib
+	    	
+	    	addLinhaParaSepararQuadros(documentMerge, columnWidths);
+	    	
+	    	PdfPTable tableTotal = new PdfPTable(columnWidths);
+	    	
+	    	Paragraph paragraphTotal = new Paragraph("");
+	    	
+	    	insertCell(tableTotal, "MARGEM DISTRIBUIDOR", Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(tableTotal, "", Element.ALIGN_CENTER, 2, bfBold12);
+	    	insertCell(tableTotal, formatarCelulaValorMonetarioComSimbolo(totaisExtracao.getLiquidoDistribVenda().subtract(totaisExtracao.getLiquidoCotaVenda())), Element.ALIGN_CENTER, 1, bfBold12);
+	    	
+	    	paragraphTotal.add(tableTotal);
+	    	
+	    	documentMerge.add(paragraphTotal);
+		    // fim TOTAIS
+	    	
+	    	addLinhaParaSepararQuadros(documentMerge, columnWidths);
+	    	
+	    	PdfPTable tableObsCotas = new PdfPTable(columnWidths);
+	    	
+	    	Paragraph paragraphObsCotas = new Paragraph("");
+	    	
+	    	insertCell(tableObsCotas, "*Encalhe ainda não processado - Cotas: ", Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(tableObsCotas, concatenarCotasObservacoes(cotasNaoProcessadas), Element.ALIGN_LEFT, 3, bfBold12);
+	    	
+	    	insertCell(tableObsCotas, "", Element.ALIGN_CENTER, 4, bfBold12);
+	    	
+	    	insertCell(tableObsCotas, "*Encalhe postergado (Fechamento Encalhe) - Cotas: ", Element.ALIGN_CENTER, 1, bfBold12);
+	    	insertCell(tableObsCotas, concatenarCotasObservacoes(cotasPostergadas), Element.ALIGN_LEFT, 3, bfBold12);
+	    	
+	    	paragraphObsCotas.add(tableObsCotas);
+	    	
+	    	documentMerge.add(paragraphObsCotas);
+	    	
+		    documentMerge.close();
+		    readerFileExtracao.close();
+		    
+		    byte[] retorno = IOUtils.toByteArray(new FileInputStream(filePathName));
+		    
+		    this.httpResponse.setHeader("Content-Disposition", "attachment; filename=Extracao_Fechamento_Encalhe_" + DateUtil.formatarDataPTBR(new Date()) + ".pdf");
+		       
+            OutputStream output;
+    
+            output = this.httpResponse.getOutputStream();
+    
+            output.write(retorno);
+    
+            httpResponse.getOutputStream().close();
+			
+			result.nothing();
+			return;
+		}
+				
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		
 		HSSFSheet aba = workbook.createSheet("Extrato Conta Corrente ");
@@ -768,85 +968,29 @@ public class FechamentoEncalheController extends BaseController {
 		Integer idPrimeiroQuadro;
 		Integer idSegundoQuadro;
 		
-		BigInteger totalReparte = BigInteger.ZERO;
-		BigInteger totalVendaEnc = BigInteger.ZERO;
-		BigInteger totalEncalhe = BigInteger.ZERO;
-		BigInteger totalVenda = BigInteger.ZERO;
-		BigDecimal totalVendaTotal = BigDecimal.ZERO;
-		
-		BigInteger qtdRemessa = BigInteger.ZERO;
-		BigInteger qtdDevolucao = BigInteger.ZERO;
-		BigInteger qtdVenda = BigInteger.ZERO;
-		BigDecimal brutoRemessa = BigDecimal.ZERO;
-		BigDecimal brutoDevolucao = BigDecimal.ZERO;
-		BigDecimal brutoVenda = BigDecimal.ZERO;
-		BigDecimal descontoCotaRemessa = BigDecimal.ZERO;
-		BigDecimal descontoCotaDevolucao = BigDecimal.ZERO;
-		BigDecimal descontoCotaVenda = BigDecimal.ZERO;
-		BigDecimal descontoDistribRemessa = BigDecimal.ZERO;
-		BigDecimal descontoDistribDevolucao = BigDecimal.ZERO;
-		BigDecimal descontoDistribVenda = BigDecimal.ZERO;
-		BigDecimal liquidoCotaRemessa = BigDecimal.ZERO;
-		BigDecimal liquidoCotaDevolucao = BigDecimal.ZERO;
-		BigDecimal liquidoCotaVenda = BigDecimal.ZERO;
-		BigDecimal liquidoDistribRemessa = BigDecimal.ZERO;
-		BigDecimal liquidoDistribDevolucao = BigDecimal.ZERO;
-		BigDecimal liquidoDistribVenda = BigDecimal.ZERO;
-		
 		for (ExtracaoContaCorrenteDTO dto : listExtracoes) {
 			mapDadosPlanilha.put(id, new Object[] {
 					dto.getSequenciaMatriz().toString(), 
 					dto.getCodigoProduto(),
 					dto.getNomeProduto(),
 					dto.getNumeroEdicao().toString(),
-					formatarCelularValorMonetario(dto.getPrecoCapa()),
+					formatarCelulaValorMonetario(dto.getPrecoCapa()),
 					dto.getPacotePadrao().toString(),
-					formatarCelularValorMonetario(dto.getDesconto()),
+					formatarCelulaValorMonetario(dto.getDesconto()),
 					dto.getReparte().toString(),
 					dto.getVendaEncalhe().toString(),
 					dto.getEncalhe().toString(),
 					dto.getVenda().toString(),
-					formatarCelularValorMonetario(dto.getVendaTotal())
+					formatarCelulaValorMonetario(dto.getVendaTotal())
 					});
-			
-			//Totais quadros
-			
-			qtdRemessa = qtdRemessa.add(dto.getReparte());
-			qtdDevolucao = qtdDevolucao.add(dto.getEncalhe());
-			brutoRemessa = brutoRemessa.add(dto.getPrecoCapa().multiply(new BigDecimal(dto.getReparte())));
-			brutoDevolucao = brutoDevolucao.add(dto.getPrecoCapa().multiply(new BigDecimal(dto.getEncalhe())));
-			descontoCotaRemessa = descontoCotaRemessa.add(dto.getDescCota().multiply(new BigDecimal(dto.getReparte())));
-			descontoCotaDevolucao = descontoCotaDevolucao.add(dto.getDescCota().multiply(new BigDecimal(dto.getEncalhe())));
-			descontoDistribRemessa = descontoDistribRemessa.add(dto.getDescLogistica().multiply(new BigDecimal(dto.getReparte())));
-			descontoDistribDevolucao = descontoDistribDevolucao.add(dto.getDescLogistica().multiply(new BigDecimal(dto.getEncalhe())));
-			
-			totalReparte = totalReparte.add(dto.getReparte());
-			totalVendaEnc = totalVendaEnc.add(dto.getVendaEncalhe());
-			totalEncalhe = totalEncalhe.add(dto.getEncalhe());
-			totalVenda = totalVenda.add(dto.getVenda());
-			totalVendaTotal = totalVendaTotal.add(dto.getVendaTotal());
-			
 			++id;
 		}
-		
-		qtdVenda = qtdRemessa.subtract(qtdDevolucao);
-		brutoVenda = brutoRemessa.subtract(brutoDevolucao);
-		descontoCotaVenda = descontoCotaRemessa.subtract(descontoCotaDevolucao);
-		descontoDistribVenda = descontoDistribRemessa.subtract(descontoDistribDevolucao);
-		
-		liquidoCotaRemessa = brutoRemessa.subtract(descontoCotaRemessa);
-		liquidoCotaDevolucao = brutoDevolucao.subtract(descontoCotaDevolucao);
-		liquidoCotaVenda = brutoVenda.subtract(descontoCotaVenda);
-		
-		liquidoDistribRemessa = brutoRemessa.subtract(descontoDistribRemessa);
-		liquidoDistribDevolucao = brutoDevolucao.subtract(descontoDistribDevolucao);
-		liquidoDistribVenda = brutoVenda.subtract(descontoDistribVenda);
 		
 		idSubLines = id;
 		
 		mapDadosPlanilha.put(id, new Object[] {
-				"", "TOTAL GERAL", "", "", "", "", "", totalReparte.toString(), totalVendaEnc.toString(),
-					totalEncalhe.toString(), totalVenda.toString(), formatarCelularValorMonetario(totalVendaTotal)});
+				"", "TOTAL GERAL", "", "", "", "", "", totaisExtracao.getTotalReparte().toString(), totaisExtracao.getTotalVendaEnc().toString(),
+				totaisExtracao.getTotalEncalhe().toString(), totaisExtracao.getTotalVenda().toString(), formatarCelulaValorMonetario(totaisExtracao.getTotalVendaTotal())});
 		++id;
 		
 		mapDadosPlanilha.put(id, new Object[] {
@@ -872,19 +1016,19 @@ public class FechamentoEncalheController extends BaseController {
 		++id;
 		
 		mapDadosPlanilha.put(id, new Object[] {
-				"", "", "QUANTIDADE", qtdRemessa.toString(), qtdDevolucao.toString(), qtdVenda.toString(), "", "","", "","", "" });
+				"", "", "QUANTIDADE", totaisExtracao.getQtdRemessa().toString(), totaisExtracao.getQtdDevolucao().toString(), totaisExtracao.getQtdVenda().toString(), "", "","", "","", "" });
 		++id;
 		
 		mapDadosPlanilha.put(id, new Object[] {
-				"", "", "BRUTO", formatarCelularValorMonetario(brutoRemessa), formatarCelularValorMonetario(brutoDevolucao), formatarCelularValorMonetario(brutoVenda), "", "","", "","", "" });
+				"", "", "BRUTO", formatarCelulaValorMonetario(totaisExtracao.getBrutoRemessa()), formatarCelulaValorMonetario(totaisExtracao.getBrutoDevolucao()), formatarCelulaValorMonetario(totaisExtracao.getBrutoVenda()), "", "","", "","", "" });
 		++id;
 		
 		mapDadosPlanilha.put(id, new Object[] {
-				"", "", "DESCONTO_COTA", formatarCelularValorMonetario(descontoCotaRemessa), formatarCelularValorMonetario(descontoCotaDevolucao), formatarCelularValorMonetario(descontoCotaVenda), "", "","", "","", "" });
+				"", "", "DESCONTO_COTA", formatarCelulaValorMonetario(totaisExtracao.getDescontoCotaRemessa()), formatarCelulaValorMonetario(totaisExtracao.getDescontoCotaDevolucao()), formatarCelulaValorMonetario(totaisExtracao.getDescontoCotaVenda()), "", "","", "","", "" });
 		++id;
 		
 		mapDadosPlanilha.put(id, new Object[] {
-				"", "", "LIQUIDO", formatarCelularValorMonetario(liquidoCotaRemessa), formatarCelularValorMonetario(liquidoCotaDevolucao), formatarCelularValorMonetario(liquidoCotaVenda), "", "","", "","", "" });
+				"", "", "LIQUIDO", formatarCelulaValorMonetario(totaisExtracao.getLiquidoCotaRemessa()), formatarCelulaValorMonetario(totaisExtracao.getLiquidoCotaDevolucao()), formatarCelulaValorMonetario(totaisExtracao.getLiquidoCotaVenda()), "", "","", "","", "" });
 		
 		++id;
 		
@@ -907,19 +1051,19 @@ public class FechamentoEncalheController extends BaseController {
 		++id;
 		
 		mapDadosPlanilha.put(id, new Object[] {
-				"", "", "QUANTIDADE", qtdRemessa.toString(), qtdDevolucao.toString(), qtdVenda.toString(), "", "","", "","", "" });
+				"", "", "QUANTIDADE", totaisExtracao.getQtdRemessa().toString(), totaisExtracao.getQtdDevolucao().toString(), totaisExtracao.getQtdVenda().toString(), "", "","", "","", "" });
 		++id;
 		
 		mapDadosPlanilha.put(id, new Object[] {
-				"", "", "BRUTO", formatarCelularValorMonetario(brutoRemessa), formatarCelularValorMonetario(brutoDevolucao), formatarCelularValorMonetario(brutoVenda), "", "","", "","", "" });
+				"", "", "BRUTO", formatarCelulaValorMonetario(totaisExtracao.getBrutoRemessa()), formatarCelulaValorMonetario(totaisExtracao.getBrutoDevolucao()), formatarCelulaValorMonetario(totaisExtracao.getBrutoVenda()), "", "","", "","", "" });
 		++id;
 		
 		mapDadosPlanilha.put(id, new Object[] {
-				"", "", "DESCONTO_DISTRIBUIDOR", formatarCelularValorMonetario(descontoDistribRemessa), formatarCelularValorMonetario(descontoDistribDevolucao), formatarCelularValorMonetario(descontoDistribVenda), "", "","", "","", "" });
+				"", "", "DESCONTO_DISTRIBUIDOR", formatarCelulaValorMonetario(totaisExtracao.getDescontoDistribRemessa()), formatarCelulaValorMonetario(totaisExtracao.getDescontoDistribDevolucao()), formatarCelulaValorMonetario(totaisExtracao.getDescontoDistribVenda()), "", "","", "","", "" });
 		++id;
 		
 		mapDadosPlanilha.put(id, new Object[] {
-				"", "", "LIQUIDO", formatarCelularValorMonetario(liquidoDistribRemessa), formatarCelularValorMonetario(liquidoDistribDevolucao), formatarCelularValorMonetario(liquidoDistribVenda), "", "","", "","", "" });
+				"", "", "LIQUIDO", formatarCelulaValorMonetario(totaisExtracao.getLiquidoDistribRemessa()), formatarCelulaValorMonetario(totaisExtracao.getLiquidoDistribDevolucao()), formatarCelulaValorMonetario(totaisExtracao.getLiquidoDistribVenda()), "", "","", "","", "" });
 		
 		++id;
 		
@@ -1044,27 +1188,151 @@ public class FechamentoEncalheController extends BaseController {
 		
 		this.autoSizeColumns(workbook);
 		
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=Extracao_Fechamento_Encalhe.xls");
+		// TESTE
 		
-		OutputStream output;
+		if(filtro.isExportarPDF()){
+			
+			// workbook.save("F:\\FileTemp\\MyPdfFile.pdf", SaveForm);
+			
+			File file = File.createTempFile("pdfUtil", "pdf");
+	        
+			FileOutputStream outputStream = new FileOutputStream(file);
+			
+			Iterator<Row> rowIterator = aba.iterator();
+			
+			Document iText_xls_2_pdf = new Document(PageSize.A4.rotate());
+			// Document iText_xls_2_pdf = new Document();
+            
+			PdfWriter.getInstance(iText_xls_2_pdf, outputStream);
+
+            iText_xls_2_pdf.open();
+            
+            // writer.addPageDictEntry(PdfName.ROTATE,PdfPage.PORTRAIT);
+            
+            PdfPTable my_table = new PdfPTable(12);
+            PdfPCell table_cell;
+            
+            while(rowIterator.hasNext()) {
+                Row row1 = rowIterator.next(); 
+                Iterator<Cell> cellIterator = row1.cellIterator();
+                        while(cellIterator.hasNext()) {
+                                Cell cell = cellIterator.next(); 
+                                switch(cell.getCellType()) { 
+                                case Cell.CELL_TYPE_STRING:
+                                         table_cell=new PdfPCell(new Phrase(cell.getStringCellValue()));
+                                         my_table.addCell(table_cell);
+                                        break;
+                                }
+                        }
+
+        }
+            
+        iText_xls_2_pdf.add(my_table);                       
+        iText_xls_2_pdf.close();                
+
+        byte[] fileRetorno = IOUtils.toByteArray(new FileInputStream(file));
+        
+        this.httpResponse.setHeader("Content-Disposition", "attachment; filename=Extracao_Fechamento_Encalhe - " + DateUtil.formatarDataPTBR(new Date()) + ".pdf");
+        
+        OutputStream output;
 
         output = this.httpResponse.getOutputStream();
-        
-        ByteArrayOutputStream outBA = new ByteArrayOutputStream();
-        workbook.write(outBA);
-		
-        output.write(outBA.toByteArray());
-        
-        output.flush();
-        output.close();
+
+        output.write(fileRetorno);
 
         httpResponse.getOutputStream().close();
+        
+		}else{
+			this.httpResponse.setHeader("Content-Disposition", "attachment; filename=Extracao_Fechamento_Encalhe - "+ DateUtil.formatarDataPTBR(new Date()) + ".xls");
+			
+			OutputStream output;
+			
+			output = this.httpResponse.getOutputStream();
+			
+			ByteArrayOutputStream outBA = new ByteArrayOutputStream();
+			workbook.write(outBA);
+			
+			output.write(outBA.toByteArray());
+			
+			output.flush();
+			output.close();
+			
+			httpResponse.getOutputStream().close();
+		}
 		
 	}
 	
-	private String formatarCelularValorMonetario(BigDecimal valor){
+	private String getPathFileSystem() {
+		
+		ParametroSistema pathSistem = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TRANSFERENCIA_ARQUIVO);
+		
+		String pathFile = pathSistem.getValor();
+		
+		pathFile.replace('/',File.separatorChar);
+		pathFile.replace('\\',File.separatorChar);
+		
+		pathFile = pathFile+File.separator+"fechamentoEncalheTemp";
+		
+		File diretorioRaiz = new File(pathFile);
+		
+		diretorioRaiz.mkdirs();
+		
+		pathFile += File.pathSeparator;
+		
+		return pathFile;
+		
+	}
+	
+	private void addLinhaParaSepararQuadros(Document documentMerge, float[] columnWidths) throws DocumentException {
+		
+		PdfPTable tableSeparate = new PdfPTable(columnWidths);
+		
+		PdfPCell cell = new PdfPCell(new Phrase(""));
+		
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setColspan(4);
+
+		cell.setFixedHeight(50f);
+		
+		tableSeparate.addCell(cell);
+		
+		Paragraph paragraphSeparate = new Paragraph("");
+		
+		paragraphSeparate.add(tableSeparate);
+		
+		documentMerge.add(paragraphSeparate);
+	}
+	
+	private Rectangle getPageSize(PdfReader reader, int pagenumber) {
+        Rectangle pagesize = reader.getPageSizeWithRotation(pagenumber);
+        return new Rectangle(
+                Math.min(pagesize.getWidth(), pagesize.getHeight()),
+                Math.max(pagesize.getWidth(), pagesize.getHeight()));
+    }
+	
+	private void insertCell(PdfPTable table, String text, int align, int colspan, com.itextpdf.text.Font font){
+
+		PdfPCell cell = new PdfPCell(new Phrase(text.trim()));
+		
+		cell.setHorizontalAlignment(align);
+		cell.setColspan(colspan);
+		
+		if(text.trim().equalsIgnoreCase("")){
+			cell.setMinimumHeight(10f);
+		}
+		
+		table.addCell(cell);
+
+	}
+	
+	private String formatarCelulaValorMonetario(BigDecimal valor){
 		
 		return CurrencyUtil.arredondarValorParaDuasCasas(valor).toString().replace('.', ',');
+	}
+	
+	private String formatarCelulaValorMonetarioComSimbolo(BigDecimal valor){
+		
+		return CurrencyUtil.formatarValorComSimbolo(valor);
 	}
 	
 	private String concatenarCotasObservacoes(List<Integer> cotas){

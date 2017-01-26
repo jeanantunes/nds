@@ -637,7 +637,7 @@ var fechamentoEncalheController = $.extend(true, {
 			width:450,
 			modal: true,
 			buttons: {
-				"Confirmar": function() {
+				"Exportar XLS": function() {
 					
 					var semana = $("#extracaocc-semana").val();
 					
@@ -646,13 +646,54 @@ var fechamentoEncalheController = $.extend(true, {
 						return;
 					}
 					
-					exibirMensagem("WARNING", ["Aguarde... o arquivo está sendo gerado!"]);
+					exibirMensagem("WARNING", ["Aguarde, arquivo sendo gerado..."]);
 					
 					setTimeout(function(){ esconde(false, $('#effectWarning'))}, 2500);
 					
 					var params = [];
 					
 					params.push({name : 'filtro.semana', value: semana});
+					
+					$.fileDownload(contextPath + '/devolucao/fechamentoEncalhe/exportarExtracaoCC', {
+						httpMethod : "GET",
+						data : params,
+						failCallback: function (result) {
+							
+							result = $.parseJSON($(result).text());
+
+							if((typeof result != "undefined") && result.mensagens) {
+								
+								result = result.mensagens;
+								var tipoMensagem = result.tipoMensagem;
+								var listaMensagens = result.listaMensagens;
+								
+								if (tipoMensagem && listaMensagens) {
+									exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+								}
+							}
+					    }
+					});
+					
+					$(this).dialog("close");
+				},
+				
+				"Exportar PDF": function() {
+					
+					var semana = $("#extracaocc-semana").val();
+					
+					if(semana == '' || semana == undefined || semana.length != 6){
+						exibirMensagem("WARNING", ["Insira uma semana válida!"]);
+						return;
+					}
+					
+					exibirMensagem("WARNING", ["Aguarde, arquivo sendo gerado..."]);
+					
+					setTimeout(function(){ esconde(false, $('#effectWarning'))}, 2500);
+					
+					var params = [];
+					
+					params.push({name : 'filtro.semana', value: semana});
+					params.push({name : 'filtro.exportarPDF', value: true});
 					
 					$.fileDownload(contextPath + '/devolucao/fechamentoEncalhe/exportarExtracaoCC', {
 						httpMethod : "GET",
