@@ -4,8 +4,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Footer;
+import br.com.abril.nds.util.export.FooterType;
 import br.com.abril.nds.util.export.Export.Alignment;
 
 @Exportable
@@ -13,44 +17,53 @@ public class ExtracaoContaCorrenteDTO implements Serializable {
 
 	private static final long serialVersionUID = -1121559493748523550L;
 	
-	@Export(label = "SM", alignment=Alignment.LEFT, exhibitionOrder = 1)
+	@Export(label = "SM", alignment = Alignment.CENTER, widthPercent = 3f, exhibitionOrder = 1)
 	private Integer sequenciaMatriz;
 	
-	@Export(label = "CÓDIGO", alignment=Alignment.LEFT, exhibitionOrder = 2)
+	@Export(label = "CÓDIGO", alignment = Alignment.CENTER, widthPercent = 4f, exhibitionOrder = 2)
 	private String codigoProduto;
 	
-	@Export(label = "PRODUTO", alignment=Alignment.LEFT, exhibitionOrder = 3)
+	@Export(label = "PRODUTO", alignment=Alignment.LEFT, widthPercent = 10f, exhibitionOrder = 3)
 	private String nomeProduto;
 	
-	@Export(label = "EDIÇÃO", alignment=Alignment.LEFT, exhibitionOrder = 4)
+	@Export(label = "EDIÇÃO", alignment = Alignment.CENTER, widthPercent = 4f, exhibitionOrder = 4)
 	private Long numeroEdicao;
 	
-	@Export(label = "R$ CAPA", alignment=Alignment.LEFT, exhibitionOrder = 5)
+	@Export(label = "R$ CAPA", alignment = Alignment.CENTER, widthPercent = 3f, exhibitionOrder = 5)
 	private BigDecimal precoCapa;
 	
-	@Export(label = "PP", alignment=Alignment.LEFT, exhibitionOrder = 6)
+	@Export(label = "PP", alignment = Alignment.CENTER, widthPercent = 3f, exhibitionOrder = 6)
 	private Integer pacotePadrao;
 	
-	@Export(label = "DESCONTO", alignment=Alignment.LEFT, exhibitionOrder = 7)
+	@Export(label = "DESCONTO", alignment = Alignment.CENTER, widthPercent = 4f, exhibitionOrder = 7)
 	private BigDecimal desconto;
 	
-	@Export(label = "REPARTE", alignment=Alignment.LEFT, exhibitionOrder = 8)
+	@Export(label = "REPARTE", alignment = Alignment.CENTER, widthPercent = 4f, exhibitionOrder = 8)
+	@Footer(label = "Total", type = FooterType.SUM,columnType = ColumnType.NUMBER)
 	private BigInteger reparte;
 	
-	@Export(label = "VENDA DE ENC.", alignment=Alignment.LEFT, exhibitionOrder = 9)
+	@Export(label = "VENDA ENC.", alignment = Alignment.CENTER, widthPercent = 5f, exhibitionOrder = 9)
+	@Footer(type = FooterType.SUM,columnType = ColumnType.NUMBER)
 	private BigInteger vendaEncalhe;
 	
-	@Export(label = "ENCALHE", alignment=Alignment.LEFT, exhibitionOrder = 10)
+	@Export(label = "ENCALHE", alignment = Alignment.CENTER, widthPercent = 4f, exhibitionOrder = 10)
+	@Footer(type = FooterType.SUM,columnType = ColumnType.NUMBER)
 	private BigInteger encalhe;
 	
-	@Export(label = "VENDA", alignment=Alignment.LEFT, exhibitionOrder = 11)
+	@Export(label = "VENDA", alignment = Alignment.CENTER, widthPercent = 3f, exhibitionOrder = 11)
+	@Footer(type = FooterType.SUM,columnType = ColumnType.NUMBER)
 	private BigInteger venda;
 	
-	@Export(label = "R$ VENDA TOTAL", alignment=Alignment.LEFT, exhibitionOrder = 12)
+	@Export(label = "R$ VENDA TOTAL", alignment = Alignment.CENTER, widthPercent = 7f, exhibitionOrder = 12)
+	@Footer(type = FooterType.SUM,columnType = ColumnType.MOEDA)
+	private String vendaTotalFormatado;
+	
 	private BigDecimal vendaTotal;
 	
+	@Footer(label = "Total desconto logistica",type = FooterType.SUM,columnType = ColumnType.MOEDA)
 	private BigDecimal descLogistica;
 	
+	@Footer(label = "Total desconto cota", type = FooterType.SUM,columnType = ColumnType.MOEDA)
 	private BigDecimal descCota;
 
 	public Integer getSequenciaMatriz() {
@@ -150,6 +163,7 @@ public class ExtracaoContaCorrenteDTO implements Serializable {
 			this.vendaTotal = BigDecimal.ZERO;
 		}else{
 			this.vendaTotal = vendaTotal;
+			this.vendaTotalFormatado = CurrencyUtil.formatarValor(vendaTotal);
 		}
 	}
 
@@ -168,5 +182,15 @@ public class ExtracaoContaCorrenteDTO implements Serializable {
 	public void setDescCota(BigDecimal descCota) {
 		this.descCota = descCota;
 	}
+
+	public String getVendaTotalFormatado() {
+		return vendaTotalFormatado;
+	}
+
+	public void setVendaTotalFormatado(String vendaTotalFormatado) {
+		this.vendaTotalFormatado = vendaTotalFormatado;
+	}
+	
+	
 
 }
