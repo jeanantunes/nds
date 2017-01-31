@@ -22,7 +22,6 @@ import java.util.TreeSet;
 
 import javax.xml.bind.ValidationException;
 
-import org.apache.commons.lang.StringUtils;
 import org.jrimum.domkee.financeiro.banco.febraban.Titulo.EnumAceite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -2983,6 +2982,8 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		LOGGER.debug("Metodo gerar cobranca registrada.");
 		
+		filtro.setArquivoCobrancaRegistrada(true);
+		
 		List<GeraDividaDTO> dividas = dividaRepository.obterDividasGeradas(filtro);
 		
 		if(dividas == null || dividas.isEmpty()) {
@@ -3035,6 +3036,8 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		int somaSquencial = 0;
 		
+		List<Long> idsCobrancasParaUpdate = new ArrayList<>();
+		
 		for(GeraDividaDTO divida : dividas) {
 		
 			Boleto boleto = boletoRepository.obterPorNossoNumero(divida.getNossoNumero(), null, false);
@@ -3059,8 +3062,15 @@ public class BoletoServiceImpl implements BoletoService {
         		count++;
         		
         		somaSquencial = count;
+        		
+        		idsCobrancasParaUpdate.add(divida.getCobrancaId());
+        		
         	}
     	}
+		
+		if(somaSquencial == 0){
+			return null;
+		}
 		
 		list.add(this.montarRegistro09(somaSquencial));
 		
@@ -3084,6 +3094,8 @@ public class BoletoServiceImpl implements BoletoService {
 		}catch (Exception e) {
 			throw new ValidationException("Erro na geração do arquivo"+ e.getMessage());
 		}
+		
+		cobrancaService.atualizarFlagCobrancaRegistradaGerada(idsCobrancasParaUpdate);
 			
 		return baos.toByteArray();	
 	}

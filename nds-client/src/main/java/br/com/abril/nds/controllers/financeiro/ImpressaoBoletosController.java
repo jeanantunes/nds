@@ -37,7 +37,6 @@ import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.ImpressaoDividaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.RoteirizacaoService;
@@ -98,9 +97,6 @@ public class ImpressaoBoletosController extends BaseController {
 
 	@Autowired
 	private BancoService bancoService;
-	
-	@Autowired
-    private FechamentoEncalheService fechamentoEncalheService;
 	
 	@Autowired
 	private HttpSession session;
@@ -667,11 +663,12 @@ public class ImpressaoBoletosController extends BaseController {
 	public void gerarArquivo(final FiltroDividaGeradaDTO filtro) {
 		
 		FileType fileType = FileType.REM;
-		
-		if(!fechamentoEncalheService.validarEncerramentoOperacaoEncalhe(filtro.getDataMovimento())) {
-			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Favor realizar o fechamento de encalhe."), Constantes.PARAM_MSGS).recursive().serialize();
-			return;
-		}
+
+// Validacao retirada - 31.01.2017
+//		if(!fechamentoEncalheService.validarEncerramentoOperacaoEncalhe(filtro.getDataMovimento())) {
+//			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Favor realizar o fechamento de encalhe."), Constantes.PARAM_MSGS).recursive().serialize();
+//			return;
+//		}
 		
 		try {
 			byte[] arquivo = this.boletoService.gerarArquivo(filtro);
