@@ -175,13 +175,11 @@
 		<jsp:include page="../cota/cotaBloqueada.jsp" />
 	</form>
 	
-	<div id="dialog-extracaoCC" title="Extra&ccedil;&atilde;o Conta Corrente" style="display:none;">
+	<div id="dialog-extracaoCC" title="Extra&ccedil;&atilde;o Fechamento de Encalhe" style="display:none;">
 		<fieldset style="width: 350px !important; height: 50px !important;">
 			<legend> Dados para extra&ccedil;&atilde;o</legend>
-			<td width="75">Per&iacute;odo:</td>
-			<td width="114"><input name="extracaocc-datepickerDe" type="text" id="extracaocc-datepickerDe" value="${dataOperacao}" style="width:80px;" /></td>
-			<td width="75">&nbsp;&nbsp;&nbsp;At&eacute;:</td>
-			<td width="114"><input name="extracaocc-datepickerAte" type="text" id="extracaocc-datepickerAte" value="${dataOperacao}" style="width:80px;" /></td>
+			<td width="75">Semana:</td>
+			<td width="114"><input name="extracaocc-semana" type="text" id="extracaocc-semana" value="" style="width:80px;" /></td>
 				
 		</fieldset>
 	
