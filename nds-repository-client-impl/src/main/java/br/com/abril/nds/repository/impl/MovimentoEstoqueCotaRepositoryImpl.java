@@ -4191,7 +4191,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append(" or (mec.statusEstoqueFinanceiro = :processado and cota.devolveEncalhe = true and cota.tipoCota = 'A_VISTA') ");
         
-        sql.append(" or ( mec.statusEstoqueFinanceiro != :processado and cota.tipoCota = 'CONSIGNADO'  ))" );
+        sql.append(" or ( mec.statusEstoqueFinanceiro != :processado or cota.tipoCota = 'CONSIGNADO'  ))" );
         // ajustando o group by
         sql.append(" group by mec.cota.id, produtoEdicao.id, lancamento.id ");
         
