@@ -1406,6 +1406,7 @@ public class DescontoServiceImpl implements DescontoService {
 		List<DescontoDTO> descontosProximosLancamentos = descontoProximosLancamentosRepository.obterDescontosProximosLancamentos(data);
 		
 		for(DescontoDTO desc : descontos) {
+			
 			String key = new StringBuilder()
 				.append(desc.getCotaId() != null ? "c" : "")
 				.append(desc.getCotaId() != null ? desc.getCotaId() : "")
@@ -1478,7 +1479,7 @@ public class DescontoServiceImpl implements DescontoService {
          * pl: Próximo Lançamento
          * 
          */
-		
+
 		DescontoDTO descontoDTO = null;
 		
 		/**
@@ -1536,7 +1537,7 @@ public class DescontoServiceImpl implements DescontoService {
 			.append(fornecedorId)
 			.append("p")
 			.append(produtoId)
-			.append("pl");
+			.append("pd");
 		
 		descontoDTO = descontos.get(key.toString());
 	
