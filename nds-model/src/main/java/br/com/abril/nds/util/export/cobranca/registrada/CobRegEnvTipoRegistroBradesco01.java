@@ -1,7 +1,5 @@
 package br.com.abril.nds.util.export.cobranca.registrada;
 
-import org.apache.commons.lang.StringUtils;
-
 import br.com.abril.nds.util.export.cobranca.util.CobRegBaseDTO;
 import br.com.abril.nds.util.export.cobranca.util.CobRegfield;
 
@@ -10,141 +8,138 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	@CobRegfield(tamanho=1, tipo="char", ordem=1)
 	private String tipoRegistro = "1";
 	
-	@CobRegfield(tamanho = 2, tipo = "char", ordem = 2)
-	private String codigoInscricao;
+	@CobRegfield(tamanho = 5, tipo = "char", ordem = 2)
+	private String agenciaDebito;
 	
-	@CobRegfield(tamanho = 14, tipo = "char", ordem = 3)
-	private String numeroInscricao;
+	@CobRegfield(tamanho = 1, tipo = "char", ordem = 3)
+	private String digitoAgenciaDebito;
 
-	@CobRegfield(tamanho = 4, tipo = "char", ordem = 4)
-	private String agenciaCedente;
+	@CobRegfield(tamanho = 5, tipo = "char", ordem = 4)
+	private String razaoContaCorrente;
 	
-	@CobRegfield(tamanho = 2, tipo = "char", ordem = 5)
-	private String zeros;
-
-	@CobRegfield(tamanho = 5, tipo = "char", ordem = 6)
-	private String contaCliente;
+	@CobRegfield(tamanho = 7, tipo = "char", ordem = 5)
+	private String contaCorrente;
 
 	@CobRegfield(tamanho = 1, tipo = "char", ordem = 7)
-	private String digitoConta;
+	private String digitoContaCorrente;
 	
-	@CobRegfield(tamanho = 4, tipo="char", ordem=8)
-	private String brancos;
+	@CobRegfield(tamanho = 17, tipo="char", ordem=8)
+	private String identificacaoEmpresaBeneficiaria;
 	
-	@CobRegfield(tamanho = 4, tipo="char", ordem=9)
-	private String instrucao;
+	@CobRegfield(tamanho = 25, tipo="char", ordem=9)
+	private String numeroControlePaticipante;
 	
-	@CobRegfield(tamanho = 25, tipo="char", ordem=10)
-	private String usoDaEmpresa;
+	@CobRegfield(tamanho = 3, tipo="char", ordem=10)
+	private String codigoBanco;
 	
-	@CobRegfield(tamanho = 8, tipo="char", ordem=11)
-	private String nossoNumero;
+	@CobRegfield(tamanho = 1, tipo="char", ordem=11)
+	private String campoMulta;
 	
-	@CobRegfield(tamanho = 13, tipo="char", ordem=12)
-	private String qtdeMoeda;
+	@CobRegfield(tamanho = 4, tipo="char", ordem=12)
+	private String percentualMulta;
 	
-	@CobRegfield(tamanho = 3, tipo="char", ordem=13)
-	private String numeroCarteira;
+	@CobRegfield(tamanho = 11, tipo="char", ordem=13)
+	private String identificacaoTituloBanco;
 	
-	@CobRegfield(tamanho = 21, tipo="char", ordem=14)
-	private String usoBanco;
+	@CobRegfield(tamanho = 1, tipo="char", ordem=14)
+	private String digitoConferenciaBancaria;
 	
-	@CobRegfield(tamanho = 1, tipo="char", ordem=15)
-	private String carteira;
+	@CobRegfield(tamanho = 10, tipo="numeric", ordem=15)
+	private String descontoBonificacao;
 	
-	@CobRegfield(tamanho = 2, tipo="numeric", ordem=16)
-	private String codOcerrencia;
+	@CobRegfield(tamanho = 1, tipo="char", ordem=16)
+	private String condicaoEmissaoPapeleta;
 	
-	@CobRegfield(tamanho = 10, tipo="char", ordem=17)
-	private String numeroDocumento;
+	@CobRegfield(tamanho = 1, tipo="numeric", ordem=17)
+	private String identificacaoBoletoDebitoAutomatico;
 	
-	@CobRegfield(tamanho = 6, tipo="char", ordem=18)
-	private String dataVencimento;
+	@CobRegfield(tamanho = 10, tipo="char", ordem=18)
+	private String identificaOperacaoBanco;
 	
-	@CobRegfield(tamanho= 13, tipo="numeric", ordem=19)
-	private String valorTitulo;
+	@CobRegfield(tamanho = 1, tipo="char", ordem=19)
+	private String indicadorRateiroCredito;
 	
-	@CobRegfield(tamanho= 3, tipo="char", ordem=20)
-	private String numeroBanco;
+	@CobRegfield(tamanho= 1, tipo="numeric", ordem=20)
+	private String enderecamentoAvisoDebitoAutomatico;
 	
-	@CobRegfield(tamanho = 5, tipo="char", ordem=21)
-	private String agencia;
+	@CobRegfield(tamanho= 2, tipo="char", ordem=21)
+	private String branco;
 	
 	@CobRegfield(tamanho = 2, tipo="char", ordem=22)
-	private String especie;
+	private String identificacaoOcorrencia;
 	
-	@CobRegfield(tamanho = 1, tipo="char", ordem=23)
-	private String aceite;
+	@CobRegfield(tamanho = 10, tipo="char", ordem=23)
+	private String numeroDocumento;
 	
 	@CobRegfield(tamanho = 6, tipo="char", ordem=24)
-	private String dataEmissao;
+	private String dataVencimento;
 	
-	@CobRegfield(tamanho = 2, tipo="char", ordem=25)
-	private String codigoInstrucao;
+	@CobRegfield(tamanho = 13, tipo="char", ordem=25)
+	private String valorTitulo;
 	
-	@CobRegfield(tamanho = 2, tipo="char", ordem=26)
-	private String codigoInstrucao2;
+	@CobRegfield(tamanho = 3, tipo="char", ordem=26)
+	private String bancoEncarregadoCobranca;
 	
-	@CobRegfield(tamanho = 13, tipo="char", ordem=27)
-	private String jurosDia;
+	@CobRegfield(tamanho = 5, tipo="char", ordem=27)
+	private String agenciaDepositaria;
 	
-	@CobRegfield(tamanho = 6, tipo="char", ordem=28)
-	private String dataDesconto;
+	@CobRegfield(tamanho = 2, tipo="char", ordem=28)
+	private String especieTitulo;
 	
-	@CobRegfield(tamanho = 13, tipo="char", ordem=29)
-	private String valorDesconto;
+	@CobRegfield(tamanho = 1, tipo="char", ordem=29)
+	private String identificacao;
+	
+	@CobRegfield(tamanho = 6, tipo="char", ordem=30)
+	private String dataEmissaoTitulo;
 
-	@CobRegfield(tamanho = 13, tipo="char", ordem=30)
-	private String valorIOC;
-	
-	@CobRegfield(tamanho = 13, tipo="char", ordem=31)
-	private String valorAbatimento;
+	@CobRegfield(tamanho = 2, tipo="char", ordem=31)
+	private String instrucao;
 	
 	@CobRegfield(tamanho = 2, tipo="char", ordem=32)
-	private String codigoInscricaoSacado;
+	private String instrucao2;
 	
-	@CobRegfield(tamanho = 14, tipo="char", ordem=33)
-	private String numeroCNPJCPF;
+	@CobRegfield(tamanho = 13, tipo="char", ordem=33)
+	private String jurosdia;
 	
-	@CobRegfield(tamanho = 30, tipo="char", ordem=34)
-	private String nomeSacado;
+	@CobRegfield(tamanho = 6, tipo="char", ordem=34)
+	private String dataLimiteCocessaoDesconto;
 	
-	@CobRegfield(tamanho = 10, tipo="char", ordem=35)
-	private String brancos01;
+	@CobRegfield(tamanho = 13, tipo="char", ordem=35)
+	private String valorDesconto;
 	
-	@CobRegfield(tamanho = 40, tipo="char", ordem=36)
-	private String enderecoSacado;
+	@CobRegfield(tamanho = 13, tipo="char", ordem=36)
+	private String valorIOF;
 	
-	@CobRegfield(tamanho = 12, tipo="char", ordem=37)
-	private String bairro;
+	@CobRegfield(tamanho = 13, tipo="char", ordem=37)
+	private String valorAbatimento;
 	
-	@CobRegfield(tamanho = 8, tipo="char", ordem=38)
-	private String CEP;
+	@CobRegfield(tamanho = 2, tipo="char", ordem=38)
+	private String identificacaoTipoIncricaoPagador;
 	
-	@CobRegfield(tamanho = 15, tipo="char", ordem=39)
-	private String cidade;
+	@CobRegfield(tamanho = 14, tipo="char", ordem=39)
+	private String numeroIncricaoPagador;
 	
-	@CobRegfield(tamanho = 2, tipo="char", ordem=40)
-	private String UF;
+	@CobRegfield(tamanho = 40, tipo="char", ordem=40)
+	private String nomePagador;
 	
-	@CobRegfield(tamanho = 30, tipo="char", ordem=41)
-	private String sacadoAvalista;
+	@CobRegfield(tamanho = 40, tipo="char", ordem=41)
+	private String enderecoCompleto;
+	
+	@CobRegfield(tamanho = 12, tipo="char", ordem=42)
+	private String mensagemCompleto;
+	
+	@CobRegfield(tamanho = 5, tipo="char", ordem=43)
+	private String cep;
 		
-	@CobRegfield(tamanho = 4, tipo="char", ordem=42)
-	private String brancos1;
+	@CobRegfield(tamanho = 3, tipo="char", ordem=44)
+	private String sufixoCep;
 	
-	@CobRegfield(tamanho = 6, tipo="char", ordem=43)
-	private String dataDeMora;
-	
-	@CobRegfield(tamanho = 2, tipo="char", ordem=44)
-	private String prazo;
-	
-	@CobRegfield(tamanho = 1, tipo="char", ordem=45)
-	private String branco2;
-	
+	@CobRegfield(tamanho = 60, tipo="char", ordem=45)
+	private String sacadoAvalista;
+
 	@CobRegfield(tamanho = 6, tipo="char", ordem=46)
 	private String sequencialRegistro;
-
+	
 	public String getTipoRegistro() {
 		return tipoRegistro;
 	}
@@ -152,61 +147,173 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	public void setTipoRegistro(String tipoRegistro) {
 		this.tipoRegistro = tipoRegistro;
 	}
-	
-	public String getAgenciaCedente() {
-		return agenciaCedente;
+
+	public String getAgenciaDebito() {
+		return agenciaDebito;
 	}
 
-	public void setAgenciaCedente(String agenciaCedente) {
-		this.agenciaCedente = StringUtils.leftPad(agenciaCedente, 4, '0');
+	public void setAgenciaDebito(String agenciaDebito) {
+		this.agenciaDebito = agenciaDebito;
 	}
 
-	public String getZeros() {
-		return zeros;
+	public String getDigitoAgenciaDebito() {
+		return digitoAgenciaDebito;
 	}
 
-	public void setZeros(String zeros) {
-		this.zeros = StringUtils.leftPad(zeros, 2, '0');
+	public void setDigitoAgenciaDebito(String digitoAgenciaDebito) {
+		this.digitoAgenciaDebito = digitoAgenciaDebito;
 	}
 
-	public String getContaCliente() {
-		return contaCliente;
+	public String getRazaoContaCorrente() {
+		return razaoContaCorrente;
 	}
 
-	public void setContaCliente(String contaCliente) {
-		this.contaCliente = StringUtils.leftPad(contaCliente, 5, '0');
+	public void setRazaoContaCorrente(String razaoContaCorrente) {
+		this.razaoContaCorrente = razaoContaCorrente;
 	}
 
-	public String getDigitoConta() {
-		return digitoConta;
+	public String getContaCorrente() {
+		return contaCorrente;
 	}
 
-	public void setDigitoConta(String digitoConta) {
-		this.digitoConta = digitoConta;
+	public void setContaCorrente(String contaCorrente) {
+		this.contaCorrente = contaCorrente;
 	}
 
-	public String getBrancos() {
-		return brancos;
+	public String getDigitoContaCorrente() {
+		return digitoContaCorrente;
 	}
 
-	public void setBrancos(String brancos) {
-		this.brancos = StringUtils.leftPad(brancos, 4, ' ');
+	public void setDigitoContaCorrente(String digitoContaCorrente) {
+		this.digitoContaCorrente = digitoContaCorrente;
 	}
 
-	public String getNossoNumero() {
-		return nossoNumero;
+	public String getIdentificacaoEmpresaBeneficiaria() {
+		return identificacaoEmpresaBeneficiaria;
 	}
 
-	public void setNossoNumero(String nossoNumero) {
-		this.nossoNumero = nossoNumero;
+	public void setIdentificacaoEmpresaBeneficiaria(String identificacaoEmpresaBeneficiaria) {
+		this.identificacaoEmpresaBeneficiaria = identificacaoEmpresaBeneficiaria;
 	}
 
-	public String getCarteira() {
-		return carteira;
+	public String getNumeroControlePaticipante() {
+		return numeroControlePaticipante;
 	}
 
-	public void setCarteira(String carteira) {
-		this.carteira = carteira;
+	public void setNumeroControlePaticipante(String numeroControlePaticipante) {
+		this.numeroControlePaticipante = numeroControlePaticipante;
+	}
+
+	public String getCodigoBanco() {
+		return codigoBanco;
+	}
+
+	public void setCodigoBanco(String codigoBanco) {
+		this.codigoBanco = codigoBanco;
+	}
+
+	public String getCampoMulta() {
+		return campoMulta;
+	}
+
+	public void setCampoMulta(String campoMulta) {
+		this.campoMulta = campoMulta;
+	}
+
+	public String getPercentualMulta() {
+		return percentualMulta;
+	}
+
+	public void setPercentualMulta(String percentualMulta) {
+		this.percentualMulta = percentualMulta;
+	}
+
+	public String getIdentificacaoTituloBanco() {
+		return identificacaoTituloBanco;
+	}
+
+	public void setIdentificacaoTituloBanco(String identificacaoTituloBanco) {
+		this.identificacaoTituloBanco = identificacaoTituloBanco;
+	}
+
+	public String getDigitoConferenciaBancaria() {
+		return digitoConferenciaBancaria;
+	}
+
+	public void setDigitoConferenciaBancaria(String digitoConferenciaBancaria) {
+		this.digitoConferenciaBancaria = digitoConferenciaBancaria;
+	}
+
+	public String getDescontoBonificacao() {
+		return descontoBonificacao;
+	}
+
+	public void setDescontoBonificacao(String descontoBonificacao) {
+		this.descontoBonificacao = descontoBonificacao;
+	}
+
+	public String getCondicaoEmissaoPapeleta() {
+		return condicaoEmissaoPapeleta;
+	}
+
+	public void setCondicaoEmissaoPapeleta(String condicaoEmissaoPapeleta) {
+		this.condicaoEmissaoPapeleta = condicaoEmissaoPapeleta;
+	}
+
+	public String getIdentificacaoBoletoDebitoAutomatico() {
+		return identificacaoBoletoDebitoAutomatico;
+	}
+
+	public void setIdentificacaoBoletoDebitoAutomatico(String identificacaoBoletoDebitoAutomatico) {
+		this.identificacaoBoletoDebitoAutomatico = identificacaoBoletoDebitoAutomatico;
+	}
+
+	public String getIdentificaOperacaoBanco() {
+		return identificaOperacaoBanco;
+	}
+
+	public void setIdentificaOperacaoBanco(String identificaOperacaoBanco) {
+		this.identificaOperacaoBanco = identificaOperacaoBanco;
+	}
+
+	public String getIndicadorRateiroCredito() {
+		return indicadorRateiroCredito;
+	}
+
+	public void setIndicadorRateiroCredito(String indicadorRateiroCredito) {
+		this.indicadorRateiroCredito = indicadorRateiroCredito;
+	}
+
+	public String getEnderecamentoAvisoDebitoAutomatico() {
+		return enderecamentoAvisoDebitoAutomatico;
+	}
+
+	public void setEnderecamentoAvisoDebitoAutomatico(String enderecamentoAvisoDebitoAutomatico) {
+		this.enderecamentoAvisoDebitoAutomatico = enderecamentoAvisoDebitoAutomatico;
+	}
+
+	public String getBranco() {
+		return branco;
+	}
+
+	public void setBranco(String branco) {
+		this.branco = branco;
+	}
+
+	public String getIdentificacaoOcorrencia() {
+		return identificacaoOcorrencia;
+	}
+
+	public void setIdentificacaoOcorrencia(String identificacaoOcorrencia) {
+		this.identificacaoOcorrencia = identificacaoOcorrencia;
+	}
+
+	public String getNumeroDocumento() {
+		return numeroDocumento;
+	}
+
+	public void setNumeroDocumento(String numeroDocumento) {
+		this.numeroDocumento = numeroDocumento;
 	}
 
 	public String getDataVencimento() {
@@ -222,166 +329,47 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setValorTitulo(String valorTitulo) {
-		this.valorTitulo = StringUtils.leftPad(valorTitulo, 13, '0');
+		this.valorTitulo = valorTitulo;
 	}
 
-	public String getNumeroBanco() {
-		return numeroBanco;
+	public String getBancoEncarregadoCobranca() {
+		return bancoEncarregadoCobranca;
 	}
 
-	public void setNumeroBanco(String numeroBanco) {
-		this.numeroBanco = numeroBanco;
+	public void setBancoEncarregadoCobranca(String bancoEncarregadoCobranca) {
+		this.bancoEncarregadoCobranca = bancoEncarregadoCobranca;
 	}
 
-	public String getAgencia() {
-		return agencia;
+	public String getAgenciaDepositaria() {
+		return agenciaDepositaria;
 	}
 
-	public void setAgencia(String agencia) {
-		this.agencia = StringUtils.leftPad(agencia, 5, '0');
+	public void setAgenciaDepositaria(String agenciaDepositaria) {
+		this.agenciaDepositaria = agenciaDepositaria;
 	}
 
-	public String getEspecie() {
-		return especie;
+	public String getEspecieTitulo() {
+		return especieTitulo;
 	}
 
-	public void setEspecie(String especie) {
-		this.especie = especie;
+	public void setEspecieTitulo(String especieTitulo) {
+		this.especieTitulo = especieTitulo;
 	}
 
-	public String getAceite() {
-		return aceite;
+	public String getIdentificacao() {
+		return identificacao;
 	}
 
-	public void setAceite(String aceite) {
-		this.aceite = aceite;
+	public void setIdentificacao(String identificacao) {
+		this.identificacao = identificacao;
 	}
 
-	public String getDataEmissao() {
-		return dataEmissao;
+	public String getDataEmissaoTitulo() {
+		return dataEmissaoTitulo;
 	}
 
-	public void setDataEmissao(String dataEmissao) {
-		this.dataEmissao = dataEmissao;
-	}
-	
-	public String getCodigoInstrucao() {
-		return codigoInstrucao;
-	}
-
-	public void setCodigoInstrucao(String codigoInstrucao) {
-		this.codigoInstrucao = StringUtils.leftPad(codigoInstrucao, 4, '0');
-	}
-
-	public String getJurosDia() {
-		return jurosDia;
-	}
-
-	public void setJurosDia(String jurosDia) {
-		this.jurosDia = StringUtils.leftPad(jurosDia, 13, '0');
-	}
-
-	public String getDataDesconto() {
-		return dataDesconto;
-	}
-
-	public void setDataDesconto(String dataDesconto) {
-		this.dataDesconto = StringUtils.leftPad(dataDesconto, 6, '0');
-	}
-
-	public String getValorDesconto() {
-		return valorDesconto;
-	}
-
-	public void setValorDesconto(String valorDesconto) {
-		this.valorDesconto = StringUtils.leftPad(valorDesconto, 13, '0');
-	}
-
-	public String getValorIOC() {
-		return valorIOC;
-	}
-
-	public void setValorIOC(String valorIOC) {
-		this.valorIOC = StringUtils.leftPad(valorIOC, 13, '0');
-	}
-
-	public String getValorAbatimento() {
-		return valorAbatimento;
-	}
-
-	public void setValorAbatimento(String valorAbatimento) {
-		this.valorAbatimento = StringUtils.leftPad(valorAbatimento, 13, '0');
-	}
-
-	public String getCodigoInscricaoSacado() {
-		return codigoInscricaoSacado;
-	}
-
-	public void setCodigoInscricaoSacado(String codigoInscricaoSacado) {
-		this.codigoInscricaoSacado = StringUtils.leftPad(codigoInscricaoSacado, 2, '0');
-	}
-
-	public String getNumeroCNPJCPF() {
-		return numeroCNPJCPF;
-	}
-
-	public void setNumeroCNPJCPF(String numeroCNPJCPF) {
-		this.numeroCNPJCPF = StringUtils.leftPad(numeroCNPJCPF, 14, '0');
-	}
-
-	public String getNomeSacado() {
-		return nomeSacado;
-	}
-
-	public void setNomeSacado(String nomeSacado) {
-		this.nomeSacado = nomeSacado;
-	}
-
-	public String getEnderecoSacado() {
-		return enderecoSacado;
-	}
-
-	public void setEnderecoSacado(String enderecoSacado) {
-		this.enderecoSacado = enderecoSacado;
-	}
-	public String getCEP() {
-		return CEP;
-	}
-
-	public void setCEP(String cEP) {
-		CEP = cEP;
-	}
-
-	public String getCidade() {
-		return cidade;
-	}
-
-	public void setCidade(String cidade) {
-		this.cidade = cidade;
-	}
-
-	public String getUF() {
-		return UF;
-	}
-
-	public void setUF(String uF) {
-		UF = uF;
-	}
-	
-	public String getCodigoInscricao() {
-		return codigoInscricao;
-	}
-
-	public void setCodigoInscricao(String codigoInscricao) {
-		this.codigoInscricao = codigoInscricao;
-	}
-
-	public String getNumeroInscricao() {
-		return numeroInscricao;
-	}
-
-	public void setNumeroInscricao(String numeroInscricao) {
-		this.numeroInscricao = numeroInscricao;
+	public void setDataEmissaoTitulo(String dataEmissaoTitulo) {
+		this.dataEmissaoTitulo = dataEmissaoTitulo;
 	}
 
 	public String getInstrucao() {
@@ -392,76 +380,108 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 		this.instrucao = instrucao;
 	}
 
-	public String getUsoDaEmpresa() {
-		return usoDaEmpresa;
+	public String getInstrucao2() {
+		return instrucao2;
 	}
 
-	public void setUsoDaEmpresa(String usoDaEmpresa) {
-		this.usoDaEmpresa = StringUtils.leftPad(usoDaEmpresa, 25, ' ');
+	public void setInstrucao2(String instrucao2) {
+		this.instrucao2 = instrucao2;
+	}
+
+	public String getJurosdia() {
+		return jurosdia;
+	}
+
+	public void setJurosdia(String jurosdia) {
+		this.jurosdia = jurosdia;
+	}
+
+	public String getDataLimiteCocessaoDesconto() {
+		return dataLimiteCocessaoDesconto;
+	}
+
+	public void setDataLimiteCocessaoDesconto(String dataLimiteCocessaoDesconto) {
+		this.dataLimiteCocessaoDesconto = dataLimiteCocessaoDesconto;
+	}
+
+	public String getValorDesconto() {
+		return valorDesconto;
+	}
+
+	public void setValorDesconto(String valorDesconto) {
+		this.valorDesconto = valorDesconto;
+	}
+
+	public String getValorIOF() {
+		return valorIOF;
+	}
+
+	public void setValorIOF(String valorIOF) {
+		this.valorIOF = valorIOF;
+	}
+
+	public String getValorAbatimento() {
+		return valorAbatimento;
+	}
+
+	public void setValorAbatimento(String valorAbatimento) {
+		this.valorAbatimento = valorAbatimento;
 	}
 	
-	public String getQtdeMoeda() {
-		return qtdeMoeda;
+	public String getIdentificacaoTipoIncricaoPagador() {
+		return identificacaoTipoIncricaoPagador;
 	}
 
-	public void setQtdeMoeda(String qtdeMoeda) {
-		this.qtdeMoeda = StringUtils.leftPad(qtdeMoeda, 13, '0');
+	public void setIdentificacaoTipoIncricaoPagador(String identificacaoTipoIncricaoPagador) {
+		this.identificacaoTipoIncricaoPagador = identificacaoTipoIncricaoPagador;
 	}
 
-	public String getNumeroCarteira() {
-		return numeroCarteira;
+	public String getNumeroIncricaoPagador() {
+		return numeroIncricaoPagador;
 	}
 
-	public void setNumeroCarteira(String numeroCarteira) {
-		this.numeroCarteira = numeroCarteira;
+	public void setNumeroIncricaoPagador(String numeroIncricaoPagador) {
+		this.numeroIncricaoPagador = numeroIncricaoPagador;
 	}
 
-	public String getUsoBanco() {
-		return usoBanco;
+	public String getNomePagador() {
+		return nomePagador;
 	}
 
-	public void setUsoBanco(String usoBanco) {
-		this.usoBanco = StringUtils.leftPad(usoBanco, 21, ' ');
+	public void setNomePagador(String nomePagador) {
+		this.nomePagador = nomePagador;
 	}
 
-	public String getCodOcerrencia() {
-		return codOcerrencia;
+	public String getEnderecoCompleto() {
+		return enderecoCompleto;
 	}
 
-	public void setCodOcerrencia(String codOcerrencia) {
-		this.codOcerrencia = codOcerrencia;
+	public void setEnderecoCompleto(String enderecoCompleto) {
+		this.enderecoCompleto = enderecoCompleto;
 	}
 
-	public String getNumeroDocumento() {
-		return numeroDocumento;
+	public String getMensagemCompleto() {
+		return mensagemCompleto;
 	}
 
-	public void setNumeroDocumento(String numeroDocumento) {
-		this.numeroDocumento = StringUtils.leftPad(numeroDocumento, 10, '0');
+	public void setMensagemCompleto(String mensagemCompleto) {
+		this.mensagemCompleto = mensagemCompleto;
 	}
 
-	public String getCodigoInstrucao2() {
-		return codigoInstrucao2;
+	public String getCep() {
+		return cep;
 	}
 
-	public void setCodigoInstrucao2(String codigoInstrucao2) {
-		this.codigoInstrucao2 = codigoInstrucao2;
+	public void setCep(String cep) {
+		this.cep = cep;
 	}
 
-	public String getBrancos01() {
-		return brancos01;
+	public String getSufixoCep() {
+		return sufixoCep;
 	}
 
-	public void setBracos01(String brancos01) {
-		this.brancos01 = brancos01;
-	}
-
-	public String getBairro() {
-		return bairro;
-	}
-
-	public void setBairro(String bairro) {
-		this.bairro = bairro;
+	public void setSufixoCep(String sufixoCep) {
+		this.sufixoCep = sufixoCep;
 	}
 
 	public String getSacadoAvalista() {
@@ -472,43 +492,11 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 		this.sacadoAvalista = sacadoAvalista;
 	}
 
-	public String getBrancos1() {
-		return brancos1;
-	}
-
-	public void setBrancos1(String brancos1) {
-		this.brancos1 = brancos1;
-	}
-
-	public String getDataDeMora() {
-		return dataDeMora;
-	}
-
-	public void setDataDeMora(String dataDeMora) {
-		this.dataDeMora = dataDeMora;
-	}
-
-	public String getPrazo() {
-		return prazo;
-	}
-
-	public void setPrazo(String prazo) {
-		this.prazo = prazo;
-	}
-
-	public String getBranco2() {
-		return branco2;
-	}
-
-	public void setBranco2(String branco2) {
-		this.branco2 = StringUtils.leftPad(branco2, 1, ' ');
-	}
-
 	public String getSequencialRegistro() {
 		return sequencialRegistro;
 	}
 
 	public void setSequencialRegistro(String sequencialRegistro) {
-		this.sequencialRegistro = StringUtils.leftPad(sequencialRegistro, 6, '0');
+		this.sequencialRegistro = sequencialRegistro;
 	}
 }

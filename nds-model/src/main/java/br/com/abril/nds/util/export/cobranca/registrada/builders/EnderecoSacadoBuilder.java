@@ -40,12 +40,27 @@ public class EnderecoSacadoBuilder implements Serializable {
 	
 	public static void enderecoSacado(CobRegEnvTipoRegistroBradesco01 registro01, Endereco enderecoSacado, String nomeSacado) {
 		//ENDERECO DO SACADO
-        registro01.setEnderecoSacado(TirarAcento.removerAcentuacao(enderecoSacado.getTipoLogradouro().trim()) +". "+ TirarAcento.removerAcentuacao(enderecoSacado.getLogradouro().trim()) + "," + enderecoSacado.getNumero().trim());
-        registro01.setBairro(TirarAcento.removerAcentuacao(enderecoSacado.getBairro().trim()));
-		registro01.setCEP(enderecoSacado.getCep().replace("-", "").replace(".", ""));
-		registro01.setCidade(TirarAcento.removerAcentuacao(enderecoSacado.getCidade()));
-		registro01.setUF(enderecoSacado.getUf());
+		
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(TirarAcento.removerAcentuacao(enderecoSacado.getTipoLogradouro().trim()))
+		  .append(" ")	
+		  .append(TirarAcento.removerAcentuacao(enderecoSacado.getLogradouro().trim()))
+		  .append(" ")
+		  .append(enderecoSacado.getNumero().trim())
+		  .append(" ")
+		  .append(TirarAcento.removerAcentuacao(enderecoSacado.getBairro().trim()))
+		  .append(" ")
+		  .append(TirarAcento.removerAcentuacao(enderecoSacado.getCidade()))
+		  .append(" ")
+		  .append(enderecoSacado.getUf());
+		
+        registro01.setEnderecoCompleto(sb.toString());
+        
+		registro01.setCep(enderecoSacado.getCep().replace("-", "").replace(".", "").substring(0, 5));
+		registro01.setCep(enderecoSacado.getCep().replace("-", "").replace(".", "").substring(5, 8));
+		
 		registro01.setSacadoAvalista(TirarAcento.removerAcentuacao(nomeSacado));
-		registro01.setBracos01("");
+		
 	}
 }
