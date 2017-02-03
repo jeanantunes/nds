@@ -28,28 +28,28 @@ public class CobRegEnvTipoRegistroBradesco00 extends CobRegBaseDTO {
 	@CobRegfield(tamanho = 30, tipo="char", ordem=7)
 	private String nomeEmpresa;
 	
-	@CobRegfield(tamanho = 3, tipo="char", ordem=11)
+	@CobRegfield(tamanho = 3, tipo="char", ordem=8)
 	private String numeroBanco;
 	
-	@CobRegfield(tamanho = 15, tipo="char", ordem=12)
+	@CobRegfield(tamanho = 15, tipo="char", ordem=9)
 	private String nomeBanco;
 
-	@CobRegfield(tamanho = 6, tipo="char", ordem=13)
+	@CobRegfield(tamanho = 6, tipo="char", ordem=10)
 	private String dataGravacaoArquivo;
 	
-	@CobRegfield(tamanho = 8, tipo="char", ordem=15)
+	@CobRegfield(tamanho = 8, tipo="char", ordem=11)
 	private String filler;
 	
-	@CobRegfield(tamanho = 2, tipo="char", ordem=16)
+	@CobRegfield(tamanho = 2, tipo="char", ordem=12)
 	private String identificacaoSistema;
 	
-	@CobRegfield(tamanho = 7, tipo="char", ordem=17)
+	@CobRegfield(tamanho = 7, tipo="char", ordem=13)
 	private String sequencialHeader;
 	
-	@CobRegfield(tamanho = 277, tipo="char", ordem=15)
+	@CobRegfield(tamanho = 277, tipo="char", ordem=14)
 	private String filler2;
 	
-	@CobRegfield(tamanho = 6, tipo="char", ordem=16)
+	@CobRegfield(tamanho = 6, tipo="char", ordem=15)
 	private String sequencial;
 
 	public String getTipoRegistro() {
@@ -57,7 +57,7 @@ public class CobRegEnvTipoRegistroBradesco00 extends CobRegBaseDTO {
 	}
 
 	public void setTipoRegistro(String tipoRegistro) {
-		this.tipoRegistro = tipoRegistro;
+		this.tipoRegistro = StringUtils.leftPad(tipoRegistro, 1, '0');
 	}
 
 	public String getIdentificacaoArquivoRemessa() {

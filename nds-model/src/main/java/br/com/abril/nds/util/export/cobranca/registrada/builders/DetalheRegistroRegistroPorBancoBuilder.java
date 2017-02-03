@@ -72,8 +72,6 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable{
 		registro01.setValorIOC("0");;
 		registro01.setValorAbatimento("0");
 		
-		
-		
 		registro01.setSequencialRegistro(String.valueOf(count));
 		
 		return registro01;
@@ -185,8 +183,8 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable{
 		registro01.setIdentificacaoEmpresaBeneficiaria("0"+ banco.getCarteira()+banco.getAgencia()+banco.getConta());
 		registro01.setNumeroControlePaticipante("");
 		registro01.setCodigoBanco(banco.getNumeroBanco());
-		registro01.setCampoMulta("");
-		registro01.setPercentualMulta("");
+		registro01.setCampoMulta("0");
+		registro01.setPercentualMulta("0");
 		registro01.setIdentificacaoTituloBanco("");
 		registro01.setDigitoConferenciaBancaria("");
 		
@@ -233,12 +231,12 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable{
         
 		registro01.setValorTitulo(Util.getValorString(valorDuasCadasDecimais.toEngineeringString()));	
 		
-		registro01.setBancoEncarregadoCobranca("000");
-		registro01.setAgenciaDepositaria("000000");
-		registro01.setEspecieTitulo("04");
+		registro01.setBancoEncarregadoCobranca("0");
+		registro01.setAgenciaDepositaria("0");
+		registro01.setEspecieTitulo("99");
 		registro01.setIdentificacao("N");
-		registro01.setInstrucao("00");
-		registro01.setInstrucao2("00");
+		registro01.setInstrucao("0");
+		registro01.setInstrucao2("0");
 		
 		BigDecimal taxaJurosDiaria = MathUtil.divide(banco.getJuros(), new BigDecimal(30));
 		
@@ -256,20 +254,16 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable{
 		registro01.setNumeroIncricaoPagador(documentoCedente.replace(".", "").replace("/", "").replace("-", ""));
 		
 		registro01.setBranco("");
-		registro01.setIdentificacaoOcorrencia("02");
+		registro01.setIdentificacaoOcorrencia("2");
 		
 		registro01.setNomePagador("");
 		registro01.setEnderecoCompleto("");
 		
 		registro01.setMensagemCompleto("");
-		registro01.setCep("");
-		registro01.setSufixoCep("");
-		registro01.setSacadoAvalista("");
-		registro01.setSequencialRegistro(String.valueOf(count));
-		
-		registro01.setSequencialRegistro(String.valueOf(count));
 		
 		PopularSacadoBuilder.popularSacadoCobrana(registro01, boleto);
+		
+		registro01.setSequencialBradescoRegistro(String.valueOf(count));
 		
 		return registro01;
 	}

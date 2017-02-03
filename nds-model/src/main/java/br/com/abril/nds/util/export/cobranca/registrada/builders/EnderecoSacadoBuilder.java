@@ -55,12 +55,11 @@ public class EnderecoSacadoBuilder implements Serializable {
 		  .append(" ")
 		  .append(enderecoSacado.getUf());
 		
-        registro01.setEnderecoCompleto(sb.toString());
+        registro01.setEnderecoCompleto(sb.toString().trim());
         
-		registro01.setCep(enderecoSacado.getCep().replace("-", "").replace(".", "").substring(0, 5));
-		registro01.setCep(enderecoSacado.getCep().replace("-", "").replace(".", "").substring(5, 8));
+		registro01.setCepCompleto(enderecoSacado.getCep().trim());
 		
-		registro01.setSacadoAvalista(TirarAcento.removerAcentuacao(nomeSacado));
+		registro01.setSacadoAvalista(TirarAcento.removerAcentuacao(TirarAcento.removerAcentuacao(nomeSacado).trim()));
 		
 	}
 }

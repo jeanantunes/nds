@@ -3019,15 +3019,18 @@ public class BoletoServiceImpl implements BoletoService {
 				break;
 		}
 		
+		int count = 0;
+		
 		if(registro00 != null) {
 			list.add(registro00);
 		} else if(registroItau != null) {
 			list.add(registroItau);
+			count = qtdeSequenciaRegistro(registro00, registroItau);
 		} else if(registroBradesco != null) {
 			list.add(registroBradesco);
+			count = qtdeSequenciaRegistro(registro00, registroBradesco);
 		}
 		
-		int count = qtdeSequenciaRegistro(registro00, registroItau);
 		
 		int somaSquencial = 0;
 		
@@ -3086,6 +3089,11 @@ public class BoletoServiceImpl implements BoletoService {
 
 	private int qtdeSequenciaRegistro(CobRegEnvTipoRegistro00 registro00, CobRegEnvTipoRegistroItau00 registroItau) {
 		int count = Integer.valueOf(registro00 == null ? registroItau.getSequencial() : registro00.getSequencial())+1;
+		return count;
+	}
+	
+	private int qtdeSequenciaRegistro(CobRegEnvTipoRegistro00 registro00, CobRegEnvTipoRegistroBradesco00 registroBradesco) {
+		int count = Integer.valueOf(registro00 == null ? registroBradesco.getSequencial() : registro00.getSequencial())+1;
 		return count;
 	}
 	

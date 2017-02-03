@@ -1,5 +1,7 @@
 package br.com.abril.nds.util.export.cobranca.registrada;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.util.export.cobranca.util.CobRegBaseDTO;
 import br.com.abril.nds.util.export.cobranca.util.CobRegfield;
 
@@ -20,132 +22,129 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	@CobRegfield(tamanho = 7, tipo = "char", ordem = 5)
 	private String contaCorrente;
 
-	@CobRegfield(tamanho = 1, tipo = "char", ordem = 7)
+	@CobRegfield(tamanho = 1, tipo = "char", ordem = 6)
 	private String digitoContaCorrente;
 	
-	@CobRegfield(tamanho = 17, tipo="char", ordem=8)
+	@CobRegfield(tamanho = 17, tipo="char", ordem=7)
 	private String identificacaoEmpresaBeneficiaria;
 	
-	@CobRegfield(tamanho = 25, tipo="char", ordem=9)
+	@CobRegfield(tamanho = 25, tipo="char", ordem=8)
 	private String numeroControlePaticipante;
 	
-	@CobRegfield(tamanho = 3, tipo="char", ordem=10)
+	@CobRegfield(tamanho = 3, tipo="char", ordem=9)
 	private String codigoBanco;
 	
-	@CobRegfield(tamanho = 1, tipo="char", ordem=11)
+	@CobRegfield(tamanho = 1, tipo="char", ordem=10)
 	private String campoMulta;
 	
-	@CobRegfield(tamanho = 4, tipo="char", ordem=12)
+	@CobRegfield(tamanho = 4, tipo="char", ordem=11)
 	private String percentualMulta;
 	
-	@CobRegfield(tamanho = 11, tipo="char", ordem=13)
+	@CobRegfield(tamanho = 11, tipo="char", ordem=12)
 	private String identificacaoTituloBanco;
 	
-	@CobRegfield(tamanho = 1, tipo="char", ordem=14)
+	@CobRegfield(tamanho = 1, tipo="char", ordem=13)
 	private String digitoConferenciaBancaria;
 	
-	@CobRegfield(tamanho = 10, tipo="numeric", ordem=15)
+	@CobRegfield(tamanho = 10, tipo="numeric", ordem=14)
 	private String descontoBonificacao;
 	
-	@CobRegfield(tamanho = 1, tipo="char", ordem=16)
+	@CobRegfield(tamanho = 1, tipo="char", ordem=15)
 	private String condicaoEmissaoPapeleta;
 	
-	@CobRegfield(tamanho = 1, tipo="numeric", ordem=17)
+	@CobRegfield(tamanho = 1, tipo="numeric", ordem=16)
 	private String identificacaoBoletoDebitoAutomatico;
 	
-	@CobRegfield(tamanho = 10, tipo="char", ordem=18)
+	@CobRegfield(tamanho = 10, tipo="char", ordem=17)
 	private String identificaOperacaoBanco;
 	
-	@CobRegfield(tamanho = 1, tipo="char", ordem=19)
+	@CobRegfield(tamanho = 1, tipo="char", ordem=18)
 	private String indicadorRateiroCredito;
 	
-	@CobRegfield(tamanho= 1, tipo="numeric", ordem=20)
+	@CobRegfield(tamanho= 1, tipo="numeric", ordem=19)
 	private String enderecamentoAvisoDebitoAutomatico;
 	
-	@CobRegfield(tamanho= 2, tipo="char", ordem=21)
+	@CobRegfield(tamanho= 2, tipo="char", ordem=20)
 	private String branco;
 	
-	@CobRegfield(tamanho = 2, tipo="char", ordem=22)
+	@CobRegfield(tamanho = 2, tipo="char", ordem=21)
 	private String identificacaoOcorrencia;
 	
-	@CobRegfield(tamanho = 10, tipo="char", ordem=23)
+	@CobRegfield(tamanho = 10, tipo="char", ordem=22)
 	private String numeroDocumento;
 	
-	@CobRegfield(tamanho = 6, tipo="char", ordem=24)
+	@CobRegfield(tamanho = 6, tipo="char", ordem=23)
 	private String dataVencimento;
 	
-	@CobRegfield(tamanho = 13, tipo="char", ordem=25)
+	@CobRegfield(tamanho = 13, tipo="char", ordem=24)
 	private String valorTitulo;
 	
-	@CobRegfield(tamanho = 3, tipo="char", ordem=26)
+	@CobRegfield(tamanho = 3, tipo="char", ordem=25)
 	private String bancoEncarregadoCobranca;
 	
-	@CobRegfield(tamanho = 5, tipo="char", ordem=27)
+	@CobRegfield(tamanho = 5, tipo="char", ordem=26)
 	private String agenciaDepositaria;
 	
-	@CobRegfield(tamanho = 2, tipo="char", ordem=28)
+	@CobRegfield(tamanho = 2, tipo="char", ordem=27)
 	private String especieTitulo;
 	
-	@CobRegfield(tamanho = 1, tipo="char", ordem=29)
+	@CobRegfield(tamanho = 1, tipo="char", ordem=28)
 	private String identificacao;
 	
-	@CobRegfield(tamanho = 6, tipo="char", ordem=30)
+	@CobRegfield(tamanho = 6, tipo="char", ordem=29)
 	private String dataEmissaoTitulo;
 
-	@CobRegfield(tamanho = 2, tipo="char", ordem=31)
+	@CobRegfield(tamanho = 2, tipo="char", ordem=30)
 	private String instrucao;
 	
-	@CobRegfield(tamanho = 2, tipo="char", ordem=32)
+	@CobRegfield(tamanho = 2, tipo="char", ordem=31)
 	private String instrucao2;
 	
-	@CobRegfield(tamanho = 13, tipo="char", ordem=33)
+	@CobRegfield(tamanho = 13, tipo="char", ordem=32)
 	private String jurosdia;
 	
-	@CobRegfield(tamanho = 6, tipo="char", ordem=34)
+	@CobRegfield(tamanho = 6, tipo="char", ordem=33)
 	private String dataLimiteCocessaoDesconto;
 	
-	@CobRegfield(tamanho = 13, tipo="char", ordem=35)
+	@CobRegfield(tamanho = 13, tipo="char", ordem=34)
 	private String valorDesconto;
 	
-	@CobRegfield(tamanho = 13, tipo="char", ordem=36)
+	@CobRegfield(tamanho = 13, tipo="char", ordem=35)
 	private String valorIOF;
 	
-	@CobRegfield(tamanho = 13, tipo="char", ordem=37)
+	@CobRegfield(tamanho = 13, tipo="char", ordem=36)
 	private String valorAbatimento;
 	
-	@CobRegfield(tamanho = 2, tipo="char", ordem=38)
+	@CobRegfield(tamanho = 2, tipo="char", ordem=37)
 	private String identificacaoTipoIncricaoPagador;
 	
-	@CobRegfield(tamanho = 14, tipo="char", ordem=39)
+	@CobRegfield(tamanho = 14, tipo="char", ordem=38)
 	private String numeroIncricaoPagador;
 	
-	@CobRegfield(tamanho = 40, tipo="char", ordem=40)
+	@CobRegfield(tamanho = 40, tipo="char", ordem=39)
 	private String nomePagador;
 	
-	@CobRegfield(tamanho = 40, tipo="char", ordem=41)
+	@CobRegfield(tamanho = 40, tipo="char", ordem=40)
 	private String enderecoCompleto;
 	
-	@CobRegfield(tamanho = 12, tipo="char", ordem=42)
+	@CobRegfield(tamanho = 12, tipo="char", ordem=41)
 	private String mensagemCompleto;
 	
-	@CobRegfield(tamanho = 5, tipo="char", ordem=43)
-	private String cep;
-		
-	@CobRegfield(tamanho = 3, tipo="char", ordem=44)
-	private String sufixoCep;
+	@CobRegfield(tamanho = 8, tipo="char", ordem=42)
+	private String cepCompleto;
 	
-	@CobRegfield(tamanho = 60, tipo="char", ordem=45)
+	@CobRegfield(tamanho = 60, tipo="char", ordem=43)
 	private String sacadoAvalista;
 
-	@CobRegfield(tamanho = 6, tipo="char", ordem=46)
-	private String sequencialRegistro;
+	@CobRegfield(tamanho = 6, tipo="char", ordem=44)
+	private String sequencialBradescoRegistro;
 	
 	public String getTipoRegistro() {
 		return tipoRegistro;
 	}
 
 	public void setTipoRegistro(String tipoRegistro) {
-		this.tipoRegistro = tipoRegistro;
+		this.tipoRegistro = StringUtils.leftPad(tipoRegistro, 1, '0');
 	}
 
 	public String getAgenciaDebito() {
@@ -153,7 +152,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setAgenciaDebito(String agenciaDebito) {
-		this.agenciaDebito = agenciaDebito;
+		this.agenciaDebito = StringUtils.leftPad(agenciaDebito, 5, '0');
 	}
 
 	public String getDigitoAgenciaDebito() {
@@ -161,7 +160,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setDigitoAgenciaDebito(String digitoAgenciaDebito) {
-		this.digitoAgenciaDebito = digitoAgenciaDebito;
+		this.digitoAgenciaDebito = StringUtils.leftPad(digitoAgenciaDebito, 1, ' ');
 	}
 
 	public String getRazaoContaCorrente() {
@@ -169,7 +168,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setRazaoContaCorrente(String razaoContaCorrente) {
-		this.razaoContaCorrente = razaoContaCorrente;
+		this.razaoContaCorrente = StringUtils.leftPad(razaoContaCorrente, 5, '0');
 	}
 
 	public String getContaCorrente() {
@@ -177,7 +176,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setContaCorrente(String contaCorrente) {
-		this.contaCorrente = contaCorrente;
+		this.contaCorrente = StringUtils.leftPad(contaCorrente, 7, '0');
 	}
 
 	public String getDigitoContaCorrente() {
@@ -185,7 +184,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setDigitoContaCorrente(String digitoContaCorrente) {
-		this.digitoContaCorrente = digitoContaCorrente;
+		this.digitoContaCorrente = StringUtils.leftPad(digitoContaCorrente, 1, ' ');
 	}
 
 	public String getIdentificacaoEmpresaBeneficiaria() {
@@ -193,7 +192,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setIdentificacaoEmpresaBeneficiaria(String identificacaoEmpresaBeneficiaria) {
-		this.identificacaoEmpresaBeneficiaria = identificacaoEmpresaBeneficiaria;
+		this.identificacaoEmpresaBeneficiaria = StringUtils.leftPad(identificacaoEmpresaBeneficiaria, 17, ' ');
 	}
 
 	public String getNumeroControlePaticipante() {
@@ -201,7 +200,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setNumeroControlePaticipante(String numeroControlePaticipante) {
-		this.numeroControlePaticipante = numeroControlePaticipante;
+		this.numeroControlePaticipante = StringUtils.leftPad(numeroControlePaticipante, 25, ' ');
 	}
 
 	public String getCodigoBanco() {
@@ -209,7 +208,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setCodigoBanco(String codigoBanco) {
-		this.codigoBanco = codigoBanco;
+		this.codigoBanco = StringUtils.leftPad(codigoBanco, 3, ' ');
 	}
 
 	public String getCampoMulta() {
@@ -217,7 +216,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setCampoMulta(String campoMulta) {
-		this.campoMulta = campoMulta;
+		this.campoMulta = StringUtils.leftPad(campoMulta, 1, ' ');
 	}
 
 	public String getPercentualMulta() {
@@ -225,7 +224,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setPercentualMulta(String percentualMulta) {
-		this.percentualMulta = percentualMulta;
+		this.percentualMulta = StringUtils.leftPad(percentualMulta, 4, ' ');
 	}
 
 	public String getIdentificacaoTituloBanco() {
@@ -233,7 +232,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setIdentificacaoTituloBanco(String identificacaoTituloBanco) {
-		this.identificacaoTituloBanco = identificacaoTituloBanco;
+		this.identificacaoTituloBanco = StringUtils.leftPad(identificacaoTituloBanco, 11, ' ');
 	}
 
 	public String getDigitoConferenciaBancaria() {
@@ -241,7 +240,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setDigitoConferenciaBancaria(String digitoConferenciaBancaria) {
-		this.digitoConferenciaBancaria = digitoConferenciaBancaria;
+		this.digitoConferenciaBancaria = StringUtils.leftPad(digitoConferenciaBancaria, 1, '0');
 	}
 
 	public String getDescontoBonificacao() {
@@ -249,7 +248,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setDescontoBonificacao(String descontoBonificacao) {
-		this.descontoBonificacao = descontoBonificacao;
+		this.descontoBonificacao = StringUtils.leftPad(descontoBonificacao, 10, ' ');
 	}
 
 	public String getCondicaoEmissaoPapeleta() {
@@ -257,7 +256,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setCondicaoEmissaoPapeleta(String condicaoEmissaoPapeleta) {
-		this.condicaoEmissaoPapeleta = condicaoEmissaoPapeleta;
+		this.condicaoEmissaoPapeleta = StringUtils.leftPad(condicaoEmissaoPapeleta, 1, ' ');
 	}
 
 	public String getIdentificacaoBoletoDebitoAutomatico() {
@@ -265,7 +264,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setIdentificacaoBoletoDebitoAutomatico(String identificacaoBoletoDebitoAutomatico) {
-		this.identificacaoBoletoDebitoAutomatico = identificacaoBoletoDebitoAutomatico;
+		this.identificacaoBoletoDebitoAutomatico = StringUtils.leftPad(identificacaoBoletoDebitoAutomatico, 1, ' ');
 	}
 
 	public String getIdentificaOperacaoBanco() {
@@ -273,7 +272,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setIdentificaOperacaoBanco(String identificaOperacaoBanco) {
-		this.identificaOperacaoBanco = identificaOperacaoBanco;
+		this.identificaOperacaoBanco = StringUtils.leftPad(identificaOperacaoBanco, 10, ' ');
 	}
 
 	public String getIndicadorRateiroCredito() {
@@ -281,7 +280,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setIndicadorRateiroCredito(String indicadorRateiroCredito) {
-		this.indicadorRateiroCredito = indicadorRateiroCredito;
+		this.indicadorRateiroCredito = StringUtils.leftPad(indicadorRateiroCredito, 1, ' ');
 	}
 
 	public String getEnderecamentoAvisoDebitoAutomatico() {
@@ -289,7 +288,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setEnderecamentoAvisoDebitoAutomatico(String enderecamentoAvisoDebitoAutomatico) {
-		this.enderecamentoAvisoDebitoAutomatico = enderecamentoAvisoDebitoAutomatico;
+		this.enderecamentoAvisoDebitoAutomatico = StringUtils.leftPad(enderecamentoAvisoDebitoAutomatico,  1, ' ');
 	}
 
 	public String getBranco() {
@@ -297,7 +296,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setBranco(String branco) {
-		this.branco = branco;
+		this.branco = StringUtils.leftPad(branco,  2, ' ');
 	}
 
 	public String getIdentificacaoOcorrencia() {
@@ -305,7 +304,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setIdentificacaoOcorrencia(String identificacaoOcorrencia) {
-		this.identificacaoOcorrencia = identificacaoOcorrencia;
+		this.identificacaoOcorrencia = StringUtils.leftPad(identificacaoOcorrencia, 2, '0');
 	}
 
 	public String getNumeroDocumento() {
@@ -313,7 +312,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setNumeroDocumento(String numeroDocumento) {
-		this.numeroDocumento = numeroDocumento;
+		this.numeroDocumento = StringUtils.leftPad(numeroDocumento, 10, '0');
 	}
 
 	public String getDataVencimento() {
@@ -321,7 +320,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setDataVencimento(String dataVencimento) {
-		this.dataVencimento = dataVencimento;
+		this.dataVencimento = StringUtils.leftPad(dataVencimento, 6, '0');
 	}
 
 	public String getValorTitulo() {
@@ -329,7 +328,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setValorTitulo(String valorTitulo) {
-		this.valorTitulo = valorTitulo;
+		this.valorTitulo = StringUtils.leftPad(valorTitulo, 13, '0');
 	}
 
 	public String getBancoEncarregadoCobranca() {
@@ -337,7 +336,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setBancoEncarregadoCobranca(String bancoEncarregadoCobranca) {
-		this.bancoEncarregadoCobranca = bancoEncarregadoCobranca;
+		this.bancoEncarregadoCobranca = StringUtils.leftPad(bancoEncarregadoCobranca, 3, '0');
 	}
 
 	public String getAgenciaDepositaria() {
@@ -345,7 +344,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setAgenciaDepositaria(String agenciaDepositaria) {
-		this.agenciaDepositaria = agenciaDepositaria;
+		this.agenciaDepositaria = StringUtils.leftPad(agenciaDepositaria, 5, '0');
 	}
 
 	public String getEspecieTitulo() {
@@ -353,7 +352,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setEspecieTitulo(String especieTitulo) {
-		this.especieTitulo = especieTitulo;
+		this.especieTitulo = StringUtils.leftPad(especieTitulo, 2, '0');
 	}
 
 	public String getIdentificacao() {
@@ -361,7 +360,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setIdentificacao(String identificacao) {
-		this.identificacao = identificacao;
+		this.identificacao = StringUtils.leftPad(identificacao, 1, '0');;
 	}
 
 	public String getDataEmissaoTitulo() {
@@ -369,7 +368,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setDataEmissaoTitulo(String dataEmissaoTitulo) {
-		this.dataEmissaoTitulo = dataEmissaoTitulo;
+		this.dataEmissaoTitulo = StringUtils.leftPad(dataEmissaoTitulo, 6, '0');
 	}
 
 	public String getInstrucao() {
@@ -377,7 +376,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setInstrucao(String instrucao) {
-		this.instrucao = instrucao;
+		this.instrucao = StringUtils.leftPad(instrucao, 2, ' ');
 	}
 
 	public String getInstrucao2() {
@@ -385,7 +384,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setInstrucao2(String instrucao2) {
-		this.instrucao2 = instrucao2;
+		this.instrucao2 = StringUtils.leftPad(instrucao2, 2, ' ');
 	}
 
 	public String getJurosdia() {
@@ -393,7 +392,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setJurosdia(String jurosdia) {
-		this.jurosdia = jurosdia;
+		this.jurosdia = StringUtils.leftPad(jurosdia, 13, '0');
 	}
 
 	public String getDataLimiteCocessaoDesconto() {
@@ -401,7 +400,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setDataLimiteCocessaoDesconto(String dataLimiteCocessaoDesconto) {
-		this.dataLimiteCocessaoDesconto = dataLimiteCocessaoDesconto;
+		this.dataLimiteCocessaoDesconto = StringUtils.leftPad(dataLimiteCocessaoDesconto, 6, '0');
 	}
 
 	public String getValorDesconto() {
@@ -409,7 +408,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setValorDesconto(String valorDesconto) {
-		this.valorDesconto = valorDesconto;
+		this.valorDesconto = StringUtils.leftPad(valorDesconto, 13, '0');
 	}
 
 	public String getValorIOF() {
@@ -417,7 +416,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setValorIOF(String valorIOF) {
-		this.valorIOF = valorIOF;
+		this.valorIOF = StringUtils.leftPad(valorIOF, 13, '0');
 	}
 
 	public String getValorAbatimento() {
@@ -425,7 +424,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setValorAbatimento(String valorAbatimento) {
-		this.valorAbatimento = valorAbatimento;
+		this.valorAbatimento = StringUtils.leftPad(valorAbatimento, 13, '0');
 	}
 	
 	public String getIdentificacaoTipoIncricaoPagador() {
@@ -433,7 +432,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setIdentificacaoTipoIncricaoPagador(String identificacaoTipoIncricaoPagador) {
-		this.identificacaoTipoIncricaoPagador = identificacaoTipoIncricaoPagador;
+		this.identificacaoTipoIncricaoPagador = StringUtils.leftPad(identificacaoTipoIncricaoPagador, 2, '0');;
 	}
 
 	public String getNumeroIncricaoPagador() {
@@ -441,7 +440,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setNumeroIncricaoPagador(String numeroIncricaoPagador) {
-		this.numeroIncricaoPagador = numeroIncricaoPagador;
+		this.numeroIncricaoPagador =  StringUtils.leftPad(numeroIncricaoPagador, 14, '0');
 	}
 
 	public String getNomePagador() {
@@ -449,7 +448,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setNomePagador(String nomePagador) {
-		this.nomePagador = nomePagador;
+		this.nomePagador = StringUtils.rightPad(nomePagador, 40, ' ');
 	}
 
 	public String getEnderecoCompleto() {
@@ -457,7 +456,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setEnderecoCompleto(String enderecoCompleto) {
-		this.enderecoCompleto = enderecoCompleto;
+		this.enderecoCompleto = StringUtils.leftPad(enderecoCompleto, 40, ' ');
 	}
 
 	public String getMensagemCompleto() {
@@ -465,23 +464,15 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setMensagemCompleto(String mensagemCompleto) {
-		this.mensagemCompleto = mensagemCompleto;
+		this.mensagemCompleto = StringUtils.leftPad(mensagemCompleto, 12, ' ');
+	}
+	
+	public String getCepCompleto() {
+		return cepCompleto;
 	}
 
-	public String getCep() {
-		return cep;
-	}
-
-	public void setCep(String cep) {
-		this.cep = cep;
-	}
-
-	public String getSufixoCep() {
-		return sufixoCep;
-	}
-
-	public void setSufixoCep(String sufixoCep) {
-		this.sufixoCep = sufixoCep;
+	public void setCepCompleto(String cepCompleto) {
+		this.cepCompleto = StringUtils.leftPad(cepCompleto, 8, ' ');
 	}
 
 	public String getSacadoAvalista() {
@@ -489,14 +480,14 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setSacadoAvalista(String sacadoAvalista) {
-		this.sacadoAvalista = sacadoAvalista;
+		this.sacadoAvalista = StringUtils.rightPad(sacadoAvalista, 60, ' ');
+	}
+	
+	public String getSequencialBradescoRegistro() {
+		return sequencialBradescoRegistro;
 	}
 
-	public String getSequencialRegistro() {
-		return sequencialRegistro;
-	}
-
-	public void setSequencialRegistro(String sequencialRegistro) {
-		this.sequencialRegistro = sequencialRegistro;
+	public void setSequencialBradescoRegistro(String sequencialBradescoRegistro) {
+		this.sequencialBradescoRegistro = StringUtils.leftPad(sequencialBradescoRegistro, 6, '0');
 	}
 }
