@@ -1536,7 +1536,7 @@ public class DescontoServiceImpl implements DescontoService {
 			.append(fornecedorId)
 			.append("p")
 			.append(produtoId)
-			.append("pl");
+			.append("pd");
 		
 		descontoDTO = descontos.get(key.toString());
 	
