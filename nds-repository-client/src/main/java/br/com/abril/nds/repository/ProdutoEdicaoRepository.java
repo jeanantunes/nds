@@ -1,10 +1,15 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.SQLQuery;
 
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.ConsultaProdutoEdicaoDTO;
@@ -21,7 +26,10 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.ItemAutoComplete;
 
@@ -391,4 +399,8 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 
 
 	public abstract List<ProdutoEdicao> obterProdutosEdicaoComVendaEntreDatas(FiltroCurvaABCDistribuidorDTO filtro);
+
+
+	List<Integer> obterCotasBaseEstudoHistogramaPorFaixaVenda(final FiltroHistogramaVendas filtro, final String codigoProduto, final Integer de, final Integer ate,
+			final String[] edicoes);
 }
