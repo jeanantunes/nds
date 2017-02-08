@@ -11,6 +11,8 @@
 	<script type="text/javascript"
 			src="${pageContext.request.contextPath}/scripts/diferencaEstoque.js"></script>
 
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
+	
 	<script type="text/javascript">
 	
 		$(function(){
@@ -35,6 +37,23 @@
 <body>
     <div class="areaBts">
 		<div class="area">
+			
+			
+			<span class="bt_arq">
+				<a href="javascript:;" onclick="diferencaEstoqueController.extracaoExcelPDF('XLS')" rel="tipsy" title="Extra&ccedil;&atilde;o do Arquivo Excel">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+				</a>
+			</span>
+			
+			<span class="bt_arq">
+				<a href="javascript:;" onclick="diferencaEstoqueController.extracaoExcelPDF('PDF')"rel="tipsy" title="Extra&ccedil;&atilde;o em PDF">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />					
+				</a>
+			</span>
+			
+			<span class="bt_arq">
+				/
+			</span>
 			<span class="bt_arq">
 				<a href="${pageContext.request.contextPath}/estoque/diferenca/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
@@ -46,6 +65,7 @@
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />					
 				</a>
 			</span>
+			
 		</div>
 	</div>
 	
@@ -123,8 +143,18 @@
    	        <td width="147">
 				<input type="text" name="diferenca-estoque-dataFinal" id="diferenca-estoque-dataFinal" style="width: 80px;" value="${dataAtual}" />
    	        </td>
-   	        <td width="134" align="right">&nbsp;</td>
-   	        <td width="202">&nbsp;</td>
+   	        
+   	        <td>Semana:</td>
+   	        
+   	        <td width="100">
+				<input type="text" id="semanaRecolhimentoBox" style="width: 70px;" />
+			</td>
+			
+			<td>Sugerir Semana:</td>
+
+			<td width="50">
+				<input type="checkbox" id="sugerirSemana" />
+			</td>
    	        <td width="104">
    	        	<span class="bt_pesquisar" title="Pesquisar">
    	        		<a href="javascript:;" onclick="diferencaEstoqueController.pesquisar();">Pesquisar</a>

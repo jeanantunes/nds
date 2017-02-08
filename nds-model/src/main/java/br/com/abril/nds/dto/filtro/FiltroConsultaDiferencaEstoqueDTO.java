@@ -255,7 +255,7 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 	public void setIdCota(Long idCota) {
 		this.idCota = idCota;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
