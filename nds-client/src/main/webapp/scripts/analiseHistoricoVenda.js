@@ -241,8 +241,8 @@ var analiseHistoricoVendaController = $.extend(true, {
 			row.cell.ed6Reparte = row.cell.ed6Reparte || row.cell.ed6Reparte == 0 ? row.cell.ed6Reparte : "";
 			row.cell.ed6Venda = row.cell.ed6Venda || row.cell.ed6Venda == 0 ? row.cell.ed6Venda : "";
 			
-			row.cell.reparteMedio = (row.cell.reparteMedio || 0).toFixed(0);
-			row.cell.vendaMedia = (row.cell.vendaMedia || 0).toFixed(0);
+			row.cell.reparteMedio = (row.cell.reparteMedio || 0).toFixed(2);
+			row.cell.vendaMedia = (row.cell.vendaMedia || 0).toFixed(2);
 			
 		}
 		

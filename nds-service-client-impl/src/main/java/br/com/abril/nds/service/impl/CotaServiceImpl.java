@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -3112,8 +3113,13 @@ public class CotaServiceImpl implements CotaService {
         vendaMedia += analiseHistoricoDTO.getEd5Venda() == null ? 0 : analiseHistoricoDTO.getEd5Venda();
         vendaMedia += analiseHistoricoDTO.getEd6Venda() == null ? 0 : analiseHistoricoDTO.getEd6Venda();
         
-        analiseHistoricoDTO.setReparteMedio((double)Math.round(reparteMedio / qtdEdicoes));
-        analiseHistoricoDTO.setVendaMedia((double)Math.round(vendaMedia / qtdEdicoes));
+        DecimalFormat f = new DecimalFormat("##.00");
+        
+        analiseHistoricoDTO.setReparteMedio(Double.valueOf(f.format(reparteMedio / qtdEdicoes).replace(',', '.')));
+        analiseHistoricoDTO.setVendaMedia(Double.valueOf(f.format(vendaMedia / qtdEdicoes).replace(',', '.')));
+        
+        //analiseHistoricoDTO.setReparteMedio((double)Math.round(reparteMedio / qtdEdicoes));
+        //analiseHistoricoDTO.setVendaMedia((double)Math.round(vendaMedia / qtdEdicoes));
     }
     
     @Transactional(readOnly = true)
