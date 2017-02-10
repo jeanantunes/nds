@@ -357,7 +357,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepositoryModel
         .append("        vendaProduto.VALOR_DESCONTO as desconto, ")
         .append("        produtoedi8_.PRECO_VENDA-(produtoedi8_.PRECO_VENDA*vendaProduto.VALOR_DESCONTO/100) as precoComDesconto, ")
         .append("        sum(vendaProduto.QNT_PRODUTO*(produtoedi8_.PRECO_VENDA-(produtoedi8_.PRECO_VENDA*vendaProduto.VALOR_DESCONTO/100))) as total, ")
-        .append("        vendaProduto.QNT_PRODUTO as exemplares ")
+        .append("        sum(vendaProduto.QNT_PRODUTO) as exemplares ")
         .append("from ")
         .append("        CONSOLIDADO_FINANCEIRO_COTA consolidad0_ ")
         
@@ -427,7 +427,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends AbstractRepositoryModel
         .append("        vendaProduto.VALOR_DESCONTO as desconto, ")
         .append("        CASE WHEN (produtoedi6_.PRECO_VENDA-(produtoedi6_.PRECO_VENDA*vendaProduto.VALOR_DESCONTO/100)) IS NOT NULL THEN (produtoedi6_.PRECO_VENDA-(produtoedi6_.PRECO_VENDA*vendaProduto.VALOR_DESCONTO/100)) ELSE (vendaProduto.VALOR_TOTAL_VENDA / vendaProduto.QNT_PRODUTO) END as precoComDesconto, ")
         .append("        sum(CASE WHEN movimentos3_.QTDE*(produtoedi6_.PRECO_VENDA-(produtoedi6_.PRECO_VENDA*vendaProduto.VALOR_DESCONTO/100)) IS NOT NULL THEN movimentos3_.QTDE*(produtoedi6_.PRECO_VENDA-(produtoedi6_.PRECO_VENDA*vendaProduto.VALOR_DESCONTO/100)) ELSE vendaProduto.VALOR_TOTAL_VENDA END) as total, ")
-        .append("        CASE WHEN movimentos3_.QTDE IS NOT NULL THEN movimentos3_.QTDE ELSE vendaProduto.QNT_PRODUTO END as exemplares  ")
+        .append("        CASE WHEN sum(movimentos3_.QTDE) IS NOT NULL THEN sum(movimentos3_.QTDE) ELSE sum(vendaProduto.QNT_PRODUTO) END as exemplares  ")
         
         .append("from ")
         .append("        VENDA_PRODUTO vendaProduto  ")
