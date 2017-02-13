@@ -2486,7 +2486,7 @@ public class ConferenciaEncalheController extends BaseController {
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	@LogFuncional(value="Conferência de Encalhe [Gravar observação]")
-	public void gravarObservacaoConferecnia(final Long idConferenciaEncalhe, final String observacao){
+	public void gravarObservacaoConferencia(final Long idConferenciaEncalhe, final String observacao){
 		
 		final Set<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
 		
