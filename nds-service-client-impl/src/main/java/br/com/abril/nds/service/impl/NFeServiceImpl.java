@@ -1210,6 +1210,7 @@ public class NFeServiceImpl implements NFeService {
 					
 					notasFiscalSubdividida.getNotaFiscalInformacoes().getInfAdicWrapper().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 					FaturaBuilder.montarFaturaNotaFiscal(notasFiscalSubdividida);
+					EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notasFiscalSubdividida, cota);
 					NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notasFiscalSubdividida);
 					notasFiscais.add(notasFiscalSubdividida);
 				}
