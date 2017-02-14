@@ -1618,8 +1618,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         	
         } else {
         	
-        	if (GrupoMovimentoEstoque.COMPRA_ENCALHE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque()) ||
-        		GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
+        	if (GrupoMovimentoEstoque.COMPRA_ENCALHE.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque())) {
         		
         		movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO);
         		
