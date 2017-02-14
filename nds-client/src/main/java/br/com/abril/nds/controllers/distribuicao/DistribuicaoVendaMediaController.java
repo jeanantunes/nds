@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.distribuicao;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -282,6 +283,29 @@ public class DistribuicaoVendaMediaController extends BaseController {
     	        		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO, false);
     	        	}
     	        }
+        	}else{
+        		if(estudoTemp.getProdutoEdicaoEstudo().getPeriodo() != null && estudoTemp.getProdutoEdicaoEstudo().getPeriodo() > 3){
+        			
+        			if(!selecionados.isEmpty()){
+        				
+        				List<ProdutoEdicaoVendaMediaDTO> edicoesParaRemocao = new ArrayList<>();
+        				
+        				for (ProdutoEdicaoVendaMediaDTO produtoEdicaoVendaMediaDTO : selecionados) {
+        					if(produtoEdicaoVendaMediaDTO.getVenda() == null || produtoEdicaoVendaMediaDTO.getVenda().compareTo(BigInteger.ZERO) == 0){
+        						edicoesParaRemocao.add(produtoEdicaoVendaMediaDTO);
+        					}
+        					produtoEdicaoVendaMediaDTO.setIndicePeso(BigDecimal.ONE);
+        				}
+        				
+        				selecionados.removeAll(edicoesParaRemocao);
+        				
+        				while(selecionados.size() > 3){
+        					selecionados.remove(selecionados.size() - 1);
+        				}
+        				
+        				selecionados.get(0).setIndicePeso(new BigDecimal(2));
+        			}
+        		}
         	}
         }
 	}

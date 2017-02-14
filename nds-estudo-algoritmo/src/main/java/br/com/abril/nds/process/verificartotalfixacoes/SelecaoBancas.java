@@ -64,7 +64,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	boolean existeCotaComHistorico = false;
 	
 	for (CotaEstudo cota : cotas) {
-	    
+		
 		cota.setEdicoesRecebidas(new ArrayList<ProdutoEdicaoEstudo>());
 	
 		for (Map<Long, CotaEstudo> item : historico) {
