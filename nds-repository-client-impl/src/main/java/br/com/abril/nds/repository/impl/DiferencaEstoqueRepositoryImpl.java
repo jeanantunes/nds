@@ -1043,7 +1043,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		sql.append(" pe.NOME_COMERCIAL as descricaoProduto, ");
 		sql.append(" pe.NUMERO_EDICAO as numeroEdicao, ");
 		sql.append(" item.REGIME_RECOLHIMENTO as tipo, ");
-		sql.append(" item.QTDE_ENVIADA as reparte, ");
+		this.montarQueryVenda(sql);
+		this.montarQueryRearte(sql);		
 		this.montarQueryFalta(sql);
 		this.montarQueryPerda(sql);
 		this.montarQueryGanho(sql);
@@ -1054,11 +1055,16 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		sql.append(" inner join ITEM_CHAMADA_ENCALHE_FORNECEDOR item on item.CHAMADA_ENCALHE_FORNECEDOR_ID = cef.id ");
 		sql.append(" inner join produto_edicao pe on item.PRODUTO_EDICAO_ID = pe.ID ");
 		sql.append(" inner join produto p on pe.produto_id = p.id ");
-		sql.append(" inner join DIFERENCA d on d.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" left outer join DIFERENCA d on d.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" left outer join movimento_estoque me on item.PRODUTO_EDICAO_ID = me.PRODUTO_EDICAO_ID ");
+		sql.append(" left outer join ITEM_RECEB_FISICO rec on me.ITEM_REC_FISICO_ID = rec.id ");
+		sql.append(" left outer join ITEM_NOTA_FISCAL_ENTRADA infe on  rec.ITEM_NF_ENTRADA_ID = infe.ID");
 		sql.append(" where 1=1 ");
-		//sql.append(" and item.PRODUTO_EDICAO_ID = 124785 ");
+		// sql.append(" and item.PRODUTO_EDICAO_ID = 131871 ");
 		sql.append(" and cef.ANO_REFERENCIA =:anoReferencia ");
 		sql.append(" and cef.NUMERO_SEMANA =:numeroSemana ");
+		sql.append(" and infe.NOTA_FISCAL_ID is not null ");
+		
 		sql.append(" group by cef.id, item.NUEMRO_ITEM, pe.id, p.codigo ");
 		sql.append(" order by item.NUEMRO_ITEM ");
      
@@ -1072,9 +1078,53 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
         return query.list();
 	}
 	
+	private StringBuilder montarQueryVenda(StringBuilder sql) {
+		
+		sql.append(" (select sum(meVenda.qtde) ");
+		sql.append(" from CHAMADA_ENCALHE_FORNECEDOR ceVenda ");
+		sql.append(" inner join ITEM_CHAMADA_ENCALHE_FORNECEDOR itemVenda on itemVenda.CHAMADA_ENCALHE_FORNECEDOR_ID = ceVenda.id ");
+		sql.append(" inner join produto_edicao peVenda on itemVenda.PRODUTO_EDICAO_ID = peVenda.ID ");
+		sql.append(" inner join produto pVenda on peVenda.produto_id = pVenda.id ");
+		sql.append(" left outer join movimento_estoque meVenda on itemVenda.PRODUTO_EDICAO_ID = meVenda.PRODUTO_EDICAO_ID ");
+		sql.append(" left outer join ITEM_RECEB_FISICO recVenda on meVenda.ITEM_REC_FISICO_ID = recVenda.id ");
+		sql.append(" left outer join ITEM_NOTA_FISCAL_ENTRADA infeVenda on  recVenda.ITEM_NF_ENTRADA_ID = infeVenda.ID  and infeVenda.PRODUTO_EDICAO_ID = peVenda.ID");
+		sql.append(" where 1=1");
+		sql.append(" and ceVenda.ANO_REFERENCIA =:anoReferencia ");
+		sql.append(" and ceVenda.NUMERO_SEMANA =:numeroSemana ");
+		sql.append(" and ceVenda.id = cef.id " );
+		sql.append(" and itemVenda.PRODUTO_EDICAO_ID = pe.id ");
+		sql.append(" and meVenda.tipo_movimento_id in(31) ");
+		sql.append(" group by ceVenda.id ");
+		sql.append(" ) as venda, ");
+		
+		return sql;
+	}
+	
+	private StringBuilder montarQueryRearte(StringBuilder sql) {
+		
+		sql.append(" (select coalesce(sum(infe.qtde), 0) ");
+		sql.append(" from CHAMADA_ENCALHE_FORNECEDOR ceReparte ");
+		sql.append(" inner join ITEM_CHAMADA_ENCALHE_FORNECEDOR itemReparte on itemReparte.CHAMADA_ENCALHE_FORNECEDOR_ID = ceReparte.id ");
+		sql.append(" inner join produto_edicao peReparte on itemReparte.PRODUTO_EDICAO_ID = peReparte.ID ");
+		sql.append(" inner join produto pReparte on peReparte.produto_id = pReparte.id ");
+//		sql.append(" left outer join DIFERENCA dReparte on dReparte.PRODUTO_EDICAO_ID = peReparte.ID ");
+		sql.append(" left outer join movimento_estoque meReparte on itemReparte.PRODUTO_EDICAO_ID = meReparte.PRODUTO_EDICAO_ID ");
+		sql.append(" left outer join ITEM_RECEB_FISICO rec on meReparte.ITEM_REC_FISICO_ID = rec.id ");
+		sql.append(" left outer join ITEM_NOTA_FISCAL_ENTRADA infe on  rec.ITEM_NF_ENTRADA_ID = infe.ID  and infe.PRODUTO_EDICAO_ID = peReparte.ID");
+		sql.append(" where 1=1");
+		sql.append(" and ceReparte.ANO_REFERENCIA =:anoReferencia ");
+		sql.append(" and ceReparte.NUMERO_SEMANA =:numeroSemana ");
+		sql.append(" and ceReparte.id = cef.id " );
+		sql.append(" and itemReparte.PRODUTO_EDICAO_ID = pe.id ");
+		sql.append(" group by ceReparte.id ");
+		sql.append(" ) as reparte, ");
+		
+		return sql;
+	}
+	
 	private StringBuilder montarQueryFalta(StringBuilder sql) {
 		
-		sql.append(" (select coalesce(sum(d.qtde), 0) ");
+		sql.append(" (select coalesce(sum(dFalta.qtde), 0) ");
 		sql.append(" from CHAMADA_ENCALHE_FORNECEDOR ceFalta ");
 		sql.append(" inner join ITEM_CHAMADA_ENCALHE_FORNECEDOR itemFalta on itemFalta.CHAMADA_ENCALHE_FORNECEDOR_ID = ceFalta.id ");
 		sql.append(" inner join produto_edicao peFalta on itemFalta.PRODUTO_EDICAO_ID = peFalta.ID ");
@@ -1094,7 +1144,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 	
 	private StringBuilder montarQueryPerda(StringBuilder sql) {
 		
-		sql.append(" (select coalesce(sum(d.qtde), 0) ");
+		sql.append(" (select coalesce(sum(dPerda.qtde), 0) ");
 		sql.append(" from CHAMADA_ENCALHE_FORNECEDOR cePerda ");
 		sql.append(" inner join ITEM_CHAMADA_ENCALHE_FORNECEDOR itemPerda on itemPerda.CHAMADA_ENCALHE_FORNECEDOR_ID = cePerda.id ");
 		sql.append(" inner join produto_edicao pePerda on itemPerda.PRODUTO_EDICAO_ID = pePerda.ID ");
@@ -1113,7 +1163,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 	
 	private StringBuilder montarQueryGanho(StringBuilder sql) {
 		
-		sql.append(" (select coalesce(sum(d.qtde), 0) ");
+		sql.append(" (select coalesce(sum(dGanho.qtde), 0) ");
 		sql.append(" from CHAMADA_ENCALHE_FORNECEDOR ceGanho ");
 		sql.append(" inner join ITEM_CHAMADA_ENCALHE_FORNECEDOR itemGanho on itemGanho.CHAMADA_ENCALHE_FORNECEDOR_ID = ceGanho.id ");
 		sql.append(" inner join produto_edicao peGanho on itemGanho.PRODUTO_EDICAO_ID = peGanho.ID ");
@@ -1133,7 +1183,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 	
 	private StringBuilder montarQuerySobra(StringBuilder sql) {
 		
-		sql.append(" (select coalesce(sum(d.qtde), 0) ");
+		sql.append(" (select coalesce(sum(dSobra.qtde), 0) ");
 		sql.append(" from CHAMADA_ENCALHE_FORNECEDOR ceSobra ");
 		sql.append(" inner join ITEM_CHAMADA_ENCALHE_FORNECEDOR itemSobra on itemSobra.CHAMADA_ENCALHE_FORNECEDOR_ID = ceSobra.id ");
 		sql.append(" inner join produto_edicao peSobra on itemSobra.PRODUTO_EDICAO_ID = peSobra.ID ");

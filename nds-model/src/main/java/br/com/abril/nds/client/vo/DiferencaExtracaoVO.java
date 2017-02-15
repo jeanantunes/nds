@@ -33,13 +33,16 @@ public class DiferencaExtracaoVO implements Serializable {
 	private String tipo;
 
 	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 6, fontSize = 9, widthPercent = 6)
-	private BigInteger reparte;
+	private Number reparte;
 	
 	@Export(label = "Sobra", alignment = Alignment.CENTER, exhibitionOrder = 7, fontSize = 9, widthPercent = 7, columnType = ColumnType.INTEGER)
 	private Number sobra;
 	
 	@Export(label = "Falta", alignment = Alignment.CENTER, exhibitionOrder = 8, fontSize = 9, widthPercent = 5, columnType = ColumnType.INTEGER)
 	private Number falta;
+	
+	@Export(label = "Venda", alignment = Alignment.CENTER, exhibitionOrder = 6, fontSize = 9, widthPercent = 6)
+	private Number venda;
 	
 	@Export(label = "Ganho", alignment = Alignment.CENTER, exhibitionOrder = 9, fontSize = 9, widthPercent = 6, columnType = ColumnType.INTEGER)
 	private Number ganho;
@@ -112,12 +115,12 @@ public class DiferencaExtracaoVO implements Serializable {
 		this.qtde = qtde;
 	}
 
-	public BigInteger getReparte() {
+	public Number getReparte() {
 		return reparte;
 	}
 
-	public void setReparte(BigInteger reparte) {
-		this.reparte = reparte;
+	public void setReparte(Number reparte) {
+		this.reparte = reparte == null ? BigDecimal.ZERO : reparte.intValue();
 	}
 
 	public Number getFalta() {
@@ -128,6 +131,14 @@ public class DiferencaExtracaoVO implements Serializable {
 		this.falta = falta == null ? BigDecimal.ZERO : falta.intValue();
 	}
 
+	public Number getVenda() {
+		return venda;
+	}
+
+	public void setVenda(Number venda) {
+		this.venda = venda == null ? BigDecimal.ZERO : venda.intValue(); 
+	}
+	
 	public Number getGanho() {
 		return ganho;
 	}
@@ -149,6 +160,10 @@ public class DiferencaExtracaoVO implements Serializable {
 	}
 
 	public void setSaldo(Number saldo) {
-		this.saldo = (reparte.intValue() + sobra.intValue() - falta.intValue()) ;
+		if(tipo.equals("PARCIAL")) {
+			this.saldo = (reparte.intValue() - venda.intValue() + (sobra.intValue() - falta.intValue())) ;
+		} else {
+			this.saldo = (reparte.intValue() + sobra.intValue() - falta.intValue()) ;
+		}
 	}
 }
