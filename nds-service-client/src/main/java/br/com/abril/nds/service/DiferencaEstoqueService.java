@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.client.vo.ContasAPagarConsignadoVO;
+import br.com.abril.nds.client.vo.DiferencaExtracaoVO;
 import br.com.abril.nds.client.vo.DiferencaVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
@@ -152,4 +153,7 @@ public interface DiferencaEstoqueService {
 	
 	List<ContasAPagarConsignadoVO> pesquisarDiferncas(
             String codigoProduto, Long numeroEdicao, Date data);
+	
+	
+	List<DiferencaExtracaoVO> extracaoFaltaSobra(FiltroDetalheDiferencaCotaDTO filtro);
 }
