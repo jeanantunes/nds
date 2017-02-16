@@ -47,7 +47,7 @@
 			
 			<span class="bt_arq">
 				<a href="javascript:;" onclick="diferencaEstoqueController.extracaoExcelPDF('PDF')"rel="tipsy" title="Extra&ccedil;&atilde;o em PDF">
-					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />					
+					<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" alt="Imprimir" hspace="5" border="0" />					
 				</a>
 			</span>
 			
