@@ -1025,7 +1025,6 @@ var negociacaoDividaController = $.extend(true, {
 	
 	validarDataOperacao : function(value){
 		
-		alert('fc:'+value);
 		var dataCampo = new Date(value);
 	    var dataOperacao = new Date(value);
 	    if (dataCampo = dataOperacao) {
