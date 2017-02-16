@@ -18,8 +18,10 @@ import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.ContasAPagarConsignadoVO;
+import br.com.abril.nds.client.vo.DiferencaExtracaoVO;
 import br.com.abril.nds.dto.ImpressaoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -1028,4 +1030,181 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		return (BigDecimal) query.uniqueResult();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DiferencaExtracaoVO> extracaoFaltaSobra(FiltroDetalheDiferencaCotaDTO filtro) {
+        
+		final StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append(" item.NUEMRO_ITEM as seqChamadaEncalhe, ");
+		sql.append(" p.CODIGO as codigoProduto, "); 
+		sql.append(" pe.NOME_COMERCIAL as descricaoProduto, ");
+		sql.append(" pe.NUMERO_EDICAO as numeroEdicao, ");
+		sql.append(" item.REGIME_RECOLHIMENTO as tipo, ");
+		this.montarQueryVenda(sql);
+		this.montarQueryRearte(sql);		
+		this.montarQueryFalta(sql);
+		this.montarQueryPerda(sql);
+		this.montarQueryGanho(sql);
+		this.montarQuerySobra(sql);
+		this.montarQuerySaldo(sql);
+		sql.append(" d.QTDE as qtde ");
+		sql.append(" from CHAMADA_ENCALHE_FORNECEDOR cef ");
+		sql.append(" inner join ITEM_CHAMADA_ENCALHE_FORNECEDOR item on item.CHAMADA_ENCALHE_FORNECEDOR_ID = cef.id ");
+		sql.append(" inner join produto_edicao pe on item.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" inner join produto p on pe.produto_id = p.id ");
+		sql.append(" left outer join DIFERENCA d on d.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" left outer join movimento_estoque me on item.PRODUTO_EDICAO_ID = me.PRODUTO_EDICAO_ID ");
+		sql.append(" left outer join ITEM_RECEB_FISICO rec on me.ITEM_REC_FISICO_ID = rec.id ");
+		sql.append(" left outer join ITEM_NOTA_FISCAL_ENTRADA infe on  rec.ITEM_NF_ENTRADA_ID = infe.ID");
+		sql.append(" where 1=1 ");
+		// sql.append(" and item.PRODUTO_EDICAO_ID = 131871 ");
+		sql.append(" and cef.ANO_REFERENCIA =:anoReferencia ");
+		sql.append(" and cef.NUMERO_SEMANA =:numeroSemana ");
+		sql.append(" and infe.NOTA_FISCAL_ID is not null ");
+		
+		sql.append(" group by cef.id, item.NUEMRO_ITEM, pe.id, p.codigo ");
+		sql.append(" order by item.NUEMRO_ITEM ");
+     
+		final SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("anoReferencia",filtro.getAno());
+		query.setParameter("numeroSemana", filtro.getSemana());
+		
+        query.setResultTransformer(new AliasToBeanResultTransformer(DiferencaExtracaoVO.class));
+        
+        return query.list();
+	}
+	
+	private StringBuilder montarQueryVenda(StringBuilder sql) {
+		
+		sql.append(" (select sum(meVenda.qtde) ");
+		sql.append(" from CHAMADA_ENCALHE_FORNECEDOR ceVenda ");
+		sql.append(" inner join ITEM_CHAMADA_ENCALHE_FORNECEDOR itemVenda on itemVenda.CHAMADA_ENCALHE_FORNECEDOR_ID = ceVenda.id ");
+		sql.append(" inner join produto_edicao peVenda on itemVenda.PRODUTO_EDICAO_ID = peVenda.ID ");
+		sql.append(" inner join produto pVenda on peVenda.produto_id = pVenda.id ");
+		sql.append(" left outer join movimento_estoque meVenda on itemVenda.PRODUTO_EDICAO_ID = meVenda.PRODUTO_EDICAO_ID ");
+		sql.append(" left outer join ITEM_RECEB_FISICO recVenda on meVenda.ITEM_REC_FISICO_ID = recVenda.id ");
+		sql.append(" left outer join ITEM_NOTA_FISCAL_ENTRADA infeVenda on  recVenda.ITEM_NF_ENTRADA_ID = infeVenda.ID  and infeVenda.PRODUTO_EDICAO_ID = peVenda.ID");
+		sql.append(" where 1=1");
+		sql.append(" and ceVenda.ANO_REFERENCIA =:anoReferencia ");
+		sql.append(" and ceVenda.NUMERO_SEMANA =:numeroSemana ");
+		sql.append(" and ceVenda.id = cef.id " );
+		sql.append(" and itemVenda.PRODUTO_EDICAO_ID = pe.id ");
+		sql.append(" and meVenda.tipo_movimento_id in(31) ");
+		sql.append(" group by ceVenda.id ");
+		sql.append(" ) as venda, ");
+		
+		return sql;
+	}
+	
+	private StringBuilder montarQueryRearte(StringBuilder sql) {
+		
+		sql.append(" (select coalesce(sum(infe.qtde), 0) ");
+		sql.append(" from CHAMADA_ENCALHE_FORNECEDOR ceReparte ");
+		sql.append(" inner join ITEM_CHAMADA_ENCALHE_FORNECEDOR itemReparte on itemReparte.CHAMADA_ENCALHE_FORNECEDOR_ID = ceReparte.id ");
+		sql.append(" inner join produto_edicao peReparte on itemReparte.PRODUTO_EDICAO_ID = peReparte.ID ");
+		sql.append(" inner join produto pReparte on peReparte.produto_id = pReparte.id ");
+//		sql.append(" left outer join DIFERENCA dReparte on dReparte.PRODUTO_EDICAO_ID = peReparte.ID ");
+		sql.append(" left outer join movimento_estoque meReparte on itemReparte.PRODUTO_EDICAO_ID = meReparte.PRODUTO_EDICAO_ID ");
+		sql.append(" left outer join ITEM_RECEB_FISICO rec on meReparte.ITEM_REC_FISICO_ID = rec.id ");
+		sql.append(" left outer join ITEM_NOTA_FISCAL_ENTRADA infe on  rec.ITEM_NF_ENTRADA_ID = infe.ID  and infe.PRODUTO_EDICAO_ID = peReparte.ID");
+		sql.append(" where 1=1");
+		sql.append(" and ceReparte.ANO_REFERENCIA =:anoReferencia ");
+		sql.append(" and ceReparte.NUMERO_SEMANA =:numeroSemana ");
+		sql.append(" and ceReparte.id = cef.id " );
+		sql.append(" and itemReparte.PRODUTO_EDICAO_ID = pe.id ");
+		sql.append(" group by ceReparte.id ");
+		sql.append(" ) as reparte, ");
+		
+		return sql;
+	}
+	
+	private StringBuilder montarQueryFalta(StringBuilder sql) {
+		
+		sql.append(" (select coalesce(sum(dFalta.qtde), 0) ");
+		sql.append(" from CHAMADA_ENCALHE_FORNECEDOR ceFalta ");
+		sql.append(" inner join ITEM_CHAMADA_ENCALHE_FORNECEDOR itemFalta on itemFalta.CHAMADA_ENCALHE_FORNECEDOR_ID = ceFalta.id ");
+		sql.append(" inner join produto_edicao peFalta on itemFalta.PRODUTO_EDICAO_ID = peFalta.ID ");
+		sql.append(" inner join produto pFalta on peFalta.produto_id = pFalta.id ");
+		sql.append(" left outer join DIFERENCA dFalta on dFalta.PRODUTO_EDICAO_ID = peFalta.ID ");
+		sql.append(" where 1=1");
+		sql.append(" and dFalta.TIPO_DIFERENCA='FALTA_EM_DIRECIONADA_COTA' ");
+		sql.append(" and ceFalta.ANO_REFERENCIA =:anoReferencia ");
+		sql.append(" and ceFalta.NUMERO_SEMANA =:numeroSemana ");
+		sql.append(" and ceFalta.id = cef.id " );
+		sql.append(" and itemFalta.PRODUTO_EDICAO_ID = pe.id ");
+		sql.append(" group by ceFalta.id ");
+		sql.append(" ) as falta, ");
+		
+		return sql;
+	}
+	
+	private StringBuilder montarQueryPerda(StringBuilder sql) {
+		
+		sql.append(" (select coalesce(sum(dPerda.qtde), 0) ");
+		sql.append(" from CHAMADA_ENCALHE_FORNECEDOR cePerda ");
+		sql.append(" inner join ITEM_CHAMADA_ENCALHE_FORNECEDOR itemPerda on itemPerda.CHAMADA_ENCALHE_FORNECEDOR_ID = cePerda.id ");
+		sql.append(" inner join produto_edicao pePerda on itemPerda.PRODUTO_EDICAO_ID = pePerda.ID ");
+		sql.append(" inner join produto pPerda on pePerda.produto_id = pPerda.id ");
+		sql.append(" left outer join DIFERENCA dPerda on dPerda.PRODUTO_EDICAO_ID = pePerda.ID ");
+		sql.append(" where 1=1");
+		sql.append(" and dPerda.TIPO_DIFERENCA='PERDA_EM' ");
+		sql.append(" and cePerda.ANO_REFERENCIA =:anoReferencia ");
+		sql.append(" and cePerda.NUMERO_SEMANA = :numeroSemana ");
+		sql.append(" and cePerda.id = cef.id " );
+		sql.append(" and itemPerda.PRODUTO_EDICAO_ID = pe.id ");
+		sql.append(" group by cePerda.id ");
+		sql.append(" ) as perda, ");
+		return sql;
+	}
+	
+	private StringBuilder montarQueryGanho(StringBuilder sql) {
+		
+		sql.append(" (select coalesce(sum(dGanho.qtde), 0) ");
+		sql.append(" from CHAMADA_ENCALHE_FORNECEDOR ceGanho ");
+		sql.append(" inner join ITEM_CHAMADA_ENCALHE_FORNECEDOR itemGanho on itemGanho.CHAMADA_ENCALHE_FORNECEDOR_ID = ceGanho.id ");
+		sql.append(" inner join produto_edicao peGanho on itemGanho.PRODUTO_EDICAO_ID = peGanho.ID ");
+		sql.append(" inner join produto pGanho on peGanho.produto_id = pGanho.id ");
+		sql.append(" left outer join DIFERENCA dGanho on dGanho.PRODUTO_EDICAO_ID = peGanho.ID ");
+		sql.append(" where 1=1");
+		//sql.append(" and item.PRODUTO_EDICAO_ID = 124785 ");
+		sql.append(" and dGanho.TIPO_DIFERENCA='GANHO_EM' ");
+		sql.append(" and ceGanho.ANO_REFERENCIA =:anoReferencia ");
+		sql.append(" and ceGanho.NUMERO_SEMANA =:numeroSemana ");
+		sql.append(" and ceGanho.id = cef.id " );
+		sql.append(" and itemGanho.PRODUTO_EDICAO_ID = pe.id ");
+		sql.append(" group by ceGanho.id ");
+		sql.append(" ) as ganho, ");
+		return sql;
+	}
+	
+	private StringBuilder montarQuerySobra(StringBuilder sql) {
+		
+		sql.append(" (select coalesce(sum(dSobra.qtde), 0) ");
+		sql.append(" from CHAMADA_ENCALHE_FORNECEDOR ceSobra ");
+		sql.append(" inner join ITEM_CHAMADA_ENCALHE_FORNECEDOR itemSobra on itemSobra.CHAMADA_ENCALHE_FORNECEDOR_ID = ceSobra.id ");
+		sql.append(" inner join produto_edicao peSobra on itemSobra.PRODUTO_EDICAO_ID = peSobra.ID ");
+		sql.append(" inner join produto pSobra on peSobra.produto_id = pSobra.id ");
+		sql.append(" left outer join DIFERENCA dSobra on dSobra.PRODUTO_EDICAO_ID = peSobra.ID ");
+		sql.append(" where 1=1");
+		//sql.append(" and item.PRODUTO_EDICAO_ID = 124785 ");
+		sql.append(" and dSobra.TIPO_DIFERENCA='SOBRA_EM_DIRECIONADA_COTA' ");
+		sql.append(" and ceSobra.ANO_REFERENCIA =:anoReferencia ");
+		sql.append(" and ceSobra.NUMERO_SEMANA =:numeroSemana ");
+		sql.append(" and ceSobra.id = cef.id " );
+		sql.append(" and itemSobra.PRODUTO_EDICAO_ID = pe.id ");
+		sql.append(" group by ceSobra.id ");
+		sql.append(" ) as sobra, ");
+		return sql;
+	}
+	
+	private StringBuilder montarQuerySaldo(StringBuilder sql) {
+		
+		sql.append(" (0.0) as saldo, ");
+		return sql;
+	}
+	
 }

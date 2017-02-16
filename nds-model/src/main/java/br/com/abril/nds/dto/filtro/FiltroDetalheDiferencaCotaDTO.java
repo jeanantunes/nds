@@ -4,6 +4,7 @@ import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 
 /**
  * Filtro utilizado na consulta de detalhes da diferença por cota.
@@ -38,6 +39,14 @@ public class FiltroDetalheDiferencaCotaDTO extends FiltroDTO {
 	
 	private Integer numeroCota;
 
+	private String numeroSemana;
+	
+	private FileType fileType;
+	
+	private String semana;
+	
+	private String ano;
+	
 	private ColunaOrdenacao colunaOrdenacao;
 	
 	public enum ColunaOrdenacao {
@@ -191,5 +200,36 @@ public class FiltroDetalheDiferencaCotaDTO extends FiltroDTO {
 	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
-}
 
+	public String getNumeroSemana() {
+		return numeroSemana;
+	}
+
+	public void setNumeroSemana(String numeroSemana) {
+		this.numeroSemana = numeroSemana;
+	}
+
+	public FileType getFileType() {
+		return fileType;
+	}
+
+	public void setFileType(FileType fileType) {
+		this.fileType = fileType;
+	}
+	
+	public String getSemana() {
+		return semana;
+	}
+
+	public void setSemana(String semana) {
+		this.semana = semana;
+	}
+
+	public String getAno() {
+		return ano;
+	}
+
+	public void setAno(String ano) {
+		this.ano = ano;
+	}
+}

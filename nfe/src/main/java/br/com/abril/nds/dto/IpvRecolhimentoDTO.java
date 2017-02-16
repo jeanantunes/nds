@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFfield;
+import br.com.abril.nds.util.TirarAcento;
 
 public class IpvRecolhimentoDTO extends FTFBaseDTO {
 	
@@ -141,7 +142,7 @@ public class IpvRecolhimentoDTO extends FTFBaseDTO {
 	}
 
 	public void setNomeProduto(String nomeProduto) {
-		this.nomeProduto = nomeProduto;
+		this.nomeProduto = (nomeProduto == null || nomeProduto.isEmpty()) ?  "" :  TirarAcento.removerAcentuacao(nomeProduto);
 	}
 
 	public String getReparte() {
@@ -157,7 +158,7 @@ public class IpvRecolhimentoDTO extends FTFBaseDTO {
 	}
 
 	public void setNomeEditora(String nomeEditora) {
-		this.nomeEditora = nomeEditora;
+		this.nomeEditora = (nomeEditora == null || nomeEditora.isEmpty()) ?  "" :  TirarAcento.removerAcentuacao(nomeEditora);
 	}
 
 	public String getPrecoCapa() {
@@ -181,7 +182,7 @@ public class IpvRecolhimentoDTO extends FTFBaseDTO {
 	}
 
 	public void setChamadaCapa(String chamadaCapa) {
-		this.chamadaCapa = chamadaCapa;
+		this.chamadaCapa = (chamadaCapa == null || chamadaCapa.isEmpty()) ?  "" :  TirarAcento.removerAcentuacao(chamadaCapa);
 	}
 
 	public String getDataLancamento() {
