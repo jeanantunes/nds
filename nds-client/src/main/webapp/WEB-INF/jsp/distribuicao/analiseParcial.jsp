@@ -550,8 +550,8 @@ table.dadosTab { margin-left: 370px;}
 
 			<table width="686" border="0" cellpadding="2" cellspacing="1">
 				<tr>
-					<td style="width: 130px;"><strong>Código: </strong> ${estudo.produtoEdicao.produto.codigo}</td>
-					<td><strong>Produto: </strong> ${estudo.produtoEdicao.nomeComercial}</td>
+					<td style="width: 130px;"><strong>Código: </strong><span id="detalheCotaCodigoProduto"></span></td>
+					<td><strong>Produto: </strong><span id="detalheCotaNomeProduto"></span></td>
 				</tr>
 			</table>
 			<table width="686" border="0" cellpadding="2" cellspacing="1">

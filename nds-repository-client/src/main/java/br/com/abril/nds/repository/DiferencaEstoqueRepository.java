@@ -6,8 +6,10 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.ContasAPagarConsignadoVO;
+import br.com.abril.nds.client.vo.DiferencaExtracaoVO;
 import br.com.abril.nds.dto.ImpressaoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -125,4 +127,6 @@ public interface DiferencaEstoqueRepository extends Repository<Diferenca, Long> 
 	BigDecimal obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidor(final Date dataFechamento);
 	
 	BigDecimal obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidorNoDia(final Date dataFechamento, boolean precoCapaHistoricoAlteracao);
+
+	List<DiferencaExtracaoVO> extracaoFaltaSobra(FiltroDetalheDiferencaCotaDTO filtro);
 }

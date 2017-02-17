@@ -31,16 +31,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.client.vo.DiferencaExtracaoVO;
 import br.com.abril.nds.client.vo.DiferencaVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.client.vo.ResultadoDiferencaVO;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.BoletoAvulsoDTO;
 import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.dto.EstoqueDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.RateioDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO.OrdenacaoColunaConsulta;
@@ -51,7 +50,6 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusConfirmacao;
-import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -61,10 +59,6 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
-import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
-import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
-import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
-import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -305,6 +299,25 @@ public class DiferencaEstoqueController extends BaseController {
         FileExporter.to("consulta-faltas-sobras", fileType)
         .inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoDiferencaVO,
                 listaConsultaDiferenca, DiferencaVO.class, httpServletResponse);
+        
+        result.nothing();
+    }
+    
+    @Get
+    public void extracaoExcelPDF(final FiltroDetalheDiferencaCotaDTO filtro) throws IOException {
+        
+        if (filtro.getFileType() == null) {
+            
+            throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
+        }
+        
+        final List<DiferencaExtracaoVO> listaDiferencas = diferencaEstoqueService.extracaoFaltaSobra(filtro);
+        
+        if(listaDiferencas.isEmpty()) {
+        	throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro eencontrado!");
+        } 
+        
+        FileExporter.to("extracao-faltas-sobras", filtro.getFileType()).inHTTPResponse(this.getNDSFileHeader(), filtro, listaDiferencas, DiferencaExtracaoVO.class, httpServletResponse);
         
         result.nothing();
     }
