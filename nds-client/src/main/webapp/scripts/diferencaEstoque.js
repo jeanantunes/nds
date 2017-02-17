@@ -4,6 +4,21 @@ var diferencaEstoqueController = $.extend(true, {
 	idDiferenca: "",
 	
 	init : function () {
+		
+		$('input[id^="diferenca-estoque-dataInicial"]', diferencaEstoqueController.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true,
+			dateFormat: "dd/mm/yy"
+		});
+		
+		$('input[id^="diferenca-estoque-dataFinal"]', diferencaEstoqueController.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true,
+			dateFormat: "dd/mm/yy"
+		});
+		
 		$('input[id^="data"]', diferencaEstoqueController.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -14,7 +29,16 @@ var diferencaEstoqueController = $.extend(true, {
 		$('input[id^="data"]', diferencaEstoqueController.workspace).mask("99/99/9999");
 		
 		$("#diferenca-estoque-produto", diferencaEstoqueController.workspace).autocomplete({source: []});
-
+		
+		$("#sugerirSemana", diferencaEstoqueController.workspace).click(function(e){
+			
+			if($(this).is(":checked")){
+				diferencaEstoqueController.carregarDiaSemana();
+			}else{
+				$("#semanaRecolhimentoBox", diferencaEstoqueController.workspace).val("");
+			 }
+		});
+		
 		$(".consultaFaltasSobrasGrid", diferencaEstoqueController.workspace).flexigrid({
 			preProcess: diferencaEstoqueController.executarPreProcessamento,
 			dataType : 'json',
@@ -359,7 +383,105 @@ var diferencaEstoqueController = $.extend(true, {
 			form: $("#dialogDetalheEncalheCota", this.workspace).parents("form")
 		});
 	},
+	
+	carregarDiaSemana : function() {
+		
+		if($("#sugerirSemana:checked").size() < 1)
+			return;
+		
+		var dataPesquisa = $("#diferenca-estoque-dataInicial", diferencaEstoqueController.workspace).val();
 
+		if (!dataPesquisa) {
+
+			return;
+		}
+
+		var data = [{ name: 'data', value: $("#diferenca-estoque-dataInicial", diferencaEstoqueController.workspace).val() }];
+		
+		$.getJSON(
+			contextPath + "/cadastro/distribuidor/obterNumeroSemana", 
+			data,
+			function(result) {
+				if (result) {
+					$("#semanaRecolhimentoBox", diferencaEstoqueController.workspace).val(result.int);
+				}
+			});
+	},
+	
+	carregarDataSemana : function() {
+		
+		var numeroSemana = $("#semanaRecolhimentoBox", diferencaEstoqueController.workspace).val();
+
+		if (!numeroSemana) {
+
+			return;
+		}
+		
+		var data = [{ name: 'numeroSemana', value: numeroSemana }];
+		
+		$.getJSON(
+			contextPath + "/cadastro/distribuidor/obterDataDaSemana", 
+			data,
+			function(result) {
+
+				if (result) {
+					
+					$("#diferenca-estoque-dataInicial", diferencaEstoqueController.workspace).val(result);
+				}
+			});
+	},
+	
+	extracaoExcelPDF : function(fileType) {
+		
+		var mensagens = []; 
+		
+		var data = new Array();
+		
+		var numeroSemana = $("#semanaRecolhimentoBox", diferencaEstoqueController.workspace).val();
+		
+		var path = contextPath + "/estoque/diferenca/extracaoExcelPDF";
+		
+		if(numeroSemana == '') {
+			mensagens.push("A ['Semana de Recolhimento'] não pode ser nula");
+		}
+		
+		if(mensagens.length > 0) {
+			exibirMensagem('WARNING', mensagens);
+			return;
+		}
+		
+		
+		data.push({name:'filtro.fileType', value: fileType});
+		data.push({name:'filtro.numeroSemana', value: numeroSemana});
+		
+		data.push({name:'filtro.ano', value: numeroSemana.substr(0, 4)});
+		data.push({name:'filtro.semana', value: numeroSemana.substr(4, 6)});
+		
+		
+		$.fileDownload(path, {
+			httpMethod : "GET",
+			data : data,
+			successCallback: function(result) {
+				if (result.mensagens) {
+	
+					exibirMensagem(
+							result.mensagens.tipoMensagem, 
+							result.mensagens.listaMensagens
+					);
+				}			
+			},
+		});
+		
+//		$.getJSON(contextPath + "/estoque/diferenca/extracaoExcelPDF", data,
+//		function(result) {
+//		
+//			if (result) {
+//				
+//				$("#diferenca-estoque-dataInicial", diferencaEstoqueController.workspace).val(result);
+//			}
+//		});
+	},
+	
 	popupDetalhe : function(result) {
 		
 		$('#detalheCodigo', diferencaEstoqueController.workspace)		.html(result.codigoProduto);
@@ -384,7 +506,5 @@ var diferencaEstoqueController = $.extend(true, {
 		    form: $("#dialog-detalhe-1", this.workspace).parents("form")
 		});
 	}
-
 }, BaseController);
-
 //@ sourceURL=diferencaEstoque.js

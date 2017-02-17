@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ContasAPagarConsignadoVO;
+import br.com.abril.nds.client.vo.DiferencaExtracaoVO;
 import br.com.abril.nds.client.vo.DiferencaVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.client.vo.RelatorioLancamentoFaltasSobrasVO;
@@ -1860,6 +1861,12 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
         }
         
         return identificador;
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<DiferencaExtracaoVO> extracaoFaltaSobra(final FiltroDetalheDiferencaCotaDTO filtro) {
+        return diferencaEstoqueRepository.extracaoFaltaSobra(filtro);
     }
     
 }
