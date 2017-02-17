@@ -284,23 +284,31 @@ public class DistribuicaoVendaMediaController extends BaseController {
     	        	}
     	        }
         	}else{
-        		if(estudoTemp.getProdutoEdicaoEstudo().getPeriodo() != null && estudoTemp.getProdutoEdicaoEstudo().getPeriodo() > 3){
+        		if(estudoTemp.getProdutoEdicaoEstudo().getPeriodo() != null && estudoTemp.getProdutoEdicaoEstudo().getPeriodo() >= 3){
         			
         			if(!selecionados.isEmpty()){
         				
-        				List<ProdutoEdicaoVendaMediaDTO> edicoesParaRemocao = new ArrayList<>();
-        				
-        				for (ProdutoEdicaoVendaMediaDTO produtoEdicaoVendaMediaDTO : selecionados) {
-        					if(produtoEdicaoVendaMediaDTO.getVenda() == null || produtoEdicaoVendaMediaDTO.getVenda().compareTo(BigInteger.ZERO) == 0){
-        						edicoesParaRemocao.add(produtoEdicaoVendaMediaDTO);
+        				if(selecionados.size() <= 3){
+        					
+        					for (ProdutoEdicaoVendaMediaDTO produtoEdicaoVendaMediaDTO : selecionados) {
+        						produtoEdicaoVendaMediaDTO.setIndicePeso(BigDecimal.ONE);
         					}
-        					produtoEdicaoVendaMediaDTO.setIndicePeso(BigDecimal.ONE);
-        				}
-        				
-        				selecionados.removeAll(edicoesParaRemocao);
-        				
-        				while(selecionados.size() > 3){
-        					selecionados.remove(selecionados.size() - 1);
+        					
+        				}else{
+        					List<ProdutoEdicaoVendaMediaDTO> edicoesParaRemocao = new ArrayList<>();
+        					
+        					for (ProdutoEdicaoVendaMediaDTO produtoEdicaoVendaMediaDTO : selecionados) {
+        						if(produtoEdicaoVendaMediaDTO.getVenda() == null || produtoEdicaoVendaMediaDTO.getVenda().compareTo(BigInteger.ZERO) == 0){
+        							edicoesParaRemocao.add(produtoEdicaoVendaMediaDTO);
+        						}
+        						produtoEdicaoVendaMediaDTO.setIndicePeso(BigDecimal.ONE);
+        					}
+        					
+        					selecionados.removeAll(edicoesParaRemocao);
+        					
+        					while(selecionados.size() > 3){
+        						selecionados.remove(selecionados.size() - 1);
+        					}
         				}
         				
         				selecionados.get(0).setIndicePeso(new BigDecimal(2));
@@ -631,8 +639,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    response.add(estudo.getId());
 	    response.add(estudo.isLiberado() == null ? false : true);
 	    
-	    String htmlEstudo = HTMLTableUtil.informacoesReparteComplementarEstudo(estudo);
-	    this.infoRepEstudoComplementarService.salvarInformacoes(estudo.getInformacoesRepComplementar());
+	    //String htmlEstudo = HTMLTableUtil.informacoesReparteComplementarEstudo(estudo);
+	    String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
+//	    this.infoRepEstudoComplementarService.salvarInformacoes(estudo.getInformacoesRepComplementar());
 
 	    if(distGrid != null && distGrid.isExibirInformacoesReparteComplementar()){
 	    	response.add(htmlEstudo);
