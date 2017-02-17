@@ -236,6 +236,10 @@ var analiseParcialController = $.extend(true, {
                     $fixacao.show();
                 }
                 
+                $dialog.find('#detalheCotaCodigoProduto').text(result.codigoProduto || '');
+                $dialog.find('#detalheCotaNomeProduto').text(result.nomeProduto || '');
+                
+                
                 $('#dialog-cotas-detalhes').dialog( "open" );
         });
 
@@ -895,7 +899,7 @@ var analiseParcialController = $.extend(true, {
             {display: 'LEG',        name: 'leg',                width: 20, sortable: true, align: 'center'}];
 
         if (estudoOrigem) {
-            modelo = modelo.concat([{display: 'Est. Orig.', name: 'reparteEstudoOrigemCopia', width: 50, sortable: true, align: 'right'}]);
+            modelo = modelo.concat([{display: 'Est. Orig.', name: 'reparteEstudoOrigemCopia', width: 50, sortable: true, align: 'center'}]);
         }
         modelo = modelo.concat([
 //            {display: 'Desc Leg',   name: 'descricaoLegenda',   width: 1,  hide: true},
