@@ -110,7 +110,7 @@ public class RegistroPorBancoBuilder implements Serializable {
 		registro00.setIdentificacaoExtenso("REMESSA");
 		registro00.setCodigoServico("01");
 		registro00.setLiteralServicos("COBRANCA");
-		registro00.setCodigoEmpresa(String.valueOf(banco.getAgencia()));
+		registro00.setCodigoEmpresa("4865858");
 		String nomeCliente = obterNomeCliente(pessoaCedente);
 		registro00.setNomeEmpresa((TirarAcento.removerAcentuacao(nomeCliente)));
 		registro00.setNumeroBanco(banco.getNumeroBanco());

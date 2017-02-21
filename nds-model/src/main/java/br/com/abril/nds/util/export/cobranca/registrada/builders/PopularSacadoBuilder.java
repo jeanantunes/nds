@@ -55,7 +55,7 @@ public class PopularSacadoBuilder implements Serializable {
         registro01.setSacadoAvalista(TirarAcento.removerAcentuacao(nomeSacado.trim()));
         
         
-        EnderecoSacadoBuilder.enderecoSacado(registro01, enderecoSacado, nomeSacado);
+        EnderecoSacadoBuilder.enderecoSacado(registro01, enderecoSacado, nomeSacado.trim());
 	}
 	
 	public static void popularSacadoCobrana(CobRegEnvTipoRegistro01 registro01, Boleto boleto) {

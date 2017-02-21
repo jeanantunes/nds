@@ -22,7 +22,7 @@ public class EnderecoSacadoBuilder implements Serializable {
 		registro01.setCEP(enderecoSacado.getCep());
 		registro01.setCidade(enderecoSacado.getCidade());
 		registro01.setUF(enderecoSacado.getUf());
-		registro01.setMensagemCedenteNomeSacadorAvalista(TirarAcento.removerAcentuacao(nomeSacado));
+		registro01.setMensagemCedenteNomeSacadorAvalista(TirarAcento.removerAcentuacao(nomeSacado.trim()));
 		registro01.setPrazoProtesto("99");
 		registro01.setCodigoMoeda("00");
 	}
@@ -51,9 +51,9 @@ public class EnderecoSacadoBuilder implements Serializable {
 		  .append(" ")
 		  .append(TirarAcento.removerAcentuacao(enderecoSacado.getBairro().trim()))
 		  .append(" ")
-		  .append(TirarAcento.removerAcentuacao(enderecoSacado.getCidade()))
+		  .append(TirarAcento.removerAcentuacao(enderecoSacado.getCidade().trim()))
 		  .append(" ")
-		  .append(enderecoSacado.getUf());
+		  .append(enderecoSacado.getUf().trim());
 		
         registro01.setEnderecoCompleto(sb.toString().trim());
         

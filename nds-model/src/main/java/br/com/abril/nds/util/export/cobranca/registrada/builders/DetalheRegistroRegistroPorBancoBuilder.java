@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 
 import javax.xml.bind.ValidationException;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.cadastro.Banco;
@@ -14,6 +15,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro01;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroBradesco01;
@@ -180,7 +182,7 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable{
 		registro01.setContaCorrente("");
 		// pagina 17
 		
-		registro01.setIdentificacaoEmpresaBeneficiaria("0"+ banco.getCarteira()+banco.getAgencia()+banco.getConta());
+		registro01.setIdentificacaoEmpresaBeneficiaria(montarIdentificacaoEmpresaBeneficiaria(banco));
 		registro01.setNumeroControlePaticipante("");
 		registro01.setCodigoBanco(banco.getNumeroBanco());
 		registro01.setCampoMulta("0");
@@ -257,7 +259,6 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable{
 		registro01.setIdentificacaoOcorrencia("2");
 		
 		registro01.setNomePagador("");
-		registro01.setEnderecoCompleto("");
 		
 		registro01.setMensagemCompleto("");
 		
@@ -266,6 +267,20 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable{
 		registro01.setSequencialBradescoRegistro(String.valueOf(count));
 		
 		return registro01;
+	}
+	
+	private static String montarIdentificacaoEmpresaBeneficiaria(Banco banco) {
+		//"0"+ banco.getCarteira()+banco.getAgencia()+banco.getConta()
+		
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("0")
+		.append(StringUtils.leftPad(banco.getCarteira().toString(), 2, '0'))
+		.append(StringUtils.leftPad(banco.getAgencia().toString(), 4, '0'))
+		.append(StringUtils.leftPad(banco.getConta().toString(), 6, '0'))
+		.append(StringUtils.leftPad(banco.getConta().toString(), 1, '0'));
+		
+		return sb.toString();
 	}
 	
 }

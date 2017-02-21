@@ -129,7 +129,7 @@ public class CobRegEnvTipoRegistroBradesco00 extends CobRegBaseDTO {
 	}
 
 	public void setSequencial(String sequencial) {
-		this.sequencial = StringUtils.leftPad(sequencial, 6, '0');;
+		this.sequencial = StringUtils.leftPad(sequencial, 6, '0');
 	}
 
 	public String getCodigoEmpresa() {
@@ -137,7 +137,7 @@ public class CobRegEnvTipoRegistroBradesco00 extends CobRegBaseDTO {
 	}
 
 	public void setCodigoEmpresa(String codigoEmpresa) {
-		this.codigoEmpresa = codigoEmpresa;
+		this.codigoEmpresa = StringUtils.leftPad(codigoEmpresa, 20, '0');
 	}
 
 	public String getNomeEmpresa() {
@@ -169,7 +169,7 @@ public class CobRegEnvTipoRegistroBradesco00 extends CobRegBaseDTO {
 	}
 
 	public void setSequencialHeader(String sequencialHeader) {
-		this.sequencialHeader = sequencialHeader;
+		this.sequencialHeader = StringUtils.leftPad(sequencialHeader, 7, '0');
 	}
 
 }

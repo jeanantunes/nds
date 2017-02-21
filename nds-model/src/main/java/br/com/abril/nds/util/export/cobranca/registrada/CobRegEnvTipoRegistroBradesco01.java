@@ -456,7 +456,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setEnderecoCompleto(String enderecoCompleto) {
-		this.enderecoCompleto = StringUtils.leftPad(enderecoCompleto, 40, ' ');
+		this.enderecoCompleto = StringUtils.rightPad(enderecoCompleto, 40, ' ');
 	}
 
 	public String getMensagemCompleto() {
