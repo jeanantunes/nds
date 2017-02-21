@@ -78,7 +78,10 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private Long id;
 	private Integer sequenciaMatriz;
 	private BigDecimal precoVenda;
+	
+	@XlsMapper(value="desconto")
 	private BigDecimal desconto;
+	
 	private BigDecimal precoComDesconto;
 	private Integer peb;
 	private BigDecimal precoCusto;
@@ -99,10 +102,14 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private Integer periodo;
 	private String periodoString;
 	private Integer dia;
+	
+	@XlsMapper(value="dataRecolhimentoReal")
 	private Date dataRecolhimentoDistribuidor;
 	
     // Usados na listagem de Edições:
+	@XlsMapper(value="dataLancamento")
 	private Date dataLancamento;
+	
     private Long idFornecedor;
 	private String nomeFornecedor;
 	private TipoLancamento tipoLancamento;
@@ -166,8 +173,13 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	
 	private Double venda;
 	private Double percentualVenda;
+	
+	@XlsMapper(value="percentualDesconto")
+	private Double percentualDesconto;
+	
 	private Long reparteEstudo;
 	private Long tipoSegmentoProdutoId;
+	private String segmento;
 	
 	private FormaComercializacao formaComercializacao;
 	
@@ -199,7 +211,10 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 		this.statusLancamento  = statusLancamento;
 		this.statusSituacao = statusSituacao; 
 		this.temBrinde = temBrinde;
-		this.precoVenda = precoVenda;		
+		this.precoVenda = precoVenda;
+		this.desconto = desconto;	
+		this.dataLancamento = dataLancamento;
+		this.dataRecolhimentoReal = dataRecolhimentoReal;
 	};
 	
 	
@@ -904,6 +919,14 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	public void setPercentualVenda(Double percentualVenda) {
 		this.percentualVenda = percentualVenda;
 	}
+	
+	public Double getPercentualDesconto() {
+		return percentualDesconto;
+	}
+
+	public void setPercentualDesconto(Double percentualDesconto) {
+		this.percentualDesconto = percentualDesconto;
+	}
 
 	public Long getTipoSegmentoProdutoId() {
 		return tipoSegmentoProdutoId;
@@ -911,6 +934,14 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 
 	public void setTipoSegmentoProdutoId(Long tipoSegmentoProdutoId) {
 		this.tipoSegmentoProdutoId = tipoSegmentoProdutoId;
+	}
+	
+	public String getSegmento() {
+		return segmento;
+	}
+
+	public void setSegmento(String segmento) {
+		this.segmento = segmento;
 	}
 
 	public TipoClassificacaoProduto getTipoClassificacaoProduto() {

@@ -132,12 +132,12 @@ public interface ProdutoEdicaoService {
 	 */
 	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeProduto,
 			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
-			String codigoDeBarras, boolean brinde,
+			String codigoDeBarras, boolean brinde,int segmento,
 			String sortorder, String sortname, int page, int maxResults);
 	
 	public List<ConsultaProdutoEdicaoDTO> pesquisarConsultaEdicoes(String codigoProduto, String nomeProduto,
 			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
-			String codigoDeBarras, boolean brinde,
+			String codigoDeBarras, boolean brinde,int segmento,
 			String sortorder, String sortname, int page, int maxResults);
 	
 	/**
@@ -150,7 +150,7 @@ public interface ProdutoEdicaoService {
 	 */
 	public Long countPesquisarEdicoes(String codigoProduto, String nomeProduto,
 			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
-			String codigoDeBarras, boolean brinde);
+			String codigoDeBarras, boolean brinde,int segmento);
 	
 	/**
 	 * Salva ou Atualiza um novo ProdutoEdição.

@@ -36,7 +36,11 @@ public class FiltroProdutoEdicaoDTO implements Serializable {
 	@Export(label="Brinde")
 	private boolean brinde;
 	
-    private Date dataLancamentoDe;
+	@Export(label="Segmento")
+	private int segmento;
+	
+
+	private Date dataLancamentoDe;
 	
 	private Date dataLancamentoAte;
 	
@@ -57,7 +61,7 @@ public class FiltroProdutoEdicaoDTO implements Serializable {
 	
 	public FiltroProdutoEdicaoDTO() {}
 	
-	public FiltroProdutoEdicaoDTO(String codigo, String nome, String fornecedor,String parcial,String tipoLancamento,StatusLancamento statusLancamento,boolean brinde,Date dataLancamentoDe,Date dataLancamentoAte,Double precoDe,Double precoAte,String codigoBarras, String sortOrder, String sortName, int page,int rp) {
+	public FiltroProdutoEdicaoDTO(String codigo, String nome, String fornecedor,String parcial,String tipoLancamento,StatusLancamento statusLancamento,boolean brinde, int segmento,Date dataLancamentoDe,Date dataLancamentoAte,Double precoDe,Double precoAte,String codigoBarras, String sortOrder, String sortName, int page,int rp) {
 		
 		this.codigo = codigo;
 		this.nome = nome;
@@ -66,6 +70,7 @@ public class FiltroProdutoEdicaoDTO implements Serializable {
 		this.tipoLancamento = tipoLancamento;
 		this.statusLancamento = statusLancamento;
 		this.brinde = brinde;
+		this.segmento = segmento;
 		this.dataLancamentoDe = dataLancamentoDe;
 		this.dataLancamentoAte = dataLancamentoAte;
 		this.precoDe = precoDe;
@@ -77,6 +82,7 @@ public class FiltroProdutoEdicaoDTO implements Serializable {
 		this.rp = rp;
 		
 	}
+	
 	
 	public String getCodigo() {
 		return codigo;
@@ -141,6 +147,14 @@ public class FiltroProdutoEdicaoDTO implements Serializable {
 
 	public void setBrinde(boolean brinde) {
 		this.brinde = brinde;
+	}
+	
+    public int getSegmento() {
+		return segmento;
+	}
+
+	public void setSegmento(int segmento) {
+		this.segmento = segmento;
 	}
 
 	public Date getDataLancamentoDe() {

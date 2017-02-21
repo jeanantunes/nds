@@ -69,6 +69,9 @@ public class ConsultaProdutoEdicaoDTO implements Serializable {
 	@Export(label="Brinde", alignment=Alignment.CENTER, widthPercent=8)
 	private Boolean temBrinde;
 	
+	@Export(label="Segmento", alignment=Alignment.CENTER, widthPercent=8)
+	private String segmento;
+	
 	
 	/**
 	 * Construtor Padrão
@@ -173,6 +176,15 @@ public class ConsultaProdutoEdicaoDTO implements Serializable {
 
 	public void setTemBrinde(Boolean temBrinde) {
 		this.temBrinde = temBrinde;
+	}
+	
+	public String getSegmento() {
+		return segmento;
+	}
+
+
+	public void setSegmento(String segmento) {
+		this.segmento = segmento;
 	}
 
 
