@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
 
 @Exportable
 public class ProdutoLancamentoVO  implements Serializable {
@@ -12,63 +13,61 @@ public class ProdutoLancamentoVO  implements Serializable {
 	
 	private Long id;
 	
-	@Export(label="Codigo", exhibitionOrder = 0, widthPercent = 6)
+	@Export(label="Codigo", exhibitionOrder = 0, alignment = Alignment.CENTER, fontSize=6, widthPercent = 6)
 	private String codigoProduto;
 	
-	@Export(label="Produto", exhibitionOrder = 1, widthPercent = 18)
+	@Export(label="Produto", exhibitionOrder = 1, alignment = Alignment.LEFT, fontSize=6, widthPercent = 15)
 	private String nomeProduto;
 	
-	@Export(label="Edição", exhibitionOrder = 2, widthPercent = 0)
+	@Export(label="Edição", exhibitionOrder = 2, alignment = Alignment.CENTER, fontSize=6, widthPercent = 5)
 	private Long numeroEdicao;
 	
-	@Export(label="Capa R$", exhibitionOrder = 3, widthPercent = 0)
+	@Export(label="Capa R$", exhibitionOrder = 3, alignment = Alignment.CENTER, fontSize=6, widthPercent = 5)
 	private String precoVenda;
 	
-	@Export(label="Reparte", exhibitionOrder = 4, widthPercent = 0)
+	@Export(label="Reparte", exhibitionOrder = 4, alignment = Alignment.CENTER, fontSize=6, widthPercent = 5)
 	private String repartePrevisto;
 	
-	@Export(label="Lançamento", exhibitionOrder = 5, widthPercent = 8)
+	@Export(label="Lançamento", exhibitionOrder = 5, alignment = Alignment.CENTER, fontSize=6, widthPercent = 5)
 	private String descricaoLancamento;
 	
-	@Export(label="Recolhim.", exhibitionOrder = 6, widthPercent = 6)
+	@Export(label="Rec.", exhibitionOrder = 6, alignment = Alignment.CENTER, fontSize=6, widthPercent = 5)
 	private String dataRecolhimentoPrevista;
 
-	@Export(label="Rec. Dist.", exhibitionOrder = 7, widthPercent = 6)
+	@Export(label="Rec. Dist.", exhibitionOrder = 7, alignment = Alignment.CENTER, fontSize=6, widthPercent = 5)
 	private String dataRecolhimentoDistribuidor;
 	
-	@Export(label="Total R$", exhibitionOrder = 8, widthPercent = 6)
+	@Export(label="Total R$", exhibitionOrder = 8, alignment = Alignment.CENTER, fontSize=6, widthPercent = 7)
 	private String valorTotal;
 	
-	@Export(label="PEB", exhibitionOrder = 9, widthPercent = 3)
+	@Export(label="PEB", exhibitionOrder = 9, alignment = Alignment.CENTER, fontSize=6, widthPercent = 3)
 	private Long peb;
 	
-	@Export(label="Desc Logistica", exhibitionOrder = 10, widthPercent = 6)
+	@Export(label="Desc.", exhibitionOrder = 10, alignment = Alignment.CENTER, fontSize=6, widthPercent = 5)
 	private String descontoLogistica;
 	
-	@Export(label="Físico", exhibitionOrder = 11, widthPercent = 4)
+	@Export(label="Físico", exhibitionOrder = 11, fontSize=6, alignment = Alignment.CENTER, widthPercent = 4)
 	private String reparteFisico;
 	
-	@Export(label="Distrib.", exhibitionOrder = 12, widthPercent = 0)
+	@Export(label="Distrib.", exhibitionOrder = 12, fontSize=6, alignment = Alignment.CENTER, widthPercent = 5)
 	private String distribuicao;
 	
-	@Export(label="Previsto", exhibitionOrder = 13, widthPercent = 6)
+	@Export(label="Previsto", exhibitionOrder = 13, fontSize=6, alignment = Alignment.CENTER, widthPercent = 7)
 	private String dataLancamentoPrevista;
 	
 	//@Export(label="Excluir", exhibitionOrder = 13, widthPercent = 0)
 	private boolean cancelado;
 	
-	@Export(label="Status", exhibitionOrder = 14, widthPercent = 9)
+	@Export(label="Status", exhibitionOrder = 14, fontSize=6, alignment = Alignment.CENTER, widthPercent = 0)
 	private String statusLancamento;
 	
-	@Export(label="Fornec.", exhibitionOrder = 15, widthPercent = 5)
+	@Export(label="Fornec.", exhibitionOrder = 15, fontSize=6, alignment = Alignment.CENTER, widthPercent = 7)
 	private String nomeFantasia;
 	
 	
-	@Export(label="Sequencia", exhibitionOrder = 16, widthPercent = 8)
+	@Export(label="Seq.", exhibitionOrder = 16, fontSize=6, alignment = Alignment.CENTER, widthPercent = 4)
 	private String sequenciaMatriz;
 	
-
-
 	private Long fornecedorId;
 
 	private String novaDataLancamento;
