@@ -275,10 +275,10 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable{
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append("0")
-		.append(StringUtils.leftPad(banco.getCarteira().toString(), 2, '0'))
-		.append(StringUtils.leftPad(banco.getAgencia().toString(), 4, '0'))
-		.append(StringUtils.leftPad(banco.getConta().toString(), 6, '0'))
-		.append(StringUtils.leftPad(banco.getConta().toString(), 1, '0'));
+		.append(StringUtils.leftPad(banco.getCarteira().toString(), 3, '0'))
+		.append(StringUtils.leftPad(banco.getAgencia().toString(), 5, '0'))
+		.append(StringUtils.leftPad(banco.getConta().toString(), 7, '0'))
+		.append(StringUtils.leftPad(banco.getDvConta().toString(), 1, '0'));
 		
 		return sb.toString();
 	}
