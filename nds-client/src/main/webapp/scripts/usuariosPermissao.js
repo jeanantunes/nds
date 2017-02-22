@@ -98,7 +98,7 @@ var usuariosPermissaoController = $.extend(true, {
 		popup_editar_usuario : function(idUsuario) {
 			
 			$("#trInsercaoSenhas", usuariosPermissaoController.workspace).hide();
-			$("#trLembreteSenha", usuariosPermissaoController.workspace).hide();
+			$("#trLembreteSenha", usuariosPermissaoController.workspace).show();
 			
 			$('input[tipo="permissao"]').attr("checked", false);
 			$('#permissaoGridConteudo').appendTo($('#localPermissaoGridUsuario'));
