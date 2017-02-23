@@ -9,6 +9,8 @@ public class ProdutoDTO {
 	private Long idProduto;
 
 	private Long idClassificacaoProduto;
+	
+	private Long tipoSegmentoProdutoId;
 
 
 	public String getCodigoProduto() {
@@ -41,5 +43,13 @@ public class ProdutoDTO {
 
 	public void setIdClassificacaoProduto(Long idClassificacaoProduto) {
 		this.idClassificacaoProduto = idClassificacaoProduto;
+	}
+	
+	public Long getTipoSegmentoProdutoId() {
+		return tipoSegmentoProdutoId;
+	}
+
+	public void setTipoSegmentoProdutoId(Long tipoSegmentoProdutoId) {
+		this.tipoSegmentoProdutoId = tipoSegmentoProdutoId;
 	}
 }

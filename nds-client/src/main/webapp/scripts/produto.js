@@ -224,49 +224,49 @@ var produtoController = $.extend(true, {
 			colModel : [ {
 				display : 'C&oacute;digo',
 				name : 'codigo',
-				width : 70,
+				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'produtoDescricao',
-				width : 170,
+				width : 155,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Tipo Produto',
 				name : 'tipoProdutoDescricao',
-				width : 80,
+				width : 70,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Editor',
 				name : 'nomeEditor',
-				width : 110,
+				width : 120,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Fornecedor',
 				name : 'tipoContratoFornecedor',
-				width : 90,
+				width : 70,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'PEB',
 				name : 'peb',
-				width : 60,
+				width : 30,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Pcte. Padr&atilde;o',
+				display : 'P.Padr&atilde;o',
 				name : 'pacotePadrao',
-				width : 65,
+				width : 40,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Desconto %',
+				display : 'Desconto',
 				name : 'percentualDesconto',
-				width : 70,
+				width : 45,
 				sortable : true,
 				align : 'right'
 			}, {
@@ -276,6 +276,12 @@ var produtoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
+				display : 'Segmento',
+				name : 'segmento',
+				width : 100,
+				sortable : true,
+				align : 'center'
+			},{
 				display : 'Ação',
 				name : 'acao',
 				width : 52,
@@ -317,7 +323,7 @@ var produtoController = $.extend(true, {
 		var editor = $("#produto-edicao", this.workspace).val();
 		var codigoTipoProduto = $("#produto-comboTipoProduto", this.workspace).val();
 		var isGeracaoAutomatica = produtoController.formatarCampoComboGeracaoAutomatica("#produto-comboGeracaoAutomatica");
-		
+		var segmento = $("#produto-tipoSegmento", this.workspace).val();
 		
 		$(".produtosGrid", this.workspace).flexOptions({
 			url: contextPath + "/produto/pesquisarProdutos",
@@ -326,7 +332,8 @@ var produtoController = $.extend(true, {
 				     {name:'fornecedor', value: fornecedor },
 				     {name:'editor', value: editor },
 				     {name:'codigoTipoProduto', value : codigoTipoProduto},
-				     {name:'isGeracaoAutomatica', value : isGeracaoAutomatica}],
+				     {name:'isGeracaoAutomatica', value : isGeracaoAutomatica},
+				     {name:'segmento', value : segmento}],
 			newp: 1,
 		});
 		

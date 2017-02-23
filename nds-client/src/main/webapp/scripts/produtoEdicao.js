@@ -723,6 +723,7 @@ var produtoEdicaoController =$.extend(true,  {
 			         newp: 1, 
 			         rp: 99999
 		});
+	
 
 		$(".prodsPesqGrid",this.workspace).flexReload();	
 	},

@@ -366,9 +366,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		.append("        pe.possui_brinde as temBrinde, ")
 		.append("        pe.parcial as parcial, ")
 		.append("        pe.preco_venda as precoVenda, ")
-		.append("        coalesce(descontoLogistica.percentual_desconto,0.0) as percentualDesconto, ")
+		.append("        coalesce(coalesce(coalesce(descontoLogistica.percentual_desconto,pe.desconto),p.desconto),0) as percentualDesconto, ")
 		.append("        l.data_lcto_distribuidor as dataLancamento, ")
-		.append("        l.data_rec_distrib as dataRecolhimentoReal ");
+		.append("        l.data_rec_distrib as dataRecolhimentoReal, ")
+		.append("        coalesce(coalesce(coalesce(descontoLogistica.percentual_desconto,pe.desconto),p.desconto),0) as desconto, ")
+		.append("        ttsp.descricao as segmento ");
 		
 		// Corpo da consulta com os filtros:
 		final SQLQuery query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde,segmento, sortname, sortorder);
@@ -393,6 +395,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.addScalar("desconto", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("dataLancamento", StandardBasicTypes.DATE);
 		query.addScalar("dataRecolhimentoReal", StandardBasicTypes.DATE);
+		query.addScalar("segmento", StandardBasicTypes.STRING);
 		
 		return query.list();
 	}
