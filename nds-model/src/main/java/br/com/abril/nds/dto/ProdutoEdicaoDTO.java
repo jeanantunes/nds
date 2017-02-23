@@ -18,6 +18,7 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.upload.XlsMapper;
 
 import com.google.common.base.Strings;
@@ -176,6 +177,8 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	
 	@XlsMapper(value="percentualDesconto")
 	private Double percentualDesconto;
+	
+	private String percentualDescontoFormatado;
 	
 	private Long reparteEstudo;
 	private Long tipoSegmentoProdutoId;
@@ -925,6 +928,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	}
 
 	public void setPercentualDesconto(Double percentualDesconto) {
+		this.percentualDescontoFormatado = CurrencyUtil.formatarValor(percentualDesconto);
 		this.percentualDesconto = percentualDesconto;
 	}
 
@@ -1138,6 +1142,8 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 		this.descricaoSituacaoLancamento = descricaoSituacaoLancamento;
 		this.situacaoLancamento = StatusLancamento.valueOf(descricaoSituacaoLancamento);
 	}
-	
 
+	public String getPercentualDescontoFormatado() {
+		return percentualDescontoFormatado;
+	}
 }

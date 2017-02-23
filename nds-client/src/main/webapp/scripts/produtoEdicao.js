@@ -317,7 +317,7 @@ var produtoEdicaoController =$.extend(true,  {
 				align : 'left'
 			}, {
 				display : 'Desconto',
-				name : 'percentualDesconto',
+				name : 'percentualDescontoFormatado',
 				width : 60,
 				sortable : true,
 				align : 'left'
