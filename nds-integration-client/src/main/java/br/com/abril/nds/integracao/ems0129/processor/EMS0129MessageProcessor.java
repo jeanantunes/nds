@@ -235,8 +235,14 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 				
 				while(ccotal !=new Long(headerDTO.getCodigoCota()).longValue()){
 					cont++;
-					subHeaderPickingDTO = listaSubHeadePickingModelo4.get(cont);
-					ccotal = Long.parseLong(subHeaderPickingDTO.getCodigoCota().replace(";",""));
+					try {
+					 subHeaderPickingDTO = listaSubHeadePickingModelo4.get(cont);
+					 ccotal = Long.parseLong(subHeaderPickingDTO.getCodigoCota().replace(";",""));
+					}catch (IndexOutOfBoundsException e) {
+						System.out.println("Erro na execução do Led (Interface 129):"+e);
+					}catch(Exception exx ){
+						System.out.println("Erro na execução do Led (Interface 129):"+exx);
+					}
 					
 				}
 				
