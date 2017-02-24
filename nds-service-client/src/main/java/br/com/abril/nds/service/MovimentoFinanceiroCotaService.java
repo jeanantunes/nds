@@ -199,5 +199,4 @@ public interface MovimentoFinanceiroCotaService {
 			  															   final List<MovimentoEstoqueCotaDTO>movimentosEstoqueCota);
     
     List<MovimentoFinanceiroCota> gerarMovimentosFinanceirosDebitoCreditoCobrancaGerada(final MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO);
-
 }

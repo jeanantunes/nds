@@ -11,6 +11,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.UsuarioRepository;
@@ -165,4 +166,19 @@ public class UsuarioRepositoryImpl extends AbstractRepositoryModel<Usuario, Long
         criteria.setProjection(Projections.rowCount());
         return (Long) criteria.uniqueResult() > 0;
     }
+    
+    @Override
+	public Usuario obterUsuarioPeloMovimento(MovimentoFinanceiroCota movimento) {
+		
+		StringBuilder hql = new StringBuilder("");
+		    	
+    	hql.append(" select u from MovimentoFinanceiroCota mfc join mfc.usuario u ");
+    	hql.append(" where mfc.id =:idMovimento ");
+    	
+    	Query query = this.getSession().createQuery(hql.toString());
+
+ 	    query.setParameter("idMovimento", movimento.getId());
+
+		return ((Usuario) query.uniqueResult());
+	}
 }

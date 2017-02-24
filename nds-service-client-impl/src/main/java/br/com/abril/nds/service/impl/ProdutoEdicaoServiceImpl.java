@@ -1846,6 +1846,8 @@ if ( dto.getRepartePrevisto() != null) {
             codigoProduto = Util.padLeft(codigoProduto, "0", 8);
         }
         
+        filtro.setIdsEdicoes(produtoEdicaoRepository.obterIdsEdicoesPorCodigoNumeroEdicoes(codigoProduto, edicoes));
+        
         final List<AnaliseHistogramaDTO> list = new ArrayList<AnaliseHistogramaDTO>();
         
         final String[] newFaixasVenda = new String[faixasVenda.length];
@@ -1874,6 +1876,9 @@ if ( dto.getRepartePrevisto() != null) {
         final StringBuilder strCotas = new StringBuilder();
         
         for (int i = 0; i < newFaixasVenda.length; i++) {
+        	
+        	final StringBuilder strCotasDaFaixa = new StringBuilder();
+        	
             final String[] faixa = newFaixasVenda[i].split("-");
             final AnaliseHistogramaDTO obj =
                     produtoEdicaoRepository.obterBaseEstudoHistogramaPorFaixaVenda(
@@ -1891,6 +1896,13 @@ if ( dto.getRepartePrevisto() != null) {
 //            }
             
             if (!cotas.isEmpty()){
+            	
+            	for (Integer numCota : cotas) {
+            		strCotas.append(strCotas.length() == 0 ? numCota.toString() : "," + numCota.toString());
+            		strCotasDaFaixa.append(strCotasDaFaixa.length() == 0 ? numCota.toString() : "," + numCota.toString());
+				}
+            	
+            	obj.setIdCotaStr(strCotasDaFaixa.toString());
                 
             	Collections.sort(lstPrDTO);
             	

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.seguranca.GrupoPermissao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -187,6 +188,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     public String obterNomeUsuarioPorLogin(String login) {
     	
     	return this.usuarioRepository.getNomeUsuarioPorLogin(login);
+    }
+    
+    @Transactional
+    public Usuario obterUsuarioPeloMovimento(final MovimentoFinanceiroCota movimento){
+    	
+    	return usuarioRepository.obterUsuarioPeloMovimento(movimento);
+    	
     }
 
 }
