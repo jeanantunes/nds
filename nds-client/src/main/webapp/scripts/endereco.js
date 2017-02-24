@@ -204,8 +204,14 @@ function Endereco(paramTela, paramMessage) {
 	this.incluirNovoEndereco = function () {
 
 		$('.tipsy').hide();
+		
+		$("#"+paramTela+"codigoUf", 				Endereco.workspace).removeAttr("disabled");
+		$("#"+paramTela+"codigoCidadeIBGE", 		Endereco.workspace).removeAttr("disabled");
+		
 		var formData = $("#"+paramTela+"formEnderecos :input", Endereco.workspace).serializeArray();
 		$.each(formData, function(index, row) {
+			console.log(row.value.toString());
+			
 			row.value = row.value.toString().toUpperCase();
 		});
 		

@@ -423,7 +423,7 @@ public class DebitoCreditoCotaController extends BaseController{
 			
 			itemExport.setTipoMovimentoFinanceiro((TipoMovimentoFinanceiro) movimeto.getTipoMovimento());
 			
-			itemExport.setUsuario(movimeto.getUsuario());
+			itemExport.setUsuario(usuarioService.obterUsuarioPeloMovimento(movimeto));
 			
 			itemExport.setValor(movimeto.getValor());
 			

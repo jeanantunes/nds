@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.seguranca.GrupoPermissao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -48,5 +49,7 @@ public interface UsuarioService {
     public abstract Boolean isNotSupervisor();
     
     String obterNomeUsuarioPorLogin(String login);
+    
+    Usuario obterUsuarioPeloMovimento(MovimentoFinanceiroCota movimento);
     
 }
