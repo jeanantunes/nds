@@ -107,12 +107,12 @@ public class QCProdutoRepository extends ProdutoRepositoryTest {
     @Test
     public void testQCPesquisarCountProdutos() {
 
-        this.produtoRepository.pesquisarCountProdutos("10", "VEJA", "1", "1", 1L, true);
+        this.produtoRepository.pesquisarCountProdutos("10", "VEJA", "1", "1", 1L, true,0);
     }
 
     @Test
     public void testQCPesquisarProdutos() {
 
-        this.produtoRepository.pesquisarProdutos("10", "VEJA", "1", "1", 1L, null, null, 1, 15, true);
+        this.produtoRepository.pesquisarProdutos("10", "VEJA", "1", "1", 1L, null, null, 1, 15, true,0);
     }
 }

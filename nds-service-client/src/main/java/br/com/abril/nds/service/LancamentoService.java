@@ -211,8 +211,9 @@ public interface LancamentoService {
 
 	List<InformeLancamentoDTO> buscarInformeLancamento(Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento, PaginacaoVO paginacao);
 
-	Lancamento obterProximoLancamentoDaEdicao(Long idProdutoEdicao,
-			Date dataLimiteLancamento);
+	Lancamento obterProximoLancamentoDaEdicao(Long idProdutoEdicao,Date dataLimiteLancamento);
+	
+	String verificarStatusRecolhimentoBalanceado(final ExpedicaoDTO expedicaoDTO);
 
 	
 }

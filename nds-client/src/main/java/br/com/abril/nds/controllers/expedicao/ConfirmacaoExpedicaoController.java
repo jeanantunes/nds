@@ -23,6 +23,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DescontoService;
@@ -248,6 +249,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				
 		        String retorno = null;
 		        List<String> listaRetorno = new ArrayList<>();
+		        Lancamento lancamento = null;
 		        
 				for(int i=0; i<selecionados.size(); i++) {
 					
@@ -256,11 +258,17 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 							tipoMovimento, tipoMovimentoCota, tipoMovimentoJuramentado, 
 							dataVencimentoDebito, fornecedorPadraoDistribuidor.getId());
 					
-					retorno = lancamentoService.confirmarExpedicao(expedicaoDTO);
+					lancamento = lancamentoService.buscarPorId(expedicaoDTO.getIdLancamento());
 					
+					retorno = lancamentoService.verificarStatusRecolhimentoBalanceado(expedicaoDTO);
+					this.tratarMensagemRetornoStatusRecolhimentoBalanceado(retorno, listaRetorno, lancamento.getProdutoEdicao().getProduto().getCodigo() ,lancamento.getProdutoEdicao().getNumeroEdicao().toString());
+					
+					if(retorno == null){
+					 retorno = lancamentoService.confirmarExpedicao(expedicaoDTO);
+					 this.tratarMensagemRetorno(retorno, listaRetorno);
+					}
 					session.setAttribute(STATUS_EXPEDICAO, getMsgProcessamento((i+1), selecionados.size()));
 					
-					this.tratarMensagemRetorno(retorno, listaRetorno);
 				}
 				
 				if (!listaRetorno.isEmpty()) {
@@ -316,6 +324,19 @@ public class ConfirmacaoExpedicaoController extends BaseController{
                     listaRetorno.add("Redistribuição não pode ser expedida, "
                             + "pois o lançamento já se encontra em processo de recolhimento. "
                             + "Caso necessário reabra a matriz de recolhimento!");
+                }
+                
+                listaRetorno.add(retorno);
+            }
+        }
+        
+        private void tratarMensagemRetornoStatusRecolhimentoBalanceado(String retorno, List<String> listaRetorno,String produto, String edicao) {
+            
+            if (retorno != null) {
+                
+                if (listaRetorno.isEmpty()) {
+                    
+                    listaRetorno.add("A Data de Recolhimento do Produto "+produto+" Ed."+edicao+" encontra-se em uma matriz já confirmada. Altere a Data de Recolhimento para Prosseguir com a Expedição.");
                 }
                 
                 listaRetorno.add(retorno);

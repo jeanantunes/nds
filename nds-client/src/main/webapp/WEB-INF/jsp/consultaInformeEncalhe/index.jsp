@@ -62,47 +62,47 @@ fieldset label {
 					<tr>
 						
 						<td width="27">
-							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.sequenciaMatriz" type="checkbox" value="sequenciaMatriz" />
+							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.sequenciaMatriz" type="checkbox" value="sequenciaMatriz"  onclick="manterSelecoes('tipoImpressao.colunas.sequenciaMatriz');" />
 						</td>
 						<td width="183">
 							<label for="tipoImpressao.colunas.sequenciaMatriz">Sequ&ecirc;ncia</label>
 						</td>
 						<td width="27">
-							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.codigoProduto" type="checkbox" value="codigoProduto" />
+							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.codigoProduto" type="checkbox" value="codigoProduto" onclick="manterSelecoes('tipoImpressao.colunas.codigoProduto');" />
 						</td>
 						<td width="183">
 							<label for="tipoImpressao.colunas.codigoProduto">C&oacute;digo</label>
 						</td>
 						<td width="21">
-							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.nomeProduto" type="checkbox" value="nomeProduto" />
+							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.nomeProduto" type="checkbox" value="nomeProduto" onclick="manterSelecoes('tipoImpressao.colunas.nomeProduto');" />
 						</td>
 						<td width="105">
 							<label for="tipoImpressao.colunas.nomeProduto">Produto</label>
 						</td>
 						<td width="23">
-							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.numeroEdicao" type="checkbox" value="numeroEdicao" />
+							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.numeroEdicao" type="checkbox" value="numeroEdicao" onclick="manterSelecoes('tipoImpressao.colunas.numeroEdicao');" />
 						</td>
 						<td width="101">
 							<label for="tipoImpressao.colunas.numeroEdicao">Edi&ccedil;&atilde;o</label>
 						</td>
 						<td width="23">
-							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.chamadaCapa" type="checkbox" value="chamadaCapa" />
+							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.chamadaCapa" type="checkbox" value="chamadaCapa" onclick="manterSelecoes('tipoImpressao.colunas.chamadaCapa');" />
 						</td>
 						<td width="200"><label for="tipoImpressao.colunas.chamadaCapa">Chamada de Capa</label></td>					
 					</tr>
 					<tr>
 						
-						<td><input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.codigoDeBarras" type="checkbox" value="codigoDeBarras" /></td>
+						<td><input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.codigoDeBarras" type="checkbox" value="codigoDeBarras" onclick="manterSelecoes('tipoImpressao.colunas.codigoDeBarras');" /></td>
 						<td><label for="tipoImpressao.colunas.codigoDeBarras">C&oacute;digo Barras</label></td>
 						
-						<td><input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.precoVenda" type="checkbox" value="precoVenda" /></td>
+						<td><input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.precoVenda" type="checkbox" value="precoVenda" onclick="manterSelecoes('tipoImpressao.colunas.precoVenda');" /></td>
 						<td><label for="tipoImpressao.colunas.precoVenda">Pre&ccedil;o de Capa</label></td>
-						<td><input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.nomeEditor" type="checkbox" value="nomeEditor" /></td>
+						<td><input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.nomeEditor" type="checkbox" value="nomeEditor" onclick="manterSelecoes('tipoImpressao.colunas.nomeEditor');" /></td>
 						<td><label for="tipoImpressao.colunas.nomeEditor">Editor</label></td>
-						<td><input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.brinde" type="checkbox" value="brinde" /></td>
+						<td><input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.brinde" type="checkbox" value="brinde" onclick="manterSelecoes('tipoImpressao.colunas.brinde');" /></td>
 						<td><label for="tipoImpressao.colunas.brinde">Brinde</label></td>
 						<td>
-							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.dataLancamento" type="checkbox" value="dataLancamento" />
+							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.dataLancamento" type="checkbox" value="dataLancamento" onclick="manterSelecoes('tipoImpressao.colunas.dataLancamento');" />
 						</td>
 						<td>
 							<label for="tipoImpressao.colunas.dataLancamento">Data Lan&ccedil;amento</label>
@@ -110,26 +110,26 @@ fieldset label {
 					</tr>
 					<tr>
 						<td>
-							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.dataRecolhimento" type="checkbox" value="dataRecolhimento" />
+							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.dataRecolhimento" type="checkbox" value="dataRecolhimento" onclick="manterSelecoes('tipoImpressao.colunas.dataRecolhimento');" />
 						</td>
 						<td>
 							<label for="tipoImpressao.colunas.dataRecolhimento">Data Recolhimento</label>
 						</td>
 						<td>
-							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.tipoLancamentoParcial" type="checkbox" value="tipoLancamentoParcial" />
+							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.tipoLancamentoParcial" type="checkbox" value="tipoLancamentoParcial" onclick="manterSelecoes('tipoImpressao.colunas.tipoLancamentoParcial');" />
 						</td>
 						<td>
 							<label for="tipoImpressao.colunas.tipoLancamentoParcial">Recolhimento Parcial/Final</label>
 						</td>
 						<td>
-							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.pacotePadrao" type="checkbox" value="pacotePadrao" />
+							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.pacotePadrao" type="checkbox" value="pacotePadrao" onclick="manterSelecoes('tipoImpressao.colunas.pacotePadrao');" />
 						</td>
 						<td>
 							<label for="tipoImpressao.colunas.pacotePadrao">Pacote Padr&atilde;o</label>
 						</td>
 						
 						<td>
-							<input name="tipoImpressao.observacao" id="tipoImpressao.observacao" type="checkbox" onclick="habilitarDesabilitar();" />
+							<input name="tipoImpressao.observacao" id="tipoImpressao.observacao" type="checkbox" onclick="manterSelecoes('tipoImpressao.observacao');habilitarDesabilitar();" />
 						</td>
 						<td>
 							<label for="tipoImpressao.observacao">Observa&ccedil;&atilde;o</label>
@@ -148,7 +148,7 @@ fieldset label {
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_arq">
-				<a href="javascript:;" id="btnImprimir" rel="tipsy" title="Imprimir">
+				<a href="javascript:;" onclick="carregarSelecoes();" id="btnImprimir" rel="tipsy" title="Imprimir">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" alt="" />
 				</a>
 			</span>
@@ -202,7 +202,7 @@ fieldset label {
 	<div class="linha_separa_fields">&nbsp;</div>
 	<div class="grids" style="display: none;">
 		<fieldset class="fieldGrid">
-			<legend>Informe de Recolhimentos Cadastrados</legend>
+			<legend>Informe de Recolhimentos Cadastrados</legend> 
 			<div id="consultaInformeEncalheGrid"></div>		
 		</fieldset>
 	</div>

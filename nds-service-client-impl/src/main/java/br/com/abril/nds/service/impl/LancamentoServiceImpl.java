@@ -190,10 +190,11 @@ public class LancamentoServiceImpl implements LancamentoService {
 	public String confirmarExpedicao(final ExpedicaoDTO expedicaoDTO) {
 		
 		LancamentoDTO lancamento = lancamentoRepository.obterLancamentoPorID(expedicaoDTO.getIdLancamento());
+		String msgRetorno = null;
 		
 		if (TipoLancamento.REDISTRIBUICAO.equals(lancamento.getTipoLancamento())) {
             
-		    String msgRetorno = this.tratarRedistribuicao(lancamento);
+		    msgRetorno = this.tratarRedistribuicao(lancamento);
             
             if (msgRetorno != null) {
                 
@@ -794,5 +795,22 @@ public class LancamentoServiceImpl implements LancamentoService {
 	public List<InformeLancamentoDTO> buscarInformeLancamento (Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento, PaginacaoVO paginacao){
 		return this.lancamentoRepository.buscarInformeLancamento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento, paginacao);
 	}
+	
+	@Override
+	@Transactional
+	public String verificarStatusRecolhimentoBalanceado(final ExpedicaoDTO expedicaoDTO) {
+		
+		Date recolhimento = lancamentoRepository.buscarPorId(expedicaoDTO.getIdLancamento()).getDataRecolhimentoDistribuidor();
+		String msgRetorno = null;
+		
+
+		if (lancamentoRepository.existeRecolhimentoBalanceado(recolhimento)) {
+		    msgRetorno = " ";
+            return msgRetorno;
+        }
+		
+		return null;
+	}
+
 
 }

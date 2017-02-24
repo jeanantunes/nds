@@ -61,12 +61,12 @@ public interface ProdutoService {
 
 	List<ConsultaProdutoDTO> pesquisarProdutos(String codigo, String produto,
 			String fornecedor, String editor, Long codigoTipoProduto,
-			String sortorder, String sortname, int page, int rp, Boolean isGeracaoAutomatica);
+			String sortorder, String sortname, int page, int rp, Boolean isGeracaoAutomatica,int segmento);
 
 	void removerProduto(Long id);
 
 	Integer pesquisarCountProdutos(String codigo, String produto,
-			String fornecedor, String editor, Long codigoTipoProduto, Boolean isGeracaoAutomatica);
+			String fornecedor, String editor, Long codigoTipoProduto, Boolean isGeracaoAutomatica,int segmento);
 	
 	/**
 	 * Verifica se o Produto está em estoque

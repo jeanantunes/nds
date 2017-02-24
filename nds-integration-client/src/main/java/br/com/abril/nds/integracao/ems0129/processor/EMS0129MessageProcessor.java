@@ -230,6 +230,22 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 				
 				SubHeaderPickingDTO subHeaderPickingDTO = listaSubHeadePickingModelo4.get(cont);
 				
+				long ccotal = Long.parseLong(subHeaderPickingDTO.getCodigoCota().replace(";",""));
+				
+				
+				while(ccotal !=new Long(headerDTO.getCodigoCota()).longValue()){
+					cont++;
+					try {
+					 subHeaderPickingDTO = listaSubHeadePickingModelo4.get(cont);
+					 ccotal = Long.parseLong(subHeaderPickingDTO.getCodigoCota().replace(";",""));
+					}catch (IndexOutOfBoundsException e) {
+						System.out.println("Erro na execução do Led (Interface 129):"+e);
+					}catch(Exception exx ){
+						System.out.println("Erro na execução do Led (Interface 129):"+exx);
+					}
+					
+				}
+				
 				subHeaderPickingDTO.setCredito(""+listaSubHeadePickingModelo4.size());
 				subHeaderPickingDTO.setDebito(""+listaSubHeadePickingModelo4.size());
 				//subHeaderPickingDTO.setConsignado("");
@@ -289,7 +305,10 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		dto.setListTrailer2(listaLinha02Modelo04);
 		
 		dto.setIdentificadorLinha3(subHeaderPickingDTO.getIdentificadorLinha());
-		dto.setCodigoCotaLinha3(subHeaderPickingDTO.getCodigoCota());
+		//dto.setCodigoCotaLinha3(subHeaderPickingDTO.getCodigoCota());
+		if(headerDTO.getCodigoCota().toString().equals("125")){
+		 dto.setCodigoCotaLinha3(headerDTO.getCodigoCota().toString());
+		}
 		dto.setPrecoTotal(subHeaderPickingDTO.getPrecoTotal());
 		dto.setPrecoTotalDesconto(subHeaderPickingDTO.getPrecoTotalDesconto());
 		dto.setObservacoes01(subHeaderPickingDTO.getCredito());

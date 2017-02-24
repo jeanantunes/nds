@@ -162,20 +162,20 @@ public class ProdutoServiceImpl implements ProdutoService {
 	public List<ConsultaProdutoDTO> pesquisarProdutos(String codigo,
 			String produto, String fornecedor, String editor,
 			Long codigoTipoProduto, String sortorder, String sortname,
-			int page, int rp,  Boolean isGeracaoAutomatica) {
+			int page, int rp,  Boolean isGeracaoAutomatica,int segmento) {
 				
 		return this.produtoRepository.pesquisarProdutos(
 			codigo, produto, fornecedor, editor, 
-			codigoTipoProduto, sortorder, sortname, page, rp, isGeracaoAutomatica);
+			codigoTipoProduto, sortorder, sortname, page, rp, isGeracaoAutomatica, Long.parseLong(""+segmento));
 	}
 
 	@Override
 	@Transactional(readOnly=true)
 	public Integer pesquisarCountProdutos(String codigo,
 			String produto, String fornecedor, String editor,
-			Long codigoTipoProduto, Boolean isGeracaoAutomatica) {
+			Long codigoTipoProduto, Boolean isGeracaoAutomatica,int segmento) {
 				
-		return this.produtoRepository.pesquisarCountProdutos(codigo, produto, fornecedor, editor, codigoTipoProduto, isGeracaoAutomatica);
+		return this.produtoRepository.pesquisarCountProdutos(codigo, produto, fornecedor, editor, codigoTipoProduto, isGeracaoAutomatica,segmento);
 	}
 
 	@Override
