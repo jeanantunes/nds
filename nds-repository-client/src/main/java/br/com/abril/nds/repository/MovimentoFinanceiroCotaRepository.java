@@ -21,7 +21,6 @@ import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 
-
 public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoFinanceiroCota, Long> {
 
 	
