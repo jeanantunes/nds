@@ -620,13 +620,13 @@ fieldset {
 
 			<thead />
 
-			<tbody>
+<tbody>
 
 				<tr>
 
-					<td width="75">C&oacute;digo:</td>
+					<td width="40">C&oacute;digo:</td>
 
-					<td width="65"><input type="text" name="pCodigoProduto"
+					<td align="left" width="65" style="text-align: right;"><input type="text" name="pCodigoProduto"
 						id="produtoEdicaoController-pCodigoProduto" maxlength="30"
 						style="width: 60px;"
 						onkeyup="this.value = this.value.replace(/[^0-9\.]/g,'');"
@@ -635,8 +635,7 @@ fieldset {
 										undefined);" />
 					</td>
 
-					<td width="57">Produto:</td>
-
+					<td width="70" align="right">Produto:&nbsp;</td>
 					<td width="170"><input type="text" name="pNomeProduto"
 						id="produtoEdicaoController-pNome" maxlength="255"
 						style="width: 150px;" /></td>
@@ -647,7 +646,6 @@ fieldset {
 					<td width="26">At&eacute;:</td>
 					<td width="110"><input type="text" name="pDateLanctoAte"
 						id="produtoEdicaoController-pDateLanctoAte" style="width: 60px;" /></td>
-					<td width="22">&nbsp;</td>
 					<td width="57">Situa&ccedil;&atilde;o:</td>
 					<td width="113"><select name="pSituacaoLancamento"
 						id="produtoEdicaoController-pSituacaoLancamento"
@@ -658,15 +656,18 @@ fieldset {
 								<option value="${statusLancamento.key}">${statusLancamento.value}</option>
 							</c:forEach>
 					</select></td>
+					<td width="22"></td>
 
 				</tr>
 
 				<tr>
-
-					<td>C&oacute;d. Barras:</td>
-					<td colspan="3"><input type="text" name="pCodigoDeBarras"
-						id="produtoEdicaoController-pCodigoDeBarras" style="width: 290px;"
-						maxlength="25" /></td>
+                    <td>Brinde:</td>
+					<td align="left"><input type="checkbox" name="pBrinde"
+						id="produtoEdicaoController-pBrinde" value="" /></td>
+					<td align="right">C&oacute;d. Barras:&nbsp;</td>
+					<td><input type="text" name="pCodigoDeBarras"
+						id="produtoEdicaoController-pCodigoDeBarras" 
+						maxlength="25" style="width: 150px;"/></td>
 					<td>Pre&ccedil;o (R$) de:</td>
 					<td><input type="text" name="pPrecoDe"
 						id="produtoEdicaoController-pPrecoDe"
@@ -675,9 +676,14 @@ fieldset {
 					<td><input type="text" name="pPrecoAte"
 						id="produtoEdicaoController-pPrecoAte"
 						style="width: 60px; text-align: right;" /></td>
-					<td align="right"><input type="checkbox" name="pBrinde"
-						id="produtoEdicaoController-pBrinde" value="" /></td>
-					<td><label for="pBrinde">Brinde</label></td>
+					<td width="57">Segmento:</td>
+					<td><select name="comboTipoSegmento" id="produtoEdicaoController-pSegmento" style="width: 150px;">
+						<option value="">Selecione</option>
+						 <c:forEach varStatus="counter" var="itemSegmento"
+						  items="${listaSegmentoProduto}">
+						<option value="${itemSegmento.key}">${itemSegmento.value}</option>
+						</c:forEach>
+						</select></td>
 					<td><span class="bt_novos"><a href="javascript:;"
 							onclick="produtoEdicaoController.pesquisarEdicoes();"><img
 								src="${pageContext.request.contextPath}/images/ico_pesquisar.png"
@@ -686,6 +692,7 @@ fieldset {
 				</tr>
 
 			</tbody>
+
 
 		</table>
 

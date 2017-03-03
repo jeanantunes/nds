@@ -23,6 +23,9 @@ public class FiltroProdutoDTO implements Serializable {
 	@Export(label="Editor")
 	private String editor;
 	
+	@Export(label="Segmento")
+	private int segmento;
+
 	@Export(label="Tipo Produto")
 	private String getDescricaoTipoProduto(){
 		
@@ -39,7 +42,7 @@ public class FiltroProdutoDTO implements Serializable {
 	
 	public FiltroProdutoDTO() {}
 	
-	public FiltroProdutoDTO(String codigo, String nome, String editor, String fornecedor, Long codigoTipoProduto, String sortOrder, String sortName, Boolean isGeracaAutomatica) {
+	public FiltroProdutoDTO(String codigo, String nome, String editor, String fornecedor, Long codigoTipoProduto, String sortOrder, String sortName, Boolean isGeracaAutomatica,int segmento) {
 		
 		this.codigo = codigo;
 		this.nome = nome;
@@ -50,6 +53,7 @@ public class FiltroProdutoDTO implements Serializable {
 		this.tipoProduto = new TipoProduto();
 		this.tipoProduto.setCodigo(codigoTipoProduto);
 		this.isGeracaoAutomatica = isGeracaAutomatica;
+		this.segmento = segmento;
 	}
 	
 	public String getCodigo() {
@@ -115,5 +119,13 @@ public class FiltroProdutoDTO implements Serializable {
 
 	public void setIsGeracaoAutomatica(Boolean isGeracaoAutomatica) {
 		this.isGeracaoAutomatica = isGeracaoAutomatica;
+	}
+	
+	public int getSegmento() {
+		return segmento;
+	}
+
+	public void setSegmento(int segmento) {
+		this.segmento = segmento;
 	}
 }

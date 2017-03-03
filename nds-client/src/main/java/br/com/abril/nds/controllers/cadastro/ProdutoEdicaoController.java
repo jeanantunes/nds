@@ -12,6 +12,8 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -163,6 +165,26 @@ public class ProdutoEdicaoController extends BaseController {
 			comboClassificacao.add(new ItemDTO<Long,String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
 		}
 		result.include("listaClassificacao",comboClassificacao);
+		
+		List<ItemDTO<Long,String>> comboSegmento =  new ArrayList<ItemDTO<Long,String>>();
+
+		List<TipoSegmentoProduto> segmentos = prodService.carregarSegmentos();
+		Collections.sort(segmentos, new Comparator<TipoSegmentoProduto>() {
+			@Override
+			public int compare(TipoSegmentoProduto o1, TipoSegmentoProduto o2) {
+				if(o1 != null && o2 == null) return -1;
+				if(o1 == null && o2 != null) return 1;
+				if(o1.getDescricao() != null && o2.getDescricao() == null) return -1;
+				if(o1.getDescricao() != null && o2.getDescricao() == null) return 1;
+				return o1.getDescricao().compareTo(o2.getDescricao());
+			}
+		});
+
+		for (TipoSegmentoProduto itemSegmento : segmentos) {
+			comboSegmento.add(new ItemDTO<Long,String>(itemSegmento.getId(), itemSegmento.getDescricao()));
+		}
+
+		result.include("listaSegmentoProduto", comboSegmento);
     }
 
 	@Post
@@ -210,7 +232,7 @@ public class ProdutoEdicaoController extends BaseController {
 	public void pesquisarEdicoes(FiltroProdutoDTO filtro,
 			Date dataLancamentoDe, Date dataLancamentoAte, Double precoDe,
 			Double precoAte , StatusLancamento situacaoLancamento,
-			String codigoDeBarras, boolean brinde, ModoTela modoTela,
+			String codigoDeBarras, boolean brinde,int segmento, ModoTela modoTela,
             String sortorder, String sortname, int page, int rp) {
 		
 		Intervalo<Double> intervaloPreco = null;
@@ -241,14 +263,14 @@ public class ProdutoEdicaoController extends BaseController {
 		// Pesquisar:
 		Integer qtd = produtoEdicaoService.countPesquisarEdicoes(
 				StringUtils.leftPad(filtro.getCodigo(), 8, '0'), filtro.getNome(), intervaloLancamento, 
-				intervaloPreco, situacaoLancamento, codigoDeBarras, brinde).intValue();
+				intervaloPreco, situacaoLancamento, codigoDeBarras, brinde,segmento).intValue();
 		
 		if(qtd > 0) {		
 			
 			List<ProdutoEdicaoDTO> lst = 
 					produtoEdicaoService.pesquisarEdicoes(StringUtils.leftPad(filtro.getCodigo(), 8, '0'), filtro.getNome(), 
 							intervaloLancamento, intervaloPreco, situacaoLancamento, codigoDeBarras, 
-							brinde, sortorder, sortname, page, rp);
+							brinde,segmento, sortorder, sortname, page, rp);
 			
 			for (ProdutoEdicaoDTO dto : lst) {
 				dto.setModoTela(modoTela);
@@ -269,6 +291,7 @@ public class ProdutoEdicaoController extends BaseController {
 				null,
 				situacaoLancamento,
 				brinde,
+				segmento,
 				dataLancamentoDe,
 				dataLancamentoAte,
 				precoDe,
@@ -881,6 +904,7 @@ public class ProdutoEdicaoController extends BaseController {
 					filtro.getStatusLancamento(), 
 					filtro.getCodigoBarras(), 
 					filtro.getBrinde(),
+					filtro.getSegmento(),
 					filtro.getSortOrder(), 
 					filtro.getSortName(), 
 					0, // filtro.getPage(),  -- page, 
@@ -899,6 +923,7 @@ public class ProdutoEdicaoController extends BaseController {
 		
 		result.nothing();
 	}
+
 	
 
 }

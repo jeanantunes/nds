@@ -292,7 +292,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	@SuppressWarnings("unchecked")
 	public List<ProdutoEdicaoDTO> pesquisarEdicoes(final String codigoProduto, final String nome,
 			final Intervalo<Date> dataLancamento, final Intervalo<Double> preco , final StatusLancamento statusLancamento,
-			final String codigoDeBarras, final boolean brinde,
+			final String codigoDeBarras, final boolean brinde,int segmento,
 			final String sortorder, final String sortname, final int initialResult, final int maxResults) {
 			
 		final StringBuilder hql = new StringBuilder()
@@ -309,12 +309,15 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		.append("                       where  l.PRODUTO_EDICAO_ID = pe.id  ")
 		.append("                          and ((select DATA_OPERACAO from distribuidor) between l.DATA_LCTO_DISTRIBUIDOR and l.DATA_REC_DISTRIB OR plp.TIPO = 'FINAL') ")
 		.append("                          order by plp.NUMERO_PERIODO limit 1), l.status)) as statusSituacao, ")
-		
 		.append("        pe.possui_brinde as temBrinde, ")
+		.append("        ttsp.DESCRICAO as segmento, ")
+		.append("        coalesce(coalesce(coalesce(coalesce(descontoLogistica.PERCENTUAL_DESCONTO,(select distinct percentual_desconto from desconto_logistica dzz where id = pe.desconto_logistica_id)),pe.desconto),p.desconto),0) as percentualDesconto, ")
+		.append("        l.DATA_LCTO_DISTRIBUIDOR as dataLancamento, ")
+		.append("        l.DATA_REC_DISTRIB as dataRecolhimentoReal, ")
 		.append("        pe.parcial as parcial ");
 		
 		// Corpo da consulta com os filtros:
-		final SQLQuery query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortname, sortorder);
+		final SQLQuery query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde,segmento, sortname, sortorder);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
 		
@@ -329,7 +332,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.addScalar("statusLancamento", StandardBasicTypes.STRING);
 		query.addScalar("statusSituacao", StandardBasicTypes.STRING);
 		query.addScalar("temBrinde", StandardBasicTypes.BOOLEAN);
+		query.addScalar("segmento", StandardBasicTypes.STRING);
 		query.addScalar("parcial", StandardBasicTypes.BOOLEAN);
+		query.addScalar("percentualDesconto", StandardBasicTypes.DOUBLE);
+		query.addScalar("dataLancamento", StandardBasicTypes.DATE);
+		query.addScalar("dataRecolhimentoReal", StandardBasicTypes.DATE);
 		
 		return query.list();
 	}
@@ -338,7 +345,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	@SuppressWarnings("unchecked")
 	public List<ConsultaProdutoEdicaoDTO> pesquisarConsultaEdicoes(final String codigoProduto, final String nome,
 			final Intervalo<Date> dataLancamento, final Intervalo<Double> preco , final StatusLancamento statusLancamento,
-			final String codigoDeBarras, final boolean brinde,
+			final String codigoDeBarras, final boolean brinde,final int segmento,
 			final String sortorder, final String sortname, final int initialResult, final int maxResults) {
 			
 		final StringBuilder hql = new StringBuilder()
@@ -359,12 +366,14 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		.append("        pe.possui_brinde as temBrinde, ")
 		.append("        pe.parcial as parcial, ")
 		.append("        pe.preco_venda as precoVenda, ")
-		.append("        descontoLogistica.percentual_desconto as desconto, ")
+		.append("        coalesce(coalesce(coalesce(descontoLogistica.percentual_desconto,pe.desconto),p.desconto),0) as percentualDesconto, ")
 		.append("        l.data_lcto_distribuidor as dataLancamento, ")
-		.append("        l.data_rec_distrib as dataRecolhimentoReal ");
+		.append("        l.data_rec_distrib as dataRecolhimentoReal, ")
+		.append("        coalesce(coalesce(coalesce(descontoLogistica.percentual_desconto,pe.desconto),p.desconto),0) as desconto, ")
+		.append("        ttsp.descricao as segmento ");
 		
 		// Corpo da consulta com os filtros:
-		final SQLQuery query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortname, sortorder);
+		final SQLQuery query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde,segmento, sortname, sortorder);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ConsultaProdutoEdicaoDTO.class));
 		
@@ -386,6 +395,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.addScalar("desconto", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("dataLancamento", StandardBasicTypes.DATE);
 		query.addScalar("dataRecolhimentoReal", StandardBasicTypes.DATE);
+		query.addScalar("segmento", StandardBasicTypes.STRING);
 		
 		return query.list();
 	}
@@ -466,7 +476,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 										           final Intervalo<Double> preco , 
 										           final StatusLancamento statusLancamento,
 										           final String codigoDeBarras, 
-										           final boolean brinde){
+										           final boolean brinde,
+										           final int segmento){
 		
         query.setParameter("indAtivo", true);
 		
@@ -510,6 +521,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			query.setBoolean("possuiBrinde", brinde);
 		}
 		
+        if (segmento != 0) {
+			
+			query.setInteger("segmento", segmento);
+		}
+		
 		return query;
 	}
 
@@ -520,7 +536,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			                             final Intervalo<Double> preco , 
 			                             final StatusLancamento statusLancamento,
 			                             final String codigoDeBarras, 
-			                             final boolean brinde) {
+			                             final boolean brinde,
+			                             final int segmento) {
 		
 		
 		final StringBuilder sql = new StringBuilder();
@@ -544,6 +561,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		sql.append("   join LANCAMENTO l on pe.ID=l.PRODUTO_EDICAO_ID "); 
 		
 		sql.append("   where pe.ATIVO = :indAtivo ");
+		
+		if(segmento!=0){
+		 sql.append("   and p.TIPO_SEGMENTO_PRODUTO_ID = :segmento ");
+		}
 		
 		sql.append("   and l.id=( ");
 		
@@ -571,7 +592,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 
-        query = this.setParametrosPerquisarEdicoes(query, codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
+        query = this.setParametrosPerquisarEdicoes(query, codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde,segmento);
 		
         query.addScalar("total", StandardBasicTypes.INTEGER);
         
@@ -606,13 +627,16 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			                                   final Intervalo<Double> preco , 
 			                                   final StatusLancamento statusLancamento,
 			                                   final String codigoDeBarras, 
-			                                   final boolean brinde, 
+			                                   final boolean brinde,
+			                                   final int segmento,
 			                                   final String sortname, 
 			                                   final String sortorder) {
 		
 		hql.append("   from PRODUTO_EDICAO pe ");
 		
 		hql.append("   inner join PRODUTO p on pe.PRODUTO_ID=p.ID "); 
+		
+		hql.append("   left join TIPO_SEGMENTO_PRODUTO ttsp on p.TIPO_SEGMENTO_PRODUTO_ID=ttsp.ID ");
 		
 		hql.append("   left join PRODUTO_FORNECEDOR pf on p.ID=pf.PRODUTO_ID "); 
 		
@@ -625,6 +649,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append("   join LANCAMENTO l on pe.ID=l.PRODUTO_EDICAO_ID "); 
 		
 		hql.append("   where pe.ATIVO = :indAtivo ");
+		
+		if(segmento != 0){
+			  hql.append(" AND p.tipo_segmento_produto_id =:segmento ");
+		}
 		
 		hql.append("   and l.id=( ");
 		
@@ -639,6 +667,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append("       where ");
 		
 		hql.append("           l.PRODUTO_EDICAO_ID=pe.ID ");
+		
 		
 		if (statusLancamento != null  )
 			 hql.append("   and l.STATUS = :situacaoLancamentoInner");
@@ -656,7 +685,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		SQLQuery query = getSession().createSQLQuery(hql.toString());
 
-        query = this.setParametrosPerquisarEdicoes(query, codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
+        query = this.setParametrosPerquisarEdicoes(query, codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, segmento);
 		
 		return query;
 	}
@@ -669,7 +698,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" SELECT pe ");
 		
 		// Corpo da consulta com os filtros:
-		final Query query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, null, null, null, null, null, false, "pe.numeroEdicao", "DESC");
+		final Query query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, null, null, null, null, null, false,0, "pe.numeroEdicao", "DESC");
 		
 		query.setMaxResults(qtdEdicoes);
 		
