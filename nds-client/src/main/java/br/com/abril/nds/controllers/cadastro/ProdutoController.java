@@ -446,7 +446,7 @@ public class ProdutoController extends BaseController {
      */
 	@Path("/pesquisarProdutos")
 	public void pesquisarProdutos(String codigo, String produto, String fornecedor, String editor,
-			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp, Boolean isGeracaoAutomatica) {
+			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp, Boolean isGeracaoAutomatica,int segmento) {
 		
 		int startSearch = page*rp - rp;
 
@@ -456,15 +456,15 @@ public class ProdutoController extends BaseController {
         }
 
         FiltroProdutoDTO filtroProdutoDTO =
-				new FiltroProdutoDTO(codigo,produto,editor,fornecedor,codigoTipoProduto,sortorder,sortname,isGeracaoAutomatica);
+				new FiltroProdutoDTO(codigo,produto,editor,fornecedor,codigoTipoProduto,sortorder,sortname,isGeracaoAutomatica,segmento);
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroProdutoDTO);
 		
 		List<ConsultaProdutoDTO> listaProdutos =
 			this.produtoService.pesquisarProdutos(codigo, produto, fornecedor, editor, 
-				codigoTipoProduto, sortorder, sortname, startSearch, rp, isGeracaoAutomatica);
+				codigoTipoProduto, sortorder, sortname, startSearch, rp, isGeracaoAutomatica,segmento);
 		
-		Integer totalResultados = this.produtoService.pesquisarCountProdutos(codigo, produto, fornecedor, editor, codigoTipoProduto, isGeracaoAutomatica);
+		Integer totalResultados = this.produtoService.pesquisarCountProdutos(codigo, produto, fornecedor, editor, codigoTipoProduto, isGeracaoAutomatica,segmento);
 		
 		this.result.use(FlexiGridJson.class).from(listaProdutos).total(totalResultados).page(page).serialize();
 	}
@@ -935,7 +935,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 			
 			listaProdutos =
 					this.produtoService.pesquisarProdutos(filtro.getCodigo(), filtro.getNome(), filtro.getFornecedor(), filtro.getEditor(), 
-						filtro.getTipoProduto().getCodigo(), null, null, 0, 0, filtro.getIsGeracaoAutomatica());
+						filtro.getTipoProduto().getCodigo(), null, null, 0, 0, filtro.getIsGeracaoAutomatica(),filtro.getSegmento());
 		}
 		
 		if (listaProdutos == null || listaProdutos.isEmpty()){

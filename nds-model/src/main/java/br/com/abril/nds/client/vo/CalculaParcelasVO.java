@@ -22,6 +22,16 @@ public class CalculaParcelasVO implements Serializable{
 	private String ativarAoPagar = "";
 	
 	private boolean modificada = false;
+	
+	private String dataOperacao;
+
+	public String getDataOperacao() {
+		return dataOperacao;
+	}
+
+	public void setDataOperacao(String dataOperacao) {
+		this.dataOperacao = dataOperacao;
+	}
 
 	public String getNumParcela() {
 		return numParcela;

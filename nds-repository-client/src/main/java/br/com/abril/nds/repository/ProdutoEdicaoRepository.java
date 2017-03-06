@@ -154,12 +154,12 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeProduto,
 			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
-			String codigoDeBarras, boolean brinde,
+			String codigoDeBarras, boolean brinde,int segmento,
 			String sortorder, String sortname, int initialResult, int maxResults);
 	
 	public List<ConsultaProdutoEdicaoDTO> pesquisarConsultaEdicoes(String codigoProduto, String nomeProduto,
 			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
-			String codigoDeBarras, boolean brinde,
+			String codigoDeBarras, boolean brinde,int segmento,
 			String sortorder, String sortname, int initialResult, int maxResults);
 	
 	/**
@@ -171,7 +171,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	public Integer countPesquisarEdicoes(String codigoProduto, String nomeProduto,
 			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
-			String codigoDeBarras, boolean brinde);
+			String codigoDeBarras, boolean brinde,int segmento);
 	
 	/**
 	 * Pesquisa as últimas edições cadastradas.<br>

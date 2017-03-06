@@ -2936,7 +2936,9 @@ public class CotaServiceImpl implements CotaService {
     public List<AnaliseHistoricoDTO> buscarHistoricoCotas(final List<ProdutoEdicaoDTO> listProdutoEdicaoDto,
             final List<Integer> cotas, final String sortorder, final String sortname) {
         
-        final List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarHistoricoCotas(listProdutoEdicaoDto, cotas);
+        List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarHistoricoCotas(listProdutoEdicaoDto, cotas);
+        
+        List<AnaliseHistoricoDTO> listAnaliseHistoricoParaRemocao = new ArrayList<>(); 
         
         for (final AnaliseHistoricoDTO analiseHistoricoDTO : listAnaliseHistoricoDTO) {
             
@@ -2967,6 +2969,14 @@ public class CotaServiceImpl implements CotaService {
                 			dto.setQtdeVendas(venda.toBigInteger());
                 		}
                 		
+                	}
+                	
+                	if(dto.getReparte().compareTo(BigInteger.ZERO) == 0){
+                		if(dto.getVenda() == null || dto.getQtdeVendas().compareTo(BigInteger.ZERO) == 0){
+                			dto.setReparte(null);
+                			dto.setQtdeVendas(null);
+                			continue;
+                		}
                 	}
                 	
                     qtdEdicaoVendida++;
@@ -3033,8 +3043,15 @@ public class CotaServiceImpl implements CotaService {
                 }
             }
             
-            setMediaVendaEReparte(qtdEdicaoVendida, analiseHistoricoDTO);
+            if(qtdEdicaoVendida > 0){
+            	setMediaVendaEReparte(qtdEdicaoVendida, analiseHistoricoDTO);
+            }else{
+            	listAnaliseHistoricoParaRemocao.add(analiseHistoricoDTO);
+            }
+            
         }
+        
+        listAnaliseHistoricoDTO.removeAll(listAnaliseHistoricoParaRemocao);
         
         formatarListaHistoricoVenda(listAnaliseHistoricoDTO);
         ordenarListaHistoricoVenda(sortorder, sortname, listAnaliseHistoricoDTO);
@@ -3115,8 +3132,14 @@ public class CotaServiceImpl implements CotaService {
         
         DecimalFormat f = new DecimalFormat("##.00");
         
-        analiseHistoricoDTO.setReparteMedio(Double.valueOf(f.format(reparteMedio / qtdEdicoes).replace(',', '.')));
-        analiseHistoricoDTO.setVendaMedia(Double.valueOf(f.format(vendaMedia / qtdEdicoes).replace(',', '.')));
+        if(qtdEdicoes != 0){
+        	analiseHistoricoDTO.setReparteMedio(Double.valueOf(f.format(reparteMedio / qtdEdicoes).replace(',', '.')));
+        	analiseHistoricoDTO.setVendaMedia(Double.valueOf(f.format(vendaMedia / qtdEdicoes).replace(',', '.')));
+        }else{
+        	analiseHistoricoDTO.setReparteMedio(Double.valueOf(f.format(reparteMedio).replace(',', '.')));
+        	analiseHistoricoDTO.setVendaMedia(Double.valueOf(f.format(vendaMedia).replace(',', '.')));
+        }
+        
         
         //analiseHistoricoDTO.setReparteMedio((double)Math.round(reparteMedio / qtdEdicoes));
         //analiseHistoricoDTO.setVendaMedia((double)Math.round(vendaMedia / qtdEdicoes));

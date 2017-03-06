@@ -30,44 +30,47 @@ public class ConsultaProdutoEdicaoDTO implements Serializable {
 
 	private Long id;
 	
-	@Export(label="Código", alignment=Alignment.CENTER, widthPercent=12)
+	@Export(label="Código", alignment=Alignment.CENTER, widthPercent=6)
 	private String codigoProduto;
 	
-	@Export(label="Nome Comercial", alignment=Alignment.CENTER, widthPercent=20)
+	@Export(label="Nome Comercial", alignment=Alignment.CENTER, widthPercent=12)
 	private String nomeComercial;
 	
-	@Export(label="Edição", alignment=Alignment.CENTER, widthPercent=8)
+	@Export(label="Edição", alignment=Alignment.CENTER, widthPercent=5)
 	private Long numeroEdicao;
 	
-	@Export(label="Fornecedor", alignment=Alignment.LEFT, widthPercent=12)
+	@Export(label="Fornecedor", alignment=Alignment.LEFT, widthPercent=11)
 	private String nomeFornecedor;
 	
-	@Export(label="Parcial", alignment=Alignment.LEFT, widthPercent=8)
+	@Export(label="Parcial", alignment=Alignment.LEFT, widthPercent=4)
 	private Boolean parcial;
 	
-	@Export(label="Tipo Lançamento", alignment=Alignment.CENTER, widthPercent=10)
+	@Export(label="Tipo Lançamento", alignment=Alignment.CENTER, widthPercent=5)
 	private String lancamento;
 	
-	@Export(label="Lançamento", alignment=Alignment.CENTER, widthPercent=16)
+	@Export(label="Lançamento", alignment=Alignment.CENTER, widthPercent=6)
 	private String statusLancamento;
 	
-	@Export(label="Preço Capa", alignment=Alignment.CENTER, widthPercent=16)
+	@Export(label="Preço Capa", alignment=Alignment.CENTER, widthPercent=5)
 	private BigDecimal precoVenda;
 	
-	@Export(label="Desconto Logística", alignment=Alignment.CENTER, widthPercent=16)
+	@Export(label="Desconto", alignment=Alignment.CENTER, widthPercent=6)
 	private BigDecimal desconto;
 	
-	@Export(label="Data Lancamento", alignment=Alignment.CENTER, widthPercent=16)
+	@Export(label="Data Lancamento", alignment=Alignment.CENTER, widthPercent=8)
 	private Date dataLancamento;
 	
-	@Export(label="Data Recolhimento", alignment=Alignment.CENTER, widthPercent=16)
+	@Export(label="Data Recolhimento", alignment=Alignment.CENTER, widthPercent=8)
 	private Date dataRecolhimentoReal;
 	
-	@Export(label="Situação", alignment=Alignment.CENTER, widthPercent=16)
+	@Export(label="Situação", alignment=Alignment.CENTER, widthPercent=9)
 	private String statusSituacao;
 	
-	@Export(label="Brinde", alignment=Alignment.CENTER, widthPercent=8)
+	@Export(label="Brinde", alignment=Alignment.CENTER, widthPercent=5)
 	private Boolean temBrinde;
+	
+	@Export(label="Segmento", alignment=Alignment.CENTER, widthPercent=10)
+	private String segmento;
 	
 	
 	/**
@@ -173,6 +176,15 @@ public class ConsultaProdutoEdicaoDTO implements Serializable {
 
 	public void setTemBrinde(Boolean temBrinde) {
 		this.temBrinde = temBrinde;
+	}
+	
+	public String getSegmento() {
+		return segmento;
+	}
+
+
+	public void setSegmento(String segmento) {
+		this.segmento = segmento;
 	}
 
 

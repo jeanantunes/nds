@@ -446,7 +446,9 @@ public class HistoricoVendaController extends BaseController {
 
 	private void parseListaRetorno(List<AnaliseHistoricoDTO> listDto,
 			Map<Integer, AnaliseHistoricoXLSDTO> cotaComdadosPdvDTO, List<AnaliseHistoricoXLSDTO> listCotasComPDV) {
+		
 		for (AnaliseHistoricoDTO dto : listDto) {
+			
 			AnaliseHistoricoXLSDTO pdvComDados = cotaComdadosPdvDTO.get(dto.getNumeroCota());
 			
 			pdvComDados.setStatusCota(dto.getStatusCota());

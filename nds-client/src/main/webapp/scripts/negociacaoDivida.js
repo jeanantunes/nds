@@ -798,7 +798,7 @@ var negociacaoDividaController = $.extend(true, {
 				}
 
 				coluna1.innerHTML = result[i-1].numParcela+'&ordf;';
-				coluna2.innerHTML = '<input type="text" class="dtVencDinam" name="vencimentoParcela" id="vencimentoParcela'+i+'" style="width: 70px;" value="'+result[i-1].dataVencimento+'" onchange="negociacaoDividaController.recalcularParcelas('+(i-1)+',this,true)"/>';
+				coluna2.innerHTML = '<input type="text" class="dtVencDinam" name="vencimentoParcela" id="vencimentoParcela'+i+'" style="width: 70px;" value="'+result[i-1].dataVencimento+'" onBlur="this.value = validarOperacao(this.value,'+result[i-1].dataOperacao+');" onchange="negociacaoDividaController.recalcularParcelas('+(i-1)+',this,true)"/>';
 				coluna3.innerHTML = '<input type="text" name="valorParcela" id="parcela'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].parcela+'" onchange="negociacaoDividaController.recalcularParcelas('+(i-1)+',this, false)" />';
 				coluna4.innerHTML = '<input type="text" name="encargoParcela" id="encargos'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].encargos+'" disabled="disabled"/>';
 				coluna5.innerHTML = '<input type="text" name="parcTotal" id="parcTotal'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].parcTotal+'"/ disabled="disabled">';
@@ -1023,6 +1023,19 @@ var negociacaoDividaController = $.extend(true, {
 		
 	},
 	
+	validarDataOperacao : function(value){
+		
+		var dataCampo = new Date(value);
+	    var dataOperacao = new Date(value);
+	    if (dataCampo = dataOperacao) {
+	        alert("Data não pode ser maior que a data final");
+	        return false;
+	    } else {
+	        return true
+	    }
+		
+	},
+	
 	valorSelecionadoSemEncargo: 0,
 	valorEncargoSelecionado: 0,
 	
@@ -1157,4 +1170,21 @@ var negociacaoDividaController = $.extend(true, {
 
 }, BaseController);
 
+function validarOperacao(dataCampo,dataOperacao){
+
+var ptsdataCampo = dataCampo.split('/'); 
+var ptsdataOperacao = dataOperacao.split('/'); 
+var dataCorrente = new Date();
+
+
+  if (new Date(ptsdataCampo[2]+'-'+ptsdataCampo[1]+'-'+ptsdataCampo[0]) < 
+	  new Date(ptsdataOperacao[2]+'-'+ptsdataOperacao[1]+'-'+ptsdataOperacao[0])){ 
+	  
+	  exibirMensagem("WARNING", ["A Data de Vencimento é Inválida, será recalculada."], "");
+	  return dataOperacao;
+  } else {
+	  return dataCampo;
+  }
+  
+}
 //@ sourceURL=negociacaoDivida.js

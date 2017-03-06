@@ -294,25 +294,49 @@ var produtoEdicaoController =$.extend(true,  {
 			}, {
 				display : 'Parcial',
 				name : 'parcial',
-				width : 40,
+				width : 35,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Tipo de Lan&ccedil;amento',
+				display : 'Tipo de Lan&ccedil;.',
 				name : 'statusLancamento',
-				width : 120,
+				width : 90,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Situa&ccedil;&atilde;o',
 				name : 'statusSituacao',
-				width : 115,
+				width : 90,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Brinde',
 				name : 'temBrinde',
+				width : 35,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Desconto',
+				name : 'percentualDescontoFormatado',
 				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Lançamento',
+				name : 'dataLancamento',
+				width : 65,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Recolhimento',
+				name : 'dataRecolhimentoReal',
+				width : 70,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Segmento',
+				name : 'segmento',
+				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -465,6 +489,7 @@ var produtoEdicaoController =$.extend(true,  {
 			$("#produtoEdicaoController-pBrinde",this.workspace).val(1);
 		}
 		var brinde = $("#produtoEdicaoController-pBrinde",this.workspace).val();
+		var segmento = $("#produtoEdicaoController-pSegmento",this.workspace).val();
 
 		$(".edicoesGrid",this.workspace).flexOptions({
 			url: contextPath + "/cadastro/edicao/pesquisarEdicoes.json",
@@ -476,7 +501,8 @@ var produtoEdicaoController =$.extend(true,  {
 			         {name:'precoAte', value: precoAte },
 			         {name:'situacaoLancamento', value: situacaoLancamento },
 			         {name:'codigoDeBarras', value: codigoDeBarras },
-			         {name:'brinde', value : brinde }],
+			         {name:'brinde', value : brinde },
+			         {name:'segmento', value : segmento }],
 			         newp: 1
 		});
 			
@@ -679,6 +705,7 @@ var produtoEdicaoController =$.extend(true,  {
 			$("#produtoEdicaoController-pBrinde",this.workspace).val(1);
 		}
 		var brinde = $("#produtoEdicaoController-pBrinde",this.workspace).val();
+		var segmento = $("#produtoEdicaoController-pSegmento",this.workspace).val();
 
 		$(".prodsPesqGrid",this.workspace).flexOptions({
 			url: contextPath + "/cadastro/edicao/pesquisarEdicoes.json",
@@ -691,10 +718,12 @@ var produtoEdicaoController =$.extend(true,  {
 			         {name:'situacaoLancamento', value: situacaoLancamento },
 			         {name:'codigoDeBarras', value: codigoDeBarras },
 			         {name:'brinde', value : brinde },
+			         {name:'segmento', value : segmento },
 			         {name:'modoTela', value : modoTela }],
 			         newp: 1, 
 			         rp: 99999
 		});
+	
 
 		$(".prodsPesqGrid",this.workspace).flexReload();	
 	},

@@ -43,6 +43,9 @@ public class ConsultaProdutoDTO implements Serializable {
 	@Export(label="Periodicidade", alignment=Alignment.CENTER, widthPercent=10)
 	private PeriodicidadeProduto periodicidade;
 	
+	@Export(label="Segmento", alignment=Alignment.CENTER, widthPercent=10)
+	private String segmento;
+
 	private boolean isSemCeIntegracao;
 	
 	/**
@@ -200,5 +203,13 @@ public class ConsultaProdutoDTO implements Serializable {
 
 	public void setSemCeIntegracao(boolean isSemCeIntegracao) {
 		this.isSemCeIntegracao = isSemCeIntegracao;
+	}
+	
+	public String getSegmento() {
+		return segmento;
+	}
+
+	public void setSegmento(String segmento) {
+		this.segmento = segmento;
 	}
 }
