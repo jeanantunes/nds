@@ -319,37 +319,38 @@
 					       onblur="pesquisaProdutoCadastroProduto.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false, undefined, undefined);"/>  -->
 					<input type="text" name="produto-produto" id="produto-produto" style="width: 222px;" maxlength="255"/>
 				</td>
-				<td width="99">Fornecedor:</td>
+				<td width="150">Fornecedor:</td>
 				<td width="251">
 					<input type="text" id="produto-fornecedor" name="produto-fornecedor" style="width:200px;"
 					       onkeyup="produtoController.autoCompletarPorNomeFornecedor('#produto-fornecedor', false);" />
 				
 				</td>
-				<td width="106">&nbsp;</td>
+				<td width="106">Segmento:</td>
+				<td colspan="2"><select name="produto-tipoSegmento"
+						id="produto-tipoSegmento"
+						style="width: 140px;"> -
+						<option value="">Selecione</option>
+						<c:forEach varStatus="counter" var="itemSegmento"
+						items="${listaSegmentoProduto}">
+						<option value="${itemSegmento.key}">${itemSegmento.value}</option>
+						</c:forEach>
+					</select></td>
 			</tr>
 			<tr>
 				<td>Editor:</td>
 				<td colspan="3" style="width:470px;">
-					<input type="text" style="width:410px;" name="produto-edicao" id="produto-edicao" maxlength="20"/>
+					<input type="text" style="width:390px;" name="produto-edicao" id="produto-edicao" maxlength="20"/>
 				</td>
-				<td>Tipo de Produto:</td>
+				<td style="width:150px;">Tipo Produto:</td>
 				<td>
-					<select id="produto-comboTipoProduto" style="width:207px;">
+					<select id="produto-comboTipoProduto" style="width:200px;">
 						<option value="0"></option>
 						<c:forEach items="${listaTipoProduto}" var="tipoProduto" >
 							<option value="${tipoProduto.id}">${tipoProduto.descricao}</option>
 						</c:forEach>
 					</select>
 				</td>
-				<td>Geração Automática:</td>
-				<td style="width:100px;">
-					<select id="produto-comboGeracaoAutomatica" style="width:65px;">
-						<option value="-1" selected="selected"></option>
-						<option value="0">Sim</option>
-						<option value="1">Não</option>
-						<option value="2">Ambos</option>
-					</select>
-				</td>
+					<input type="hidden" value="-1" id="produto-comboGeracaoAutomatica" >
 				<td>
 					<span class="bt_novos">
 						<a href="javascript:;" onclick="produtoController.pesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>

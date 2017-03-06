@@ -374,11 +374,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     @Override
     @Transactional(readOnly = true)
     public List<ProdutoEdicaoDTO> pesquisarEdicoes(final String codigoProduto, final String nome, final Intervalo<Date> dataLancamento, final Intervalo<Double> preco, final StatusLancamento statusLancamento,
-            final String codigoDeBarras, final boolean brinde, final String sortorder, final String sortname, final int page, final int maxResults) {
+            final String codigoDeBarras, final boolean brinde,final int segmento, final String sortorder, final String sortname, final int page, final int maxResults) {
         
         final int initialResult = ((page * maxResults) - maxResults);
         
-        final List<ProdutoEdicaoDTO> edicoes = produtoEdicaoRepository.pesquisarEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, initialResult, maxResults);
+        final List<ProdutoEdicaoDTO> edicoes = produtoEdicaoRepository.pesquisarEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde,segmento, sortorder, sortname, initialResult, maxResults);
         
         return edicoes;
     }
@@ -386,11 +386,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     @Override
     @Transactional(readOnly = true)
     public List<ConsultaProdutoEdicaoDTO> pesquisarConsultaEdicoes(final String codigoProduto, final String nome, final Intervalo<Date> dataLancamento, final Intervalo<Double> preco, final StatusLancamento statusLancamento,
-            final String codigoDeBarras, final boolean brinde, final String sortorder, final String sortname, final int page, final int maxResults) {
+            final String codigoDeBarras, final boolean brinde,final int segmento, final String sortorder, final String sortname, final int page, final int maxResults) {
         
         final int initialResult = ((page * maxResults) - maxResults);
         
-        final List<ConsultaProdutoEdicaoDTO> edicoes = produtoEdicaoRepository.pesquisarConsultaEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, initialResult, maxResults);
+        final List<ConsultaProdutoEdicaoDTO> edicoes = produtoEdicaoRepository.pesquisarConsultaEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde,segmento,sortorder, sortname, initialResult, maxResults);
         
         return edicoes;
     }
@@ -399,9 +399,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     @Override
     @Transactional(readOnly = true)
     public Long countPesquisarEdicoes(final String codigoProduto, final String nome, final Intervalo<Date> dataLancamento, final Intervalo<Double> preco,
-            final StatusLancamento statusLancamento, final String codigoDeBarras, final boolean brinde) {
+            final StatusLancamento statusLancamento, final String codigoDeBarras, final boolean brinde, final int segmento) {
         
-        final Integer count = produtoEdicaoRepository.countPesquisarEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
+        final Integer count = produtoEdicaoRepository.countPesquisarEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde,segmento);
         
         return Long.valueOf(count);
     }

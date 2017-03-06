@@ -234,6 +234,7 @@ InformeEncalhe.prototype.bindEvents = function() {
 	});
 	$("#btnImprimir", this.workspace).click(function() {
 		_this.$dialogImprimir.dialog('open');
+		carregarSelecoes();
 	});
 	$('#dataRecolhimentoBox,#semanaRecolhimentoBox', this.workspace).bind('keypress', function(e) {
 		if(e.keyCode == 13) {
@@ -586,6 +587,76 @@ function habilitarDesabilitar() {
 	} else {
 		$(tpObservacao).hide()
 	}
+}
+
+function manterSelecoes(nomeRadio) {
+	
+	var radioCheck = document.getElementById(nomeRadio);
+	
+	if(radioCheck.checked == true){
+		createCookieX(nomeRadio, true,365);
+	}else {
+		createCookieX(nomeRadio, 'false',365);		
+	}
+}
+
+function carregarSelecoes() {
+	
+	carregarSelecoesX('tipoImpressao.colunas.sequenciaMatriz');
+	carregarSelecoesX('tipoImpressao.colunas.codigoProduto');
+	carregarSelecoesX('tipoImpressao.colunas.nomeProduto');
+	carregarSelecoesX('tipoImpressao.colunas.numeroEdicao');
+	carregarSelecoesX('tipoImpressao.colunas.chamadaCapa');
+	carregarSelecoesX('tipoImpressao.colunas.codigoDeBarras');
+	carregarSelecoesX('tipoImpressao.colunas.precoVenda');
+	carregarSelecoesX('tipoImpressao.colunas.nomeEditor');
+	carregarSelecoesX('tipoImpressao.colunas.brinde');
+	carregarSelecoesX('tipoImpressao.colunas.dataLancamento');
+	carregarSelecoesX('tipoImpressao.colunas.dataRecolhimento');
+	carregarSelecoesX('tipoImpressao.colunas.tipoLancamentoParcial');
+	carregarSelecoesX('tipoImpressao.colunas.pacotePadrao');
+	carregarSelecoesX('tipoImpressao.observacao');
+
+}
+
+function carregarSelecoesX(nomeRadio) {
+	
+	var radioCheck = readCookieX(nomeRadio);
+	
+	if(radioCheck == 'true'){
+	  document.getElementById(nomeRadio).checked = true;	
+	}else {
+	  document.getElementById(nomeRadio).checked = false;
+	}
+}
+
+//Cookies
+function createCookieX(name, value, days) {
+    
+	var expires ="";
+	
+	if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (200 * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toGMTString();
+    } else {
+    	expires = ";expires=;";
+    }
+
+    //document.cookie = name + "=" + value + ";expires=-1;";
+	//alert(name + "=" + value + expires);
+	document.cookie = name + "=" + value + expires;
+}
+
+function readCookieX(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null; 
 }
 
 //@ sourceURL=informeEncalhe.js

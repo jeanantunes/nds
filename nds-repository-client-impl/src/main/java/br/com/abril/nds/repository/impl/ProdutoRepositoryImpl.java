@@ -129,12 +129,13 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 	@SuppressWarnings("unchecked")
 	public List<ConsultaProdutoDTO> pesquisarProdutos(String codigo, String produto,
 			String fornecedor, String editor, Long codigoTipoProduto,
-			String sortorder, String sortname, int page, int rp, Boolean isGeracaoAutomatica) {
+			String sortorder, String sortname, int page, int rp, Boolean isGeracaoAutomatica, long segmento) {
 		
 		StringBuffer hql = new StringBuffer();
 		
 		hql.append(" select  ");
 		
+		hql.append(" tipoSegmentoProduto.descricao as segmento,		");
 		hql.append(" produto.id as id, 								");
 		hql.append(" produto.codigo as codigo, 						");
 		hql.append(" produto.nome as produtoDescricao, 				");
@@ -162,7 +163,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 			Query query = 
 				this.getQueryBuscaProdutos(
 					hql, codigo, produto, fornecedor, 
-					editor, codigoTipoProduto, sortname, sortorder, false, isGeracaoAutomatica);
+					editor, codigoTipoProduto, sortname, sortorder, false, isGeracaoAutomatica,segmento);
 			
 			query.setResultTransformer(
 				new AliasToBeanResultTransformer(
@@ -180,7 +181,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 
 	@Override
 	public Integer pesquisarCountProdutos(String codigo, String produto,
-			String fornecedor, String editor, Long codigoTipoProduto, Boolean isGeracaoAutomatica) {
+			String fornecedor, String editor, Long codigoTipoProduto, Boolean isGeracaoAutomatica,int segmento) {
 		
 		StringBuffer hql = new StringBuffer(" select count(distinct produto.id) ");
 		
@@ -189,7 +190,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 			Query query = 
 				this.getQueryBuscaProdutos(
 					hql, codigo, produto, fornecedor, 
-					editor, codigoTipoProduto, null, null, true, isGeracaoAutomatica);
+					editor, codigoTipoProduto, null, null, true, isGeracaoAutomatica,segmento);
 			
 			return ((Long) query.uniqueResult()).intValue();
 			
@@ -199,12 +200,14 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 	}
 	
 	private Query getQueryBuscaProdutos(StringBuffer hql, String codigo, String nome,
-			String fornecedor, String editor, Long codigoTipoProduto, String sortname, String sortorder, boolean isCount, Boolean isGeracaoAutomatica) {
+			String fornecedor, String editor, Long codigoTipoProduto, String sortname, String sortorder, boolean isCount, Boolean isGeracaoAutomatica,long segmento) {
+		
 		
 		hql.append(" from ");
 		hql.append(" Produto produto ");
 		hql.append(" join produto.tipoProduto tipoProduto 					");
 		hql.append(" left join produto.descontoLogistica descontoLogistica 	");
+		hql.append(" left join produto.tipoSegmentoProduto tipoSegmentoProduto 	");
 
 		if (fornecedor != null && !fornecedor.isEmpty()) {
 			hql.append(" join produto.fornecedores fornecedorProd ");
@@ -253,6 +256,13 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 			hql.append(" produto.isGeracaoAutomatica = false " );
 			auxHql = " and ";
 		}
+		
+        if (segmento != 0) {
+			
+			hql.append(auxHql);
+			hql.append(" tipoSegmentoProduto.id = :segmentoId " );
+			auxHql = " and ";
+		}
 
 		if (codigoTipoProduto != null && codigoTipoProduto > 0) {
 			hql.append(auxHql).append(" tipoProduto.id = :codigoTipoProduto ");
@@ -270,7 +280,8 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 			hql.append(" produto.peb,			");
 			hql.append(" produto.pacotePadrao,  ");
 			hql.append(" col_8_0_, 				");
-			hql.append(" produto.periodicidade  ");
+			hql.append(" produto.periodicidade,  ");
+			hql.append(" tipoSegmentoProduto.id  ");
 			
 		}
 
@@ -299,6 +310,9 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		
 		if (codigoTipoProduto != null && codigoTipoProduto > 0) {
 			query.setParameter("codigoTipoProduto", codigoTipoProduto);
+		}
+		if (segmento !=  0) {
+			query.setParameter("segmentoId", segmento);
 		}
 		
 		return query;

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -937,7 +938,15 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
         int qtdParcelasModificadas = 0;
         
+        Date dataBase = this.distribuidorService.obterDataOperacaoDistribuidor();
+        
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        String stdataBase = "'"+format.format(dataBase)+"'";
+        
         for (final CalculaParcelasVO calculaParcelasVO : parcelas) {
+        	
+        	calculaParcelasVO.setDataOperacao(stdataBase);
+        	
             if (calculaParcelasVO.isModificada()) {
                 
                 if (calculaParcelasVO.getParcela() == null){
@@ -968,7 +977,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         BigDecimal valorEncargoPorParcela = 
         		filtro.getValorEncargoSelecionado().divide(BigDecimal.valueOf(filtro.getQntdParcelas()), RoundingMode.HALF_UP);
 
-        Date dataBase = null;
+        dataBase = null;
         
         for (int i = 0; i < parcelas.size(); i++) {
             
@@ -1183,6 +1192,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
             parcela.setEncargos(CurrencyUtil.formatarValor(valorEncargo));
 
             parcela.setParcTotal(CurrencyUtil.formatarValor(valorParcela.add(valorEncargo)));
+            
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+            parcela.setDataOperacao("'"+format.format(dataBase)+"'");
             
             listParcelas.add(parcela);
         }
@@ -1511,6 +1523,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
     				parcela.setDataVencimento(detalhe.getDataVencimento());
     				parcela.setEncargos(CurrencyUtil.formatarValor(detalhe.getValorEncargos() != null ? detalhe.getValorEncargos() : BigDecimal.ZERO));
     				parcela.setParcTotal(CurrencyUtil.formatarValor(detalhe.getParcela().add(detalhe.getValorEncargos() != null ? detalhe.getValorEncargos() : BigDecimal.ZERO)));
+
+    				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+    	            parcela.setDataOperacao(format.format(this.distribuidorService.obterDataOperacaoDistribuidor()));
     				
     				countParcela++;
     				

@@ -227,7 +227,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		$("#dialogProdutosDeOutraSemana", balanceamentoRecolhimentoController.workspace).dialog({
 			resizable: false,
-			height:'auto',
+			height:600,
 			width:600,
 			modal: true,
 			buttons: {
