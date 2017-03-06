@@ -3903,6 +3903,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append(" SELECT  ");
 		
 		sql.append("   c.NUMERO_COTA numeroCota, ");
+		sql.append("   c.tipo_distribuicao_cota tipoDistribuicaoCota, ");
+		sql.append("   tpPDV.descricao tipoPDVPrincipal, ");
 		sql.append("   endereco.TIPO_LOGRADOURO tipoLogradouro, ");
 		sql.append("   endereco.LOGRADOURO logradouro, ");
 		sql.append("   endereco.NUMERO numeroEndereco, ");
@@ -3922,12 +3924,16 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append("   on endPdv.PDV_ID = pdv.ID ");
 		sql.append(" join endereco  ");
 		sql.append("   ON endPdv.ENDERECO_ID = endereco.ID ");
+		sql.append(" join tipo_ponto_pdv tpPDV  ");
+		sql.append("   on pdv.tipo_ponto_pdv_id = tpPDV.id ");
 
 		sql.append(" WHERE c.NUMERO_COTA in (:cotas)  ");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 
 		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		query.addScalar("tipoDistribuicaoCota", StandardBasicTypes.STRING);
+		query.addScalar("tipoPDVPrincipal", StandardBasicTypes.STRING);
 		query.addScalar("tipoLogradouro", StandardBasicTypes.STRING);
 		query.addScalar("logradouro", StandardBasicTypes.STRING);
 		query.addScalar("numeroEndereco", StandardBasicTypes.STRING);
