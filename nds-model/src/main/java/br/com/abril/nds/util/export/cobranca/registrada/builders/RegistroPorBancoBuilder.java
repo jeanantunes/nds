@@ -117,7 +117,7 @@ public class RegistroPorBancoBuilder implements Serializable {
 		registro00.setNomeBanco("BRADESCO");
 		registro00.setDataGravacaoArquivo(setarDataFomatada());
 		registro00.setFiller(" ");
-		registro00.setIdentificacaoSistema("MX");
+		registro00.setIdentificacaoSistema("01");
 		registro00.setSequencialHeader("01");
 		registro00.setFiller2(" ");
 		registro00.setSequencial("01");
