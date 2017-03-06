@@ -9,13 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFPalette;
-import org.apache.poi.hssf.usermodel.HSSFPatriarch;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFTextbox;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -28,11 +21,19 @@ import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFTextBox;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ImageUtil;
@@ -53,9 +54,8 @@ public class XLSExporter implements Exporter {
     private CellStyle headerColumnCellStyleRight;
 
     private CellStyle headerColumnCellStyleCenter;
-
-
-    private CellStyle footerCellStyle;
+    
+    private CellStyle footerCellStyle;	
 
     private CellStyle footerCellStyleRight;
 
@@ -91,14 +91,14 @@ public class XLSExporter implements Exporter {
                 return;
             }
 
-            final HSSFWorkbook workbook = new HSSFWorkbook();
+            final XSSFWorkbook workbook = new XSSFWorkbook();
 
 
-            final Sheet sheet = workbook.createSheet(WorkbookUtil.createSafeSheetName(name));
+            final XSSFSheet sheet = workbook.createSheet(WorkbookUtil.createSafeSheetName(name));
 
             sheet.getPrintSetup().setLandscape(true);
 
-            this.configurePalletes(sheet);
+           // this.configurePalletes(sheet);
 
             final CreationHelper creationHelper = workbook.getCreationHelper();
 
@@ -130,10 +130,8 @@ public class XLSExporter implements Exporter {
             throw new RuntimeException("Erro ao gerar arquivo XLS!", e);
         }
     }
-
-
-
-    private void createSheetHeader(final Sheet sheet, final CreationHelper creationHelper,
+    
+    private void createSheetHeader(final XSSFSheet sheet, final CreationHelper creationHelper,
             final NDSFileHeader ndsFileHeader) throws IOException {
 
         this.createHeaderBackground(sheet, creationHelper);
@@ -145,7 +143,7 @@ public class XLSExporter implements Exporter {
         this.createHeaderTextBoxOutrosDados(sheet, ndsFileHeader);
     }
 
-    private int createSheetFilter(final Sheet sheet, final CreationHelper creationHelper,
+    private int createSheetFilter(final XSSFSheet sheet, final CreationHelper creationHelper,
             final List<ExportFilter> filters) {
 
         final int startRowNum = 5;
@@ -204,7 +202,7 @@ public class XLSExporter implements Exporter {
         return filterRow.getRowNum();
     }
 
-    private int createSheetMainDataHeaders(final Sheet sheet, final CreationHelper creationHelper,
+    private int createSheetMainDataHeaders(final XSSFSheet sheet, final CreationHelper creationHelper,
             final List<ExportHeader> headers, final int lastRowNum, List<Integer> autoSizeColumns) {
 
         final int startRowNum = lastRowNum + 2;
@@ -277,7 +275,7 @@ public class XLSExporter implements Exporter {
         return startRowNum + 1;
     }
 
-    private int createSheetMainDataRows(final Sheet sheet, final List<ExportRow> rows, final int lastRowNum) {
+    private int createSheetMainDataRows(final XSSFSheet sheet, final List<ExportRow> rows, final int lastRowNum) {
 
         if (rows == null || rows.isEmpty()) {
 
@@ -354,7 +352,7 @@ public class XLSExporter implements Exporter {
 
     }
 
-    private void createSheetFooter(final Sheet sheet, final List<ExportFooter> footers,
+    private void createSheetFooter(final XSSFSheet sheet, final List<ExportFooter> footers,
             final List<ExportHeader> headers, final int lastRowNum) {
 
         if (footers == null || footers.isEmpty()) {
@@ -431,11 +429,11 @@ public class XLSExporter implements Exporter {
         }
     }
 
-    private void createHeaderTextBoxDadosDistribuidor(final Sheet sheet, final NDSFileHeader ndsFileHeader) {
+    private void createHeaderTextBoxDadosDistribuidor(final XSSFSheet sheet, final NDSFileHeader ndsFileHeader) {
 
-        final HSSFPatriarch patriarch = (HSSFPatriarch) sheet.createDrawingPatriarch();
+        final XSSFDrawing patriarch = (XSSFDrawing) sheet.createDrawingPatriarch();
 
-        final HSSFClientAnchor clientAnchorDistribuidor = new HSSFClientAnchor();
+        final XSSFClientAnchor clientAnchorDistribuidor = new XSSFClientAnchor();
 
         clientAnchorDistribuidor.setCol1(0);
         clientAnchorDistribuidor.setCol2(8);
@@ -449,11 +447,11 @@ public class XLSExporter implements Exporter {
         clientAnchorDistribuidor.setDx2(0);
         clientAnchorDistribuidor.setDy2(0);
 
-        final HSSFTextbox textBoxDadosDistribuidor = patriarch.createTextbox(clientAnchorDistribuidor);
+        final XSSFTextBox textBoxDadosDistribuidor = patriarch.createTextbox(clientAnchorDistribuidor);
 
         textBoxDadosDistribuidor.setNoFill(true);
 
-        textBoxDadosDistribuidor.setLineStyle(HSSFTextbox.LINESTYLE_NONE);
+        textBoxDadosDistribuidor.setLineStyle(XSSFTextBox.EMU_PER_PIXEL);
 
         final String nomeDistribuidor = StringUtils.defaultString(ndsFileHeader.getNomeDistribuidor());
         final String cnpjDistribuidor = StringUtils.defaultString(ndsFileHeader.getCnpjDistribuidor());
@@ -465,20 +463,20 @@ public class XLSExporter implements Exporter {
             dadosDistribuidor += "\nCNPJ: " + cnpjDistribuidor;
         }
 
-        final HSSFRichTextString richTextDadosDistribuidor = new HSSFRichTextString(dadosDistribuidor);
+        final XSSFRichTextString richTextDadosDistribuidor = new XSSFRichTextString(dadosDistribuidor);
 
         final Font font = this.getFont(sheet, "Calibri", (short) 11, true, false);
 
         richTextDadosDistribuidor.applyFont(0, nomeDistribuidor.length(), font);
 
-        textBoxDadosDistribuidor.setString(richTextDadosDistribuidor);
+        // textBoxDadosDistribuidor.setString(richTextDadosDistribuidor);
     }
 
-    private void createHeaderTextBoxOutrosDados(final Sheet sheet, final NDSFileHeader ndsFileHeader) {
+    private void createHeaderTextBoxOutrosDados(final XSSFSheet sheet, final NDSFileHeader ndsFileHeader) {
 
-        final HSSFPatriarch patriarch = (HSSFPatriarch) sheet.createDrawingPatriarch();
+        final XSSFDrawing patriarch = (XSSFDrawing) sheet.createDrawingPatriarch();
 
-        final HSSFClientAnchor clientAnchorOutros = new HSSFClientAnchor();
+        final XSSFClientAnchor clientAnchorOutros = new XSSFClientAnchor();
 
         clientAnchorOutros.setCol1(5);
         clientAnchorOutros.setCol2(8);
@@ -492,11 +490,11 @@ public class XLSExporter implements Exporter {
         clientAnchorOutros.setDx2(0);
         clientAnchorOutros.setDy2(0);
 
-        final HSSFTextbox textBoxOutrosDados = patriarch.createTextbox(clientAnchorOutros);
+        final XSSFTextBox textBoxOutrosDados = patriarch.createTextbox(clientAnchorOutros);
 
         textBoxOutrosDados.setNoFill(true);
 
-        textBoxOutrosDados.setLineStyle(HSSFTextbox.LINESTYLE_NONE);
+        textBoxOutrosDados.setLineStyle(XSSFTextBox.EMU_PER_PIXEL);
 
         final String dataAtual = ndsFileHeader.getData() == null ? "" : DateUtil.formatarDataPTBR(ndsFileHeader
                 .getData());
@@ -516,7 +514,7 @@ public class XLSExporter implements Exporter {
             outrosDados = "\n" + nomeUsuario;
         }
 
-        final HSSFRichTextString richTextDadosDistribuidor = new HSSFRichTextString(outrosDados);
+        final XSSFRichTextString richTextDadosDistribuidor = new XSSFRichTextString(outrosDados);
 
         final Font font = this.getFont(sheet, "Calibri", (short) 11, true, false);
 
@@ -525,10 +523,10 @@ public class XLSExporter implements Exporter {
             richTextDadosDistribuidor.applyFont(0, labelDia.length(), font);
         }
 
-        textBoxOutrosDados.setString(richTextDadosDistribuidor);
+        //textBoxOutrosDados.setString(richTextDadosDistribuidor);
     }
 
-    private void createHeaderLogo(final Sheet sheet, final CreationHelper creationHelper, final InputStream logo) {
+    private void createHeaderLogo(final XSSFSheet sheet, final CreationHelper creationHelper, final InputStream logo) {
 
         if (logo == null) {
             return;
@@ -536,7 +534,7 @@ public class XLSExporter implements Exporter {
 
         final byte[] bytes = ImageUtil.redimensionar(logo, 80, 70, FormatoImagem.PNG);
 
-        final int pictureIdx = sheet.getWorkbook().addPicture(bytes, Workbook.PICTURE_TYPE_PNG);
+        final int pictureIdx = sheet.getWorkbook().addPicture(bytes, XSSFWorkbook.PICTURE_TYPE_PNG);
 
         final Drawing drawing = sheet.createDrawingPatriarch();
 
@@ -566,7 +564,7 @@ public class XLSExporter implements Exporter {
 
         final byte[] bytes = IOUtils.toByteArray(inputStream);
 
-        final int pictureIdx = sheet.getWorkbook().addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
+        final int pictureIdx = sheet.getWorkbook().addPicture(bytes, XSSFWorkbook.PICTURE_TYPE_JPEG);
 
         inputStream.close();
 
@@ -591,14 +589,14 @@ public class XLSExporter implements Exporter {
         picture.resize();
     }
 
-    private Font getFont(final Sheet sheet, final String name, final short size, final boolean bold,
+    private Font getFont(final XSSFSheet sheet, final String name, final short size, final boolean bold,
             final boolean italic) {
 
         final Font font = sheet.getWorkbook().createFont();
 
         if (bold) {
 
-            font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+            font.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD);
         }
 
         font.setItalic(italic);
@@ -611,7 +609,7 @@ public class XLSExporter implements Exporter {
     }
 
     private RichTextString getRichTextString(final String string, final CreationHelper creationHelper,
-            final Sheet sheet, final short fontSize, final String fontName, final boolean bold, final boolean italic) {
+            final XSSFSheet sheet, final short fontSize, final String fontName, final boolean bold, final boolean italic) {
 
         final RichTextString richTextString = creationHelper.createRichTextString(string);
 
@@ -620,7 +618,7 @@ public class XLSExporter implements Exporter {
         return richTextString;
     }
 
-    private CellStyle getHeaderColumnCellStyle(final Sheet sheet, final Alignment alignment) {
+    private CellStyle getHeaderColumnCellStyle(final XSSFSheet sheet, final Alignment alignment) {
 
         switch (alignment) {
 
@@ -652,46 +650,60 @@ public class XLSExporter implements Exporter {
             break;
         }
 
-        final CellStyle style = sheet.getWorkbook().createCellStyle();
+        //final CellStyle style = sheet.getWorkbook().createCellStyle();
+        
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFCellStyle cellStyle = wb.createCellStyle();
+        final short fontIndex = cellStyle.getFontIndex();
+        final Font font = sheet.getWorkbook().getFontAt(fontIndex);
+        
+        byte[] rgb = new byte[3];
+        rgb[0] = (byte) 242; // red
+        rgb[1] = (byte) 220; // green
+        rgb[2] = (byte) 219; // blue
+        XSSFColor myColor = new XSSFColor(rgb); // #f2dcdb
+        cellStyle.setFillForegroundColor(myColor);
+        cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        
+        
+        cellStyle.setFillForegroundColor(HSSFColor.BLUE.index);
 
-        style.setFillForegroundColor(HSSFColor.BLUE.index);
+        cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
-        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+        cellStyle.setBottomBorderColor(HSSFColor.LIGHT_BLUE.index);
+        cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+        cellStyle.setLeftBorderColor(HSSFColor.LIGHT_BLUE.index);
+        cellStyle.setBorderRight(CellStyle.BORDER_THIN);
+        cellStyle.setRightBorderColor(HSSFColor.LIGHT_BLUE.index);
+        cellStyle.setBorderTop(CellStyle.BORDER_THIN);
+        cellStyle.setTopBorderColor(HSSFColor.LIGHT_BLUE.index);
 
-        style.setBorderBottom(CellStyle.BORDER_THIN);
-        style.setBottomBorderColor(HSSFColor.LIGHT_BLUE.index);
-        style.setBorderLeft(CellStyle.BORDER_THIN);
-        style.setLeftBorderColor(HSSFColor.LIGHT_BLUE.index);
-        style.setBorderRight(CellStyle.BORDER_THIN);
-        style.setRightBorderColor(HSSFColor.LIGHT_BLUE.index);
-        style.setBorderTop(CellStyle.BORDER_THIN);
-        style.setTopBorderColor(HSSFColor.LIGHT_BLUE.index);
+        cellStyle.setAlignment(this.getAlignment(alignment));
 
-        style.setAlignment(this.getAlignment(alignment));
-
-        final Font font = this.getFont(sheet, "Arial", (short) 10, true, false);
+        final Font fontArial = this.getFont(sheet, "Arial", (short) 10, true, false);
 
         font.setColor(HSSFColor.WHITE.index);
 
-        style.setFont(font);
+        cellStyle.setFont(fontArial);
 
         switch (alignment) {
 
         case CENTER:
-            headerColumnCellStyleCenter = style;
+            headerColumnCellStyleCenter = cellStyle;
             break;
         case RIGHT:
-            headerColumnCellStyleRight = style;
+            headerColumnCellStyleRight = cellStyle;
             break;
         case LEFT:
-            headerColumnCellStyle = style;
+            headerColumnCellStyle = cellStyle;
             break;
         }
 
-        return style;
+        return cellStyle;
     }
 
-    private CellStyle getRowColumnCellStyle(final Sheet sheet, final CellStyleKey styleKey) {
+    private CellStyle getRowColumnCellStyle(final XSSFSheet sheet, final CellStyleKey styleKey) {
 
         if (mapCellStyle.containsKey(styleKey)) {
             return mapCellStyle.get(styleKey);
@@ -741,7 +753,7 @@ public class XLSExporter implements Exporter {
         return style;
     }
 
-    private CellStyle getFooterCellStyle(final Sheet sheet, final boolean isLabel, final Alignment alignment) {
+    private CellStyle getFooterCellStyle(final XSSFSheet sheet, final boolean isLabel, final Alignment alignment) {
 
         switch (alignment) {
 
@@ -861,14 +873,14 @@ public class XLSExporter implements Exporter {
         return style;
     }
 
-    private void configurePalletes(final Sheet sheet) {
-
-        final HSSFPalette palette = ((HSSFWorkbook) sheet.getWorkbook()).getCustomPalette();
-
-        palette.setColorAtIndex(HSSFColor.LIGHT_BLUE.index, (byte) 220, (byte) 230, (byte) 241);
-
-        palette.setColorAtIndex(HSSFColor.BLUE.index, (byte) 79, (byte) 129, (byte) 189);
-    }
+//    private void configurePalletes(final Sheet sheet) {
+//
+//        final XSSPalette palette = ((XSSFWorkbook) sheet.getWorkbook()).getCustomPalette();
+//
+//        palette.setColorAtIndex(HSSFColor.LIGHT_BLUE.index, (byte) 220, (byte) 230, (byte) 241);
+//
+//        palette.setColorAtIndex(HSSFColor.BLUE.index, (byte) 79, (byte) 129, (byte) 189);
+//    }
 
     @SuppressWarnings("incomplete-switch")
     private short getAlignment(final Alignment alignment) {

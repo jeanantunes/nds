@@ -145,7 +145,7 @@ public class FileExporter {
 	public enum FileType {
 		TXT(".txt", "application/text"),
 		PDF(".pdf", "application/pdf"),
-		XLS(".xls", "application/vnd.ms-excel"),
+		XLS(".xlsx", "application/vnd.ms-excel"),
 		XML(".xml", "text/xml"),
 		DOC(".doc", "application/msword"),
 		DOCX(".docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
@@ -157,7 +157,8 @@ public class FileExporter {
 		JKS(".jks", "application/octet-stream"),
 		RET(".RET", "application/text"),
 		PFX(".pfx", "application/x-pkcs12"),
-		REM(".txt", "application/text"),;
+		REM(".txt", "application/text"),
+		XLSX(".xlsx", "application/vnd.ms-excel");
 
 		private String extension;
 		

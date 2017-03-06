@@ -196,7 +196,7 @@ public class TipoDescontoCotaController extends BaseController {
 
 		FiltroTipoDescontoProdutoDTO filtro = carregarFiltroPesquisaDescontoProduto(codigo, produto, sortorder, sortname, page, rp);
 
-		List<TipoDescontoProdutoDTO> listaTipoDescontoProduto  = descontoService.buscarTipoDescontoProduto(filtro);
+		List<TipoDescontoProdutoDTO> listaTipoDescontoProduto  = descontoService.buscarTipoDescontoProduto(filtro, false);
 
 		if(listaTipoDescontoProduto.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
@@ -320,9 +320,13 @@ public class TipoDescontoCotaController extends BaseController {
 
 		FiltroTipoDescontoProdutoDTO filtroSessao = (FiltroTipoDescontoProdutoDTO) obterFiltroParaExportacao(FiltroTipoDescontoProdutoDTO.class);
 
-		List<TipoDescontoProdutoDTO> listaTipoDescontoProduto  = descontoService.buscarTipoDescontoProduto(filtroSessao);
-
-		FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, listaTipoDescontoProduto, TipoDescontoProdutoDTO.class, this.httpServletResponse);
+		List<TipoDescontoProdutoDTO> listaTipoDescontoProduto  = descontoService.buscarTipoDescontoProduto(filtroSessao, true);
+		
+		if(listaTipoDescontoProduto.size() > 65000) {
+			FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, listaTipoDescontoProduto, TipoDescontoProdutoDTO.class, this.httpServletResponse);
+		} else {
+			FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, listaTipoDescontoProduto, TipoDescontoProdutoDTO.class, this.httpServletResponse);
+		}
 	}
 	
 	private void exportarDescontoEditor(FileType fileType) throws IOException{

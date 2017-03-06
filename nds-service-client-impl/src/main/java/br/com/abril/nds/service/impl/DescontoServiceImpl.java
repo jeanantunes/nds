@@ -169,37 +169,39 @@ public class DescontoServiceImpl implements DescontoService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<TipoDescontoProdutoDTO> buscarTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro) {
+	public List<TipoDescontoProdutoDTO> buscarTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro, boolean isExport) {
 
 		List<TipoDescontoProdutoDTO> historicoDesconto = descontoProdutoRepository.buscarTipoDescontoProduto(filtro);
 		
-		Calendar dataOperacao = Calendar.getInstance();
-		dataOperacao.setTime(distribuidorRepository.obterDataOperacaoDistribuidor());
-		
-		dataOperacao.set(Calendar.AM_PM, 0);
-		dataOperacao.set(Calendar.HOUR, 0);
-		dataOperacao.set(Calendar.MINUTE, 0);
-		dataOperacao.set(Calendar.SECOND, 0);
-		dataOperacao.set(Calendar.MILLISECOND, 0);
-		
-		for(TipoDescontoProdutoDTO tdp : historicoDesconto) {
+		if(!isExport) {
+			Calendar dataOperacao = Calendar.getInstance();
+			dataOperacao.setTime(distribuidorRepository.obterDataOperacaoDistribuidor());
 			
-			Desconto desconto = descontoRepository.buscarPorId(tdp.getDescontoId());
+			dataOperacao.set(Calendar.AM_PM, 0);
+			dataOperacao.set(Calendar.HOUR, 0);
+			dataOperacao.set(Calendar.MINUTE, 0);
+			dataOperacao.set(Calendar.SECOND, 0);
+			dataOperacao.set(Calendar.MILLISECOND, 0);
 			
-			Calendar c1 = Calendar.getInstance();
-			
-			c1.setTime(tdp.getDataAlteracao());
-			
-			c1.set(Calendar.AM_PM, 0);
-			c1.set(Calendar.HOUR, 0);
-			c1.set(Calendar.MINUTE, 0);
-			c1.set(Calendar.SECOND, 1);
-			c1.set(Calendar.MILLISECOND, 0);
-			
-			if(isExclusaoBloqueada(c1.before(dataOperacao), desconto, tdp) ) {
-				tdp.setExcluivel(false);
-			} else {
-				tdp.setExcluivel(true);
+			for(TipoDescontoProdutoDTO tdp : historicoDesconto) {
+				
+				Desconto desconto = descontoRepository.buscarPorId(tdp.getDescontoId());
+				
+				Calendar c1 = Calendar.getInstance();
+				
+				c1.setTime(tdp.getDataAlteracao());
+				
+				c1.set(Calendar.AM_PM, 0);
+				c1.set(Calendar.HOUR, 0);
+				c1.set(Calendar.MINUTE, 0);
+				c1.set(Calendar.SECOND, 1);
+				c1.set(Calendar.MILLISECOND, 0);
+				
+				if(isExclusaoBloqueada(c1.before(dataOperacao), desconto, tdp) ) {
+					tdp.setExcluivel(false);
+				} else {
+					tdp.setExcluivel(true);
+				}
 			}
 		}
 		
