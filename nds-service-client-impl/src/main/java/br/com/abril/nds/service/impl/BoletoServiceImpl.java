@@ -22,7 +22,6 @@ import java.util.TreeSet;
 
 import javax.xml.bind.ValidationException;
 
-import org.apache.commons.lang.StringUtils;
 import org.jrimum.domkee.financeiro.banco.febraban.Titulo.EnumAceite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,10 +136,8 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.GeradorBoleto;
 import br.com.abril.nds.util.Intervalo;
-import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.NomeBanco;
 import br.com.abril.nds.util.TipoBaixaCobranca;
-import br.com.abril.nds.util.TirarAcento;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.cnab.UtilitarioCNAB;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro00;
@@ -151,7 +148,6 @@ import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroBra
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroItau00;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroItau01;
 import br.com.abril.nds.util.export.cobranca.registrada.builders.DetalheRegistroRegistroPorBancoBuilder;
-import br.com.abril.nds.util.export.cobranca.registrada.builders.EnderecoSacadoBuilder;
 import br.com.abril.nds.util.export.cobranca.registrada.builders.PopularSacadoBuilder;
 import br.com.abril.nds.util.export.cobranca.registrada.builders.RegistroPorBancoBuilder;
 import br.com.abril.nds.util.export.cobranca.util.CobRegBaseDTO;
@@ -3023,15 +3019,18 @@ public class BoletoServiceImpl implements BoletoService {
 				break;
 		}
 		
+		int count = 0;
+		
 		if(registro00 != null) {
 			list.add(registro00);
 		} else if(registroItau != null) {
 			list.add(registroItau);
+			count = qtdeSequenciaRegistro(registro00, registroItau);
 		} else if(registroBradesco != null) {
 			list.add(registroBradesco);
+			count = qtdeSequenciaRegistro(registro00, registroBradesco);
 		}
 		
-		int count = qtdeSequenciaRegistro(registro00, registroItau);
 		
 		int somaSquencial = 0;
 		
@@ -3090,6 +3089,11 @@ public class BoletoServiceImpl implements BoletoService {
 
 	private int qtdeSequenciaRegistro(CobRegEnvTipoRegistro00 registro00, CobRegEnvTipoRegistroItau00 registroItau) {
 		int count = Integer.valueOf(registro00 == null ? registroItau.getSequencial() : registro00.getSequencial())+1;
+		return count;
+	}
+	
+	private int qtdeSequenciaRegistro(CobRegEnvTipoRegistro00 registro00, CobRegEnvTipoRegistroBradesco00 registroBradesco) {
+		int count = Integer.valueOf(registro00 == null ? registroBradesco.getSequencial() : registro00.getSequencial())+1;
 		return count;
 	}
 	
