@@ -76,10 +76,13 @@ public class FileExporter {
 				this.fileName, ndsFileHeader, filter, footer, dataList, listClass, outputStream);
 			
 		} else if (FileType.XLS.equals(this.fileType)) {
-			
-			new XLSExporter().inOutputStream(
-				this.fileName, ndsFileHeader, filter, footer, dataList, listClass, outputStream);
-			
+			if(dataList.size() >= 65000) {
+				new XLSExporterVersaoAcima2013().inOutputStream(
+						this.fileName, ndsFileHeader, filter, footer, dataList, listClass, outputStream);	
+			} else {
+				new XLSExporter().inOutputStream(
+						this.fileName, ndsFileHeader, filter, footer, dataList, listClass, outputStream);				
+			}
 		} else {
 			
 			throw new RuntimeException("Tipo de arquivo não suportado para exportação");
