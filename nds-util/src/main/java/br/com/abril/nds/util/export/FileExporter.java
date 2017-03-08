@@ -148,7 +148,7 @@ public class FileExporter {
 	public enum FileType {
 		TXT(".txt", "application/text"),
 		PDF(".pdf", "application/pdf"),
-		XLS(".xlsx", "application/vnd.ms-excel"),
+		XLS(".xls", "application/vnd.ms-excel"),
 		XML(".xml", "text/xml"),
 		DOC(".doc", "application/msword"),
 		DOCX(".docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
