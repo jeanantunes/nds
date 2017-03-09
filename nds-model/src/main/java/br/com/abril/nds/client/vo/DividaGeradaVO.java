@@ -21,7 +21,8 @@ public class DividaGeradaVO implements Serializable {
 	private String suportaEmail;
 	private String vias;
 	private String nossoNumero;
-
+	private String status;
+	private boolean mostrar;
 	
 	/**
 	 * @return the nossoNumero
@@ -168,5 +169,19 @@ public class DividaGeradaVO implements Serializable {
 		this.suportaEmail = suportaEmail;
 	}
 	
+	public String getStatus() {
+		return status;
+	}
 	
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
+	public boolean isMostrar() {
+		return mostrar;
+	}
+	
+	public void setMostrar(boolean mostrar) {
+		this.mostrar = mostrar;
+	}
 }

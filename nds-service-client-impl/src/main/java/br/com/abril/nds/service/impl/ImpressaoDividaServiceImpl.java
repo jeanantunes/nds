@@ -75,7 +75,7 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 		List<GeraDividaDTO> dividasImpressao_EnvioEmail = new ArrayList<>();
 		
 		if( TipoCobranca.BOLETO.equals(filtro.getTipoCobranca())){
-			dividas = dividaRepository.obterDividasGeradas(filtro);
+			dividas = dividaRepository.obterDividasGeradasArquivo(filtro);
 		} else {
 			dividas = dividaRepository.obterDividasGeradasSemBoleto(filtro);
 		}

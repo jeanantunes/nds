@@ -31,6 +31,7 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.BancoService;
@@ -451,7 +452,10 @@ public class ImpressaoBoletosController extends BaseController {
 			dividaGeradaVO.setValor(CurrencyUtil.formatarValor(divida.getValor()));
 			dividaGeradaVO.setVias(String.valueOf(divida.getVias()));
 			dividaGeradaVO.setNossoNumero(divida.getNossoNumero());
-
+			dividaGeradaVO.setStatus(divida.getStatus() != null ? divida.getStatus().getDescricao() : "");
+			dividaGeradaVO.setMostrar(divida.getStatus().equals(StatusDivida.EM_ABERTO) ? true : false);
+			
+			
 			listaDividasGeradasVO.add(dividaGeradaVO);
 		}
 

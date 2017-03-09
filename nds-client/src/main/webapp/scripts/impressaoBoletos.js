@@ -92,7 +92,7 @@ var impressaoBoletosController = $.extend(true, {
 			}, {
 				display : 'Vencimento',
 				name : 'dataVencimento',
-				width : 75,
+				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -104,7 +104,7 @@ var impressaoBoletosController = $.extend(true, {
 			}, {
 				display : 'Emissão',
 				name : 'dataEmissao',
-				width : 80,
+				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -116,13 +116,19 @@ var impressaoBoletosController = $.extend(true, {
 			},{
 				display : 'Tipo',
 				name : 'tipoCobranca',
-				width : 100,
+				width : 60,
 				sortable : true,
 				align : 'left'
 			},{
+				display : 'Status',
+				name : 'status',
+				width : 60,
+				sortable : false,
+				align : 'center'
+			},{
 				display : 'Ação',
 				name : 'acao',
-				width : 70,
+				width : 60,
 				sortable : false,
 				align : 'center'
 			}],
@@ -156,23 +162,48 @@ var impressaoBoletosController = $.extend(true, {
 			
 			var nossoNumero  = row.cell.nossoNumero;
 			
-			var linkImpressao = '<a isEdicao="true" href="javascript:;" onclick="impressaoBoletosController.imprimirDivida(\'' + nossoNumero + '\');" style="cursor:pointer">' +
+			if(row.cell.mostrar) {
+				
+				console.log(row.cell.mostrar);
+				
+				var linkImpressao = '<a isEdicao="true" href="javascript:;" onclick="impressaoBoletosController.imprimirDivida(\'' + nossoNumero + '\');" style="cursor:pointer">' +
 				 '<img src="' + contextPath + '/images/ico_impressora.gif" hspace="5" border="0px" title="Imprime" />' +
 				 '</a>';			
 			
-			var linkEmail ='<a isEdicao="true" href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
-            				'<img src="' + contextPath + '/images/ico_email.png" hspace="5" border="0px" title="Divida não tem suporte para Envio de Arquivo por E-Mail" />' +
-            				'</a>';
-			
-			if(row.cell.suportaEmail == "true"){
-			 
-				linkEmail ='<a isEdicao="true" href="javascript:;" onclick="impressaoBoletosController.enviarDivida(\'' + nossoNumero + '\');" style="cursor:pointer">' +
-                 '<img src="' + contextPath + '/images/ico_email.png" hspace="5" border="0px" title="Enviar Arquivo por E-Mail" />' +
-                  '</a>';		 					 
+				var linkEmail ='<a isEdicao="true" href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
+	           				'<img src="' + contextPath + '/images/ico_email.png" hspace="5" border="0px" title="Divida não tem suporte para Envio de Arquivo por E-Mail" />' +
+	           				'</a>';
 				
-			}	 
+				if(row.cell.suportaEmail == "true"){
+				 
+					linkEmail ='<a isEdicao="true" href="javascript:;" onclick="impressaoBoletosController.enviarDivida(\'' + nossoNumero + '\');" style="cursor:pointer">' +
+	                '<img src="' + contextPath + '/images/ico_email.png" hspace="5" border="0px" title="Enviar Arquivo por E-Mail" />' +
+	                 '</a>';		 					 
+					
+				}	 
+				
+	            row.cell.acao = linkImpressao + linkEmail ; 
+			} else {
+				var linkImpressao = '<a isEdicao="true" href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
+				 '<img src="' + contextPath + '/images/ico_impressora.gif" hspace="5" border="0px" title="Imprime" />' +
+				 '</a>';			
 			
-             row.cell.acao = linkImpressao + linkEmail ; 
+				var linkEmail ='<a isEdicao="true" href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
+	           				'<img src="' + contextPath + '/images/ico_email.png" hspace="5" border="0px" title="Divida não tem suporte para Envio de Arquivo por E-Mail" />' +
+	           				'</a>';
+				
+				if(row.cell.suportaEmail == "true"){
+				 
+					linkEmail ='<a isEdicao="true" href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
+	                '<img src="' + contextPath + '/images/ico_email.png" hspace="5" border="0px" title="Enviar Arquivo por E-Mail" />' +
+	                 '</a>';		 					 
+					
+				}	 
+				
+	            row.cell.acao = linkImpressao + linkEmail ; 
+			} 
+			
+			
 		});
 		
 		$("#grids", impressaoBoletosController.workspace).show();

@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -49,6 +50,9 @@ public class GeraDividaDTO implements Serializable{
 	
 	@Export(label = "Valor", alignment = Alignment.RIGHT, columnType =ColumnType.MOEDA)
 	private BigDecimal valor;
+	
+	@Export(label = "Status", alignment = Alignment.CENTER)
+	private StatusDivida status;
 	
 	@Export(label = "Tipo")
 	private TipoCobranca tipoCobranca;
@@ -98,7 +102,7 @@ public class GeraDividaDTO implements Serializable{
 			this.vias = vias;
 			this.nossoNumero = nossoNumero;
 			this.bancoId = bancoId;
-}
+	}
 	
 	/**
 	 * @return the id
@@ -134,42 +138,49 @@ public class GeraDividaDTO implements Serializable{
 	public Integer getVias() {
 		return vias;
 	}
+	
 	/**
 	 * @param vias the vias to set
 	 */
 	public void setVias(Integer vias) {
 		this.vias = vias;
 	}
+	
 	/**
 	 * @return the box
 	 */
 	public String getBox() {
 		return box;
 	}
+	
 	/**
 	 * @param box the box to set
 	 */
 	public void setBox(String box) {
 		this.box = box;
 	}
+	
 	/**
 	 * @return the rota
 	 */
 	public String getRota() {
 		return rota;
 	}
+	
 	/**
 	 * @param rota the rota to set
 	 */
 	public void setRota(String rota) {
 		this.rota = rota;
 	}
+	
 	/**
 	 * @return the roteiro
 	 */
 	public String getRoteiro() {
 		return roteiro;
 	}
+	
 	/**
 	 * @param roteiro the roteiro to set
 	 */
@@ -182,6 +193,7 @@ public class GeraDividaDTO implements Serializable{
 	public Integer getNumeroCota() {
 		return numeroCota;
 	}
+	
 	/**
 	 * @param numeroCota the numeroCota to set
 	 */
@@ -194,6 +206,7 @@ public class GeraDividaDTO implements Serializable{
 	public String getNomeCota() {
 		return nomeCota;
 	}
+	
 	/**
 	 * @param nomeCota the nomeCota to set
 	 */
@@ -206,48 +219,56 @@ public class GeraDividaDTO implements Serializable{
 	public Date getDataVencimento() {
 		return dataVencimento;
 	}
+	
 	/**
 	 * @param dataVencimento the dataVencimento to set
 	 */
 	public void setDataVencimento(Date dataVencimento) {
 		this.dataVencimento = dataVencimento;
 	}
+	
 	/**
 	 * @return the dataEmissao
 	 */
 	public Date getDataEmissao() {
 		return dataEmissao;
 	}
+	
 	/**
 	 * @param dataEmissao the dataEmissao to set
 	 */
 	public void setDataEmissao(Date dataEmissao) {
 		this.dataEmissao = dataEmissao;
 	}
+	
 	/**
 	 * @return the valor
 	 */
 	public BigDecimal getValor() {
 		return valor;
 	}
+	
 	/**
 	 * @param valor the valor to set
 	 */
 	public void setValor(BigDecimal valor) {
 		this.valor = valor == null ? null : valor.setScale(2, RoundingMode.HALF_EVEN);
 	}
+	
 	/**
 	 * @return the tipoCobranca
 	 */
 	public TipoCobranca getTipoCobranca() {
 		return tipoCobranca;
 	}
+	
 	/**
 	 * @param tipoCobranca the tipoCobranca to set
 	 */
 	public void setTipoCobranca(TipoCobranca tipoCobranca) {
 		this.tipoCobranca = tipoCobranca;
 	}
+	
 	/**
 	 * @return the suportaEmail
 	 */
@@ -260,15 +281,13 @@ public class GeraDividaDTO implements Serializable{
 	public void setSuportaEmail(Boolean suportaEmail) {
 		this.suportaEmail = suportaEmail;
 	}
-
-    
+	
     /**
      * @return the idCota
      */
     public Long getIdCota() {
         return idCota;
     }
-
     
     /**
      * @param idCota the idCota to set
@@ -276,7 +295,12 @@ public class GeraDividaDTO implements Serializable{
     public void setIdCota(Long idCota) {
         this.idCota = idCota;
     }
-	
-	
-	 
+
+	public StatusDivida getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusDivida status) {
+		this.status = status;
+	}
 }

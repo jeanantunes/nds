@@ -2979,7 +2979,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		LOGGER.debug("Metodo gerar cobranca registrada.");
 		
-		List<GeraDividaDTO> dividas = dividaRepository.obterDividasGeradas(filtro);
+		List<GeraDividaDTO> dividas = dividaRepository.obterDividasGeradasArquivo(filtro);
 		
 		if(dividas == null || dividas.isEmpty()) {
 			return null;
