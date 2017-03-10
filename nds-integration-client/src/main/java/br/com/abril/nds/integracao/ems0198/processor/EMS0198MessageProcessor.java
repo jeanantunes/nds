@@ -279,7 +279,6 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		sql.append("      , DATE_FORMAT((ce.DATA_RECOLHIMENTO),'%Y%m%d') as dataLancamento ");
 
 		sql.append("      from chamada_encalhe ce  ");
-		
 		sql.append("      JOIN chamada_encalhe_cota cec ON cec.CHAMADA_ENCALHE_ID = ce.ID ");
 		sql.append(" 		 join produto_edicao pe on ce.PRODUTO_EDICAO_ID = pe.ID ");
 		sql.append(" 		 join cota c on cec.COTA_ID = c.ID  ");
@@ -297,7 +296,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		sql.append("      and c.id = :idCota ");
 		sql.append("      and c.UTILIZA_IPV = :true ");
 		sql.append("      group by c.NUMERO_COTA,ce.PRODUTO_EDICAO_ID");
-		sql.append("      order by c.NUMERO_COTA, ce.PRODUTO_EDICAO_ID  ");
+		sql.append("      order by ce.SEQUENCIA, c.NUMERO_COTA, ce.PRODUTO_EDICAO_ID  ");
 		
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString()); 
