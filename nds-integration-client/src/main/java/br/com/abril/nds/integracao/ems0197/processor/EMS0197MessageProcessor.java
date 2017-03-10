@@ -117,25 +117,9 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 				addDescontoProduto(descontos, outheader, print, listDetalhes);
 
-				/*	
-			for (IpvLancamentoDTO dto : listDetalhes) {
-
-				EMS0197Detalhe outDetalhe = createDetalhes(dto);
-
-				print.println(fixedFormatManager.export(outDetalhe));
-			}
-
-				 */
-
-				//			EMS0197Trailer outTrailer = createTrailer(outheader.getNumeroCota(), listDetalhes.size());
-
-				//			print.println(fixedFormatManager.export(outTrailer));
-
 				print.flush();
 				print.close();
 				
-				
-
 				this.quantidadeArquivosGerados++;
 				
 			} catch(IOException e) {
@@ -591,7 +575,8 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("       		and ecg.REPARTE > 0 ");
 		sql.append(" 	 		and c.id = :idCota");
 		sql.append(" 	 		and c.UTILIZA_IPV = :true and  pdvs.ponto_principal = true");
-
+		sql.append(" 	 		order by lct.SEQUENCIA_MATRIZ ");
+		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("data", data);
