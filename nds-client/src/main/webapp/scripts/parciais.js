@@ -1095,6 +1095,12 @@ var ParciaisController = $.extend(true, {
 					sortable : false,
 					align : 'center'
 				}, {
+					display : 'Status',
+					name : 'statusLancamento',
+					width : 55,
+					sortable : false,
+					align : 'center'		
+				}, {
 					display : 'Ação',
 					name : 'acao',
 					width : 55,
