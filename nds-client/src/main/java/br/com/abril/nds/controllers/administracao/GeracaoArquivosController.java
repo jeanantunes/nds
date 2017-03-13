@@ -906,8 +906,7 @@ public class GeracaoArquivosController extends BaseController {
 		
 		if (operacao.equals("PICKING")) {
 			
-			String mensageValidacao = 
-				route129.execute(getUsuarioLogado().getLogin(), dataLctoPrevisto, null);
+			String mensageValidacao = route129.execute(getUsuarioLogado().getLogin(), dataLctoPrevisto, null);
 			
 			if (mensageValidacao != null) {
 				
@@ -919,7 +918,7 @@ public class GeracaoArquivosController extends BaseController {
 		} else if (operacao.equals("REPARTE")) {
 			
 			try {
-			qtdArquivosGerados = route197.execute(getUsuarioLogado().getLogin(), dataLctoPrevisto, null);
+				qtdArquivosGerados = route197.execute(getUsuarioLogado().getLogin(), dataLctoPrevisto, null);
 			} catch ( Exception ee ) {
 				LOGGER.error("ERRO GERANDO arquivo de reparte",ee);
 				throw new ValidacaoException(TipoMensagem.ERROR, ee.getMessage());
@@ -930,7 +929,8 @@ public class GeracaoArquivosController extends BaseController {
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 				ParametroSistema ps = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO);
 					
-					File file = new File(ps.getValor() + File.separator +"reparte"+ File.separator +"zip"+ File.separator +"reparte-"+ sdf.format(dataLctoPrevisto) +".zip");
+				File file = new File(ps.getValor() + File.separator +"reparte"+ File.separator +"zip"+ File.separator +"reparte-"+ sdf.format(dataLctoPrevisto) +".zip");
+				
 				try {
 					String dirFc = ps.getValor()+ File.separator +"fc";
 					FileUtils.copyFileToDirectory(file, new File(dirFc));
@@ -960,7 +960,7 @@ public class GeracaoArquivosController extends BaseController {
 			
 		} else {
 			try {
-			qtdArquivosGerados = route198.execute(getUsuarioLogado().getLogin(), dataLctoPrevisto, null);
+				qtdArquivosGerados = route198.execute(getUsuarioLogado().getLogin(), dataLctoPrevisto, null);
 			} catch ( Exception ee ) {
 				LOGGER.error("ERRO GERANDO arquivo de encalhe",ee);
 				throw new ValidacaoException(TipoMensagem.ERROR, ee.getMessage());
@@ -1104,7 +1104,7 @@ public class GeracaoArquivosController extends BaseController {
 		}
 	}
 	
-public int 	descompactar(String zipFile,String outputFolder) {
+	public int 	descompactar(String zipFile,String outputFolder) {
 
 	     byte[] buffer = new byte[1024];
 	     int cont=0;
