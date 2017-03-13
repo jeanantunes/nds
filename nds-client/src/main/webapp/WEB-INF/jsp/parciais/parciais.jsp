@@ -264,15 +264,15 @@
             <tr>
               <td width="51">Código:</td>
               <td colspan="3">
-		<!-- Código -->
-		<input class="campoDePesquisa" id="parcial-codigoProduto" name="parcial-codigoProduto" style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
-			onchange="pesquisaProdutoParciais.pesquisarPorCodigoProdutoAutoCompleteEdicao('#parcial-codigoProduto', '#parcial-nomeProduto', '#parcial-edicaoProduto' , false);" />
+				<!-- Código -->
+				<input class="campoDePesquisa" id="parcial-codigoProduto" name="parcial-codigoProduto" style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
+					onchange="pesquisaProdutoParciais.pesquisarPorCodigoProdutoAutoCompleteEdicao('#parcial-codigoProduto', '#parcial-nomeProduto', '#parcial-edicaoProduto' , false);" />
 				</td>
                 <td width="52">Produto:</td>
                 <td width="192">
                 
-		<!-- Nome Produto -->                
-		<input class="campoDePesquisa" id="parcial-nomeProduto" type="text" name="parcial-nomeProduto"  style="width: 150px;" maxlength="255"
+				<!-- Nome Produto -->                
+				<input class="campoDePesquisa" id="parcial-nomeProduto" type="text" name="parcial-nomeProduto"  style="width: 150px;" maxlength="255"
 					       onkeyup="pesquisaProdutoParciais.autoCompletarPorNomeProduto('#parcial-nomeProduto', false);"
 					       onblur="pesquisaProdutoParciais.pesquisarPorNomeProduto('#parcial-codigoProduto', '#parcial-nomeProduto', null, false);"/>
 					    	   

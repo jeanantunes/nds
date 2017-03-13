@@ -55,9 +55,6 @@ var ParciaisController = $.extend(true, {
 		$('#parcial-lancamentoNovaRed', ParciaisController.workspace).mask("99/99/9999");
 		$("#parcial-dataRecolhimentoManual", ParciaisController.workspace).mask("99/99/9999");
 
-		$("#parcial-nomeProduto", ParciaisController.workspace).autocomplete({source: ""});
-		$("#parcial-edicaoProduto", ParciaisController.workspace).autocomplete({source: ""});
-		
 		ParciaisController.inicializarGrids();
 	},
 	
@@ -1203,6 +1200,12 @@ var ParciaisController = $.extend(true, {
 					width : 55,
 					sortable : false,
 					align : 'center'
+				}, {
+					display : 'status',
+					name : 'statusLancamento',
+					width : 55,
+					sortable : false,
+					align : 'center'		
 				}, {
 					display : 'Ação',
 					name : 'acao',
