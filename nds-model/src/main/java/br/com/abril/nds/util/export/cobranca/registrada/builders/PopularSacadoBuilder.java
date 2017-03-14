@@ -41,22 +41,21 @@ public class PopularSacadoBuilder implements Serializable {
         	
             nomeSacado = ((PessoaFisica) pessoaSacado).getNome();
             documentoSacado = ((PessoaFisica) pessoaSacado).getCpf();
-        	registro01.setCodigoInscricaoSacado(CODIGO_INSCRICAO_FISICA);
+            registro01.setIdentificacaoTipoIncricaoPagador(CODIGO_INSCRICAO_FISICA);
 
         }
         if (pessoaSacado instanceof PessoaJuridica) {
-        	registro01.setCodigoInscricaoSacado(CODIGO_INSCRICAO_JURIDICA);
             nomeSacado = ((PessoaJuridica) pessoaSacado).getRazaoSocial();
             documentoSacado = ((PessoaJuridica) pessoaSacado).getCnpj();
+            registro01.setIdentificacaoTipoIncricaoPagador(CODIGO_INSCRICAO_JURIDICA);
         }
         
-        registro01.setNumeroCNPJCPF(documentoSacado.replace(".", "").replace("-", "").replace("/", ""));
+        registro01.setNumeroDocumento(documentoSacado.replace(".", "").replace("-", "").replace("/", ""));
                 
-        registro01.setNomeSacado(TirarAcento.removerAcentuacao(nomeSacado));
+        registro01.setSacadoAvalista(TirarAcento.removerAcentuacao(nomeSacado.trim()));
         
-        registro01.setBracos01("");
         
-        EnderecoSacadoBuilder.enderecoSacado(registro01, enderecoSacado, nomeSacado);
+        EnderecoSacadoBuilder.enderecoSacado(registro01, enderecoSacado, nomeSacado.trim());
 	}
 	
 	public static void popularSacadoCobrana(CobRegEnvTipoRegistro01 registro01, Boleto boleto) {

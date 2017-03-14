@@ -147,6 +147,7 @@ import br.com.abril.nds.service.HistoricoTitularidadeService;
 import br.com.abril.nds.service.MixCotaProdutoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PessoaService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.service.UsuarioService;
@@ -300,6 +301,9 @@ public class CotaServiceImpl implements CotaService {
     
     @Autowired
     private EstoqueProdutoService estoqueProdutoService;
+    
+    @Autowired	
+    private ProdutoService produtoService;
     
     @Transactional(readOnly = true)
     @Override
@@ -2981,6 +2985,10 @@ public class CotaServiceImpl implements CotaService {
                 	
                     qtdEdicaoVendida++;
                     
+                    String nomeProduto = produtoService.obterNomeProdutoPorCodigo(produtoEdicaoDTO.getCodigoProduto());
+    				
+    				String prodEdicao = produtoEdicaoDTO.getCodigoProduto() + " - " + nomeProduto + " - " + produtoEdicaoDTO.getNumeroEdicao();
+                    
                     if (i == 0) {
                         if(dto.getReparte() != null){
                             analiseHistoricoDTO.setEd1Reparte(dto.getReparte().intValue());
@@ -2989,6 +2997,8 @@ public class CotaServiceImpl implements CotaService {
                         if(dto.getQtdeVendas() != null){
                             analiseHistoricoDTO.setEd1Venda(dto.getQtdeVendas().intValue());
                         }
+                        
+        				analiseHistoricoDTO.setProduto01(prodEdicao);
                     }
                     
                     if (i == 1) {
@@ -2999,6 +3009,8 @@ public class CotaServiceImpl implements CotaService {
                         if(dto.getQtdeVendas() != null){
                             analiseHistoricoDTO.setEd2Venda(dto.getQtdeVendas().intValue());
                         }
+                        
+                        analiseHistoricoDTO.setProduto02(prodEdicao);
                     }
                     
                     if (i == 2) {
@@ -3009,6 +3021,8 @@ public class CotaServiceImpl implements CotaService {
                         if(dto.getQtdeVendas() != null){
                             analiseHistoricoDTO.setEd3Venda(dto.getQtdeVendas().intValue());
                         }
+                        
+                        analiseHistoricoDTO.setProduto03(prodEdicao);
                     }
                     
                     if (i == 3) {
@@ -3019,6 +3033,8 @@ public class CotaServiceImpl implements CotaService {
                         if(dto.getQtdeVendas() != null){
                             analiseHistoricoDTO.setEd4Venda(dto.getQtdeVendas().intValue());
                         }
+                        
+                        analiseHistoricoDTO.setProduto04(prodEdicao);
                     }
                     
                     if (i == 4) {
@@ -3029,6 +3045,8 @@ public class CotaServiceImpl implements CotaService {
                         if(dto.getQtdeVendas() != null){
                             analiseHistoricoDTO.setEd5Venda(dto.getQtdeVendas().intValue());
                         }
+                        
+                        analiseHistoricoDTO.setProduto05(prodEdicao);
                     }
                     
                     if (i == 5) {
@@ -3039,6 +3057,8 @@ public class CotaServiceImpl implements CotaService {
                         if(dto.getQtdeVendas() != null){
                             analiseHistoricoDTO.setEd6Venda(dto.getQtdeVendas().intValue());
                         }
+                        
+                        analiseHistoricoDTO.setProduto06(prodEdicao);
                     }
                 }
             }

@@ -3924,7 +3924,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append("   on endPdv.PDV_ID = pdv.ID ");
 		sql.append(" join endereco  ");
 		sql.append("   ON endPdv.ENDERECO_ID = endereco.ID ");
-		sql.append(" join tipo_ponto_pdv tpPDV  ");
+		sql.append(" left join tipo_ponto_pdv tpPDV  ");
 		sql.append("   on pdv.tipo_ponto_pdv_id = tpPDV.id ");
 
 		sql.append(" WHERE c.NUMERO_COTA in (:cotas)  ");
