@@ -1501,24 +1501,87 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	@SuppressWarnings("unchecked")
 	public List<Integer> obterCotasBaseEstudoHistogramaPorFaixaVenda(final FiltroHistogramaVendas filtro,final String codigoProduto,final Integer de, final Integer ate,final String[] edicoes) {
 		
-		final String queryQtdEdicoesPresentesPorCota = " (select count(distinct _pe.ID) " +
-				" from ESTOQUE_PRODUTO_COTA _epc " +
-				" join PRODUTO_EDICAO _pe on (_pe.ID = _epc.PRODUTO_EDICAO_ID) " +
-				" join PRODUTO _p on (_p.ID = _pe.PRODUTO_ID) " +
-				" join COTA _c on (_c.ID = _epc.COTA_ID) " +
-				" where _p.CODIGO = :produtoCodigo " +
-				" and _pe.NUMERO_EDICAO in (:nrEdicoes)" +
-				" and _c.NUMERO_COTA = cota2_.NUMERO_COTA) ";
-		
-		
-		String queryStringProdutoEdicao = 
-				" select  " +
-				" 	cota2_.numero_cota  " +
-				" from ESTOQUE_PRODUTO_COTA estoqueProdutoCota " +
-				" 	join PRODUTO_EDICAO produtoEdicao on estoqueProdutoCota.PRODUTO_EDICAO_ID=produtoEdicao.ID " +
-				" 	join PRODUTO produto4_ on produtoEdicao.PRODUTO_ID=produto4_.ID " +
-				" 	join COTA cota2_ on estoqueProdutoCota.COTA_ID=cota2_.ID ";
+//		final String queryQtdEdicoesPresentesPorCota = " (select count(distinct _pe.ID) " +
+//				" from ESTOQUE_PRODUTO_COTA _epc " +
+//				" join PRODUTO_EDICAO _pe on (_pe.ID = _epc.PRODUTO_EDICAO_ID) " +
+//				" join PRODUTO _p on (_p.ID = _pe.PRODUTO_ID) " +
+//				" join COTA _c on (_c.ID = _epc.COTA_ID) " +
+//				" where _p.CODIGO = :produtoCodigo " +
+//				" and _pe.NUMERO_EDICAO in (:nrEdicoes)" +
+//				" and _c.NUMERO_COTA = cota2_.NUMERO_COTA) ";
+//		
+//		
+//		String queryStringProdutoEdicao = 
+//				" select  " +
+//				" 	cota2_.numero_cota  " +
+//				" from ESTOQUE_PRODUTO_COTA estoqueProdutoCota " +
+//				" 	join PRODUTO_EDICAO produtoEdicao on estoqueProdutoCota.PRODUTO_EDICAO_ID=produtoEdicao.ID " +
+//				" 	join PRODUTO produto4_ on produtoEdicao.PRODUTO_ID=produto4_.ID " +
+//				" 	join COTA cota2_ on estoqueProdutoCota.COTA_ID=cota2_.ID ";
 
+		
+		
+		StringBuilder queryStringProdutoEdicao = new StringBuilder();
+		
+		queryStringProdutoEdicao.append(" select  T2.numCota as numeroCota from (  ");
+		queryStringProdutoEdicao.append("    ");
+		queryStringProdutoEdicao.append(" Select sum(T.REPARTE) AS reparte, sum(T.qtdeVendas) AS qtdeVendas,  ");
+		queryStringProdutoEdicao.append("  		T.numCota AS numCota  ");
+		queryStringProdutoEdicao.append("    ");
+		queryStringProdutoEdicao.append("  from (  ");
+		queryStringProdutoEdicao.append("  	SELECT   ");
+		queryStringProdutoEdicao.append("          cast(sum( case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else -mecReparte.QTDE end ) as unsigned int) AS reparte,   ");
+		queryStringProdutoEdicao.append("           ");
+		queryStringProdutoEdicao.append("          (case when l.status IN ('FECHADO','RECOLHIDO','EM_RECOLHIMENTO')   ");
+		queryStringProdutoEdicao.append("            then    ");
+		queryStringProdutoEdicao.append("             cast(sum(    ");
+		queryStringProdutoEdicao.append("               CASE    ");
+		queryStringProdutoEdicao.append("                   WHEN tipo.OPERACAO_ESTOQUE = 'ENTRADA'    ");
+		queryStringProdutoEdicao.append("                   THEN    ");
+		queryStringProdutoEdicao.append("                     mecReparte.QTDE    ");
+		queryStringProdutoEdicao.append("                   ELSE    ");
+		queryStringProdutoEdicao.append("                     -mecReparte.QTDE    ");
+		queryStringProdutoEdicao.append("               END)    ");
+		queryStringProdutoEdicao.append("               - IF(mecReparte.TIPO_MOVIMENTO_ID = 9, 0,(select sum(mecEncalhe.qtde)    ");
+		queryStringProdutoEdicao.append("                   from lancamento lanc    ");
+		queryStringProdutoEdicao.append("                   LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID    ");
+		queryStringProdutoEdicao.append("                   LEFT JOIN chamada_encalhe ce on ce.id = cel.CHAMADA_ENCALHE_ID    ");
+		queryStringProdutoEdicao.append("                   LEFT JOIN chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID    ");
+		queryStringProdutoEdicao.append("                   LEFT JOIN cota cota on cota.id = cec.COTA_ID    ");
+		queryStringProdutoEdicao.append("                   LEFT JOIN conferencia_encalhe confEnc on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID    ");
+		queryStringProdutoEdicao.append("                   LEFT JOIN movimento_estoque_cota mecEncalhe on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID    ");
+		queryStringProdutoEdicao.append(" 	              WHERE lanc.id = l.id and cota.id = c.id and ce.DATA_RECOLHIMENTO = lanc.data_rec_distrib)) AS SIGNED INT)    ");
+		queryStringProdutoEdicao.append(" 	        else    ");
+		queryStringProdutoEdicao.append("             null    ");
+		queryStringProdutoEdicao.append("             end) as qtdeVendas,  ");
+		queryStringProdutoEdicao.append("               ");
+		queryStringProdutoEdicao.append("         	(select count( distinct _epc.produto_edicao_id ) from ESTOQUE_PRODUTO_COTA _epc where _epc.produto_edicao_id in (:idsEdicoes) and _epc.cota_id = c.id ) as qtdEdicoesRecebida,  ");
+		queryStringProdutoEdicao.append("           ");
+		queryStringProdutoEdicao.append("             l.status as statusLancamento,  ");
+		queryStringProdutoEdicao.append("             c.numero_cota as numCota,  ");
+		queryStringProdutoEdicao.append("             c.id as cotaID,  ");
+		queryStringProdutoEdicao.append("             l.id as lancID,  ");
+		queryStringProdutoEdicao.append("             pe.id as id   ");
+		queryStringProdutoEdicao.append("           ");
+		queryStringProdutoEdicao.append("          FROM lancamento l   ");
+		queryStringProdutoEdicao.append("   ");
+		queryStringProdutoEdicao.append("              JOIN produto_edicao pe ON pe.id = l.produto_edicao_id   ");
+		queryStringProdutoEdicao.append("              LEFT JOIN periodo_lancamento_parcial plp ON plp.id = l.periodo_lancamento_parcial_id   ");
+		queryStringProdutoEdicao.append("              JOIN produto p ON p.id = pe.produto_id     ");
+		queryStringProdutoEdicao.append("              LEFT JOIN movimento_estoque_cota mecReparte on mecReparte.LANCAMENTO_ID = l.id   ");
+		queryStringProdutoEdicao.append("              LEFT JOIN tipo_movimento tipo ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID   ");
+		queryStringProdutoEdicao.append("              JOIN cota c on mecReparte.COTA_ID = c.ID   ");
+		queryStringProdutoEdicao.append("              left outer join BOX box on c.box_id = box.id  ");
+		queryStringProdutoEdicao.append("   ");
+		queryStringProdutoEdicao.append("          where l.status in ('EXPEDIDO','EM_BALANCEAMENTO_RECOLHIMENTO','BALANCEADO_RECOLHIMENTO','EM_RECOLHIMENTO','RECOLHIDO','FECHADO')   ");
+		queryStringProdutoEdicao.append("           ");
+		queryStringProdutoEdicao.append("          and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE'   ");
+		queryStringProdutoEdicao.append("           ");
+		queryStringProdutoEdicao.append("          and mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null   ");
+		queryStringProdutoEdicao.append(" 		  ");
+		queryStringProdutoEdicao.append("          and mecReparte.produto_edicao_id in (:idsEdicoes)  ");
+		queryStringProdutoEdicao.append(" 	       ");
+		
 
 		// Adicionando filtro
 
@@ -1527,8 +1590,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		// Filtro por
 		if (StringUtils.isNotEmpty(filtro.getFiltroPor())) {
-			queryStringProdutoEdicao += 
-					  " left outer join BOX box on cota2_.box_id=box.id";
+//			queryStringProdutoEdicao += 
+//					  " left outer join BOX box on cota2_.box_id=box.id";
 
 			whereList.add(" box.tipo_box = :tipoBox ");
 			parameterMap.put("tipoBox",TipoBox.values()[Integer.parseInt(filtro.getFiltroPor())].toString());
@@ -1543,7 +1606,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 					.getComponente())]) {
 			case TIPO_PONTO_DE_VENDA:
 				
-				whereList.add(" estoqueProdutoCota.cota_id in (select distinct cota.id from cota inner " +
+				whereList.add(" mecReparte.COTA_ID in (select distinct cota.id from cota inner " +
 								"join pdv on pdv.cota_id = cota.id where tipo_ponto_pdv_id = :codigoTipoPontoPDV) ");
 				parameterMap.put("codigoTipoPontoPDV",
 						Long.parseLong(filtro.getElemento()));
@@ -1551,7 +1614,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				break;
 			case AREA_DE_INFLUENCIA:
 
-				whereList.add(" estoqueProdutoCota.cota_id in (select distinct cota.id from cota inner " +
+				whereList.add(" mecReparte.COTA_ID in (select distinct cota.id from cota inner " +
 								" join pdv on pdv.cota_id = cota.id where AREA_INFLUENCIA_PDV_ID = :codigoAreaInfluenciaPDV) ");
 				parameterMap.put("codigoAreaInfluenciaPDV",
 						Long.parseLong(filtro.getElemento()));
@@ -1559,7 +1622,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 			case BAIRRO:
 				whereList.add(
-						  " estoqueProdutoCota.cota_id in (select distinct cota.id from cota  " +
+						  " mecReparte.COTA_ID in (select distinct cota.id from cota  " +
 						  " inner join pdv on pdv.cota_id = cota.id " +
 						  " left outer join ENDERECO_PDV enderecoPDV on enderecoPDV.pdv_id=pdv.id " +
 					      " left outer join ENDERECO endereco on endereco.id=enderecoPDV.endereco_id " +
@@ -1571,7 +1634,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			case DISTRITO:
 
 				whereList.add(
-						  " estoqueProdutoCota.cota_id in (select distinct cota.id from cota  " +
+						  " mecReparte.COTA_ID in (select distinct cota.id from cota  " +
 						  " inner join pdv on pdv.cota_id = cota.id " +
 						  " left outer join ENDERECO_PDV enderecoPDV on enderecoPDV.pdv_id=pdv.id " +
 					      " left outer join ENDERECO endereco on endereco.id=enderecoPDV.endereco_id " +
@@ -1583,7 +1646,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			case GERADOR_DE_FLUXO:
 
 				whereList.add(
-						  " estoqueProdutoCota.cota_id in (select distinct cota.id from cota  " +
+						  " mecReparte.COTA_ID in (select distinct cota.id from cota  " +
 						  " inner join pdv on pdv.cota_id = cota.id " +
 						  " left outer join GERADOR_FLUXO_PDV geradorFluxoPDV on pdv.ID = geradorFluxoPDV.pdv_id " +
 						  " where geradorFluxoPDV.tipo_gerador_fluxo_id = :idGeradorFluxoPDV) ");
@@ -1594,7 +1657,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				break;
 			case COTAS_A_VISTA:
 
-				whereList.add(" cota2_.tipo_cota = :tipoCota");
+				whereList.add(" c.tipo_cota = :tipoCota");
 				parameterMap.put("tipoCota",TipoCota.A_VISTA);
 
 				break;
@@ -1603,7 +1666,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				break;
 			case REGIAO:
 
-				whereList.add(" estoqueProdutoCota.COTA_ID in (SELECT registro.cota_id FROM registro_cota_regiao as registro WHERE regiao_id = :regiaoId )");
+				whereList.add(" mecReparte.COTA_ID in (SELECT registro.cota_id FROM registro_cota_regiao as registro WHERE regiao_id = :regiaoId )");
 				parameterMap.put("regiaoId",Long.parseLong(filtro.getElemento()));
 				break;
 			default:
@@ -1612,23 +1675,31 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		}
 
-		queryStringProdutoEdicao += " where " +
-									"	produto4_.CODIGO= :produtoCodigo " +
-									"	and ( produtoEdicao.NUMERO_EDICAO in ( :nrEdicoes ))";
+//		queryStringProdutoEdicao += " where " +
+//									"	produto4_.CODIGO= :produtoCodigo " +
+//									"	and ( produtoEdicao.NUMERO_EDICAO in ( :nrEdicoes ))";
 
 		if(!whereList.isEmpty()){
-			queryStringProdutoEdicao += " and "+StringUtils.join(whereList, " and ");
+			queryStringProdutoEdicao.append(" and "+StringUtils.join(whereList, " and "));
 
 		}
+		
+		queryStringProdutoEdicao.append(" 		 group by pe.numero_edicao, pe.id, mecReparte.cota_id, plp.numero_periodo ORDER BY l.ID desc) as T  ");
+		queryStringProdutoEdicao.append(" 		 where qtdeVendas/qtdEdicoesRecebida between :de and :ate  ");
+		queryStringProdutoEdicao.append(" 		 group by T.numCota  ");
+		queryStringProdutoEdicao.append(" 		 ) T2  ");
+		
 
-		queryStringProdutoEdicao += " group by numero_cota "
-								   +" having round((sum(estoqueProdutoCota.QTDE_RECEBIDA) - sum(estoqueProdutoCota.QTDE_DEVOLVIDA)) / " + queryQtdEdicoesPresentesPorCota+ ") between :de and :ate ";
+//		queryStringProdutoEdicao += " group by numero_cota "
+//								   +" having round((sum(estoqueProdutoCota.QTDE_RECEBIDA) - sum(estoqueProdutoCota.QTDE_DEVOLVIDA)) / " + queryQtdEdicoesPresentesPorCota+ ") between :de and :ate ";
 
-		final SQLQuery query = this.getSession().createSQLQuery(queryStringProdutoEdicao);
+		final SQLQuery query = this.getSession().createSQLQuery(queryStringProdutoEdicao.toString());
 		query.setParameter("de", de);
 		query.setParameter("ate", ate);
-		query.setParameter("produtoCodigo", codigoProduto);
-		query.setParameterList("nrEdicoes", edicoes);
+		query.setParameterList("idsEdicoes", filtro.getIdsEdicoes());
+		
+//		query.setParameter("produtoCodigo", codigoProduto);
+//		query.setParameterList("nrEdicoes", edicoes);
 
 		setParameters(query, parameterMap);
 

@@ -22,7 +22,6 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
-import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -60,8 +59,6 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_DISTRIBUICAO_HISTORICO_VENDA)
 public class HistoricoVendaController extends BaseController {
 
-	private static final String FILTRO_SESSION_ATTRIBUTE = "FiltroHistoricoVendaDTO";
-	
 	private static final ValidacaoVO VALIDACAO_VO_LISTA_VAZIA = new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 	
 	@Autowired
@@ -358,6 +355,7 @@ public class HistoricoVendaController extends BaseController {
 		}
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Post
 	public void carregarElementos(ComponentesPDV componente){
 		List<ItemDTO<Long, String>> resultList = new ArrayList<ItemDTO<Long, String>>();
@@ -427,14 +425,14 @@ public class HistoricoVendaController extends BaseController {
 			parseListaRetorno(listDto, cotaComdadosPdvDTO, listCotasComPDV);
 			
 			try {
-				FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, listCotasComPDV,
+				FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, listCotasComPDV,
 						AnaliseHistoricoXLSDTO.class, this.httpResponse);
 			} catch (Exception e) {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Não foi possível gerar o arquivo ." + fileType.toString()));
 			}
 		}else{
 			try {
-				FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, listDto,
+				FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, listDto,
 						AnaliseHistoricoDTO.class, this.httpResponse);
 			} catch (Exception e) {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Não foi possível gerar o arquivo ." + fileType.toString()));
@@ -505,6 +503,30 @@ public class HistoricoVendaController extends BaseController {
 				pdvComDados.setEd6Venda(dto.getEd6Venda());
 			}
 			
+			if(dto.getProduto01() != null){
+				pdvComDados.setProduto01(dto.getProduto01());
+			}
+			
+			if(dto.getProduto02() != null){
+				pdvComDados.setProduto02(dto.getProduto02());
+			}
+			
+			if(dto.getProduto03() != null){
+				pdvComDados.setProduto03(dto.getProduto03());
+			}
+			
+			if(dto.getProduto04() != null){
+				pdvComDados.setProduto04(dto.getProduto04());
+			}
+			
+			if(dto.getProduto05() != null){
+				pdvComDados.setProduto05(dto.getProduto05());
+			}
+			
+			if(dto.getProduto06() != null){
+				pdvComDados.setProduto06(dto.getProduto06());
+			}
+			
 			listCotasComPDV.add(pdvComDados);
 		}
 	}
@@ -518,28 +540,6 @@ public class HistoricoVendaController extends BaseController {
 		tableModel.setTotal(listaDto.size());
 		
 		return tableModel;
-	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked"})
-	private TableModel configurarTableModelComPaginacao( List listaDto, TableModel tableModel, FiltroDTO filtro){
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDto));
-
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-
-		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
-		
-		return tableModel;
-	}
-	
-	private void guardarFiltroNaSession(FiltroHistoricoVendaDTO filtro) {
-		
-		FiltroHistoricoVendaDTO filtroSession = (FiltroHistoricoVendaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-		
-		if (filtroSession != null && !filtroSession.equals(filtro)){
-			filtro.getPaginacao().setPaginaAtual(1);
-		}
-		
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 	}
 	
 	private void filtroValidate(boolean isValid, FiltroHistoricoVendaDTO filtro){
