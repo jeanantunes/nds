@@ -663,12 +663,9 @@ public class ImpressaoBoletosController extends BaseController {
 	public void gerarArquivo(final FiltroDividaGeradaDTO filtro) {
 		
 		FileType fileType = FileType.REM;
-<<<<<<< HEAD
 
 // Validacao retirada - 31.01.2017
-=======
 		
->>>>>>> DGBti/master
 //		if(!fechamentoEncalheService.validarEncerramentoOperacaoEncalhe(filtro.getDataMovimento())) {
 //			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Favor realizar o fechamento de encalhe."), Constantes.PARAM_MSGS).recursive().serialize();
 //			return;
