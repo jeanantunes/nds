@@ -168,15 +168,15 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 EdicoesProdutosDTO edicoesProdutosAcumulado = this.getReparteVendaAcumulado(edicoesProdutoPorCota);
                 
                 if (edicoesProdutosAcumulado != null) {
-                if(queryDTO.possuiOrdenacaoPlusFiltro() && queryDTO.possuiPercentualDeVenda() ){
-                	          
-                	int pct = edicoesProdutosAcumulado.getVenda().intValue()*100/ ( edicoesProdutosAcumulado.getReparte().intValue() > 0?edicoesProdutosAcumulado.getReparte().intValue():1) ;
-                	if ( (pct >=  queryDTO.getFilterSortFrom() && pct <=  queryDTO.getFilterSortTo()))
-                	   lista1.add(item);
-                	else
-                		continue;
-                }
-                else lista1.add(item);
+	                if(queryDTO.possuiOrdenacaoPlusFiltro() && queryDTO.possuiPercentualDeVenda() ){
+	                	          
+	                	int pct = edicoesProdutosAcumulado.getVenda().intValue()*100/ ( edicoesProdutosAcumulado.getReparte().intValue() > 0?edicoesProdutosAcumulado.getReparte().intValue():1) ;
+	                	if ( (pct >=  queryDTO.getFilterSortFrom() && pct <=  queryDTO.getFilterSortTo()))
+	                	   lista1.add(item);
+	                	else
+	                		continue;
+	                }
+	                else lista1.add(item);
                 
                     temp.add(edicoesProdutosAcumulado);
                 } 
@@ -228,6 +228,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             }
 
             List<Long> idsProdutoEdicao = new LinkedList<>();
+            
             for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
                 idsProdutoEdicao.add(edicao.getProdutoEdicaoId());
             }

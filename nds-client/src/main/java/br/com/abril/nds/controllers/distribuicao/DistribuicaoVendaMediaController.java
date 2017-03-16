@@ -129,8 +129,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
     @Autowired
     private DistribuidorService distribuidorService;
     
-    @Autowired
-    private InformacoesReparteEstudoComplementarService infoRepEstudoComplementarService;
+//    @Autowired
+//    private InformacoesReparteEstudoComplementarService infoRepEstudoComplementarService;
     
     private static final int QTD_MAX_PRODUTO_EDICAO = 6;
 
