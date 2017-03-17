@@ -185,4 +185,6 @@ public interface DividaRepository extends Repository<Divida, Long>{
     Long verificarEnvioDeEmail(GeraDividaDTO dividaGerada);
 
     BigInteger obterIdDividaPendente(ConsolidadoFinanceiroCota consolidado, Date dataOperaçao);
+    
+    public BigDecimal obterTotalGeral(FiltroDividaGeradaDTO filtro);
 }

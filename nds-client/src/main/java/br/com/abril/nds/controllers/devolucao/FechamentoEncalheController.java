@@ -1977,8 +1977,8 @@ public class FechamentoEncalheController extends BaseController {
 			try {
 				
 				FileExporter.to("analitico-encalhe", fileType).inHTTPResponse(
-					this.getNDSFileHeader(), null, null, listVO, 
-					AnaliticoEncalheVO.class, this.response);
+						this.getNDSFileHeader(), null, null, listVO, 
+						AnaliticoEncalheVO.class, this.response);
 				
 			} catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);

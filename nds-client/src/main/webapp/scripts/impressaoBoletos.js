@@ -157,14 +157,16 @@ var impressaoBoletosController = $.extend(true, {
 			return resultado.tableModel;
 		}
 		
+		var totalGeral = 0;
+		
 		// Monta as colunas com os inputs do grid
 		$.each(resultado.rows, function(index, row) {
 			
 			var nossoNumero  = row.cell.nossoNumero;
 			
+			totalGeral = row.cell.totalGeral;
+			
 			if(row.cell.mostrar) {
-				
-				console.log(row.cell.mostrar);
 				
 				var linkImpressao = '<a isEdicao="true" href="javascript:;" onclick="impressaoBoletosController.imprimirDivida(\'' + nossoNumero + '\');" style="cursor:pointer">' +
 				 '<img src="' + contextPath + '/images/ico_impressora.gif" hspace="5" border="0px" title="Imprime" />' +
@@ -203,8 +205,9 @@ var impressaoBoletosController = $.extend(true, {
 	            row.cell.acao = linkImpressao + linkEmail ; 
 			} 
 			
-			
 		});
+		
+		$('#totalGeralBoletos', workspace).html($.formatNumber(totalGeral, {format:"#,##0.00", locale:"br"}));
 		
 		$("#grids", impressaoBoletosController.workspace).show();
 			

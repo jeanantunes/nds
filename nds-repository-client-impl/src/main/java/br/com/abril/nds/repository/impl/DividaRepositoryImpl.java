@@ -100,6 +100,21 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         return (long) query.list().size();
     }
     
+    @Override
+    public BigDecimal obterTotalGeral(FiltroDividaGeradaDTO filtro) {
+    	final StringBuilder hql = new StringBuilder();
+        
+        hql.append(getSqlSumDividas(true, filtro, true));
+        
+        final Query query = super.getSession().createQuery(hql.toString());
+        
+        final Map<String, Object> param = getParametrosConsultaDividas(filtro, true);
+        
+        setParameters(query, param);
+        
+        return (BigDecimal) query.uniqueResult();
+    }
+    
     @SuppressWarnings("unchecked")
     @Override
     public List<GeraDividaDTO> obterDividasGeradasSemBoleto(final FiltroDividaGeradaDTO filtro) {
@@ -313,7 +328,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
                .append(" cobranca.tipoCobranca as tipoCobranca,")
                .append(" coalesce(cobranca.vias, 0) as vias, ")
                .append(" cobranca.nossoNumero as nossoNumero, ")
-               .append(" divida.status as status ");
+               .append(" divida.status as status, ")
+               .append(" sum(cobranca.valor) as totalGeral ");	
         }
         
         hql.append(" FROM ")
@@ -372,6 +388,78 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         }
         
         hql.append(" GROUP BY cobranca.id ");
+        
+        return hql.toString();
+    }
+    
+    /**
+     * Retorna o hql da consulta de dividas.
+     * 
+     * @param count
+     * @param filtro
+     * @return String
+     */
+    private String getSqlSumDividas(final boolean count, final FiltroDividaGeradaDTO filtro, final boolean isBoleto) {
+        
+        final StringBuilder hql = new StringBuilder();
+        
+        hql.append(" select sum(cobranca.valor) as totalGeral ");	
+        hql.append(" FROM ")
+           .append(" Divida divida ")
+           .append(" JOIN divida.cobranca cobranca ")
+           .append(" JOIN divida.consolidados consolidado ")
+           .append(" JOIN cobranca.cota cota ");
+           
+           if(filtro.getIdBanco() != null) {
+        	   hql.append(" JOIN cobranca.banco banco ");
+           }
+           
+           hql.append(" left JOIN cota.box box ")
+           .append(" left JOIN cota.pdvs pdv ")
+           .append(" left JOIN cota.pessoa pessoa ")
+           .append(" left JOIN cota.parametroCobranca parametroCobranca ")
+           .append(" left JOIN pdv.rotas rotaPdv  ").append(" left JOIN rotaPdv.rota rota  ")
+           .append(" left JOIN rota.roteiro roteiro ")
+           .append(" WHERE ")
+           .append(" divida.data =:data ")
+           .append(" AND divida.acumulada =:acumulaDivida ")
+//           .append(" AND cobranca.statusCobranca=:statusCobranca ")
+           .append(" AND pdv.caracteristicas.pontoPrincipal = true ")
+           //.append(" AND divida.status != :pendenteAcumulada ")
+           .append(" AND roteiro.tipoRoteiro != :tipoRoteiroEspecial ");
+           //.append(" AND cobranca.dataPagamento is null ")
+         //  .append(" AND divida.status in (:statusDivida) ");
+        
+        if (filtro.getNumeroCota() != null) {
+            hql.append(" AND cota.numeroCota =:numeroCota ");
+        }
+        
+        if (filtro.getTipoCobranca() != null) {
+            
+            hql.append(" AND cobranca.tipoCobranca =:tipoCobranca  ");
+        }
+        
+        if (!isBoleto) {
+            hql.append(" AND cobranca.tipoCobranca not in (:tipoCobrancaBoleto ) ");
+        }
+        
+        if (filtro.getIdBox() != null) {
+            hql.append(" AND box.id =:box ");
+        }
+        
+        if (filtro.getIdRota() != null) {
+            hql.append(" AND rota.id =:rota ");
+        }
+        
+        if (filtro.getIdRoteiro() != null) {
+            hql.append(" AND roteiro.id =:roteiro ");
+        }
+        
+        if (filtro.getIdBanco() != null) {
+            hql.append(" AND banco.id = :idBanco ");
+        }
+        
+        //hql.append(" GROUP BY cobranca.id ");
         
         return hql.toString();
     }

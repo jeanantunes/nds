@@ -1,9 +1,11 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -28,6 +30,14 @@ public class AnaliticoEncalheVO implements Serializable {
 	@Export(label="Cobrança", alignment=Export.Alignment.LEFT, exhibitionOrder=5)
 	private String statusCobranca;
 	
+	@Export(label="usuário", alignment=Export.Alignment.LEFT, exhibitionOrder=6)
+	private String usuario;
+	
+	@Export(label="Início", alignment=Export.Alignment.LEFT, exhibitionOrder=7)
+	private String inicio;
+	
+	@Export(label="Fim", alignment=Export.Alignment.LEFT, exhibitionOrder=8)
+	private String fim;
 	
 	public AnaliticoEncalheVO()
 	{}
@@ -39,6 +49,9 @@ public class AnaliticoEncalheVO implements Serializable {
 		this.setBoxEncalhe(dto.getBoxEncalhe());
 		this.setTotal(CurrencyUtil.formatarValor(MathUtil.round(dto.getTotal(), 2)));
 		this.setStatusCobranca(dto.getStatusCobranca().toString());
+		this.setUsuario(dto.getUsuario());
+		this.setInicio(dto.getIncio());
+		this.setFim(dto.getFim());
 	}
 
 
@@ -91,6 +104,29 @@ public class AnaliticoEncalheVO implements Serializable {
 		this.statusCobranca = statusCobranca;
 	}
 	
+	public String getUsuario() {
+		return usuario;
+	}
 	
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+	
+	public String getInicio() {
+		return inicio;
+	}
+	
+	public void setInicio(Date inicio) {
+		this.inicio = DateUtil.formatarHoraMinuto(inicio);
+	}
 
+
+	public String getFim() {
+		return fim;
+	}
+
+
+	public void setFim(Date fim) {
+		this.fim = DateUtil.formatarHoraMinuto(fim);
+	}
 }

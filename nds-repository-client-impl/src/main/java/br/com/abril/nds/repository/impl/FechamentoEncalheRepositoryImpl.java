@@ -1241,7 +1241,13 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         hql.append(hqlCobrancaCotaAVista);
         
-        hql.append("), 'POSTERGADA') as statusCobranca ");
+        hql.append("), 'POSTERGADA') as statusCobranca, ");
+        
+        hql.append("	u.nome as usuario,			");
+        
+        hql.append("	TIME(controle.dataInicio) as inicio,			");
+        
+        hql.append("	TIME(controle.dataFim) as fim			");
         
         getQueryAnalitico(filtro, hql);
         
@@ -1331,6 +1337,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             final StringBuilder hql) {
         
         hql.append("     FROM ControleConferenciaEncalheCota  controle ");
+        
+        hql.append("     JOIN controle.usuario u");
         
         hql.append("     JOIN controle.cota cota");
         

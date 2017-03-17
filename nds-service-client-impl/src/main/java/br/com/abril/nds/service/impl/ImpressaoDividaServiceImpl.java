@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -171,6 +172,13 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 	public Long obterQuantidadeDividasGeradas(FiltroDividaGeradaDTO filtro) {
 		
 		return dividaRepository.obterQuantidadeRegistroDividasGeradas(filtro);
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public BigDecimal obterTotalGeral(FiltroDividaGeradaDTO filtro) {
+		
+		return dividaRepository.obterTotalGeral(filtro);
 	}
 	
 	@Transactional(readOnly=true)

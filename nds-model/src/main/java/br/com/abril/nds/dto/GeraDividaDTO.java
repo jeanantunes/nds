@@ -11,6 +11,8 @@ import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Footer;
+import br.com.abril.nds.util.export.FooterType;
 
 @Exportable
 public class GeraDividaDTO implements Serializable{
@@ -49,6 +51,7 @@ public class GeraDividaDTO implements Serializable{
 	private Date dataEmissao;
 	
 	@Export(label = "Valor", alignment = Alignment.RIGHT, columnType =ColumnType.MOEDA)
+	@Footer(label = "Total Geral R$", type=FooterType.SUM, columnType=ColumnType.MOEDA)
 	private BigDecimal valor;
 	
 	@Export(label = "Status", alignment = Alignment.CENTER)
@@ -62,7 +65,9 @@ public class GeraDividaDTO implements Serializable{
 	private String nossoNumero;
 	
 	private Long bancoId;
-
+	
+	private BigDecimal totalGeral;
+	
 	public GeraDividaDTO() {}
 	
 	public GeraDividaDTO(String box,String rota, String roteiro, 
@@ -302,5 +307,13 @@ public class GeraDividaDTO implements Serializable{
 
 	public void setStatus(StatusDivida status) {
 		this.status = status;
+	}
+
+	public BigDecimal getTotalGeral() {
+		return totalGeral;
+	}
+
+	public void setTotalGeral(BigDecimal totalGeral) {
+		this.totalGeral = totalGeral;
 	}
 }

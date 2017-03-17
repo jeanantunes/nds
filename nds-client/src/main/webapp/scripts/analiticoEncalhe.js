@@ -68,33 +68,58 @@ var analiticoEncalheController = $.extend(true, {
 			colModel : [ {
 				display : 'Cota',
 				name : 'numeroCota',
-				width : 60,
+				width : 40,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
 				name : 'nomeCota',
-				width : 400,
+				width : 250,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Box Encalhe',
 				name : 'boxEncalhe',
-				width : 140,
+				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Total R$',
 				name : 'total',
-				width : 100,
+				width : 70,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Cobrança',
 				name : 'statusCobranca',
-				width : 180,
+				width : 80,
 				sortable : true,
 				align : 'left'
+			}, {
+				display : 'Usuário',
+				name : 'usuario',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Início',
+				name : 'inicio',
+				width : 60,
+				sortable : true,
+				align : 'center'
+					
+			}, {
+				display : 'Fim',
+				name : 'fim',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Detalhes',
+				name : 'acao',
+				width : 70,
+				sortable : true,
+				align : 'center'			
 			}],
 			sortname : "numeroCota",
 			sortorder : "asc",
