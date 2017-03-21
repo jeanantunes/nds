@@ -1,8 +1,7 @@
 var analiticoEncalheController = $.extend(true, {
 	
 	path : contextPath + '/devolucao/fechamentoEncalhe/',
-//fechamentoEncalheController
-
+	
 	init : function() {
 		
 		$("#analiticoEncalhe_dataEncalhe").datepicker({
@@ -132,19 +131,22 @@ var analiticoEncalheController = $.extend(true, {
 		});
 	},
 	
-	
-	
 	preprocessamentoGrid : function(resultado) {
 
 		$('#valorTotalAnalitico', workspace).html(resultado.valorTotalAnalitico);
 		
 		$('#totalCotaAnalitico', workspace).html(resultado.qtdCotas);
 		
+		$.each(resultado.tableModel.rows, function(index, value) {
+			var id = value.cell.id;
+			
+			var acao = '</a> <a href="javascript:;" onclick="fechamentoEncalheController.detalhe(' + id + ');""><img src="' + contextPath + '/images/ico_detalhes.png" border="0" /></a>';
+			
+			value.cell.acao = acao;
+		});
+		
 		return resultado.tableModel;
 	},
 	
-	
-	
 }, BaseController);
-
 //@ sourceURL=analiticoEncalhe.js

@@ -21,6 +21,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -175,6 +178,12 @@ public class FechamentoEncalheController extends BaseController {
 	
 	private static final ConcurrentMap<String, String> CACHE_COBRANCA_COTAS = new ConcurrentHashMap<>();
 	
+	
+	private enum Visao {
+		REPARTE, ENCALHE
+	}
+	
+	
 	@Path("/")
 	public void index() {
 		
@@ -185,6 +194,8 @@ public class FechamentoEncalheController extends BaseController {
 		result.include("aceitaJuramentado", this.distribuidorService.aceitaJuramentado());
 		result.include("listaFornecedores", listaFornecedores);
 		result.include("listaBoxes", listaBoxes);
+		
+		result.include("listaVisao", Arrays.asList(Visao.ENCALHE, Visao.REPARTE));
 		
 		boolean confCega = !usuarioPossuiRule(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_CONF_CEGA);
 		
@@ -1937,9 +1948,13 @@ public class FechamentoEncalheController extends BaseController {
 		if(valorTotalAnalitico == null) {
 			valorTotalAnalitico = BigDecimal.ZERO;
 		}
-		
+
 		List<AnaliticoEncalheVO> listVO = new ArrayList<AnaliticoEncalheVO>();
 		
+//		lambda
+//		final List<AnaliticoEncalheVO> wrappedMovies2 =
+//				listDTO.stream().map(dto -> new AnaliticoEncalheVO(dto)).collect(Collectors.toList());
+//		
 		for (AnaliticoEncalheDTO dto : listDTO) {
 			listVO.add(new AnaliticoEncalheVO(dto));
 		}
@@ -2098,6 +2113,13 @@ public class FechamentoEncalheController extends BaseController {
 	private void limparStatusCobrancaCotas() {
 		
 		CACHE_COBRANCA_COTAS.clear();
+	}
+	
+	@Post
+	public void detalhe(Long id){
+		
+		
+		this.result.use(Results.json()).from("").serialize();
 	}
 	
 }

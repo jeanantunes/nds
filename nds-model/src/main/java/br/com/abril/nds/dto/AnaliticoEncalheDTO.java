@@ -18,6 +18,7 @@ public class AnaliticoEncalheDTO implements Serializable {
 	private String usuario;
 	private Date inicio;
 	private Date fim;
+	private Long id;
 	
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -80,5 +81,13 @@ public class AnaliticoEncalheDTO implements Serializable {
 	
 	public void setFim(Date fim) {
 		this.fim = fim;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 }

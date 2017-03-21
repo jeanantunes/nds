@@ -17,7 +17,7 @@
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="75">Data Encalhe:</td>
-				<td width="114"><input name="filtro.dataEncalhe" type="text" id="analiticoEncalhe_dataEncalhe" style="width:80px;" value="" onchange="analiticoEncalheController.limpaGridPesquisa()" /></td>
+				<td width="100"><input name="filtro.dataEncalhe" type="text" id="analiticoEncalhe_dataEncalhe" style="width:80px;" value="" onchange="analiticoEncalheController.limpaGridPesquisa()" /></td>
 				<td width="67">Fornecedor:</td>
 				<td width="216">
 					<select name="filtro.fornecedorId" id="selectFornecedor" style="width:200px;" onchange="analiticoEncalheController.limpaGridPesquisa()">
@@ -27,12 +27,24 @@
 					</c:forEach>
 					</select>
 				</td>
-				<td width="97">Box de Encalhe:</td>
-				<td width="239">
-					<select name="filtro.boxId" id="selectBoxEncalhe" style="width:100px;" onchange="analiticoEncalheController.limpaGridPesquisa()">
-					<option value="">Selecione...</option>
-					<c:forEach var="box" items="${listaBoxes}">
-						<option value="${box.id}">${box.nome}</option>
+				<td></td>
+			</tr>	
+			<tr>	
+				<td width="70">Box de Encalhe:</td>
+				<td width="160">
+					<select name="filtro.boxId" id="selectBoxEncalhe" style="width:160px;" onchange="analiticoEncalheController.limpaGridPesquisa()">
+						<option value="">Selecione...</option>
+						<c:forEach var="box" items="${listaBoxes}">
+							<option value="${box.id}">${box.nome}</option>
+						</c:forEach>
+					</select>
+				</td>
+				
+				<td width="70">Vis&atilde;o:</td>
+				<td width="100">
+					<select name="filtro.visao" id="selectVisao" style="width:100px;">
+					<c:forEach var="v" items="${listaVisao}">
+						<option value="${v}">${v}</option>
 					</c:forEach>
 					</select>
 				</td>

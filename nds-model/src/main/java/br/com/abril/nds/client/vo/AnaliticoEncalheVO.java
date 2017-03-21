@@ -39,8 +39,9 @@ public class AnaliticoEncalheVO implements Serializable {
 	@Export(label="Fim", alignment=Export.Alignment.LEFT, exhibitionOrder=8)
 	private String fim;
 	
-	public AnaliticoEncalheVO()
-	{}
+	private Long id;
+	
+	public AnaliticoEncalheVO(AnaliticoEncalheVO dto) {}
 	
 	
 	public AnaliticoEncalheVO(AnaliticoEncalheDTO dto) {
@@ -52,13 +53,13 @@ public class AnaliticoEncalheVO implements Serializable {
 		this.setUsuario(dto.getUsuario());
 		this.setInicio(dto.getIncio());
 		this.setFim(dto.getFim());
+		this.setId(dto.getId());
 	}
 
 
 	public String getNumeroCota() {
 		return numeroCota;
 	}
-
 
 	public void setNumeroCota(String numeroCota) {
 		this.numeroCota = numeroCota;
@@ -68,23 +69,19 @@ public class AnaliticoEncalheVO implements Serializable {
 	public String getNomeCota() {
 		return nomeCota;
 	}
-
-
+	
 	public void setNomeCota(String nomeCota) {
 		this.nomeCota = nomeCota;
 	}
-
 
 	public String getBoxEncalhe() {
 		return boxEncalhe;
 	}
 
-
 	public void setBoxEncalhe(String boxEncalhe) {
 		this.boxEncalhe = boxEncalhe;
 	}
-
-
+	
 	public String getTotal() {
 		return total;
 	}
@@ -119,14 +116,24 @@ public class AnaliticoEncalheVO implements Serializable {
 	public void setInicio(Date inicio) {
 		this.inicio = DateUtil.formatarHoraMinuto(inicio);
 	}
-
-
+	
 	public String getFim() {
 		return fim;
 	}
-
-
+	
 	public void setFim(Date fim) {
 		this.fim = DateUtil.formatarHoraMinuto(fim);
 	}
+
+
+	public Long getId() {
+		return id;
+	}
+
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	
 }
