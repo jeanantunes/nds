@@ -2938,11 +2938,13 @@ public class CotaServiceImpl implements CotaService {
     @Transactional(readOnly = true)
     @Override
     public List<AnaliseHistoricoDTO> buscarHistoricoCotas(final List<ProdutoEdicaoDTO> listProdutoEdicaoDto,
-            final List<Integer> cotas, final String sortorder, final String sortname) {
+            final List<Integer> cotas, final String sortorder, final String sortname, Boolean isFiltroTodasCotas) {
         
         List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarHistoricoCotas(listProdutoEdicaoDto, cotas);
         
         List<AnaliseHistoricoDTO> listAnaliseHistoricoParaRemocao = new ArrayList<>(); 
+        
+        List<Integer> listCotasExistentes = new ArrayList<>();
         
         for (final AnaliseHistoricoDTO analiseHistoricoDTO : listAnaliseHistoricoDTO) {
             
@@ -3069,12 +3071,27 @@ public class CotaServiceImpl implements CotaService {
             	listAnaliseHistoricoParaRemocao.add(analiseHistoricoDTO);
             }
             
+            if(isFiltroTodasCotas){
+            	listCotasExistentes.add(analiseHistoricoDTO.getNumeroCota());
+            }
+            
         }
         
         listAnaliseHistoricoDTO.removeAll(listAnaliseHistoricoParaRemocao);
         
         formatarListaHistoricoVenda(listAnaliseHistoricoDTO);
         ordenarListaHistoricoVenda(sortorder, sortname, listAnaliseHistoricoDTO);
+        
+        // add cotas sem reparte
+        
+        if(isFiltroTodasCotas){
+        	
+        	cotas.removeAll(listCotasExistentes);
+        	
+        	List<AnaliseHistoricoDTO> listCotasSemReparte = cotaRepository.buscarDadosCotasSemHistorico(cotas);
+        	
+        	listAnaliseHistoricoDTO.addAll(listCotasSemReparte);
+        }
         
         return listAnaliseHistoricoDTO;
     }
@@ -3245,6 +3262,22 @@ public class CotaServiceImpl implements CotaService {
     public List<CotaDTO> buscarCotasHistorico(final List<ProdutoEdicaoDTO> listProdutoEdicaoDto, final boolean cotasAtivas) {
         
         return cotaRepository.buscarCotasHistorico(listProdutoEdicaoDto, cotasAtivas);
+    }
+    
+    @Override
+	@Transactional
+    public List<CotaDTO> buscarCotasComEsemReparte(List<ProdutoEdicaoDTO> listProdutoEdicaoDTO){
+    	
+    	List<Long> listIdsProdutoEdicao = new ArrayList<>();
+    	
+    	for (ProdutoEdicaoDTO produtoEdicaoDTO : listProdutoEdicaoDTO) {
+    		
+    		String[] numeroEdicao = {produtoEdicaoDTO.getNumeroEdicao().toString()};
+    		
+    		listIdsProdutoEdicao.addAll(produtoEdicaoRepository.obterIdsEdicoesPorCodigoNumeroEdicoes(produtoEdicaoDTO.getCodigoProduto(), numeroEdicao));
+		}
+    	
+    	return cotaRepository.buscarCotasCom_e_SemRaparte(listIdsProdutoEdicao);
     }
     
     @Transactional(readOnly = true)

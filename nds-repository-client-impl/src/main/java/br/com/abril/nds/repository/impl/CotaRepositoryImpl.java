@@ -2907,10 +2907,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
             
             break;
         case COTAS_A_VISTA:
-            hql.append(" LEFT JOIN cota.parametroCobranca as parametroCobranca ");
-            
-            whereParameter.append(" parametroCobranca.tipoCota = :tipoCota AND");
-            parameters.put("tipoCota", TipoCota.A_VISTA);
+            whereParameter.append(" cota.tipoCota = :tipoCota AND");
+            parameters.put("tipoCota", TipoCota.valueOf(elemento)); 
             
             break;
         case COTAS_NOVAS_RETIVADAS:
@@ -2968,7 +2966,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         
         hql.append(" GROUP BY cota.numeroCota ");
         
-        final Query query = super.getSession().createQuery(hql.toString());
+        final Query query = super.getSession().createQuery(hql.toString()); 
         
         this.setParameters(query, parameters);
         
@@ -3053,6 +3051,43 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseHistoricoDTO.class));
         
         return query.list();
+    }
+    
+    @Override
+	@SuppressWarnings("unchecked")
+	public List<AnaliseHistoricoDTO> buscarDadosCotasSemHistorico(List<Integer> listCota) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select  ");
+		sql.append(" 	cota.numero_Cota as numeroCota,  ");
+		sql.append(" 	cota.situacao_Cadastro as statusCotaFormatado,  ");
+		sql.append(" 	coalesce(pessoa.nome_Fantasia,pessoa.razao_Social,pessoa.nome,'') as nomePessoa,  ");
+		sql.append(" 	count(distinct pdvs.id) as qtdPdv  ");
+		sql.append(" from  ");
+		sql.append(" 	Cota cota  ");
+		sql.append(" 	left join Pessoa pessoa   ");
+		sql.append(" 		on cota.pessoa_id = pessoa.id  ");
+		sql.append(" 	left join pdv pdvs  ");
+		sql.append(" 		on pdvs.cota_id = cota.id  ");
+		sql.append(" where  ");
+		sql.append(" 	cota.numero_Cota in(:cotas)  ");
+		sql.append(" group by  ");
+		sql.append(" 	cota.numero_Cota  ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+
+		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		query.addScalar("statusCotaFormatado", StandardBasicTypes.STRING);
+		query.addScalar("nomePessoa", StandardBasicTypes.STRING);
+		query.addScalar("qtdPdv", StandardBasicTypes.LONG);
+		
+		query.setParameterList("cotas", listCota);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseHistoricoDTO.class));
+        
+		return query.list();
+        
     }
     
     @Override
@@ -3567,6 +3602,36 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
             query.setParameterList("produtoCodigoList", listCodProduto);
             query.setParameterList("produtoEdicaoNumeroList", listNumEdicao);
         }
+        
+        query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
+        
+        return query.list();
+    }
+    
+    @Override
+	@SuppressWarnings("unchecked")
+    public List<CotaDTO> buscarCotasCom_e_SemRaparte(final List<Long> listIdProdutoEdicao) {
+        
+        final StringBuilder sql = new StringBuilder();
+        
+        sql.append(" select   ");
+        sql.append(" 	ct.numero_cota as numeroCota,  ");
+        sql.append(" 	coalesce(pessoa.nome_Fantasia,pessoa.razao_Social,pessoa.nome,'') as nomePessoa  ");
+        sql.append(" from estudo_cota_gerado ecg  ");
+        sql.append(" 	join estudo es   ");
+        sql.append(" 		on ecg.estudo_id = es.id  ");
+        sql.append(" 	join cota ct  ");
+        sql.append(" 		on ecg.cota_id = ct.id  ");
+        sql.append(" 	left join Pessoa pessoa   ");
+        sql.append(" 		on ct.pessoa_id = pessoa.id  ");
+        sql.append(" where es.produto_edicao_id in (:produtoEdicaoIdList)  ");
+        sql.append(" 	and ct.situacao_cadastro in ('ATIVO', 'SUSPENSA')  ");
+        sql.append(" group by ecg.cota_id order by ct.numero_cota  ");
+        
+        
+        final Query query = super.getSession().createSQLQuery(sql.toString());
+        
+        query.setParameterList("produtoEdicaoIdList", listIdProdutoEdicao);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
         

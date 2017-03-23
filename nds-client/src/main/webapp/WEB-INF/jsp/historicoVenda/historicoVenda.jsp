@@ -14,7 +14,7 @@ $(function() {
 
 </script>
 <style type="text/css">
-.filtroQtdeReparte, .filtroQtdeVenda, .filtroComponentes, .filtroCotas, .filtroPercVenda, .filtroTodasAsCotas{display:none;}
+.filtroQtdeReparte, .filtroQtdeVenda, .filtroComponentes, .filtroCotas, .filtroPercVenda, .filtroCotasDoHistorico, .filtroTodasAsCotas{display:none;}
 </style>
 
 <div class="areaBts">
@@ -270,6 +270,23 @@ $(function() {
                       </span>
                     </td>
                   </tr>
+                </table>
+                
+                <table width="410" border="0" cellpadding="2" cellspacing="1">
+                  <tr>
+                    <td width="20">
+                      <input type="radio" name="filtroPor" id="cotasDoHistoricoFiltro" value="radio" onclick="historicoVendaController.filtroCotasDoHistorico()" />
+                    </td>
+                    <td>
+                      <label for="todasAsCotasFiltro">
+                        <strong>Cotas do hist&oacute;rico</strong>
+                      </label>
+                      <span class="classPesquisar filtroCotasDoHistorico">
+                        <a href="javascript:;" id="pesquisarCotasDoHistorico">&nbsp;</a>
+                      </span>
+                    </td>
+                  </tr>
+
                 </table>
 
                 <table width="410" border="0" cellpadding="2" cellspacing="1">

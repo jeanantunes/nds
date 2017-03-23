@@ -119,6 +119,7 @@ public class AnaliseHistoricoDTO {
 
 	public void setStatusCotaFormatado(String statusCotaFormatado) {
 		this.statusCotaFormatado = statusCotaFormatado;
+		this.statusCota = SituacaoCadastro.valueOf(statusCotaFormatado);
 	}
 
 	public String getNomePessoa() {

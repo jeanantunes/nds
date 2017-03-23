@@ -1911,7 +1911,7 @@ if ( dto.getRepartePrevisto() != null) {
             	Collections.sort(lstPrDTO);
             	
                 final List<AnaliseHistoricoDTO> historico =
-                        cotaService.buscarHistoricoCotas(lstPrDTO, cotas, null, null);
+                        cotaService.buscarHistoricoCotas(lstPrDTO, cotas, null, null, false);
                 
                 BigDecimal vendaMedia = BigDecimal.ZERO, reparteMedio = BigDecimal.ZERO;
                 
