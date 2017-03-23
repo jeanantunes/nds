@@ -64,68 +64,62 @@ public class AnaliseHistoricoXLSDTO {
 	private String vendaMediaFormat;
 
 	// Edição 1
-	@Export(label = "Produto 01", alignment=Alignment.LEFT, exhibitionOrder = 17)
-	private String produto01;
-	
-	@Export(label = "REP 1", alignment=Alignment.LEFT, exhibitionOrder = 18)
+	@Export(label = "REP 1", alignment=Alignment.LEFT, exhibitionOrder = 17)
 	private Integer ed1Reparte;
 	
-	@Export(label = "VDA 1", alignment=Alignment.LEFT, exhibitionOrder = 19)
+	@Export(label = "VDA 1", alignment=Alignment.LEFT, exhibitionOrder = 18)
 	private Integer ed1Venda;
 
 	// Edição 2
-	@Export(label = "Produto 02", alignment=Alignment.LEFT, exhibitionOrder = 20)
-	private String produto02;
-	
-	@Export(label = "REP 2", alignment=Alignment.LEFT, exhibitionOrder = 21)
+	@Export(label = "REP 2", alignment=Alignment.LEFT, exhibitionOrder = 19)
 	private Integer ed2Reparte;
 	
-	@Export(label = "VDA 2", alignment=Alignment.LEFT, exhibitionOrder = 22)
+	@Export(label = "VDA 2", alignment=Alignment.LEFT, exhibitionOrder = 20)
 	private Integer ed2Venda;
 
 	// Edição 3
-	@Export(label = "Produto 03", alignment=Alignment.LEFT, exhibitionOrder = 23)
-	private String produto03;
-	
-	@Export(label = "REP 3", alignment=Alignment.LEFT, exhibitionOrder = 24)
+	@Export(label = "REP 3", alignment=Alignment.LEFT, exhibitionOrder = 21)
 	private Integer ed3Reparte;
 	
-	@Export(label = "VDA 3", alignment=Alignment.LEFT, exhibitionOrder = 25)
+	@Export(label = "VDA 3", alignment=Alignment.LEFT, exhibitionOrder = 22)
 	private Integer ed3Venda;
 
 	// Edição 4
-	@Export(label = "Produto 04", alignment=Alignment.LEFT, exhibitionOrder = 26)
-	private String produto04;
-	
-	@Export(label = "REP 4", alignment=Alignment.LEFT, exhibitionOrder = 27)
+	@Export(label = "REP 4", alignment=Alignment.LEFT, exhibitionOrder = 23)
 	private Integer ed4Reparte;
 	
-	@Export(label = "VDA 4", alignment=Alignment.LEFT, exhibitionOrder = 28)
+	@Export(label = "VDA 4", alignment=Alignment.LEFT, exhibitionOrder = 24)
 	private Integer ed4Venda;
 
 	// Edição 5
-	@Export(label = "Produto 05", alignment=Alignment.LEFT, exhibitionOrder = 29)
-	private String produto05;
-	
-	@Export(label = "REP 5", alignment=Alignment.LEFT, exhibitionOrder = 30)
+	@Export(label = "REP 5", alignment=Alignment.LEFT, exhibitionOrder = 25)
 	private Integer ed5Reparte;
 	
-	@Export(label = "VDA 5", alignment=Alignment.LEFT, exhibitionOrder = 31)
+	@Export(label = "VDA 5", alignment=Alignment.LEFT, exhibitionOrder = 26)
 	private Integer ed5Venda;
 
 	// Edição 6
-	@Export(label = "Produto 06", alignment=Alignment.LEFT, exhibitionOrder = 32)
-	private String produto06;
-	
-	@Export(label = "REP 6", alignment=Alignment.LEFT, exhibitionOrder = 33)
+	@Export(label = "REP 6", alignment=Alignment.LEFT, exhibitionOrder = 27)
 	private Integer ed6Reparte;
 	
-	@Export(label = "VDA 6", alignment=Alignment.LEFT, exhibitionOrder = 34)
+	@Export(label = "VDA 6", alignment=Alignment.LEFT, exhibitionOrder = 28)
 	private Integer ed6Venda;
 	
 	private String codigoProduto;
 	
 	private Long numeroEdicao;
+	
+	private String produto01;
+	
+	private String produto02;
+	
+	private String produto03;
+	
+	private String produto04;
+	
+	private String produto05;
+	
+	private String produto06;
 
 	public Integer getNumeroCota() {
 		return numeroCota;
