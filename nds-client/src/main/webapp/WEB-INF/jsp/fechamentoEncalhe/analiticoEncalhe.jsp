@@ -53,11 +53,9 @@
 		</table>
 		</form>
     </fieldset>
-
-
+	
 	<div class="linha_separa_fields">&nbsp;</div>
-      
-
+	
 	<fieldset class="classFieldset">
     	<legend> Resultado Pesquisa</legend>
         <div class="grids" id="divAnaliticoEncalheGrid" style="display:none;">
@@ -74,9 +72,11 @@
 	        </table>
 		</div>
 	</fieldset>
-
-
-
+	
+	<div id="dialog-historico-detalhes" title="Historico de encalhe realizado" style="display:none;">
+		<table class="dadosHistoricoEncalheGrid"></table>
+	</div> 
+	
 	<script language="javascript" type="text/javascript">
 	$(function(){
 		analiticoEncalheController.init();

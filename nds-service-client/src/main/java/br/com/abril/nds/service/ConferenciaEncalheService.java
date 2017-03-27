@@ -288,5 +288,7 @@ public interface ConferenciaEncalheService {
 	List<ItemAutoComplete> obterProdutoPorCodigoOuNomeCotaVarejo(final String codigoOuNome, Integer numeroCota);
 
 	boolean isCobrancaNegociada(Long numeroCota);
+
+	public void criarHistoricoConfEncalheCota(Usuario usuarioLogado, List<ConferenciaEncalheDTO> listaConferenciaEncalhe, ControleConferenciaEncalheCota controleConfEncalheCota);
 	
 }

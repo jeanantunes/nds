@@ -23,8 +23,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.ValidationException;
@@ -75,6 +73,7 @@ import br.com.abril.nds.dto.ExtracaoContaCorrenteDTO;
 import br.com.abril.nds.dto.ExtracaoContaCorrenteTotaisDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTOCego;
+import br.com.abril.nds.dto.HistoricoEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroExtracaoContaCorrenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -1948,16 +1947,14 @@ public class FechamentoEncalheController extends BaseController {
 		if(valorTotalAnalitico == null) {
 			valorTotalAnalitico = BigDecimal.ZERO;
 		}
-
-		List<AnaliticoEncalheVO> listVO = new ArrayList<AnaliticoEncalheVO>();
 		
-//		lambda
-//		final List<AnaliticoEncalheVO> wrappedMovies2 =
-//				listDTO.stream().map(dto -> new AnaliticoEncalheVO(dto)).collect(Collectors.toList());
-//		
-		for (AnaliticoEncalheDTO dto : listDTO) {
-			listVO.add(new AnaliticoEncalheVO(dto));
-		}
+		// lambdas
+		final List<AnaliticoEncalheVO> listVO = listDTO.stream().map(dto -> new AnaliticoEncalheVO(dto)).collect(Collectors.toList());
+		
+//		List<AnaliticoEncalheVO> listVO = new ArrayList<AnaliticoEncalheVO>();
+//		for (AnaliticoEncalheDTO dto : listDTO) {
+//			listVO.add(new AnaliticoEncalheVO(dto));
+//		}
 		
 		TableModel<CellModelKeyValue<AnaliticoEncalheVO>> tableModel = new TableModel<CellModelKeyValue<AnaliticoEncalheVO>>();
 		
@@ -2116,10 +2113,18 @@ public class FechamentoEncalheController extends BaseController {
 	}
 	
 	@Post
-	public void detalhe(Long id){
+	@Path("/obterHistoricosConferenciaEncalhe.json")
+	public void obterHistoricosConferenciaEncalhe(String numeroCota, Date dataEncalhe){
 		
+		List<HistoricoEncalheDTO> listaHistoricoEncalhe = fechamentoEncalheService.obterHistoricosConferenciaEncalhe(numeroCota, dataEncalhe);
 		
-		this.result.use(Results.json()).from("").serialize();
+		TableModel<CellModelKeyValue<HistoricoEncalheDTO>> tableModel = new TableModel<CellModelKeyValue<HistoricoEncalheDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaHistoricoEncalhe));
+		tableModel.setPage(1);
+		tableModel.setTotal(15);
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
 }

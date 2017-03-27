@@ -13,6 +13,7 @@ var analiticoEncalheController = $.extend(true, {
 		$("#analiticoEncalhe_dataEncalhe").val(fechamentoEncalheController.vDataEncalhe);
 		
 		this.initGridFechamentoAnalitico();
+		this.initGridHistoricoEncalhe();
 	},
 	
 	
@@ -57,8 +58,7 @@ var analiticoEncalheController = $.extend(true, {
 
 		return false;
 	},
-
-	 
+	
 	initGridFechamentoAnalitico : function() {
 		
 		$(".fechamentoAnaliticoGrid").flexigrid({
@@ -131,8 +131,53 @@ var analiticoEncalheController = $.extend(true, {
 		});
 	},
 	
+	initGridHistoricoEncalhe : function() {
+	    //GRID DE HISTORICO DE ENCALHE
+		$(function() {
+			$(".dadosHistoricoEncalheGrid", fechamentoEncalheController.workspace).flexigrid({
+				preProcess: fechamentoEncalheController.getDataFromResultDivida,
+				dataType : 'json',
+				colModel : [ {
+					display : 'Usuario',
+					name : 'usuario',
+					width : 180,
+					sortable : true,
+					align : 'left'
+				},{
+					display : 'Box Encalhe',
+					name : 'boxEncalhe',
+					width : 200,
+					sortable : true,
+					align : 'left'
+				},{
+					display : 'Inicio',
+					name : 'inicio',
+					width : 40,
+					sortable : true,
+					align : 'center'
+				},{
+					display : 'Fim',
+					name : 'fim',
+					width : 40,
+					sortable : true,
+					align : 'center'
+				},{
+					display : 'Total Encalhe',
+					name : 'valorEncalheFormatado',
+					width : 70,
+					sortable : true,
+					align : 'center'
+				}],
+				width : 620,
+				height : 160
+			});
+		});
+	},
+	
 	preprocessamentoGrid : function(resultado) {
-
+		
+		var dataEncalhe = $('#analiticoEncalhe_dataEncalhe',this.workspace).val();
+		
 		$('#valorTotalAnalitico', workspace).html(resultado.valorTotalAnalitico);
 		
 		$('#totalCotaAnalitico', workspace).html(resultado.qtdCotas);
@@ -140,12 +185,54 @@ var analiticoEncalheController = $.extend(true, {
 		$.each(resultado.tableModel.rows, function(index, value) {
 			var id = value.cell.id;
 			
-			var acao = '</a> <a href="javascript:;" onclick="fechamentoEncalheController.detalhe(' + id + ');""><img src="' + contextPath + '/images/ico_detalhes.png" border="0" /></a>';
+			var acao = '<a href="javascript:;" onclick="analiticoEncalheController.popup_detalhes(' + value.cell.numeroCota + ', ' + dataEncalhe +');""><img src="' + contextPath + '/images/ico_detalhes.png" border="0" /></a>';
 			
 			value.cell.acao = acao;
 		});
 		
 		return resultado.tableModel;
+	},
+	
+	//POPUPS
+    popup_detalhes : function (numeroCota, dataOperacao) {
+    	
+    	analiticoEncalheController.obterHistoricosConferenciaEncalhe(numeroCota, dataOperacao);
+    	
+		$( "#dialog-historico-detalhes", analiticoEncalheController.workspace ).dialog({
+			resizable: false,
+			width:650,
+			height:350,
+			modal: true,
+			buttons:[ 
+	          {
+		           id:"bt_fechar",
+		           text:"Fechar", 
+		           click: function() {
+		        	   
+		        	   $(this).dialog( "close" );
+		           }
+	           }
+	        ],
+			form: $("dialog-historico-detalhes", this.workspace).parents("form")
+		});
+		$("#dialog-historico-detalhes", this.workspace).dialog("close");
+		$(".grids", fechamentoEncalheController.workspace).show();
+	},
+	
+	obterHistoricosConferenciaEncalhe : function(numeroCota, dataOperacao){
+		
+		var dataEncalhe = $('#analiticoEncalhe_dataEncalhe',this.workspace).val();
+		
+		$(".dadosHistoricoEncalheGrid", analiticoEncalheController.workspace).flexOptions({
+			url: this.path + "obterHistoricosConferenciaEncalhe.json",
+			params: [
+			         {name:'numeroCota', value: numeroCota},
+			         {name:'dataEncalhe', value: dataEncalhe}
+			        ] ,
+			        newp: 1
+		});
+		$(".dadosHistoricoEncalheGrid", analiticoEncalheController.workspace).flexReload();
+		$(".grids", fechamentoEncalheController.workspace).show();
 	},
 	
 }, BaseController);

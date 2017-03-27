@@ -78,7 +78,7 @@ public class ControleConferenciaEncalheCota {
 	
 	@OneToMany(mappedBy = "controleConferenciaEncalheCota")
 	private List<ConferenciaEncalhe> conferenciasEncalhe = new ArrayList<ConferenciaEncalhe>();
-
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
@@ -349,5 +349,4 @@ public class ControleConferenciaEncalheCota {
 		}
 		return null;
 	}
-
 }

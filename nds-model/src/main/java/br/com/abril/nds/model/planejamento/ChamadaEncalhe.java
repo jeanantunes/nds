@@ -157,7 +157,7 @@ public class ChamadaEncalhe implements Serializable {
 	public void setSequencia(Integer sequencia) {
 		this.sequencia = sequencia;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

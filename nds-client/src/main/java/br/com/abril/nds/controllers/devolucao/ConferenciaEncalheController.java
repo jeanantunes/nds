@@ -421,78 +421,77 @@ public class ConferenciaEncalheController extends BaseController {
 	@LogFuncional(value="Conferência de Encalhe [Início da conferência]")
 	public void iniciarConferenciaEncalhe(final Integer numeroCota) {
 
-	LOGGER.warn("LOGFUNCIONAL INICIO CONFERENCIA usuario="+usuarioService.getUsuarioLogado().getLogin()+
+		LOGGER.warn("LOGFUNCIONAL INICIO CONFERENCIA usuario="+usuarioService.getUsuarioLogado().getLogin()+
 				" sessionid="+session.getId()+"  cota="+numeroCota);
-	 Cota cota=null;
+		Cota cota=null;
 		
-	 // evitar que duas conferencia na mesma cota
+		// evitar que duas conferencia na mesma cota
 	 
-	synchronized (DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA  ) {
-		
-		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(this.session, numeroCota);
-
-		limparDadosSessao();
-		
-		cota = this.conferenciaEncalheService.validarCotaParaInicioConferenciaEncalhe(numeroCota);
-		
-		if (conferenciaEncalheSessionScopeAttr.getIdBoxLogado() == null){
-	        throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento não informado.");
-	    }
-		
-        bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(cota.getNumeroCota(), this.session);
-    	
-	 }
+		synchronized (DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA  ) {
+			
+			bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(this.session, numeroCota);
 	
-	
-	if(!this.cotaService.isCotaVarejo(cota.getId())){
+			limparDadosSessao();
+			
+			cota = this.conferenciaEncalheService.validarCotaParaInicioConferenciaEncalhe(numeroCota);
+			
+			if (conferenciaEncalheSessionScopeAttr.getIdBoxLogado() == null){
+		        throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento não informado.");
+		    }
+			
+	        bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(cota.getNumeroCota(), this.session);
+	    	
+		}
 		
-		carregarMapaDatasEncalheConferiveis(numeroCota);
-		
-		// verificar se ja tem divida negociada no dia 
-		if ( conferenciaEncalheService.isCobrancaNegociada(cota.getId()) )
-			throw new ValidacaoException(TipoMensagem.WARNING, String.format("A Cota %s teve negociação.O encalhe não pode ser reaberto.", numeroCota));
-		
-		if(this.conferenciaEncalheService.verificarCotaComConferenciaEncalheFinalizada(numeroCota)) {
+		if(!this.cotaService.isCotaVarejo(cota.getId())){
 			
-			this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").put("IND_REABERTURA", "S").serialize();
+			carregarMapaDatasEncalheConferiveis(numeroCota);
 			
-		} else {
+			// verificar se ja tem divida negociada no dia 
+			if ( conferenciaEncalheService.isCobrancaNegociada(cota.getId()) )
+				throw new ValidacaoException(TipoMensagem.WARNING, String.format("A Cota %s teve negociação.O encalhe não pode ser reaberto.", numeroCota));
 			
-			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
-			
-			List<Date> datas = this.grupoService.obterDatasRecolhimentoOperacaoDiferenciada(numeroCota, dataOperacao);
-			
-			if(this.conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota, datas)) {
+			if(this.conferenciaEncalheService.verificarCotaComConferenciaEncalheFinalizada(numeroCota)) {
 				
-				this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();	
+				this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").put("IND_REABERTURA", "S").serialize();
 				
 			} else {
 				
-				if(cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacao)){
-					this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "N").put("msg",
-							"Cota com Operação Diferenciada, nenhum recolhimento para a data de operação atual.")
-					.serialize();
-				}else{
-					this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "N").put("msg",
-							"Cota não possui recolhimento planejado para a data de operação atual.")
-					.serialize();
+				Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+				
+				List<Date> datas = this.grupoService.obterDatasRecolhimentoOperacaoDiferenciada(numeroCota, dataOperacao);
+				
+				if(this.conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota, datas)) {
+					
+					this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();	
+					
+				} else {
+					
+					if(cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacao)){
+						this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "N").put("msg",
+								"Cota com Operação Diferenciada, nenhum recolhimento para a data de operação atual.")
+						.serialize();
+					}else{
+						this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "N").put("msg",
+								"Cota não possui recolhimento planejado para a data de operação atual.")
+						.serialize();
+					}
+					
+					
+					bloqueioConferenciaEncalheComponent.removerTravaConferenciaCotaUsuario(this.session);
+					
 				}
-				
-				
-				bloqueioConferenciaEncalheComponent.removerTravaConferenciaCotaUsuario(this.session);
-				
 			}
+		}else{
+			this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();
 		}
-	}else{
-		this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();
-	}
-		
-	this.session.setAttribute(NUMERO_COTA, numeroCota);
-    this.session.setAttribute(COTA, cota);
-    this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
-    
-    LOGGER.warn("INICIO CONFERENCIA COTA BLOQUEADA usuario="+usuarioService.getUsuarioLogado().getLogin()+
-			" sessionid="+session.getId()+"  cota="+numeroCota);
+			
+		this.session.setAttribute(NUMERO_COTA, numeroCota);
+	    this.session.setAttribute(COTA, cota);
+	    this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
+	    
+	    LOGGER.warn("INICIO CONFERENCIA COTA BLOQUEADA usuario="+usuarioService.getUsuarioLogado().getLogin()+
+				" sessionid="+session.getId()+"  cota="+numeroCota);
 		
 	}
 	
@@ -581,11 +580,10 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Post
 	@LogFuncional(value="Conferência de Encalhe [Carregamento da lista de encalhes]")
-	public void carregarListaConferencia(
-			Integer numeroCota, 
-			final boolean indObtemDadosFromBD,  
-			final boolean indConferenciaContingencia){
+	public void carregarListaConferencia(Integer numeroCota, final boolean indObtemDadosFromBD, final boolean indConferenciaContingencia){
+		
 		LOGGER.warn("LOGUFNCIONAL  CARREGANDO LISTA DE ENCALHES numero_cota="+numeroCota+" sessionid="+session.getId());
+		
 		final Map<String, Object> dados = obterMapaConferenciaEncalhe(numeroCota, indObtemDadosFromBD, indConferenciaContingencia);
 		
 		result.use(CustomJson.class).from(dados).serialize();
@@ -2126,9 +2124,11 @@ public class ConferenciaEncalheController extends BaseController {
 	public void finalizarConferencia(final boolean indConferenciaContingencia) throws Exception {
 		
 		LOGGER.warn("LOGFUNCIONAL F9 - finalizando conferencia encalhe - inicio cota="+this.session.getAttribute(NUMERO_COTA)+ " session.id="+this.session.getId());
+		
 		final Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
 		
 		final Integer numeroCota = (Integer) this.session.getAttribute(NUMERO_COTA);
+		
 		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(session, numeroCota);
 		
 		if (horaInicio != null) {
@@ -2145,6 +2145,7 @@ public class ConferenciaEncalheController extends BaseController {
 			}
 			
 			controleConfEncalheCota.setCota(info.getCota());
+			
 			controleConfEncalheCota.setId(info.getIdControleConferenciaEncalheCota());
 			
 	        this.carregarNotasFiscais(controleConfEncalheCota, info);
@@ -2181,31 +2182,6 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			limparIdsTemporarios(info.getListaConferenciaEncalhe());
 			
-			/*
-			dadosDocumentacaoConfEncalheCota = this.conferenciaEncalheService.finalizarConferenciaEncalhe(controleConfEncalheCota, 
-																										  listaConferenciaEncalheCotaToSave, 
-																										  this.getSetConferenciaEncalheExcluirFromSession(), 
-																										  this.getUsuarioLogado(),
-																										  indConferenciaContingencia,
-																										  info.getReparte());
-			
-			agendarAgoraAtualizacaoEstoqueProdutoConf();
-			
-			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
-			
-			final Long idControleConferenciaEncalheCota = dadosDocumentacaoConfEncalheCota.getIdControleConferenciaEncalheCota();
-			
-			this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
-				
-			try {
-				
-				this.gerarDocumentoConferenciaEncalhe(dadosDocumentacaoConfEncalheCota);
-			} catch (final Exception e){
-                LOGGER.error("Erro ao gerar documentos da conferência de encalhe: " + e.getMessage(), e);
-                throw new Exception("Erro ao gerar documentos da conferência de encalhe - " + e.getMessage());
-			}
-			*/
-
 			this.conferenciaEncalheAsyncComponent.finalizarConferenciaEncalheAsync(
 					  controleConfEncalheCota, 
 					  new ArrayList<ConferenciaEncalheDTO>(info.getListaConferenciaEncalhe()), 
@@ -2216,30 +2192,9 @@ public class ConferenciaEncalheController extends BaseController {
 			final Map<String, Object> dados = new HashMap<String, Object>();
 			
 			dados.put("tipoMensagem", TipoMensagem.SUCCESS);
+			
 			dados.put(TIPOS_DOCUMENTO_IMPRESSAO_ENCALHE, session.getAttribute(TIPOS_DOCUMENTO_IMPRESSAO_ENCALHE));
 			
-/*
-			if(dadosDocumentacaoConfEncalheCota.getMsgsGeracaoCobranca() != null) {
-				
-				dados.put("listaMensagens", dadosDocumentacaoConfEncalheCota.getMsgsGeracaoCobranca().getListaMensagens());
-				
-			} else {
-
-				String msgSucess = "";
-				
-				if (listaConferenciaEncalheCotaToSave == null || listaConferenciaEncalheCotaToSave.isEmpty()) {
-                    msgSucess = "Operação efetuada com sucesso. Nenhum ítem encalhado, total cobrado.";
-				} else {
-                    msgSucess = "Operação efetuada com sucesso.";
-				}
-				
-				dados.put("listaMensagens", 	new String[]{msgSucess});
-				
-			}
-
-			dados.put("indGeraDocumentoConfEncalheCota", dadosDocumentacaoConfEncalheCota.isIndGeraDocumentacaoConferenciaEncalhe());
-			*/
-
 			String msgSucess = "";
 			if (listaConferenciaEncalheCotaToSave == null || listaConferenciaEncalheCotaToSave.isEmpty()){
                 msgSucess = "Operação efetuada com sucesso. Nenhum ítem encalhado, total cobrado.";
@@ -2250,8 +2205,9 @@ public class ConferenciaEncalheController extends BaseController {
 			dados.put("listaMensagens", 	new String[]{msgSucess});
 			
 			limparDadosSessao();
+			
 			limparDadosSessaoConferenciaEncalheCotaFinalizada();
-				
+			
 			this.result.use(CustomMapJson.class).put("result", dados).serialize();
 			
 		} else {

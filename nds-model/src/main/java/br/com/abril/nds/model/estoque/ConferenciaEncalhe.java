@@ -38,8 +38,6 @@ public class ConferenciaEncalhe implements Serializable {
 	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = 1L;
-
-	
 	
 	@Id
 	@GeneratedValue(generator = "CONFERENCIA_ENCALHE_SEQ")
@@ -60,7 +58,7 @@ public class ConferenciaEncalhe implements Serializable {
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "CONTROLE_CONFERENCIA_ENCALHE_COTA_ID")
 	private ControleConferenciaEncalheCota controleConferenciaEncalheCota;
-
+	
 	@Column(name = "DIA_RECOLHIMENTO")
 	private Integer diaRecolhimento;
 	
