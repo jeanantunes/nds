@@ -592,12 +592,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		
 		for (EstudoCotaGerado estudoCota : lista) {
 			
-			//Refatorar essa consulta, buscar todas as cotas, armazenar em um map e ir verificando dentro do java
-			//ao inves de fazer uma consulta por cota
-//			if(!cotaRepository.validarCotaRecebeFornecedor(estudoCota.getCota().getId(), estudo.getProdutoEdicao().getId())){
 			if(idCotasQueNaoRecebemFornecedor.contains(estudoCota.getCota().getId())){
-//				estudoCota.getReparte() == null
-//				continue;
 				estudoCota.setReparte(null);
 				estudoCota.setClassificacao(ClassificacaoCota.CotaNaoRecebeDesseFornecedor.getTexto());
 			}
@@ -620,7 +615,9 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		    
 		    retorno.add(cota);
 		}
+		
 	return retorno;
+	
     }
 
     private EstudoGerado criarCopiaDeEstudo(CopiaProporcionalDeDistribuicaoVO vo, EstudoGerado estudo) {
@@ -936,7 +933,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 //			estudoCotaGeradoRepository.adicionar(cota);
 		}
 		
-		estudoCotaGeradoRepository.gravarCotasEstudoCotaGerado(cotas);
+//		estudoCotaGeradoRepository.gravarCotasEstudoCotaGerado(cotas);
 
 		estudoCopia.setEstudoCotas(new HashSet<EstudoCotaGerado>(cotas));
 		

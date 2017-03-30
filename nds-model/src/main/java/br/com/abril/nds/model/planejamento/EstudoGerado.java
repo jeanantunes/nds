@@ -69,7 +69,7 @@ public class EstudoGerado implements Serializable {
 	@Column(name = "LANCAMENTO_ID")
 	protected Long lancamentoID;
 	
-	@Cascade(value={CascadeType.SAVE_UPDATE, CascadeType.PERSIST, CascadeType.DELETE})
+	@Cascade(value={CascadeType.SAVE_UPDATE, CascadeType.DELETE})
 	@OneToMany(mappedBy = "estudo", fetch = FetchType.LAZY)
 	protected Set<EstudoCotaGerado> estudoCotas = new HashSet<EstudoCotaGerado>();
 	

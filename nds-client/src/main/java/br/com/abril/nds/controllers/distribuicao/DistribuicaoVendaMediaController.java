@@ -48,7 +48,6 @@ import br.com.abril.nds.service.EstrategiaService;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
 import br.com.abril.nds.service.EstudoProdutoEdicaoBaseService;
 import br.com.abril.nds.service.EstudoService;
-import br.com.abril.nds.service.InformacoesReparteEstudoComplementarService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.ProdutoEdicaoAlgoritimoService;
