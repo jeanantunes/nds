@@ -310,8 +310,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
         						selecionados.remove(selecionados.size() - 1);
         					}
         				}
-        				
-        				selecionados.get(0).setIndicePeso(new BigDecimal(2));
+        				// Ronaldo: Não utilizar peso 2 para edição mais recente de produto parcial. 22/03/2017
+        				//selecionados.get(0).setIndicePeso(new BigDecimal(2));
         			}
         		}
         	}

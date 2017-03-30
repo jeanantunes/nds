@@ -616,7 +616,7 @@ public class HistoricoVendaController extends BaseController {
 		
 		diretorioRaiz.mkdirs();
 		
-		pathFile += File.separatorChar;
+		pathFile += File.pathSeparator;
 		
 		return pathFile;
 		

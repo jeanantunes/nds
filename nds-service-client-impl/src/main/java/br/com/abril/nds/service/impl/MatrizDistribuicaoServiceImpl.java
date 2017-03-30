@@ -51,7 +51,6 @@ import br.com.abril.nds.repository.InformacoesReparteEstudoComplementarRepositor
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
-import br.com.abril.nds.repository.impl.CotaRepositoryImpl;
 import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EstudoService;
@@ -589,10 +588,18 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
     private LinkedList<EstudoCotaGerado> copiarListaDeCotas(LinkedList<EstudoCotaGerado> lista, EstudoGerado estudo, boolean isFixacao) {
 		LinkedList<EstudoCotaGerado> retorno = new LinkedList<>();
 	
+		List<Long> idCotasQueNaoRecebemFornecedor = cotaRepository.buscarCotasQueNaoRecebeFornecedorDoProduto(estudo.getProdutoEdicao().getId());
+		
 		for (EstudoCotaGerado estudoCota : lista) {
 			
-			if(estudoCota.getReparte() == null || !cotaRepository.validarCotaRecebeFornecedor(estudoCota.getCota().getId(), estudo.getProdutoEdicao().getId())){
-				continue;
+			//Refatorar essa consulta, buscar todas as cotas, armazenar em um map e ir verificando dentro do java
+			//ao inves de fazer uma consulta por cota
+//			if(!cotaRepository.validarCotaRecebeFornecedor(estudoCota.getCota().getId(), estudo.getProdutoEdicao().getId())){
+			if(idCotasQueNaoRecebemFornecedor.contains(estudoCota.getCota().getId())){
+//				estudoCota.getReparte() == null
+//				continue;
+				estudoCota.setReparte(null);
+				estudoCota.setClassificacao(ClassificacaoCota.CotaNaoRecebeDesseFornecedor.getTexto());
 			}
 			
 		    if ( SituacaoCadastro.INATIVO.equals(estudoCota.getCota().getSituacaoCadastro())) {
@@ -625,6 +632,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		Lancamento lancamento = lancamentoRepository.buscarPorIdSemEstudo(vo.getIdLancamento());
 		EstudoGerado estudoCopia = obterCopiaDeEstudo(estudo, lancamento, vo.getPacotePadrao());
 		estudoCopia.setQtdeReparte(vo.getReparteDistribuido());
+		
 		LinkedList<EstudoCotaGerado> cotasSelecionadas = new LinkedList<>(estudo.getEstudoCotas());
 		ProdutoEdicao edicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(vo.getCodigoProduto(), vo.getNumeroEdicao().longValue());
 		Map<Long, CotaEstudo> mapCotas = carregarInformacoesCotaEstudo(edicao);
@@ -899,7 +907,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		if(cotasSelecionadas.size() > 0){
 			cotas.addAll(cotasSelecionadas);
 		}
-		// salvando no banco
+		// ~salvando no banco~ Preparando pra salvar no banco
 		for (EstudoCotaGerado cota : cotas) {
 			if (cota.getReparte() == null) {
 				cota.setQtdePrevista(null);
@@ -925,10 +933,13 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 				cota.setReparteInicial(cota.getReparte());
 			}
 			
-			estudoCotaGeradoRepository.adicionar(cota);
+			//estudoCotaGeradoRepository.adicionar(cota);
 		}
+		
+		estudoCotaGeradoRepository.gravarCotasEstudoCotaGerado(cotas);
 
 		estudoCopia.setEstudoCotas(new HashSet<EstudoCotaGerado>(cotas));
+		
 		estudoCotaGeradoRepository.inserirProdutoBase(estudoCopia);
 		
 		this.atualizarPercentualAbrangencia(estudoCopia.getId());

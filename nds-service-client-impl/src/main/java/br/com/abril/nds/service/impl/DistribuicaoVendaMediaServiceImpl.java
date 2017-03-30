@@ -77,7 +77,7 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
      * @param idClassificacao
      * @param usarICD
      * @return
-     * @see br.com.abril.nds.repository.DistribuicaoVendaMediaRepository#pesquisar(java.lang.String,
+     * @see br.com.abril.nds.repository.DistribuicaoVendaMediaRepository pesquisar(java.lang.String,
      *      java.lang.String, java.lang.Long, java.lang.Long, boolean)
      */
     @Override

@@ -475,4 +475,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
 
 	List<AnaliseHistoricoDTO> buscarDadosCotasSemHistorico(List<Integer> listCota);
+
+
+	List<Long> buscarCotasQueNaoRecebeFornecedorDoProduto(Long idProdutoEdicao);
 }
