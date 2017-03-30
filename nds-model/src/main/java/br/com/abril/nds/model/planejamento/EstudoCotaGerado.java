@@ -16,9 +16,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-
 import br.com.abril.nds.model.cadastro.Cota;
 
 /**
@@ -49,7 +46,6 @@ public class EstudoCotaGerado implements Serializable {
 	private EstudoGerado estudo;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @Cascade({CascadeType.REFRESH})
     @JoinColumn(name = "COTA_ID")
     private Cota cota;
 
