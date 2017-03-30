@@ -190,4 +190,6 @@ public interface DistribuidorService {
 	boolean verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(Distribuidor distribuidor, TipoParametrosDistribuidorEmissaoDocumento tipoDoc);
 
 	boolean verificarParametroDistribuidorEmissaoDocumentosEmailCheck(Distribuidor distribuidor, TipoParametrosDistribuidorEmissaoDocumento tipoDoc);
+
+	 boolean vendaEncalheTotal();
 }

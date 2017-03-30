@@ -41,6 +41,8 @@ public class AnaliticoEncalheVO implements Serializable {
 	
 	private Long id;
 	
+	private Long quantidade;
+	
 	public AnaliticoEncalheVO(AnaliticoEncalheVO dto) {}
 	
 	
@@ -54,6 +56,7 @@ public class AnaliticoEncalheVO implements Serializable {
 		this.setInicio(dto.getIncio());
 		this.setFim(dto.getFim());
 		this.setId(dto.getId());
+		this.setQuantidade(dto.getQuantidade());
 	}
 
 
@@ -135,5 +138,12 @@ public class AnaliticoEncalheVO implements Serializable {
 		this.id = id;
 	}
 	
+	public Long getQuantidade() {
+		return quantidade;
+	}
+
+	public void setQuantidade(Long quantidade) {
+		this.quantidade = quantidade;
+	}
 	
 }

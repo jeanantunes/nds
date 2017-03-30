@@ -1249,8 +1249,11 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         hql.append("	TIME(controle.dataFim) as fim, ");
         
-        hql.append("	controle.id as id ");
+        hql.append("	controle.id as id, ");
         
+        hql.append(" ( ");
+        hql.append(getQueryQuantidadeHistorico());
+        hql.append(" ) as quantidade ");
         getQueryAnalitico(filtro, hql);
         
         hql.append("   group by cota.id ");
@@ -1290,6 +1293,21 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         }
         
         return query.list();
+    }
+
+    private StringBuilder getQueryQuantidadeHistorico(){
+        
+        final StringBuilder subquery = new StringBuilder();
+        
+        subquery.append(" select count(hi.id ) ");
+        
+        subquery.append(" from HistoricoConfChamadaEncalheCota hi ");
+        
+        subquery.append(" where hi.dataOperacao = :dataEncalhe ");
+        
+        subquery.append(" and hi.cota.id = cota.id ");
+        subquery.append(" group by hi.dataOperacao ");
+        return subquery;
     }
     
     @Override

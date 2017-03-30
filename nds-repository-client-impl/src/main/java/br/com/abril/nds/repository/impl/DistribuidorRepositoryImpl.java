@@ -623,4 +623,13 @@ public class DistribuidorRepositoryImpl extends AbstractRepositoryModel<Distribu
 		super.alterar(entity);
 		super.getSession().getSessionFactory().getCache().evictQueryRegions();
 	}
+	
+	public boolean vendaEncalheTotal() {
+		
+		StringBuilder hql = new StringBuilder(" select d.vendaTotalEncalhe from Distribuidor d ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		return (boolean) query.uniqueResult();
+	}
 }

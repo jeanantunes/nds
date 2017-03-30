@@ -404,6 +404,8 @@ public class Distribuidor {
 	@Column(name = "LIBERAR_TRANSFERENCIA_PARCIAL")
 	private boolean liberarTranferenciaParcial;
 	
+	@Column(name = "VENDA_TOTAL_ENCALHE")
+	private boolean vendaTotalEncalhe;
 	
 	public Long getId() {
 		return id;
@@ -1400,6 +1402,14 @@ public class Distribuidor {
 
 	public void setArquivoInterfaceLedPicking4(String arquivoInterfaceLedPicking4) {
 		this.arquivoInterfaceLedPicking4 = arquivoInterfaceLedPicking4;
+	}
+	
+	public boolean isVendaTotalEncalhe() {
+		return vendaTotalEncalhe;
+	}
+	
+	public void setVendaTotalEncalhe(boolean vendaTotalEncalhe) {
+		this.vendaTotalEncalhe = vendaTotalEncalhe;
 	}
 
 	@Override

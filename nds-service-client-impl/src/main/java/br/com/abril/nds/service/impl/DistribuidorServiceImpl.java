@@ -862,4 +862,12 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		}
 		return parametroCorreto;
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public boolean vendaEncalheTotal() {
+		
+		return this.distribuidorRepository.buscarDistribuidorAceitaRecolhimentoParcialAtraso();
+		
+	}
 }

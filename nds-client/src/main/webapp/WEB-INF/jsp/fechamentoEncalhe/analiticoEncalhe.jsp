@@ -51,11 +51,27 @@
 				<td width="106"><span class="bt_novos"><a href="javascript:;" onclick="analiticoEncalheController.pesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
 			</tr>
 		</table>
+		
 		</form>
     </fieldset>
-	
+    <fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
+    <legend> Historico de Encalhe</legend>
+	    <form id="formHistoricoEncalhe">
+			<div id="dialog-historico-detalhes" title="Historico de encalhe realizado" style="display:none;">
+				<table width="600" border="0">
+					<tr>
+						<td width="40"><strong>Cota:</strong></td>
+						<td width="40" id="histNumeroCota"></td>
+						<td width="75"><strong>Nome:</strong></td>
+						<td width="380" id="histNomeCota"></td>
+					<tr>
+				</table>
+				<div class="linha_separa_fields">&nbsp;</div>
+				<table class="dadosHistoricoEncalheGrid"></table>
+			</div> 
+		</form>
+	</fieldset>
 	<div class="linha_separa_fields">&nbsp;</div>
-	
 	<fieldset class="classFieldset">
     	<legend> Resultado Pesquisa</legend>
         <div class="grids" id="divAnaliticoEncalheGrid" style="display:none;">
@@ -72,11 +88,6 @@
 	        </table>
 		</div>
 	</fieldset>
-	
-	<div id="dialog-historico-detalhes" title="Historico de encalhe realizado" style="display:none;">
-		<table class="dadosHistoricoEncalheGrid"></table>
-	</div> 
-	
 	<script language="javascript" type="text/javascript">
 	$(function(){
 		analiticoEncalheController.init();

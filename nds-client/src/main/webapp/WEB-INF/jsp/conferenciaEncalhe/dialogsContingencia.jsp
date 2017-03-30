@@ -285,6 +285,14 @@
 		</fieldset>
 	</div>
 </form>
+<form id="form-produtos-sem-encalhe">
+	<div id="dialog-produtos-sem-encalhe" title="Produtos sem Encalhe" style="display: none;">
+		<fieldset>
+			<legend>Produtos sem Encalhe</legend>
+			<p id="msgProdutosSemEncalhe"></p>
+		</fieldset>
+	</div>
+</form>
 <form id="form-confirmar">
 	<div id="dialog-confirmar" title="Confirma">
 		<fieldset>

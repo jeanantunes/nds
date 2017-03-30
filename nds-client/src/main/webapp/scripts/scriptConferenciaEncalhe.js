@@ -1,3 +1,5 @@
+var permiteVerEncalheVendaTotal = false;
+
 function disableEnterKey(e) {
 	
 	var key;
@@ -526,6 +528,16 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	finalizarConferencia : function() {
 		
+		console.log(permiteVerEncalheVendaTotal);
+		
+		if(!permiteVerEncalheVendaTotal) {
+			ConferenciaEncalhe.processarConferencia();
+		} else {
+			ConferenciaEncalhe.verificarProdutosSemEncalhe();
+		}
+	},
+	
+	processarConferencia : function() {
 		if (!ConferenciaEncalhe.modalAberta) {
 			
 			if(document.activeElement != undefined && document.activeElement.id != undefined && document.activeElement.id.indexOf('qtdExemplaresGrid_') > -1) {
@@ -544,6 +556,56 @@ var ConferenciaEncalhe = $.extend(true, {
 			}, 1000);
 			
 		};
+	},
+	
+	verificarProdutosSemEncalhe: function(){
+		
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarProdutosSemEncalhe', null,
+			
+			function(conteudo){
+			
+				if(conteudo && conteudo.tipoMensagem == 'WARNING') {
+					
+					$("#msgProdutosSemEncalhe", ConferenciaEncalhe.workspace).html(conteudo.listaMensagens[0]);
+					
+					$("#dialog-produtos-sem-encalhe", ConferenciaEncalhe.workspace).dialog({
+						resizable : false,
+						height : 400,
+						width : 680,
+						modal : true,
+						buttons : {
+							"Confirmar" : function() {
+								
+								$("#dialog-produtos-sem-encalhe", ConferenciaEncalhe.workspace).dialog("close");
+								
+								ConferenciaEncalhe.processarConferencia();
+								
+							},
+							"Cancelar" : function(){
+							
+								$("#dialog-produtos-sem-encalhe", ConferenciaEncalhe.workspace).dialog("close");
+							}
+						},
+						
+						open : function() {
+							
+							ConferenciaEncalhe.configurarNavegacaoSetas($('#form-produtos-sem-encalhe').find('button'));
+							
+							setTimeout(function(){
+								$($('#form-produtos-sem-encalhe').find('button')[0]).focus();
+							}, 1);
+							
+						},
+						
+						form: $("#dialog-produtos-sem-encalhe", ConferenciaEncalhe.workspace).parents("form")
+					});
+					
+				} else {
+					ConferenciaEncalhe.processarConferencia();
+				}
+				
+			}, null, true, "dialog-produtos-sem-encalhe"
+		);
 	},
 	
 	salvarConferencia : function() {
@@ -627,6 +689,8 @@ var ConferenciaEncalhe = $.extend(true, {
 							
 							focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 							
+							permiteVerEncalheVendaTotal = result.permiteVerEncalheVendaTotal;
+							
 							ConferenciaEncalhe.numeroCotaEditavel(false);
 						},
 						"Não" : function(event) {
@@ -696,6 +760,8 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 				}
+				
+				permiteVerEncalheVendaTotal = result.permiteVerEncalheVendaTotal;
 				
 				ConferenciaEncalhe.numeroCotaEditavel(true);
 			}

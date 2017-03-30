@@ -165,4 +165,6 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 			OperacaoDistribuidor operacaoDistribuidor);
 
 	boolean isConferenciaCegaFechamentoEncalhe();
+	
+	boolean vendaEncalheTotal();
 }

@@ -1,3 +1,5 @@
+var permiteVerEncalheVendaTotal = false;
+
 var ConferenciaEncalheCont = $.extend(true, {
 	
 	processandoConferenciaEncalhe: false,
@@ -11,7 +13,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 	valorAnteriorInput : undefined,
 	
 	resetValue : true,
-
+	
 	init : function() {
 		
 		$(".outrosVlrsGrid", ConferenciaEncalheCont.workspace).flexigrid({
@@ -197,23 +199,12 @@ var ConferenciaEncalheCont = $.extend(true, {
 			exibirAcessoNegado();
 			return;
 		}
-		if (!ConferenciaEncalheCont.modalAberta) {
-
-			if(document.activeElement != undefined && document.activeElement.id != undefined && document.activeElement.id.indexOf('qtdExemplaresGrid_') > -1) {
-				elNdx = $(document.activeElement).attr('elIndex');
-				$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
-				ConferenciaEncalheCont.verificarPermissaoSuperVisor(elNdx, 'keydown.finalizarConferencia');
-				return;
-			}
-			
-			ConferenciaEncalheCont.processandoConferenciaEncalhe = true;
-			
-			$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
-			
-			setTimeout(function() {
-				ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.verificarCobrancaGerada);
-			}, 1000);
-		};
+		
+		if(!permiteVerEncalheVendaTotal) {
+			ConferenciaEncalheCont.processarConferencia();
+		} else {
+			ConferenciaEncalheCont.verificarProdutosSemEncalhe();
+		}
 		
 	},
 	
@@ -284,6 +275,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 								ConferenciaEncalheCont.carregarListaConferencia(data);
 								
 								ConferenciaEncalheCont.numeroCotaEditavel(false);
+								
+								permiteVerEncalheVendaTotal = result.permiteVerEncalheVendaTotal;
 							},
 							"Não" : function() {
 								
@@ -323,6 +316,10 @@ var ConferenciaEncalheCont = $.extend(true, {
 						exibirMensagem('WARNING', [result.msg]);
 						
 					} 
+					
+					console.log(permiteVerEncalheVendaTotal);
+					
+					permiteVerEncalheVendaTotal = result.permiteVerEncalheVendaTotal;
 					
 					ConferenciaEncalheCont.carregarListaConferencia(data);
 					
@@ -1967,6 +1964,76 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 			}, null, true, "dialog-confirmar-regerar-cobranca"
 		);
+	},
+	
+	verificarProdutosSemEncalhe: function(){
+		
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarProdutosSemEncalhe', null,
+			
+			function(conteudo){
+			
+				if(conteudo && conteudo.tipoMensagem == 'WARNING') {
+					
+					$("#msgProdutosSemEncalhe", ConferenciaEncalheCont.workspace).html(conteudo.listaMensagens[0]);
+					
+					$("#dialog-produtos-sem-encalhe", ConferenciaEncalheCont.workspace).dialog({
+						resizable : false,
+						height : 400,
+						width : 680,
+						modal : true,
+						buttons : {
+							"Confirmar" : function() {
+								
+								$("#dialog-produtos-sem-encalhe", ConferenciaEncalheCont.workspace).dialog("close");
+								
+								ConferenciaEncalheCont.processarConferencia();
+								
+							},
+							"Cancelar" : function(){
+							
+								$("#dialog-produtos-sem-encalhe", ConferenciaEncalheCont.workspace).dialog("close");
+							}
+						},
+						
+						open : function() {
+							
+							ConferenciaEncalheCont.configurarNavegacaoSetas($('#form-produtos-sem-encalhe').find('button'));
+							
+							setTimeout(function(){
+								$($('#form-produtos-sem-encalhe').find('button')[0]).focus();
+							}, 1);
+							
+						},
+						
+						form: $("#dialog-produtos-sem-encalhe", ConferenciaEncalheCont.workspace).parents("form")
+					});
+					
+				} else {
+					ConferenciaEncalheCont.processarConferencia();
+				}
+				
+			}, null, true, "dialog-produtos-sem-encalhe"
+		);
+	},
+	
+	processarConferencia : function() {
+		if (!ConferenciaEncalheCont.modalAberta) {
+
+			if(document.activeElement != undefined && document.activeElement.id != undefined && document.activeElement.id.indexOf('qtdExemplaresGrid_') > -1) {
+				elNdx = $(document.activeElement).attr('elIndex');
+				$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
+				ConferenciaEncalheCont.verificarPermissaoSuperVisor(elNdx, 'keydown.finalizarConferencia');
+				return;
+			}
+			
+			ConferenciaEncalheCont.processandoConferenciaEncalhe = true;
+			
+			$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
+			
+			setTimeout(function() {
+				ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.verificarCobrancaGerada);
+			}, 1000);
+		};
 	},
 	
 	limparTela : function() {

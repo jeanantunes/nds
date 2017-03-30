@@ -250,7 +250,7 @@ public class ConferenciaEncalheController extends BaseController {
 		if(tipoContabilizacaoCE!=null) {
 			this.result.include("tipoContabilizacaoCE", tipoContabilizacaoCE.name());
 		}
-		
+			
 		this.preCarregarBoxes();
 	}
 	
@@ -425,6 +425,8 @@ public class ConferenciaEncalheController extends BaseController {
 				" sessionid="+session.getId()+"  cota="+numeroCota);
 		Cota cota=null;
 		
+		final boolean isvendaTotal = this.distribuidorService.vendaEncalheTotal();
+		
 		// evitar que duas conferencia na mesma cota
 	 
 		synchronized (DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA  ) {
@@ -453,7 +455,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			if(this.conferenciaEncalheService.verificarCotaComConferenciaEncalheFinalizada(numeroCota)) {
 				
-				this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").put("IND_REABERTURA", "S").serialize();
+				this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").put("IND_REABERTURA", "S").put("permiteVerEncalheVendaTotal", isvendaTotal).serialize();
 				
 			} else {
 				
@@ -463,7 +465,7 @@ public class ConferenciaEncalheController extends BaseController {
 				
 				if(this.conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota, datas)) {
 					
-					this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();	
+					this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").put("permiteVerEncalheVendaTotal", isvendaTotal).put("permiteVerEncalheVendaTotal", isvendaTotal).serialize();	
 					
 				} else {
 					
@@ -472,7 +474,7 @@ public class ConferenciaEncalheController extends BaseController {
 								"Cota com Operação Diferenciada, nenhum recolhimento para a data de operação atual.")
 						.serialize();
 					}else{
-						this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "N").put("msg",
+						this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "N").put("permiteVerEncalheVendaTotal", isvendaTotal).put("msg",
 								"Cota não possui recolhimento planejado para a data de operação atual.")
 						.serialize();
 					}
@@ -483,7 +485,7 @@ public class ConferenciaEncalheController extends BaseController {
 				}
 			}
 		}else{
-			this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();
+			this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").put("permiteVerEncalheVendaTotal", isvendaTotal).serialize();
 		}
 			
 		this.session.setAttribute(NUMERO_COTA, numeroCota);
@@ -3162,5 +3164,71 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		result.use(CustomJson.class).from(dados).serialize();
 	}
-	
+
+	@Post
+	public void verificarProdutosSemEncalhe(){
+		
+		final InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+		
+		if(!validarItemComZero(info.getListaConferenciaEncalhe())){
+			this.result.use(Results.json()).from("","result").serialize();
+			return;
+		}
+		
+		Collection<ConferenciaEncalheDTO> listaConferenciaEncalhe = 
+				PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(info.getListaConferenciaEncalhe()), 
+						Ordenacao.ASC, 
+						"dataRecolhimento", "codigoSM", "numeroEdicao");
+		
+		StringBuilder html = montarHtmlRetorno(listaConferenciaEncalhe);
+			
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, html.toString()),
+							"result").recursive().serialize();
+	}
+
+	private StringBuilder montarHtmlRetorno(Collection<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+		StringBuilder html = new StringBuilder();
+		
+		html.append("<br>");
+		
+		html.append("<table width='600' height = '300' border='0' cellspacing='0' cellpadding='0' align='center'>");
+		
+		html.append("<tr>");
+		html.append("<td width='25' align='left'><strong>Seq</strong></td>");
+		html.append("<td width='80' align='left'><strong>Codigo</strong></td>");
+		html.append("<td width='180' align='left'><strong>Produto</strong></td>");
+		html.append("<td width='80' align='center'><strong>Edição</strong></td>");
+		html.append("<td width='80' align='center'><strong>Preço</strong></td>");
+		html.append("<td width='80' align='center'><strong>Reparte</strong></td>");
+		html.append("</tr>");
+		
+		for(ConferenciaEncalheDTO conf : listaConferenciaEncalhe) {
+			html.append("<tr>");
+			if(conf.getQtdInformada().intValue() == 0) {				
+				html.append("<td align='left'>"+conf.getCodigoSM()+"</td>");
+				html.append("<td align='left'>"+conf.getCodigo() +"</td>");
+				html.append("<td align='left'>"+conf.getNomeProduto()+"</td>");
+				html.append("<td align='center'>"+conf.getNumeroEdicao()+"</td>");
+				html.append("<td align='center'>"+conf.getPrecoComDesconto()+"</td>");
+				html.append("<td align='center'>"+conf.getQtdReparte()+"</td>");
+				html.append("</tr>");
+			}
+		}
+		
+		html.append("</table>");
+		return html;
+	}
+
+	private boolean validarItemComZero(Set<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+		
+		boolean isItemZerado = false;
+		
+		for (ConferenciaEncalheDTO conferenciaEncalheDTO : listaConferenciaEncalhe) {
+			if(conferenciaEncalheDTO.getQtdInformada().intValue() == 0) {
+				isItemZerado = true;
+				break;
+			}
+		}
+		return isItemZerado;
+	}
 }

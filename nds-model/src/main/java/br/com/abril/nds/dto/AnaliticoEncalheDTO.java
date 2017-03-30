@@ -20,6 +20,8 @@ public class AnaliticoEncalheDTO implements Serializable {
 	private Date fim;
 	private Long id;
 	private BigDecimal valorEncalhe;
+	private Long quantidade;
+	
 	
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -98,5 +100,13 @@ public class AnaliticoEncalheDTO implements Serializable {
 
 	public void setValorEncalhe(BigDecimal valorEncalhe) {
 		this.valorEncalhe = valorEncalhe;
+	}
+
+	public Long getQuantidade() {
+		return quantidade;
+	}
+
+	public void setQuantidade(Long quantidade) {
+		this.quantidade = quantidade;
 	}
 }

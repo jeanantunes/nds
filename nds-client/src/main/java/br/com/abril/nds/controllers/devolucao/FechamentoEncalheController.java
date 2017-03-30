@@ -2113,7 +2113,6 @@ public class FechamentoEncalheController extends BaseController {
 	}
 	
 	@Post
-	@Path("/obterHistoricosConferenciaEncalhe.json")
 	public void obterHistoricosConferenciaEncalhe(String numeroCota, Date dataEncalhe){
 		
 		List<HistoricoEncalheDTO> listaHistoricoEncalhe = fechamentoEncalheService.obterHistoricosConferenciaEncalhe(numeroCota, dataEncalhe);
@@ -2123,8 +2122,8 @@ public class FechamentoEncalheController extends BaseController {
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaHistoricoEncalhe));
 		tableModel.setPage(1);
 		tableModel.setTotal(15);
-
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+		this.result.use(FlexiGridJson.class).from(listaHistoricoEncalhe).total(listaHistoricoEncalhe.size()).page(1).serialize();
 	}
 	
 }
