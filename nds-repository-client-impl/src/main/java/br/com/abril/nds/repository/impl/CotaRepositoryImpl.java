@@ -4153,4 +4153,20 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		return query.list();
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Long> buscarCotasQueNaoRecebeFornecedorDoProduto(Long idProdutoEdicao){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select id from cota where id not in (select cota_id from cota_fornecedor where fornecedor_id in "
+				+ "(select fornecedores_id from produto_fornecedor where produto_id = (select produto_id from produto_edicao pe where id = :idProdutoEdicao))); ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return query.list();
+	}
 }

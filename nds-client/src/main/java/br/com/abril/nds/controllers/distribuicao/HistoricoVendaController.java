@@ -587,10 +587,10 @@ public class HistoricoVendaController extends BaseController {
 
 		String nomeProduto = "";
 		
-		if(listProdutoEdicaoDTO.get(idListProdutoEdicaoDTO) != null){
+		if(idListProdutoEdicaoDTO < listProdutoEdicaoDTO.size()){
 			nomeProduto = listProdutoEdicaoDTO.get(idListProdutoEdicaoDTO).getNomeProduto() != null ? listProdutoEdicaoDTO.get(idListProdutoEdicaoDTO).getNomeProduto() : ""; 
 		}
-
+		
 		if (cell == null) {
 			
 			cell = row.createCell(cellReference.getCol());
@@ -606,17 +606,16 @@ public class HistoricoVendaController extends BaseController {
 		ParametroSistema pathSistem = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TRANSFERENCIA_ARQUIVO);
 
 		String pathFile = pathSistem.getValor();
-		
+
 		pathFile.replace('/',File.separatorChar);
 		pathFile.replace('\\',File.separatorChar);
 		
 		pathFile = pathFile+File.separator+"historicoVendaTemp";
 		
 		File diretorioRaiz = new File(pathFile);
-		
 		diretorioRaiz.mkdirs();
 		
-		pathFile += File.separatorChar;
+		pathFile += File.pathSeparator;
 		
 		return pathFile;
 		
