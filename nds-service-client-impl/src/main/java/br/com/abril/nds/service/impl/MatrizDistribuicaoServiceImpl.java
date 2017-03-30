@@ -933,10 +933,10 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 				cota.setReparteInicial(cota.getReparte());
 			}
 			
-			estudoCotaGeradoRepository.adicionar(cota);
+//			estudoCotaGeradoRepository.adicionar(cota);
 		}
 		
-//		estudoCotaGeradoRepository.gravarCotasEstudoCotaGerado(cotas);
+		estudoCotaGeradoRepository.gravarCotasEstudoCotaGerado(cotas);
 
 		estudoCopia.setEstudoCotas(new HashSet<EstudoCotaGerado>(cotas));
 		
