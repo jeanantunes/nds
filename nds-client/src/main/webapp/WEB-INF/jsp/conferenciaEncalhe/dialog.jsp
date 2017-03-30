@@ -100,7 +100,7 @@
 <form id="form-produtos-sem-encalhe">
 	<div id="dialog-produtos-sem-encalhe" title="Produtos sem Encalhe" style="display: none;">
 		<fieldset>
-			<legend>Produtos sem Encalhe</legend>
+			<legend>Encalhe N&atilde;o Processado/Venda Tota</legend>
 			<p id="msgProdutosSemEncalhe"></p>
 		</fieldset>
 	</div>
