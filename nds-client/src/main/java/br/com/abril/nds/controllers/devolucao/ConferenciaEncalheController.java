@@ -62,6 +62,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ChamadaEncalheCotaService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
@@ -3168,7 +3169,11 @@ public class ConferenciaEncalheController extends BaseController {
 	@Post
 	public void verificarProdutosSemEncalhe(){
 		
-		final InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+		
+		if(info.getListaConferenciaEncalhe() == null || info.getListaConferenciaEncalhe().isEmpty()) {
+			info = conferenciaEncalheService.obterInfoConferenciaEncalheCota(info.getCota().getNumeroCota(), true);
+		}
 		
 		if(!validarItemComZero(info.getListaConferenciaEncalhe())){
 			this.result.use(Results.json()).from("","result").serialize();
@@ -3185,11 +3190,98 @@ public class ConferenciaEncalheController extends BaseController {
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, html.toString()),
 							"result").recursive().serialize();
 	}
-
+	
+	@Post
+	public void validarProdutoComVendaTotal(){
+		InfoConferenciaEncalheCota infoSession = this.getInfoConferenciaSession();
+		
+		Set<ConferenciaEncalheDTO> listaConfBancoDados = new HashSet<ConferenciaEncalheDTO>();
+		
+		Set<ConferenciaEncalheDTO> listaVerificada = null;
+		
+		if(infoSession.getListaConferenciaEncalhe() == null || infoSession.getListaConferenciaEncalhe().isEmpty()) {
+			infoSession = conferenciaEncalheService.obterInfoConferenciaEncalheCota(infoSession.getCota().getNumeroCota(), true);
+			listaVerificada = infoSession.getListaConferenciaEncalhe();
+		} else {
+			
+			InfoConferenciaEncalheCota infoBD = conferenciaEncalheService.obterInfoConferenciaEncalheCota(infoSession.getCota().getNumeroCota(), true);	
+			Set<ConferenciaEncalheDTO> tela = infoSession.getListaConferenciaEncalhe();
+			
+			listaVerificada = new HashSet<ConferenciaEncalheDTO>();
+			
+			listaConfBancoDados = infoBD.getListaConferenciaEncalhe();
+			
+			for(ConferenciaEncalheDTO conf : tela) {
+				
+				if(listaConfBancoDados.contains(conf)){
+					listaConfBancoDados.remove(conf);
+				}
+				
+				listaVerificada.add(conf);
+			}
+		}
+		
+		if(!listaConfBancoDados.isEmpty()) {			
+			listaVerificada.addAll(listaConfBancoDados);
+		}
+		
+		if(!validarItemComZero(listaVerificada)){
+			this.result.use(Results.json()).from(TipoMensagem.SUCCESS,"SUCESS").serialize();
+		} else {
+			this.result.use(Results.json()).from("ERRO","result").serialize();
+		}	
+	}
+	
+	@Post
+	public void verificarProdutosSemConferenciaNormalEncalhe(){
+		
+		InfoConferenciaEncalheCota infoSession = this.getInfoConferenciaSession();
+		
+		Set<ConferenciaEncalheDTO> listaConfBancoDados = new HashSet<ConferenciaEncalheDTO>();
+		
+		Set<ConferenciaEncalheDTO> listaVerificada = new HashSet<ConferenciaEncalheDTO>();
+		
+		if(infoSession.getListaConferenciaEncalhe() == null || infoSession.getListaConferenciaEncalhe().isEmpty()) {
+			infoSession = conferenciaEncalheService.obterInfoConferenciaEncalheCota(infoSession.getCota().getNumeroCota(), true);
+			listaVerificada.addAll(infoSession.getListaConferenciaEncalhe());
+		} else {
+			
+			InfoConferenciaEncalheCota infoBD = conferenciaEncalheService.obterInfoConferenciaEncalheCota(infoSession.getCota().getNumeroCota(), true);	
+			Set<ConferenciaEncalheDTO> tela = infoSession.getListaConferenciaEncalhe();
+			
+			listaConfBancoDados = infoBD.getListaConferenciaEncalhe();
+			
+			for(ConferenciaEncalheDTO conf : tela) {
+				
+				if(listaConfBancoDados.contains(conf)){
+					listaConfBancoDados.remove(conf);
+				}
+				if(conf.getQtdInformada().intValue() == 0) { 
+					listaVerificada.add(conf);
+				}	
+			}
+		}
+		
+		if(!listaConfBancoDados.isEmpty()) {			
+			listaVerificada.addAll(listaConfBancoDados);
+		}
+		
+		if(!validarItemComZero(listaVerificada)){
+			this.result.use(Results.json()).from("SUCESS","result").serialize();
+		} else {
+			
+			Collection<ConferenciaEncalheDTO> listaConferenciaEncalhe = 
+					PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(listaVerificada), 
+							Ordenacao.ASC, 
+							"dataRecolhimento", "codigoSM", "numeroEdicao");
+			
+			this.result.use(FlexiGridJson.class).from((ArrayList<ConferenciaEncalheDTO>)listaConferenciaEncalhe).total(listaConferenciaEncalhe.size()).page(1).serialize();
+		}
+		
+	}
+	
 	private StringBuilder montarHtmlRetorno(Collection<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
 		StringBuilder html = new StringBuilder();
-		
-		html.append("<br>");
 		
 		html.append("<table width='600' height = '300' border='0' cellspacing='0' cellpadding='0' align='center'>");
 		

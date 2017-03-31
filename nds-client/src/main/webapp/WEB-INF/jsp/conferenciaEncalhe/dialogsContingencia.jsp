@@ -286,7 +286,7 @@
 	</div>
 </form>
 <form id="form-produtos-sem-encalhe">
-	<div id="dialog-produtos-sem-encalhe" title="Produtos sem Encalhe" style="display: none;">
+	<div id="dialog-produtos-sem-encalhe" title="Encalhe N&atilde;o Processado/Venda Total" style="display: none;">
 		<fieldset>
 			<legend>Encalhe N&atilde;o Processado/Venda Total</legend>
 			<p id="msgProdutosSemEncalhe"></p>

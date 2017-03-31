@@ -317,6 +317,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 						
 					} 
 					
+					permiteVerEncalheVendaTotal = result.permiteVerEncalheVendaTotal;
+					
 					console.log(permiteVerEncalheVendaTotal);
 					
 					permiteVerEncalheVendaTotal = result.permiteVerEncalheVendaTotal;
