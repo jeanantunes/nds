@@ -278,6 +278,8 @@ $(function(){
 									<td id="repartereparte"></td>
 									<td><strong>Encalhe:</strong></td>
 									<td id="encalhereparte"></td>
+									<td><strong>Base Encalhe:</strong></td>
+									<td id="encalhebasereparte"></td>
 								</tr>
 							</tbody>
 						</table>

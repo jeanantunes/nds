@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
+import br.com.abril.nds.dto.ControleConferenciaEncalheCotaDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
@@ -3680,6 +3681,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return this.debitoCreditoCotaService.obterListaDebitoCreditoCotaDTO(
 		        controleConferenciaEncalheCota.getCota(), Arrays.asList(controleConferenciaEncalheCota.getDataOperacao()),
+		        idFornecedor);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<DebitoCreditoCota> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(
+			ControleConferenciaEncalheCotaDTO controleConfEncalheCota,
+	        final Long idFornecedor){
+		
+		return this.debitoCreditoCotaService.obterListaDebitoCreditoCotaDTO(
+				controleConfEncalheCota, Arrays.asList(controleConfEncalheCota.getDataOperacao()),
 		        idFornecedor);
 	}
 	

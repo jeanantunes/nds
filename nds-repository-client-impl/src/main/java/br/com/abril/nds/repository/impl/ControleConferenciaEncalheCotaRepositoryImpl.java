@@ -9,10 +9,12 @@ import javax.sql.DataSource;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ControleConferenciaEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
@@ -356,7 +358,7 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 			.append("	            AND DATEDIFF(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 1 DAY) ")
 			.append("	                                WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 2 DAY) ")
 			.append("	                                ELSE (select DATA_OPERACAO from distribuidor) END, DATA_RECOLHIMENTO) = 1) ")
-			.append("	            AND (NOT EXISTS(SELECT DATA FROM feriado WHERE data = (select DATA_OPERACAO from distribuidor)) ")
+			.append("	            AND (NOT EXISTS(SELECT DATA FROM feriado WHERE dacontroleConferenciaEncalheCotata = (select DATA_OPERACAO from distribuidor)) ")
 			.append("				                OR (SELECT IND_OPERA FROM feriado WHERE data = (select DATA_OPERACAO from distribuidor) = true)) THEN DATEDIFF(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 1 DAY) ")
 			.append("																															WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 2 DAY) ")
 			.append("				                                                                                                            ELSE (select DATA_OPERACAO from distribuidor) END, DATA_RECOLHIMENTO) + 1 ")
@@ -523,8 +525,26 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		
 		query.setParameter("idCota", idCota);
 		
-	
-		
 		return (query.list().size() > 0);
+	}
+    
+    public ControleConferenciaEncalheCotaDTO obterControleConferenciaEncalheCota(Long idControleConfEncalheCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select c.numeroCota as numeroCota, c.id as idCota, ccec.dataOperacao as dataOperacao");
+		hql.append(" from ControleConferenciaEncalheCota ccec ");
+		hql.append(" inner join ccec.cota c ");
+		hql.append(" where ");
+		hql.append(" ccec.id = :idControleConfEncalheCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idControleConfEncalheCota", idControleConfEncalheCota);
+		
+		query.setResultTransformer(Transformers.aliasToBean(ControleConferenciaEncalheCotaDTO.class));
+		
+		return (ControleConferenciaEncalheCotaDTO) query.uniqueResult();
+		
 	}
 }

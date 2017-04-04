@@ -533,52 +533,72 @@ var ConsultaEncalhe = $
 							return resultado.tableModel;
 						}
 
-						$
-								.each(
-										resultado.tableModel.rows,
-										function(index, row) {
-											var detalhes = '<a href="javascript:;" '
-													+ (!row.cell.indPossuiObservacaoConferenciaEncalhe ? 'style="opacity: 0.5;"'
-															: 'onclick="ConsultaEncalhe.popupDetalhe(\''
-																	+ row.cell.idCota
-																	+ '\', \''
-																	+ row.cell.idFornecedor
-																	+ '\', \''
-																	+ row.cell.idProdutoEdicao
-																	+ '\', null, \''
-																	+ row.cell.recolhimento
-																	+ '\');" style="cursor:pointer"')
-													+ '>'
-													+ '<img title="Detalhes do Encalhe" src="'
-													+ contextPath
-													+ '/images/ico_detalhes.png" hspace="5" border="0px" />'
-													+ '</a>';
-											detalhes += '  <a href="javascript:;" '
-													+ ('onclick="ConsultaEncalhe.popupDetalheReparte(\''
-															+ row.cell.idCota
-															+ '\', \''
-															+ row.cell.idFornecedor
-															+ '\', \''
-															+ row.cell.idProdutoEdicao
-															+ '\', null, \''
-															+ row.cell.recolhimento + '\',\'' +
-															 row.cell.codigoProduto + '\',\''+
-															 row.cell.nomeProduto + '\',\''+
-															 row.cell.numeroEdicao + '\',\''+
-															 row.cell.reparte + '\',\''+
-															 row.cell.encalhe + '\''
-															
-													+ ');" style="cursor:pointer"')
-													+ '>'
-													+ '<img title="Detalhes do Produto" src="'
-													+ contextPath
-													+ '/images/ico_negociar.png" hspace="5" border="0px" />'
-													+ '</a>';
+						$.each(resultado.tableModel.rows,
+						function(index, row) {
+							var detalhes = '<a href="javascript:;" '
+									+ (!row.cell.indPossuiObservacaoConferenciaEncalhe ? 'style="opacity: 0.5;"'
+											: 'onclick="ConsultaEncalhe.popupDetalhe(\''
+													+ row.cell.idCota
+													+ '\', \''
+													+ row.cell.idFornecedor
+													+ '\', \''
+													+ row.cell.idProdutoEdicao
+													+ '\', null, \''
+													+ row.cell.recolhimento
+													+ '\');" style="cursor:pointer"')
+									+ '>'
+									+ '<img title="Detalhes do Encalhe" src="'
+									+ contextPath
+									+ '/images/ico_detalhes.png" hspace="5" border="0px" />'
+									+ '</a>';
+							detalhes += '  <a href="javascript:;" '
+									+ ('onclick="ConsultaEncalhe.popupDetalheReparte(\''
+											+ row.cell.idCota
+											+ '\', \''
+											+ row.cell.idFornecedor
+											+ '\', \''
+											+ row.cell.idProdutoEdicao
+											+ '\', null, \''
+											+ row.cell.recolhimento + '\',\'' +
+											 row.cell.codigoProduto + '\',\''+
+											 row.cell.nomeProduto + '\',\''+
+											 row.cell.numeroEdicao + '\',\''+
+											 row.cell.reparte + '\',\''+
+											 row.cell.encalhe + '\''
+											
+									+ ');" style="cursor:pointer"')
+									+ '>'
+									+ '<img title="Detalhes do Produto" src="'
+									+ contextPath
+									+ '/images/ico_negociar.png" hspace="5" border="0px" />'
+									+ '</a>';
+							
+							detalhes += '  <a href="javascript:;" '
+								+ ('onclick="ConsultaEncalhe.popupDetalheBaseReparte(\''
+										+ row.cell.idCota
+										+ '\', \''
+										+ row.cell.idFornecedor
+										+ '\', \''
+										+ row.cell.idProdutoEdicao
+										+ '\', null, \''
+										+ row.cell.recolhimento + '\',\'' +
+										 row.cell.codigoProduto + '\',\''+
+										 row.cell.nomeProduto + '\',\''+
+										 row.cell.numeroEdicao + '\',\''+
+										 row.cell.reparte + '\',\''+
+										 row.cell.encalhe + '\''
+										
+								+ ');" style="cursor:pointer"')
+								+ '>'
+								+ '<img title="Detalhes do Produto" src="'
+								+ contextPath
+								+ '/images/ico_negociar.png" hspace="5" border="0px" />'
+								+ '</a>';
+							
+							row.cell.acao = detalhes;
 
-											row.cell.acao = detalhes;
-
-										});
-
+						});
+						
 						$("#outrosValoresGrid", ConsultaEncalhe.workspace)
 								.flexAddData(
 										{
@@ -756,12 +776,18 @@ var ConsultaEncalhe = $
 								edicaoProduto);
 						$("#repartereparte", ConsultaEncalhe.workspace).html(
 								reparte);
-						$("#encalhereparte", ConsultaEncalhe.workspace).html(
-								encalhe);
+						$("#encalhereparte", ConsultaEncalhe.workspace).html(encalhe);
 						ConsultaEncalhe.obterDetalhesReparte(idCota,
 								idFornecedor, idProdutoEdicao, dataMovimento,
 								dataRecolhimento);
-
+						
+						$("#encalhebasereparte", ConsultaEncalhe.workspace).html(
+								encalhe);
+						ConsultaEncalhe.obterDetalhesBaseReparte(idCota,
+								idFornecedor, idProdutoEdicao, dataMovimento,
+								dataRecolhimento);
+						
+						
 						$("#dialog-detalhes-reparte", ConsultaEncalhe.workspace)
 								.dialog(
 										{
@@ -783,7 +809,47 @@ var ConsultaEncalhe = $
 													.parents("form")
 										});
 					},
+					
+					popupDetalheBaseReparte : function(idCota, idFornecedor,
+							idProdutoEdicao, dataMovimento, dataRecolhimento,codigoProduto,nomeProduto,edicaoProduto,reparte,encalhe) {
+                       
+						$("#codigoProdutoreparte", ConsultaEncalhe.workspace).html(
+								codigoProduto);
+						$("#nomeProdutoreparte", ConsultaEncalhe.workspace).html(
+								nomeProduto);
+						$("#edicaoProdutoreparte", ConsultaEncalhe.workspace).html(
+								edicaoProduto);
+						$("#repartereparte", ConsultaEncalhe.workspace).html(
+								reparte);
+						$("#encalhebasereparte", ConsultaEncalhe.workspace).html(
+								encalhe);
+						ConsultaEncalhe.obterDetalhesBaseReparte(idCota,
+								idFornecedor, idProdutoEdicao, dataMovimento,
+								dataRecolhimento);
+						
+						
+						$("#dialog-detalhes-reparte", ConsultaEncalhe.workspace)
+								.dialog(
+										{
+											resizable : false,
+											height : 450,
+											width : 650,
+											modal : true,
+											buttons : [ {
+												id : "bt_fechar",
+												text : "Fechar",
+												click : function() {
 
+													$(this).dialog("close");
+												}
+											} ],
+											form : $(
+													"#dialog-detalhes-reparte",
+													ConsultaEncalhe.workspace)
+													.parents("form")
+										});
+					},
+					
 					// POPULA GRADE DE DETALHES DA ENCALHE
 					obterDetalhesEncalhe : function(numeroCota, idFornecedor,
 							idProdutoEdicao, dataMovimento, dataRecolhimento) {
@@ -862,7 +928,46 @@ var ConsultaEncalhe = $
 								.flexReload();
 						$(".grids", ConsultaEncalhe.workspace).show();
 					},
+					
+					// POPULA GRADE DE DETALHES DA ENCALHE POR PRODUTO
+					obterDetalhesBaseReparte : function(numeroCota, idFornecedor,
+							idProdutoEdicao, dataMovimento, dataRecolhimento) {
 
+						if (!numeroCota) {
+
+							numeroCota = $("#consulta-encalhe-cota",
+									ConsultaEncalhe.workspace).val();
+						}
+						
+						$("#dadosDetalheReparteGrid", ConsultaEncalhe.workspace).clear();
+						$("#dadosDetalheReparteGrid", ConsultaEncalhe.workspace)
+								.flexOptions(
+										{
+											url : contextPath
+													+ "/devolucao/consultaEncalhe/pesquisarDetalheBaseReparte",
+											params : [ {
+												name : 'idProdutoEdicao',
+												value : idProdutoEdicao
+											}, {
+												name : 'idFornecedor',
+												value : idFornecedor
+											}, {
+												name : 'numeroCota',
+												value : numeroCota
+											}, {
+												name : 'dataRecolhimento',
+												value : dataRecolhimento
+											}, {
+												name : 'dataMovimento',
+												value : dataMovimento
+											} ],
+											newp : 1
+										});
+						$("#dadosDetalheReparteGrid", ConsultaEncalhe.workspace)
+								.flexReload();
+						$(".grids", ConsultaEncalhe.workspace).show();
+					},
+					
 					obterColModel : function() {
 
 						var colModel = [ {

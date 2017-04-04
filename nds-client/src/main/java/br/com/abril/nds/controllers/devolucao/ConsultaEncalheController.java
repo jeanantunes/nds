@@ -423,7 +423,30 @@ public class ConsultaEncalheController extends BaseController {
 		efetuarPesquisaReparte(filtro1);
 	}
 	
-	
+	@Post
+	@Path("/pesquisarDetalheBaseReparte")
+	public void pesquisarDetalheBaseReparte(Long idProdutoEdicao, Long idFornecedor, Integer numeroCota, 
+			String dataRecolhimento, String dataMovimento, String sortorder, String sortname, int page, int rp) {
+		
+		FiltroConsultaEncalheDTO filtro = ((FiltroConsultaEncalheDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE));
+		
+		FiltroConsultaEncalheDTO filtro1 = new FiltroConsultaEncalheDTO();
+		
+		filtro1.setCodigoProduto(filtro.getCodigoProduto());
+		filtro1.setDataRecolhimentoFinal(filtro.getDataRecolhimentoFinal());
+		filtro1.setDataRecolhimentoInicial(filtro.getDataRecolhimentoInicial());
+		filtro1.setIdBox(filtro.getIdBox());
+		filtro1.setIdCota(filtro.getIdCota());
+		filtro1.setIdFornecedor(filtro.getIdFornecedor());
+		
+		filtro1.setIdProdutoEdicao(idProdutoEdicao);
+		
+		configurarPaginacaoPesquisaReparte(filtro1, sortorder, sortname, page, rp);
+		
+		tratarFiltroReparte(filtro1);
+		
+		efetuarPesquisaBaseReparte(filtro1);
+	}
 
 	/**
 	 * Executa a pesquisa de consulta encalhe.
@@ -680,6 +703,57 @@ public class ConsultaEncalheController extends BaseController {
 		 this.session.setAttribute(FILTRO_DETALHE_REPARTE_SESSION_ATTRIBUTE,filtro);
 		
 		InfoConsultaEncalheDTO infoConsultaEncalhe = consultaEncalheService.pesquisarReparte(filtro);
+		
+		List<ConsultaEncalheDTO> listaResultado1 = infoConsultaEncalhe.getListaConsultaEncalhe();
+		
+		if (listaResultado1 == null || listaResultado1.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
+		List<CotaReparteProdutoDTO> listaResultado = new  ArrayList<CotaReparteProdutoDTO>();
+		for (ConsultaEncalheDTO ce: listaResultado1 ) {
+			CotaReparteProdutoDTO lista = new CotaReparteProdutoDTO();
+			lista.setReparte(ce.getReparte().longValue());
+			lista.setEncalhe(ce.getEncalhe()!= null ? ce.getEncalhe().longValue():0L);
+			lista.setIdBox(ce.getIdBox());
+			lista.setNumeroCota(ce.getIdCota().intValue());
+			lista.setNomeBox(ce.getNomeBox());
+			lista.setNomeCota(ce.getNomeCota());
+			listaResultado.add(lista);
+		}
+		
+	
+		if (listaResultado == null || listaResultado.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
+		Integer quantidadeRegistros = listaResultado.size();
+		
+		List<ConsultaEncalheDetalheReparteVO> listaResultadosVO = getListaConsultaEncalheDetalheReparteVO(listaResultado);
+		
+		TableModel<CellModelKeyValue<ConsultaEncalheDetalheReparteVO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEncalheDetalheReparteVO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaResultadosVO));
+		
+		tableModel.setTotal( (quantidadeRegistros!= null) ? quantidadeRegistros : 0);
+		
+		tableModel.setPage( filtro.getPaginacao().getPaginaAtual());
+		
+		ResultadoConsultaEncalheDetalheReparteVO resultadoPesquisa = new ResultadoConsultaEncalheDetalheReparteVO();
+		
+		resultadoPesquisa.setTableModel(tableModel);
+		
+		 this.session.setAttribute(CONSULTA_ENCALHE_DETALHE_REPARTE_LISTA,listaResultadosVO);
+	
+		
+		result.use(Results.json()).withoutRoot().from(resultadoPesquisa).recursive().serialize();
+	}
+	
+	private void efetuarPesquisaBaseReparte(FiltroConsultaEncalheDTO filtro) {
+		
+		 this.session.setAttribute(FILTRO_DETALHE_REPARTE_SESSION_ATTRIBUTE,filtro);
+		
+		InfoConsultaEncalheDTO infoConsultaEncalhe = consultaEncalheService.pesquisarBaseReparte(filtro);
 		
 		List<ConsultaEncalheDTO> listaResultado1 = infoConsultaEncalhe.getListaConsultaEncalhe();
 		

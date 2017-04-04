@@ -40,6 +40,8 @@
 					</select>
 				</td>
 				
+				<!-- 
+				
 				<td width="70">Vis&atilde;o:</td>
 				<td width="100">
 					<select name="filtro.visao" id="selectVisao" style="width:100px;">
@@ -48,6 +50,9 @@
 					</c:forEach>
 					</select>
 				</td>
+				-->
+				<td width="70">&nbsp;</td>
+				<td width="100">&nbsp;</td>
 				<td width="106"><span class="bt_novos"><a href="javascript:;" onclick="analiticoEncalheController.pesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
 			</tr>
 		</table>

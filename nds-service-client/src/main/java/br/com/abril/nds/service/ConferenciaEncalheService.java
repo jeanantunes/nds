@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
+import br.com.abril.nds.dto.ControleConferenciaEncalheCotaDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
@@ -75,6 +76,8 @@ public interface ConferenciaEncalheService {
 	public List<DebitoCreditoCota> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(
 	        ControleConferenciaEncalheCota controleConferenciaEncalheCota, Long idFornecedor);
 	
+	public List<DebitoCreditoCota> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(
+			ControleConferenciaEncalheCotaDTO controleConferenciaEncalheCotaDTO, Long idFornecedor);
 	
 	/**
 	 * Obtém o primeiro dia de recolhimento para da data de

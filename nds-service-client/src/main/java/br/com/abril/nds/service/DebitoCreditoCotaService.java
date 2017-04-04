@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.BoletoAvulsoDTO;
+import br.com.abril.nds.dto.ControleConferenciaEncalheCotaDTO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
@@ -118,4 +119,6 @@ public interface DebitoCreditoCotaService {
 	MovimentoFinanceiroCotaDTO gerarMovimentoFinanceiroBoletoAvulsoDTO(BoletoAvulsoDTO debitoCredito);
 	
 	MovimentoFinanceiroCotaDTO gerarMovimentoFinanceiroCotaCobrancaDTO(DebitoCreditoDTO debitoCreditoDTO);
+	
+	List<DebitoCreditoCota> obterListaDebitoCreditoCotaDTO(ControleConferenciaEncalheCotaDTO controleConfEncalheCota, final List<Date> datas, final Long idFornecedor);
 }

@@ -733,7 +733,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
         .append(" and mec.COTA_ID = chamadaenc0_.COTA_ID and tm.OPERACAO_ESTOQUE = 'ENTRADA' order by mec.data desc limit 1 )   ")
         .append(" ,0) as precoComDesconto, ")
         
-        //.append(" (select sum(cec.qtde_prevista) ")
+//        .append(" coalesce((select sum(cec.qtde_prevista) ")
         .append(" coalesce((select sum(case when tm.OPERACAO_ESTOQUE = 'ENTRADA' then mec.qtde else -mec.qtde end)       ")
         .append(" from movimento_estoque_cota mec  FORCE INDEX (NDX_PRODUTO_EDICAO)			                                                             ")
         .append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID                                 ")
