@@ -27,6 +27,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.Validate;
 
@@ -404,6 +405,7 @@ public class Distribuidor {
 	@Column(name = "LIBERAR_TRANSFERENCIA_PARCIAL")
 	private boolean liberarTranferenciaParcial;
 	
+	@Transient
 	@Column(name = "VENDA_TOTAL_ENCALHE")
 	private boolean vendaTotalEncalhe;
 	

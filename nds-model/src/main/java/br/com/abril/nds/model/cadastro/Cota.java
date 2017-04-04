@@ -84,7 +84,7 @@ public class Cota implements Serializable {
 	@OneToMany(mappedBy = "cota", cascade={CascadeType.REMOVE})
 	private List<PDV> pdvs = new ArrayList<PDV>();
 
-	@OneToMany(mappedBy = "cota")
+	@OneToMany(fetch=FetchType.LAZY, mappedBy = "cota")
 	private List<ChamadaEncalheCota> chamadaEncalheCotas = new ArrayList<ChamadaEncalheCota>();
 
 	@Enumerated(EnumType.STRING)
@@ -97,7 +97,7 @@ public class Cota implements Serializable {
 	@OneToMany(mappedBy = "cota")
 	private Set<TelefoneCota> telefones = new HashSet<TelefoneCota>();
 	
-	@OneToOne(cascade=CascadeType.ALL)
+	@OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="CONTRATO_ID")
 	private ContratoCota contratoCota;
 	
@@ -106,13 +106,13 @@ public class Cota implements Serializable {
 	private Box box;
 	
 	@Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
-	@OneToMany(mappedBy = "cota")
+	@OneToMany(fetch=FetchType.LAZY, mappedBy = "cota")
 	private List<HistoricoSituacaoCota> historicos = new ArrayList<HistoricoSituacaoCota>();
 	
 	@OneToMany(mappedBy = "cota")
 	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
 	
-	@OneToOne(cascade=CascadeType.ALL)
+	@OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name = "PARAMETRO_COBRANCA_ID")
 	private ParametroCobrancaCota parametroCobranca;
 
@@ -167,7 +167,7 @@ public class Cota implements Serializable {
 	/**
 	 * Fornecedores associados à Cota
 	 */
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(name = "COTA_FORNECEDOR", joinColumns = {@JoinColumn(name = "COTA_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "FORNECEDOR_ID")})
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
@@ -179,7 +179,7 @@ public class Cota implements Serializable {
 	@Embedded
 	private ParametrosCotaNotaFiscalEletronica parametrosCotaNotaFiscalEletronica;
 	
-	@OneToOne(cascade={CascadeType.REMOVE})
+	@OneToOne(fetch=FetchType.LAZY, cascade={CascadeType.REMOVE})
 	@JoinColumn(name="BASE_REFERENCIA_COTA_ID")
 	private BaseReferenciaCota baseReferenciaCota;
 	
@@ -204,7 +204,7 @@ public class Cota implements Serializable {
 	/** 
 	 * Referente a garantias da cota.
 	 */
-	@OneToOne(cascade=CascadeType.ALL)
+	@OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="COTA_GARANTIA_ID")
 	private CotaGarantia cotaGarantia;
 	
