@@ -598,7 +598,7 @@ var analiseParcialController = $.extend(true, {
 					
 				}
   
-				$('#abrangencia').text(result).formatNumber({format:'0.00 %', locale:'br'});
+//				$('#abrangencia').text(result).formatNumber({format:'0.00 %', locale:'br'});
     		},
     		error: function(result) {
 

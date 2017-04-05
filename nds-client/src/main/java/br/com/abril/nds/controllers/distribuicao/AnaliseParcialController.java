@@ -227,9 +227,8 @@ public class AnaliseParcialController extends BaseController {
     @Post
     public void carregarDetalhesCota(Integer numeroCota, String codigoProduto, Long idClassifProdEdicao) {
         Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
-        
         CotaDTO cotaDTO = analiseParcialService.buscarDetalhesCota(numeroCota, produto.getCodigoICD(), idClassifProdEdicao);
-
+        
         cotaDTO.setNomeProduto(produto.getNomeComercial());
         cotaDTO.setCodigoProduto(produto.getCodigo());
         
@@ -418,9 +417,9 @@ public class AnaliseParcialController extends BaseController {
         	);
         }
         
-        BigDecimal percentualAbrangencia = analiseParcialService.calcularPercentualAbrangencia(estudoId);
+        //BigDecimal percentualAbrangencia = analiseParcialService.calcularPercentualAbrangencia(estudoId);
         
-        result.use(Results.json()).withoutRoot().from(percentualAbrangencia).serialize();
+        result.use(Results.json()).withoutRoot().from("").serialize();
     }
 
     @Post("/mudarReparteLote")
@@ -446,6 +445,8 @@ public class AnaliseParcialController extends BaseController {
     	ValidacaoException validacao = analiseParcialService.validarLiberacaoDeEstudo(estudoId);
     	
     	if(validacao == null || validacao.getValidacao().getTipoMensagem().equals(TipoMensagem.SUCCESS)) {
+    		
+    		analiseParcialService.calcularPercentualAbrangencia(estudoId);
     		
     		analiseParcialService.liberar(estudoId, cotas);
     	} else {
