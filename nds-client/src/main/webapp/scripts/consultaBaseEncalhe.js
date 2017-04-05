@@ -1,7 +1,4 @@
-var ConsultaEncalhe = $
-		.extend(
-				true,
-				{
+var ConsultaEncalhe = $.extend(true,{
 
 					init : function() {
 
@@ -552,7 +549,7 @@ var ConsultaEncalhe = $
 									+ '/images/ico_detalhes.png" hspace="5" border="0px" />'
 									+ '</a>';
 							detalhes += '  <a href="javascript:;" '
-									+ ('onclick="ConsultaEncalhe.popupDetalheReparte(\''
+									+ ('onclick="ConsultaEncalhe.popupDetalheBaseReparte(\''
 											+ row.cell.idCota
 											+ '\', \''
 											+ row.cell.idFornecedor
@@ -790,17 +787,17 @@ var ConsultaEncalhe = $
 					
 					popupDetalheBaseReparte : function(idCota, idFornecedor,
 							idProdutoEdicao, dataMovimento, dataRecolhimento,codigoProduto,nomeProduto,edicaoProduto,reparte,encalhe) {
-                       
-						$("#codigoProdutoreparte", ConsultaEncalhe.workspace).html(
-								codigoProduto);
-						$("#nomeProdutoreparte", ConsultaEncalhe.workspace).html(
-								nomeProduto);
-						$("#edicaoProdutoreparte", ConsultaEncalhe.workspace).html(
-								edicaoProduto);
-						$("#repartereparte", ConsultaEncalhe.workspace).html(
-								reparte);
-						$("#encalhebasereparte", ConsultaEncalhe.workspace).html(
-								encalhe);
+						
+						console.log(idCota+" - "+idFornecedor+" - "+
+								idProdutoEdicao+" - "+dataMovimento+" - "+dataRecolhimento+" - "
+								+codigoProduto+" - "+nomeProduto+" - "+edicaoProduto+" - "+reparte+" - "+encalhe);
+						
+						$("#codigoProdutoreparte", ConsultaEncalhe.workspace).html(codigoProduto);
+						$("#nomeProdutoreparte", ConsultaEncalhe.workspace).html(nomeProduto);
+						$("#edicaoProdutoreparte", ConsultaEncalhe.workspace).html(edicaoProduto);
+						$("#repartereparte", ConsultaEncalhe.workspace).html(reparte);
+						$("#encalhebasereparte", ConsultaEncalhe.workspace).html(encalhe);
+						
 						ConsultaEncalhe.obterDetalhesBaseReparte(idCota,
 								idFornecedor, idProdutoEdicao, dataMovimento,
 								dataRecolhimento);
@@ -908,13 +905,21 @@ var ConsultaEncalhe = $
 					},
 					
 					// POPULA GRADE DE DETALHES DA ENCALHE POR PRODUTO
-					obterDetalhesBaseReparte : function(numeroCota, idFornecedor,
-							idProdutoEdicao, dataMovimento, dataRecolhimento) {
-
+					obterDetalhesBaseReparte : function(numeroCota, idFornecedor, idProdutoEdicao, dataMovimento, dataRecolhimento) {
+						
+						console.log(numeroCota +" "+ idFornecedor +" "+ idProdutoEdicao +" "+ dataMovimento +" "+ dataRecolhimento);
+						
+						var parametros = new Array();
+						
+						parametros.push({name:"filtro.idProdutoEdicao" , idProdutoEdicao});
+						parametros.push({name:"filtro.idFornecedor" , idFornecedor});
+						parametros.push({name:"filtro.numCota" , numeroCota});
+						parametros.push({name:"filtro.dataRecolhimentoInicial" , dataRecolhimento});
+						parametros.push({name:"filtro.dataRecolhimentoFinal" , dataMovimento});
+						
 						if (!numeroCota) {
 
-							numeroCota = $("#consulta-encalhe-cota",
-									ConsultaEncalhe.workspace).val();
+							numeroCota = $("#consulta-encalhe-cota", ConsultaEncalhe.workspace).val();
 						}
 						
 						$("#dadosDetalheReparteGrid", ConsultaEncalhe.workspace).clear();
@@ -922,23 +927,8 @@ var ConsultaEncalhe = $
 								.flexOptions(
 										{
 											url : contextPath
-													+ "/devolucao/consultaEncalhe/pesquisarDetalheBaseReparte",
-											params : [ {
-												name : 'idProdutoEdicao',
-												value : idProdutoEdicao
-											}, {
-												name : 'idFornecedor',
-												value : idFornecedor
-											}, {
-												name : 'numeroCota',
-												value : numeroCota
-											}, {
-												name : 'dataRecolhimento',
-												value : dataRecolhimento
-											}, {
-												name : 'dataMovimento',
-												value : dataMovimento
-											} ],
+													+ "/devolucao/consultaBaseEncalhe/pesquisarDetalheBaseReparte",
+											params : parametros,
 											newp : 1
 										});
 						$("#dadosDetalheReparteGrid", ConsultaEncalhe.workspace)
@@ -1120,4 +1110,4 @@ var ConsultaEncalhe = $
 					}
 
 				}, BaseController);
-//@ sourceURL=consultaEncalhe.js
+//@ sourceURL=consultaBaseEncalhe.js

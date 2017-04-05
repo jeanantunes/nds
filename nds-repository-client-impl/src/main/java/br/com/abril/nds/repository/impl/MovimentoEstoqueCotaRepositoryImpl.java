@@ -1485,7 +1485,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append(" order by cota_id ");
         
-       
         final Map<String, Object> parameters = new HashMap<String, Object>();
         
         final NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
@@ -1498,7 +1497,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             parameters.put("idFornecedor", filtro.getIdFornecedor());
         }
         
-        
         if(filtro.getIdProdutoEdicao() != null) {
             parameters.put("idProdutoEdicao", filtro.getIdProdutoEdicao());
         }
@@ -1506,7 +1504,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         if(filtro.getIdBox() != null) {
             parameters.put("idBox", filtro.getIdBox());
         }
-         parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
+        
+        parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
         parameters.put("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
         parameters.put("tipoVendaProduto",TipoVendaEncalhe.ENCALHE.name());
         
@@ -4915,12 +4914,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			if(filtro.getIdCota() != null) {
 	           sql.append(" AND cec.COTA_ID = :idCota" );
 	        }
+			
 			if(filtro.getIdBox() != null) {
 	        	sql.append(" AND c.box_id = :idBox" );
 	        }
 			
-			sql.append(" AND pe.ID = :idProdutoEdicao ");
-			
+			if(filtro.getIdProdutoEdicao() != null) {
+				sql.append(" AND pe.ID = :idProdutoEdicao ");
+			}
 	        return sql;
 	    } 
 	    
