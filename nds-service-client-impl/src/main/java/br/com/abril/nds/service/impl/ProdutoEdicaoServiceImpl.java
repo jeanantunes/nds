@@ -2076,7 +2076,7 @@ if ( dto.getRepartePrevisto() != null) {
 
     	for (ProdutoEdicaoDTO peDTO : listEdicoesProdutoDto) {
     		if((peDTO.getDescricaoSituacaoLancamento().equalsIgnoreCase("FECHADO")) 
-    				&& (peDTO.getQtdeVendas() == null || peDTO.getQtdeVendas().compareTo(BigInteger.ZERO) <= 0)){
+    				&& (peDTO.getQtdeVendas() == null || peDTO.getQtdeVendas().compareTo(BigInteger.ZERO) == 0)){
     			peDTO.setQtdeVendas(estoqueProdutoService.obterVendaBaseadoNoEstoque(peDTO.getId()).toBigInteger());
     		}
     		

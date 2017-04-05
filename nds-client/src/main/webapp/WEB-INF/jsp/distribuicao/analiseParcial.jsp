@@ -197,7 +197,12 @@ table.dadosTab { margin-left: 370px;}
 							<option value="numero_cota">Cota</option>
 					</select></td>
 					<%--<td>Reparte: <input type="text" name="textfield6" id="textfield6" style="width: 40px;" /></td>--%>
-					<td>Abrangência: <span id="abrangencia"></span></td>
+					<td>Abrang&ecirc;ncia: 
+					   <span id="abrangencia"></span>
+                       <a href="javascript:analiseParcialController.atualizaAbrangencia();" onclick="">
+                           <img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" title="Atualizar abrang&ecirc;ncia." width="15" height="15" border="0" style="margin-top: 15px;" />
+                       </a>
+					</td>
 				</tr>
             </table>
             <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
