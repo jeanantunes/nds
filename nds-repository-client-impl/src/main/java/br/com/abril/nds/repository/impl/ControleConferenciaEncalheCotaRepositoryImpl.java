@@ -358,7 +358,7 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 			.append("	            AND DATEDIFF(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 1 DAY) ")
 			.append("	                                WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 2 DAY) ")
 			.append("	                                ELSE (select DATA_OPERACAO from distribuidor) END, DATA_RECOLHIMENTO) = 1) ")
-			.append("	            AND (NOT EXISTS(SELECT DATA FROM feriado WHERE dacontroleConferenciaEncalheCotata = (select DATA_OPERACAO from distribuidor)) ")
+			.append("	            AND (NOT EXISTS(SELECT DATA FROM feriado WHERE data = (select DATA_OPERACAO from distribuidor)) ")
 			.append("				                OR (SELECT IND_OPERA FROM feriado WHERE data = (select DATA_OPERACAO from distribuidor) = true)) THEN DATEDIFF(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 1 DAY) ")
 			.append("																															WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 2 DAY) ")
 			.append("				                                                                                                            ELSE (select DATA_OPERACAO from distribuidor) END, DATA_RECOLHIMENTO) + 1 ")
