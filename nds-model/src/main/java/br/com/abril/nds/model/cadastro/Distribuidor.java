@@ -405,7 +405,6 @@ public class Distribuidor {
 	@Column(name = "LIBERAR_TRANSFERENCIA_PARCIAL")
 	private boolean liberarTranferenciaParcial;
 	
-	@Transient
 	@Column(name = "VENDA_TOTAL_ENCALHE")
 	private boolean vendaTotalEncalhe;
 	
