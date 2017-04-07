@@ -867,7 +867,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Transactional(readOnly = true)
 	public boolean vendaEncalheTotal() {
 		
-		return this.distribuidorRepository.buscarDistribuidorAceitaRecolhimentoParcialAtraso();
+		return this.distribuidorRepository.vendaEncalheTotal();
 		
 	}
 }

@@ -289,7 +289,7 @@
 	<div id="dialog-produtos-sem-encalhe" title="Encalhe N&atilde;o Processado/Venda Total" style="display: none;">
 		<fieldset>
 			<legend>Encalhe N&atilde;o Processado/Venda Total</legend>
-			<p id="msgProdutosSemEncalhe"></p>
+			<table class="dadosHistoricoEncalheGrid"></table>
 		</fieldset>
 	</div>
 </form>

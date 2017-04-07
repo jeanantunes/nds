@@ -587,7 +587,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		} else {
 			$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/validarProdutoComVendaTotal", null, 
 				function(result){
-					if(result.SUCESS == 'SUCCESS') {
+					if(result.SUCCESS == 'SUCCESS') {
 						ConferenciaEncalhe.processarConferencia();
 					} else {
 						ConferenciaEncalhe.verificarProdutosSemEncalhe();

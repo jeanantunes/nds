@@ -426,7 +426,7 @@ public class ConferenciaEncalheController extends BaseController {
 				" sessionid="+session.getId()+"  cota="+numeroCota);
 		Cota cota=null;
 		
-		final boolean isvendaTotal = this.distribuidorService.vendaEncalheTotal();
+		boolean isvendaTotal = this.distribuidorService.vendaEncalheTotal();
 		
 		// evitar que duas conferencia na mesma cota
 	 
@@ -3165,7 +3165,19 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		result.use(CustomJson.class).from(dados).serialize();
 	}
-
+	
+	@Post
+	public void reparteMaiorQueZero(){
+		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+		
+		if(!validarItemComZero(info.getListaConferenciaEncalhe())){
+			this.result.use(Results.json()).from("SIM","result").serialize();
+			return;
+		} else {
+			this.result.use(Results.json()).from("NAO","result").serialize();
+		}
+	}
+	
 	@Post
 	public void verificarProdutosSemEncalhe(){
 		
@@ -3180,15 +3192,18 @@ public class ConferenciaEncalheController extends BaseController {
 			return;
 		}
 		
+		Set<ConferenciaEncalheDTO> lista = info.getListaConferenciaEncalhe();
+		
+		lista.removeIf(c -> c.getQtdInformada().intValue() > 0);
+		
 		Collection<ConferenciaEncalheDTO> listaConferenciaEncalhe = 
-				PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(info.getListaConferenciaEncalhe()), 
+				PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(lista), 
 						Ordenacao.ASC, 
 						"dataRecolhimento", "codigoSM", "numeroEdicao");
 		
-		StringBuilder html = montarHtmlRetorno(listaConferenciaEncalhe);
-			
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, html.toString()),
-							"result").recursive().serialize();
+		this.result.use(FlexiGridJson.class).from((ArrayList<ConferenciaEncalheDTO>)listaConferenciaEncalhe).total(listaConferenciaEncalhe.size()).page(1).serialize();
+		
+		
 	}
 	
 	@Post
