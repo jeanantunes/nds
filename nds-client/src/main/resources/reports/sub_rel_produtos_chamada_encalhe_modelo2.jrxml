@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_rel_produtos_ne_modelo2" pageWidth="591" pageHeight="842" columnWidth="591" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="7de11dee-12a2-456c-a4a4-c9817c298944">
-	<property name="ireport.zoom" value="2.4157650000000013"/>
-	<property name="ireport.x" value="521"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.zoom" value="2.657341500000003"/>
+	<property name="ireport.x" value="944"/>
+	<property name="ireport.y" value="110"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" pdfFontName="Arial" isPdfEmbedded="true">
 		<pen lineWidth="0.25"/>
@@ -37,6 +37,9 @@
 	<field name="codigoBarras" class="java.lang.String">
 		<fieldDescription><![CDATA[codigoBarras]]></fieldDescription>
 	</field>
+	<field name="confereciaRealizada" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[confereciaRealizada]]></fieldDescription>
+	</field>
 	<variable name="SUM_TOTAL_BRUTO" class="java.math.BigDecimal" resetType="Group" resetGroup="CHAMADA_ENCALHE" calculation="Sum">
 		<variableExpression><![CDATA[($F{precoVenda}.multiply(new BigDecimal($F{quantidadeReparte})))]]></variableExpression>
 		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
@@ -58,6 +61,12 @@
 	</variable>
 	<variable name="SUM_QTDE_DEVOLVIDA" class="java.lang.Integer" calculation="Sum">
 		<variableExpression><![CDATA[$F{quantidadeDevolvida}]]></variableExpression>
+	</variable>
+	<variable name="SUM_QTDE_VENDA" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[($F{quantidadeDevolvida}.doubleValue() > 0.0 && $F{confereciaRealizada} == true) ? new BigDecimal(0) : $F{vlrPrecoComDesconto}.multiply(new BigDecimal($F{vendido}))]]></variableExpression>
+	</variable>
+	<variable name="SUM_TOTAL_SEM_QTDE_DEVOLVIDA" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[($F{quantidadeDevolvida}.doubleValue() > 0.0 && $F{confereciaRealizada} == true) ? new BigDecimal("0"): $F{vlrPrecoComDesconto}.multiply(new BigDecimal($F{vendido}))]]></variableExpression>
 	</variable>
 	<group name="CHAMADA_ENCALHE">
 		<groupExpression><![CDATA[$P{NUMERO_NOTA_ENVIO}]]></groupExpression>
@@ -141,8 +150,8 @@
 					<reportElement x="475" y="131" width="100" height="1" uuid="76b93483-9412-4a1a-a1c2-5187219fa5c6"/>
 				</line>
 				<textField pattern="">
-					<reportElement x="478" y="114" width="97" height="19" uuid="95eb7d74-8047-4367-a366-0a793e7df7d4">
-						<printWhenExpression><![CDATA[$V{SUM_VALOR_ENCALHE}.doubleValue() > 0.0]]></printWhenExpression>
+					<reportElement x="478" y="115" width="97" height="19" uuid="95eb7d74-8047-4367-a366-0a793e7df7d4">
+						<printWhenExpression><![CDATA[$V{SUM_QTDE_DEVOLVIDA}.intValue() > 0]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Right">
 						<font size="10"/>
@@ -185,12 +194,26 @@
 				</textField>
 				<textField pattern="">
 					<reportElement x="478" y="97" width="97" height="19" uuid="d07bf70a-38c1-45a9-9af1-cbb4705459c6">
-						<printWhenExpression><![CDATA[$V{SUM_VALOR_ENCALHE}.doubleValue() > 0.0]]></printWhenExpression>
+						<printWhenExpression><![CDATA[$V{SUM_QTDE_DEVOLVIDA}.intValue() > 0]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{SUM_VALOR_TOTAL_COM_DESCONTO}.subtract($V{SUM_VALOR_ENCALHE}).doubleValue()]]></textFieldExpression>
+				</textField>
+				<textField pattern="###0.0000">
+					<reportElement x="478" y="97" width="97" height="20" uuid="b20c0d0c-aa91-4e4d-8877-06035b23b235">
+						<printWhenExpression><![CDATA[$V{SUM_QTDE_DEVOLVIDA}.intValue() == 0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[($V{SUM_QTDE_VENDA}).doubleValue()]]></textFieldExpression>
+				</textField>
+				<textField pattern="###0.0000" isBlankWhenNull="false">
+					<reportElement x="478" y="115" width="97" height="19" uuid="8c3d0ae6-aa0f-44b7-ad5d-0b38982bddf6">
+						<printWhenExpression><![CDATA[$V{SUM_QTDE_DEVOLVIDA}.intValue() == 0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{SUM_TOTAL_SEM_QTDE_DEVOLVIDA}.doubleValue()]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -572,7 +595,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{quantidadeDevolvida} != null) ? ($F{quantidadeReparte}.intValue() - $F{quantidadeDevolvida}.intValue()) : ""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{quantidadeDevolvida} != null && $F{confereciaRealizada} == true) ? ($F{quantidadeReparte}.intValue() - $F{quantidadeDevolvida}.intValue()) : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
 				<reportElement x="435" y="0" width="34" height="22" uuid="c9647ed7-9ee5-4587-a024-832c1dc2b814"/>

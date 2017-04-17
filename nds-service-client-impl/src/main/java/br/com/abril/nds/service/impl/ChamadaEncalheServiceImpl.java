@@ -368,7 +368,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		BigDecimal vlrReparte = BigDecimal.ZERO;	
 		BigDecimal vlrDesconto = BigDecimal.ZERO;
-		BigDecimal vlrEncalhe = BigDecimal.ZERO;	
+		BigDecimal vlrEncalhe = BigDecimal.ZERO;
 		
 		List<Long> idsProdutoEdicao = new ArrayList<>();
 		
