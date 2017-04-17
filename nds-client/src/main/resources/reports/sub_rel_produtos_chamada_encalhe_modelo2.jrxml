@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_rel_produtos_ne_modelo2" pageWidth="591" pageHeight="842" columnWidth="591" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="7de11dee-12a2-456c-a4a4-c9817c298944">
 	<property name="ireport.zoom" value="2.657341500000003"/>
-	<property name="ireport.x" value="944"/>
+	<property name="ireport.x" value="367"/>
 	<property name="ireport.y" value="110"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" pdfFontName="Arial" isPdfEmbedded="true">
@@ -63,10 +63,10 @@
 		<variableExpression><![CDATA[$F{quantidadeDevolvida}]]></variableExpression>
 	</variable>
 	<variable name="SUM_QTDE_VENDA" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[($F{quantidadeDevolvida}.doubleValue() > 0.0 && $F{confereciaRealizada} == true) ? new BigDecimal(0) : $F{vlrPrecoComDesconto}.multiply(new BigDecimal($F{vendido}))]]></variableExpression>
+		<variableExpression><![CDATA[($F{quantidadeDevolvida}.doubleValue() > 0.0 && $F{confereciaRealizada} == true) ? new BigDecimal("0") : $F{vlrPrecoComDesconto}.multiply(new BigDecimal($F{vendido}))]]></variableExpression>
 	</variable>
 	<variable name="SUM_TOTAL_SEM_QTDE_DEVOLVIDA" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[($F{quantidadeDevolvida}.doubleValue() > 0.0 && $F{confereciaRealizada} == true) ? new BigDecimal("0"): $F{vlrPrecoComDesconto}.multiply(new BigDecimal($F{vendido}))]]></variableExpression>
+		<variableExpression><![CDATA[($F{quantidadeDevolvida}.doubleValue() > 0.0 && $F{confereciaRealizada} == true) ? new BigDecimal("0") : $F{vlrPrecoComDesconto}.multiply(new BigDecimal($F{vendido}))]]></variableExpression>
 	</variable>
 	<group name="CHAMADA_ENCALHE">
 		<groupExpression><![CDATA[$P{NUMERO_NOTA_ENVIO}]]></groupExpression>
@@ -201,19 +201,19 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$V{SUM_VALOR_TOTAL_COM_DESCONTO}.subtract($V{SUM_VALOR_ENCALHE}).doubleValue()]]></textFieldExpression>
 				</textField>
-				<textField pattern="###0.0000">
+				<textField>
 					<reportElement x="478" y="97" width="97" height="20" uuid="b20c0d0c-aa91-4e4d-8877-06035b23b235">
 						<printWhenExpression><![CDATA[$V{SUM_QTDE_DEVOLVIDA}.intValue() == 0]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[($V{SUM_QTDE_VENDA}).doubleValue()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{SUM_QTDE_VENDA}.doubleValue() > 0.0 ? $V{SUM_QTDE_VENDA} : ""]]></textFieldExpression>
 				</textField>
-				<textField pattern="###0.0000" isBlankWhenNull="false">
+				<textField isBlankWhenNull="false">
 					<reportElement x="478" y="115" width="97" height="19" uuid="8c3d0ae6-aa0f-44b7-ad5d-0b38982bddf6">
 						<printWhenExpression><![CDATA[$V{SUM_QTDE_DEVOLVIDA}.intValue() == 0]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$V{SUM_TOTAL_SEM_QTDE_DEVOLVIDA}.doubleValue()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{SUM_TOTAL_SEM_QTDE_DEVOLVIDA}.doubleValue() > 0.0 ? $V{SUM_TOTAL_SEM_QTDE_DEVOLVIDA} : ""]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
