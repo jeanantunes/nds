@@ -1,6 +1,11 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -26,9 +31,13 @@ public class CertificadoRepositoryImpl  extends AbstractRepositoryModel<Certific
 	@SuppressWarnings("unchecked")
 	public List<CertificadoNFEDTO> obterCertificado(CertificadoNFEDTO filtro) {
 		
-		StringBuilder hql = new StringBuilder("select cert from Certificado as cert ");
-				
-		Query query = this.getSession().createQuery(hql.toString());
+		StringBuilder sql = new StringBuilder("select ");
+		sql.append(" cert.ID as id, cert.SENHA as senha, cert.ALIAS as alias, cert.NOME_ARQUIVO as nomeArquivo, ");
+		sql.append(" cert.EXTENSAO as extensao, ");
+		sql.append(" cert.DATA_INICIO as dataInicio, cert.DATA_FIM as dataFim ");
+		sql.append(" from CERTIFICADO as cert ");
+		
+		Query query = getSession().createSQLQuery(sql.toString()); 
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CertificadoNFEDTO.class));
 		
