@@ -200,7 +200,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setNumeroControlePaticipante(String numeroControlePaticipante) {
-		this.numeroControlePaticipante = StringUtils.leftPad(numeroControlePaticipante, 25, ' ');
+		this.numeroControlePaticipante = StringUtils.leftPad(numeroControlePaticipante, 25, '0');
 	}
 
 	public String getCodigoBanco() {
@@ -208,7 +208,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setCodigoBanco(String codigoBanco) {
-		this.codigoBanco = StringUtils.leftPad(codigoBanco, 3, ' ');
+		this.codigoBanco = StringUtils.leftPad(codigoBanco, 3, '0');
 	}
 
 	public String getCampoMulta() {
@@ -224,7 +224,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setPercentualMulta(String percentualMulta) {
-		this.percentualMulta = StringUtils.leftPad(percentualMulta, 4, ' ');
+		this.percentualMulta = StringUtils.leftPad(percentualMulta, 4, '0');
 	}
 
 	public String getIdentificacaoTituloBanco() {
@@ -232,7 +232,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setIdentificacaoTituloBanco(String identificacaoTituloBanco) {
-		this.identificacaoTituloBanco = StringUtils.leftPad(identificacaoTituloBanco, 11, ' ');
+		this.identificacaoTituloBanco = StringUtils.leftPad(identificacaoTituloBanco, 11, '0');
 	}
 
 	public String getDigitoConferenciaBancaria() {
@@ -256,7 +256,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setCondicaoEmissaoPapeleta(String condicaoEmissaoPapeleta) {
-		this.condicaoEmissaoPapeleta = StringUtils.leftPad(condicaoEmissaoPapeleta, 1, ' ');
+		this.condicaoEmissaoPapeleta = StringUtils.leftPad(condicaoEmissaoPapeleta, 1, '0');
 	}
 
 	public String getIdentificacaoBoletoDebitoAutomatico() {
@@ -376,7 +376,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setInstrucao(String instrucao) {
-		this.instrucao = StringUtils.leftPad(instrucao, 2, ' ');
+		this.instrucao = StringUtils.leftPad(instrucao, 2, '0');
 	}
 
 	public String getInstrucao2() {
@@ -384,7 +384,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setInstrucao2(String instrucao2) {
-		this.instrucao2 = StringUtils.leftPad(instrucao2, 2, ' ');
+		this.instrucao2 = StringUtils.leftPad(instrucao2, 2, '0');
 	}
 
 	public String getJurosdia() {

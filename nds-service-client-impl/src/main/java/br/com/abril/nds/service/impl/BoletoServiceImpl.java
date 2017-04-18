@@ -3168,7 +3168,7 @@ public class BoletoServiceImpl implements BoletoService {
 		registro01.setCarteira(String.valueOf(banco.getCarteira()));
 		
 		// não sei o que setar
-		registro01.setCodigoServico("01");
+		registro01.setCodigoServico("MX");
 		
 		registro01.setNumero(boleto.getNossoNumero());
 		
