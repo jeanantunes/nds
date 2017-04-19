@@ -42,6 +42,7 @@ import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
+import br.com.abril.nds.dto.HistoricoVendaCotaDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
@@ -2946,6 +2947,29 @@ public class CotaServiceImpl implements CotaService {
         
         List<Integer> listCotasExistentes = new ArrayList<>();
         
+        Map<String, String> mapNomeProdutos = new HashMap<>();
+        
+        Map<String, Map<Long, HistoricoVendaCotaDTO>> mapHistoricoEdicoes = new HashMap<>();
+        
+        Map<Long, HistoricoVendaCotaDTO> mapCotas = new HashMap<>();
+
+        for (ProdutoEdicaoDTO produtoEdicaoDTO : listProdutoEdicaoDto) {
+        	if(produtoEdicaoDTO.isParcial() && produtoEdicaoDTO.isParcialConsolidado() == false){
+        		mapCotas = produtoEdicaoRepository.obterCotasHistoricoProdutoEdicaoParcial(produtoEdicaoDTO.getId(), produtoEdicaoDTO.getPeriodo(),produtoEdicaoDTO.getNumeroEdicao());
+        	}else{
+        		mapCotas = produtoEdicaoRepository.obterCotasHistoricoProdutoEdicao(produtoEdicaoDTO.getId(), produtoEdicaoDTO.getNumeroEdicao());
+        	}
+        	
+        	String chaveMap = getChaveMapHistoricoEdicoes(produtoEdicaoDTO);
+        	
+        	mapHistoricoEdicoes.put(chaveMap, mapCotas);
+        	
+        	String nomeProduto = produtoService.obterNomeProdutoPorCodigo(produtoEdicaoDTO.getCodigoProduto());
+        	
+        	mapNomeProdutos.put(produtoEdicaoDTO.getCodigoProduto(), nomeProduto);
+        	
+		}
+        
         for (final AnaliseHistoricoDTO analiseHistoricoDTO : listAnaliseHistoricoDTO) {
             
             int qtdEdicaoVendida = 0;
@@ -2954,13 +2978,26 @@ public class CotaServiceImpl implements CotaService {
                 final ProdutoEdicaoDTO produtoEdicaoDTO = listProdutoEdicaoDto.get(i);
                 
                 ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
+
+                Map<Long, HistoricoVendaCotaDTO> mapHistoricoCotas = mapHistoricoEdicoes.get(getChaveMapHistoricoEdicoes(produtoEdicaoDTO));
                 
-                if(produtoEdicaoDTO.isParcial() && produtoEdicaoDTO.isParcialConsolidado() == false){
-                	dto = produtoEdicaoRepository.obterHistoricoProdutoEdicaoParcial(produtoEdicaoDTO.getId(), produtoEdicaoDTO.getPeriodo(), 
-                													analiseHistoricoDTO.getNumeroCota(), produtoEdicaoDTO.getNumeroEdicao());
-                }else{
-                	dto = produtoEdicaoRepository.obterHistoricoProdutoEdicao(produtoEdicaoDTO.getCodigoProduto(), produtoEdicaoDTO.getNumeroEdicao(), 
-            														analiseHistoricoDTO.getNumeroCota());
+                HistoricoVendaCotaDTO cotaDTO = new HistoricoVendaCotaDTO();
+                
+//                if(produtoEdicaoDTO.isParcial() && produtoEdicaoDTO.isParcialConsolidado() == false){
+//                	dto = produtoEdicaoRepository.obterHistoricoProdutoEdicaoParcial(produtoEdicaoDTO.getId(), produtoEdicaoDTO.getPeriodo(), 
+//                													analiseHistoricoDTO.getNumeroCota(), produtoEdicaoDTO.getNumeroEdicao());
+//                }else{
+//                	dto = produtoEdicaoRepository.obterHistoricoProdutoEdicao(produtoEdicaoDTO.getCodigoProduto(), produtoEdicaoDTO.getNumeroEdicao(), analiseHistoricoDTO.getNumeroCota());
+//                	
+//                }
+
+                cotaDTO = mapHistoricoCotas.get(analiseHistoricoDTO.getNumeroCota().longValue());
+
+                if(cotaDTO != null){
+                	dto.setReparte(cotaDTO.getReparte() != null ? cotaDTO.getReparte() : BigInteger.ZERO);
+                	dto.setQtdeVendas(cotaDTO.getVenda() != null ? cotaDTO.getVenda() : BigInteger.ZERO);
+                	dto.setStatusLancamento(cotaDTO.getStatusLancamento());
+                	dto.setId(produtoEdicaoDTO.getId());
                 }
                 
                 if (dto != null && dto.getId() != null) {
@@ -2987,8 +3024,8 @@ public class CotaServiceImpl implements CotaService {
                 	
                     qtdEdicaoVendida++;
                     
-                    String nomeProduto = produtoService.obterNomeProdutoPorCodigo(produtoEdicaoDTO.getCodigoProduto());
-    				
+                    String nomeProduto = mapNomeProdutos.get(produtoEdicaoDTO.getCodigoProduto());
+                    
     				String prodEdicao = produtoEdicaoDTO.getCodigoProduto() + " - " + nomeProduto + " - " + produtoEdicaoDTO.getNumeroEdicao();
                     
                     if (i == 0) {
@@ -3094,6 +3131,18 @@ public class CotaServiceImpl implements CotaService {
         }
         
         return listAnaliseHistoricoDTO;
+    }
+    
+    private String getChaveMapHistoricoEdicoes(ProdutoEdicaoDTO peDTO){
+    	String chave = "";
+    	
+    	if(peDTO.isParcial()){
+    		chave = peDTO.getId().toString()+peDTO.getPeriodoString();
+    	}else{
+    		chave = peDTO.getId().toString()+peDTO.getNumeroEdicao();
+    	}
+    	
+    	return chave;
     }
     
     private void formatarListaHistoricoVenda(final List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO) {

@@ -1,16 +1,23 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.ConsultaProdutoEdicaoDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
+import br.com.abril.nds.dto.HistoricoVendaCotaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
@@ -398,4 +405,10 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 
 
 	List<Long> obterIdsEdicoesPorCodigoNumeroEdicoes(String codigoProduto, String[] numeroEdicoes);
+
+
+	Map<Long, HistoricoVendaCotaDTO> obterCotasHistoricoProdutoEdicaoParcial(Long idProdutoEdicao, Integer numeroPeriodo, Long numeroEdicao);
+
+
+	Map<Long, HistoricoVendaCotaDTO> obterCotasHistoricoProdutoEdicao(Long idProdutoEdicao, Long numeroEdicao);
 }
