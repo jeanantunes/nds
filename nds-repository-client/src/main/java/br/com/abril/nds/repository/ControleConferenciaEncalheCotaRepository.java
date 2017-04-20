@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import br.com.abril.nds.dto.ControleConferenciaEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
@@ -92,4 +93,6 @@ public interface ControleConferenciaEncalheCotaRepository  extends Repository<Co
 	List<Integer> obterListaNumCotaConferenciaEncalheCota(FiltroConsultaEncalheDTO filtro);
 
 	boolean isCobrancaNegociada(Long idCota, Date dataOperacao);
+
+	ControleConferenciaEncalheCotaDTO obterControleConferenciaEncalheCota(Long idControleConfEncalheCota);
 }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.HistoricoEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.model.cadastro.CanalDistribuicao;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -79,7 +80,6 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 	
 	public BigInteger obterQtdeEncalhe(Long idConferenciaEncalhe) {
 		
-
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select conf.qtde from ConferenciaEncalhe conf ")
@@ -93,9 +93,6 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 		return (BigInteger) query.uniqueResult();
 		
 	}
-	
-	
-	 
 	
 	/*
 	 * (non-Javadoc)
@@ -996,6 +993,41 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 		
 		return (List<Integer>)query.list();
 		
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<HistoricoEncalheDTO> obterHistoricosConferenciaEncalhe(String numeroCota, Date dataEncalhe) {
+		
+		final StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT  ");
+		sql.append("  c.NUMERO_COTA as numeroCota, ");
+		sql.append("  coalesce(p.NOME, p.RAZAO_SOCIAL) as nomeCota, ");
+		sql.append("  b.NOME as boxEncalhe, ");
+		sql.append("  u.NOME as usuario,			");
+		sql.append("  TIME(hist.DATA_INICIO) as inicio, ");
+		sql.append("  TIME(hist.DATA_FIM) as fim, ");
+		sql.append("  hist.VALOR_ENCALHE as valorEncalhe");
+		sql.append(" FROM historico_conf_chamada_encalhe_cota hist  ");
+		sql.append(" INNER JOIN cota c ON hist.COTA_ID = c.ID ");
+		sql.append(" INNER JOIN pessoa p ON c.PESSOA_ID = p.ID ");
+		sql.append(" INNER JOIN box b ON hist.BOX_ID = b.ID ");
+		sql.append(" INNER JOIN usuario u ON hist.USUARIO_ID = u.ID ");
+		sql.append(" WHERE 1=1 ");
+		sql.append(" and c.NUMERO_COTA = :numeroCota ");
+		sql.append(" and hist.DATA_OPERACAO = :dataEncalhe ");
+		sql.append(" GROUP BY hist.ID ");
+		sql.append(" order by hist.ID desc ");
+		
+		final Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("numeroCota", numeroCota);
+		query.setParameter("dataEncalhe", dataEncalhe);
+		
+		query.setResultTransformer(Transformers.aliasToBean(HistoricoEncalheDTO.class));
+		
+		return query.list();
 	}
 	
 }

@@ -253,6 +253,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		// Recolhimento
 		parametrosDistribuidor.setAceitaEncalheJuramentada(distribuidor.isAceitaJuramentado());
+		parametrosDistribuidor.setVendaTotalEncalhe(distribuidor.isVendaTotalEncalhe());
 		parametrosDistribuidor.setDiaRecolhimentoPrimeiro(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoPrimeiro());
 		parametrosDistribuidor.setDiaRecolhimentoSegundo(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoSegundo());
 		parametrosDistribuidor.setDiaRecolhimentoTerceiro(distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoTerceiro());
@@ -695,6 +696,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 
 		// Recolhimento
 		distribuidor.setAceitaJuramentado(parametrosDistribuidor.isAceitaEncalheJuramentada());
+		
+		distribuidor.setVendaTotalEncalhe(parametrosDistribuidor.isVendaTotalEncalhe());
 		
 		distribuidor.setTipoContabilizacaoCE(parametrosDistribuidor.getTipoContabilizacaoCE());
 		

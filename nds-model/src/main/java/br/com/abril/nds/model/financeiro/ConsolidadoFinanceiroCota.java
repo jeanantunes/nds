@@ -9,6 +9,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -67,11 +68,11 @@ public class ConsolidadoFinanceiroCota implements Serializable {
 	@Column(name = "TOTAL", nullable = false, precision=18, scale=4)
 	private BigDecimal total;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(fetch=FetchType.LAZY, optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@ManyToMany(cascade=CascadeType.ALL)
+	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinTable(name = "CONSOLIDADO_MVTO_FINANCEIRO_COTA",
 			   joinColumns = {@JoinColumn(name = "CONSOLIDADO_FINANCEIRO_ID")}, 
 			   inverseJoinColumns = {@JoinColumn(name = "MVTO_FINANCEIRO_COTA_ID", unique = true)})

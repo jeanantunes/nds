@@ -5,13 +5,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.ExtracaoContaCorrenteDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
+import br.com.abril.nds.dto.HistoricoEncalheDTO;
 import br.com.abril.nds.dto.fechamentoencalhe.GridFechamentoEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroExtracaoContaCorrenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
@@ -110,4 +109,6 @@ public interface FechamentoEncalheService {
 	List<ExtracaoContaCorrenteDTO> extracaoContaCorrente(FiltroExtracaoContaCorrenteDTO filtro);
 
 	List<Integer> extracaoContaCorrente_BuscarCotasObservacoes(FiltroExtracaoContaCorrenteDTO filtro);
+
+	List<HistoricoEncalheDTO> obterHistoricosConferenciaEncalhe(String numeroCota, Date dataEncalhe);
 }

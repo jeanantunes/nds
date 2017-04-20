@@ -2979,7 +2979,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		LOGGER.debug("Metodo gerar cobranca registrada.");
 		
-		List<GeraDividaDTO> dividas = dividaRepository.obterDividasGeradas(filtro);
+		List<GeraDividaDTO> dividas = dividaRepository.obterDividasGeradasArquivo(filtro);
 		
 		if(dividas == null || dividas.isEmpty()) {
 			return null;
@@ -3168,7 +3168,7 @@ public class BoletoServiceImpl implements BoletoService {
 		registro01.setCarteira(String.valueOf(banco.getCarteira()));
 		
 		// não sei o que setar
-		registro01.setCodigoServico("01");
+		registro01.setCodigoServico("MX");
 		
 		registro01.setNumero(boleto.getNossoNumero());
 		

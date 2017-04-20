@@ -62,28 +62,28 @@ public class ControleConferenciaEncalheCota {
 	@Column(name = "STATUS")
 	private StatusOperacao status;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(fetch=FetchType.LAZY, optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "CTRL_CONF_ENCALHE_ID")
 	private ControleConferenciaEncalhe controleConferenciaEncalhe;
 
 	@OneToMany(fetch=FetchType.LAZY, mappedBy = "controleConferenciaEncalheCota", cascade=CascadeType.ALL)
 	private List<NotaFiscalEntradaCota> notaFiscalEntradaCota = new ArrayList<NotaFiscalEntradaCota>();
 	
-	@OneToMany(mappedBy = "controleConferenciaEncalheCota")
+	@OneToMany(fetch=FetchType.LAZY, mappedBy = "controleConferenciaEncalheCota")
 	private List<CobrancaControleConferenciaEncalheCota> cobrancasControleConferenciaEncalheCota = new ArrayList<CobrancaControleConferenciaEncalheCota>();
 	
-	@OneToMany(mappedBy = "controleConferenciaEncalheCota")
+	@OneToMany(fetch=FetchType.LAZY, mappedBy = "controleConferenciaEncalheCota")
 	private List<ConferenciaEncalhe> conferenciasEncalhe = new ArrayList<ConferenciaEncalhe>();
-
-	@ManyToOne(optional = false)
+	
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "BOX_ID")
 	private Box box;
 
@@ -349,5 +349,4 @@ public class ControleConferenciaEncalheCota {
 		}
 		return null;
 	}
-
 }

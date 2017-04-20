@@ -97,6 +97,14 @@
 </div>
 </form>
 
+<form id="form-produtos-sem-encalhe">
+	<div id="dialog-produtos-sem-encalhe" title="Encalhe N&atilde;o Processado/Venda Total" style="display: none;">
+		<fieldset>
+			<legend>Encalhe N&atilde;o Processado/Venda Total</legend>
+			<table class="dadosHistoricoEncalheGrid"></table>
+		</fieldset>
+	</div>
+</form>
 <form id="form-logado">
 <div id="dialog-logado" title="Box de Encalhe" style="display:none;">
 	

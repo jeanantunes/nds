@@ -1241,8 +1241,19 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         hql.append(hqlCobrancaCotaAVista);
         
-        hql.append("), 'POSTERGADA') as statusCobranca ");
+        hql.append("), 'POSTERGADA') as statusCobranca, ");
         
+        hql.append("	u.nome as usuario,			");
+        
+        hql.append("	TIME(controle.dataInicio) as inicio, ");
+        
+        hql.append("	TIME(controle.dataFim) as fim, ");
+        
+        hql.append("	controle.id as id, ");
+        
+        hql.append(" ( ");
+        hql.append(getQueryQuantidadeHistorico());
+        hql.append(" ) as quantidade ");
         getQueryAnalitico(filtro, hql);
         
         hql.append("   group by cota.id ");
@@ -1283,6 +1294,21 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         return query.list();
     }
+
+    private StringBuilder getQueryQuantidadeHistorico(){
+        
+        final StringBuilder subquery = new StringBuilder();
+        
+        subquery.append(" select count(hi.id ) ");
+        
+        subquery.append(" from HistoricoConfChamadaEncalheCota hi ");
+        
+        subquery.append(" where hi.dataOperacao = :dataEncalhe ");
+        
+        subquery.append(" and hi.cota.id = cota.id ");
+        subquery.append(" group by hi.dataOperacao ");
+        return subquery;
+    }
     
     @Override
     public Integer buscarTotalAnaliticoEncalhe(	final FiltroFechamentoEncalheDTO filtro) {
@@ -1304,7 +1330,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         if (filtro.getFornecedorId() != null) {
             query.setLong("fornecedorId", filtro.getFornecedorId());
         }
-        
         
         return ((Long)query.uniqueResult()).intValue();
     }
@@ -1330,36 +1355,36 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     private void getQueryAnalitico(final FiltroFechamentoEncalheDTO filtro,
             final StringBuilder hql) {
         
-        hql.append("     FROM ControleConferenciaEncalheCota  controle ");
+        hql.append("    FROM ControleConferenciaEncalheCota  controle ");
         
-        hql.append("     JOIN controle.cota cota");
+        hql.append("    JOIN controle.usuario u");
         
-        hql.append("     JOIN cota.pessoa pess");
+        hql.append("    JOIN controle.cota cota");
         
-        hql.append("     JOIN controle.box  box ");
+        hql.append("    JOIN cota.pessoa pess");
         
-        hql.append("     LEFT JOIN controle.conferenciasEncalhe confEnc ");
+        hql.append("    JOIN controle.box  box ");
         
-        hql.append("     LEFT JOIN confEnc.movimentoEstoqueCota mec ");
+        hql.append("    LEFT OUTER JOIN controle.conferenciasEncalhe confEnc ");
         
-        hql.append("     LEFT JOIN mec.produtoEdicao pe ");
+        hql.append("    LEFT OUTER JOIN confEnc.movimentoEstoqueCota mec ");
         
-        hql.append("     LEFT JOIN pe.produto pro ");
+        hql.append("    LEFT OUTER JOIN mec.produtoEdicao pe ");
         
-        hql.append("  	LEFT JOIN pe.descontoLogistica as descLogProdEdicao ");
+        hql.append("    LEFT OUTER JOIN pe.produto pro ");
         
-        hql.append("  	LEFT JOIN pro.descontoLogistica as descLogProd ");
+        hql.append("  	LEFT OUTER JOIN pe.descontoLogistica as descLogProdEdicao ");
         
+        hql.append("  	LEFT OUTER JOIN pro.descontoLogistica as descLogProd ");
         
-        hql.append("     LEFT JOIN controle.cobrancasControleConferenciaEncalheCota cobrancaControle ");
+        hql.append("    LEFT OUTER JOIN controle.cobrancasControleConferenciaEncalheCota cobrancaControle ");
         
-        hql.append("     LEFT JOIN cobrancaControle.cobranca cob");
+        hql.append("    LEFT OUTER JOIN cobrancaControle.cobranca cob");
         
-        hql.append("     LEFT JOIN cob.divida div");
-        
+        hql.append("    LEFT OUTER JOIN cob.divida div");
         
         if (filtro.getFornecedorId() != null) {
-            hql.append("     JOIN  pro.fornecedores for ");
+            hql.append("  LEFT OUTER JOIN  pro.fornecedores for ");
         }
         
         hql.append(" WHERE controle.dataOperacao = :dataEncalhe ");
@@ -1373,9 +1398,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         if (filtro.getFornecedorId() != null) {
             hql.append("     and for.id =:fornecedorId ");
         }
-        
-        
-        
     }
     
     @Override

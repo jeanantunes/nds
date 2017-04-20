@@ -15,7 +15,6 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.MathUtil;
-import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro01;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroBradesco01;
@@ -183,22 +182,22 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable{
 		// pagina 17
 		
 		registro01.setIdentificacaoEmpresaBeneficiaria(montarIdentificacaoEmpresaBeneficiaria(banco));
-		registro01.setNumeroControlePaticipante("");
-		registro01.setCodigoBanco(banco.getNumeroBanco());
+		registro01.setNumeroControlePaticipante(boleto.getNossoNumero());
+		registro01.setCodigoBanco("0");
 		registro01.setCampoMulta("0");
 		registro01.setPercentualMulta("0");
-		registro01.setIdentificacaoTituloBanco("");
-		registro01.setDigitoConferenciaBancaria("");
+		registro01.setIdentificacaoTituloBanco(boleto.getNossoNumero());
+		registro01.setDigitoConferenciaBancaria(boleto.getDigitoNossoNumero());
 		
 		registro01.setDescontoBonificacao("");
-		registro01.setCondicaoEmissaoPapeleta("");
-		registro01.setIdentificacaoBoletoDebitoAutomatico("");
+		registro01.setCondicaoEmissaoPapeleta("2");
+		registro01.setIdentificacaoBoletoDebitoAutomatico("N");
 		registro01.setIdentificaOperacaoBanco("");
 		registro01.setIndicadorRateiroCredito("");
 		registro01.setEnderecamentoAvisoDebitoAutomatico("");
 		
 		registro01.setBranco("");
-		registro01.setIdentificacaoOcorrencia("");
+		registro01.setIdentificacaoOcorrencia("01");
 		
 		Pessoa pessoaCedente = banco.getPessoaJuridicaCedente();
 		
@@ -209,13 +208,14 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable{
             
             nomeCedente = ((PessoaJuridica) pessoaCedente).getRazaoSocial();
             documentoCedente = ((PessoaJuridica) pessoaCedente).getCnpj();
+//            registro01.setIdentificacaoTipoIncricaoPagador("01");
             registro01.setIdentificacaoTipoIncricaoPagador(CODIGO_INSCRICAO_JURIDICA);
             
         } else {
             
             nomeCedente = ((PessoaFisica) pessoaCedente).getNome();
             documentoCedente = ((PessoaFisica) pessoaCedente).getCpf();
-            registro01.setIdentificacaoTipoIncricaoPagador("01");
+//            registro01.setIdentificacaoTipoIncricaoPagador("01");
             registro01.setIdentificacaoTipoIncricaoPagador(CODIGO_INSCRICAO_FISICA);
         }
 		
@@ -254,9 +254,6 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable{
 		
 		
 		registro01.setNumeroIncricaoPagador(documentoCedente.replace(".", "").replace("/", "").replace("-", ""));
-		
-		registro01.setBranco("");
-		registro01.setIdentificacaoOcorrencia("2");
 		
 		registro01.setNomePagador("");
 		

@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
+import br.com.abril.nds.dto.ControleConferenciaEncalheCotaDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
@@ -99,6 +101,7 @@ import br.com.abril.nds.model.movimentacao.Slip;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.model.planejamento.HistoricoConfChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -116,9 +119,9 @@ import br.com.abril.nds.repository.CotaUnificacaoRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
-import br.com.abril.nds.repository.FeriadoRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.GrupoRepository;
+import br.com.abril.nds.repository.HistoricoConfChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -312,7 +315,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
     private FormaCobrancaService formaCobrancaService;
 	
 	@Autowired
-	FeriadoRepository feriadoRepository;
+	private HistoricoConfChamadaEncalheCotaRepository historicoConfChamadaEncalheCotaRepository;
 	
 	private final int PRIMEIRO_DIA_RECOLHIMENTO = 1;
 	
@@ -3681,6 +3684,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		        idFornecedor);
 	}
 	
+	@Override
+	@Transactional(readOnly=true)
+	public List<DebitoCreditoCota> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(
+			ControleConferenciaEncalheCotaDTO controleConfEncalheCota,
+	        final Long idFornecedor){
+		
+		return this.debitoCreditoCotaService.obterListaDebitoCreditoCotaDTO(
+				controleConfEncalheCota, Arrays.asList(controleConfEncalheCota.getDataOperacao()),
+		        idFornecedor);
+	}
+	
 	protected String obterSlipReportPath() throws URISyntaxException {
 		
 		final URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/slip.jasper");
@@ -3891,5 +3905,26 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional
 	public void excluirNotasFiscaisPorReabertura(final InfoConferenciaEncalheCota infoConfereciaEncalheCota) {
 		this.notaFiscalEntradaService.excluirNotasFiscaisPorReabertura(infoConfereciaEncalheCota);
+	}
+
+	@Override
+	@Transactional
+	public void criarHistoricoConfEncalheCota(Usuario usuarioLogado, List<ConferenciaEncalheDTO> listaConferenciaEncalhe, ControleConferenciaEncalheCota controleConfEncalheCota) {
+		
+		BigDecimal valorEncalhe = listaConferenciaEncalhe.stream()
+				.filter(Objects::nonNull)
+				.filter(c -> c.getValorTotal() != null)
+				.map(ConferenciaEncalheDTO::getValorTotal)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		
+		HistoricoConfChamadaEncalheCota hist = new HistoricoConfChamadaEncalheCota(controleConfEncalheCota.getDataInicio(),
+				controleConfEncalheCota.getDataFim() == null ? new Date() : controleConfEncalheCota.getDataFim(),
+				usuarioLogado,
+				controleConfEncalheCota.getCota(),
+				controleConfEncalheCota.getDataOperacao(),
+				controleConfEncalheCota.getBox(),
+				valorEncalhe);
+		
+		this.historicoConfChamadaEncalheCotaRepository.adicionar(hist);
 	}
 }

@@ -1,6 +1,7 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public class DividaGeradaVO implements Serializable {
 	
@@ -21,7 +22,10 @@ public class DividaGeradaVO implements Serializable {
 	private String suportaEmail;
 	private String vias;
 	private String nossoNumero;
-
+	private String status;
+	private boolean mostrar;
+	private BigDecimal totalGeral;
+	
 	
 	/**
 	 * @return the nossoNumero
@@ -168,5 +172,27 @@ public class DividaGeradaVO implements Serializable {
 		this.suportaEmail = suportaEmail;
 	}
 	
+	public String getStatus() {
+		return status;
+	}
 	
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
+	public boolean isMostrar() {
+		return mostrar;
+	}
+	
+	public void setMostrar(boolean mostrar) {
+		this.mostrar = mostrar;
+	}
+	
+	public BigDecimal getTotalGeral() {
+		return totalGeral;
+	}
+	
+	public void setTotalGeral(BigDecimal totalGeral) {
+		this.totalGeral = totalGeral;
+	}
 }

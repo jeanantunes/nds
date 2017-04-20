@@ -368,7 +368,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		BigDecimal vlrReparte = BigDecimal.ZERO;	
 		BigDecimal vlrDesconto = BigDecimal.ZERO;
-		BigDecimal vlrEncalhe = BigDecimal.ZERO;	
+		BigDecimal vlrEncalhe = BigDecimal.ZERO;
 		
 		List<Long> idsProdutoEdicao = new ArrayList<>();
 		
@@ -893,6 +893,8 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		Date dataOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
 		
+		Integer numeroSemana = distribuidorService.obterNumeroSemana(filtro.getDtRecolhimentoDe());
+		
 		final List<ChamadaEncalheImpressaoWrapper> listaCEWrapper = new ArrayList<ChamadaEncalheImpressaoWrapper>();
 		
 		List<ChamadaEncalheImpressaoWrapper> listaCEWrapperImpressaoEemail = new ArrayList<ChamadaEncalheImpressaoWrapper>();
@@ -945,6 +947,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				}
 			}
 			
+			dto.setNumeroSemana(numeroSemana);
 			dto.setEmissorNome(distribuidor.getRazaoSocial());
 			dto.setEmissorCNPJ(distribuidor.getCnpj());
 			dto.setEmissorInscricaoEstadual(distribuidor.getInscricaoEstatual());

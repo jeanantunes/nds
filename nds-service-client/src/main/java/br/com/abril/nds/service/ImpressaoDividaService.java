@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -48,5 +49,7 @@ public interface ImpressaoDividaService {
 	 * @return Boolean
 	 */
 	Boolean validarDividaGerada(Date dataMovimento);
+	
+	public BigDecimal obterTotalGeral(FiltroDividaGeradaDTO filtro);
 
 }
