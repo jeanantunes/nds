@@ -11,8 +11,10 @@ import br.com.abril.nds.dto.MapaCotaDTO;
 import br.com.abril.nds.dto.MapaProdutoCotasDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoMapaDTO;
+import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaRotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.vo.ProdutoEdicaoVO;
 
@@ -197,4 +199,6 @@ public interface MapaAbastecimentoService {
 	List<BoxRoterioRotaDTO> obterMapaDeImpressaoPorBoxRotaQuebraCota2(FiltroMapaAbastecimentoDTO filtro);
 	
 	Map<String, Map<String, ProdutoMapaRotaDTO>> obterMapaDeImpressaoPorBoxRoteiro(FiltroMapaAbastecimentoDTO filtro);
+
+	List<ProdutoLancamentoDTO> obterProdutosSemDistribuicao(FiltroLancamentoDTO filtro);
 }

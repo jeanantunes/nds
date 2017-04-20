@@ -28,16 +28,22 @@ import br.com.abril.nds.dto.MapaProdutoCotasDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoAbastecimentoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoMapaDTO;
+import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoMapaCotaDTO;
 import br.com.abril.nds.dto.ProdutoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaRotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.MapaAbastecimentoService;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.vo.ProdutoEdicaoVO;
 
 @Service
@@ -54,6 +60,12 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 	
 	@Autowired
 	private MovimentoEstoqueRepository movimentoEstoqueRepository;
+	
+	@Autowired
+    protected LancamentoRepository lancamentoRepository;
+	
+	@Autowired
+    protected DistribuidorRepository distribuidorRepository;
 	
 	@Override
 	@Transactional
@@ -1039,4 +1051,44 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 
 		return produtosBoxCota;
 	}
+	
+	@Override
+	@Transactional
+	public List<ProdutoLancamentoDTO> obterProdutosSemDistribuicao(final FiltroLancamentoDTO filtro) {
+		
+		final Intervalo<Date> periodoDistribuicao = this
+                .getPeriodoDistribuicao(filtro.getData());
+		
+		final List<ProdutoLancamentoDTO> produtosLancamento = lancamentoRepository
+                .obterBalanceamentoLancamento(filtro.getData(),periodoDistribuicao,
+                        filtro.getIdsFornecedores(), filtro.getFiltroFisico());
+		List<ProdutoLancamentoDTO> produtosSemDistribuicao = new ArrayList<ProdutoLancamentoDTO>();
+		
+		for (ProdutoLancamentoDTO produtoLancamentoDTO : produtosLancamento) {
+			if (produtoLancamentoDTO.getDistribuicao() == null) {
+				produtosSemDistribuicao.add(produtoLancamentoDTO);
+			}
+		}
+		
+		return produtosSemDistribuicao;
+	}
+	
+	/**
+	* Monta o perídodo da semana de distribuição referente à data informada.
+    */
+   private Intervalo<Date> getPeriodoDistribuicao(final Date dataLancamento) {
+       
+       final int codigoDiaSemana = distribuidorRepository.buscarInicioSemanaLancamento()
+               .getCodigoDiaSemana();
+       
+       final Date dataInicialSemana = SemanaUtil.obterDataInicioSemana(
+               codigoDiaSemana, dataLancamento);
+       
+       final Date dataFinalSemana = DateUtil.adicionarDias(dataInicialSemana, 6);
+       
+       final Intervalo<Date> periodo = new Intervalo<Date>(dataInicialSemana,
+               dataFinalSemana);
+       
+       return periodo;
+   }
 }

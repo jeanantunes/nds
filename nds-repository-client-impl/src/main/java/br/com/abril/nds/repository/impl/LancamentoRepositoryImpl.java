@@ -1592,7 +1592,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 
 		sql.append(" where ");
 
-		sql.append(" fornecedor.ID in (:idsFornecedores) ");
+		sql.append(" (fornecedor.ID in (:idsFornecedores) or :idsFornecedores = 0) ");
 
 		sql.append(" AND lancamento.DATA_LCTO_DISTRIBUIDOR <= :periodoFinal ");
 		sql.append(" AND (lancamento.STATUS in (:statusLancamentoDataMenorFinal) ");

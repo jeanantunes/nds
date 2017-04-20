@@ -188,7 +188,7 @@
 				grid,
 				params
 			);
-
+			
 			break;
 			
 		case 'ROTEIRO':
@@ -290,6 +290,7 @@
 
 	this.preencherGrid = function(tableClass, url, preProcess, grid, params) {
 		
+		
 		$(tableClass, _workspace).flexOptions({			
 			url : url,
 			dataType : 'json',
@@ -299,7 +300,25 @@
 		$(tableClass, _workspace).flexReload();
 		$(grid, _workspace).show();
 		
-		$(".areaBts", _workspace).show();	
+		$(".areaBts", _workspace).show();
+		
+	},
+		
+	this.produtosSemDistribuicao = function() {
+		
+		var params = [];
+		
+		params.push({name:'dataDate',	value: T.get("dataLancamento")});
+		
+		$.postJSON(contextPath + "/mapaAbastecimento/obterProdutosSemDistribuicao",
+				   {dataDate: T.get("dataLancamento")},
+				function(result){
+					   if(result) {
+						   exibirMensagem("WARNING", result);						
+					   }
+				});
+		
+			
 	},
 	
 	this.processarMensagens = function(result) {
@@ -324,6 +343,10 @@
 				}
 			});	
 		}
+		
+		if(result.rows != "") {
+			T.produtosSemDistribuicao();
+		}
 		return result;
 	},
 	
@@ -335,13 +358,14 @@
 		
 		$.each(result.rows, function(index,row){T.processarLinha(index,row.cell);} );
 		
+		
 		return result;
 	},
 	
 	this.processarRetornoPesquisaPorCota = function(result) {
 		
 		T.processarMensagens(result);
-
+		
 		var codigoCota = T.get('codigoCota');
 		var nomeCota = T.get('nomeCota');
 
