@@ -454,5 +454,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	Lancamento obterProximoLancamentoDaEdicao(Long idProdutoEdicao,
 			Date dataLimiteLancamento);
+
+	List<ProdutoLancamentoDTO> obterProdutosSemEstudo(FiltroLancamentoDTO filtro);
 	
 }

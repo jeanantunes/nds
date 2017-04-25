@@ -200,5 +200,5 @@ public interface MapaAbastecimentoService {
 	
 	Map<String, Map<String, ProdutoMapaRotaDTO>> obterMapaDeImpressaoPorBoxRoteiro(FiltroMapaAbastecimentoDTO filtro);
 
-	List<ProdutoLancamentoDTO> obterProdutosSemDistribuicao(FiltroLancamentoDTO filtro);
+	List<ProdutoLancamentoDTO> obterProdutosSemEstudo(FiltroLancamentoDTO filtro);
 }

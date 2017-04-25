@@ -275,13 +275,10 @@ public class MapaAbastecimentoController extends BaseController {
 
 	@Post
 	public void obterProdutosSemDistribuicao(Date dataDate) {
+
+		FiltroLancamentoDTO filtroProdutos = new FiltroLancamentoDTO(dataDate, null);
 		
-		ArrayList<Long> idFornecedorParaNaoAfetarConsultaExistente = new ArrayList<Long>();		
-		idFornecedorParaNaoAfetarConsultaExistente.add(0L);
-		
-		FiltroLancamentoDTO filtroProdutos = new FiltroLancamentoDTO(dataDate, idFornecedorParaNaoAfetarConsultaExistente);
-		
-		List<ProdutoLancamentoDTO> produtosSemDistribuicao = mapaAbastecimentoService.obterProdutosSemDistribuicao(filtroProdutos);
+		List<ProdutoLancamentoDTO> produtosSemDistribuicao = mapaAbastecimentoService.obterProdutosSemEstudo(filtroProdutos);
 		
 		StringBuffer sb = new StringBuffer();
 		
@@ -296,7 +293,7 @@ public class MapaAbastecimentoController extends BaseController {
 			
 				sb.append(produto.getCodigoProduto());
 				sb.append(" - ");
-				sb.append(produto.getNomeFantasia());
+				sb.append(produto.getNomeProduto());
 				sb.append(" - ");
 				sb.append(produto.getNumeroEdicao());
 				sb.append(" - ");

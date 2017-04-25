@@ -1592,7 +1592,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 
 		sql.append(" where ");
 
-		sql.append(" (fornecedor.ID in (:idsFornecedores) or :idsFornecedores = 0) ");
+		sql.append(" fornecedor.ID in (:idsFornecedores) ");
 
 		sql.append(" AND lancamento.DATA_LCTO_DISTRIBUIDOR <= :periodoFinal ");
 		sql.append(" AND (lancamento.STATUS in (:statusLancamentoDataMenorFinal) ");
@@ -3443,6 +3443,33 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 		if (paginacao.getPosicaoInicial() != null) {
 			query.setFirstResult(paginacao.getPosicaoInicial());
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoLancamentoDTO> obterProdutosSemEstudo(FiltroLancamentoDTO filtro) {
+
+		StringBuilder hql = new StringBuilder();
+		hql.append("select  pe.numeroEdicao as numeroEdicao, pe.precoVenda as precoVenda, ");
+		hql.append("p.codigo as codigoProduto, p.nomeComercial as nomeProduto ");
+		hql.append("from Lancamento l ");
+		hql.append("inner join l.produtoEdicao as pe ");
+		hql.append("inner join pe.produto as p ");
+		hql.append("left outer join l.estudo as e ");
+		hql.append("where l.dataLancamentoDistribuidor = :data ");
+		hql.append("and l.status in (:statusBalanceado, :statusExpedido) ");
+		hql.append("and l.estudo is null ");
+
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", filtro.getData());
+		query.setParameter("statusBalanceado", StatusLancamento.BALANCEADO);
+		query.setParameter("statusExpedido", StatusLancamento.EXPEDIDO);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoLancamentoDTO.class));
+		List<ProdutoLancamentoDTO> resultado = query.list();
+		
+		return resultado;
 	}
 	
 }

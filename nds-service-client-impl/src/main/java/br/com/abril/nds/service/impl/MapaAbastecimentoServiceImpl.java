@@ -1054,41 +1054,10 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 	
 	@Override
 	@Transactional
-	public List<ProdutoLancamentoDTO> obterProdutosSemDistribuicao(final FiltroLancamentoDTO filtro) {
-		
-		final Intervalo<Date> periodoDistribuicao = this
-                .getPeriodoDistribuicao(filtro.getData());
-		
-		final List<ProdutoLancamentoDTO> produtosLancamento = lancamentoRepository
-                .obterBalanceamentoLancamento(filtro.getData(),periodoDistribuicao,
-                        filtro.getIdsFornecedores(), filtro.getFiltroFisico());
-		List<ProdutoLancamentoDTO> produtosSemDistribuicao = new ArrayList<ProdutoLancamentoDTO>();
-		
-		for (ProdutoLancamentoDTO produtoLancamentoDTO : produtosLancamento) {
-			if (produtoLancamentoDTO.getDistribuicao() == null) {
-				produtosSemDistribuicao.add(produtoLancamentoDTO);
-			}
-		}
-		
-		return produtosSemDistribuicao;
+	public List<ProdutoLancamentoDTO> obterProdutosSemEstudo(final FiltroLancamentoDTO filtro) {
+
+		return lancamentoRepository.obterProdutosSemEstudo(filtro);
+
 	}
 	
-	/**
-	* Monta o perídodo da semana de distribuição referente à data informada.
-    */
-   private Intervalo<Date> getPeriodoDistribuicao(final Date dataLancamento) {
-       
-       final int codigoDiaSemana = distribuidorRepository.buscarInicioSemanaLancamento()
-               .getCodigoDiaSemana();
-       
-       final Date dataInicialSemana = SemanaUtil.obterDataInicioSemana(
-               codigoDiaSemana, dataLancamento);
-       
-       final Date dataFinalSemana = DateUtil.adicionarDias(dataInicialSemana, 6);
-       
-       final Intervalo<Date> periodo = new Intervalo<Date>(dataInicialSemana,
-               dataFinalSemana);
-       
-       return periodo;
-   }
 }
