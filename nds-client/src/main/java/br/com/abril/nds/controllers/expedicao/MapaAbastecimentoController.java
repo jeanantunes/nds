@@ -286,6 +286,8 @@ public class MapaAbastecimentoController extends BaseController {
 		
 		sb.append("Produtos sem estudo:" + quebraLinha);
 		
+		boolean imprimeMsg = Boolean.FALSE;
+		
 		for (ProdutoLancamentoDTO produto : produtosSemDistribuicao) {
 			
 			if(produto.getPrecoVenda() instanceof BigDecimal) {
@@ -299,10 +301,16 @@ public class MapaAbastecimentoController extends BaseController {
 				sb.append(" - ");
 				sb.append(valorCapa + quebraLinha);
 				
+				imprimeMsg = Boolean.TRUE;
 			}
 		}
 		
-		this.result.use(Results.json()).from(sb.toString()).recursive().serialize();
+		if(!imprimeMsg) {
+			this.result.use(Results.nothing());
+		}
+		else {
+			this.result.use(Results.json()).from(sb.toString()).recursive().serialize();
+		}
 	}
 
 	private void validarFiltroPesquisa(FiltroMapaAbastecimentoDTO filtro) {
