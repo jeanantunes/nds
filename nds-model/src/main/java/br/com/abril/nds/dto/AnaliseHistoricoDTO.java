@@ -34,9 +34,6 @@ public class AnaliseHistoricoDTO {
 	private String vendaMediaFormat;
 
 	// Edição 1
-	@Export(label = "Produto 01", alignment=Alignment.LEFT, exhibitionOrder = 7)
-	private String produto01;
-	
 	@Export(label = "REP 1", alignment=Alignment.LEFT, exhibitionOrder = 7)
 	private Integer ed1Reparte;
 	
@@ -44,9 +41,6 @@ public class AnaliseHistoricoDTO {
 	private Integer ed1Venda;
 
 	// Edição 2
-	@Export(label = "Produto 02", alignment=Alignment.LEFT, exhibitionOrder = 7)
-	private String produto02;
-	
 	@Export(label = "REP 2", alignment=Alignment.LEFT, exhibitionOrder = 9)
 	private Integer ed2Reparte;
 	
@@ -54,9 +48,6 @@ public class AnaliseHistoricoDTO {
 	private Integer ed2Venda;
 
 	// Edição 3
-	@Export(label = "Produto 03", alignment=Alignment.LEFT, exhibitionOrder = 7)
-	private String produto03;
-	
 	@Export(label = "REP 3", alignment=Alignment.LEFT, exhibitionOrder = 11)
 	private Integer ed3Reparte;
 	
@@ -64,9 +55,6 @@ public class AnaliseHistoricoDTO {
 	private Integer ed3Venda;
 
 	// Edição 4
-	@Export(label = "Produto 04", alignment=Alignment.LEFT, exhibitionOrder = 7)
-	private String produto04;
-	
 	@Export(label = "REP 4", alignment=Alignment.LEFT, exhibitionOrder = 13)
 	private Integer ed4Reparte;
 	
@@ -74,9 +62,6 @@ public class AnaliseHistoricoDTO {
 	private Integer ed4Venda;
 
 	// Edição 5
-	@Export(label = "Produto 05", alignment=Alignment.LEFT, exhibitionOrder = 7)
-	private String produto05;
-	
 	@Export(label = "REP 5", alignment=Alignment.LEFT, exhibitionOrder = 15)
 	private Integer ed5Reparte;
 	
@@ -84,9 +69,6 @@ public class AnaliseHistoricoDTO {
 	private Integer ed5Venda;
 
 	// Edição 6
-	@Export(label = "Produto 06", alignment=Alignment.LEFT, exhibitionOrder = 7)
-	private String produto06;
-	
 	@Export(label = "REP 6", alignment=Alignment.LEFT, exhibitionOrder = 17)
 	private Integer ed6Reparte;
 	
@@ -96,6 +78,13 @@ public class AnaliseHistoricoDTO {
 	private String codigoProduto;
 	
 	private Long numeroEdicao;
+	
+	private String produto01;
+	private String produto02;
+	private String produto03;
+	private String produto04;
+	private String produto05;
+	private String produto06;
 
 	public Integer getNumeroCota() {
 		return numeroCota;

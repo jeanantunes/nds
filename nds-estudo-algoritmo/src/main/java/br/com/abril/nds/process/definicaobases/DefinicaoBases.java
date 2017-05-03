@@ -71,6 +71,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
         			
         			if(parcialComMaisDeUmPeriodo) {
         				edicoesBase = filtarEdicoesParciais(edicoesBase, estudo);
+//        				atribuirPesoEdicaoFechadaMaisRecente(edicoesBase);
         			}
         			
         			estudo.setEdicoesBase(edicoesBase);        			
@@ -93,7 +94,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
 			}
 		}
 		
-		if(listaEdicoesFechadas.size() > 2) {
+		if(listaEdicoesFechadas.size() >= 2) {
 			Collections.sort(listaEdicoesFechadas, new Comparator<ProdutoEdicaoEstudo>() {
 
 				@Override

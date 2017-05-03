@@ -3610,28 +3610,21 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     
     @Override
 	@SuppressWarnings("unchecked")
-    public List<CotaDTO> buscarCotasCom_e_SemRaparte(final List<Long> listIdProdutoEdicao) {
+    public List<CotaDTO> buscarCotasCom_e_SemRaparte() {
         
         final StringBuilder sql = new StringBuilder();
         
         sql.append(" select   ");
         sql.append(" 	ct.numero_cota as numeroCota,  ");
         sql.append(" 	coalesce(pessoa.nome_Fantasia,pessoa.razao_Social,pessoa.nome,'') as nomePessoa  ");
-        sql.append(" from estudo_cota_gerado ecg  ");
-        sql.append(" 	join estudo es   ");
-        sql.append(" 		on ecg.estudo_id = es.id  ");
-        sql.append(" 	join cota ct  ");
-        sql.append(" 		on ecg.cota_id = ct.id  ");
+        sql.append(" from cota ct  ");
         sql.append(" 	left join Pessoa pessoa   ");
         sql.append(" 		on ct.pessoa_id = pessoa.id  ");
-        sql.append(" where es.produto_edicao_id in (:produtoEdicaoIdList)  ");
-        sql.append(" 	and ct.situacao_cadastro in ('ATIVO', 'SUSPENSA')  ");
-        sql.append(" group by ecg.cota_id order by ct.numero_cota  ");
+        sql.append(" where ct.situacao_cadastro in ('ATIVO')  ");
+        sql.append(" group by ct.id order by ct.numero_cota  ");
         
         
         final Query query = super.getSession().createSQLQuery(sql.toString());
-        
-        query.setParameterList("produtoEdicaoIdList", listIdProdutoEdicao);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
         

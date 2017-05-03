@@ -638,11 +638,11 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    response.add(estudo.getId());
 	    response.add(estudo.isLiberado() == null ? false : true);
 	    
-	    //String htmlEstudo = HTMLTableUtil.informacoesReparteComplementarEstudo(estudo);
-	    String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
-//	    this.infoRepEstudoComplementarService.salvarInformacoes(estudo.getInformacoesRepComplementar());
 
 	    if(distGrid != null && distGrid.isExibirInformacoesReparteComplementar()){
+	    	//String htmlEstudo = HTMLTableUtil.informacoesReparteComplementarEstudo(estudo);
+	    	String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
+	    	//this.infoRepEstudoComplementarService.salvarInformacoes(estudo.getInformacoesRepComplementar());
 	    	response.add(htmlEstudo);
 	    }
 		
