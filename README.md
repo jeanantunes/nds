@@ -49,7 +49,7 @@ add datasource config in tomcat
 to build
 --------
 
-go to https://github.com/DGBti/NDS
+go to https://github.com/abrilmdia/NDS
 Fork!
 git clone git@github.com:<yourgithubuser>/NDS.git
 cd NDS
