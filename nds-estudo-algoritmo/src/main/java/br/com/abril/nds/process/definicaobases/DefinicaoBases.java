@@ -71,7 +71,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
         			
         			if(parcialComMaisDeUmPeriodo) {
         				edicoesBase = filtarEdicoesParciais(edicoesBase, estudo);
-        				atribuirPesoEdicaoFechadaMaisRecente(edicoesBase);
+//        				atribuirPesoEdicaoFechadaMaisRecente(edicoesBase);
         			}
         			
         			estudo.setEdicoesBase(edicoesBase);        			
