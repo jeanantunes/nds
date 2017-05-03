@@ -73,18 +73,18 @@ public class CotaDAO {
 	    params.put("DATA", new java.sql.Date(new Date().getTime()));
 
 	    listEquivalente = jdbcTemplate.query(queryCotaEquivalente, params, new RowMapper<CotaEstudo>() {
-		@Override
-		public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
-		    CotaEstudo temp = new CotaEstudo();
-		    temp.setId(rs.getLong("ID"));
-		    temp.setNumeroCota(rs.getInt("NUMERO_COTA"));
-		    temp.setIndiceAjusteEquivalente(rs.getBigDecimal("INDICE_AJUSTE"));
-		    return temp;
-		}
+			@Override
+			public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
+			    CotaEstudo temp = new CotaEstudo();
+			    temp.setId(rs.getLong("ID"));
+			    temp.setNumeroCota(rs.getInt("NUMERO_COTA"));
+			    temp.setIndiceAjusteEquivalente(rs.getBigDecimal("INDICE_AJUSTE"));
+			    return temp;
+			}
 	    });
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-	}
+        }
 	return listEquivalente;
     }
 
@@ -333,6 +333,10 @@ public class CotaDAO {
 				pe.setColecao(edicao.isColecao());
 				pe.setIndicePeso(edicao.getIndicePeso());
 				pe.setNumeroEdicao(edicao.getNumeroEdicao());
+
+				if(edicao.getPeriodo() != null){
+					pe.setPeriodo(edicao.getPeriodo());
+				}
 		
 				cota.getEdicoesRecebidas().add(pe);
 			return cota;

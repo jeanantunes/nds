@@ -110,7 +110,15 @@ public class HTMLTableUtil {
 //				}
 			    
 			    for (ProdutoEdicaoEstudo peEstudoCota : ce.getEdicoesRecebidas()) {
-			    	mapEdicoesRecebidas.put(peEstudoCota.getNumeroEdicao(), peEstudoCota);
+			    	
+			    	if(peEstudoCota.isParcial()){
+			    		String chave = peEstudoCota.getNumeroEdicao()+""+peEstudoCota.getPeriodo();
+			    		
+			    		mapEdicoesRecebidas.put(Long.parseLong(chave), peEstudoCota);
+			    	}else{
+			    		mapEdicoesRecebidas.put(peEstudoCota.getNumeroEdicao(), peEstudoCota);
+			    	}
+			    	
 				}
 			    
 			}
@@ -121,7 +129,15 @@ public class HTMLTableUtil {
 			
 			for (ProdutoEdicaoEstudo peBaseEstudo : estudo.getEdicoesBase()) {
 				
-				ProdutoEdicaoEstudo peCota = mapEdicoesRecebidas.get(peBaseEstudo.getNumeroEdicao());
+				ProdutoEdicaoEstudo peCota = null;
+				
+				if(peBaseEstudo.isParcial()){
+		    		String chave = peBaseEstudo.getNumeroEdicao()+""+peBaseEstudo.getPeriodo();
+		    		
+		    		peCota = mapEdicoesRecebidas.get(Long.parseLong(chave));
+		    	}else{
+		    		peCota = mapEdicoesRecebidas.get(peBaseEstudo.getNumeroEdicao());
+		    	}
 				
 				if(peCota != null){
 					h.append(String.format(" <td>%s</td>", peCota.getReparte()));
@@ -136,7 +152,14 @@ public class HTMLTableUtil {
 			
 			for (ProdutoEdicaoEstudo peBaseEstudo : estudo.getEdicoesBase()) {
 				
-				ProdutoEdicaoEstudo peCota = mapEdicoesRecebidas.get(peBaseEstudo.getNumeroEdicao());
+				ProdutoEdicaoEstudo peCota = null;
+				
+				if(peBaseEstudo.isParcial()){
+					String chave = peBaseEstudo.getNumeroEdicao()+""+peBaseEstudo.getPeriodo();
+					peCota = mapEdicoesRecebidas.get(Long.parseLong(chave));
+				}else{
+					peCota = mapEdicoesRecebidas.get(peBaseEstudo.getNumeroEdicao());
+				}
 				
 				if(peCota != null){
 					h.append(String.format(" <td>%s</td>", peCota.getVendaCorrigida()));

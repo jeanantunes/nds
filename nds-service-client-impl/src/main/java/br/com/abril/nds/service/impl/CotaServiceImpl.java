@@ -2939,8 +2939,11 @@ public class CotaServiceImpl implements CotaService {
     @Transactional(readOnly = true)
     @Override
     public List<AnaliseHistoricoDTO> buscarHistoricoCotas(final List<ProdutoEdicaoDTO> listProdutoEdicaoDto,
-            final List<Integer> cotas, final String sortorder, final String sortname, Boolean isFiltroTodasCotas) {
+            final List<Integer> cotasSessao, final String sortorder, final String sortname, Boolean isFiltroTodasCotas) {
         
+    	List<Integer> cotas = new ArrayList<>();
+    	cotas.addAll(cotasSessao);
+    	
         List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarHistoricoCotas(listProdutoEdicaoDto, cotas);
         
         List<AnaliseHistoricoDTO> listAnaliseHistoricoParaRemocao = new ArrayList<>(); 
@@ -3317,16 +3320,16 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional
     public List<CotaDTO> buscarCotasComEsemReparte(List<ProdutoEdicaoDTO> listProdutoEdicaoDTO){
     	
-    	List<Long> listIdsProdutoEdicao = new ArrayList<>();
+//    	List<Long> listIdsProdutoEdicao = new ArrayList<>();
+//    	
+//    	for (ProdutoEdicaoDTO produtoEdicaoDTO : listProdutoEdicaoDTO) {
+//    		
+//    		String[] numeroEdicao = {produtoEdicaoDTO.getNumeroEdicao().toString()};
+//    		
+//    		listIdsProdutoEdicao.addAll(produtoEdicaoRepository.obterIdsEdicoesPorCodigoNumeroEdicoes(produtoEdicaoDTO.getCodigoProduto(), numeroEdicao));
+//		}
     	
-    	for (ProdutoEdicaoDTO produtoEdicaoDTO : listProdutoEdicaoDTO) {
-    		
-    		String[] numeroEdicao = {produtoEdicaoDTO.getNumeroEdicao().toString()};
-    		
-    		listIdsProdutoEdicao.addAll(produtoEdicaoRepository.obterIdsEdicoesPorCodigoNumeroEdicoes(produtoEdicaoDTO.getCodigoProduto(), numeroEdicao));
-		}
-    	
-    	return cotaRepository.buscarCotasCom_e_SemRaparte(listIdsProdutoEdicao);
+    	return cotaRepository.buscarCotasCom_e_SemRaparte();
     }
     
     @Transactional(readOnly = true)
