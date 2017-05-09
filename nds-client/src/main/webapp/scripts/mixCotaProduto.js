@@ -1418,11 +1418,11 @@ var mixCotaProdutoController = $.extend(true, {
 			$("#"+target).dialog({
 				resizable: false,
 				height:'auto',
-				width:500,
+				width:700,
 				draggable: false,
 				modal: true,
 				buttons: {
-					"Iníciar cópia": function() {
+					"Iniciar cópia": function() {
 
 						var len=0;
 						
@@ -1460,8 +1460,11 @@ var mixCotaProdutoController = $.extend(true, {
 						
 						data.push({name:"copiaMix.codigoProdutoOrigem",	value: $("#codigoProdutoOrigemInput").val()});
 						data.push({name:"copiaMix.nomeProdutoOrigem",	value: $("#nomeProdutoOrigemInput").val()});
+						data.push({name:"copiaMix.segmentoOrigem",	value: $("#segmentoMixPopupOrigem option:selected").val()});
+						
 						data.push({name:"copiaMix.codigoProdutoDestino",	value: $("#codigoProdutoDestinoInput").val()});
 						data.push({name:"copiaMix.nomeProdutoDestino",	value: $("#nomeProdutoDestinoInput").val()});
+						data.push({name:"copiaMix.segmentoDestino",	value: $("#segmentoMixPopupDestino option:selected").val()});
 						
 						modal = this;
 						$.postJSON(contextPath + '/distribuicao/mixCotaProduto/gerarCopiaMix',  data, 
@@ -1482,7 +1485,11 @@ var mixCotaProdutoController = $.extend(true, {
 						$(this).dialog("close");
 					}
 				},
-				close:function(){$(idsCopiaCota+","+idsCopiaProduto).val('');}
+				close:function(){
+					$(idsCopiaCota+","+idsCopiaProduto).val('');
+					$("#segmentoMixPopupOrigem").val(0);
+					$("#segmentoMixPopupDestino").val(0);
+				}
 			});
 			
 			
