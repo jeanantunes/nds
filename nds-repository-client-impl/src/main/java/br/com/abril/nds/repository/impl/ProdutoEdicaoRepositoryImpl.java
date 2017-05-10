@@ -2942,4 +2942,24 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	    return lista;
 	}
     
+    @Override
+	public Long obterIdEdicaoPorCodigoNumeroEdicao(String codigoProduto, String numeroEdicoes){
+		
+		final StringBuilder sql = new StringBuilder();
+
+
+			sql.append(" select pe.id from produto_edicao pe join produto p ON p.ID = pe.PRODUTO_ID ")
+				.append(" where p.codigo = :codigoProduto ")
+				.append(" and pe.numero_edicao = :numEdicoes order by pe.id desc limit 1");
+		
+	    final Query query = getSession().createSQLQuery(sql.toString());
+	  
+	    query.setParameter("codigoProduto", codigoProduto);
+	    query.setParameter("numEdicoes", numeroEdicoes);
+	    
+	    BigInteger resultBI = (BigInteger) query.uniqueResult(); 
+	    
+	    return resultBI != null ? resultBI.longValue() : null;
+	}
+    
 }

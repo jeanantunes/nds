@@ -1861,6 +1861,7 @@ if ( dto.getRepartePrevisto() != null) {
             final ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
             dto.setCodigoProduto(codigoProduto);
             dto.setNumeroEdicao(Long.valueOf(strEd));
+            dto.setId(produtoEdicaoRepository.obterIdEdicaoPorCodigoNumeroEdicao(codigoProduto, strEd));
             lstPrDTO.add(dto);
         }
         
