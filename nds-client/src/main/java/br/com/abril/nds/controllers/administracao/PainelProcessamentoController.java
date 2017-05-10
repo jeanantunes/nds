@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSServiceClient;
-import br.com.abril.icd.axis.util.SemanaUtil;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.DetalheInterfaceVO;
@@ -38,11 +38,13 @@ import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.FTFService;
+import br.com.abril.nds.service.GerarArquivosMicroservicosService;
 import br.com.abril.nds.service.InterfaceExecucaoService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.PainelProcessamentoService;
 import br.com.abril.nds.service.RankingFaturamentoService;
 import br.com.abril.nds.service.RankingSegmentoService;
+import br.com.abril.nds.service.TransferenciaArquivoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -60,6 +62,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -113,6 +116,9 @@ public class PainelProcessamentoController extends BaseController {
     
     @Autowired
     private FTFService ftfService;
+	
+	@Autowired
+	private GerarArquivosMicroservicosService gerarArquivoMatrizService;
     
     private static final int INTERFACE = 1;
     private static final int PROCESSO  = 2;
@@ -740,5 +746,42 @@ public class PainelProcessamentoController extends BaseController {
             new ValidacaoVO(TipoMensagem.SUCCESS,
                 "Execução da geração de ranking de faturamento foi realizada com sucesso"), "result").recursive().serialize();
     }
+    
+    /**
+     * Exporta arquivos de interface
+     * @param fileType
+     * @throws IOException
+     */
+    private void exportarArquivoInterface(final FileType fileType) throws IOException {
+        final FiltroProcessosDTO filtroSessao =
+                (FiltroProcessosDTO) session.getAttribute(FILTRO_PESQUISA_PROCESSOS_SESSION_ATTRIBUTE);
+        
+        if (filtroSessao != null && filtroSessao.getPaginacao() != null) {
+            filtroSessao.getPaginacao().setPaginaAtual(null);
+            filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
+            
+        }
+        
+        final List<ProcessoDTO> lista = painelProcessamentoService.listarArquivosInterface(filtroSessao);
+        
+        final String nomeArquivo = "arquivo-interface";
+        
+        FileExporter.to(nomeArquivo, fileType).inHTTPResponse(
+                this.getNDSFileHeader(), filtroSessao, lista, ProcessoDTO.class, httpServletResponse);
+    }
+    
+    @Post
+	@Path("/uploadArquivo")
+	public void uploadArquivo(final String idInterface) throws FileNotFoundException, IOException{
+			
+		
+    	gerarArquivoMatrizService.processarMicrodistribuicao(idInterface, getUsuarioLogado(), null);
+		/*Calendar cl = Calendar.getInstance();
+		gerarArquivoMatrizService.gerarArquivoMatriz(cl.getTime());
+		gerarArquivoMatrizService.gerarArquivoDeapr(cl.getTime());
+		gerarArquivoMatrizService.gerarArquivoDeajo(cl.getTime());*/
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Arquivo enviado com sucesso!"),"result").recursive().serialize();
+	}
     
 }

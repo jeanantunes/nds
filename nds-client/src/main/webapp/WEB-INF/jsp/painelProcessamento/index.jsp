@@ -81,6 +81,9 @@
 		  
 		  <input type="radio" id="visao-processos" name="radioToggle" value="">
 		  <label for="visao-processos" style="width:100px">Processos</label>
+		  
+		  <input type="radio" id="visao-microdistribuicao" name="radioToggle" value="mi">
+		  <label for="visao-microdistribuicao" style="width:130px">Microdistribui&ccedil;&atilde;o</label>
 		
 		</div>
 		
@@ -135,6 +138,15 @@
               	</div>  
             </div>
         </div>
+        
+        <div id="divMicrodistribuicao" style="display: none;">
+			
+           	<span class="bt_confirmar_novo" title="Gerar Arquivo">
+           			<a onclick="painelProcessamentoController.processarArquivosMatriz();" href="javascript:;">
+           			<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_boletos.gif">&nbsp;Gerar Arquivo</a>
+           	</span>
+           	
+		</div>
         
       </fieldset>
       

@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
+
 import br.com.abril.nds.dto.DiretorioTransferenciaArquivoDTO;
 import br.com.abril.nds.model.DiretorioTransferenciaArquivo;
 import br.com.abril.nds.repository.TransferenciaArquivoRepository;
@@ -21,6 +23,9 @@ public class TransferenciaArquivoServiceImpl implements TransferenciaArquivoServ
 
 	@Autowired
 	private TransferenciaArquivoRepository transferenciaArquivosRepository;
+	
+	@Autowired
+	private FixedFormatManager fixedFormatManager;
 	
 	@Override
 	@Transactional

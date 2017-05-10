@@ -187,12 +187,24 @@ var painelProcessamentoController = $.extend(true, {
 			$(".areaBts", painelProcessamentoController.workspace).hide();
 			$(".grids", painelProcessamentoController.workspace).hide();
 			$("#divProcessamento", painelProcessamentoController.workspace).show();
+			$("#divMicrodistribuicao", painelProcessamentoController.workspace).hide();
+			
+			return;
+		}
+		
+		if (codigoDistribuidor == "mi") {
+			
+			$(".areaBts", painelProcessamentoController.workspace).hide();
+			$(".grids", painelProcessamentoController.workspace).hide();
+			$("#divProcessamento", painelProcessamentoController.workspace).hide();
+			$("#divMicrodistribuicao", painelProcessamentoController.workspace).show();
 			
 			return;
 		}
 		
 		
 		$("#divProcessamento", painelProcessamentoController.workspace).hide();
+		$("#divMicrodistribuicao", painelProcessamentoController.workspace).hide();
 		$(".areaBts", painelProcessamentoController.workspace).show();
 		$(".grids", painelProcessamentoController.workspace).show();
 		
@@ -534,6 +546,19 @@ var painelProcessamentoController = $.extend(true, {
 			}
 		});
 		
+	},
+	
+	processarArquivosMatriz : function() {
+		
+		var data = {};
+		
+		$.postJSON(contextPath + "/administracao/painelProcessamento/uploadArquivo",
+				   data,
+				   function (resultado) {
+				
+						
+					}
+				);
 	}
 
 }, BaseController);
