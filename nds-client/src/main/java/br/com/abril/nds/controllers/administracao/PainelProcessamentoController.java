@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -44,7 +43,6 @@ import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.PainelProcessamentoService;
 import br.com.abril.nds.service.RankingFaturamentoService;
 import br.com.abril.nds.service.RankingSegmentoService;
-import br.com.abril.nds.service.TransferenciaArquivoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -62,7 +60,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -745,29 +742,6 @@ public class PainelProcessamentoController extends BaseController {
         result.use(Results.json()).from(
             new ValidacaoVO(TipoMensagem.SUCCESS,
                 "Execução da geração de ranking de faturamento foi realizada com sucesso"), "result").recursive().serialize();
-    }
-    
-    /**
-     * Exporta arquivos de interface
-     * @param fileType
-     * @throws IOException
-     */
-    private void exportarArquivoInterface(final FileType fileType) throws IOException {
-        final FiltroProcessosDTO filtroSessao =
-                (FiltroProcessosDTO) session.getAttribute(FILTRO_PESQUISA_PROCESSOS_SESSION_ATTRIBUTE);
-        
-        if (filtroSessao != null && filtroSessao.getPaginacao() != null) {
-            filtroSessao.getPaginacao().setPaginaAtual(null);
-            filtroSessao.getPaginacao().setQtdResultadosPorPagina(null);
-            
-        }
-        
-        final List<ProcessoDTO> lista = painelProcessamentoService.listarArquivosInterface(filtroSessao);
-        
-        final String nomeArquivo = "arquivo-interface";
-        
-        FileExporter.to(nomeArquivo, fileType).inHTTPResponse(
-                this.getNDSFileHeader(), filtroSessao, lista, ProcessoDTO.class, httpServletResponse);
     }
     
     @Post

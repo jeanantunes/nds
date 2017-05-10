@@ -62,6 +62,4 @@ public interface PainelProcessamentoService {
 
 	public BigInteger listarTotalInterfaces(FiltroInterfacesDTO filtro);
 
-	public List<ProcessoDTO> listarArquivosInterface(FiltroProcessosDTO filtroSessao);
-	
 }

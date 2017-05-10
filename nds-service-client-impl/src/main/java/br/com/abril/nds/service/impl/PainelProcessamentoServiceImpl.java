@@ -19,7 +19,6 @@ import br.com.abril.nds.dto.InterfaceDTO;
 import br.com.abril.nds.dto.ProcessoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheProcessamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
-import br.com.abril.nds.dto.filtro.FiltroProcessosDTO;
 import br.com.abril.nds.model.StatusOperacional;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
@@ -557,11 +556,5 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	    }
 	    return map;
 	}
-
-	@Override
-	public List<ProcessoDTO> listarArquivosInterface(FiltroProcessosDTO filtroSessao) {
-		// TODO Auto-generated method stub
-		
-		return null;
-	}
+	
 }
