@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -750,10 +751,12 @@ public class PainelProcessamentoController extends BaseController {
 			
 		
     	gerarArquivoMatrizService.processarMicrodistribuicao(idInterface, getUsuarioLogado(), null);
-		/*Calendar cl = Calendar.getInstance();
+		
+    	//Teste para gerar os arquivos de texto. Remover após criação do processo automatizado.
+    	Calendar cl = Calendar.getInstance();
 		gerarArquivoMatrizService.gerarArquivoMatriz(cl.getTime());
 		gerarArquivoMatrizService.gerarArquivoDeapr(cl.getTime());
-		gerarArquivoMatrizService.gerarArquivoDeajo(cl.getTime());*/
+		gerarArquivoMatrizService.gerarArquivoDeajo(cl.getTime());
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Arquivo enviado com sucesso!"),"result").recursive().serialize();
 	}
