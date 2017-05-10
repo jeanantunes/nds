@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.Query;
+
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.ConsultaProdutoEdicaoDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
@@ -405,4 +407,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 
 
 	Map<Long, HistoricoVendaCotaDTO> obterCotasHistoricoProdutoEdicao(Long idProdutoEdicao, Long numeroEdicao);
+
+
+	Long obterIdEdicaoPorCodigoNumeroEdicao(String codigoProduto, String numeroEdicoes);
 }
