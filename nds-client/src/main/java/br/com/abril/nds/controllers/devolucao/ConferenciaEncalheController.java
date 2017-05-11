@@ -3193,11 +3193,16 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 		
 		Set<ConferenciaEncalheDTO> lista = info.getListaConferenciaEncalhe();
+		Set<ConferenciaEncalheDTO> listaAux = new HashSet<ConferenciaEncalheDTO>();
 		
-		lista.removeIf(c -> c.getQtdInformada().intValue() > 0);
-		
+		for(ConferenciaEncalheDTO c: lista){
+			if(c.getQtdInformada().intValue() <= 0){
+				listaAux.add(c);
+			}
+		}
+		System.out.println("-----------------------------XXXXX------------------------");
 		Collection<ConferenciaEncalheDTO> listaConferenciaEncalhe = 
-				PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(lista), 
+				PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(listaAux), 
 						Ordenacao.ASC, 
 						"dataRecolhimento", "codigoSM", "numeroEdicao");
 		

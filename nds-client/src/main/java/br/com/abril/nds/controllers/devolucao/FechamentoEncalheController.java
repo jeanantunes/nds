@@ -1949,12 +1949,12 @@ public class FechamentoEncalheController extends BaseController {
 		}
 		
 		// lambdas
-		final List<AnaliticoEncalheVO> listVO = listDTO.stream().map(dto -> new AnaliticoEncalheVO(dto)).collect(Collectors.toList());
+//		final List<AnaliticoEncalheVO> listVO = listDTO.stream().map(dto -> new AnaliticoEncalheVO(dto)).collect(Collectors.toList());
 		
-//		List<AnaliticoEncalheVO> listVO = new ArrayList<AnaliticoEncalheVO>();
-//		for (AnaliticoEncalheDTO dto : listDTO) {
-//			listVO.add(new AnaliticoEncalheVO(dto));
-//		}
+		List<AnaliticoEncalheVO> listVO = new ArrayList<AnaliticoEncalheVO>();
+		for (AnaliticoEncalheDTO dto : listDTO) {
+			listVO.add(new AnaliticoEncalheVO(dto));
+		}
 		
 		TableModel<CellModelKeyValue<AnaliticoEncalheVO>> tableModel = new TableModel<CellModelKeyValue<AnaliticoEncalheVO>>();
 		
