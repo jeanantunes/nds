@@ -19,6 +19,7 @@ public class NotaFiscalV200Test {
 	private static Logger LOGGER = LoggerFactory.getLogger(NotaFiscalV200Test.class);
 	
 	private String versaoNFE = "2.00";
+	private final String URI = "http://www.w3.org/2001/XMLSchema";
 	
 	@Test
 	public void validateXML() throws Exception {
@@ -27,7 +28,7 @@ public class NotaFiscalV200Test {
 			String schemaFile = "src/main/resources/xsd/v"+ versaoNFE +"/nfe_v"+ versaoNFE +".xsd";
 			//String xmlFile = "src/main/resources/xmlGerado.xml";
 			String xmlFile = "C:/opt/nfeassinada.xml";
-			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			SchemaFactory factory = SchemaFactory.newInstance(URI);
 			LOGGER.debug("Schema: "+ schemaFile);
 			Schema schema = factory.newSchema(new File(schemaFile));
 			Validator validator = schema.newValidator();
@@ -46,7 +47,7 @@ public class NotaFiscalV200Test {
 			String schemaFile = "src/main/resources/xsd/v"+ versaoNFE +"/cancNFe_v"+ versaoNFE +".xsd";
 			//String xmlFile = "src/main/resources/xmlGerado.xml";
 			String xmlFile = "src/main/resources/xmlTestes/solicitacaoCancNFe.xml";
-			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			SchemaFactory factory = SchemaFactory.newInstance(URI);
 			LOGGER.debug("Schema: "+ schemaFile);
 			Schema schema = factory.newSchema(new File(schemaFile));
 			Validator validator = schema.newValidator();
@@ -65,7 +66,7 @@ public class NotaFiscalV200Test {
 			String schemaFile = "src/main/resources/xsd/v"+ versaoNFE +"/retCancNFe_v"+ versaoNFE +".xsd";
 			//String xmlFile = "src/main/resources/xmlGerado.xml";
 			String xmlFile = "src/main/resources/xmlTestes/retornoCancNFe.xml";
-			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			SchemaFactory factory = SchemaFactory.newInstance(URI);
 			LOGGER.debug("Schema: "+ schemaFile);
 			Schema schema = factory.newSchema(new File(schemaFile));
 			Validator validator = schema.newValidator();
