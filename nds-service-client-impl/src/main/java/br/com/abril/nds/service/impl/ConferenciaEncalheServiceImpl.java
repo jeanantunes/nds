@@ -3911,11 +3911,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional
 	public void criarHistoricoConfEncalheCota(Usuario usuarioLogado, List<ConferenciaEncalheDTO> listaConferenciaEncalhe, ControleConferenciaEncalheCota controleConfEncalheCota) {
 		
-		BigDecimal valorEncalhe = listaConferenciaEncalhe.stream()
-				.filter(Objects::nonNull)
-				.filter(c -> c.getValorTotal() != null)
-				.map(ConferenciaEncalheDTO::getValorTotal)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		BigDecimal valorEncalhe = new BigDecimal(0);
+		for(ConferenciaEncalheDTO conferenciaEncalheDTO:listaConferenciaEncalhe){
+			if(conferenciaEncalheDTO.getValorTotal()!=null){
+				valorEncalhe.add(conferenciaEncalheDTO.getValorTotal());  
+			}
+		}
 		
 		HistoricoConfChamadaEncalheCota hist = new HistoricoConfChamadaEncalheCota(controleConfEncalheCota.getDataInicio(),
 				controleConfEncalheCota.getDataFim() == null ? new Date() : controleConfEncalheCota.getDataFim(),
