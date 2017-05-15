@@ -311,6 +311,10 @@ public class HistoricoVendaController extends BaseController {
 		
 		Boolean isFiltroTodasCotas = (Boolean) session.getAttribute("isFiltroTodasCotas"); 
 		
+		if(isFiltroTodasCotas == null){
+			isFiltroTodasCotas = false;
+		}
+		
 		List<AnaliseHistoricoDTO> listAnaliseHistorico = 
 			cotaService.buscarHistoricoCotas(
 				listProdutoEdicaoDTO, listCota, sortorder, sortname, isFiltroTodasCotas);

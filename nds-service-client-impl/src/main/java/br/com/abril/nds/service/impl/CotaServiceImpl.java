@@ -2955,6 +2955,8 @@ public class CotaServiceImpl implements CotaService {
         Map<String, Map<Long, HistoricoVendaCotaDTO>> mapHistoricoEdicoes = new HashMap<>();
         
         Map<Long, HistoricoVendaCotaDTO> mapCotas = new HashMap<>();
+        
+        tratarListProdutoEdicao(listProdutoEdicaoDto);
 
         for (ProdutoEdicaoDTO produtoEdicaoDTO : listProdutoEdicaoDto) {
         	if(produtoEdicaoDTO.isParcial() && produtoEdicaoDTO.isParcialConsolidado() == false){
@@ -3135,6 +3137,16 @@ public class CotaServiceImpl implements CotaService {
         
         return listAnaliseHistoricoDTO;
     }
+
+	private void tratarListProdutoEdicao(final List<ProdutoEdicaoDTO> listProdutoEdicaoDto) {
+		for (ProdutoEdicaoDTO produtoEdicaoDTO : listProdutoEdicaoDto) {
+			if(produtoEdicaoDTO.getId() == null){
+				if(produtoEdicaoDTO.getCodigoProduto() != null && produtoEdicaoDTO.getNumeroEdicao() != null){
+					produtoEdicaoDTO.setId(produtoEdicaoRepository.obterIdEdicaoPorCodigoNumeroEdicao(produtoEdicaoDTO.getCodigoProduto(), produtoEdicaoDTO.getNumeroEdicao().toString()));
+				}
+			}
+		}
+	}
     
     private String getChaveMapHistoricoEdicoes(ProdutoEdicaoDTO peDTO){
     	String chave = "";
