@@ -3072,6 +3072,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append(" 		on pdvs.cota_id = cota.id  ");
 		sql.append(" where  ");
 		sql.append(" 	cota.numero_Cota in(:cotas)  ");
+		sql.append(" 	AND cota.situacao_cadastro = 'ATIVO' ");
 		sql.append(" group by  ");
 		sql.append(" 	cota.numero_Cota  ");
 		
@@ -3620,7 +3621,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         sql.append(" from cota ct  ");
         sql.append(" 	left join Pessoa pessoa   ");
         sql.append(" 		on ct.pessoa_id = pessoa.id  ");
-        sql.append(" where ct.situacao_cadastro in ('ATIVO')  ");
+        sql.append(" where ct.situacao_cadastro in ('ATIVO', 'SUSPENSO')  ");
         sql.append(" group by ct.id order by ct.numero_cota  ");
         
         
