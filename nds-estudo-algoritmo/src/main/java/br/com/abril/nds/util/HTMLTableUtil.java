@@ -150,6 +150,8 @@ public class HTMLTableUtil {
 				}
 			}
 			
+			addEspacosEmBranco(estudo, h, 3);
+			
 			for (ProdutoEdicaoEstudo peBaseEstudo : estudo.getEdicoesBase()) {
 				
 				ProdutoEdicaoEstudo peCota = null;
@@ -167,6 +169,8 @@ public class HTMLTableUtil {
 					h.append(" <td></td>");
 				}
 			}
+			
+			addEspacosEmBranco(estudo, h, 1);
 			
 			
 //			for (int i = 0; i < 6; i++) {
@@ -364,6 +368,16 @@ public class HTMLTableUtil {
 //	sb.append(HTMLTableUtil.buildHTMLTable(estudoAutomatico.getCotas()));
 //	return sb.toString();
     }
+
+	private static void addEspacosEmBranco(EstudoTransient estudo, StringBuilder h, int multiplo) {
+		int qtdEdicoesBases = estudo.getEdicoesBase().size();
+		
+		for (int i = qtdEdicoesBases; i < 6; i++) {
+			for (int j = 0; j < multiplo; j++) {
+				h.append(" <td></td>");
+			}
+		}
+	}
     
     public static String informacoesReparteComplementarEstudo(EstudoTransient estudo){
     	
