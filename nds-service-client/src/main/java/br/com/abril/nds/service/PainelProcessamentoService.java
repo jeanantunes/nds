@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.ProcessoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheProcessamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
 import br.com.abril.nds.dto.filtro.FiltroProcessosDTO;
+import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
 
 /**
  * Interface que define as regras de acesso a serviços referentes a entidade
@@ -61,5 +62,7 @@ public interface PainelProcessamentoService {
 	public Long listarTotaldetalhesProcessamentoInterface(FiltroDetalheProcessamentoDTO filtro);
 
 	public BigInteger listarTotalInterfaces(FiltroInterfacesDTO filtro);
+
+	List<InterfaceDTO> listarInterfacesExecucaoMicroDistribuicao();
 
 }

@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -34,8 +35,10 @@ import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.DestinoEncalhe;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoAmbiente;
+import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.repository.LogExecucaoRepository;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.FTFService;
 import br.com.abril.nds.service.GerarArquivosMicroservicosService;
@@ -225,6 +228,27 @@ public class PainelProcessamentoController extends BaseController {
             tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultado));
             tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
             tableModel.setTotal(Integer.valueOf(painelProcessamentoService.listarTotalInterfaces(filtro).toString()));
+            
+            result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+        }
+        
+    }
+    
+    
+    
+    @Path("/pesquisarInterfacesMicroDistribuicao")
+    public void pesquisarInterfacesMicroDistribuicao() throws Exception {
+        
+    	 List<InterfaceDTO> resultado = painelProcessamentoService.listarInterfacesExecucaoMicroDistribuicao();
+        
+        if (resultado == null || resultado.isEmpty()) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+        } else {
+            
+            final TableModel<CellModelKeyValue<InterfaceDTO>> tableModel = new TableModel<CellModelKeyValue<InterfaceDTO>>();
+            tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultado));
+            tableModel.setPage(1);
+            tableModel.setTotal(1);
             
             result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
         }

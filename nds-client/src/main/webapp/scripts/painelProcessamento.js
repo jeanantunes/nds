@@ -182,6 +182,7 @@ var painelProcessamentoController = $.extend(true, {
 		
 		var codigoDistribuidor = $("#toggleFornecedores :radio:checked").val();
 		
+		
 		if (codigoDistribuidor == "") {
 			
 			$(".areaBts", painelProcessamentoController.workspace).hide();
@@ -193,13 +194,16 @@ var painelProcessamentoController = $.extend(true, {
 		}
 		
 		if (codigoDistribuidor == "mi") {
-			
 			$(".areaBts", painelProcessamentoController.workspace).hide();
 			$(".grids", painelProcessamentoController.workspace).hide();
 			$("#divProcessamento", painelProcessamentoController.workspace).hide();
-			$("#divMicrodistribuicao", painelProcessamentoController.workspace).show();
-			
-			return;
+			//$("#divMicrodistribuicao", painelProcessamentoController.workspace).hide();
+			$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexOptions({
+				url : contextPath + '/administracao/painelProcessamento/pesquisarInterfacesMicroDistribuicao',
+				params: [],
+				newp: 1,
+			});
+			$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
 		}
 		
 		
@@ -386,6 +390,7 @@ var painelProcessamentoController = $.extend(true, {
 					$( this ).dialog( "close" );
 					
 					var data = [{name: 'idInterface', value: idInterface}];
+					
 					$.postJSON(contextPath + "/administracao/painelProcessamento/executarInterface",
 							   data,
 							   function (resultado) {

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.woden.wsdl20.Interface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,8 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheProcessamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
 import br.com.abril.nds.model.StatusOperacional;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
+import br.com.abril.nds.model.integracao.InterfaceExecucao;
+import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
 import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.repository.LogExecucaoRepository;
@@ -32,6 +35,7 @@ import br.com.abril.nds.service.HistoricoSituacaoCotaService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.PainelProcessamentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.Util;
 
 /**
@@ -62,11 +66,11 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 
 	private SimpleDateFormat sdfData = new SimpleDateFormat("dd/MM/yyyy");
 	private SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm");
-	
+
 	private final static String ACAO = "ACAO";
 	private final static String DETALHE = "DETALHE";
 	private final static String LOCAL = "LOCAL";
-	
+
 	@Autowired
 	private LogExecucaoRepository logExecucaoRepository;
 
@@ -93,6 +97,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 
 	/**
 	 * Busca os LogExecucao respeitando as restricoes parametrizadas.
+	 * 
 	 * @param orderBy
 	 * @param ordenacao
 	 * @param initialResult
@@ -110,60 +115,72 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	public BigInteger listarTotalInterfaces(FiltroInterfacesDTO filtro) {
 		return logExecucaoRepository.obterTotalInterfaces(filtro);
 	}
-	
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<InterfaceDTO> listarInterfacesExecucaoMicroDistribuicao() {
+		return getInterfaceList(logExecucaoRepository.obterInterfacesExecucaoMicroDistribuicao());
+	}
+
 	/**
 	 * Popula a lista de DTO para exibir na Grid
+	 * 
 	 * @param listaLogExecucao
 	 * @return
 	 */
 	private List<InterfaceDTO> getInterfaceList(List<ConsultaInterfacesDTO> listaLogExecucao) {
-		
+
 		List<InterfaceDTO> listaInterface = new ArrayList<InterfaceDTO>();
-		
+
 		InterfaceDTO interfaceDTO = null;
-		
+
 		for (ConsultaInterfacesDTO logExecucao : listaLogExecucao) {
 			interfaceDTO = new InterfaceDTO();
-			
+
 			interfaceDTO.setIdInterface(logExecucao.getIdInterface().toString());
-			interfaceDTO.setIdLogProcessamento(logExecucao.getId().toString());
+			if (logExecucao.getId() != null) {
+				interfaceDTO.setIdLogProcessamento(logExecucao.getId().toString());
+			}
+
 			interfaceDTO.setIdLogExecucao(logExecucao.getIdLogExecucao());
-			
-			if(logExecucao != null &&  logExecucao.getDataInicio() != null)	{	
-				interfaceDTO.setDataProcessmento( sdfData.format(logExecucao.getDataInicio() ));
-				interfaceDTO.setHoraProcessamento( sdfHora.format(logExecucao.getDataInicio() ));
+
+			if (logExecucao != null && logExecucao.getDataInicio() != null) {
+				interfaceDTO.setDataProcessmento(sdfData.format(logExecucao.getDataInicio()));
+				interfaceDTO.setHoraProcessamento(sdfHora.format(logExecucao.getDataInicio()));
 			} else {
 				interfaceDTO.setDataProcessmento("");
 				interfaceDTO.setHoraProcessamento("");
 			}
 
-			if(logExecucao != null && logExecucao.getNomeArquivo() != null) {
+			if (logExecucao != null && logExecucao.getNomeArquivo() != null) {
 				interfaceDTO.setNomeArquivo(logExecucao.getNomeArquivo().split(DELIMITADOR_PONTO)[0]);
 			} else {
 				interfaceDTO.setNomeArquivo("");
 			}
-			
-			if(logExecucao != null && logExecucao.getExtensaoArquivo() != null) {
+
+			if (logExecucao != null && logExecucao.getExtensaoArquivo() != null) {
 				interfaceDTO.setExtensaoArquivo(logExecucao.getExtensaoArquivo());
 			} else {
 				interfaceDTO.setExtensaoArquivo("");
 			}
-						
+
 			interfaceDTO.setNome(logExecucao.getNome());
 			interfaceDTO.setDescricaoInterface(logExecucao.getDescricao());
 			interfaceDTO.setStatus(Util.getEnumByStringValue(InterfaceDTO.Status.values(), logExecucao.getStatus()));
-			
-			
+
 			listaInterface.add(interfaceDTO);
-			
+
 		}
-		
+
 		return listaInterface;
-		
+
 	}
 
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.service.LogExecucaoMensagemService#listarProcessamentoInterface(java.lang.Long)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see br.com.abril.nds.service.LogExecucaoMensagemService#
+	 * listarProcessamentoInterface(java.lang.Long)
 	 */
 	@Transactional(readOnly = true)
 	@Override
@@ -174,20 +191,21 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 			String tipoErro = "";
 			detalheProcessamentoVO = new DetalheProcessamentoVO();
 			detalheProcessamentoVO.setMensagem(logExecucaoMensagem.getMensagem());
-			detalheProcessamentoVO.setNumeroLinha((logExecucaoMensagem.getNumeroLinha()==null)?null:logExecucaoMensagem.getNumeroLinha().toString());
+			detalheProcessamentoVO.setNumeroLinha((logExecucaoMensagem.getNumeroLinha() == null) ? null
+					: logExecucaoMensagem.getNumeroLinha().toString());
 			switch (logExecucaoMensagem.getLogExecucao().getStatus()) {
-				case AVISO:
-					tipoErro = ALERTA;
-					break;
-				case FALHA:
-					tipoErro = FATAL;
-					break;
-				case SUCESSO:
-					tipoErro = SUCESSO;
-					break;
-				default:
-					tipoErro = INDEFINIDO;
-					break;
+			case AVISO:
+				tipoErro = ALERTA;
+				break;
+			case FALHA:
+				tipoErro = FATAL;
+				break;
+			case SUCESSO:
+				tipoErro = SUCESSO;
+				break;
+			default:
+				tipoErro = INDEFINIDO;
+				break;
 			}
 			detalheProcessamentoVO.setTipoErro(tipoErro);
 			lista.add(detalheProcessamentoVO);
@@ -201,21 +219,23 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		return logExecucaoRepository.obterTotalMensagensErroLogInterface(filtro);
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.service.LogExecucaoMensagemService#listarProcessos()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * br.com.abril.nds.service.LogExecucaoMensagemService#listarProcessos()
 	 */
 	@Override
 	@Transactional
 	public List<ProcessoDTO> listarProcessos() {
-		
-		Date dataOperacao = this. distribuidorService.obterDataOperacaoDistribuidor();
-		
+
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+
 		List<ProcessoDTO> processos = new ArrayList<ProcessoDTO>();
-		
+
 		// Adiciona estado Status Operacional
 		processos.add(this.getProcessoStatusOperacional(dataOperacao));
-		
+
 		// Adiciona estado fechamento encalhe
 		processos.add(this.getProcessoEstadoFechamentoEncalhe(dataOperacao));
 
@@ -242,21 +262,24 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 
 	/**
 	 * Retorna o estado operacional do sistema
+	 * 
 	 * @return ProcessoDTO
 	 */
 	private ProcessoDTO getProcessoStatusOperacional(Date dataOperacao) {
 		ProcessoDTO processoStatusOperacional = new ProcessoDTO();
 		processoStatusOperacional.setNome(STATUS_OPERACIONAL);
 
-		ControleFechamentoEncalhe controleFechamentoEncalhe = fechamentoEncalheService.buscaControleFechamentoEncalhePorData(dataOperacao);
-		
+		ControleFechamentoEncalhe controleFechamentoEncalhe = fechamentoEncalheService
+				.buscaControleFechamentoEncalhePorData(dataOperacao);
+
 		if (controleFechamentoEncalhe != null) {
 			// Mostra os dados do fechamento diário
 			processoStatusOperacional.setStatus(StatusExecucaoEnum.SUCESSO.toString());
 			processoStatusOperacional.setDataProcessmento(sdfData.format(controleFechamentoEncalhe.getDataEncalhe()));
 			processoStatusOperacional.setHoraProcessamento(sdfHora.format(controleFechamentoEncalhe.getDataEncalhe()));
 		} else {
-			// Caso não tenha um fechamento do dia, busca o último fechamento realizado
+			// Caso não tenha um fechamento do dia, busca o último fechamento
+			// realizado
 			Date dataUltimoFechamentoEncalhe = fechamentoEncalheService.buscaDataUltimoControleFechamentoEncalhe();
 			processoStatusOperacional.setStatus(StatusExecucaoEnum.FALHA.toString());
 			if (dataUltimoFechamentoEncalhe != null) {
@@ -267,30 +290,35 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 				processoStatusOperacional.setHoraProcessamento("");
 			}
 		}
-		
+
 		processoStatusOperacional.setSistemaOperacional(true);
 		return processoStatusOperacional;
 	}
 
 	/**
 	 * Retorna o estado do fechamento de encalhe
+	 * 
 	 * @param dataOperacao
 	 * @return ProcessoDTO
 	 */
 	private ProcessoDTO getProcessoEstadoFechamentoEncalhe(Date dataOperacao) {
-		
+
 		ProcessoDTO processoEstadoFechamentoEncalhe = new ProcessoDTO();
 		processoEstadoFechamentoEncalhe.setNome(CONFERENCIA_ENCALHE_FINALIZADA);
-		
-		ControleFechamentoEncalhe controleFechamentoEncalhe = fechamentoEncalheService.buscaControleFechamentoEncalhePorData(dataOperacao);
-		
+
+		ControleFechamentoEncalhe controleFechamentoEncalhe = fechamentoEncalheService
+				.buscaControleFechamentoEncalhePorData(dataOperacao);
+
 		if (controleFechamentoEncalhe != null) {
 			// Mostra os dados do fechamento diário
 			processoEstadoFechamentoEncalhe.setStatus(StatusExecucaoEnum.SUCESSO.toString());
-			processoEstadoFechamentoEncalhe.setDataProcessmento(sdfData.format(controleFechamentoEncalhe.getDataEncalhe()));
-			processoEstadoFechamentoEncalhe.setHoraProcessamento(sdfHora.format(controleFechamentoEncalhe.getDataEncalhe()));
+			processoEstadoFechamentoEncalhe
+					.setDataProcessmento(sdfData.format(controleFechamentoEncalhe.getDataEncalhe()));
+			processoEstadoFechamentoEncalhe
+					.setHoraProcessamento(sdfHora.format(controleFechamentoEncalhe.getDataEncalhe()));
 		} else {
-			// Caso não tenha um fechamento do dia, busca o último fechamento realizado
+			// Caso não tenha um fechamento do dia, busca o último fechamento
+			// realizado
 			Date dataUltimoFechamentoEncalhe = fechamentoEncalheService.buscaDataUltimoControleFechamentoEncalhe();
 			processoEstadoFechamentoEncalhe.setStatus(StatusExecucaoEnum.FALHA.toString());
 			if (dataUltimoFechamentoEncalhe != null) {
@@ -301,29 +329,31 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 				processoEstadoFechamentoEncalhe.setHoraProcessamento("");
 			}
 		}
-		
+
 		return processoEstadoFechamentoEncalhe;
 	}
-	
+
 	/**
 	 * Retorna processo de expedição confirmada para o dia
+	 * 
 	 * @param dataOperacao
 	 * @return ProcessoDTO
 	 */
 	private ProcessoDTO getProcessoExpedicaoConfirmaca(Date dataOperacao) {
-		
+
 		ProcessoDTO processoExpedicaoConfirmacao = new ProcessoDTO();
 		processoExpedicaoConfirmacao.setNome(EXPEDICAO_CONFIRMADA);
-		
+
 		Date dataUltimaExpedicao = expedicaoService.obterDataUltimaExpedicaoDia(dataOperacao);
-		
+
 		if (dataUltimaExpedicao != null) {
 			// Mostra os dados da última expedição do dia
 			processoExpedicaoConfirmacao.setStatus(StatusExecucaoEnum.SUCESSO.toString());
 			processoExpedicaoConfirmacao.setDataProcessmento(sdfData.format(dataUltimaExpedicao));
 			processoExpedicaoConfirmacao.setHoraProcessamento(sdfHora.format(dataUltimaExpedicao));
 		} else {
-			// Caso não tenha um fechamento do dia, busca o último fechamento realizado
+			// Caso não tenha um fechamento do dia, busca o último fechamento
+			// realizado
 			dataUltimaExpedicao = expedicaoService.obterDataUltimaExpedicao();
 			processoExpedicaoConfirmacao.setStatus(StatusExecucaoEnum.FALHA.toString());
 			if (dataUltimaExpedicao != null) {
@@ -334,28 +364,31 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 				processoExpedicaoConfirmacao.setHoraProcessamento("");
 			}
 		}
-		
+
 		return processoExpedicaoConfirmacao;
 	}
 
 	/**
-	 * Retorna o último processo de suspensão de jornaleiro do dia (ou o último realizado) 
+	 * Retorna o último processo de suspensão de jornaleiro do dia (ou o último
+	 * realizado)
+	 * 
 	 * @param dataOperacao
 	 * @return ProcessoDTO
 	 */
 	private ProcessoDTO getProcessoSuspensaoJornaleiro(Date dataOperacao) {
 		ProcessoDTO processoSuspensaoJornaleiro = new ProcessoDTO();
 		processoSuspensaoJornaleiro.setNome(SUSPENSAO_JORNALEIRO);
-		
+
 		Date dataUltimaSuspensaoCota = historicoSituacaoCotaService.buscarUltimaSuspensaoCotasDia(dataOperacao);
-		
+
 		if (dataUltimaSuspensaoCota != null) {
 			// Mostra os dados da última suspensão de jornaleiro do dia
 			processoSuspensaoJornaleiro.setStatus(StatusExecucaoEnum.SUCESSO.toString());
 			processoSuspensaoJornaleiro.setDataProcessmento(sdfData.format(dataUltimaSuspensaoCota));
 			processoSuspensaoJornaleiro.setHoraProcessamento(sdfHora.format(dataUltimaSuspensaoCota));
 		} else {
-			// Caso não tenha uma suspensão no dia, busca a última suspensão realizada
+			// Caso não tenha uma suspensão no dia, busca a última suspensão
+			// realizada
 			dataUltimaSuspensaoCota = historicoSituacaoCotaService.buscarDataUltimaSuspensaoCotas();
 			processoSuspensaoJornaleiro.setStatus(StatusExecucaoEnum.FALHA.toString());
 			if (dataUltimaSuspensaoCota != null) {
@@ -366,21 +399,23 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 				processoSuspensaoJornaleiro.setHoraProcessamento("");
 			}
 		}
-		
+
 		return processoSuspensaoJornaleiro;
 	}
 
 	/**
-	 * Retorna o último processo de baixa automática do dia (ou o último realizado)
+	 * Retorna o último processo de baixa automática do dia (ou o último
+	 * realizado)
+	 * 
 	 * @param dataOperacao
 	 * @return ProcessoDTO
 	 */
 	private ProcessoDTO getProcessoBaixaAutomatica(Date dataOperacao) {
 		ProcessoDTO processoBaixaAutomatica = new ProcessoDTO();
 		processoBaixaAutomatica.setNome(BAIXA_BANCARIA_BOLETO);
-		
+
 		Date dataUltimaBaixaAutomatica = baixaCobrancaService.buscarUltimaBaixaAutomaticaDia(dataOperacao);
-		
+
 		if (dataUltimaBaixaAutomatica != null) {
 			processoBaixaAutomatica.setStatus(StatusExecucaoEnum.SUCESSO.toString());
 			processoBaixaAutomatica.setDataProcessmento(sdfData.format(dataUltimaBaixaAutomatica));
@@ -396,12 +431,13 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 				processoBaixaAutomatica.setHoraProcessamento("");
 			}
 		}
-		
+
 		return processoBaixaAutomatica;
 	}
 
 	/**
 	 * Retorna o último processo de cobrança automática gerada
+	 * 
 	 * @param dataOperacao
 	 * @return ProcessoDTO
 	 */
@@ -426,13 +462,14 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 				processoCobrancaGerada.setHoraProcessamento("");
 			}
 		}
-		
+
 		return processoCobrancaGerada;
-		
+
 	}
 
 	/**
 	 * Retorna o último processo de matriz de lançamento balanceado
+	 * 
 	 * @param dataOperacao
 	 * @return ProcessoDTO
 	 */
@@ -440,7 +477,8 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		ProcessoDTO processoUltimaMatrizLancamento = new ProcessoDTO();
 		processoUltimaMatrizLancamento.setNome(ULTIMA_MATRIZ_LANC_BALANCEADA);
 
-		Date dataUltimaMatrizLancamento = lancamentoService.buscarUltimoBalanceamentoLancamentoRealizadoDia(dataOperacao);
+		Date dataUltimaMatrizLancamento = lancamentoService
+				.buscarUltimoBalanceamentoLancamentoRealizadoDia(dataOperacao);
 
 		if (dataUltimaMatrizLancamento != null) {
 			processoUltimaMatrizLancamento.setStatus(StatusExecucaoEnum.SUCESSO.toString());
@@ -457,13 +495,14 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 				processoUltimaMatrizLancamento.setHoraProcessamento("");
 			}
 		}
-		
+
 		return processoUltimaMatrizLancamento;
-		
+
 	}
 
 	/**
-	 * Retorna o último processo de matriz de recolhimento balanceado 
+	 * Retorna o último processo de matriz de recolhimento balanceado
+	 * 
 	 * @param dataOperacao
 	 * @return ProcessoDTO
 	 */
@@ -471,7 +510,8 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		ProcessoDTO processoUltimaMatrizRecolhimento = new ProcessoDTO();
 		processoUltimaMatrizRecolhimento.setNome(ULTIMA_MATRIZ_REC_BALANCEADA);
 
-		Date dataUltimaMatrizRecolhimento = lancamentoService.buscarUltimoBalanceamentoRecolhimentoRealizadoDia(dataOperacao);
+		Date dataUltimaMatrizRecolhimento = lancamentoService
+				.buscarUltimoBalanceamentoRecolhimentoRealizadoDia(dataOperacao);
 
 		if (dataUltimaMatrizRecolhimento != null) {
 			processoUltimaMatrizRecolhimento.setStatus(StatusExecucaoEnum.SUCESSO.toString());
@@ -488,31 +528,37 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 				processoUltimaMatrizRecolhimento.setHoraProcessamento("");
 			}
 		}
-		
+
 		return processoUltimaMatrizRecolhimento;
-		
+
 	}
 
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.service.PainelProcessamentoService#obterEstadoOperacional()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see br.com.abril.nds.service.PainelProcessamentoService#
+	 * obterEstadoOperacional()
 	 */
 	@Override
 	@Transactional
 	public String obterEstadoOperacional() {
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 
-		ControleFechamentoEncalhe controleFechamentoEncalhe = fechamentoEncalheService.buscaControleFechamentoEncalhePorData(dataOperacao);
-		// Se existe um controle de fechamento, significa que o dia já foi encerrado
+		ControleFechamentoEncalhe controleFechamentoEncalhe = fechamentoEncalheService
+				.buscaControleFechamentoEncalhePorData(dataOperacao);
+		// Se existe um controle de fechamento, significa que o dia já foi
+		// encerrado
 		if (controleFechamentoEncalhe != null) {
 			return StatusOperacional.ENCERRADO.getDescricao();
 		}
-		
+
 		// Um registro foi encontrado, logo, está em processo de fechamento
-		if ( fechamentoEncalheService.buscarUltimoFechamentoEncalheDia(dataOperacao) != null ) {
+		if (fechamentoEncalheService.buscarUltimoFechamentoEncalheDia(dataOperacao) != null) {
 			return StatusOperacional.FECHAMENTO.getDescricao();
 		}
 
-		// Nenhum registro foi encontrado, logo, o sistema ainda está em operação
+		// Nenhum registro foi encontrado, logo, o sistema ainda está em
+		// operação
 		return StatusOperacional.OPERANDO.getDescricao();
 	}
 
@@ -522,8 +568,9 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		List<DetalheInterfaceVO> lista = new ArrayList<DetalheInterfaceVO>();
 		DetalheInterfaceVO detalheInterfaceVO = null;
 		String info = null;
-		Map<String, String> mapaInformacoes; 
-		for (LogExecucaoMensagem logExecucaoMensagem : logExecucaoRepository.obterMensagensLogInterface(codigoLogExecucao)) {
+		Map<String, String> mapaInformacoes;
+		for (LogExecucaoMensagem logExecucaoMensagem : logExecucaoRepository
+				.obterMensagensLogInterface(codigoLogExecucao)) {
 			info = logExecucaoMensagem.getMensagemInfo();
 			if (info == null) {
 				// Se info retornar nulo, vai para o próximo registro do laço
@@ -531,7 +578,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 			}
 
 			mapaInformacoes = toMap(info);
-			
+
 			detalheInterfaceVO = new DetalheInterfaceVO();
 			detalheInterfaceVO.setAcao(mapaInformacoes.get(ACAO));
 			detalheInterfaceVO.setDetalhe(mapaInformacoes.get(DETALHE));
@@ -543,18 +590,32 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 
 	/**
 	 * Retorna um mapa baseado em uma String
+	 * 
 	 * @param String
 	 * @return Map<String, String>
 	 */
 	private Map<String, String> toMap(String input) {
 		// assumes that input is properly formed e.g. "k1=v1,k2=v2"
 		Map<String, String> map = new HashMap<String, String>();
-	    String[] array = input.split(";");
-	    for (String str : array) {
-	        String[] pair = str.split("=");
-	        map.put(pair[0], pair[1]);
-	    }
-	    return map;
+		String[] array = input.split(";");
+		for (String str : array) {
+			String[] pair = str.split("=");
+			map.put(pair[0], pair[1]);
+		}
+		return map;
 	}
-	
+
+	private List<InterfaceDTO> parseORMToDTOInterfaceExecucao(List<InterfaceExecucao> listaInterfaceExecucao) {
+		List<InterfaceDTO> listaDTO = new ArrayList<InterfaceDTO>();
+		for (InterfaceExecucao interfaceExecucao : listaInterfaceExecucao) {
+			InterfaceDTO interfaceDTO = new InterfaceDTO();
+			interfaceDTO.setExtensaoArquivo(interfaceExecucao.getExtensaoArquivo());
+			interfaceDTO.setNomeArquivo(interfaceExecucao.getNome());
+			interfaceDTO.setDataProcessmento("lalala");
+			interfaceDTO.setDescricaoInterface(interfaceExecucao.getDescricao());
+			listaDTO.add(interfaceDTO);
+		}
+		return listaDTO;
+	}
+
 }

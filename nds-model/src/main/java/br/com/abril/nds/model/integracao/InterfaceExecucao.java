@@ -22,7 +22,16 @@ public class InterfaceExecucao implements Serializable {
 	
 	@Column(name = "MASCARA_ARQUIVO", nullable = false, length = 50)
 	private String mascaraArquivo;
-
+	
+	@Column(name = "TIPO_INTERFACE_EXECUCAO", nullable = false, length = 50)
+	private String tipoInterfaceExecucao;
+	
+	@Column(name = "DESCRICAO", length = 50)
+	private String descricao;
+	
+	@Column(name = "EXTENSAO_ARQUIVO", length = 50)
+	private String extensaoArquivo;
+	
 	public Long getId() {
 		return id;
 	}
@@ -46,5 +55,29 @@ public class InterfaceExecucao implements Serializable {
 	public void setMascaraArquivo(String mascaraArquivo) {
 		this.mascaraArquivo = mascaraArquivo;
 	}
-	
+
+	public String getTipoInterfaceExecucao() {
+		return tipoInterfaceExecucao;
+	}
+
+	public void setTipoInterfaceExecucao(String tipoInterfaceExecucao) {
+		this.tipoInterfaceExecucao = tipoInterfaceExecucao;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	public String getExtensaoArquivo() {
+		return extensaoArquivo;
+	}
+
+	public void setExtensaoArquivo(String extensaoArquivo) {
+		this.extensaoArquivo = extensaoArquivo;
+	}
+
 }
