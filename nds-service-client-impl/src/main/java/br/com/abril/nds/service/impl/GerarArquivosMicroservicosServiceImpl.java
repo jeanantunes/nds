@@ -68,7 +68,7 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
 		
 		List<Ems0108Matriz> dadosMatriz = lancamentoService.obterDadosMatriz(data);
 		
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		
 		String quebraLinha = System.getProperty("line.separator");
 		 

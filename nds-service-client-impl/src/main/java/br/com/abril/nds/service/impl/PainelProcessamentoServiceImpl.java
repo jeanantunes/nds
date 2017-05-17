@@ -167,7 +167,8 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 			interfaceDTO.setNome(logExecucao.getNome());
 			interfaceDTO.setDescricaoInterface(logExecucao.getDescricao());
 			interfaceDTO.setStatus(Util.getEnumByStringValue(InterfaceDTO.Status.values(), logExecucao.getStatus()));
-
+			interfaceDTO.setTipoInterfaceExecucao(logExecucao.getTipoInterfaceExecucao());
+			
 			listaInterface.add(interfaceDTO);
 
 		}

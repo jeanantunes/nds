@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.administracao;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -87,6 +88,9 @@ public class PainelProcessamentoController extends BaseController {
     
     private static final String FILTRO_PESQUISA_DETALHES_INTERFACE_SESSION_ATTRIBUTE = "filtroPesquisaDetalheInterfaceGrid";
     private static final String FILTRO_PESQUISA_DETALHES_PROCESSAMENTO_SESSION_ATTRIBUTE = "filtroPesquisaDetalheProcessamentoGrid";
+    
+    private static final String INTERFACE_EXECUCAO_MATRIZ = "9001";
+    private static final String INTERFACE_EXECUCAO_ESTUDO = "9002";
     
     @Autowired
     private PainelProcessamentoService painelProcessamentoService;
@@ -321,6 +325,62 @@ public class PainelProcessamentoController extends BaseController {
         result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
         
     }
+    
+    public void pesquisarDetalhesInterfaceMicroDistribuicao(final String dataProcessamento, final String idLogExecucao,
+            final String sortname, final String sortorder, final int rp, final int page) throws Exception {
+        
+        final FiltroDetalheProcessamentoDTO filtro = carregarFiltroDetalhesProcessamento(sortorder, sortname, page, rp);
+        System.out.println("");
+        List<DetalheProcessamentoVO> lista;
+        int quantidade = 0;
+        try {
+            
+/*            
+            Long idLogExecucaoLong = 0L;
+            if (StringUtils.isNotEmpty(idLogExecucao)) {
+                idLogExecucaoLong = Long.parseLong(idLogExecucao);
+            }
+            
+            filtro.setCodigoLogExecucao(idProcessamentoLong);
+            filtro.setIdLogExecucao(idLogExecucaoLong);
+            
+            Date dataOperacao = null;
+            if (StringUtils.isNotEmpty(dataProcessamento)) {
+                try {
+                    dataOperacao = new SimpleDateFormat("dd/MM/yyyy").parse(dataProcessamento);
+                } catch (final ParseException e) {
+                    LOGGER.debug(e.getMessage(), e);
+                }
+            }
+            
+            filtro.setDataProcessamento(dataOperacao);
+            
+            lista = painelProcessamentoService.listardetalhesProcessamentoInterface(filtro);
+            quantidade = Integer.valueOf( painelProcessamentoService.listarTotaldetalhesProcessamentoInterface(filtro).toString() );
+            
+            if (lista == null || lista.isEmpty()) {
+                throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+            }*/
+            
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            if (e instanceof ValidacaoException) {
+                throw e;
+            } else {
+                throw new ValidacaoException(TipoMensagem.ERROR,
+                        "Erro ao pesquisar registros: " + e.getMessage());
+            }
+        }
+        
+        final TableModel<CellModelKeyValue<DetalheProcessamentoVO>> tableModel = new TableModel<CellModelKeyValue<DetalheProcessamentoVO>>();
+       // tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
+      //  tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+      //  tableModel.setTotal(quantidade);
+        
+        result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+        
+    }
+    
     
     private FiltroDetalheProcessamentoDTO carregarFiltroDetalhesProcessamento(final String sortorder, final String sortname, final int page, final int rp) {
         final FiltroDetalheProcessamentoDTO filtro = new FiltroDetalheProcessamentoDTO();
@@ -769,7 +829,30 @@ public class PainelProcessamentoController extends BaseController {
                 "Execução da geração de ranking de faturamento foi realizada com sucesso"), "result").recursive().serialize();
     }
     
-    @Post
+    @Path("/downloadArquivo")
+	public void downloadArquivo(final String idInterface, final String dataInterfaceExecucao) throws FileNotFoundException, IOException{
+    	try {
+			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			Date date = formatter.parse(dataInterfaceExecucao);
+			if(idInterface.equals(INTERFACE_EXECUCAO_MATRIZ)){
+				gerarArquivoMatrizService.gerarArquivoMatriz(date);
+    		}else if(idInterface.equals(INTERFACE_EXECUCAO_ESTUDO)){
+    			gerarArquivoMatrizService.gerarArquivoDeapr(date);
+    			gerarArquivoMatrizService.gerarArquivoDeajo(date);
+    		}
+		//	gerarArquivoMatrizService.gerarArquivoDeapr(cl.getTime());  // 9002
+		//	gerarArquivoMatrizService.gerarArquivoDeajo(cl.getTime());  // 9002
+			
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Arquivo enviado com sucesso!"),"result").recursive().serialize();
+		}
+    	
+    	catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
+    
+    
+    
 	@Path("/uploadArquivo")
 	public void uploadArquivo(final String idInterface) throws FileNotFoundException, IOException{
 			
@@ -778,9 +861,9 @@ public class PainelProcessamentoController extends BaseController {
 		
     	//Teste para gerar os arquivos de texto. Remover após criação do processo automatizado.
     	Calendar cl = Calendar.getInstance();
-		gerarArquivoMatrizService.gerarArquivoMatriz(cl.getTime());
-		gerarArquivoMatrizService.gerarArquivoDeapr(cl.getTime());
-		gerarArquivoMatrizService.gerarArquivoDeajo(cl.getTime());
+		gerarArquivoMatrizService.gerarArquivoMatriz(cl.getTime()); // 9001 
+		gerarArquivoMatrizService.gerarArquivoDeapr(cl.getTime());  // 9002
+		gerarArquivoMatrizService.gerarArquivoDeajo(cl.getTime());  // 9002
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Arquivo enviado com sucesso!"),"result").recursive().serialize();
 	}

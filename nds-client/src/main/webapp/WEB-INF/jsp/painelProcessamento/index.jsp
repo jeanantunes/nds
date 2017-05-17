@@ -47,6 +47,9 @@
 <div id="dialog-excutarInterface" title="Processar Interface" style="display:none;">
 	<br />
     <p>Deseja reprocessar interface?</p>
+    <div id="divCalendarInterfaceExecucao">
+    <input class="campoDePesquisa" type="text" name="calendarInterfaceExecucao" id="calendarInterfaceExecucao" style="width:80px;" value="${data}" />
+	</div>
 </div>
 
 <form id="detalhesInterface">

@@ -56,9 +56,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 				.addScalar("idInterface", StandardBasicTypes.LONG)
 				.setResultTransformer(Transformers.aliasToBean(ConsultaInterfacesDTO.class));
 
-		if(!filtro.getCodigoDistribuidor().equals("mi")){
 			query.setParameter("codigoDistribuidor", filtro.getCodigoDistribuidor());
-		}
 		
 		if(filtro.getPaginacao()!=null) {
 			
@@ -293,6 +291,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		projections = projections.add(Projections.property("ie.extensaoArquivo"), "extensaoArquivo");
 		projections = projections.add(Projections.property("ie.nome"), "nomeArquivo");
 		projections = projections.add(Projections.property("status"), "statusEnum");
+		projections = projections.add(Projections.property("ie.tipoInterfaceExecucao"), "tipoInterfaceExecucao");
 		projections = projections.add(Projections.groupProperty("ie.id"), "idInterface");
 		criteria = criteria.setProjection(projections);
 		criteria.setResultTransformer(Transformers.aliasToBean(ConsultaInterfacesDTO.class));

@@ -23,6 +23,7 @@ public class ConsultaInterfacesDTO implements Serializable {
 	private Date dataInicio;
 	private Date dataFim;
 	private Long idInterface;
+	private String tipoInterfaceExecucao;
 	
 	public String getNome() {
 		return nome;
@@ -110,6 +111,14 @@ public class ConsultaInterfacesDTO implements Serializable {
 
 	public void setStatusEnum(StatusExecucaoEnum statusEnum) {
 		this.statusEnum = statusEnum;
+	}
+
+	public String getTipoInterfaceExecucao() {
+		return tipoInterfaceExecucao;
+	}
+
+	public void setTipoInterfaceExecucao(String tipoInterfaceExecucao) {
+		this.tipoInterfaceExecucao = tipoInterfaceExecucao;
 	}
 	
 }

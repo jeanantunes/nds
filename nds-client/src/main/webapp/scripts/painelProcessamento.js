@@ -181,10 +181,10 @@ var painelProcessamentoController = $.extend(true, {
 		painelProcessamentoController.bindButtonsInterfaces();
 		
 		var codigoDistribuidor = $("#toggleFornecedores :radio:checked").val();
-		
+		$("#divCalendarInterfaceExecucao").hide();
 		
 		if (codigoDistribuidor == "") {
-			
+			$( "#calendarInterfaceExecucao").hide();
 			$(".areaBts", painelProcessamentoController.workspace).hide();
 			$(".grids", painelProcessamentoController.workspace).hide();
 			$("#divProcessamento", painelProcessamentoController.workspace).show();
@@ -194,9 +194,12 @@ var painelProcessamentoController = $.extend(true, {
 		}
 		
 		if (codigoDistribuidor == "mi") {
-			$(".areaBts", painelProcessamentoController.workspace).hide();
-			$(".grids", painelProcessamentoController.workspace).hide();
+			$( "#calendarInterfaceExecucao").show();
+			$(".areaBts", painelProcessamentoController.workspace).show();
+			$(".grids", painelProcessamentoController.workspace).show();
 			$("#divProcessamento", painelProcessamentoController.workspace).hide();
+			$("#divCalendarInterfaceExecucao").show();
+		//	$( "#calendarInterfaceExecucao").show();
 			//$("#divMicrodistribuicao", painelProcessamentoController.workspace).hide();
 			$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexOptions({
 				url : contextPath + '/administracao/painelProcessamento/pesquisarInterfacesMicroDistribuicao',
@@ -204,9 +207,12 @@ var painelProcessamentoController = $.extend(true, {
 				newp: 1,
 			});
 			$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
+			
+			
+			return;
 		}
 		
-		
+		$( "#calendarInterfaceExecucao").hide();
 		$("#divProcessamento", painelProcessamentoController.workspace).hide();
 		$("#divMicrodistribuicao", painelProcessamentoController.workspace).hide();
 		$(".areaBts", painelProcessamentoController.workspace).show();
@@ -234,9 +240,17 @@ var painelProcessamentoController = $.extend(true, {
 		var brDetalhes        = "";
 		
 		$.each(resultado.rows, function(index, row) {
-
-			btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterface(\"" + row.cell.idInterface + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
-			brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.idLogExecucao + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
+			
+			if(row.cell.tipoInterfaceExecucao=='microDistribuicao'){
+				btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterfaceMicroDistribuicao(\"" + row.cell.idInterface + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
+				brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceMicroDistribuicao(" + row.cell.idLogProcessamento + ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.idLogExecucao + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
+			}else{
+				btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterface(\"" + row.cell.idInterface + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
+				brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.idLogExecucao + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
+			}
+			
+			
+			
 
 			if(row.cell.idLogProcessamento != "" && row.cell.dataProcessmento != "" && row.cell.idLogExecucao != "" && row.cell.status != 'S' && row.cell.status != 'V'){
 				row.cell.reprocessar = btReprocessamento + brDetalhes;
@@ -324,6 +338,23 @@ var painelProcessamentoController = $.extend(true, {
 		$(".detalheProcessamentoGrid", painelProcessamentoController.workspace).flexReload();
 		painelProcessamentoController.popup(idLogProcessamento, dataProcessamento, horaProcessamento);			
 	},
+	
+	abrirPopUpDetalhesInterfaceMicroDistribuicao : function(idLogProcessamento, dataProcessamento, idLogExecucao, horaProcessamento) {
+		$(".detalheProcessamentoGrid", painelProcessamentoController.workspace).flexOptions({
+			url: contextPath + '/administracao/painelProcessamento/pesquisarDetalhesInterfaceMicroDistribuicao',
+			params: [
+		         {name:'idLogProcessamento', value: idLogProcessamento},
+		          {name:'dataProcessamento', value: dataProcessamento},
+		         {name:'idLogExecucao', value: idLogExecucao}
+		    ],
+		    newp: 1,
+		});
+		
+		$(".detalheProcessamentoGrid", painelProcessamentoController.workspace).flexReload();
+		painelProcessamentoController.popup(idLogProcessamento, dataProcessamento, horaProcessamento);			
+	},
+	
+	
 	executarPreProcessamentoGrid : function(resultado) {
 		
 		if (resultado.mensagens) {
@@ -377,6 +408,49 @@ var painelProcessamentoController = $.extend(true, {
 			window.location = contextPath + "/administracao/painelProcessamento/exportar?fileType=PDF&tipoRelatorio=2";
 		});
 	},
+	
+   reprocessarInterfaceMicroDistribuicao : function(idInterface) {
+	 var dataInterfaceExecucao =  $( "#calendarInterfaceExecucao" ).datepicker({
+		   dateFormat: 'dd/mm/yy',
+		   showOn: "button",
+           buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif",
+           buttonImageOnly: true,
+           buttonText: "Selecione uma data"
+       });
+	   
+	   
+		$( "#dialog-excutarInterface" ).dialog({
+			resizable: false,
+			height:'auto',
+			width:400,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					
+					
+					var data = [{name: 'idInterface', value: idInterface},
+						{name: 'dataInterfaceExecucao', value: dataInterfaceExecucao.val()}];
+					
+					$.postJSON(contextPath + "/administracao/painelProcessamento/downloadArquivo",
+							   data,
+							   function (result) {
+									exibirMensagem(result.tipoMensagem, result.listaMensagens);
+								});
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	},
+	
+	
+	
+	
+	
+	
 	
 	reprocessarInterface : function(idInterface) {
 		
