@@ -243,7 +243,7 @@ var painelProcessamentoController = $.extend(true, {
 			
 			if(row.cell.tipoInterfaceExecucao=='microDistribuicao'){
 				btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterfaceMicroDistribuicao(\"" + row.cell.idInterface + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
-				brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceMicroDistribuicao(" + row.cell.idLogProcessamento + ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.idLogExecucao + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
+				brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceMicroDistribuicao(" + row.cell.idInterface+ ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.idLogExecucao + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
 			}else{
 				btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterface(\"" + row.cell.idInterface + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
 				brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.idLogExecucao + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
@@ -339,11 +339,11 @@ var painelProcessamentoController = $.extend(true, {
 		painelProcessamentoController.popup(idLogProcessamento, dataProcessamento, horaProcessamento);			
 	},
 	
-	abrirPopUpDetalhesInterfaceMicroDistribuicao : function(idLogProcessamento, dataProcessamento, idLogExecucao, horaProcessamento) {
+	abrirPopUpDetalhesInterfaceMicroDistribuicao : function(idInterface, dataProcessamento, idLogExecucao, horaProcessamento) {
 		$(".detalheProcessamentoGrid", painelProcessamentoController.workspace).flexOptions({
 			url: contextPath + '/administracao/painelProcessamento/pesquisarDetalhesInterfaceMicroDistribuicao',
 			params: [
-		         {name:'idLogProcessamento', value: idLogProcessamento},
+		         {name:'idInterface', value: idInterface},
 		          {name:'dataProcessamento', value: dataProcessamento},
 		         {name:'idLogExecucao', value: idLogExecucao}
 		    ],
@@ -351,7 +351,7 @@ var painelProcessamentoController = $.extend(true, {
 		});
 		
 		$(".detalheProcessamentoGrid", painelProcessamentoController.workspace).flexReload();
-		painelProcessamentoController.popup(idLogProcessamento, dataProcessamento, horaProcessamento);			
+		painelProcessamentoController.popup(idInterface, dataProcessamento, horaProcessamento);			
 	},
 	
 	

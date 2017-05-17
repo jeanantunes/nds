@@ -298,5 +298,8 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 
 		return criteria.list();  
 	}
+	
+	
+	
 
 }

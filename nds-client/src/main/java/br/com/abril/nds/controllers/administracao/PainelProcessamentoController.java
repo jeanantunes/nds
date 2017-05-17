@@ -13,6 +13,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.axis2.databinding.types.soapencoding.Array;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -326,42 +327,21 @@ public class PainelProcessamentoController extends BaseController {
         
     }
     
-    public void pesquisarDetalhesInterfaceMicroDistribuicao(final String dataProcessamento, final String idLogExecucao,
+    public void pesquisarDetalhesInterfaceMicroDistribuicao(final String idInterface, final String dataProcessamento, final String idLogExecucao,
             final String sortname, final String sortorder, final int rp, final int page) throws Exception {
         
-        final FiltroDetalheProcessamentoDTO filtro = carregarFiltroDetalhesProcessamento(sortorder, sortname, page, rp);
-        System.out.println("");
-        List<DetalheProcessamentoVO> lista;
-        int quantidade = 0;
         try {
-            
-/*            
-            Long idLogExecucaoLong = 0L;
-            if (StringUtils.isNotEmpty(idLogExecucao)) {
-                idLogExecucaoLong = Long.parseLong(idLogExecucao);
-            }
-            
-            filtro.setCodigoLogExecucao(idProcessamentoLong);
-            filtro.setIdLogExecucao(idLogExecucaoLong);
-            
-            Date dataOperacao = null;
-            if (StringUtils.isNotEmpty(dataProcessamento)) {
-                try {
-                    dataOperacao = new SimpleDateFormat("dd/MM/yyyy").parse(dataProcessamento);
-                } catch (final ParseException e) {
-                    LOGGER.debug(e.getMessage(), e);
-                }
-            }
-            
-            filtro.setDataProcessamento(dataOperacao);
-            
-            lista = painelProcessamentoService.listardetalhesProcessamentoInterface(filtro);
-            quantidade = Integer.valueOf( painelProcessamentoService.listarTotaldetalhesProcessamentoInterface(filtro).toString() );
-            
-            if (lista == null || lista.isEmpty()) {
-                throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-            }*/
-            
+        	DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			Date date = formatter.parse(dataProcessamento);
+		   	List<DetalheProcessamentoVO> lista = painelProcessamentoService.listardetalhesProcessamentoInterface(new FiltroDetalheProcessamentoDTO(null,date, new Long(idInterface),new Long(idLogExecucao)));
+	    	
+	           
+           final TableModel<CellModelKeyValue<DetalheProcessamentoVO>> tableModel = new TableModel<CellModelKeyValue<DetalheProcessamentoVO>>();
+           tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
+           tableModel.setPage(1);
+           tableModel.setTotal(lista.size());
+           result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+ 
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             if (e instanceof ValidacaoException) {
@@ -371,14 +351,6 @@ public class PainelProcessamentoController extends BaseController {
                         "Erro ao pesquisar registros: " + e.getMessage());
             }
         }
-        
-        final TableModel<CellModelKeyValue<DetalheProcessamentoVO>> tableModel = new TableModel<CellModelKeyValue<DetalheProcessamentoVO>>();
-       // tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
-      //  tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-      //  tableModel.setTotal(quantidade);
-        
-        result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-        
     }
     
     

@@ -606,17 +606,4 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		return map;
 	}
 
-	private List<InterfaceDTO> parseORMToDTOInterfaceExecucao(List<InterfaceExecucao> listaInterfaceExecucao) {
-		List<InterfaceDTO> listaDTO = new ArrayList<InterfaceDTO>();
-		for (InterfaceExecucao interfaceExecucao : listaInterfaceExecucao) {
-			InterfaceDTO interfaceDTO = new InterfaceDTO();
-			interfaceDTO.setExtensaoArquivo(interfaceExecucao.getExtensaoArquivo());
-			interfaceDTO.setNomeArquivo(interfaceExecucao.getNome());
-			interfaceDTO.setDataProcessmento("lalala");
-			interfaceDTO.setDescricaoInterface(interfaceExecucao.getDescricao());
-			listaDTO.add(interfaceDTO);
-		}
-		return listaDTO;
-	}
-
 }
