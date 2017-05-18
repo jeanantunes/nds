@@ -7,11 +7,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -53,6 +57,7 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RepartePdvService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -71,6 +76,8 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 @Path("/distribuicao/analise/parcial")
 public class AnaliseParcialController extends BaseController {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AnaliseParcialController.class);
 
     @Autowired
     private Validator validator;
@@ -115,7 +122,12 @@ public class AnaliseParcialController extends BaseController {
     private EstudoService estudoService;
     
     @Autowired
+   	private UsuarioService usuarioService;
+    
+    @Autowired
     private static final String EDICOES_BASE_SESSION_ATTRIBUTE = "";
+    
+    public static final String MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE = "mapa_analise_estudo";
 
     @Path("/")
     public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado, String dataLancamentoEdicao) {
@@ -183,14 +195,19 @@ public class AnaliseParcialController extends BaseController {
 
         ClassificacaoCota[] vetor = ClassificacaoCota.values();
         Arrays.sort(vetor, new Comparator<ClassificacaoCota>() {
-
-	    @Override
-	    public int compare(ClassificacaoCota o1, ClassificacaoCota o2) {
-		return o1.getTexto().compareToIgnoreCase(o2.getTexto());
-	    }
+		    @Override
+		    public int compare(ClassificacaoCota o1, ClassificacaoCota o2) {
+		    	return o1.getTexto().compareToIgnoreCase(o2.getTexto());
+		    }
         });
+
         result.include("classificacaoCotaList", vetor);
         result.forwardTo("/WEB-INF/jsp/distribuicao/analiseParcial.jsp");
+        
+        String loginUsuario = super.getUsuarioLogado().getLogin();
+        
+        this.bloquearAnaliseEstudo(estudoCota.getEstudo().getProdutoEdicaoId(), this.session, loginUsuario);
+        
     }
     
     @Path("/abrirAnaliseFaixa")
@@ -585,5 +602,71 @@ public class AnaliseParcialController extends BaseController {
 	    ret[1] = this.repartePdvService.verificarRepartePdv(numeroCota, codigoProduto);
 	    
 	    this.result.use(Results.json()).from(ret, "result").serialize();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void bloquearAnaliseEstudo(Long idProdutoEdicao, HttpSession session, String loginUsuario) {
+		
+		if (idProdutoEdicao == null) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Estudo inválido!"));
+		}
+		
+		// conferir se ja nao tem um estudo aberto em outra aba nesta sessao
+    	String windowname_estudo=(String) session.getAttribute("WINDOWNAME_ESTUDO");
+    	String windowname=(String) session.getAttribute("WINDOWNAME");
+    	
+      	 
+    	if ( windowname_estudo != null && windowname != null && !windowname_estudo.equals(windowname)){
+    		 throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Ja existe um Estudo sendo analisado em outra aba/janela"));
+    	}
+    	
+    	
+		
+		Map<Long, String> mapaAnaliseEstudo = (Map<Long, String>) session.getServletContext().getAttribute(MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
+		
+		if (mapaAnaliseEstudo != null) {
+			
+			String loginUsuarioBloqueio = mapaAnaliseEstudo.get(idProdutoEdicao);
+			
+			if (loginUsuarioBloqueio != null && !loginUsuarioBloqueio.equals(loginUsuario+";"+windowname)) {
+				LOGGER.error("ESTE ESTUDO ja ESTA SENDO ANALISADO PELO USUARIO "+(loginUsuarioBloqueio)+
+						"  BLOQUEANDO COM="+loginUsuario+";"+windowname);
+				LOGGER.error("MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE=" +mapaAnaliseEstudo.toString());
+				
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Este estudo já está sendo analisado pelo usuário [" 
+							+ this.usuarioService.obterNomeUsuarioPorLogin(loginUsuarioBloqueio.split(";")[0]) + "]."));
+			}
+			
+		} else {
+		
+			mapaAnaliseEstudo = new HashMap<Long, String>();
+		}
+		session.setAttribute("WINDOWNAME_ESTUDO",windowname);
+		mapaAnaliseEstudo.put(idProdutoEdicao, loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
+		LOGGER.warn("TRAVANDO ESTUDO COM  "+loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
+		
+		session.getServletContext().setAttribute(MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE, mapaAnaliseEstudo);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static void desbloquearAnaliseEstudo(HttpSession session, String loginUsuario) {
+
+		Map<Long, String> mapaAnaliseEstudo = (Map<Long, String>) 
+				session.getServletContext().getAttribute(MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
+		
+		LOGGER.warn("DESBLOQUEANDO ESTUDO com "+loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
+		
+		if (mapaAnaliseEstudo != null) {
+			
+			for (Map.Entry<Long, String> entry : mapaAnaliseEstudo.entrySet()) {
+				
+				if (entry.getValue().equals(loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"))) {
+					mapaAnaliseEstudo.remove(entry.getKey());
+					session.removeAttribute("WINDOWNAME_ESTUDO");
+					break;
+				}
+			}
+		}
 	}
 }
