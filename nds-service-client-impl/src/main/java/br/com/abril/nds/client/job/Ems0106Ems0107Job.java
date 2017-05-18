@@ -7,11 +7,11 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import br.com.abril.nds.service.GerarArquivosMicroservicosService;
+import br.com.abril.nds.service.GerarArquivosMicroDistribuicaoService;
 
 public class Ems0106Ems0107Job implements Job{
 
-	private GerarArquivosMicroservicosService gerarArquivosEms0106Ems0107Service;
+	private GerarArquivosMicroDistribuicaoService gerarArquivosEms0106Ems0107Service;
 	
 	public Ems0106Ems0107Job() {
 		@SuppressWarnings("resource")
@@ -19,7 +19,7 @@ public class Ems0106Ems0107Job implements Job{
 				new ClassPathXmlApplicationContext("applicationContext.xml");
 			
 			this.gerarArquivosEms0106Ems0107Service = 
-				applicationContext.getBean(GerarArquivosMicroservicosService.class);
+				applicationContext.getBean(GerarArquivosMicroDistribuicaoService.class);
 	}
 	
 	@Override

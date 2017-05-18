@@ -7,11 +7,11 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import br.com.abril.nds.service.GerarArquivosMicroservicosService;
+import br.com.abril.nds.service.GerarArquivosMicroDistribuicaoService;
 
 public class Ems0108MatrizJob implements Job {
 	
-	private GerarArquivosMicroservicosService gerarArquivoMatrizService; 
+	private GerarArquivosMicroDistribuicaoService gerarArquivoMatrizService; 
 	
 	public Ems0108MatrizJob() {
 		
@@ -20,7 +20,7 @@ public class Ems0108MatrizJob implements Job {
 				new ClassPathXmlApplicationContext("applicationContext.xml");
 			
 			this.gerarArquivoMatrizService = 
-				applicationContext.getBean(GerarArquivosMicroservicosService.class);
+				applicationContext.getBean(GerarArquivosMicroDistribuicaoService.class);
 	}
 
 	@Override

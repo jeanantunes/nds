@@ -436,6 +436,7 @@ var painelProcessamentoController = $.extend(true, {
 							   data,
 							   function (result) {
 									exibirMensagem(result.tipoMensagem, result.listaMensagens);
+									$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
 								});
 					
 				},
@@ -444,6 +445,10 @@ var painelProcessamentoController = $.extend(true, {
 				}
 			}
 		});
+		$(".areaBts", painelProcessamentoController.workspace).flexReload();
+		$(".grids", painelProcessamentoController.workspace).flexReload();
+		$("#divProcessamento", painelProcessamentoController.workspace).flexReload();
+		$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
 	},
 	
 	
@@ -624,7 +629,7 @@ var painelProcessamentoController = $.extend(true, {
 				}
 			}
 		});
-		
+		$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
 	},
 	
 	processarArquivosMatriz : function() {

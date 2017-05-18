@@ -5,15 +5,12 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.axis2.databinding.types.soapencoding.Array;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,13 +34,11 @@ import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.DestinoEncalhe;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoAmbiente;
-import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.repository.LogExecucaoRepository;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.FTFService;
-import br.com.abril.nds.service.GerarArquivosMicroservicosService;
+import br.com.abril.nds.service.GerarArquivosMicroDistribuicaoService;
 import br.com.abril.nds.service.InterfaceExecucaoService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.PainelProcessamentoService;
@@ -124,7 +119,7 @@ public class PainelProcessamentoController extends BaseController {
     private FTFService ftfService;
 	
 	@Autowired
-	private GerarArquivosMicroservicosService gerarArquivoMatrizService;
+	private GerarArquivosMicroDistribuicaoService gerarArquivoMatrizService;
     
     private static final int INTERFACE = 1;
     private static final int PROCESSO  = 2;
@@ -807,7 +802,7 @@ public class PainelProcessamentoController extends BaseController {
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			Date date = formatter.parse(dataInterfaceExecucao);
 			if(idInterface.equals(INTERFACE_EXECUCAO_MATRIZ)){
-				gerarArquivoMatrizService.gerarArquivoMatriz(date);
+				gerarArquivoMatrizService.gerarArquivoMatriz(date,  getUsuarioLogado());
     		}else if(idInterface.equals(INTERFACE_EXECUCAO_ESTUDO)){
     			gerarArquivoMatrizService.gerarArquivoDeapr(date);
     			gerarArquivoMatrizService.gerarArquivoDeajo(date);
@@ -821,23 +816,6 @@ public class PainelProcessamentoController extends BaseController {
     	catch (ParseException e) {
 			e.printStackTrace();
 		}
-	}
-    
-    
-    
-	@Path("/uploadArquivo")
-	public void uploadArquivo(final String idInterface) throws FileNotFoundException, IOException{
-			
-		
-    	gerarArquivoMatrizService.processarMicrodistribuicao(idInterface, getUsuarioLogado(), null);
-		
-    	//Teste para gerar os arquivos de texto. Remover após criação do processo automatizado.
-    	Calendar cl = Calendar.getInstance();
-		gerarArquivoMatrizService.gerarArquivoMatriz(cl.getTime()); // 9001 
-		gerarArquivoMatrizService.gerarArquivoDeapr(cl.getTime());  // 9002
-		gerarArquivoMatrizService.gerarArquivoDeajo(cl.getTime());  // 9002
-		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Arquivo enviado com sucesso!"),"result").recursive().serialize();
 	}
     
 }

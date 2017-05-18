@@ -5,9 +5,9 @@ import java.util.Date;
 
 import br.com.abril.nds.model.seguranca.Usuario;
 
-public interface GerarArquivosMicroservicosService {
+public interface GerarArquivosMicroDistribuicaoService {
 
-	void gerarArquivoMatriz(Date data);
+	void gerarArquivoMatriz(Date data, Usuario usuario);
 	
 	void gerarArquivoDeajo(Date data);
 	

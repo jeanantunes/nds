@@ -285,7 +285,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		criteria.createAlias("interfaceExecucao", "ie");
 		criteria.add(Restrictions.eq("ie.tipoInterfaceExecucao", "microDistribuicao"));
 		ProjectionList projections = Projections.projectionList();
-		projections = projections.add(Projections.min("dataInicio"), "dataInicio");
+		projections = projections.add(Projections.max("dataInicio"), "dataInicio");
 		projections = projections.add(Projections.property("id"), "idLogExecucao");
 		projections = projections.add(Projections.property("ie.descricao"), "descricao");
 		projections = projections.add(Projections.property("ie.extensaoArquivo"), "extensaoArquivo");
@@ -297,6 +297,13 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		criteria.setResultTransformer(Transformers.aliasToBean(ConsultaInterfacesDTO.class));
 
 		return criteria.list();  
+	}
+
+	@Override
+	public InterfaceExecucao findByID(Long id) {
+		Criteria criteria = getSession().createCriteria(InterfaceExecucao.class);
+		criteria.add(Restrictions.eq("id", id));
+		return (InterfaceExecucao) criteria.uniqueResult();
 	}
 	
 	

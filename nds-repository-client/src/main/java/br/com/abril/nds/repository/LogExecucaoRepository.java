@@ -32,4 +32,6 @@ public interface LogExecucaoRepository extends Repository<LogExecucao, Long> {
 	
 	List<ConsultaInterfacesDTO> obterInterfacesExecucaoMicroDistribuicao();
 	
+	InterfaceExecucao findByID(Long id);
+	
 }

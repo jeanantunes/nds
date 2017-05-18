@@ -14,12 +14,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
+import br.com.abril.nds.dto.ConsultaInterfacesDTO;
 import br.com.abril.nds.dto.integracao.micro.Ems0106Deapr;
 import br.com.abril.nds.dto.integracao.micro.Ems0107Deajo;
 import br.com.abril.nds.dto.integracao.micro.Ems0108Matriz;
@@ -33,14 +39,16 @@ import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
 import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.LogExecucaoRepository;
 import br.com.abril.nds.repository.TransferenciaArquivoRepository;
-import br.com.abril.nds.service.GerarArquivosMicroservicosService;
+import br.com.abril.nds.service.GerarArquivosMicroDistribuicaoService;
+import br.com.abril.nds.service.InterfaceExecucaoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 
 @Service
-public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicroservicosService {
+public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicroDistribuicaoService {
 	
 	private static final long ID_EVENTO_EXECUCAO_4L = 4L;
 
@@ -53,7 +61,11 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
 	private static final String DEAJO19_NEW = "/deajo19.new";
 	
 	public static final long ID_DIRETORIO_MICROSERVICO = 6L;
+	
+	private static final Long ID_INTERFACE_EXECUCAO_MATRIZ = 9001l;
 
+	private static final Long ID_INTERFACE_EXECUCAO_ESTUDO = 9002l;
+	
 	@Autowired
 	private LancamentoService lancamentoService;
 	
@@ -69,7 +81,14 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
 	@Autowired
 	private ParametroSistemaService parametroSistemaService;
 	
-	public void gerarArquivoMatriz(Date data) {
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private InterfaceExecucaoService interfaceExecucaoService;
+	
+	
+	public void gerarArquivoMatriz(Date data, Usuario usuario) {
 		
 		List<Ems0108Matriz> dadosMatriz = lancamentoService.obterDadosMatriz(data);
 		
@@ -95,6 +114,15 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
             
             out.write(sb.toString());
             out.close();
+            
+            LogExecucao logExecucao=new LogExecucao();
+            logExecucao.setStatus(StatusExecucaoEnum.SUCESSO);
+            logExecucao.setDataInicio(new Date());
+            
+            InterfaceExecucao interfaceExecucao = logExecucaoRepository.findByID(ID_INTERFACE_EXECUCAO_MATRIZ);
+            logExecucao.setInterfaceExecucao(interfaceExecucao);
+            logExecucao.setNomeLoginUsuario(usuario.getNome());
+            logExecucaoRepository.adicionar(logExecucao);
 			
 		} catch (FileNotFoundException e) {
 			// TODO Add Msg de log
