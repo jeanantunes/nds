@@ -24,6 +24,7 @@ import br.com.abril.nds.dto.integracao.micro.Ems0106Deapr;
 import br.com.abril.nds.dto.integracao.micro.Ems0107Deajo;
 import br.com.abril.nds.dto.integracao.micro.Ems0108Matriz;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiretorioTransferenciaArquivo;
 import br.com.abril.nds.model.integracao.EventoExecucao;
@@ -36,6 +37,7 @@ import br.com.abril.nds.repository.LogExecucaoRepository;
 import br.com.abril.nds.repository.TransferenciaArquivoRepository;
 import br.com.abril.nds.service.GerarArquivosMicroservicosService;
 import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.service.integracao.ParametroSistemaService;
 
 @Service
 public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicroservicosService {
@@ -64,6 +66,9 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
 	@Autowired
 	private LogExecucaoRepository logExecucaoRepository;
 	
+	@Autowired
+	private ParametroSistemaService parametroSistemaService;
+	
 	public void gerarArquivoMatriz(Date data) {
 		
 		List<Ems0108Matriz> dadosMatriz = lancamentoService.obterDadosMatriz(data);
@@ -76,11 +81,11 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
 			sb.append(fixedFormatManager.export(ems0108Matriz) + quebraLinha);
 		}
 		
-		DiretorioTransferenciaArquivo parametroPath = transferenciaArquivosRepository.buscarPorId(ID_DIRETORIO_MICROSERVICO);
+		
 		
 		try {
-			String diretorio = parametroPath.getEnderecoDiretorio().replace("\\", "/");
 			
+			String diretorio = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTEGRATION_ANALISTA).getValor();
 			File file = new File(diretorio);
             file.mkdirs();
             File destino = new File(file, MATRIZ_NEW);
@@ -119,10 +124,9 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
 		
 		DiretorioTransferenciaArquivo parametroPath = transferenciaArquivosRepository.buscarPorId(ID_DIRETORIO_MICROSERVICO);
 		
-		String diretorio = parametroPath.getEnderecoDiretorio().replace("\\", "/");
 		
 		try {
-			
+			String diretorio = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTEGRATION_ANALISTA).getValor();
 			File file = new File(diretorio);
 			file.mkdirs();
 			File destino = new File(file, DEAJO19_NEW);
@@ -159,10 +163,10 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
 		
 		DiretorioTransferenciaArquivo parametroPath = transferenciaArquivosRepository.buscarPorId(ID_DIRETORIO_MICROSERVICO);
 		
-		String diretorio = parametroPath.getEnderecoDiretorio().replace("\\", "/");
 		
 		try {
 			
+			String diretorio = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTEGRATION_ANALISTA).getValor();
 			File file = new File(diretorio);
 			file.mkdirs();
 			File destino = new File(file, DEAPR19_NEW);
@@ -403,6 +407,10 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
 
 		arq = new FileReader(arquivo);
 		return arq;
+	}
+
+	public void setParametroSistemaService(ParametroSistemaService parametroSistemaService) {
+		this.parametroSistemaService = parametroSistemaService;
 	}
 	
 }
