@@ -204,10 +204,6 @@ public class AnaliseParcialController extends BaseController {
         result.include("classificacaoCotaList", vetor);
         result.forwardTo("/WEB-INF/jsp/distribuicao/analiseParcial.jsp");
         
-        String loginUsuario = super.getUsuarioLogado().getLogin();
-        
-        this.bloquearAnaliseEstudo(estudoCota.getEstudo().getProdutoEdicaoId(), this.session, loginUsuario);
-        
     }
     
     @Path("/abrirAnaliseFaixa")
@@ -604,11 +600,23 @@ public class AnaliseParcialController extends BaseController {
 	    this.result.use(Results.json()).from(ret, "result").serialize();
 	}
 	
+	@Post
+	public void efetuarBloqueioAnaliseEstudo(Long idProdutoEdicao){
+		
+		String loginUsuario = super.getUsuarioLogado().getLogin();
+		
+		this.bloquearAnaliseEstudo(idProdutoEdicao, this.session, loginUsuario);
+		
+		this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Estudo bloqueado com sucesso."), 
+				"result").recursive().serialize();
+	}
+	
 	@SuppressWarnings("unchecked")
 	private void bloquearAnaliseEstudo(Long idProdutoEdicao, HttpSession session, String loginUsuario) {
 		
 		if (idProdutoEdicao == null) {
-			
+			 
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Estudo inválido!"));
 		}
 		
