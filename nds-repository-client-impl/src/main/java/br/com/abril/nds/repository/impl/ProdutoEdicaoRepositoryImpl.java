@@ -1527,6 +1527,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		queryStringProdutoEdicao.append(" select  T2.numCota as numeroCota from (  ");
 		queryStringProdutoEdicao.append("    ");
 		queryStringProdutoEdicao.append(" Select sum(T.REPARTE) AS reparte, sum(T.qtdeVendas) AS qtdeVendas,  ");
+		queryStringProdutoEdicao.append("  		sum( T.qtdeVendas )/T.qtdEdicoesRecebida as vendaMedia,  ");
 		queryStringProdutoEdicao.append("  		T.numCota AS numCota  ");
 		queryStringProdutoEdicao.append("    ");
 		queryStringProdutoEdicao.append("  from (  ");
@@ -1553,7 +1554,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		queryStringProdutoEdicao.append("                   LEFT JOIN movimento_estoque_cota mecEncalhe on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID    ");
 		queryStringProdutoEdicao.append(" 	              WHERE lanc.id = l.id and cota.id = c.id and ce.DATA_RECOLHIMENTO = lanc.data_rec_distrib)) AS SIGNED INT)    ");
 		queryStringProdutoEdicao.append(" 	        else    ");
-		queryStringProdutoEdicao.append("             null    ");
+		queryStringProdutoEdicao.append("             null     ");
 		queryStringProdutoEdicao.append("             end) as qtdeVendas,  ");
 		queryStringProdutoEdicao.append("               ");
 		queryStringProdutoEdicao.append("         	(select count( distinct _epc.produto_edicao_id ) from ESTOQUE_PRODUTO_COTA _epc where _epc.produto_edicao_id in (:idsEdicoes) and _epc.cota_id = c.id ) as qtdEdicoesRecebida,  ");
@@ -1686,9 +1687,21 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		}
 		
 		queryStringProdutoEdicao.append(" 		 group by pe.numero_edicao, pe.id, mecReparte.cota_id, plp.numero_periodo ORDER BY l.ID desc) as T  ");
-		queryStringProdutoEdicao.append(" 		 where qtdeVendas/qtdEdicoesRecebida between :de and :ate  ");
+		
+//		queryStringProdutoEdicao.append(" 		 where qtdeVendas/qtdEdicoesRecebida between :de and :ate  ");
+//		
+
+		
 		queryStringProdutoEdicao.append(" 		 group by T.numCota  ");
 		queryStringProdutoEdicao.append(" 		 ) T2  ");
+		
+		queryStringProdutoEdicao.append(" 		 WHERE ");
+		
+		queryStringProdutoEdicao.append(" 		 T2.vendaMedia >= :de and T2.vendaMedia < :ate ");
+		
+		if(de.intValue() == 0 && ate.intValue() == 0){
+			queryStringProdutoEdicao.append("    or T2.vendaMedia is null   ");
+		}
 		
 
 //		queryStringProdutoEdicao += " group by numero_cota "
@@ -1696,7 +1709,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		final SQLQuery query = this.getSession().createSQLQuery(queryStringProdutoEdicao.toString());
 		query.setParameter("de", de);
-		query.setParameter("ate", ate);
+		query.setParameter("ate", (ate.intValue()+1));
 		query.setParameterList("idsEdicoes", filtro.getIdsEdicoes());
 		
 //		query.setParameter("produtoCodigo", codigoProduto);
