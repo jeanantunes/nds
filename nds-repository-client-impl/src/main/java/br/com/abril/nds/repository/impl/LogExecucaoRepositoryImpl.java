@@ -8,6 +8,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.ConsultaInterfacesDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheProcessamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
+import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
 import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
@@ -54,7 +56,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 				.addScalar("idInterface", StandardBasicTypes.LONG)
 				.setResultTransformer(Transformers.aliasToBean(ConsultaInterfacesDTO.class));
 
-		query.setParameter("codigoDistribuidor", filtro.getCodigoDistribuidor());
+			query.setParameter("codigoDistribuidor", filtro.getCodigoDistribuidor());
 		
 		if(filtro.getPaginacao()!=null) {
 			
@@ -70,6 +72,8 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 
 		return query.list();
 	}
+	
+	
 
 	@Override
 	public BigInteger obterTotalInterfaces(FiltroInterfacesDTO filtro) {
@@ -274,5 +278,35 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		criteria.setProjection(Projections.rowCount());
 		return (Long) criteria.uniqueResult();
 	}
+
+	@Override
+	public List<ConsultaInterfacesDTO> obterInterfacesExecucaoMicroDistribuicao() {
+		Criteria criteria = getSession().createCriteria(LogExecucao.class);
+		criteria.createAlias("interfaceExecucao", "ie");
+		criteria.add(Restrictions.eq("ie.tipoInterfaceExecucao", "microDistribuicao"));
+		ProjectionList projections = Projections.projectionList();
+		projections = projections.add(Projections.max("dataInicio"), "dataInicio");
+		projections = projections.add(Projections.property("id"), "idLogExecucao");
+		projections = projections.add(Projections.property("ie.descricao"), "descricao");
+		projections = projections.add(Projections.property("ie.extensaoArquivo"), "extensaoArquivo");
+		projections = projections.add(Projections.property("ie.nome"), "nomeArquivo");
+		projections = projections.add(Projections.property("status"), "statusEnum");
+		projections = projections.add(Projections.property("ie.tipoInterfaceExecucao"), "tipoInterfaceExecucao");
+		projections = projections.add(Projections.groupProperty("ie.id"), "idInterface");
+		criteria = criteria.setProjection(projections);
+		criteria.setResultTransformer(Transformers.aliasToBean(ConsultaInterfacesDTO.class));
+
+		return criteria.list();  
+	}
+
+	@Override
+	public InterfaceExecucao findByID(Long id) {
+		Criteria criteria = getSession().createCriteria(InterfaceExecucao.class);
+		criteria.add(Restrictions.eq("id", id));
+		return (InterfaceExecucao) criteria.uniqueResult();
+	}
+	
+	
+	
 
 }

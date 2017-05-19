@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
@@ -971,6 +973,11 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 	@Override
 	public void posProcess(Object tempVar) {
 		distribuidorService.desbloqueiaProcessosLancamentosEstudos();
+	}
+	
+	public void gerarArquivoMatriz(Calendar dataAtual) {
+		List<EMS0108Input> linhasArquivo = new ArrayList<EMS0108Input>();
+		
 	}
 	
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import br.com.abril.nds.dto.ConsultaInterfacesDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheProcessamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
+import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
 
@@ -25,8 +26,12 @@ public interface LogExecucaoRepository extends Repository<LogExecucao, Long> {
 
 	void atualizar(LogExecucao logExecucao);
 
-	public Long obterTotalMensagensErroLogInterface(FiltroDetalheProcessamentoDTO filtro);
+	Long obterTotalMensagensErroLogInterface(FiltroDetalheProcessamentoDTO filtro);
 
-	public BigInteger obterTotalInterfaces(FiltroInterfacesDTO filtro);
-
+	BigInteger obterTotalInterfaces(FiltroInterfacesDTO filtro);
+	
+	List<ConsultaInterfacesDTO> obterInterfacesExecucaoMicroDistribuicao();
+	
+	InterfaceExecucao findByID(Long id);
+	
 }

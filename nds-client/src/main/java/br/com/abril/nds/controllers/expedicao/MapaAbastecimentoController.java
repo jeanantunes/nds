@@ -1,8 +1,10 @@
 package br.com.abril.nds.controllers.expedicao;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,8 +25,10 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
+import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaRotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -224,10 +228,12 @@ public class MapaAbastecimentoController extends BaseController {
 	public void pesquisar(FiltroMapaAbastecimentoDTO filtro, Integer page, Integer rp, String sortname, String sortorder) {
 
 		validarFiltroPesquisa(filtro);
+		
 
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 
 		tratarFiltro(filtro);
+		
 
 		switch(filtro.getTipoConsulta()) {
 
@@ -263,6 +269,47 @@ public class MapaAbastecimentoController extends BaseController {
             break;	
 		default:
 			break;
+		}		
+		
+	}
+
+	@Post
+	public void obterProdutosSemDistribuicao(Date dataDate) {
+
+		FiltroLancamentoDTO filtroProdutos = new FiltroLancamentoDTO(dataDate, null);
+		
+		List<ProdutoLancamentoDTO> produtosSemDistribuicao = mapaAbastecimentoService.obterProdutosSemEstudo(filtroProdutos);
+		
+		StringBuffer sb = new StringBuffer();
+		
+		String quebraLinha = System.getProperty("line.separator");
+		
+		sb.append("Produtos sem estudo:" + quebraLinha);
+		
+		boolean imprimeMsg = Boolean.FALSE;
+		
+		for (ProdutoLancamentoDTO produto : produtosSemDistribuicao) {
+			
+			if(produto.getPrecoVenda() instanceof BigDecimal) {
+				String valorCapa = NumberFormat.getCurrencyInstance().format(produto.getPrecoVenda());				
+			
+				sb.append(produto.getCodigoProduto());
+				sb.append(" - ");
+				sb.append(produto.getNomeProduto());
+				sb.append(" - ");
+				sb.append(produto.getNumeroEdicao());
+				sb.append(" - ");
+				sb.append(valorCapa + quebraLinha);
+				
+				imprimeMsg = Boolean.TRUE;
+			}
+		}
+		
+		if(!imprimeMsg) {
+			this.result.use(Results.nothing());
+		}
+		else {
+			this.result.use(Results.json()).from(sb.toString()).recursive().serialize();
 		}
 	}
 
@@ -719,7 +766,7 @@ public class MapaAbastecimentoController extends BaseController {
 	}
 
 	private void popularGridPorRota(FiltroMapaAbastecimentoDTO filtro) {
-
+		
 		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorBoxRota(filtro);
 
 		if (lista == null || lista.isEmpty()) {
@@ -729,6 +776,7 @@ public class MapaAbastecimentoController extends BaseController {
 		Long totalRegistros = mapaAbastecimentoService.countObterMapaAbastecimentoPorBoxRota(filtro);
 
 		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
+			
 	}
 
 	private void popularGridPorProduto(FiltroMapaAbastecimentoDTO filtro) {
@@ -740,7 +788,7 @@ public class MapaAbastecimentoController extends BaseController {
 		}
 
 		Long totalRegistros = mapaAbastecimentoService.countObterMapaAbastecimentoPorProdutoEdicao(filtro);
-
+		
 		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
 	}
 	
@@ -770,7 +818,7 @@ public class MapaAbastecimentoController extends BaseController {
 		}
 
 		Long totalRegistros = mapaAbastecimentoService.countObterMapaAbastecimentoPorProdutoEdicao(filtro);
-
+		
 		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
 	}
 
@@ -798,7 +846,6 @@ public class MapaAbastecimentoController extends BaseController {
 		Long totalRegistros = mapaAbastecimentoService.countObterMapaDeAbastecimentoPorEntregador(filtro);
 
 		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
-
 	}
 
 	@Post

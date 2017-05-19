@@ -27,5 +27,5 @@ public interface TransferenciaArquivoService {
 	String upload(UploadedFile uploadedFile, String parametroPath) throws IOException;
 
 	Boolean isDiretorioExistente(String pathDiretorio);
-
+	
 }

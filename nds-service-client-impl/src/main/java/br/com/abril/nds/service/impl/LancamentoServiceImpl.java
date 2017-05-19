@@ -25,6 +25,9 @@ import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
+import br.com.abril.nds.dto.integracao.micro.Ems0106Deapr;
+import br.com.abril.nds.dto.integracao.micro.Ems0107Deajo;
+import br.com.abril.nds.dto.integracao.micro.Ems0108Matriz;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.helper.LancamentoHelper;
@@ -811,6 +814,22 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 		return null;
 	}
+	
+	@Override
+	@Transactional
+	public List<Ems0108Matriz> obterDadosMatriz(Date data) {
+		return lancamentoRepository.buscarDadosMatriz(data);
+	}
 
+	@Override
+	@Transactional
+	public List<Ems0106Deapr> obterDadosDeapr(Date data) {
+		return lancamentoRepository.obterDadosDeapr(data);
+	}
 
+	@Override
+	@Transactional
+	public List<Ems0107Deajo> obterDadosDeajo(Date data) {
+		return lancamentoRepository.obterDadosDeajo(data);
+	}
 }
