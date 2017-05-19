@@ -28,7 +28,7 @@ public class Ems0108MatrizJob implements Job {
 		
 		Calendar dataAtual = Calendar.getInstance();
 		
-		this.gerarArquivoMatrizService.gerarArquivoMatriz(dataAtual.getTime());
+	//	this.gerarArquivoMatrizService.gerarArquivoMatriz(dataAtual.getTime());
 	}
 
 }
