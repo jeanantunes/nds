@@ -12,7 +12,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	    var numLanc = $('#numeroLancamentoDvm').val();
 	    var numPeriodo = $('#periodoDvm').text();
 	    
-	    if((numLanc != undefined) && (numLanc > 1) || (numPeriodo != undefined) && (numPeriodo > 1)){
+	    if((numLanc != undefined) && (numLanc > 1)){
 	    	$("#usarFixacao").prop('checked', false);
 	    	$("#usarMix").prop('checked', false);
 	    }else{
