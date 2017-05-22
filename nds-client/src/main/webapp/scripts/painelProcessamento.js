@@ -122,7 +122,7 @@ var painelProcessamentoController = $.extend(true, {
 			}],
 			sortname : "descricaoInterface",
 			sortorder : "asc",
-			usepager : false,
+			usepager : false, 
 			useRp : false,
 			rp : 0,
 			showTableToggleBtn : true,
