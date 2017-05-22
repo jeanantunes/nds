@@ -829,16 +829,16 @@ function Distribuicao(tela) {
 			 decimal:',', 
 			 precision:2
 		});
-//		$("input[id$=valorPercentualFaturamento", this.workspace).maskMoney({
-//			 thousands:'.', 
-//			 decimal:',', 
-//			 precision:2
-//		});	
+		$("input[id$=valorPercentualFaturamento", this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});	
 		
 	
-//		$("input[id$=inputQuinzenalDiaInicio", this.workspace).numeric();
+		$("input[id$=inputQuinzenalDiaInicio", this.workspace).numeric();
 		
-//		$("input[id$=inputCobrancaMensal",this.workspace).numeric();
+		$("input[id$=inputCobrancaMensal",this.workspace).numeric();
 		
 		
 	});
