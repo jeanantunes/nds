@@ -242,7 +242,7 @@ var painelProcessamentoController = $.extend(true, {
 		$.each(resultado.rows, function(index, row) {
 			
 			if(row.cell.tipoInterfaceExecucao=='microDistribuicao'){
-				btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterfaceMicroDistribuicao(\"" + row.cell.idInterface+ "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
+				btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterfaceMicroDistribuicao(\"" + row.cell.nome+ "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
 				brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceMicroDistribuicao(" + row.cell.idInterface+ ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.idLogExecucao + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
 			}else{
 				btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterface(\"" + row.cell.idInterface + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";

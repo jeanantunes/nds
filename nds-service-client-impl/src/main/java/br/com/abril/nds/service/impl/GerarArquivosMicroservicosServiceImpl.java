@@ -42,6 +42,7 @@ import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
 import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.EventoExecucaoRepository;
 import br.com.abril.nds.repository.LogExecucaoMensagemRepository;
 import br.com.abril.nds.repository.LogExecucaoRepository;
 import br.com.abril.nds.repository.TransferenciaArquivoRepository;
@@ -71,6 +72,9 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
 	
 	private static final String INTERFACE_REPROCESSADA_SUCESSO = "A interface %s foi reprocessada com sucesso, havia %d registros e a data selecionada era %s";
 	
+	private static final String EVENTO_INTERFACE_MICRO_DISTRIBUICAO = "Arquivo";
+	
+	
 	@Autowired
 	private LancamentoService lancamentoService;
 	
@@ -82,6 +86,9 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
 	
 	@Autowired
 	private LogExecucaoRepository logExecucaoRepository;
+	
+	@Autowired
+	private EventoExecucaoRepository eventoExecucaoRepository; 
 	
 	@Autowired
 	private LogExecucaoMensagemRepository logExecucaoMensagemRepository;
@@ -132,7 +139,7 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
             logExecucao.setNomeLoginUsuario(usuario.getNome());
             logExecucaoRepository.adicionar(logExecucao);
             
-            logExecucaoMensagemRepository.inserir(criarLogExecucaoMensagem(logExecucao, interfaceExecucao.getNome(), dadosMatriz.size(),data));
+            logExecucaoMensagemRepository.inserir(criarLogExecucaoMensagem(logExecucao, interfaceExecucao.getNome(), dadosMatriz.size(),data, MATRIZ_NEW));
 			
 		} catch (FileNotFoundException e) {
 			// TODO Add Msg de log
@@ -159,15 +166,12 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
 	}
 	
 	@Transactional
-	private LogExecucaoMensagem criarLogExecucaoMensagem(LogExecucao logExecucao, String idInterface, Integer numeroRegistro, Date data){
-		
-		EventoExecucao eventoExecucao = new EventoExecucao();
-		eventoExecucao.setId(4l);
-		
+	private LogExecucaoMensagem criarLogExecucaoMensagem(LogExecucao logExecucao, String idInterface, Integer numeroRegistro, Date data, String nomeArquivo){
+		EventoExecucao eventoExecucao = eventoExecucaoRepository.findByNome(EVENTO_INTERFACE_MICRO_DISTRIBUICAO);
 		LogExecucaoMensagem logExecucaoMensagem = new LogExecucaoMensagem();
 		logExecucaoMensagem.setLogExecucao(logExecucao);
 		logExecucaoMensagem.setEventoExecucao(eventoExecucao);
-		logExecucaoMensagem.setNomeArquivo("a");
+		logExecucaoMensagem.setNomeArquivo(nomeArquivo.substring(1));
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		logExecucaoMensagem.setMensagem(String.format(INTERFACE_REPROCESSADA_SUCESSO, idInterface,numeroRegistro,simpleDateFormat.format(data)));
 		return logExecucaoMensagem;
