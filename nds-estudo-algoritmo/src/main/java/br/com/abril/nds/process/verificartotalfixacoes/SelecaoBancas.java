@@ -273,20 +273,32 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	    // lista utilizada para que utilizemos apenas as bancas ativas
 	    
 	    List<CotaEstudo> temp = new ArrayList<>();
+	    int countQtdCotasMix = 0;
+	    boolean estudoTemReparteMinimo = estudo.getReparteMinimo() != null;
+	    
+	    for (int i = 0; i < cotas.size(); i++) {
+	    	if(BigDecimal.valueOf(i).compareTo(qtdeCotasAbrangencia) >= 0){
+	    		if(cotas.get(i).isMix()){
+	    			++countQtdCotasMix;
+	    		}
+	    	}
+		}
+	    
+	    qtdeCotasAbrangencia = qtdeCotasAbrangencia.subtract(new BigDecimal(countQtdCotasMix));
+	    
 	    for (CotaEstudo cota : cotas) {
 			if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
 			    temp.add(cota);
 			}
 	    }
-
-	    boolean estudoTemReparteMinimo = estudo.getReparteMinimo() != null;
+	  
 	    for (int i = 0; i < temp.size(); i++) {
 			if (BigDecimal.valueOf(i).compareTo(qtdeCotasAbrangencia) >= 0 &&
-				!(temp.get(i).isNova() && estudoTemReparteMinimo)) {// se houver reparte minimo não remove as cotas novas do estudo		 
-			    temp.get(i).setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
-			    temp.get(i).setReparteCalculado(BigInteger.ZERO, estudo);
-			    
-			    temp.get(i).setReparteMinimoFinal(BigInteger.ONE);
+				!(temp.get(i).isNova() && estudoTemReparteMinimo) && !temp.get(i).isMix()) {// se houver reparte minimo não remove as cotas novas do estudo		 
+				    temp.get(i).setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+				    temp.get(i).setReparteCalculado(BigInteger.ZERO, estudo);
+				    
+				    temp.get(i).setReparteMinimoFinal(BigInteger.ONE);
 			}
 	    }
 	}
