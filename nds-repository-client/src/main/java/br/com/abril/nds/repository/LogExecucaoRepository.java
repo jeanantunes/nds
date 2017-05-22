@@ -34,4 +34,6 @@ public interface LogExecucaoRepository extends Repository<LogExecucao, Long> {
 	
 	InterfaceExecucao findByID(Long id);
 	
+	InterfaceExecucao findByNome(String nome); 
+	
 }

@@ -85,8 +85,8 @@ public class PainelProcessamentoController extends BaseController {
     private static final String FILTRO_PESQUISA_DETALHES_INTERFACE_SESSION_ATTRIBUTE = "filtroPesquisaDetalheInterfaceGrid";
     private static final String FILTRO_PESQUISA_DETALHES_PROCESSAMENTO_SESSION_ATTRIBUTE = "filtroPesquisaDetalheProcessamentoGrid";
     
-    private static final String INTERFACE_EXECUCAO_MATRIZ = "9001";
-    private static final String INTERFACE_EXECUCAO_ESTUDO = "9002";
+    private static final String INTERFACE_EXECUCAO_MATRIZ = "EMS9001";
+    private static final String INTERFACE_EXECUCAO_ESTUDO = "EMS9002";
     
     @Autowired
     private PainelProcessamentoService painelProcessamentoService;
@@ -797,15 +797,15 @@ public class PainelProcessamentoController extends BaseController {
     }
     
     @Path("/downloadArquivo")
-	public void downloadArquivo(final String idInterface, final String dataInterfaceExecucao) throws FileNotFoundException, IOException{
+	public void downloadArquivo(final String nomeInterface, final String dataInterfaceExecucao) throws FileNotFoundException, IOException{
     	try {
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			Date date = formatter.parse(dataInterfaceExecucao);
-			if(idInterface.equals(INTERFACE_EXECUCAO_MATRIZ)){
-				gerarArquivoMatrizService.gerarArquivoMatriz(date,  getUsuarioLogado());
-    		}else if(idInterface.equals(INTERFACE_EXECUCAO_ESTUDO)){
-    			gerarArquivoMatrizService.gerarArquivoDeapr(date);
-    			gerarArquivoMatrizService.gerarArquivoDeajo(date);
+			if(nomeInterface.equals(INTERFACE_EXECUCAO_MATRIZ)){
+				gerarArquivoMatrizService.gerarArquivoMatriz(null, date,  getUsuarioLogado(), nomeInterface);
+    		}else if(nomeInterface.equals(INTERFACE_EXECUCAO_ESTUDO)){
+    			gerarArquivoMatrizService.gerarArquivoDeapr(date, getUsuarioLogado());
+    			gerarArquivoMatrizService.gerarArquivoDeajo(date, getUsuarioLogado());
     		}
 		//	gerarArquivoMatrizService.gerarArquivoDeapr(cl.getTime());  // 9002
 		//	gerarArquivoMatrizService.gerarArquivoDeajo(cl.getTime());  // 9002

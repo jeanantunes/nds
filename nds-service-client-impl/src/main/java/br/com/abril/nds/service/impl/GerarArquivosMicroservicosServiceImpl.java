@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +42,8 @@ import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
 import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.EventoExecucaoRepository;
+import br.com.abril.nds.repository.LogExecucaoMensagemRepository;
 import br.com.abril.nds.repository.LogExecucaoRepository;
 import br.com.abril.nds.repository.TransferenciaArquivoRepository;
 import br.com.abril.nds.service.GerarArquivosMicroDistribuicaoService;
@@ -62,9 +66,14 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
 	
 	public static final long ID_DIRETORIO_MICROSERVICO = 6L;
 	
-	private static final Long ID_INTERFACE_EXECUCAO_MATRIZ = 9001l;
+	private static final String NOME_INTERFACE_EXECUCAO_MATRIZ = "EMS9001";
 
-	private static final Long ID_INTERFACE_EXECUCAO_ESTUDO = 9002l;
+	private static final String NOME_INTERFACE_EXECUCAO_ESTUDO = "EMS9002";
+	
+	private static final String INTERFACE_REPROCESSADA_SUCESSO = "A interface %s foi reprocessada com sucesso, havia %d registros e a data selecionada era %s";
+	
+	private static final String EVENTO_INTERFACE_MICRO_DISTRIBUICAO = "Arquivo";
+	
 	
 	@Autowired
 	private LancamentoService lancamentoService;
@@ -79,6 +88,12 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
 	private LogExecucaoRepository logExecucaoRepository;
 	
 	@Autowired
+	private EventoExecucaoRepository eventoExecucaoRepository; 
+	
+	@Autowired
+	private LogExecucaoMensagemRepository logExecucaoMensagemRepository;
+	
+	@Autowired
 	private ParametroSistemaService parametroSistemaService;
 	
 	@Autowired
@@ -88,7 +103,8 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
 	private InterfaceExecucaoService interfaceExecucaoService;
 	
 	
-	public void gerarArquivoMatriz(Date data, Usuario usuario) {
+	@Transactional
+	public void gerarArquivoMatriz(String caminhoArquivo, Date data, Usuario usuario, String nomeInterface) {
 		
 		List<Ems0108Matriz> dadosMatriz = lancamentoService.obterDadosMatriz(data);
 		
@@ -118,11 +134,12 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
             LogExecucao logExecucao=new LogExecucao();
             logExecucao.setStatus(StatusExecucaoEnum.SUCESSO);
             logExecucao.setDataInicio(new Date());
-            
-            InterfaceExecucao interfaceExecucao = logExecucaoRepository.findByID(ID_INTERFACE_EXECUCAO_MATRIZ);
+            InterfaceExecucao interfaceExecucao = logExecucaoRepository.findByNome(NOME_INTERFACE_EXECUCAO_MATRIZ);
             logExecucao.setInterfaceExecucao(interfaceExecucao);
             logExecucao.setNomeLoginUsuario(usuario.getNome());
             logExecucaoRepository.adicionar(logExecucao);
+            
+            logExecucaoMensagemRepository.inserir(criarLogExecucaoMensagem(logExecucao, interfaceExecucao.getNome(), dadosMatriz.size(),data, MATRIZ_NEW));
 			
 		} catch (FileNotFoundException e) {
 			// TODO Add Msg de log
@@ -136,9 +153,34 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
 		}
 		
 	}
+	
+	@Transactional
+	private void inserirLogExecucao(Usuario usuario){
+		 LogExecucao logExecucao=new LogExecucao();
+         logExecucao.setStatus(StatusExecucaoEnum.SUCESSO);
+         logExecucao.setDataInicio(new Date());
+         InterfaceExecucao interfaceExecucao = logExecucaoRepository.findByNome(NOME_INTERFACE_EXECUCAO_MATRIZ);
+         logExecucao.setInterfaceExecucao(interfaceExecucao);
+         logExecucao.setNomeLoginUsuario(usuario.getNome());
+         logExecucaoRepository.adicionar(logExecucao);
+	}
+	
+	@Transactional
+	private LogExecucaoMensagem criarLogExecucaoMensagem(LogExecucao logExecucao, String idInterface, Integer numeroRegistro, Date data, String nomeArquivo){
+		EventoExecucao eventoExecucao = eventoExecucaoRepository.findByNome(EVENTO_INTERFACE_MICRO_DISTRIBUICAO);
+		LogExecucaoMensagem logExecucaoMensagem = new LogExecucaoMensagem();
+		logExecucaoMensagem.setLogExecucao(logExecucao);
+		logExecucaoMensagem.setEventoExecucao(eventoExecucao);
+		logExecucaoMensagem.setNomeArquivo(nomeArquivo.substring(1));
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		logExecucaoMensagem.setMensagem(String.format(INTERFACE_REPROCESSADA_SUCESSO, idInterface,numeroRegistro,simpleDateFormat.format(data)));
+		return logExecucaoMensagem;
+	}
+	
 
+	@Transactional
 	@Override
-	public void gerarArquivoDeajo(Date data) {
+	public void gerarArquivoDeajo(Date data, Usuario usuario) {
 
 		List<Ems0107Deajo> dadosDeajo = lancamentoService.obterDadosDeajo(data);
 		
@@ -176,8 +218,9 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
 		
 	}
 
+	@Transactional
 	@Override
-	public void gerarArquivoDeapr(Date data) {
+	public void gerarArquivoDeapr(Date data, Usuario usuario) {
 		
 		List<Ems0106Deapr> dadosDeapr = lancamentoService.obterDadosDeapr(data);
 		
@@ -203,6 +246,13 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
 			
 			out.write(sb.toString());
 			out.close();
+			 LogExecucao logExecucao=new LogExecucao();
+	         logExecucao.setStatus(StatusExecucaoEnum.SUCESSO);
+	         logExecucao.setDataInicio(new Date());
+	         InterfaceExecucao interfaceExecucao = logExecucaoRepository.findByNome(NOME_INTERFACE_EXECUCAO_ESTUDO);
+	         logExecucao.setInterfaceExecucao(interfaceExecucao);
+	         logExecucao.setNomeLoginUsuario(usuario.getNome());
+	         logExecucaoRepository.adicionar(logExecucao);
 		} catch (FileNotFoundException e) {
 			// TODO Add Msg de log
 			e.printStackTrace();
@@ -435,6 +485,11 @@ public class GerarArquivosMicroservicosServiceImpl implements GerarArquivosMicro
 
 		arq = new FileReader(arquivo);
 		return arq;
+	}
+	
+	
+	private String gerarMensagem(String mensagem, String date, Integer totalRegistro){
+		return String.format(mensagem, totalRegistro, date );
 	}
 
 	public void setParametroSistemaService(ParametroSistemaService parametroSistemaService) {
