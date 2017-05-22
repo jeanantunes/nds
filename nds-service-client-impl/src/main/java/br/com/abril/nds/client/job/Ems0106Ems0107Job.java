@@ -26,8 +26,8 @@ public class Ems0106Ems0107Job implements Job{
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 
 		Calendar dataAtual = Calendar.getInstance();
-		this.gerarArquivosEms0106Ems0107Service.gerarArquivoDeajo(dataAtual.getTime());
-		this.gerarArquivosEms0106Ems0107Service.gerarArquivoDeapr(dataAtual.getTime());
+		//this.gerarArquivosEms0106Ems0107Service.gerarArquivoDeajo(dataAtual.getTime());
+		//this.gerarArquivosEms0106Ems0107Service.gerarArquivoDeapr(dataAtual.getTime());
 		
 	}
 

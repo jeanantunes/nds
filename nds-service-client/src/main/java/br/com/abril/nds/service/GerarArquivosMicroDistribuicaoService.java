@@ -7,11 +7,11 @@ import br.com.abril.nds.model.seguranca.Usuario;
 
 public interface GerarArquivosMicroDistribuicaoService {
 
-	void gerarArquivoMatriz(Date data, Usuario usuario);
+	void gerarArquivoMatriz(String caminhoArquivo, Date data, Usuario usuario, String nomeInterface) ;
 	
-	void gerarArquivoDeajo(Date data);
+	void gerarArquivoDeajo(Date data, Usuario usuario);
 	
-	void gerarArquivoDeapr(Date data);
+	void gerarArquivoDeapr(Date data, Usuario usuario);
 
 	void processarMicrodistribuicao(String caminhoArquivo, Usuario usuario, String codDistribuidor) throws IOException;
 }

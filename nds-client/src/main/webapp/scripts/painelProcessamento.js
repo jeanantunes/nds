@@ -242,7 +242,7 @@ var painelProcessamentoController = $.extend(true, {
 		$.each(resultado.rows, function(index, row) {
 			
 			if(row.cell.tipoInterfaceExecucao=='microDistribuicao'){
-				btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterfaceMicroDistribuicao(\"" + row.cell.idInterface + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
+				btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterfaceMicroDistribuicao(\"" + row.cell.idInterface+ "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
 				brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceMicroDistribuicao(" + row.cell.idInterface+ ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.idLogExecucao + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
 			}else{
 				btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterface(\"" + row.cell.idInterface + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
@@ -409,7 +409,9 @@ var painelProcessamentoController = $.extend(true, {
 		});
 	},
 	
-   reprocessarInterfaceMicroDistribuicao : function(idInterface) {
+   reprocessarInterfaceMicroDistribuicao : function(nomeInterface) {
+	   
+	   
 	 var dataInterfaceExecucao =  $( "#calendarInterfaceExecucao" ).datepicker({
 		   dateFormat: 'dd/mm/yy',
 		   showOn: "button",
@@ -429,8 +431,8 @@ var painelProcessamentoController = $.extend(true, {
 					$( this ).dialog( "close" );
 					
 					
-					var data = [{name: 'idInterface', value: idInterface},
-						{name: 'dataInterfaceExecucao', value: dataInterfaceExecucao.val()}];
+					var data = [{name: 'dataInterfaceExecucao', value: dataInterfaceExecucao.val()},
+					{name: 'nomeInterface', value: nomeInterface}];
 					
 					$.postJSON(contextPath + "/administracao/painelProcessamento/downloadArquivo",
 							   data,

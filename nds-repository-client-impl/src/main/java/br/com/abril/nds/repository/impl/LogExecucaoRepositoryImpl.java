@@ -14,6 +14,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaInterfacesDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheProcessamentoDTO;
@@ -172,7 +173,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 	public List<LogExecucaoMensagem> obterMensagensErroLogInterface(FiltroDetalheProcessamentoDTO filtro) {
 		Criteria criteria = addMensagensLogInterfaceRestrictions(filtro.getCodigoLogExecucao());
 		criteria.add(Restrictions.eq("logExecucao.id", filtro.getIdLogExecucao()));
-		criteria.add(Restrictions.not(Restrictions.eq("logExecucao.status", StatusExecucaoEnum.SUCESSO)));//Ignorar casos de sucesso na apresentacao do detalhe
+	//	criteria.add(Restrictions.not(Restrictions.eq("logExecucao.status", StatusExecucaoEnum.SUCESSO)));//Ignorar casos de sucesso na apresentacao do detalhe
 
 		boolean desc = true;
 		if (filtro.getPaginacao() != null && filtro.getPaginacao().getSortOrder() != null) {
@@ -286,10 +287,10 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		criteria.add(Restrictions.eq("ie.tipoInterfaceExecucao", "microDistribuicao"));
 		ProjectionList projections = Projections.projectionList();
 		projections = projections.add(Projections.max("dataInicio"), "dataInicio");
-		projections = projections.add(Projections.property("id"), "idLogExecucao");
+		projections = projections.add(Projections.max("id"), "idLogExecucao");
 		projections = projections.add(Projections.property("ie.descricao"), "descricao");
 		projections = projections.add(Projections.property("ie.extensaoArquivo"), "extensaoArquivo");
-		projections = projections.add(Projections.property("ie.nome"), "nomeArquivo");
+		projections = projections.add(Projections.property("ie.nome"), "nome");
 		projections = projections.add(Projections.property("status"), "statusEnum");
 		projections = projections.add(Projections.property("ie.tipoInterfaceExecucao"), "tipoInterfaceExecucao");
 		projections = projections.add(Projections.groupProperty("ie.id"), "idInterface");
@@ -299,13 +300,19 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		return criteria.list();  
 	}
 
-	@Override
+	@Transactional
 	public InterfaceExecucao findByID(Long id) {
 		Criteria criteria = getSession().createCriteria(InterfaceExecucao.class);
 		criteria.add(Restrictions.eq("id", id));
 		return (InterfaceExecucao) criteria.uniqueResult();
 	}
 	
+	@Transactional
+	public InterfaceExecucao findByNome(String nome) {
+		Criteria criteria = getSession().createCriteria(InterfaceExecucao.class);
+		criteria.add(Restrictions.eq("nome", nome));
+		return (InterfaceExecucao) criteria.uniqueResult();
+	}
 	
 	
 
