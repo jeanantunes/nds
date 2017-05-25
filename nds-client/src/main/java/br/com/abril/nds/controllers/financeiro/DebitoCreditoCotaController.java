@@ -372,6 +372,7 @@ public class DebitoCreditoCotaController extends BaseController{
 	 * @throws IOException Exceção de E/S
 	 */
 	@Get
+	@Transactional
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroDebitoCreditoDTO filtro = this.obterFiltroExportacao();
