@@ -482,6 +482,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         return movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
     }
 
+    @Transactional
 	private void aplicarParametrosDebitoTaxaDeEntrega(
 			final FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 		

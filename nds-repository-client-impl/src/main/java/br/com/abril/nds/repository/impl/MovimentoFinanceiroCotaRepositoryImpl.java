@@ -27,6 +27,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.CotaTransportadorDTO;
@@ -454,6 +455,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	}
 
 	@Override
+	@Transactional
 	public Integer obterContagemMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 		
 		String hql = " select count(movimentoFinanceiroCota) " + 
@@ -477,6 +479,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	}
 
 	@Override
+	@Transactional
 	public BigDecimal obterSomatorioValorMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 		
 		String hql = " select sum(movimentoFinanceiroCota.valor) " + 
@@ -492,6 +495,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
+	@Transactional
 	public List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCotaUsuario(
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 
@@ -569,6 +573,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		return query.list();
 	}
 	
+	@Transactional
 	private String getQueryObterMovimentosFinanceiroCotaUsuario(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 
 		StringBuilder hql = new StringBuilder();
@@ -604,6 +609,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		return hql.toString();
 	}
 	
+	@Transactional
 	private String getQueryObterMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 
 		StringBuilder hql = new StringBuilder();
@@ -648,6 +654,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		return hql;
 	}
 
+	@Transactional
 	private Query criarQueryObterMovimentosFinanceiroCota(String hql, FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 		
 		Query query = getSession().createQuery(hql);
@@ -690,6 +697,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		return query;
 	}
 	
+	@Transactional
 	private String getOrderByObterMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 
 		ColunaOrdenacao colunaOrdenacao = filtroDebitoCreditoDTO.getColunaOrdenacao();

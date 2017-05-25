@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DebitoCreditoVO;
@@ -497,6 +498,7 @@ public class DebitoCreditoCotaController extends BaseController{
 	}
 	
 	@Post
+	@Transactional
 	public void pesquisarDebitoCredito(FiltroDebitoCreditoDTO filtroDebitoCredito, 
 									   String sortorder, String sortname, int page, int rp) {
 
