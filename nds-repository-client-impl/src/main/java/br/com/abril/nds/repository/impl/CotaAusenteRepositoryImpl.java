@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.client.vo.RateioCotaVO;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -446,5 +447,38 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		
 		return query.list();
 	}
-	
+
+	public List<RateioCotaVO> obterRateioDeCotaAusente(Long idCotaAusente){
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select ");
+
+		hql.append(" rca.id as id, ");
+		hql.append(" pessoa.nome as nomeCota, ");
+		hql.append(" cota.numeroCota as numeroCota, ");
+		hql.append(" rca.qtde as quantidade, ");
+		hql.append(" produtoEdicao.nomeComercial as nomeEdicao, ");
+		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao ");
+
+		hql.append(" from  RateioCotaAusente rca ");
+
+		hql.append(" inner join rca.produtoEdicao produtoEdicao ");
+		hql.append(" inner join rca.cotaAusente cotaAusente ");
+		hql.append(" inner join rca.cota cota ");
+		hql.append(" inner join cota.pessoa pessoa ");
+
+		hql.append(" where cotaAusente.id = :idCotaAusente ");
+
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("idCotaAusente", idCotaAusente);
+
+		query.setResultTransformer(
+				Transformers.aliasToBean(RateioCotaVO.class));
+
+		return query.list();
+
+	}
 }

@@ -36,7 +36,27 @@ public class RateioCotaVO implements Serializable {
 	private Date dataEnvioNota;
 	
 	private Date dataMovimento;
-	
+
+	private String nomeEdicao;
+
+	private Long numeroEdicao;
+
+	public String getNomeEdicao() {
+		return nomeEdicao;
+	}
+
+	public void setNomeEdicao(String nomeEdicao) {
+		this.nomeEdicao = nomeEdicao;
+	}
+
+	public Long getNumeroEdicao() {
+		return numeroEdicao;
+	}
+
+	public void setNumeroEdicao(Long numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
+	}
+
 	/**
 	 * Construtor padrão.
 	 */
