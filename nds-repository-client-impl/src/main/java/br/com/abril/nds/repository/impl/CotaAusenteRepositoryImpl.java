@@ -55,6 +55,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		queryNative.append(" SELECT "); 		
 		queryNative.append(" ca.ID as idCotaAusente, ");
 		queryNative.append(" ca.DATA as data, ");
+		queryNative.append(" ca.DESTINO as destino, ");
 		queryNative.append(" box.NOME as box, ");
 		queryNative.append(" cota.NUMERO_COTA as cota, ");
 	    queryNative.append(" (case when (pessoa.TIPO = 'F') then pessoa.NOME else pessoa.RAZAO_SOCIAL end) AS nome, ");
@@ -99,6 +100,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 				.addScalar("nome")
 				.addScalar("valorNe")
 				.addScalar("cotaAvista")
+				.addScalar("destino")
 				.setResultTransformer(Transformers.aliasToBean(CotaAusenteDTO.class));
 
 		setParametersBuscaCotaAusente(filtro, query);
