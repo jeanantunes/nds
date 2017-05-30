@@ -113,6 +113,25 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 				}
 			}
 		}
+
+		Integer numeroCota = movimentosRateio.get(0).getRateios().get(0).getNumCota();
+		String destino = "Cota "+numeroCota;
+
+		for (MovimentoEstoqueCotaDTO movimentoRateioDTO : movimentosRateio) {
+
+			for(RateioDTO rateioDTO :  movimentoRateioDTO.getRateios()){
+
+				if(!numeroCota.equals(rateioDTO.getNumCota())){
+					destino = "Diversas cotas";
+					break;
+				}
+			}
+		}
+
+		for(CotaAusente cotasAusente:cotasAusentes){
+			cotasAusente.setDestino(destino);
+			this.cotaAusenteRepository.saveOrUpdate(cotasAusente);
+		}
 	}
 
 	private Boolean validarNaMatrizDeRecolhimento(Integer numCota, Date data)

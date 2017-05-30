@@ -82,8 +82,8 @@
 	</div>
 </form>
 
-<form id="form-rateios">
-	<div id="dialog-rateios" title="Cota Ausente">
+<form id="form-rateios" >
+	<div id="dialog-rateios" title="Cota Ausente" style="display:none">
 		<fieldset class="classFieldset" style="width:520px !important;">
 			<legend>Rateios da cota ausente</legend>
 
