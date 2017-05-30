@@ -5,49 +5,51 @@ import java.math.BigDecimal;
 public class BancoVO {
 
 	long idBanco;
-	
+
 	String numero;
-    
+
 	String nome;
-    
+
 	long idPessoaCedente;
-	
+
     String codigoCedente;
-    
+
     String digitoCodigoCedente;
-    
+
     Long agencia;
-    
+
     String digitoAgencia;
-    
+
     Long conta;
-    
+
     String digito;
-    
+
     String apelido;
-    
+
     Integer carteira;
-    
+
     BigDecimal juros;
-    
+
     boolean ativo;
-    
+
     BigDecimal multa;
-    
+
     BigDecimal vrMulta;
-    
+
+		private boolean exibirValorMonetario;
+
     String instrucoes1;
-    
+
     String instrucoes2;
-    
+
     String instrucoes3;
-    
+
     String instrucoes4;
-    
+
     String convenio;
-    
+
     public BancoVO() {
-    	
+
     }
 
 	public BancoVO(long idBanco, String numero, String nome,
@@ -173,7 +175,7 @@ public class BancoVO {
 	public void setApelido(String apelido) {
 		this.apelido = apelido;
 	}
-	
+
 	public Integer getCarteira() {
 		return carteira;
 	}
@@ -205,7 +207,7 @@ public class BancoVO {
 	public void setMulta(BigDecimal multa) {
 		this.multa = multa;
 	}
-	
+
 	public BigDecimal getVrMulta() {
 		return vrMulta;
 	}
@@ -245,13 +247,21 @@ public class BancoVO {
 	public void setInstrucoes4(String instrucoes4) {
 		this.instrucoes4 = instrucoes4;
 	}
-	
+
 	public String getConvenio() {
 		return convenio;
 	}
 
 	public void setConvenio(String convenio) {
 		this.convenio = convenio;
+	}
+
+	public boolean isExibirValorMonetario() {
+		return exibirValorMonetario;
+	}
+
+	public void setExibirValorMonetario(boolean exibirValorMonetario) {
+		this.exibirValorMonetario = exibirValorMonetario;
 	}
 
 	@Override

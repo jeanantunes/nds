@@ -201,7 +201,7 @@ label {
 					</td>
 					<td>Juros %:</td>
 						<td>
-							<input onchange="bancoController.verificarInstrucoes1PorcentagemJuros()" maxlength="8" type="text" name="alterJuros" id="alterJuros" style="width: 80px;" />
+							<input onchange="bancoController.verificarInstrucoes1ChangeJuros()" maxlength="8" type="text" name="alterJuros" id="alterJuros" style="width: 80px;" />
 					</td>
 				</tr>
 
