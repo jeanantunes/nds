@@ -56,7 +56,7 @@
                                </c:forEach>
                             </select>
                         </td>
-    
+
                         <td width="185" style="text-align: right;">Acumula D&iacute;vida:</td>
                         <td width="270">
                         	<select name="acumulaDivida" id="acumulaDivida" style="width: 80px;" onchange="parametroCobrancaController.isAcumulaDivida = this.value">
@@ -65,7 +65,7 @@
                             </select>
                         </td>
                     </tr>
-    
+
                     <tr>
                     	<td width="133"><label class="tdComboBanco" for="dBanco">Banco:</label></td>
                         <td>
@@ -78,62 +78,62 @@
                             </select>
                         </td>
                     </tr>
-    
+
                     <tr>
-                    
+
                         <td style="width: 228px; ">Vencimentos somente em dia &uacute;til:</td>
                         <td>
                         	<select name="vencimentoDiaUtil" id="vencimentoDiaUtil" style="width: 80px;">
                                 <option value="S">Sim</option>
                                 <option value="N">N&atilde;o</option>
                         	</select>
-                      	</td> 
+                      	</td>
                     </tr>
-                    
+
                         <tr>
                             <td><label class="tdMulta" for="taxaMulta">Multa %:</label></td>
-    
+
                             <td width="209">
                                 <table class="tdMulta" width="100%" border="0" cellspacing="0"
                                     cellpadding="0">
                                     <tr>
                                         <td width="31%"><input type="text"
-                                            name="taxaMulta" id="taxaMulta" style="width: 50px; text-align:right;" 
+                                            name="taxaMulta" id="taxaMulta" style="width: 50px; text-align:right;"
                                             readonly="readonly"/></td>
-                                        <td width="40%">&nbsp;ou R$:</td>
+                                        <td width="40%" style="text-align: right; padding-right: 10px;">&nbsp;ou R$:</td>
                                         <td width="29%"><input type="text"
-                                            name="valorMulta" id="valorMulta" style="width: 50px; text-align:right;" 
+                                            name="valorMulta" id="valorMulta" style="width: 50px; text-align:right;"
                                             readonly="readonly"/></td>
                                     </tr>
                                 </table>
                             </td>
-                            
+
                             <td style="text-align: right;">
                             	Por Fornecedor:
                             </td>
                             <td>
-                            	<select name="unificada" id="unificada" style="width: 80px;" 
+                            	<select name="unificada" id="unificada" style="width: 80px;"
                                 	onchange="parametroCobrancaController.tratarFornecedoresCobrancaUnificada();">
                                     <option value="S">Sim</option>
                                     <option value="N">N&atilde;o</option>
                             	</select>
                             </td>
                         </tr>
-    
+
                         <tr>
                             <td><label class="tdJuros" for="taxaJuros">Juros %:</label></td>
                             <td><input class="tdJuros" type="text"
-                                name="taxaJuros" id="taxaJuros" style="width: 50px; text-align:right;" 
+                                name="taxaJuros" id="taxaJuros" style="width: 50px; text-align:right;"
                                 	  readonly="readonly"/></td>
-                                	  
+
                             <td>
-                            	
+
                             </td>
                             <td>
-                            	
+
                             </td>
                         </tr>
-    
+
                         <tr>
                             <td><span class="formPgto">Forma de Cobran&ccedil;a:</span></td>
                             <td>
@@ -164,7 +164,54 @@
 								<td>&nbsp;</td>
 								<td>&nbsp;</td>
                         </tr>
-    					
+												<tr>
+					                            <td>
+					                            	<span class="">Protestar boleto registrado em caso de inadimpl&ecirc;ncia:</span>
+					                            </td>
+					                            <td>
+					                                <table width="100%" border="0" cellspacing="0" cellpadding="0"class="">
+
+					                                    <tr>
+					                                        <td width="9%">
+					                                        	<input class="" type="radio" name="radioFormaCobrancaBoletoProtesto"
+					                                            id="radioFormaCobrancaBoleto.PROTESTADA" value="PROTESTADA"
+					                                            onclick="parametroCobrancaController.isExibirInputProtesto(true);" />
+					                                        </td>
+					                                         <td width="9%" style="padding-left: 11px;">
+					                                        	<label class="" for="radioFormaCobrancaBoleto.PROTESTADA">
+					                                        		Sim
+					                                       		</label>
+					                                     	</td>
+					                                         <td width="9%" style="padding-left: 59px;">
+					                                        	<input class="" type="radio" name="radioFormaCobrancaBoletoProtesto"
+					                                            id="radioFormaCobrancaBoleto.NAO_PROTESTADA" checked="checked"
+					                                            value="NAO_PROTESTADA" onclick="parametroCobrancaController.isExibirInputProtesto(false);" />
+					                                        </td>
+					                                         <td width="9%" style="padding-left: 14px;">
+					                                        	<label class="" for="radioFormaCobrancaBoleto.NAO_PROTESTADA">
+					                                        		N&atilde;o
+					                                       		</label>
+					                                     	</td>
+					                                     	<td>&nbsp;</td>
+													<td>&nbsp;</td>
+													<td>&nbsp;</td>
+													<td>&nbsp;</td>
+					                                        <td width="44%" id="inputQuantidadeDiasProtesto" style="display: none;">
+					                                        	<label class="" for="radioFormaCobrancaBoleto.NAO_PROTESTADA" style=" width: 70px;">
+					                                        		Ap&oacute;s quantos dias?
+					                                       		</label>
+					                                     	</td>
+					                                     	 <td width="20%" id="inputQuantidadeDiasProtesto" style="display: none;">
+					                                        	<input class="" type="text" name="quantidadeDiasProtesto"
+					                                            id="radioFormaCobrancaBoleto.quantidadeDiasProtesto" style="width: 30px;" maxlength="02" />
+					                                        </td>
+					                                    </tr>
+					                                    <td>&nbsp;</td>
+													<td>&nbsp;</td>
+					                                </table>
+					                            </td>
+					                        </tr>
+
     					<tr>
     						<td>Principal</td>
     						<td align="left">
@@ -175,14 +222,14 @@
                                 <div id="formasEmissao" />
                             </td>
     					</tr>
-    					
+
                         <tr>
                             <td valign="top">Instru&ccedil;&otilde;es:</td>
                             <td colspan="3"><textarea name="instrucoes" rows="4"
                                     maxlength="100" id="instrucoes" style="width: 605px; height: 46px"
                                     readonly="true"></textarea></td>
                         </tr>
-                        
+
                         <tr>
                             <td valign="top">Fator de vencimento:</td>
                             <td colspan="3">
@@ -211,7 +258,7 @@
 								</select>
 							</td>
                         </tr>
-                        
+
                         <tr height="40">
                             <td valign="middle">Fornecedor Padrão:</td>
                             <td>
@@ -223,7 +270,7 @@
 								</select>
 							</td>
                         </tr>
-    
+
                         <tr>
                             <td style="vertical-align: text-top;">Fornecedores:</td>
                           <td valign="top" rowspan="2">
@@ -238,7 +285,7 @@
                                                 id="ParamCob-fornecedor_<c:out value="${listaFornecedores[status.index].key}" />"
                                                 value='<c:out value="${listaFornecedores[status.index].key}" />' /></td>
                                             <td><c:out value="${listaFornecedores[status.index].value}" /></td>
-                                            
+
                                         </tr>
                                     </c:forEach>
                                 </table>
@@ -272,7 +319,7 @@
                             <td valign="top">&nbsp;</td>
                             <td valign="top">&nbsp;</td>
                             <td valign="top">
-                            
+
                                 <table width="100%" border="0" cellspacing="1" cellpadding="1"
                                     class="quinzenal">
                                     <tr>
@@ -284,7 +331,7 @@
                                             id="diaDoMes2" style="width: 60px; text-align:center;" /></td>
                                     </tr>
                                 </table>
-                                
+
                                 <table width="100%" border="0" cellspacing="1" cellpadding="1"
                                     class="mensal">
                                     <tr>
@@ -293,7 +340,7 @@
                                             id="diaDoMes" style="width: 60px; text-align:center;" /></td>
                                     </tr>
                                 </table>
-                                
+
                                 <table width="100%" border="0" cellspacing="0" cellpadding="1"
                                     class="semanal">
                                     <tr>
@@ -321,10 +368,10 @@
                                         <td>&nbsp;</td>
                                     </tr>
                                 </table>
-                                
+
                             </td>
                         </tr>
-    
+
                     </table>
 
 			</fieldset>
@@ -332,13 +379,13 @@
 		</div>
 
 	</form>
-	
+
 	<form id="cota_unificacao_form" name="cota_unificacao_form">
 	   <div id="dialog_cota_unificacao" title="Cotas Centralizadas">
 		  <table class="cotasCentralizadas"></table>
 	   </div>
     </form>
-	
+
     <form id="nova_cota_unificacao_form" name="nova_cota_unificacao_form">
 	   <div id="dialog_nova_cota_unificacao" title="Unifica&ccedil;&atilde;o de Cotas">
 		  <fieldset style="width: 98%;">
@@ -354,14 +401,14 @@
 		  					onchange="parametroCobrancaController.buscarCotaPorNumero('')"/>
 		  			</td>
 		  			<td>
-		  				<input type="text"  id="parametro-cobranca-nomeCota" style="width: 495px;" 
-		  					onkeyup="parametroCobrancaController.onkeyupCampoNome('');" 
+		  				<input type="text"  id="parametro-cobranca-nomeCota" style="width: 495px;"
+		  					onkeyup="parametroCobrancaController.onkeyupCampoNome('');"
 		  					onblur="parametroCobrancaController.onblurCampoNome('');"/>
 		  			</td>
 		  		</tr>
 		  	</table>
 		  </fieldset>
-		  
+
 		  <fieldset style="width: 98%;">
 			<legend>Cotas Centralizadas</legend>
 				<div style="overflow: auto; height: 190px;">
@@ -387,13 +434,13 @@
 				<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
 			</a>
 			</span>
-			
+
 			<span class="bt_novos" id="bt_novo" title="Unificar Cotas">
 				<a href="javascript:;" onclick="parametroCobrancaController.mostrarUnificacaoCotas();">
 					<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif">
 				</a>
 			</span>
-			
+
 			</div>
 		</div>
 		<div class="linha_separa_fields">&nbsp;</div>
@@ -423,7 +470,7 @@
 							</c:forEach>
 					</select></td>
 
-					<td width="413"><span class="bt_novos"> 
+					<td width="413"><span class="bt_novos">
 						<a href="javascript:;" onclick="parametroCobrancaController.mostrarGridConsulta();">
 							<img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" />
 						</a>

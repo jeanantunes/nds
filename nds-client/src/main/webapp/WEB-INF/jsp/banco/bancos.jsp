@@ -87,6 +87,11 @@ label {
 					<td>
 						<input maxlength="6" type="text" name="newConvenio" id="newConvenio" style="width: 100px;" />
 					</td>
+				</td>
+					<td>Juros %:</td>
+					<td><input maxlength="8" type="text" name="newJuros" id="newJuros"
+						style="width: 80px; text-align:right;" />
+					</td>
 				</tr>
 
 				<tr>
@@ -97,10 +102,11 @@ label {
 						id="newCarteira" style="width: 143px;" />
 
 					</td>
-					<td>Juros %:</td>
-					<td><input maxlength="8" type="text" name="newJuros" id="newJuros"
-						style="width: 80px; text-align:right;" />
-					</td>
+					<td>Multa %:</td>
+					<td>
+					    <input onblur="bancoController.limparVrMulta();" maxlength="8" type="text" name="newMulta" id="newMulta" style="width:80px; text-align:right;" />
+					    ou R$: <input onblur="bancoController.limparMulta();" maxlength="15" type="text" name="newVrMulta" id="newVrMulta" style="width:80px; text-align:right;" />
+ 					</td>
 				</tr>
 				<tr>
 					<td>Status:</td>
@@ -108,11 +114,17 @@ label {
 						checked="checked" id="newAtivo" /><label for="statusBco">Ativo</label>
 					</td>
 
-					<td>Multa %:</td>
+					<td>Exibir valor em:</td>
 					<td>
-					    <input onblur="bancoController.limparVrMulta();" maxlength="8" type="text" name="newMulta" id="newMulta" style="width:80px; text-align:right;" />
-					    ou R$: <input onblur="bancoController.limparMulta();" maxlength="15" type="text" name="newVrMulta" id="newVrMulta" style="width:80px; text-align:right;" />
-					</td>
+						%
+						<input name="tipoExibicaoValor" type="radio" value="" style="margin-top: 10px; margin-left: 5px; margin-right: 61px;"
+						checked="checked" id="tipoExibicaoValorPorcentagem" onclick="bancoController.exibirValorPorcentagem();" />
+
+
+						R$
+						<input name="tipoExibicaoValor" type="radio" value="" style="margin-top: 10px; margin-left: 5px; "
+						 id="tipoExibicaoValorMoeda" onclick="bancoController.exibirValorMoeda();" />
+					 </td>
 
 				</tr>
 				<tr>
