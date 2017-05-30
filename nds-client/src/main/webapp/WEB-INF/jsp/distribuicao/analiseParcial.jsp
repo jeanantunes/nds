@@ -148,7 +148,7 @@ table.dadosTab { margin-left: 370px;}
 			<input type="hidden" id="reparteCopiado" value="${reparteCopiado}" />
 			<input type="hidden" id="numeroEdicao" value="${estudo.produtoEdicao.numeroEdicao}" />
 			<input type="hidden" id="estudoId" value="${estudo.id}" />
-			<input type="hidden" id="codigoProduto" value="${estudo.produtoEdicao.produto.codigo}" />
+			<input type="hidden" id="codigoProduto_analiseParcial" value="${estudo.produtoEdicao.produto.codigo}" />
 			<input type="hidden" id="produtoId" value="${estudo.produtoEdicao.produto.id}" />
 			<input type="hidden" id="tipoSegmentoProduto" value="${estudo.produtoEdicao.produto.tipoSegmentoProduto.id}" />
 			<input type="hidden" id="estudoOrigem" value="${estudo.idEstudoOrigemCopia}" />
@@ -573,8 +573,8 @@ table.dadosTab { margin-left: 370px;}
 
             <table width="686" border="0" cellpadding="2" cellspacing="1">
                 <tr>
-                    <td style="width: 130px;"><strong>Código: </strong> ${estudo.produtoEdicao.produto.codigo}</td>
-                    <td><strong>Produto: </strong> ${estudo.produtoEdicao.nomeComercial}</td>
+                    <td style="width: 130px;"><strong>Código: </strong><span id="detalheCotaCodigoProduto"></span></td>
+					<td><strong>Produto: </strong><span id="detalheCotaNomeProduto"></span></td>
                 </tr>
             </table>
             <table width="686" border="0" cellpadding="2" cellspacing="1">

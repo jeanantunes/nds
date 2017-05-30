@@ -99,7 +99,7 @@ var analiseParcialController = $.extend(true, {
                     	
                     	parameters.push({name: 'id', value: $('#estudoId').val()},
                             {name: 'numeroEdicao', value: $('#numeroEdicao').val()},
-                            {name: 'codigoProduto', value: $('#codigoProduto').val()},
+                            {name: 'codigoProduto', value: $('#codigoProduto_analiseParcial').val()},
                             {name: 'faixaDe', value: $('#faixaDe').val()},
                             {name: 'faixaAte', value: $('#faixaAte').val()});
 
@@ -193,7 +193,7 @@ var analiseParcialController = $.extend(true, {
         $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/carregarDetalhesCota',
             [{name: 'numeroCota', value: numeroCota},
              {name: 'idClassifProdEdicao', value: $('#tipoClassificacaoProdutoId').val()},
-             {name: 'codigoProduto', value: $('input[id="codigoProduto"]').val()}],
+             {name: 'codigoProduto', value: $('input[id="codigoProduto_analiseParcial"]').val()}],
             function(result){
 
                 var $dialog = $('#dialog-cotas-detalhes'),
@@ -471,7 +471,7 @@ var analiseParcialController = $.extend(true, {
             
             if (legendaText.indexOf('FX') > -1 || legendaText.indexOf('MX') > -1) {
             	
-            	var codProd = $("#codigoProduto", analiseParcialController.workspace).text() || $("#codigoProduto", analiseParcialController.workspace).val();
+            	var codProd = $("#codigoProduto_analiseParcial", analiseParcialController.workspace).text() || $("#codigoProduto_analiseParcial", analiseParcialController.workspace).val();
             	var usedMix = $('#usedMinMaxMix', analiseParcialController.workspace).val();
             	
             	if((legendaText.indexOf('MX') > -1) && (usedMix == "false")){
@@ -1243,7 +1243,7 @@ var analiseParcialController = $.extend(true, {
     	parameters.push({name: 'id', 					value: _id});
         parameters.push({name: 'faixaDe', 				value: _faixaDe});
         parameters.push({name: 'faixaAte', 				value: _faixaAte});
-        parameters.push({name: 'codigoProduto', 		value: $("#codigoProduto", analiseParcialController.workspace).text() || $("#codigoProduto", analiseParcialController.workspace).val()});
+        parameters.push({name: 'codigoProduto', 		value: $("#codigoProduto_analiseParcial", analiseParcialController.workspace).text() || $("#codigoProduto_analiseParcial", analiseParcialController.workspace).val()});
         parameters.push({name: 'numeroEdicao', 			value: $('#numeroEdicao').val()});
         parameters.push({name: 'estudoOrigem', 			value: estudoOrigem});
         parameters.push({name: 'dataLancamentoEdicao',  value: $('#dataLancamentoEdicao').val()});
@@ -1660,10 +1660,10 @@ var analiseParcialController = $.extend(true, {
                         if ($inputsPreenchidos.filter('[motivo="SM"]').length > 0) {
 
                             var params = [];
-                            var codigoProduto = $('#codigoProduto').text();
+                            var codigoProduto = $('#codigoProduto_analiseParcial').text();
                             
                             if(codigoProduto == ""){
-                            	codigoProduto = $('#codigoProduto').val();
+                            	codigoProduto = $('#codigoProduto_analiseParcial').val();
                             }
                             
                             var classificacao = $('#tipoClassificacaoProdutoDescricao').val();
@@ -1688,7 +1688,7 @@ var analiseParcialController = $.extend(true, {
                         if ($inputsPreenchidos.filter('[motivo="GN"]').length > 0) {
 
                             var params = [];
-                            params.push({name: 'filtro.produtoDto.codigoProduto', value: $('#codigoProduto').text()});
+                            params.push({name: 'filtro.produtoDto.codigoProduto', value: $('#codigoProduto_analiseParcial').text()});
                             params.push({name: 'filtro.produtoDto.idClassificacaoProduto', value: $('#tipoClassificacaoProdutoId').val()});
                             params.push({name: 'filtro.excecaoSegmento', value: true});
 
