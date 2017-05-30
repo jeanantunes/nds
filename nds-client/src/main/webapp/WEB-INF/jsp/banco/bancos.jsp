@@ -85,17 +85,17 @@ label {
 				<tr>
 					<td>Conv&ecirc;nio</td>
 					<td>
-						<input maxlength="6" type="text" name="newConvenio" id="newConvenio" style="width: 100px;" /> 
+						<input maxlength="6" type="text" name="newConvenio" id="newConvenio" style="width: 100px;" />
 					</td>
 				</tr>
-				
+
 				<tr>
 					<td>Carteira:</td>
 					<td>
-					
+
 					<input type="text" name="newCarteira" maxlength="100"
 						id="newCarteira" style="width: 143px;" />
-													
+
 					</td>
 					<td>Juros %:</td>
 					<td><input maxlength="8" type="text" name="newJuros" id="newJuros"
@@ -107,7 +107,7 @@ label {
 					<td><input name="newAtivo" type="checkbox" value=""
 						checked="checked" id="newAtivo" /><label for="statusBco">Ativo</label>
 					</td>
-	
+
 					<td>Multa %:</td>
 					<td>
 					    <input onblur="bancoController.limparVrMulta();" maxlength="8" type="text" name="newMulta" id="newMulta" style="width:80px; text-align:right;" />
@@ -137,20 +137,20 @@ label {
 				</tr>
 			</table>
 			</fieldset>
-		
+
 	</div>
 	</form>
 
-    <form name="formularioAlteraBanco" id="formularioAlteraBanco"> 
+    <form name="formularioAlteraBanco" id="formularioAlteraBanco">
     <div id="dialog-alterar" title="Alterar Banco">
-    
+
         <jsp:include page="../messagesDialog.jsp" />
 
 			<fieldset>
 			<legend>Dados de Bancos</legend>
-	
+
 	        <input type="hidden" id="idBanco" name="idBanco" />
-	
+
 			<table width="626" border="0" cellpadding="2" cellspacing="1">
 				<tr>
 					<td width="111">Número Banco:</td>
@@ -197,39 +197,51 @@ label {
 				<tr>
 					<td>Conv&ecirc;nio</td>
 					<td>
-						<input maxlength="6" type="text" name="alterConvenio" id="alterConvenio" style="width: 100px;" /> 
+						<input maxlength="6" type="text" name="alterConvenio" id="alterConvenio" style="width: 100px;" />
+					</td>
+					<td>Juros %:</td>
+						<td>
+							<input onchange="bancoController.verificarInstrucoes1PorcentagemJuros()" maxlength="8" type="text" name="alterJuros" id="alterJuros" style="width: 80px;" />
 					</td>
 				</tr>
-				
+
 				<tr>
 					<td>Carteira:</td>
 					<td>
-						
+
 						<input type="text" name="alterCarteira" maxlength="100"
 						id="alterCarteira" style="width: 143px;" />
-								                
+
 					</td>
-					<td>Juros %:</td>
-					<td><input maxlength="8" type="text" name="alterJuros" id="alterJuros"
-						style="width: 80px;" />
-					</td>
+					<td>Multa %:</td>
+					<td>
+						<input onblur="bancoController.limparVrMulta();" maxlength="8" type="text" name="alterMulta" id="alterMulta" style="width:80px; text-align:right;" />
+						ou R$: <input onblur="bancoController.limparMulta();" maxlength="12" type="text" name="alterVrMulta" id="alterVrMulta" style="width:80px; text-align:right;" />
+ 					</td>
 				</tr>
 				<tr>
 					<td>Status:</td>
-					<td><input name="alterAtivo" type="checkbox" value=""
-						checked="checked" id="alterAtivo" /><label for="statusBco">Ativo</label>
-					</td>
-					
-					<td>Multa %:</td>
 					<td>
-					    <input onblur="bancoController.limparVrMulta();" maxlength="8" type="text" name="alterMulta" id="alterMulta" style="width:80px; text-align:right;" />
-					    ou R$: <input onblur="bancoController.limparMulta();" maxlength="12" type="text" name="alterVrMulta" id="alterVrMulta" style="width:80px; text-align:right;" />
+						<input name="alterAtivo" type="checkbox" value="" style="margin-top: 10px; margin-left: 5px;"
+							checked="checked" id="alterAtivo" />
+							<label for="statusBco">Ativo</label>
 					</td>
-					
+
+					<td>Exibir valor em:</td>
+					<td>
+						%
+						<input name="tipoExibicaoValor" type="radio" value="" style="margin-top: 10px; margin-left: 5px; margin-right: 61px;"
+							checked="checked" id="tipoExibicaoValorPorcentagem" onclick="bancoController.exibirValorPorcentagem();" />
+
+
+						R$
+						<input name="tipoExibicaoValor" type="radio" value="" style="margin-top: 10px; margin-left: 5px; " id="tipoExibicaoValorMoeda" onclick="bancoController.exibirValorMoeda();" />
+					</td>
+
 				</tr>
 				<tr>
 					<td>Instruções 1:</td>
-					<td colspan="3"><textarea name="alterInstrucoes1" id="alterInstrucoes1" maxlength="200" style="width: 510px;"></textarea>
+					<td colspan="3"><textarea name="alterInstrucoes1" id="alterInstrucoes1" maxlength="200" disabled style="width: 510px;"></textarea>
 					</td>
 				</tr>
 				<tr>
@@ -252,7 +264,7 @@ label {
 	</div>
 	</form>
 
-    <form name="formularioFiltro" id="formularioFiltro"> 
+    <form name="formularioFiltro" id="formularioFiltro">
 		<div class="areaBts">
 			<div class="area">
 				<span class="bt_novos"><a href="javascript:;" onclick="bancoController.popup();" rel="tipsy" title="Incluir Novo Banco"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" /></a></span>
@@ -287,18 +299,18 @@ label {
 					</td>
 				</tr>
 			</table>
-	
+
 		</fieldset>
-	
+
 	</form>
-	
+
 	<div class="linha_separa_fields">&nbsp;</div>
 	<div class="grids" style="display: none;">
 		<fieldset class="fieldGrid">
 			<legend>Bancos Cadastrados</legend>
-			
+
 				<table class="bancosGrid"></table>
-				
+
 		</fieldset>
 	</div>
-</body>	
+</body>
