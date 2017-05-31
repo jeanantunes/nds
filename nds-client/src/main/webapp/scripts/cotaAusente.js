@@ -106,7 +106,7 @@ var cotaAusenteController = $.extend(true, {
                     name: 'numeroCota',
                     width: 40,
                     sortable: false,
-                    align: 'left'
+                    align: 'center'
                 }, {
                     display: 'Nome da cota',
                     name: 'nomeCota',
@@ -119,7 +119,7 @@ var cotaAusenteController = $.extend(true, {
                     name: 'codigo',
                     width: 70,
                     sortable: false,
-                    align: 'left'
+                    align: 'center'
                 },
                 {
                     display: 'Produto',
@@ -133,14 +133,14 @@ var cotaAusenteController = $.extend(true, {
                     name: 'numeroEdicao',
                     width: 70,
                     sortable: false,
-                    align: 'left'
+                    align: 'center'
                 },
                 {
                     display: 'Distribuido',
                     name: 'quantidade',
                     width: 70,
                     sortable: false,
-                    align: 'left'
+                    align: 'center'
                 }],
             width: 520
         }));
@@ -173,7 +173,7 @@ var cotaAusenteController = $.extend(true, {
                 $.each(result, function (idx, val) {
                     var row = {
                         id: val.id,
-                        cell: [val.numeroCota, val.nomeCota,val.codigo, val.numeroEdicao, val.nomeEdicao, val.quantidade]
+                        cell: [val.numeroCota, val.nomeCota,val.codigo, val.nomeEdicao,val.numeroEdicao, val.quantidade]
                     };
                     data.rows.push(row);
                 });
