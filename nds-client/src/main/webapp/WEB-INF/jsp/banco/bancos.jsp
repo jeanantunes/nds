@@ -26,6 +26,7 @@ label {
 	<form id="excluir-banco-form">
 	<div id="dialog-excluir" title="Excluir Banco">
 		<p>Confirma a exclusão deste Banco?</p>
+		
 	</div>
 	</form>
 
@@ -40,6 +41,7 @@ label {
 			<table width="626" border="0" cellpadding="2" cellspacing="1">
 				<tr>
 					<td width="105">Número Banco:</td>
+					
 					<td width="180"><input type="text" name="newNumero" maxlength="4"
 						id="newNumero" style="width: 143px;" />
 					</td>
