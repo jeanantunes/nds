@@ -30,6 +30,7 @@ import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
 import br.com.abril.nds.dto.DataLancamentoPeriodoEdicoesBasesDTO;
 import br.com.abril.nds.dto.DetalhesEdicoesBasesAnaliseEstudoDTO;
+import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
@@ -50,6 +51,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.EstudoProdutoEdicaoBaseService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MixCotaProdutoService;
@@ -123,6 +125,9 @@ public class AnaliseParcialController extends BaseController {
     
     @Autowired
    	private UsuarioService usuarioService;
+    
+    @Autowired
+    private EstudoProdutoEdicaoBaseService estudoProdutoEdicaoBaseService;
     
     @Autowired
     private static final String EDICOES_BASE_SESSION_ATTRIBUTE = "";
@@ -293,7 +298,7 @@ public class AnaliseParcialController extends BaseController {
         filtroQueryDTO.setFilterSortFrom(filterSortFrom);
         filtroQueryDTO.setFilterSortTo(filterSortTo);
         filtroQueryDTO.setElemento(elemento);
-        filtroQueryDTO.setEdicoesBase(getEdicoesBase(edicoesBase));
+        filtroQueryDTO.setEdicoesBase(getEdicoesBase(edicoesBase, id));
         filtroQueryDTO.setEstudoId(id);
         filtroQueryDTO.setFaixaDe(faixaDe);
         filtroQueryDTO.setFaixaAte(faixaAte);
@@ -367,7 +372,7 @@ public class AnaliseParcialController extends BaseController {
 	}
     
     @SuppressWarnings("unchecked")
-	private List<EdicoesProdutosDTO> getEdicoesBase(List<EdicoesProdutosDTO> edicoesBase) {
+	private List<EdicoesProdutosDTO> getEdicoesBase(List<EdicoesProdutosDTO> edicoesBase, Long idEstudo) {
     	
     	if (edicoesBase != null) {
     		
@@ -377,6 +382,13 @@ public class AnaliseParcialController extends BaseController {
     	}
     	
     	edicoesBase = (List<EdicoesProdutosDTO>) this.session.getAttribute(EDICOES_BASE_SESSION_ATTRIBUTE);
+    	
+    	if(edicoesBase == null){
+	    	
+			List<EdicaoBaseEstudoDTO> edicaoBaseEstudoDTOs = estudoProdutoEdicaoBaseService.obterEdicoesBase(idEstudo);
+			
+			System.out.println("buscado");
+    	}
     	
     	return edicoesBase;
     }
