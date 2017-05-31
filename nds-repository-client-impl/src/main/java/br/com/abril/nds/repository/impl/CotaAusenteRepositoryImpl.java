@@ -459,6 +459,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		hql.append(" rca.id as id, ");
 		hql.append(" pessoa.nome as nomeCota, ");
 		hql.append(" cota.numeroCota as numeroCota, ");
+		hql.append(" produto.codigo as codigo, ");
 		hql.append(" rca.qtde as quantidade, ");
 		hql.append(" produtoEdicao.nomeComercial as nomeEdicao, ");
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao ");
@@ -466,6 +467,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		hql.append(" from  RateioCotaAusente rca ");
 
 		hql.append(" inner join rca.produtoEdicao produtoEdicao ");
+		hql.append(" inner join produtoEdicao.produto produto ");
 		hql.append(" inner join rca.cotaAusente cotaAusente ");
 		hql.append(" inner join rca.cota cota ");
 		hql.append(" inner join cota.pessoa pessoa ");
