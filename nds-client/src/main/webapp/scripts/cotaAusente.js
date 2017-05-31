@@ -113,16 +113,24 @@ var cotaAusenteController = $.extend(true, {
                     width: 220,
                     sortable: false,
                     align: 'left'
-                }, {
-                    display: 'Edição',
-                    name: 'numeroEdicao',
+                },
+                {
+                    display: 'Código',
+                    name: 'codigo',
                     width: 70,
                     sortable: false,
                     align: 'left'
                 },
                 {
-                    display: 'Nome Edição',
+                    display: 'Produto',
                     name: 'nomeEdicao',
+                    width: 70,
+                    sortable: false,
+                    align: 'left'
+                },
+                {
+                    display: 'Edição',
+                    name: 'numeroEdicao',
                     width: 70,
                     sortable: false,
                     align: 'left'
@@ -134,7 +142,7 @@ var cotaAusenteController = $.extend(true, {
                     sortable: false,
                     align: 'left'
                 }],
-            width: 520,
+            width: 520
         }));
 
         $("#dialog-rateios", cotaAusenteController.workspace).dialog({
@@ -165,7 +173,7 @@ var cotaAusenteController = $.extend(true, {
                 $.each(result, function (idx, val) {
                     var row = {
                         id: val.id,
-                        cell: [val.numeroCota, val.nomeCota, val.numeroEdicao, val.nomeEdicao, val.quantidade]
+                        cell: [val.numeroCota, val.nomeCota,val.codigo, val.numeroEdicao, val.nomeEdicao, val.quantidade]
                     };
                     data.rows.push(row);
                 });

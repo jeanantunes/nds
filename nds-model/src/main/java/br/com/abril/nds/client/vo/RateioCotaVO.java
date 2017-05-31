@@ -37,9 +37,19 @@ public class RateioCotaVO implements Serializable {
 	
 	private Date dataMovimento;
 
+	private String codigo;
+
 	private String nomeEdicao;
 
 	private Long numeroEdicao;
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
 
 	public String getNomeEdicao() {
 		return nomeEdicao;
