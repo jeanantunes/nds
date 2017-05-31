@@ -91,6 +91,23 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable{
 
 		String nomeCedente = "";
         String documentoCedente = "";
+        
+        String numeroCota = "";
+                StringBuilder usoDaEmpresa = new StringBuilder();
+                
+                if(boleto.getCota() != null){
+                	if(boleto.getCota().getNumeroCota() != null){
+                		numeroCota = boleto.getCota().getNumeroCota().toString();
+                		
+                		if(numeroCota.length() > 5){
+                			numeroCota = numeroCota.substring(0, 5);
+                		}
+                		
+                	}
+                }
+                
+                usoDaEmpresa.append(setarDataFomatada());
+                usoDaEmpresa.append(numeroCota);
 
         if(pessoaCedente instanceof PessoaJuridica) {
 
@@ -111,7 +128,7 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable{
 		registro01.setDigitoConta(String.valueOf(banco.getDvConta()));
 		registro01.setBrancos("");
 		registro01.setInstrucao("0000");
-		registro01.setUsoDaEmpresa(setarDataFomatada());
+		registro01.setUsoDaEmpresa(usoDaEmpresa.toString());
 		registro01.setNossoNumero(boleto.getNossoNumero());
 		registro01.setQtdeMoeda("0");
 		registro01.setNumeroCarteira(String.valueOf(banco.getCarteira()));

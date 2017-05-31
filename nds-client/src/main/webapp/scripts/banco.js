@@ -659,13 +659,15 @@ var bancoController = $.extend(true, {
 			
 			$("#alterInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de "+bancoController.obterMultaFormatada($("#alterVrMulta", this.workspace).val())+"%. Após vencimento, cobrar juros diários de "+bancoController.obterJurosFormatado(jurosVar)+"%.");
 
-			
+			$("#alterMulta", this.workspace).focus();
 		},
 		
 		exibirValorPorcentagemNew: function(){
 			
 			$("#newVrMulta", this.workspace).val("");
+			
 			$("#newVrMulta", this.workspace).prop("disabled", true);
+			$("#newMulta", this.workspace).prop("disabled", false);
 
 			if($("#newMulta", this.workspace).val() == "" && $("#newVrMulta", this.workspace).val() == ""){
 				$("#newMulta", this.workspace).val("0,0000");
@@ -674,13 +676,17 @@ var bancoController = $.extend(true, {
 			var jurosVar = $("#newJuros", this.workspace).val();
 			
 			$("#newInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de "+bancoController.obterMultaFormatada($("#newVrMulta", this.workspace).val())+"%. Após vencimento, cobrar juros diários de "+bancoController.obterJurosFormatado(jurosVar)+"%.");
-
+			
+			$("#newMulta", this.workspace).focus();
 			
 		},
 		
 		exibirValorMoeda: function(){
 			
+			$("#alterMulta", this.workspace).val("");
+			
 			$("#alterVrMulta", this.workspace).prop("disabled", false);
+			$("#alterMulta", this.workspace).prop("disabled", true);
 			
 			if($("#alterVrMulta", this.workspace).val() == ""){
 				$("#alterInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de R$XXX. Após vencimento, cobrar juros diários de R$YYY.");
@@ -690,11 +696,16 @@ var bancoController = $.extend(true, {
 				}
 			}
 			
+			$("#alterVrMulta", this.workspace).focus();
+			
 		},
 		
 		exibirValorMoedaNew: function(){
 			
 			$("#newVrMulta", this.workspace).prop("disabled", false);
+			$("#newMulta", this.workspace).prop("disabled", true);
+						
+			$("#newMulta", this.workspace).val("");
 			
 			if($("#newVrMulta", this.workspace).val() == ""){
 				$("#newInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de R$XXX. Após vencimento, cobrar juros diários de R$YYY.");
@@ -703,6 +714,8 @@ var bancoController = $.extend(true, {
 					$("#newVrMulta", this.workspace).val("0,0000");
 				}
 			}
+			
+			$("#newVrMulta", this.workspace).focus();
 			
 		},
 		

@@ -105,7 +105,7 @@ label {
 					<td>Multa %:</td>
 					<td>
 					    <input onblur="bancoController.limparVrMultaNew();" maxlength="8" type="text" name="newMulta" id="newMulta" style="width:80px; text-align:right;" />
-					    ou R$: <input onblur="bancoController.limparMultaNew();" maxlength="15" type="text" name="newVrMulta" id="newVrMulta" style="width:80px; text-align:right;" />
+					    ou R$: <input onblur="bancoController.limparMultaNew();" maxlength="15" type="text" name="newVrMulta" id="newVrMulta" style="width:80px; text-align:right;" disabled />
 					</td>
 				</tr>
 				<tr>
