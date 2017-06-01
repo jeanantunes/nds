@@ -289,7 +289,7 @@ public class AnaliseParcialController extends BaseController {
     @Path("/init")
     public void init(Long id, String sortname, String sortorder, int page, int rp, String filterSortName, Double filterSortFrom, Double filterSortTo, String elemento,
                      Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao, 
-                     String numeroCotaStr,Long estudoOrigem,String dataLancamentoEdicao, Integer numeroParcial) {
+                     String numeroCotaStr,Long estudoOrigem,String dataLancamentoEdicao, Integer numeroParcial, String cotasFiltro) {
     	
         AnaliseParcialQueryDTO filtroQueryDTO = new AnaliseParcialQueryDTO();
         filtroQueryDTO.setSortName(sortname);
@@ -298,7 +298,7 @@ public class AnaliseParcialController extends BaseController {
         filtroQueryDTO.setFilterSortFrom(filterSortFrom);
         filtroQueryDTO.setFilterSortTo(filterSortTo);
         filtroQueryDTO.setElemento(elemento);
-        filtroQueryDTO.setEdicoesBase(getEdicoesBase(edicoesBase, id));
+        filtroQueryDTO.setEdicoesBase(getEdicoesBase(edicoesBase, id, numeroParcial));
         filtroQueryDTO.setEstudoId(id);
         filtroQueryDTO.setFaixaDe(faixaDe);
         filtroQueryDTO.setFaixaAte(faixaAte);
@@ -309,6 +309,7 @@ public class AnaliseParcialController extends BaseController {
         filtroQueryDTO.setEstudoOrigem(estudoOrigem);
         filtroQueryDTO.setDataLancamentoEdicao(DateUtil.parseDataPTBR(dataLancamentoEdicao));
         filtroQueryDTO.setNumeroParcial(numeroParcial);
+        filtroQueryDTO.setNumeroCotasFiltro(cotasFiltro);
         
         AnaliseEstudoNormal_E_ParcialDTO analise = analiseParcialService.buscaAnaliseParcialPorEstudo(filtroQueryDTO);
         
@@ -346,6 +347,7 @@ public class AnaliseParcialController extends BaseController {
     	vo.setPercentualAbrangencia(resumo.getAbrangenciaEstudo());
     	vo.setReparteTotalEdicao(analise.getReparteTotalEdicao());
     	vo.setVendaTotalEdicao(analise.getVendaTotalEdicao());
+    	vo.setEdicoesBase(getEdicoesBase(edicoesBase, id, numeroParcial));
     	
     	if (resumo.getSaldo() != null) {
     		vo.setSaldo(resumo.getSaldo().toBigInteger());
@@ -372,7 +374,7 @@ public class AnaliseParcialController extends BaseController {
 	}
     
     @SuppressWarnings("unchecked")
-	private List<EdicoesProdutosDTO> getEdicoesBase(List<EdicoesProdutosDTO> edicoesBase, Long idEstudo) {
+	private List<EdicoesProdutosDTO> getEdicoesBase(List<EdicoesProdutosDTO> edicoesBase, Long idEstudo, Integer numeroParcial) {
     	
     	if (edicoesBase != null) {
     		
@@ -384,10 +386,37 @@ public class AnaliseParcialController extends BaseController {
     	edicoesBase = (List<EdicoesProdutosDTO>) this.session.getAttribute(EDICOES_BASE_SESSION_ATTRIBUTE);
     	
     	if(edicoesBase == null){
-	    	
-			List<EdicaoBaseEstudoDTO> edicaoBaseEstudoDTOs = estudoProdutoEdicaoBaseService.obterEdicoesBase(idEstudo);
-			
-			System.out.println("buscado");
+    		
+    		if(!session.getAttribute("modoAnalise").toString().equalsIgnoreCase("PARCIAL")){
+    			
+    			List<EdicaoBaseEstudoDTO> edicaoBaseEstudoDTOs = estudoProdutoEdicaoBaseService.obterEdicoesBase(idEstudo);
+    			
+    			if(edicaoBaseEstudoDTOs.size() > 0){
+    				List<EdicoesProdutosDTO> bases = new ArrayList<>();
+    				
+    				for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicaoBaseEstudoDTOs) {
+    					EdicoesProdutosDTO base = new EdicoesProdutosDTO();
+    					
+    					base.setCodigoProduto(edicaoBaseEstudoDTO.getCodigoProduto());
+    					base.setNomeProduto(edicaoBaseEstudoDTO.getNomeProduto());
+    					base.setEdicao(edicaoBaseEstudoDTO.getNumeroEdicao());
+    					base.setParcial(edicaoBaseEstudoDTO.isParcial());
+    					base.setProdutoEdicaoId(edicaoBaseEstudoDTO.getIdProdutoEdicao());
+    					
+    					bases.add(base);
+    				}
+    				
+    				return bases;
+    			}
+    		}else{
+    			List<EdicoesProdutosDTO> baseUtilizadas = analiseParcialService.carregarPeriodosAnterioresParcial(idEstudo, false);
+    			
+    			if(baseUtilizadas.size() == 0){
+    				baseUtilizadas = analiseParcialService.carregarPeriodosAnterioresParcial(idEstudo, true);
+    			}
+    			
+    			return baseUtilizadas;
+    		}
     	}
     	
     	return edicoesBase;

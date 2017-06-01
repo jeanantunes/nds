@@ -26,6 +26,7 @@ public class AnaliseParcialQueryDTO {
 	private Date dataLancamentoEdicao;
 	private Integer numeroParcial;
 	private FileType file;
+	private String numeroCotasFiltro;
 	
 	private List<Long> idUltimoLancamento;
 	
@@ -126,8 +127,18 @@ public class AnaliseParcialQueryDTO {
 	}
 
 	public boolean possuiOrdenacaoPlusFiltro() {
-		return filterSortName != null && filterSortFrom != null
-				&& filterSortTo != null;
+		
+		if(filterSortName != null && filterSortFrom != null
+				&& filterSortTo != null){
+			return true;
+		}else{
+			if(filterSortName != null && numeroCotasFiltro != null){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
 	}
 
 	public boolean possuiOrdenacaoNMaiores() {
@@ -160,6 +171,10 @@ public class AnaliseParcialQueryDTO {
 
 	public boolean possuiPercentualDeVenda() {
 		return possuiOrdenacaoPlusFiltro() && filterSortName.equals("percentual_de_venda");
+	}
+	
+	public boolean possuiOrdenacaoQtdDeVenda() {
+		return possuiOrdenacaoPlusFiltro() && filterSortName.equalsIgnoreCase("qtd_de_venda");
 	}
 
 	public boolean possuiReducaoReparte() {
@@ -291,5 +306,14 @@ public class AnaliseParcialQueryDTO {
 	public void setIdUltimoLancamento(List<Long> idUltimoLancamento) {
 		this.idUltimoLancamento = idUltimoLancamento;
 	}
+
+	public String getNumeroCotasFiltro() {
+		return numeroCotasFiltro;
+	}
+
+	public void setNumeroCotasFiltro(String numeroCotasFiltro) {
+		this.numeroCotasFiltro = numeroCotasFiltro;
+	}
+	
 	
 }

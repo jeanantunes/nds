@@ -168,15 +168,26 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 EdicoesProdutosDTO edicoesProdutosAcumulado = this.getReparteVendaAcumulado(edicoesProdutoPorCota);
                 
                 if (edicoesProdutosAcumulado != null) {
-	                if(queryDTO.possuiOrdenacaoPlusFiltro() && queryDTO.possuiPercentualDeVenda() ){
+	                if(queryDTO.possuiOrdenacaoPlusFiltro() && (queryDTO.possuiPercentualDeVenda() || queryDTO.possuiOrdenacaoQtdDeVenda())){
+	                	
+	                	if(queryDTO.possuiPercentualDeVenda()){
+	                		int pct = edicoesProdutosAcumulado.getVenda().intValue()*100/ ( edicoesProdutosAcumulado.getReparte().intValue() > 0?edicoesProdutosAcumulado.getReparte().intValue():1) ;
+	                		if ( (pct >=  queryDTO.getFilterSortFrom() && pct <=  queryDTO.getFilterSortTo())){
+	                			lista1.add(item);
+	                		}else{
+	                			continue;
+	                		}
+	                	}else{
+	                		if ((edicoesProdutosAcumulado.getVenda().intValue() >=  queryDTO.getFilterSortFrom() && edicoesProdutosAcumulado.getVenda().intValue() <=  queryDTO.getFilterSortTo())){
+	                			lista1.add(item);
+	                		}else{
+	                			continue;
+	                		}
+	                	}
 	                	          
-	                	int pct = edicoesProdutosAcumulado.getVenda().intValue()*100/ ( edicoesProdutosAcumulado.getReparte().intValue() > 0?edicoesProdutosAcumulado.getReparte().intValue():1) ;
-	                	if ( (pct >=  queryDTO.getFilterSortFrom() && pct <=  queryDTO.getFilterSortTo()))
-	                	   lista1.add(item);
-	                	else
-	                		continue;
+	                }else{
+	                	lista1.add(item);
 	                }
-	                else lista1.add(item);
                 
                     temp.add(edicoesProdutosAcumulado);
                 } 
@@ -200,7 +211,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 total_qtdCotas = BigIntegerUtil.soma(total_qtdCotas, BigInteger.ONE);
                 
             }
-            if(queryDTO.possuiOrdenacaoPlusFiltro() && queryDTO.possuiPercentualDeVenda() ){
+            if(queryDTO.possuiOrdenacaoPlusFiltro() && (queryDTO.possuiPercentualDeVenda() || queryDTO.possuiOrdenacaoQtdDeVenda())){
                 lista = lista1;
             }
             
@@ -240,7 +251,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             }
             
             // Tratamento para Filtro por Percentual de Venda. Necessário após paginação do GRID
-            if(queryDTO.possuiOrdenacaoPlusFiltro() && queryDTO.possuiPercentualDeVenda()){
+            if(queryDTO.possuiOrdenacaoPlusFiltro() && (queryDTO.possuiPercentualDeVenda() || queryDTO.possuiOrdenacaoQtdDeVenda())){
             	listaCotasId = analiseParcialRepository.obterCotasDentroDoPercentualReparteFiltro(listaCotasId, idsProdutoEdicao, queryDTO);
             	
             	List<AnaliseParcialDTO> cotasForaDoFiltro = new ArrayList<>();
@@ -456,7 +467,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
     private List<EdicoesProdutosDTO> getEdicoesProdutoPorCota(List<EdicoesProdutosDTO> edicoesProdutosDTO, Integer numeroCota, List<EdicoesProdutosDTO> bases) {
         
-        List<EdicoesProdutosDTO> edicoesProdutoPorCota = new ArrayList<>();
+        List<EdicoesProdutosDTO> edicoesProdutoPorCota = new ArrayList<>(); 
         
         List<EdicoesProdutosDTO> edicoesTemp = new ArrayList<>();
         
@@ -480,8 +491,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 				
         		for (EdicoesProdutosDTO edicaoCota : edicoesTemp) {
         			
-					if(bases.get(i).getPeriodo() != null){
-						if(bases.get(i).getPeriodo().equalsIgnoreCase(edicaoCota.getPeriodo())){
+//					if(bases.get(i).getPeriodo() != null){
+						if((bases.get(i).getPeriodo() != null) &&  (bases.get(i).getPeriodo().equalsIgnoreCase(edicaoCota.getPeriodo()))){
 							edicoesProdutoPorCota.add(edicaoCota);
 							contem = true;
 						}else{
@@ -491,7 +502,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 							fake.setParcial(edicaoCota.isParcial());
 							fake.setProdutoEdicaoId(edicaoCota.getProdutoEdicaoId());
 						}
-					}
+//					}
 				}
         		
         		if(!contem){

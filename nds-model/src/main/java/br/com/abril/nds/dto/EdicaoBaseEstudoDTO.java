@@ -10,6 +10,7 @@ public class EdicaoBaseEstudoDTO {
 	private BigInteger peso;
 	private boolean isParcial;
 	private boolean isParcialConsolidado;
+	private Long idProdutoEdicao;
 
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -57,6 +58,14 @@ public class EdicaoBaseEstudoDTO {
 
 	public void setParcialConsolidado(boolean isParcialConsolidado) {
 		this.isParcialConsolidado = false;
+	}
+
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(BigInteger idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao.longValue();
 	}
 
 }

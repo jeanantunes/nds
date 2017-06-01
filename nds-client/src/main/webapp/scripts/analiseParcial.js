@@ -632,6 +632,8 @@ var analiseParcialController = $.extend(true, {
     	);
     	
         $('#baseEstudoGridParcial').flexAddData(analiseParcialController.baseInicialAnalise);
+        
+        analiseParcialController.filtroDefault($('#estudoId').val(), "reparte", "");
     },
 
     preProcessGrid : function(resultado) {
@@ -693,7 +695,7 @@ var analiseParcialController = $.extend(true, {
         if (null == analiseParcialController.baseInicialAnalise) {
             analiseParcialController.baseInicialAnalise = $.extend(true, {}, resultado);
         }
-        analiseParcialController.edicoesBase = resultado.rows[0].cell.edicoesBase;
+        analiseParcialController.edicoesBase = resultado.analiseEstudoNormal_E_ParcialDTO.edicoesBase;
 
         var totalSaldoReparte = 0;
         
@@ -894,7 +896,7 @@ var analiseParcialController = $.extend(true, {
             {display: 'Class.',     name: 'classificacao',      width: 30, sortable: true, align: 'center'},
             {display: 'Nome',       name: 'nome',               width: 150,sortable: true, align: 'left'},
             {display: 'NPDV',       name: 'npdv',               width: 30, sortable: true, align: 'right'},
-            {display: 'Últ. Rep.',  name: 'ultimoReparte',      width: 50, sortable: true, align: 'right'},
+            {display: 'Últ. Rep.',  name: 'ultimoReparte',      width: 50, sortable: true, align: 'center'},
             {display: 'Rep. Sug.',  name: 'reparteSugerido',    width: 50, sortable: true, align: 'right'},
             {display: 'LEG',        name: 'leg',                width: 20, sortable: true, align: 'center'}];
 
@@ -927,7 +929,7 @@ var analiseParcialController = $.extend(true, {
             {display: 'Class.',     name: 'classificacao',      width: 30, sortable: true, align: 'center'},
             {display: 'Nome',       name: 'nome',               width: 150,sortable: true, align: 'left'},
             {display: 'NPDV',       name: 'npdv',               width: 30, sortable: true, align: 'right'},
-            {display: 'Últ. Rep.',  name: 'ultimoReparte',      width: 50, sortable: true, align: 'right'},
+            {display: 'Últ. Rep.',  name: 'ultimoReparte',      width: 50, sortable: true, align: 'center'},
             {display: 'Rep. Sug.',  name: 'reparteSugerido',    width: 50, sortable: true, align: 'right'},
             {display: 'LEG',        name: 'leg',                width: 20, sortable: true, align: 'center'},
 //            {display: 'Desc Leg',   name: 'descricaoLegenda',   width: 1,  sortable: false, hide: true},
@@ -1771,6 +1773,21 @@ var analiseParcialController = $.extend(true, {
             $("#opcoesOrdenarPor").show();
         }
         
+        if(opcao == "numero_cota"){
+        	
+        	$("#ordenarPorDe").hide();
+        	$("#ordenarPorAte").hide();
+        	$("#labelAte").hide();
+        	
+        	$("#ordenarPorCota").show();
+        }else{
+        	$("#ordenarPorDe").show();
+        	$("#ordenarPorAte").show();
+        	$("#labelAte").show();
+        	
+        	$("#ordenarPorCota").hide();
+        }
+        
     },
 
     limparCamposDeAte: function () {
@@ -1858,14 +1875,22 @@ var analiseParcialController = $.extend(true, {
     filtroDefault: function (estudo, valueFiltroOrdenarPor, elemento) {
 
     	var numParcial = $("#numeroPeriodo").val();
+    	var de = $("#ordenarPorDe").val();
+    	var ate = $("#ordenarPorAte").val();
+    	var cotasFiltro = "";
+    	
+    	if(valueFiltroOrdenarPor == "numero_cota"){
+    		cotasFiltro = $("#ordenarPorCota").val();
+    	}
     	
         $("#baseEstudoGridParcial").flexOptions({
             params: [{name:'filterSortName', 	value: valueFiltroOrdenarPor},
-                 	 {name:'filterSortFrom', 	value: $("#ordenarPorDe").val()},
-                 	 {name:'filterSortTo',   	value: $("#ordenarPorAte").val()},
+                 	 {name:'filterSortFrom', 	value: de},
+                 	 {name:'filterSortTo',   	value: ate},
                  	 {name:'id',             	value: estudo},
                  	 {name:'elemento',       	value: elemento},
-                 	 {name:'numeroParcial',  	value: numParcial}]
+                 	 {name:'numeroParcial',  	value: numParcial},
+                 	 {name:'cotasFiltro',		value: cotasFiltro}]
         }).flexReload();
 
     },

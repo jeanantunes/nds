@@ -193,6 +193,7 @@ table.dadosTab { margin-left: 370px;}
 							<option value="ranking">Ranking</option>
 							<option value="n_maiores">N Maiores</option>
 							<option value="percentual_de_venda">% de Venda</option>
+							<option value="qtd_de_venda">Quantidade de Venda</option>
 							<option value="reducao_de_reparte">% Variação de Reparte</option>
 							<option value="numero_cota">Cota</option>
 					</select></td>
@@ -232,15 +233,19 @@ table.dadosTab { margin-left: 370px;}
 					<td>
                         	<span id="opcoesOrdenarPor" style="display: none;" class="label">
                             
-                            <span id="label_numero_cota" style="display: none;" class="label"> Cota: </span>
+                            <span id="label_numero_cota" style="display: none;" class="label"> Cotas: </span>
                             <span id="label_reparte" style="display: none;" class="label"> Reparte: </span>
                             <span id="label_reducao_de_reparte" style="display: none;" class="label"> % De: </span>
                             <span id="label_ranking" style="display: none;" class="label"> Reparte: </span>
                             <span id="label_n_maiores" style="display: none;" class="label"> Ranking: </span>
                             <span id="label_percentual_de_venda" style="display: none;" class="label"> % Venda: </span>
+                            <span id="label_qtd_de_venda" style="display: none;" class="label"> Venda: </span>
                             
-                            <input id="ordenarPorDe" type="text" style="width: 60px;" /> Até 
+                            <input id="ordenarPorDe" type="text" style="width: 60px;" />
+                            <span id="labelAte" class="label"> Até </span>
                             <input id="ordenarPorAte" type="text" style="width: 60px;" />
+                            
+                            <input id="ordenarPorCota" type="text" style="width: 135px;" style="display: none;" placeholder="Separe por virgula!">
                             
                             <span id="labelAte_numero_cota" style="display: none;" class="label"> </span>
                             <span id="labelAte_reparte" style="display: none;" class="label"> Exs. </span>
@@ -248,6 +253,7 @@ table.dadosTab { margin-left: 370px;}
                             <span id="labelAte_ranking" style="display: none;" class="label"> Exs. </span>
                             <span id="labelAte_n_maiores" style="display: none;" class="label"> Pos. </span>
                             <span id="labelAte_percentual_de_venda" style="display: none;" class="label"> % </span>
+                            <span id="labelAte_qtd_de_venda" style="display: none;" class="label"> Exs. </span>
                             
                             &nbsp;
                             
