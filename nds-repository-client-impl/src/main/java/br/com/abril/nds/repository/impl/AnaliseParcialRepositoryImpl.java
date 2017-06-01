@@ -266,12 +266,14 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             
             if (queryDTO.possuiOrdenacaoCota()) {
 
-                sql.append(" AND c.numero_cota between :filterSortFrom and :filterSortTo ");
+//                sql.append(" AND c.numero_cota between :filterSortFrom and :filterSortTo ");
+            	sql.append(" AND c.numero_cota in (:numeroCotasFiltro) ");
             }
             
             if (queryDTO.possuiReducaoReparte()) {
 
-                sql.append(" and CAST((((coalesce(ec.reparte_inicial, 0) - coalesce(ec.reparte, 0))/ec.qtde_efetiva)*10000)/100 as SIGNED INT) between :filterSortFrom and :filterSortTo ");
+//                sql.append(" and CAST((((coalesce(ec.reparte_inicial, 0) - coalesce(ec.reparte, 0))/ec.qtde_efetiva)*10000)/100 as SIGNED INT) between :filterSortFrom and :filterSortTo ");
+            	sql.append(" and cast(100-((coalesce(ec.qtde_efetiva,0)*100)/ec.reparte_inicial) as SIGNED int) between :filterSortFrom and :filterSortTo ");
             }
         }    
   
@@ -350,12 +352,16 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
         	
-            if (queryDTO.possuiOrdenacaoReparte() || queryDTO.possuiOrdenacaoRanking() || 
-            		queryDTO.possuiOrdenacaoCota() || queryDTO.possuiReducaoReparte()) {
+            if (queryDTO.possuiOrdenacaoReparte() || queryDTO.possuiOrdenacaoRanking() || queryDTO.possuiReducaoReparte()) {
             	
             	query.setParameter("filterSortFrom", queryDTO.getFilterSortFrom());
             	
             	query.setParameter("filterSortTo", queryDTO.getFilterSortTo());
+            }
+            
+            if(queryDTO.possuiOrdenacaoCota()){
+            	
+            	query.setParameterList("numeroCotasFiltro", queryDTO.getNumeroCotasFiltro().split(","));
             }
         }    
         
@@ -898,7 +904,13 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append(" (SELECT ");
     	sql.append("   T.cotaID cotaId, ");
     	sql.append("   T.numCota, ");
-    	sql.append("   (sum(T.venda)*100)/SUM(T.REPARTE) as percVenda ");
+    	
+    	if(queryDTO.possuiOrdenacaoQtdDeVenda()){
+    		sql.append("  sum( T.venda ) as QtdVenda ");
+    	}else{
+    		sql.append("   (sum(T.venda)*100)/SUM(T.REPARTE) as percVenda ");
+    	}
+    	
     	sql.append(" FROM  ");
     	sql.append(" (SELECT mec.produto_edicao_id produtoEdicaoId, ");
     	sql.append("         mec.cota_id cotaID, ");
@@ -943,7 +955,14 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append("       AND mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
 
     	sql.append(" GROUP BY mec.cota_id, mec.produto_edicao_id, mec.lancamento_id)T group by T.cotaID) tt  ");
-    	sql.append("     where tt.percVenda BETWEEN :de AND :ate ");
+    	
+    	if(queryDTO.possuiOrdenacaoQtdDeVenda()){
+    		sql.append("     where tt.QtdVenda BETWEEN :de AND :ate ");
+    	}else{
+    		sql.append("     where tt.percVenda BETWEEN :de AND :ate ");
+    	}
+    	
+    	
     	
     	SQLQuery query = getSession().createSQLQuery(sql.toString());
     	

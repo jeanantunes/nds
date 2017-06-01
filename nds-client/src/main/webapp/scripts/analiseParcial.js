@@ -99,7 +99,7 @@ var analiseParcialController = $.extend(true, {
                     	
                     	parameters.push({name: 'id', value: $('#estudoId').val()},
                             {name: 'numeroEdicao', value: $('#numeroEdicao').val()},
-                            {name: 'codigoProduto', value: $('#codigoProduto').val()},
+                            {name: 'codigoProduto', value: $('#codigoProduto_analiseParcial').val()},
                             {name: 'faixaDe', value: $('#faixaDe').val()},
                             {name: 'faixaAte', value: $('#faixaAte').val()});
 
@@ -193,7 +193,7 @@ var analiseParcialController = $.extend(true, {
         $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/carregarDetalhesCota',
             [{name: 'numeroCota', value: numeroCota},
              {name: 'idClassifProdEdicao', value: $('#tipoClassificacaoProdutoId').val()},
-             {name: 'codigoProduto', value: $('input[id="codigoProduto"]').val()}],
+             {name: 'codigoProduto', value: $('input[id="codigoProduto_analiseParcial"]').val()}],
             function(result){
 
                 var $dialog = $('#dialog-cotas-detalhes'),
@@ -471,7 +471,7 @@ var analiseParcialController = $.extend(true, {
             
             if (legendaText.indexOf('FX') > -1 || legendaText.indexOf('MX') > -1) {
             	
-            	var codProd = $("#codigoProduto", analiseParcialController.workspace).text() || $("#codigoProduto", analiseParcialController.workspace).val();
+            	var codProd = $("#codigoProduto_analiseParcial", analiseParcialController.workspace).text() || $("#codigoProduto_analiseParcial", analiseParcialController.workspace).val();
             	var usedMix = $('#usedMinMaxMix', analiseParcialController.workspace).val();
             	
             	if((legendaText.indexOf('MX') > -1) && (usedMix == "false")){
@@ -632,6 +632,8 @@ var analiseParcialController = $.extend(true, {
     	);
     	
         $('#baseEstudoGridParcial').flexAddData(analiseParcialController.baseInicialAnalise);
+        
+        analiseParcialController.filtroDefault($('#estudoId').val(), "reparte", "");
     },
 
     preProcessGrid : function(resultado) {
@@ -693,7 +695,7 @@ var analiseParcialController = $.extend(true, {
         if (null == analiseParcialController.baseInicialAnalise) {
             analiseParcialController.baseInicialAnalise = $.extend(true, {}, resultado);
         }
-        analiseParcialController.edicoesBase = resultado.rows[0].cell.edicoesBase;
+        analiseParcialController.edicoesBase = resultado.analiseEstudoNormal_E_ParcialDTO.edicoesBase;
 
         var totalSaldoReparte = 0;
         
@@ -894,7 +896,7 @@ var analiseParcialController = $.extend(true, {
             {display: 'Class.',     name: 'classificacao',      width: 30, sortable: true, align: 'center'},
             {display: 'Nome',       name: 'nome',               width: 150,sortable: true, align: 'left'},
             {display: 'NPDV',       name: 'npdv',               width: 30, sortable: true, align: 'right'},
-            {display: 'Últ. Rep.',  name: 'ultimoReparte',      width: 50, sortable: true, align: 'right'},
+            {display: 'Últ. Rep.',  name: 'ultimoReparte',      width: 50, sortable: true, align: 'center'},
             {display: 'Rep. Sug.',  name: 'reparteSugerido',    width: 50, sortable: true, align: 'right'},
             {display: 'LEG',        name: 'leg',                width: 20, sortable: true, align: 'center'}];
 
@@ -927,7 +929,7 @@ var analiseParcialController = $.extend(true, {
             {display: 'Class.',     name: 'classificacao',      width: 30, sortable: true, align: 'center'},
             {display: 'Nome',       name: 'nome',               width: 150,sortable: true, align: 'left'},
             {display: 'NPDV',       name: 'npdv',               width: 30, sortable: true, align: 'right'},
-            {display: 'Últ. Rep.',  name: 'ultimoReparte',      width: 50, sortable: true, align: 'right'},
+            {display: 'Últ. Rep.',  name: 'ultimoReparte',      width: 50, sortable: true, align: 'center'},
             {display: 'Rep. Sug.',  name: 'reparteSugerido',    width: 50, sortable: true, align: 'right'},
             {display: 'LEG',        name: 'leg',                width: 20, sortable: true, align: 'center'},
 //            {display: 'Desc Leg',   name: 'descricaoLegenda',   width: 1,  sortable: false, hide: true},
@@ -1243,7 +1245,7 @@ var analiseParcialController = $.extend(true, {
     	parameters.push({name: 'id', 					value: _id});
         parameters.push({name: 'faixaDe', 				value: _faixaDe});
         parameters.push({name: 'faixaAte', 				value: _faixaAte});
-        parameters.push({name: 'codigoProduto', 		value: $("#codigoProduto", analiseParcialController.workspace).text() || $("#codigoProduto", analiseParcialController.workspace).val()});
+        parameters.push({name: 'codigoProduto', 		value: $("#codigoProduto_analiseParcial", analiseParcialController.workspace).text() || $("#codigoProduto_analiseParcial", analiseParcialController.workspace).val()});
         parameters.push({name: 'numeroEdicao', 			value: $('#numeroEdicao').val()});
         parameters.push({name: 'estudoOrigem', 			value: estudoOrigem});
         parameters.push({name: 'dataLancamentoEdicao',  value: $('#dataLancamentoEdicao').val()});
@@ -1660,10 +1662,10 @@ var analiseParcialController = $.extend(true, {
                         if ($inputsPreenchidos.filter('[motivo="SM"]').length > 0) {
 
                             var params = [];
-                            var codigoProduto = $('#codigoProduto').text();
+                            var codigoProduto = $('#codigoProduto_analiseParcial').text();
                             
                             if(codigoProduto == ""){
-                            	codigoProduto = $('#codigoProduto').val();
+                            	codigoProduto = $('#codigoProduto_analiseParcial').val();
                             }
                             
                             var classificacao = $('#tipoClassificacaoProdutoDescricao').val();
@@ -1688,7 +1690,7 @@ var analiseParcialController = $.extend(true, {
                         if ($inputsPreenchidos.filter('[motivo="GN"]').length > 0) {
 
                             var params = [];
-                            params.push({name: 'filtro.produtoDto.codigoProduto', value: $('#codigoProduto').text()});
+                            params.push({name: 'filtro.produtoDto.codigoProduto', value: $('#codigoProduto_analiseParcial').text()});
                             params.push({name: 'filtro.produtoDto.idClassificacaoProduto', value: $('#tipoClassificacaoProdutoId').val()});
                             params.push({name: 'filtro.excecaoSegmento', value: true});
 
@@ -1769,6 +1771,21 @@ var analiseParcialController = $.extend(true, {
             $("#label_"+ opcao).show();
             $("#labelAte_"+ opcao).show();
             $("#opcoesOrdenarPor").show();
+        }
+        
+        if(opcao == "numero_cota"){
+        	
+        	$("#ordenarPorDe").hide();
+        	$("#ordenarPorAte").hide();
+        	$("#labelAte").hide();
+        	
+        	$("#ordenarPorCota").show();
+        }else{
+        	$("#ordenarPorDe").show();
+        	$("#ordenarPorAte").show();
+        	$("#labelAte").show();
+        	
+        	$("#ordenarPorCota").hide();
         }
         
     },
@@ -1858,14 +1875,22 @@ var analiseParcialController = $.extend(true, {
     filtroDefault: function (estudo, valueFiltroOrdenarPor, elemento) {
 
     	var numParcial = $("#numeroPeriodo").val();
+    	var de = $("#ordenarPorDe").val();
+    	var ate = $("#ordenarPorAte").val();
+    	var cotasFiltro = "";
+    	
+    	if(valueFiltroOrdenarPor == "numero_cota"){
+    		cotasFiltro = $("#ordenarPorCota").val();
+    	}
     	
         $("#baseEstudoGridParcial").flexOptions({
             params: [{name:'filterSortName', 	value: valueFiltroOrdenarPor},
-                 	 {name:'filterSortFrom', 	value: $("#ordenarPorDe").val()},
-                 	 {name:'filterSortTo',   	value: $("#ordenarPorAte").val()},
+                 	 {name:'filterSortFrom', 	value: de},
+                 	 {name:'filterSortTo',   	value: ate},
                  	 {name:'id',             	value: estudo},
                  	 {name:'elemento',       	value: elemento},
-                 	 {name:'numeroParcial',  	value: numParcial}]
+                 	 {name:'numeroParcial',  	value: numParcial},
+                 	 {name:'cotasFiltro',		value: cotasFiltro}]
         }).flexReload();
 
     },

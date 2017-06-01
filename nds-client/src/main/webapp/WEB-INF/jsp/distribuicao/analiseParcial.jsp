@@ -148,7 +148,7 @@ table.dadosTab { margin-left: 370px;}
 			<input type="hidden" id="reparteCopiado" value="${reparteCopiado}" />
 			<input type="hidden" id="numeroEdicao" value="${estudo.produtoEdicao.numeroEdicao}" />
 			<input type="hidden" id="estudoId" value="${estudo.id}" />
-			<input type="hidden" id="codigoProduto" value="${estudo.produtoEdicao.produto.codigo}" />
+			<input type="hidden" id="codigoProduto_analiseParcial" value="${estudo.produtoEdicao.produto.codigo}" />
 			<input type="hidden" id="produtoId" value="${estudo.produtoEdicao.produto.id}" />
 			<input type="hidden" id="tipoSegmentoProduto" value="${estudo.produtoEdicao.produto.tipoSegmentoProduto.id}" />
 			<input type="hidden" id="estudoOrigem" value="${estudo.idEstudoOrigemCopia}" />
@@ -193,6 +193,7 @@ table.dadosTab { margin-left: 370px;}
 							<option value="ranking">Ranking</option>
 							<option value="n_maiores">N Maiores</option>
 							<option value="percentual_de_venda">% de Venda</option>
+							<option value="qtd_de_venda">Quantidade de Venda</option>
 							<option value="reducao_de_reparte">% Variação de Reparte</option>
 							<option value="numero_cota">Cota</option>
 					</select></td>
@@ -232,15 +233,19 @@ table.dadosTab { margin-left: 370px;}
 					<td>
                         	<span id="opcoesOrdenarPor" style="display: none;" class="label">
                             
-                            <span id="label_numero_cota" style="display: none;" class="label"> Cota: </span>
+                            <span id="label_numero_cota" style="display: none;" class="label"> Cotas: </span>
                             <span id="label_reparte" style="display: none;" class="label"> Reparte: </span>
                             <span id="label_reducao_de_reparte" style="display: none;" class="label"> % De: </span>
                             <span id="label_ranking" style="display: none;" class="label"> Reparte: </span>
                             <span id="label_n_maiores" style="display: none;" class="label"> Ranking: </span>
                             <span id="label_percentual_de_venda" style="display: none;" class="label"> % Venda: </span>
+                            <span id="label_qtd_de_venda" style="display: none;" class="label"> Venda: </span>
                             
-                            <input id="ordenarPorDe" type="text" style="width: 60px;" /> Até 
+                            <input id="ordenarPorDe" type="text" style="width: 60px;" />
+                            <span id="labelAte" class="label"> Até </span>
                             <input id="ordenarPorAte" type="text" style="width: 60px;" />
+                            
+                            <input id="ordenarPorCota" type="text" style="width: 135px;" style="display: none;" placeholder="Separe por virgula!">
                             
                             <span id="labelAte_numero_cota" style="display: none;" class="label"> </span>
                             <span id="labelAte_reparte" style="display: none;" class="label"> Exs. </span>
@@ -248,6 +253,7 @@ table.dadosTab { margin-left: 370px;}
                             <span id="labelAte_ranking" style="display: none;" class="label"> Exs. </span>
                             <span id="labelAte_n_maiores" style="display: none;" class="label"> Pos. </span>
                             <span id="labelAte_percentual_de_venda" style="display: none;" class="label"> % </span>
+                            <span id="labelAte_qtd_de_venda" style="display: none;" class="label"> Exs. </span>
                             
                             &nbsp;
                             
@@ -573,8 +579,8 @@ table.dadosTab { margin-left: 370px;}
 
             <table width="686" border="0" cellpadding="2" cellspacing="1">
                 <tr>
-                    <td style="width: 130px;"><strong>Código: </strong> ${estudo.produtoEdicao.produto.codigo}</td>
-                    <td><strong>Produto: </strong> ${estudo.produtoEdicao.nomeComercial}</td>
+                    <td style="width: 130px;"><strong>Código: </strong><span id="detalheCotaCodigoProduto"></span></td>
+					<td><strong>Produto: </strong><span id="detalheCotaNomeProduto"></span></td>
                 </tr>
             </table>
             <table width="686" border="0" cellpadding="2" cellspacing="1">

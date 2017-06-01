@@ -112,7 +112,9 @@ public class HTMLTableUtil {
 			    for (ProdutoEdicaoEstudo peEstudoCota : ce.getEdicoesRecebidas()) {
 			    	
 			    	if(peEstudoCota.isParcial()){
-			    		String chave = peEstudoCota.getNumeroEdicao()+""+peEstudoCota.getPeriodo();
+			    		
+			    		
+			    		String chave = getChaveMap(peEstudoCota);
 			    		
 			    		mapEdicoesRecebidas.put(Long.parseLong(chave), peEstudoCota);
 			    	}else{
@@ -132,7 +134,7 @@ public class HTMLTableUtil {
 				ProdutoEdicaoEstudo peCota = null;
 				
 				if(peBaseEstudo.isParcial()){
-		    		String chave = peBaseEstudo.getNumeroEdicao()+""+peBaseEstudo.getPeriodo();
+		    		String chave = getChaveMap(peBaseEstudo);
 		    		
 		    		peCota = mapEdicoesRecebidas.get(Long.parseLong(chave));
 		    	}else{
@@ -157,7 +159,7 @@ public class HTMLTableUtil {
 				ProdutoEdicaoEstudo peCota = null;
 				
 				if(peBaseEstudo.isParcial()){
-					String chave = peBaseEstudo.getNumeroEdicao()+""+peBaseEstudo.getPeriodo();
+					String chave = getChaveMap(peBaseEstudo);
 					peCota = mapEdicoesRecebidas.get(Long.parseLong(chave));
 				}else{
 					peCota = mapEdicoesRecebidas.get(peBaseEstudo.getNumeroEdicao());
@@ -368,6 +370,23 @@ public class HTMLTableUtil {
 //	sb.append(HTMLTableUtil.buildHTMLTable(estudoAutomatico.getCotas()));
 //	return sb.toString();
     }
+
+	private static String getChaveMap(ProdutoEdicaoEstudo peEstudoCota) {
+		
+		String chave = "";
+		
+		if(peEstudoCota.getPeriodo() != null){
+			chave = peEstudoCota.getNumeroEdicao()+""+peEstudoCota.getPeriodo();
+		}else{
+			if(peEstudoCota.getIdEstudo() != null){
+				chave = peEstudoCota.getNumeroEdicao()+""+peEstudoCota.getIdEstudo();
+			}else{
+				chave = peEstudoCota.getNumeroEdicao()+""+peEstudoCota.getProduto().getCodigo();
+			}
+		}
+		
+		return chave;
+	}
 
 	private static void addEspacosEmBranco(EstudoTransient estudo, StringBuilder h, int multiplo) {
 		int qtdEdicoesBases = estudo.getEdicoesBase().size();

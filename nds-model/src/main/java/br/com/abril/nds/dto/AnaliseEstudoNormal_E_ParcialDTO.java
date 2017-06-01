@@ -25,6 +25,7 @@ public class AnaliseEstudoNormal_E_ParcialDTO implements Serializable{
     private List<BigInteger> reparteTotalEdicao;
     private List<BigInteger> vendaTotalEdicao;
     private BigInteger saldo;
+    private List<EdicoesProdutosDTO> edicoesBase;
     
     
     private TableModel<CellModelKeyValue<AnaliseParcialDTO>> table;
@@ -94,6 +95,12 @@ public class AnaliseEstudoNormal_E_ParcialDTO implements Serializable{
 	}
 	public void setTotal_somatorioReparteEstudoOrigem(BigInteger total_somatorioReparteEstudoOrigem) {
 		this.total_somatorioReparteEstudoOrigem = total_somatorioReparteEstudoOrigem;
+	}
+	public List<EdicoesProdutosDTO> getEdicoesBase() {
+		return edicoesBase;
+	}
+	public void setEdicoesBase(List<EdicoesProdutosDTO> edicoesBase) {
+		this.edicoesBase = edicoesBase;
 	}
 	
 }
