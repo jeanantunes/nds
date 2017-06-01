@@ -1935,6 +1935,23 @@ public class BoletoServiceImpl implements BoletoService {
         			instrucao1 = instrucao1.replace("R$XXX", "R$ 00,00");
         		}
         	}
+        }else{
+               	
+			instrucao1 = banco.getInstrucoes1();
+			
+			String multa = "0,00%";
+			String juros = "0,00%";
+			
+			if(BigDecimalUtil.isMaiorQueZero(banco.getMulta())){
+				multa = banco.getMulta().toString();
+			}
+			
+			if(BigDecimalUtil.isMaiorQueZero(banco.getJuros())){
+				juros = banco.getJuros().toString();
+			}
+			
+			instrucao1 = instrucao1.replace("XXX%", multa);
+			instrucao1 = instrucao1.replace("YYY%", juros);
         }
 
         if(BigDecimalUtil.isMaiorQueZero(banco.getJuros())){

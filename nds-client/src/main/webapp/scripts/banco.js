@@ -447,8 +447,12 @@ var bancoController = $.extend(true, {
 			
 			if(resultado.exibirValorMonetario){
 				$("#tipoExibicaoValorMoeda", this.workspace).attr('checked', 'checked');
+				$("#alterVrMulta", this.workspace).prop("disabled", false);
+				$("#alterMulta", this.workspace).prop("disabled", true);
 			}else{
 				$("#tipoExibicaoValorPorcentagem", this.workspace).attr('checked', 'checked');
+				$("#alterVrMulta", this.workspace).prop("disabled", true);
+				$("#alterMulta", this.workspace).prop("disabled", false);
 			}
 			
 			$("#alterInstrucoes1", this.workspace).val(resultado.instrucoes1);
