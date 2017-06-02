@@ -653,7 +653,9 @@ var bancoController = $.extend(true, {
 		exibirValorPorcentagem: function(){
 			
 			$("#alterVrMulta", this.workspace).val("");
+			
 			$("#alterVrMulta", this.workspace).prop("disabled", true);
+			$("#alterMulta", this.workspace).prop("disabled", false);
 
 			if($("#alterMulta", this.workspace).val() == "" && $("#alterVrMulta", this.workspace).val() == ""){
 				$("#alterMulta", this.workspace).val("0,0000");
