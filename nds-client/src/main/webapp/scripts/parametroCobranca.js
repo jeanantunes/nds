@@ -554,6 +554,16 @@ var parametroCobrancaController = $.extend(true,
 			}else{
 				$('.formPgtoBoleto', this.workspace).hide();
 			}
+			if(resultado.protestarBoletoRegistrado){
+
+				$("#radioProtestado").prop("checked", true);
+				$("#quantidadeDiasProtesto", this.workspace).val(resultado.quantidadeDiasParaProtesto);
+				parametroCobrancaController.isExibirInputProtesto(true);
+			}else{
+				$("#radioNaoProtestado").prop("checked", true);
+				$("#quantidadeDiasProtesto", this.workspace).val(0);
+				parametroCobrancaController.isExibirInputProtesto(false);
+			}
 		},
 
 
@@ -562,6 +572,11 @@ var parametroCobrancaController = $.extend(true,
 			if(novo){
 				idPolitica = null;
 			}
+			if($("#radioProtestado", this.workspace).is(':checked') && $("#quantidadeDiasProtesto", this.workspace).val() == ""){
+				exibirMensagem('WARNING', ['Insira um valor válido para quantidade de dias.']);
+				return;
+			}
+			
 			var parametroCobranca = {
 					idPolitica: idPolitica,
 					tipoFormaCobranca: tipoFormaCobranca,
@@ -1168,8 +1183,10 @@ var parametroCobrancaController = $.extend(true,
 		isExibirInputProtesto : function (isExibir){
 			if(isExibir){
 				$("#inputQuantidadeDiasProtesto", parametroCobrancaController.workspace).show();
+				$("#quantidadeDiasProtesto", parametroCobrancaController.workspace).numeric();
 			}else{
 				$("#inputQuantidadeDiasProtesto", parametroCobrancaController.workspace).hide();
+				$("#quantidadeDiasProtesto", this.workspace).val(0);
 			}
 		}
 	}

@@ -50,6 +50,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
+import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
@@ -3099,6 +3100,8 @@ public class BoletoServiceImpl implements BoletoService {
 
 
 		int somaSquencial = 0;
+		
+		PoliticaCobranca politicaCobranca = politicaCobrancaService.obterPoliticaCobrancaBoleto();
 
 		for(GeraDividaDTO divida : dividas) {
 
@@ -3109,6 +3112,18 @@ public class BoletoServiceImpl implements BoletoService {
         		switch (banco.getNumeroBanco()) {
         			case UtilitarioCNAB.BANCO_ITAU:
         				CobRegEnvTipoRegistroItau01 detalheItau = this.montarRegistroItau01(boleto, pessoaCedente, banco, count);
+        				
+        				if(politicaCobranca != null && politicaCobranca.getFormaCobranca() != null){
+    						if(politicaCobranca.getFormaCobranca().isProtestarBoletoRegistrado()){
+    							Long qtdDiasProtesto = 0L;
+    							if(politicaCobranca.getFormaCobranca().getQuantidadeDiasParaProtesto() != null){
+    								qtdDiasProtesto = politicaCobranca.getFormaCobranca().getQuantidadeDiasParaProtesto();
+    							}
+
+    							detalheItau.setCodigoInstrucao("34");
+    							detalheItau.setPrazo(qtdDiasProtesto.toString());
+    						}
+        				}
         				list.add(detalheItau);
         				break;
         			case UtilitarioCNAB.BANCO_BRADESCO:

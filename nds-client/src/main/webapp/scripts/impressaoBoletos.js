@@ -371,7 +371,7 @@ var impressaoBoletosController = $.extend(true, {
     	if(banco == '-1') {
     		$("#impressao-boleto-banco-dialog").dialog("close");
     		
-			exibirMensagem('WARNING', 'Favor selecionar um Banco');
+			exibirMensagem('WARNING', ['Favor selecionar um Banco']);
 			return false;
     	} else {
     		$("#impressao-dialog-banco").dialog("close");

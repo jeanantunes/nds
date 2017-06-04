@@ -203,7 +203,7 @@
 					                                     	</td>
 					                                     	 <td width="20%" id="inputQuantidadeDiasProtesto" style="display: none;">
 					                                        	<input class="" type="text" name="quantidadeDiasProtesto"
-					                                            id="quantidadeDiasProtesto" style="width: 30px;" maxlength="02" />
+					                                            id="quantidadeDiasProtesto" style="width: 30px;" maxlength="02" value="01" />
 					                                        </td>
 					                                    </tr>
 					                                    <td>&nbsp;</td>

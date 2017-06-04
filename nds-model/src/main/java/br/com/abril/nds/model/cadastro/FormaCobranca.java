@@ -289,4 +289,20 @@ public class FormaCobranca implements Serializable {
 		this.politicaCobranca = politicaCobranca;
 	}
 	
+	public boolean isProtestarBoletoRegistrado() {
+		return protestarBoletoRegistrado;
+	}
+
+	public void setProtestarBoletoRegistrado(boolean protestarBoletoRegistrado) {
+		this.protestarBoletoRegistrado = protestarBoletoRegistrado;
+	}
+
+	public Long getQuantidadeDiasParaProtesto() {
+		return quantidadeDiasParaProtesto;
+	}
+
+	public void setQuantidadeDiasParaProtesto(Long quantidadeDiasParaProtesto) {
+		this.quantidadeDiasParaProtesto = quantidadeDiasParaProtesto;
+	}
+	
 }
