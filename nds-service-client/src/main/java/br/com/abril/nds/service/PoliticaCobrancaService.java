@@ -1,8 +1,6 @@
 package br.com.abril.nds.service;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import br.com.abril.nds.client.vo.ParametroCobrancaVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
