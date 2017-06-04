@@ -448,7 +448,7 @@ var bancoController = $.extend(true, {
 			if(resultado.exibirValorMonetario){
 				$("#tipoExibicaoValorMoeda", this.workspace).attr('checked', 'checked');
 				$("#alterVrMulta", this.workspace).prop("disabled", false);
-				$("#alterMulta", this.workspace).prop("disabled", true);
+				$("#alterMulta", this.workspace).prop("disabled", false);
 			}else{
 				$("#tipoExibicaoValorPorcentagem", this.workspace).attr('checked', 'checked');
 				$("#alterVrMulta", this.workspace).prop("disabled", true);
@@ -573,7 +573,8 @@ var bancoController = $.extend(true, {
 	    		
 	    		var jurosVar = $("#newJuros", this.workspace).val();
 	    		
-	    		$("#newInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de R$"+ multa+". Após vencimento, cobrar juros diários de "+bancoController.obterJurosFormatado(jurosVar)+"%.");
+	    		$("#newInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de R$"+ multa+". Após vencimento, cobrar juros diários de R$YYY.");
+
 	    	}
 	    	
 	    	if($("#newVrMulta", this.workspace).val() != ""){
@@ -692,7 +693,7 @@ var bancoController = $.extend(true, {
 			$("#alterMulta", this.workspace).val("");
 			
 			$("#alterVrMulta", this.workspace).prop("disabled", false);
-			$("#alterMulta", this.workspace).prop("disabled", true);
+			$("#alterMulta", this.workspace).prop("disabled", false);
 			
 			if($("#alterVrMulta", this.workspace).val() == ""){
 				$("#alterInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de R$XXX. Após vencimento, cobrar juros diários de R$YYY.");
@@ -709,7 +710,7 @@ var bancoController = $.extend(true, {
 		exibirValorMoedaNew: function(){
 			
 			$("#newVrMulta", this.workspace).prop("disabled", false);
-			$("#newMulta", this.workspace).prop("disabled", true);
+			$("#newMulta", this.workspace).prop("disabled", false);
 						
 			$("#newMulta", this.workspace).val("");
 			
