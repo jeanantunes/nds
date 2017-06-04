@@ -142,13 +142,13 @@
                                     <tr>
                                         <td width="9%"><input class="formPgto" type="radio"
                                             name="radioFormaCobrancaBoleto"
-                                            id="radioFormaCobrancaBoleto.REGISTRADA" value="COM_REGISTRO" /></td>
+                                            id="radioFormaCobrancaBoleto.REGISTRADA" value="COM_REGISTRO" onclick="parametroCobrancaController.isExibirProtesto(true);" /></td>
                                         <td width="34%"><label class="formPgto"
                                             for="radioFormaCobrancaBoleto.REGISTRADA">Registrado</label></td>
                                         <td width="10%"><input class="formPgto" type="radio"
                                             name="radioFormaCobrancaBoleto"
                                             id="radioFormaCobrancaBoleto.NAO_REGISTRADA"
-                                            value="SEM_REGISTRO" /></td>
+                                            value="SEM_REGISTRO" onclick="parametroCobrancaController.isExibirProtesto(false);" /></td>
                                         <td width="47%"><label class="formPgto"
                                             for="radioFormaCobrancaBoleto.NAO_REGISTRADA">N&atilde;o
                                                 Registrado</label></td>
@@ -166,15 +166,15 @@
                         </tr>
 												<tr>
 					                            <td>
-					                            	<span class="">Protestar boleto registrado em caso de inadimpl&ecirc;ncia:</span>
+					                            	<span class="formPgtoBoleto" style="display: none;">Protestar boleto registrado em caso de inadimpl&ecirc;ncia:</span>
 					                            </td>
 					                            <td>
-					                                <table width="100%" border="0" cellspacing="0" cellpadding="0"class="">
+					                                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="formPgtoBoleto" style="display: none;">
 
 					                                    <tr>
 					                                        <td width="9%">
 					                                        	<input class="" type="radio" name="radioFormaCobrancaBoletoProtesto"
-					                                            id="radioFormaCobrancaBoleto.PROTESTADA" value="PROTESTADA"
+					                                            id="radioProtestado"
 					                                            onclick="parametroCobrancaController.isExibirInputProtesto(true);" />
 					                                        </td>
 					                                         <td width="9%" style="padding-left: 11px;">
@@ -184,8 +184,8 @@
 					                                     	</td>
 					                                         <td width="9%" style="padding-left: 59px;">
 					                                        	<input class="" type="radio" name="radioFormaCobrancaBoletoProtesto"
-					                                            id="radioFormaCobrancaBoleto.NAO_PROTESTADA" checked="checked"
-					                                            value="NAO_PROTESTADA" onclick="parametroCobrancaController.isExibirInputProtesto(false);" />
+					                                            id="radioNaoProtestado" checked="checked" 
+																onclick="parametroCobrancaController.isExibirInputProtesto(false);" />
 					                                        </td>
 					                                         <td width="9%" style="padding-left: 14px;">
 					                                        	<label class="" for="radioFormaCobrancaBoleto.NAO_PROTESTADA">
@@ -203,7 +203,7 @@
 					                                     	</td>
 					                                     	 <td width="20%" id="inputQuantidadeDiasProtesto" style="display: none;">
 					                                        	<input class="" type="text" name="quantidadeDiasProtesto"
-					                                            id="radioFormaCobrancaBoleto.quantidadeDiasProtesto" style="width: 30px;" maxlength="02" />
+					                                            id="quantidadeDiasProtesto" style="width: 30px;" maxlength="02" />
 					                                        </td>
 					                                    </tr>
 					                                    <td>&nbsp;</td>

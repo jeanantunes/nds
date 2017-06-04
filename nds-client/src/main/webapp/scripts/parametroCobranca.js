@@ -399,6 +399,14 @@ var parametroCobrancaController = $.extend(true,
 
 			parametroCobrancaController.obterDadosBancarios($("#dBanco", this.workspace).val());
 		},
+		
+		isExibirProtesto : function(isExibir){
+			if(isExibir){
+				$('.formPgtoBoleto', this.workspace).show();
+			}else{
+				$('.formPgtoBoleto', this.workspace).hide();
+			}
+		},
 
 
 		mudaConcentracaoPagamento : function(op){
@@ -540,6 +548,12 @@ var parametroCobrancaController = $.extend(true,
 			});
 
 			parametroCobrancaController.exibirAcumuloDivida(resultado.principal);
+			
+			if(resultado.tipoCobranca == "BOLETO" && resultado.formaCobrancaBoleto == "COM_REGISTRO"){
+				$('.formPgtoBoleto', this.workspace).show();
+			}else{
+				$('.formPgtoBoleto', this.workspace).hide();
+			}
 		},
 
 
@@ -572,7 +586,9 @@ var parametroCobrancaController = $.extend(true,
 					quinta : $("#dPQu", this.workspace).attr('checked')  == 'checked',
 					sexta : $("#dPSex", this.workspace).attr('checked')  == 'checked',
 					sabado : $("#dPSab", this.workspace).attr('checked')  == 'checked',
-					domingo : $("#dPDom", this.workspace).attr('checked')  == 'checked'
+					domingo : $("#dPDom", this.workspace).attr('checked')  == 'checked',
+					protestarBoletoRegistrado : $("#radioProtestado", this.workspace).is(':checked'),
+					quantidadeDiasParaProtesto : $("#quantidadeDiasProtesto", this.workspace).val()
 			};
 
 			$("input[name='radioFormaCobrancaBoleto']:checked", this.workspace).each(function(i) {
