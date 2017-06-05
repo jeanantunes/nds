@@ -84,8 +84,6 @@ public class MatrizLancamentoController extends BaseController {
     @Autowired
     private LancamentoService lancamentoService;
     
-  
-    
     @Autowired
     private HttpServletResponse httpResponse;
     
@@ -1505,7 +1503,7 @@ public class MatrizLancamentoController extends BaseController {
             
             final RodapeDTO rodape = new RodapeDTO(CurrencyUtil.formatarValor(valorTotal));
             
-            FileExporter.to("matriz_balanceamento", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, rodape,
+            FileExporter.to("matriz_lançamento", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, rodape,
                     listaProdutoBalanceamentoVO, ProdutoLancamentoVO.class, httpResponse);
         }
         

@@ -351,7 +351,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		final StringBuilder hql = new StringBuilder()
 		
 		.append(" SELECT pe.id as id, p.codigo as codigoProduto, p.NOME_COMERCIAL as nomeComercial, ")
-		.append("        pe.NUMERO_EDICAO as numeroEdicao, coalesce(if(pessoa.tipo = 'F',pessoa.nome, pessoa.RAZAO_SOCIAL),pessoa.nome_fantasia,'') as nomeFornecedor, ")
+		.append("        pe.NUMERO_EDICAO as numeroEdicao, coalesce(if(pessoa.tipo = 'F',pessoa.nome, pessoa.NOME_FANTASIA),pessoa.nome_fantasia,'') as nomeFornecedor, ")
 		.append("        l.TIPO_LANCAMENTO as statusLancamento, ") 
   		.append("        l.status as statusSituacao , ")
 		

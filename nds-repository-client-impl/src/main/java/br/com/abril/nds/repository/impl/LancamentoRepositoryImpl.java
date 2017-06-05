@@ -583,7 +583,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 
 		sql.append(" select ");
 		sql.append(" fornecedor.ID as idFornecedor, ");
-		sql.append(" pessoaFornecedor.RAZAO_SOCIAL as nomeFornecedor, ");
+		sql.append(" pessoaFornecedor.NOME_FANTASIA as nomeFornecedor, ");
 		sql.append(" periodoLancamentoParcial.TIPO as parcial, ");
 		sql.append(" lancamento.STATUS as statusLancamento, ");
 		sql.append(" lancamento.ID as idLancamento, ");
@@ -593,7 +593,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 		sql.append(" lancamento.DATA_REC_DISTRIB as novaData, ");
 		sql.append(" produto.EDITOR_ID as idEditor, ");
 		sql.append(" produtoEdicao.PEB as peb, "); 
-		sql.append(" pessoaEditor.RAZAO_SOCIAL as nomeEditor, ");
+		sql.append(" pessoaEditor.NOME_FANTASIA as nomeEditor, ");
 	
 		sql.append(" coalesce(sum( ");
 		sql.append("	case when (tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO = :tipoParcial) ");

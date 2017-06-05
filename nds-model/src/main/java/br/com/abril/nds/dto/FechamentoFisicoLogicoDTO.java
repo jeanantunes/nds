@@ -15,7 +15,7 @@ import br.com.abril.nds.util.export.Exportable;
 @SuppressWarnings("serial")
 public class FechamentoFisicoLogicoDTO implements Serializable {
 
-	@Export(label = "Código", alignment = Alignment.LEFT, exhibitionOrder = 2, fontSize=9)
+	@Export(label = "Código", alignment = Alignment.LEFT, exhibitionOrder = 2, fontSize=9, widthPercent=6)
 	private String codigo;
 	
 	@Export(label = "Produto", alignment = Alignment.LEFT, exhibitionOrder = 3, fontSize=9, widthPercent=30)
@@ -78,7 +78,7 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 	@Export(label = "Venda de Encalhe", alignment = Alignment.CENTER, exhibitionOrder = 11, fontSize=9)
     private String exemplaresVendaEncalheFormatado;
 	
-	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 7, fontSize=9)
+	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 7, fontSize=9, widthPercent=6)
 	private String totalFormatado;
 	
 	private String replicar = "";

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -86,6 +87,8 @@ public class PDFExporter implements Exporter {
 	        
 	        document.open();
 
+	        ndsFileHeader.setNomeRelatorio(name);
+	        
 	        this.processReportHeader(document, ndsFileHeader);
 	        
 	        this.processFilters(exportModel, document);
@@ -117,22 +120,22 @@ public class PDFExporter implements Exporter {
 		
 		PdfPCell headerPdfCell = new PdfPCell();
 		
-		headerPdfCell.setFixedHeight(68);
+		headerPdfCell.setFixedHeight(45);
 		headerPdfCell.setBorder(0);
 		
-		headerPdfCell.addElement(new Chunk(this.createBackgroundImage(), -3F, -48F));
+//		headerPdfCell.addElement(new Chunk(this.createBackgroundImage(), -3F, -48F));
 		
-		Image logo  = this.createLogotipoImage(ndsFileHeader.getLogo());
-		
-		if(logo!= null){
-			headerPdfCell.addElement(new Chunk(logo, -3F, -30F));
-		}
+//		Image logo  = this.createLogotipoImage(ndsFileHeader.getLogo());
+//		
+//		if(logo!= null){
+//			headerPdfCell.addElement(new Chunk(logo, -3F, -30F));
+//		}
 		
 		headerPdfTable.addCell(headerPdfCell);
 		
 		PdfPCell dadosDistribuidorPdfCell = new PdfPCell();
 		
-		dadosDistribuidorPdfCell.setFixedHeight(68);
+		dadosDistribuidorPdfCell.setFixedHeight(55);
 		dadosDistribuidorPdfCell.setBorder(0);
 		
 		Paragraph dadosDistribuidorParagraph = new Paragraph();
@@ -142,24 +145,37 @@ public class PDFExporter implements Exporter {
 		
 		dadosDistribuidorParagraph.add(new Paragraph(nomeDistribuidor, headerBoldFont));
 		
-		if (!cnpjDistribuidor.isEmpty()) {
-			
-			dadosDistribuidorParagraph.add(new Paragraph("CNPJ: " + cnpjDistribuidor, headerFont));
-		}
+//		if (!cnpjDistribuidor.isEmpty()) {
+//			
+//			dadosDistribuidorParagraph.add(new Paragraph("CNPJ: " + cnpjDistribuidor, headerFont));
+//		}
+		
+		String nomeRelatorio = ndsFileHeader.getNomeRelatorio();
+		
+		nomeRelatorio = tratarNomeRelatorio(nomeRelatorio);
+		
+		dadosDistribuidorParagraph.add(new Paragraph("\n"+ nomeRelatorio.toUpperCase(), titleFont));
 		
 		dadosDistribuidorPdfCell.addElement(dadosDistribuidorParagraph);
 		
 		headerPdfTable.addCell(dadosDistribuidorPdfCell);
 		
-		PdfPCell outrosDadosPdfCell = new PdfPCell();
+		PdfPCell outrosDadosPdfCell = new PdfPCell(); 
 		
-		outrosDadosPdfCell.setFixedHeight(68);
+		outrosDadosPdfCell.setFixedHeight(45);
 		outrosDadosPdfCell.setBorder(0);
 		
 		Paragraph outrosDadosParagraph = new Paragraph();
 		
+		if (!cnpjDistribuidor.isEmpty()) {
+			
+//			outrosDadosParagraph.add(new Phrase("CNPJ: " + cnpjDistribuidor, headerFont));
+			outrosDadosParagraph.add(new Phrase("CNPJ: ", headerBoldFont));
+			outrosDadosParagraph.add(new Phrase(cnpjDistribuidor, headerFont));
+		}
+		
 		String dia = ndsFileHeader.getData() == null ? "" : DateUtil.formatarDataPTBR(ndsFileHeader.getData());
-		String nomeUsuario = "\n"  + StringUtils.defaultString(ndsFileHeader.getNomeUsuario());
+		String nomeUsuario = StringUtils.defaultString(ndsFileHeader.getNomeUsuario());
 		
 		Phrase diaPhrase = null;
 		
@@ -171,18 +187,53 @@ public class PDFExporter implements Exporter {
 		Phrase dataPhrase = new Phrase(new Chunk(dia, headerFont));
 		
 		if (diaPhrase != null) {
+			outrosDadosParagraph.add("       ");
 			
 			outrosDadosParagraph.add(diaPhrase);
 		}
 		
+		String data = DateUtil.formatarDataPTBR(new Date());
+		String hora = DateUtil.formatarHoraMinuto(new Date());
+		
+		Paragraph dadosParagraph = new Paragraph();
+		
+		dadosParagraph.add(new Phrase("\nUsuário: ", headerBoldFont));
+		dadosParagraph.add(new Phrase(nomeUsuario, headerFont));
+		dadosParagraph.add("            ");
+		dadosParagraph.add(new Phrase("Data Geração: ", headerBoldFont));
+		dadosParagraph.add(new Phrase(data+" às "+hora, headerFont));
+		
+		
+		
 		outrosDadosParagraph.add(dataPhrase);
-		outrosDadosParagraph.add(new Paragraph(nomeUsuario, headerFont));
+//		outrosDadosParagraph.add(new Paragraph(nomeUsuario, headerFont));
+//		outrosDadosParagraph.add(new Paragraph("Data Geração: "+data, headerFont));
+		outrosDadosParagraph.add(dadosParagraph);
+		
 		
 		outrosDadosPdfCell.addElement(outrosDadosParagraph);
 		
 		headerPdfTable.addCell(outrosDadosPdfCell);
 		
 		document.add(headerPdfTable);
+	}
+
+	private String tratarNomeRelatorio(String nomeRelatorio) {
+		nomeRelatorio = nomeRelatorio.replace("_", " ");
+		nomeRelatorio = nomeRelatorio.replace("-", " ");
+		nomeRelatorio = nomeRelatorio.replace("/", " ");
+		nomeRelatorio = nomeRelatorio.replace("0", " ");
+		nomeRelatorio = nomeRelatorio.replace("1", " ");
+		nomeRelatorio = nomeRelatorio.replace("2", " ");
+		nomeRelatorio = nomeRelatorio.replace("3", " ");
+		nomeRelatorio = nomeRelatorio.replace("4", " ");
+		nomeRelatorio = nomeRelatorio.replace("5", " ");
+		nomeRelatorio = nomeRelatorio.replace("6", " ");
+		nomeRelatorio = nomeRelatorio.replace("7", " ");
+		nomeRelatorio = nomeRelatorio.replace("8", " ");
+		nomeRelatorio = nomeRelatorio.replace("9", " ");
+		nomeRelatorio = "Relatório "+nomeRelatorio;
+		return nomeRelatorio;
 	}
 	
 	private Image createBackgroundImage() throws IOException, BadElementException {
@@ -226,7 +277,15 @@ public class PDFExporter implements Exporter {
         	
     		document.add(new Paragraph("Filtro de Pesquisa", titleFont));
     		
-    		PdfPTable filterPdfTable = new PdfPTable(exportModel.getFilters().size());
+    		int qtdCampos = 0;
+    		
+    		for (ExportFilter exportFilter : exportFilters) {
+				if(exportFilter.getValue() != null && !exportFilter.getValue().isEmpty() && !exportFilter.getValue().equalsIgnoreCase("0")){
+					++qtdCampos;
+				}
+			}
+    		
+    		PdfPTable filterPdfTable = new PdfPTable(qtdCampos);
     		
     		filterPdfTable.setSpacingBefore(10F);
     		
@@ -239,6 +298,10 @@ public class PDFExporter implements Exporter {
             Float[] exportWidths = new Float[exportModel.getFilters().size()];
 
         	for (ExportFilter exportFilter : exportFilters) {
+        		
+        		if(exportFilter.getValue() == null || exportFilter.getValue().isEmpty() || exportFilter.getValue().equalsIgnoreCase("0")){
+        			continue;
+        		}
         		
         		PdfPCell filterLabelPdfCell = new PdfPCell();
         		

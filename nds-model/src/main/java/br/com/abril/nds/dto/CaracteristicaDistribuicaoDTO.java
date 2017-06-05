@@ -19,7 +19,7 @@ public class CaracteristicaDistribuicaoDTO implements Serializable{
 	@Export(label="Classificação",exhibitionOrder=2)
 	private String classificacao;
 	
-	@Export(label="Segmento",exhibitionOrder=3)
+	@Export(label="Segmento",exhibitionOrder=3, fontSize = 7)
 	private String segmento;
 	
 	@Export(label="Produto",exhibitionOrder=4)

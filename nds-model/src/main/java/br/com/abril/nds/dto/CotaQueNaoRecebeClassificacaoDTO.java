@@ -20,6 +20,24 @@ public class CotaQueNaoRecebeClassificacaoDTO extends UsuarioLogDTO {
 	@Export(label = "Nome", alignment = Alignment.LEFT, exhibitionOrder = 1)
 	private String nomePessoa;
 	
+	@Export(label="Usuário", alignment=Alignment.LEFT,exhibitionOrder=2)
+	@Override
+	public String getNomeUsuario() {
+		return super.getNomeUsuario();
+	}
+
+	@Export(label="Data", alignment=Alignment.LEFT,exhibitionOrder=3)
+	@Override
+	public String getDataAlteracaoFormatada() {
+		return super.getDataAlteracaoFormatada();
+	}
+	
+	@Export(label="Hora", alignment=Alignment.LEFT,exhibitionOrder=4)
+	@Override
+	public String getHoraAlteracaoFormatada() {
+		return super.getHoraAlteracaoFormatada();
+	}
+	
 	public Long getIdClassificacaoNaoRecebida() {
 		return idClassificacaoNaoRecebida;
 	}

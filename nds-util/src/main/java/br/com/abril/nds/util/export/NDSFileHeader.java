@@ -22,6 +22,8 @@ public class NDSFileHeader {
 	
 	private InputStream logo;
 	
+	private String nomeRelatorio;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -111,7 +113,14 @@ public class NDSFileHeader {
 	public void setLogo(InputStream logo) {
 		this.logo = logo;
 	}
-	
+
+	public String getNomeRelatorio() {
+		return nomeRelatorio;
+	}
+
+	public void setNomeRelatorio(String nomeRelatorio) {
+		this.nomeRelatorio = nomeRelatorio;
+	}
 	
 
 }

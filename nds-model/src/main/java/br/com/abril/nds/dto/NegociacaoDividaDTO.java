@@ -11,7 +11,10 @@ import br.com.abril.nds.util.export.Exportable;
 public class NegociacaoDividaDTO implements Serializable {
 	
 	private static final long serialVersionUID = 8273101897954671949L;
-
+	
+	@Export(label = "Número Cota")
+	private Integer numeroCota;
+	
 	@Export(label = "Data Emissão")
 	private Date dtEmissao;
 	
@@ -29,6 +32,9 @@ public class NegociacaoDividaDTO implements Serializable {
 
 	@Export(label = "Total R$")
 	private BigDecimal total;
+	
+	@Export(label = "Detalhes")
+	private String detalhes;
 	
 	private Long idDivida;
 
@@ -96,6 +102,41 @@ public class NegociacaoDividaDTO implements Serializable {
 
 	public void setIdDivida(Long idDivida) {
 		this.idDivida = idDivida;
+	}
+
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
+	}
+
+	public String getDetalhes() {
+		return detalhes;
+	}
+
+	public void setDetalhes(String data, String valor, String observacao) {
+
+		String detalhes = "";
+		
+		if(this.detalhes != null && !this.detalhes.isEmpty()){
+			detalhes = this.detalhes+"\n";
+		}
+		
+		if(!data.isEmpty()){
+			detalhes += "Data: "+data+" \n ";
+		}
+		
+		if(!valor.isEmpty()){
+			detalhes += "Valor: R$ "+valor+" \n ";
+		}
+		
+		if(!valor.isEmpty()){
+			detalhes += "Observação: "+observacao+".";
+		}
+		
+		this.detalhes = detalhes;
 	}
 
 }
