@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import br.com.abril.nds.model.HistoricoAlteracaoPrecoVenda;
+import br.com.abril.nds.repository.*;
+import br.com.abril.nds.service.*;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,15 +34,6 @@ import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.CotaRepository;
-import br.com.abril.nds.repository.DistribuidorRepository;
-import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
-import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
-import br.com.abril.nds.service.GerarCobrancaService;
-import br.com.abril.nds.service.LancamentoService;
-import br.com.abril.nds.service.MovimentoEstoqueCotaService;
-import br.com.abril.nds.service.MovimentoEstoqueService;
-import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.Intervalo;
 
 
@@ -68,7 +63,14 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	
 	@Autowired
 	private GerarCobrancaService gerarCobrancaService;
-	
+
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
+
+	@Autowired
+	private DistribuidorService distribuidorService;
+
+	private HistoricoAlteracaoPrecoVendaRepository historicoAlteracaoPrecoVendaRepository;
 	@Transactional
 	public List<MovimentoEstoqueCota> obterMovimentoCotaPorTipoMovimento(Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque){
 		return movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, idCota, grupoMovimentoEstoque);
@@ -373,5 +375,90 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	public void atualizarPrecoProdutoExpedido(final Long idProdutoEdicao, final BigDecimal precoProduto) {
 		
 		movimentoEstoqueCotaRepository.atualizarPrecoProdutoExpedido(idProdutoEdicao, precoProduto);
+	}
+
+
+	public List<BigDecimal> obterDescontoPublicaoExpedida(Long produtoEdicaoId){
+		return movimentoEstoqueCotaRepository.obterDescontoPublicaoExpedida(produtoEdicaoId);
+	}
+
+	public List<BigDecimal> obterDescontoPublicaoExpedidaPorCota(Long cotaId){
+		return movimentoEstoqueCotaRepository.obterDescontosDaCota(cotaId);
+	}
+
+	@Transactional
+	@Override
+	public void atualizarDescontosDaPublicacao(String codigoProduto, Long numeroEdicao,Double descontoAtual,Double novoDesconto){
+
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto,numeroEdicao);
+		List<MovimentoEstoqueCota> movimentoEstoqueCotas = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaFinanceiroNaoProcessadoDePublicaoExpedida(produtoEdicao.getId());
+		BigDecimal desconto = BigDecimal.valueOf(novoDesconto);
+
+		for (MovimentoEstoqueCota mec: movimentoEstoqueCotas) {
+
+			if(mec.getValoresAplicados().getValorDesconto().equals(BigDecimal.valueOf(descontoAtual))){
+
+				mec.getValoresAplicados().setValorDesconto(desconto);
+
+				mec.getValoresAplicados().setPrecoComDesconto( mec.getValoresAplicados().getPrecoVenda().min(mec.getValoresAplicados().getValorDesconto()));
+				this.movimentoEstoqueCotaRepository.saveOrUpdate(mec);
+			}
+
+		}
+
+		BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+		produtoEdicao.setDesconto(desconto);
+
+		//:precoProduto - ((mc.valor_desconto/100)* :precoProduto)
+		BigDecimal valoAtualizado = precoVenda.min(precoVenda.multiply(desconto.divide(BigDecimal.valueOf(100))));
+		produtoEdicao.setPrecoVenda(valoAtualizado);
+
+		HistoricoAlteracaoPrecoVenda hapc = new HistoricoAlteracaoPrecoVenda();
+		hapc.setDataOperacao(distribuidorService.obterDataOperacaoDistribuidor());
+		hapc.setUsuario(usuarioService.getUsuarioLogado());
+		hapc.setProdutoEdicao(produtoEdicao);
+		hapc.setValorAntigo(precoVenda);
+		hapc.setValorAtual(valoAtualizado);
+		hapc.setTipoAlteracao("DESCONTO");
+		historicoAlteracaoPrecoVendaRepository.adicionar(hapc);
+	}
+
+	@Transactional
+	@Override
+	public void atualizarDescontosDaCota(Long cotaId,Double descontoAtual,Double novoDesconto){
+
+		List<MovimentoEstoqueCota> movimentoEstoqueCotas = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaFinanceiroNaoProcessadoDaCota(cotaId);
+		BigDecimal desconto = BigDecimal.valueOf(novoDesconto);
+
+		for (MovimentoEstoqueCota mec: movimentoEstoqueCotas) {
+
+			if(mec.getValoresAplicados().getValorDesconto().equals(BigDecimal.valueOf(descontoAtual))){
+				mec.getValoresAplicados().setValorDesconto(BigDecimal.valueOf(novoDesconto));
+
+				mec.getValoresAplicados().setPrecoComDesconto( mec.getValoresAplicados().getPrecoVenda().min(mec.getValoresAplicados().getValorDesconto()));
+				this.movimentoEstoqueCotaRepository.saveOrUpdate(mec);
+
+				ProdutoEdicao produtoEdicao = mec.getProdutoEdicao();
+
+				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+				produtoEdicao.setDesconto(desconto);
+
+				//:precoProduto - ((mc.valor_desconto/100)* :precoProduto)
+				BigDecimal valoAtualizado = precoVenda.min(precoVenda.multiply(desconto.divide(BigDecimal.valueOf(100))));
+				produtoEdicao.setPrecoVenda(valoAtualizado);
+
+				HistoricoAlteracaoPrecoVenda hapc = new HistoricoAlteracaoPrecoVenda();
+				hapc.setDataOperacao(distribuidorService.obterDataOperacaoDistribuidor());
+				hapc.setUsuario(usuarioService.getUsuarioLogado());
+				hapc.setProdutoEdicao(produtoEdicao);
+				hapc.setValorAntigo(precoVenda);
+				hapc.setValorAtual(valoAtualizado);
+				hapc.setCota(mec.getCota());
+				hapc.setTipoAlteracao("DESCONTO");
+
+				historicoAlteracaoPrecoVendaRepository.adicionar(hapc);
+			}
+
+		}
 	}
 }

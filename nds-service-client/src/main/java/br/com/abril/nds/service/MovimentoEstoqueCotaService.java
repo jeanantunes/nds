@@ -53,4 +53,12 @@ public interface MovimentoEstoqueCotaService {
 	Date obterDataUltimaMovimentacaoReparteExpedida(Integer numeroCota, Long idProdutoEdicao);
 
 	void atualizarPrecoProdutoExpedido(final Long id,final BigDecimal precoProduto);
+
+	List<BigDecimal> obterDescontoPublicaoExpedida(Long produtoEdicaoId);
+
+	List<BigDecimal> obterDescontoPublicaoExpedidaPorCota(Long cotaId);
+
+	void atualizarDescontosDaPublicacao(String codigoProduto, Long numeroEdicao,Double descontoAtual,Double novoDesconto);
+
+	void atualizarDescontosDaCota(Long cotaId,Double descontoAtual,Double novoDesconto);
 }
