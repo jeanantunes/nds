@@ -2191,7 +2191,31 @@ if ( dto.getRepartePrevisto() != null) {
     	
     	return produtoEdicao.getPrecoVenda();
     }
-    
+
+    @Override
+    @Transactional(readOnly=true)
+    public List<BigDecimal> obterDescontosParaAlteracao(final String codigoProduto, final Long numeroEdicao){
+
+    	ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto,numeroEdicao);
+
+    	if(produtoEdicao == null){
+    		return null;
+    	}
+
+        List<BigDecimal> bigDecimals = this.movimentoEstoqueCotaService.obterDescontoPublicaoExpedida(produtoEdicao.getId());
+
+    	return bigDecimals;
+    }
+
+    @Override
+    @Transactional(readOnly=true)
+    public List<BigDecimal> obterDescontosParaAlteracaoPorCota(final Long cotaId){
+
+        List<BigDecimal> bigDecimals = this.movimentoEstoqueCotaService.obterDescontoPublicaoExpedidaPorCota(cotaId);
+
+        return bigDecimals;
+    }
+
     @Override
     @Transactional
     public void executarAlteracaoPrecoCapa(final String codigo, final Long numeroEdicao, final BigDecimal precoProduto) {
@@ -2224,6 +2248,8 @@ if ( dto.getRepartePrevisto() != null) {
 		hapc.setProdutoEdicao(produtoEdicao);
 		hapc.setValorAntigo(valorAntigo);
 		hapc.setValorAtual(precoProduto);
+        hapc.setTipoAlteracao("PREÇO");
+
 		historicoAlteracaoPrecoVendaRepository.adicionar(hapc);
     }
 

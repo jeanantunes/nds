@@ -20,6 +20,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import br.com.abril.nds.service.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -60,13 +61,6 @@ import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
-import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.service.DescontoService;
-import br.com.abril.nds.service.FileService;
-import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.PessoaFisicaService;
-import br.com.abril.nds.service.PessoaJuridicaService;
-import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -1797,5 +1791,5 @@ public class CotaController extends BaseController {
 		
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
-	
+
 }
