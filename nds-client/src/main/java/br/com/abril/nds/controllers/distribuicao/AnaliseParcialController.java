@@ -387,36 +387,36 @@ public class AnaliseParcialController extends BaseController {
     	
     	if(edicoesBase == null){
     		
-    		if(!session.getAttribute("modoAnalise").toString().equalsIgnoreCase("PARCIAL")){
+//    		if(!session.getAttribute("modoAnalise").toString().equalsIgnoreCase("PARCIAL")){
     			
-    			List<EdicaoBaseEstudoDTO> edicaoBaseEstudoDTOs = estudoProdutoEdicaoBaseService.obterEdicoesBase(idEstudo);
-    			
-    			if(edicaoBaseEstudoDTOs.size() > 0){
-    				List<EdicoesProdutosDTO> bases = new ArrayList<>();
-    				
-    				for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicaoBaseEstudoDTOs) {
-    					EdicoesProdutosDTO base = new EdicoesProdutosDTO();
-    					
-    					base.setCodigoProduto(edicaoBaseEstudoDTO.getCodigoProduto());
-    					base.setNomeProduto(edicaoBaseEstudoDTO.getNomeProduto());
-    					base.setEdicao(edicaoBaseEstudoDTO.getNumeroEdicao());
-    					base.setParcial(edicaoBaseEstudoDTO.isParcial());
-    					base.setProdutoEdicaoId(edicaoBaseEstudoDTO.getIdProdutoEdicao());
-    					
-    					bases.add(base);
-    				}
-    				
-    				return bases;
-    			}
-    		}else{
-    			List<EdicoesProdutosDTO> baseUtilizadas = analiseParcialService.carregarPeriodosAnterioresParcial(idEstudo, false);
-    			
-    			if(baseUtilizadas.size() == 0){
-    				baseUtilizadas = analiseParcialService.carregarPeriodosAnterioresParcial(idEstudo, true);
-    			}
-    			
-    			return baseUtilizadas;
-    		}
+			List<EdicaoBaseEstudoDTO> edicaoBaseEstudoDTOs = estudoProdutoEdicaoBaseService.obterEdicoesBase(idEstudo);
+			
+			if(edicaoBaseEstudoDTOs.size() > 0){
+				List<EdicoesProdutosDTO> bases = new ArrayList<>();
+				
+				for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicaoBaseEstudoDTOs) {
+					EdicoesProdutosDTO base = new EdicoesProdutosDTO();
+					
+					base.setCodigoProduto(edicaoBaseEstudoDTO.getCodigoProduto());
+					base.setNomeProduto(edicaoBaseEstudoDTO.getNomeProduto());
+					base.setEdicao(edicaoBaseEstudoDTO.getNumeroEdicao());
+					base.setParcial(edicaoBaseEstudoDTO.isParcial());
+					base.setProdutoEdicaoId(edicaoBaseEstudoDTO.getIdProdutoEdicao());
+					
+					bases.add(base);
+				}
+				
+				return bases;
+			}
+//    		}else{
+//    			List<EdicoesProdutosDTO> baseUtilizadas = analiseParcialService.carregarPeriodosAnterioresParcial(idEstudo, false);
+//    			
+//    			if(baseUtilizadas.size() == 0){
+//    				baseUtilizadas = analiseParcialService.carregarPeriodosAnterioresParcial(idEstudo, true);
+//    			}
+//    			
+//    			return baseUtilizadas;
+//    		}
     	}
     	
     	return edicoesBase;

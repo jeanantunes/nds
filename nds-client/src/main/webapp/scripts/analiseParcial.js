@@ -430,14 +430,47 @@ var analiseParcialController = $.extend(true, {
                 }
 
             } else {
+            	
+            	var isContemBaseNormal = false;
+            	
+            	var indiceBasesNormais = []; 
+            	
+            	for(var i = 0; i< analiseParcialController.edicoesBase.length; i++){
+            		if(!analiseParcialController.edicoesBase[i].parcial){
+            			isContemBaseNormal = true;
+            			indiceBasesNormais.push(i);
+            		}
+            	}
+            	
             	colSpanEdicoesBase = colSpanEdicoesBase+1;
+            	
+            	var valueBase1 = $('#dataLancamentoParcial1').val();
+            	var valueBase2 = $('#dataLancamentoParcial2').val();
+            	var valueBase3 = $('#dataLancamentoParcial3').val();
+            	
+            	if(isContemBaseNormal){
+            		for(var i = 0; i < indiceBasesNormais.length; i++){
+            			var edicao = $.extend({}, {edicao:'-'}, analiseParcialController.edicoesBase[i]);
+
+            			if(indiceBasesNormais[i] == 0){
+            				valueBase1 = edicao.edicao;
+            			}
+						if(indiceBasesNormais[i] == 1){
+            				valueBase2 = edicao.edicao;        				
+						}	
+						if(indiceBasesNormais[i] == 2){
+            				valueBase3 = edicao.edicao;
+						}
+            		}
+            	}
+            	
                 $header.prepend(
                     $('<tr>')
                         .append($('<th colspan="' + colSpanEdicoesBase + '" style="border-bottom: 1px solid #DDDDDD;">')
-                            .append('<div style="text-align: right;">Edições Base:</div>'))
-                        .append($('<th colspan="2">').append($('<div style="text-align: center;">').append($('#dataLancamentoParcial1').val())))
-                        .append($('<th colspan="2">').append($('<div style="text-align: center;">').append($('#dataLancamentoParcial2').val())))
-                        .append($('<th colspan="2">').append($('<div style="text-align: center;">').append($('#dataLancamentoParcial3').val())))
+                        .append('<div style="text-align: right;">Edições Base:</div>'))
+                        .append($('<th colspan="2">').append($('<div style="text-align: center;">').append(valueBase1)))
+                        .append($('<th colspan="2">').append($('<div style="text-align: center;">').append(valueBase2)))
+                        .append($('<th colspan="2">').append($('<div style="text-align: center;">').append(valueBase3)))
                         .append($('<th colspan="2">').append($('<div style="text-align: center;">').append('Acumulado')))
                 );
             }
