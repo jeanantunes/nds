@@ -44,6 +44,10 @@ public class PDFExporter implements Exporter {
 	
 	private static Font headerFont = new Font(Font.FontFamily.TIMES_ROMAN, 11);
 	
+	private static Font filterBoldFont = new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.BOLD);
+	
+	private static Font filterFont = new Font(Font.FontFamily.TIMES_ROMAN, 10);
+	
 	private static Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 14, Font.BOLD);
 	
 	private static Font valuesFont = new Font(Font.FontFamily.TIMES_ROMAN, 11);
@@ -174,23 +178,23 @@ public class PDFExporter implements Exporter {
 			outrosDadosParagraph.add(new Phrase(cnpjDistribuidor, headerFont));
 		}
 		
-		String dia = ndsFileHeader.getData() == null ? "" : DateUtil.formatarDataPTBR(ndsFileHeader.getData());
+//		String dia = ndsFileHeader.getData() == null ? "" : DateUtil.formatarDataPTBR(ndsFileHeader.getData());
 		String nomeUsuario = StringUtils.defaultString(ndsFileHeader.getNomeUsuario());
 		
-		Phrase diaPhrase = null;
+//		Phrase diaPhrase = null;
 		
-		if (!dia.isEmpty()) {
-			
-			diaPhrase = new Phrase("Dia: ", headerBoldFont);
-		}
+//		if (!dia.isEmpty()) {
+//			
+//			diaPhrase = new Phrase("Dia: ", headerBoldFont);
+//		}
 		
-		Phrase dataPhrase = new Phrase(new Chunk(dia, headerFont));
+//		Phrase dataPhrase = new Phrase(new Chunk(dia, headerFont));
 		
-		if (diaPhrase != null) {
-			outrosDadosParagraph.add("       ");
-			
-			outrosDadosParagraph.add(diaPhrase);
-		}
+//		if (diaPhrase != null) {
+//			outrosDadosParagraph.add("       ");
+//			
+//			outrosDadosParagraph.add(diaPhrase);
+//		}
 		
 		String data = DateUtil.formatarDataPTBR(new Date());
 		String hora = DateUtil.formatarHoraMinuto(new Date());
@@ -205,7 +209,7 @@ public class PDFExporter implements Exporter {
 		
 		
 		
-		outrosDadosParagraph.add(dataPhrase);
+//		outrosDadosParagraph.add(dataPhrase);
 //		outrosDadosParagraph.add(new Paragraph(nomeUsuario, headerFont));
 //		outrosDadosParagraph.add(new Paragraph("Data Geração: "+data, headerFont));
 		outrosDadosParagraph.add(dadosParagraph);
@@ -303,29 +307,39 @@ public class PDFExporter implements Exporter {
         			continue;
         		}
         		
-        		PdfPCell filterLabelPdfCell = new PdfPCell();
+        		PdfPCell filterPdfCell = new PdfPCell();
         		
-        		filterLabelPdfCell.setBorder(0);
+        		filterPdfCell.setBorder(0);
         		
-        		Paragraph filterLabelParagraph = 
-        			new Paragraph(StringUtils.defaultString(exportFilter.getLabel()) + ": ", valuesFont);
+        		Paragraph dadosFiltroParagraph = new Paragraph();
         		
-        		filterLabelPdfCell.addElement(filterLabelParagraph);
+        		dadosFiltroParagraph.add(new Phrase(StringUtils.defaultString(exportFilter.getLabel()) + ": ", filterBoldFont));
+        		dadosFiltroParagraph.add(new Phrase(StringUtils.defaultString(exportFilter.getValue()), filterFont));
+        		dadosFiltroParagraph.setAlignment(exportFilter.getAlignment().getValue());
         		
-        		filterPdfTable.addCell(filterLabelPdfCell);
+        		filterPdfCell.addElement(dadosFiltroParagraph);
         		
-        		PdfPCell filterValuePdfCell = new PdfPCell();
+//        		Paragraph filterLabelParagraph = 
+//        			new Paragraph(StringUtils.defaultString(exportFilter.getLabel()) + ": ", valuesFont);
         		
-        		filterValuePdfCell.setBorder(0);
+//        		filterLabelPdfCell.addElement(filterLabelParagraph);
         		
-        		Paragraph filterValueParagraph = 
-        			new Paragraph(StringUtils.defaultString(exportFilter.getValue()), valuesFont);
+//        		filterPdfTable.addCell(filterLabelPdfCell);
         		
-        		filterValueParagraph.setAlignment(exportFilter.getAlignment().getValue());
+//        		PdfPCell filterValuePdfCell = new PdfPCell();
         		
-        		filterValuePdfCell.addElement(filterValueParagraph);
+//        		filterValuePdfCell.setBorder(0);
         		
-        		filterPdfTable.addCell(filterValuePdfCell);
+//        		Paragraph filterValueParagraph = 
+//        			new Paragraph(StringUtils.defaultString(exportFilter.getValue()), valuesFont);
+//        		
+//        		filterValueParagraph.setAlignment(exportFilter.getAlignment().getValue());
+//        		
+//        		filterValuePdfCell.addElement(filterValueParagraph);
+//        		
+//        		filterPdfTable.addCell(filterValuePdfCell);
+        		
+        		filterPdfTable.addCell(filterPdfCell);
         		
         		exportWidths[headerSize] = exportFilter.getWidthPercent();
 

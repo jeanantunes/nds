@@ -918,7 +918,7 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 		
 		
-		FileExporter.to("produtoEdicoes", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
+		FileExporter.to("produto_Edicoes", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
 				listaProdutoEdicoes, ConsultaProdutoEdicaoDTO.class, this.response);
 		
 		result.nothing();
