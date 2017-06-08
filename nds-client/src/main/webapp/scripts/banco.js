@@ -690,7 +690,7 @@ var bancoController = $.extend(true, {
 		
 		exibirValorMoeda: function(){
 			
-			$("#alterMulta", this.workspace).val("");
+//			$("#alterMulta", this.workspace).val("");
 			
 			$("#alterVrMulta", this.workspace).prop("disabled", false);
 			$("#alterMulta", this.workspace).prop("disabled", false);
@@ -703,7 +703,7 @@ var bancoController = $.extend(true, {
 				}
 			}
 			
-			$("#alterVrMulta", this.workspace).focus();
+//			$("#alterVrMulta", this.workspace).focus();
 			
 		},
 		
@@ -712,7 +712,7 @@ var bancoController = $.extend(true, {
 			$("#newVrMulta", this.workspace).prop("disabled", false);
 			$("#newMulta", this.workspace).prop("disabled", false);
 						
-			$("#newMulta", this.workspace).val("");
+//			$("#newMulta", this.workspace).val("");
 			
 			if($("#newVrMulta", this.workspace).val() == ""){
 				$("#newInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de R$XXX. Após vencimento, cobrar juros diários de R$YYY.");
@@ -722,7 +722,7 @@ var bancoController = $.extend(true, {
 				}
 			}
 			
-			$("#newVrMulta", this.workspace).focus();
+//			$("#newVrMulta", this.workspace).focus();
 			
 		},
 		
