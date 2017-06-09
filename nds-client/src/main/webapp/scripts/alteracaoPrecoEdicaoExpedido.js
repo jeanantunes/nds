@@ -9,7 +9,7 @@ var manutencaoPublicacaoController = $.extend(true, {
 		
 		$("#manut-publicacao-edicaoProduto", manutencaoPublicacaoController.workspace).numeric();
 		
-		$('#manut-publicacao-novoPrecoProduto', manutencaoPublicacaoController.workspace).maskMoney({
+		$('#manut-publicacao-novoPrecoProduto,#novoDescontoInput', manutencaoPublicacaoController.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
 			 precision:2
@@ -32,13 +32,21 @@ var manutencaoPublicacaoController = $.extend(true, {
 
         if($('#opcoesVisualizacao2').is(':checked')){
 
-        	$.postJSON(manutencaoPublicacaoController.url + "/pesquisarDescontosProduto",data,function(result){
+        	var target = null;
+        	if($('#descontoOpcoesProduto').is(':checked')){
+                target = "/pesquisarDescontosProduto";
+			}else if($('#descontoOpcoesCota').is(':checked')){
+                target = "/pesquisarDescontosPorCota";
+                data={cotaNumero:cota.value}
+			}
+
+        	$.postJSON(manutencaoPublicacaoController.url + target,data,function(result){
 
         		console.log(result);
         		var descontos = result.list;
                 $('#descontoAtualSel').empty();
         		for(var x=0;x < descontos.length;x++){
-                    descontos[x] = parseFloat(descontos[x]).toString().replace('.',',');
+                    descontos[x] = parseFloat(descontos[x]).toFixed(2).toString().replace('.',',');
 
                     $('#descontoAtualSel').append('<option value="'+descontos[x]+'">'+descontos[x]+'</option>')
 				}
@@ -51,7 +59,7 @@ var manutencaoPublicacaoController = $.extend(true, {
                         " - ",manutencaoPublicacaoController.nomeProduto,
                         " - ",manutencaoPublicacaoController.numeroEdicao);
                 }else  if($('#descontoOpcoesCota').is(':checked')){
-                    nomePublicacao = "Cota " ;
+                    nomePublicacao = "Cota " +(cota.value) + " - "+ (nomeCota.value);
 				}
 
                 $('#novoDesconto-txtLegenda').text(nomePublicacao);
@@ -167,9 +175,9 @@ var manutencaoPublicacaoController = $.extend(true, {
                     }else if($('#opcoesVisualizacao2').is(':checked')){
 
                         if($('#descontoOpcoesProduto').is(':checked')){
-                            manutencaoPublicacaoController.atualizarDescontoPorProduto();
+                            manutencaoPublicacaoController.atualizarDesconto();
 						}else  if($('#descontoOpcoesCota').is(':checked')){
-                            manutencaoPublicacaoController.atualizarDescontoPorCota();
+                            manutencaoPublicacaoController.atualizarDesconto();
                         }
 
 					}
@@ -182,12 +190,12 @@ var manutencaoPublicacaoController = $.extend(true, {
 		});
 	},
 
-	atualizarDesconto:function(target,cotaId){
+	atualizarDesconto:function(){
 
         var data = {
             codigoProduto: manutencaoPublicacaoController.codigoProduto,
             numeroEdicao: manutencaoPublicacaoController.numeroEdicao,
-            cotaId:cotaId,
+            cotaNumero:cota.value,
 			descontoAtual:$("#descontoAtualSel", manutencaoPublicacaoController.workspace).val(),
             novoDesconto: $("#novoDescontoInput", manutencaoPublicacaoController.workspace).val()
         };
@@ -196,12 +204,7 @@ var manutencaoPublicacaoController = $.extend(true, {
             data,
             manutencaoPublicacaoController.precoAlteradoComSucesso);
 
-	},
-
-	atualizarDescontoPorCota:function(){
-
 	}
-
 
 
 }, BaseController);

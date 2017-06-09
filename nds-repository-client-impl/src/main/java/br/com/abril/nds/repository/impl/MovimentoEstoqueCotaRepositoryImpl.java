@@ -4969,9 +4969,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    public List<BigDecimal> obterDescontosDaCota(Long cotaId){
             final StringBuilder hql = new StringBuilder();
 
-            hql.append(" select valor_desconto ");
+            hql.append(" select distinct valor_desconto ");
             hql.append(" from movimento_estoque_cota ");
-            hql.append(" where where cota_id = :cotaId and STATUS_ESTOQUE_FINANCEIRO = 'FINANCEIRO_NAO_PROCESSADO' ");
+            hql.append(" where cota_id = :cotaId and STATUS_ESTOQUE_FINANCEIRO = 'FINANCEIRO_NAO_PROCESSADO' ");
+            hql.append(" group by 1 ");
 
             final SQLQuery query =  getSession().createSQLQuery(hql.toString());
 

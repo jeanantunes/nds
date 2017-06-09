@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.caelum.vraptor.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +33,10 @@ public class ManutencaoPublicacaoController {
 
 	@Autowired
 	private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
-	
+
+	@Autowired
+	private CotaService cotaService;
+
 	@Path("/")
 	public void index() {}
 	
@@ -97,10 +102,10 @@ public class ManutencaoPublicacaoController {
 
 	@Path("/pesquisarDescontosPorCota")
 	@Post
-	public void pesquisarDescontosPorCota(Long cotaId) {
+	public void pesquisarDescontosPorCota(Integer cotaNumero) {
 
-
-		List<BigDecimal> bigDecimals = produtoEdicaoService.obterDescontosParaAlteracaoPorCota(cotaId);
+		Cota cota = cotaService.obterCotaPDVPorNumeroDaCota(cotaNumero);
+		List<BigDecimal> bigDecimals = produtoEdicaoService.obterDescontosParaAlteracaoPorCota(cota.getId());
 
 		result.use(Results.json()).from(bigDecimals).serialize();
 	}
@@ -108,11 +113,11 @@ public class ManutencaoPublicacaoController {
 
 	@Path("/atualizarDescontos")
 	@Post
-	public void atualizarDescontos(String codigoProduto, Long numeroEdicao,Long cotaId,Double descontoAtual,Double novoDesconto) {
+	public void atualizarDescontos(String codigoProduto, Long numeroEdicao,Integer cotaNumero,Double descontoAtual,Double novoDesconto) {
 
-
-		if (cotaId!=null){
-			this.movimentoEstoqueCotaService.atualizarDescontosDaCota(cotaId,descontoAtual,novoDesconto);
+		if (cotaNumero!=null){
+			Cota cota = cotaService.obterCotaPDVPorNumeroDaCota(cotaNumero);
+			this.movimentoEstoqueCotaService.atualizarDescontosDaCota(cota.getId(),descontoAtual,novoDesconto);
 		}else{
 			this.movimentoEstoqueCotaService.atualizarDescontosDaPublicacao(codigoProduto,numeroEdicao,descontoAtual,novoDesconto);
 		}
