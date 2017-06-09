@@ -27,6 +27,8 @@ public class AnaliseParcialQueryDTO {
 	private Integer numeroParcial;
 	private FileType file;
 	private String numeroCotasFiltro;
+	private boolean isMudarBaseVisualizacao;
+	private boolean parcialComEdicaoBaseNormal;
 	
 	private List<Long> idUltimoLancamento;
 	
@@ -314,6 +316,21 @@ public class AnaliseParcialQueryDTO {
 	public void setNumeroCotasFiltro(String numeroCotasFiltro) {
 		this.numeroCotasFiltro = numeroCotasFiltro;
 	}
-	
+
+	public boolean isMudarBaseVisualizacao() {
+		return isMudarBaseVisualizacao;
+	}
+
+	public void setMudarBaseVisualizacao(boolean isMudarBaseVisualizacao) {
+		this.isMudarBaseVisualizacao = isMudarBaseVisualizacao;
+	}
+
+	public boolean isParcialComEdicaoBaseNormal() {
+		return parcialComEdicaoBaseNormal;
+	}
+
+	public void setParcialComEdicaoBaseNormal(boolean parcialComEdicaoBaseNormal) {
+		this.parcialComEdicaoBaseNormal = parcialComEdicaoBaseNormal;
+	}
 	
 }

@@ -400,14 +400,13 @@ table.dadosTab { margin-left: 370px;}
 						<img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" alt="Cotas que não entraram no Estudo" hspace="5" border="0" /> Cotas que não entraram no Estudo
 				    </a>
                 </span>
-            <c:if test="${tipoExibicao == 'NORMAL'}">
                 <span class="bt_novos">
                     <a href="javascript:;" onclick="analiseParcialController.mudarBaseVisualizacao();">
                         <img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" alt="Mudar Base de Visualização" hspace="5" border="0" />
                         <span>Mudar Bases</span>
 					</a>
-				</span>
-            </c:if>
+				</span> 
+            	<%-- <c:if test="${tipoExibicao == 'NORMAL'}"> </c:if> --%>  
                 <%--<br/>--%>
 				<span style="font-weight: bold; font-size: 10px;" onclick="dataTableInit()">Saldo a distribuir:</span>
 				<span id="saldo_reparte" style="font-weight: bold; font-size: 10px;">${estudo.sobra == null ? 0 : estudo.sobra}</span>

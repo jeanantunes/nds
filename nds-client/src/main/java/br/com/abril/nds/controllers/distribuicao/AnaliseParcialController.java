@@ -289,7 +289,7 @@ public class AnaliseParcialController extends BaseController {
     @Path("/init")
     public void init(Long id, String sortname, String sortorder, int page, int rp, String filterSortName, Double filterSortFrom, Double filterSortTo, String elemento,
                      Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao, 
-                     String numeroCotaStr,Long estudoOrigem,String dataLancamentoEdicao, Integer numeroParcial, String cotasFiltro) {
+                     String numeroCotaStr,Long estudoOrigem,String dataLancamentoEdicao, Integer numeroParcial, String cotasFiltro, boolean isMudarBaseVisualizacao) {
     	
         AnaliseParcialQueryDTO filtroQueryDTO = new AnaliseParcialQueryDTO();
         filtroQueryDTO.setSortName(sortname);
@@ -310,6 +310,21 @@ public class AnaliseParcialController extends BaseController {
         filtroQueryDTO.setDataLancamentoEdicao(DateUtil.parseDataPTBR(dataLancamentoEdicao));
         filtroQueryDTO.setNumeroParcial(numeroParcial);
         filtroQueryDTO.setNumeroCotasFiltro(cotasFiltro);
+        filtroQueryDTO.setMudarBaseVisualizacao(isMudarBaseVisualizacao);
+        
+        if(filtroQueryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL")){
+        	boolean isParcialComEdicaoNormal = false;
+        	
+        	if(filtroQueryDTO.getEdicoesBase() != null){
+        		for (EdicoesProdutosDTO edicoesProdutosDTO : filtroQueryDTO.getEdicoesBase()) {
+					if(!edicoesProdutosDTO.isParcial()){
+						isParcialComEdicaoNormal = true;
+					}
+				}
+        	}
+        	
+        	filtroQueryDTO.setParcialComEdicaoBaseNormal(isParcialComEdicaoNormal);
+        }
         
         AnaliseEstudoNormal_E_ParcialDTO analise = analiseParcialService.buscaAnaliseParcialPorEstudo(filtroQueryDTO);
         
@@ -347,7 +362,7 @@ public class AnaliseParcialController extends BaseController {
     	vo.setPercentualAbrangencia(resumo.getAbrangenciaEstudo());
     	vo.setReparteTotalEdicao(analise.getReparteTotalEdicao());
     	vo.setVendaTotalEdicao(analise.getVendaTotalEdicao());
-    	vo.setEdicoesBase(getEdicoesBase(edicoesBase, id, numeroParcial));
+    	vo.setEdicoesBase(filtroQueryDTO.getEdicoesBase() != null ? filtroQueryDTO.getEdicoesBase() : getEdicoesBase(edicoesBase, id, numeroParcial));
     	
     	if (resumo.getSaldo() != null) {
     		vo.setSaldo(resumo.getSaldo().toBigInteger());
@@ -387,36 +402,37 @@ public class AnaliseParcialController extends BaseController {
     	
     	if(edicoesBase == null){
     		
-    		if(!session.getAttribute("modoAnalise").toString().equalsIgnoreCase("PARCIAL")){
+//    		if(!session.getAttribute("modoAnalise").toString().equalsIgnoreCase("PARCIAL")){
     			
-    			List<EdicaoBaseEstudoDTO> edicaoBaseEstudoDTOs = estudoProdutoEdicaoBaseService.obterEdicoesBase(idEstudo);
-    			
-    			if(edicaoBaseEstudoDTOs.size() > 0){
-    				List<EdicoesProdutosDTO> bases = new ArrayList<>();
-    				
-    				for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicaoBaseEstudoDTOs) {
-    					EdicoesProdutosDTO base = new EdicoesProdutosDTO();
-    					
-    					base.setCodigoProduto(edicaoBaseEstudoDTO.getCodigoProduto());
-    					base.setNomeProduto(edicaoBaseEstudoDTO.getNomeProduto());
-    					base.setEdicao(edicaoBaseEstudoDTO.getNumeroEdicao());
-    					base.setParcial(edicaoBaseEstudoDTO.isParcial());
-    					base.setProdutoEdicaoId(edicaoBaseEstudoDTO.getIdProdutoEdicao());
-    					
-    					bases.add(base);
-    				}
-    				
-    				return bases;
-    			}
-    		}else{
-    			List<EdicoesProdutosDTO> baseUtilizadas = analiseParcialService.carregarPeriodosAnterioresParcial(idEstudo, false);
-    			
-    			if(baseUtilizadas.size() == 0){
-    				baseUtilizadas = analiseParcialService.carregarPeriodosAnterioresParcial(idEstudo, true);
-    			}
-    			
-    			return baseUtilizadas;
-    		}
+			List<EdicaoBaseEstudoDTO> edicaoBaseEstudoDTOs = estudoProdutoEdicaoBaseService.obterEdicoesBase(idEstudo);
+			
+			if(edicaoBaseEstudoDTOs.size() > 0){
+				List<EdicoesProdutosDTO> bases = new ArrayList<>();
+				
+				for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicaoBaseEstudoDTOs) {
+					EdicoesProdutosDTO base = new EdicoesProdutosDTO();
+					
+					base.setCodigoProduto(edicaoBaseEstudoDTO.getCodigoProduto());
+					base.setNomeProduto(edicaoBaseEstudoDTO.getNomeProduto());
+					base.setEdicao(edicaoBaseEstudoDTO.getNumeroEdicao());
+					base.setParcial(edicaoBaseEstudoDTO.isParcial());
+					base.setPeriodo(edicaoBaseEstudoDTO.getPeriodoParcial() != null ? edicaoBaseEstudoDTO.getPeriodoParcial().toString() : null);
+					base.setProdutoEdicaoId(edicaoBaseEstudoDTO.getIdProdutoEdicao());
+					
+					bases.add(base);
+				}
+				
+				return bases;
+			}
+//    		}else{
+//    			List<EdicoesProdutosDTO> baseUtilizadas = analiseParcialService.carregarPeriodosAnterioresParcial(idEstudo, false);
+//    			
+//    			if(baseUtilizadas.size() == 0){
+//    				baseUtilizadas = analiseParcialService.carregarPeriodosAnterioresParcial(idEstudo, true);
+//    			}
+//    			
+//    			return baseUtilizadas;
+//    		}
     	}
     	
     	return edicoesBase;
