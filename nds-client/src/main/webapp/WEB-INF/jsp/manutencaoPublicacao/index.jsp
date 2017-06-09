@@ -2,12 +2,15 @@
 <head>
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/alteracaoPrecoEdicaoExpedido.js"></script>
 	
 	<script type="text/javascript">
 	
-		var pesquisaProdutoPreco = new PesquisaProduto(manutencaoPublicacaoController.workspace);	
+		var pesquisaProdutoPreco = new PesquisaProduto(manutencaoPublicacaoController.workspace);
+        var pesquisaCota = new PesquisaCota(manutencaoPublicacaoController.workspace);
+
 		$(function(){	
 			manutencaoPublicacaoController.init();
 		});
@@ -111,13 +114,13 @@
 					<td width="5%" align="right">Cota:</td>
 					<td width="10%">
 						<input class="campoDePesquisa" id="cota" name="manut-publicacao-codigoProduto" style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
-							   onchange="pesquisaProdutoPreco.pesquisarPorCodigoProdutoAutoCompleteEdicao('#manut-publicacao-codigoProduto', '#manut-publicacao-nomeProduto', '#manut-publicacao-edicaoProduto' , false);" />
+							   onchange="pesquisaCota.pesquisarPorNumeroCota('#cota', '#nomeCota',false,function(result){ manutencaoPublicacaoController.cotaNumero = result.nome;  });"/>
 					</td>
 					<td width="6%" align="right">Nome:</td>
 					<td width="196">
 						<input class="campoDePesquisa" id="nomeCota" type="text" name="manut-publicacao-nomeProduto"  style="width: 150px;" maxlength="255"
-							   onkeyup="pesquisaProdutoPreco.autoCompletarPorNomeProduto('#manut-publicacao-nomeProduto', false);"
-							   onblur="pesquisaProdutoPreco.pesquisarPorNomeProduto('#manut-publicacao-codigoProduto', '#manut-publicacao-nomeProduto', null, false);"/>
+							   onkeyup="pesquisaCota.autoCompletarPorNome('#nomeCota');"
+							   onblur="pesquisaCota.pesquisarPorNomeCota('#cota', '#descricaoCota');"/>
 					</td>
 					<td width="258">
 						<span style="cursor: pointer;" class="bt_novos" onclick="manutencaoPublicacaoController.pesquisar();">
