@@ -11,6 +11,7 @@ public class EdicaoBaseEstudoDTO {
 	private boolean isParcial;
 	private boolean isParcialConsolidado;
 	private Long idProdutoEdicao;
+	private Long periodoParcial;
 
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -64,8 +65,16 @@ public class EdicaoBaseEstudoDTO {
 		return idProdutoEdicao;
 	}
 
-	public void setIdProdutoEdicao(BigInteger idProdutoEdicao) {
-		this.idProdutoEdicao = idProdutoEdicao.longValue();
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
+	public Long getPeriodoParcial() {
+		return periodoParcial;
+	}
+
+	public void setPeriodoParcial(Long periodoParcial) {
+		this.periodoParcial = periodoParcial;
 	}
 
 }

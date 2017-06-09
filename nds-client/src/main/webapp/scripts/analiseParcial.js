@@ -3,6 +3,7 @@ var analiseParcialController = $.extend(true, {
     path: contextPath,
     
     baseInicialAnalise: null, //para voltar ao estado original da analise
+    isMudarBaseVisualizacao: false,
 
     linkNomeCota : '<a tabindex="-1" class="linkNomeCota" numeroCota="#numeroCota" >#nomeCota</a>',
     edicoesBase : [],
@@ -65,6 +66,7 @@ var analiseParcialController = $.extend(true, {
             modal : true,
             buttons : {
                 "Base Original" : function() {
+                	analiseParcialController.isMudarBaseVisualizacao = false;
                     $(this).dialog("close");
                     analiseParcialController.restauraBaseInicial();
                 },
@@ -92,6 +94,9 @@ var analiseParcialController = $.extend(true, {
                         parameters.push({name: 'edicoesBase['+ i +'].produtoEdicaoId',  value: $this.find('.inputEdicaoEB').attr('id')});
 
                     });
+                    
+                    parameters.push({name: 'isMudarBaseVisualizacao', value: true});
+                    analiseParcialController.isMudarBaseVisualizacao = true;
 
                     if (!hasErros) {
                         
@@ -449,18 +454,45 @@ var analiseParcialController = $.extend(true, {
             	var valueBase3 = $('#dataLancamentoParcial3').val();
             	
             	if(isContemBaseNormal){
-            		for(var i = 0; i < indiceBasesNormais.length; i++){
+            		for(var i = 0; i < analiseParcialController.edicoesBase.length; i++){
             			var edicao = $.extend({}, {edicao:'-'}, analiseParcialController.edicoesBase[i]);
-
-            			if(indiceBasesNormais[i] == 0){
-            				valueBase1 = edicao.edicao;
+            			
+            			if(!edicao.parcial){
+            				
+            				switch(indiceBasesNormais[i]) {
+            			    case 0:
+            			    	valueBase1 = edicao.edicao;
+            			        break;
+            			    case 1:
+            			    	valueBase2 = edicao.edicao;
+            			        break;
+            			    case 2:
+            			    	valueBase3 = edicao.edicao;
+            			        break;
+            			    default:
+            			        
+            				}
+            				
+            			}else{
+            				switch(i) {
+            			    case 0:
+            			    	valueBase1 = edicao.dataLancamento != undefined ? edicao.dataLancamento : "";
+            			        break;
+            			    case 1:
+            			    	valueBase2 = edicao.dataLancamento != undefined ? edicao.dataLancamento : "";
+            			        break;
+            			    case 2:
+            			    	valueBase3 = edicao.dataLancamento != undefined ? edicao.dataLancamento : "";
+            			        break;
+            			    default:
+            			        
+            				}
             			}
-						if(indiceBasesNormais[i] == 1){
-            				valueBase2 = edicao.edicao;        				
-						}	
-						if(indiceBasesNormais[i] == 2){
-            				valueBase3 = edicao.edicao;
-						}
+            			
+            		}
+            		
+            		if(indiceBasesNormais.length < analiseParcialController.edicoesBase.length){
+            			
             		}
             	}
             	
@@ -743,6 +775,14 @@ var analiseParcialController = $.extend(true, {
         	var porcentagemVendaCota = 0;
         	
         	var reparteSugerido = 0;
+        	
+        	var qtdBasesParcialAlterarBaseVisualizacao = 0;
+        	
+        	if(analiseParcialController.tipoExibicao === 'PARCIAL' && analiseParcialController.isMudarBaseVisualizacao){
+        		qtdBasesParcialAlterarBaseVisualizacao = 3;
+        	}else{
+        		qtdBasesParcialAlterarBaseVisualizacao = 6;
+        	}
 
         	for (var j = 0; j < 6; j++) {
                 if (typeof cell.edicoesBase[j] === 'undefined' || typeof cell.edicoesBase[j].reparte === 'undefined') {
@@ -768,6 +808,11 @@ var analiseParcialController = $.extend(true, {
                     	if(cell['reparte'+ (j + 1)] === 0 ||  cell['reparte'+ (j + 1)] == ""){
                     		cell['venda'+ (j + 1)] = "";
                     	}
+                    }
+                    
+                    if(j >= qtdBasesParcialAlterarBaseVisualizacao){
+                    	cell['reparte'+ (j + 1)] = "";
+                    	cell['venda'+ (j + 1)] = "";
                     }
                 }
                 
