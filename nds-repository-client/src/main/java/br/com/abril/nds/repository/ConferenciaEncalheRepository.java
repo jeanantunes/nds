@@ -8,6 +8,7 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.HistoricoEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ProdutoEdicaoSlip;
@@ -145,5 +146,7 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoOuNome_CotaVarejo(String codigoOuNome, Integer numeroCota);
 
 	List<Integer> obterCotasVarejoConferenciaEncalhe(FiltroConsultaEncalheDTO filtro);
+
+	List<HistoricoEncalheDTO> obterHistoricosConferenciaEncalhe(String numeroCota, Date dataEncalhe);
 
 }

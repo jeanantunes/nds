@@ -1421,17 +1421,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
     }
     
-    
-    
-   @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
 	public List<ConsultaEncalheDTO> obterListaConsultaReparte(final FiltroConsultaEncalheDTO filtro) {
         
         final StringBuilder sql = obterQueryListaConsultaReparte(filtro, false);
         
         final PaginacaoVO paginacao = filtro.getPaginacao();
         
-        
-           sql.append(" order by cota_id ");
+        sql.append(" order by cota_id ");
         
        
         final Map<String, Object> parameters = new HashMap<String, Object>();
@@ -1454,7 +1451,61 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         if(filtro.getIdBox() != null) {
             parameters.put("idBox", filtro.getIdBox());
         }
-         parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
+        
+        parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
+        parameters.put("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
+        parameters.put("tipoVendaProduto",TipoVendaEncalhe.ENCALHE.name());
+        
+        @SuppressWarnings("rawtypes")
+        final RowMapper cotaRowMapper = new RowMapper() {
+            
+            @Override
+            public Object mapRow(final ResultSet rs, final int arg1) throws SQLException {
+                
+                final ConsultaEncalheDTO dto = new ConsultaEncalheDTO();
+                dto.setEncalhe(rs.getBigDecimal("encalhe"));
+                dto.setReparte(rs.getBigDecimal("reparte"));
+                dto.setIdCota(rs.getLong("idCota"));
+                dto.setNomeCota(rs.getString("nomeCota"));
+                dto.setIdBox(rs.getLong("idBox"));
+                dto.setNomeBox(rs.getString("nomeBox"));
+                     
+                return dto;
+            }
+        };
+        
+        return namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
+        
+    }
+    
+    @SuppressWarnings("unchecked")
+	public List<ConsultaEncalheDTO> obterListaConsultaBaseReparte(final FiltroConsultaEncalheDTO filtro) {
+        
+        final StringBuilder sql = obterQueryListaConsultaBaseReparte(filtro, false);
+        
+        sql.append(" order by cota_id ");
+        
+        final Map<String, Object> parameters = new HashMap<String, Object>();
+        
+        final NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+       
+        if(filtro.getIdCota() != null) {
+        	parameters.put("idCota", filtro.getIdCota());
+        } 
+      
+        if(filtro.getIdFornecedor() != null) {
+            parameters.put("idFornecedor", filtro.getIdFornecedor());
+        }
+        
+        if(filtro.getIdProdutoEdicao() != null) {
+            parameters.put("idProdutoEdicao", filtro.getIdProdutoEdicao());
+        }
+        
+        if(filtro.getIdBox() != null) {
+            parameters.put("idBox", filtro.getIdBox());
+        }
+        
+        parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
         parameters.put("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
         parameters.put("tipoVendaProduto",TipoVendaEncalhe.ENCALHE.name());
         
@@ -4837,5 +4888,41 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" ");
 			
 	        return sql;
+	    }
+	    
+	    private StringBuilder obterQueryListaConsultaBaseReparte(final FiltroConsultaEncalheDTO filtro, final boolean counting) {
+	    	
+			StringBuilder sql = new StringBuilder();
+			
+			sql.append(" select  coalesce(if(pessoa.tipo = 'F',pessoa.nome, pessoa.razao_social), pessoa.nome_fantasia, '') as nomeCota, ");
+			sql.append(" c.numero_cota as idCota, ");
+			sql.append(" box.id as idBox, box.nome as nomeBox, ");
+			sql.append(" box.TIPO_BOX as tipobox, ");
+			sql.append(" 0 as encalhe, ");
+			sql.append(" cec.QTDE_PREVISTA as reparte ");
+			sql.append(" from chamada_encalhe ce ");
+			sql.append(" INNER JOIN produto_edicao pe ON ce.PRODUTO_EDICAO_ID = pe.ID");
+			sql.append(" INNER JOIN chamada_encalhe_cota cec ON cec.CHAMADA_ENCALHE_ID = ce.id");
+			sql.append(" INNER JOIN cota c ON c.id = cec.COTA_ID");
+			sql.append(" INNER JOIN PESSOA ON (PESSOA.ID = c.PESSOA_ID)");
+			sql.append(" INNER JOIN BOX ON (BOX.ID = c.BOX_ID)");
+			sql.append(" AND cec.COTA_ID = c.id");
+			
+			sql.append(" WHERE 1=1 ");
+			sql.append(" AND ce.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
+
+			if(filtro.getIdCota() != null) {
+	           sql.append(" AND cec.COTA_ID = :idCota" );
+	        }
+			
+			if(filtro.getIdBox() != null) {
+	        	sql.append(" AND c.box_id = :idBox" );
+	        }
+			
+			if(filtro.getIdProdutoEdicao() != null) {
+				sql.append(" AND pe.ID = :idProdutoEdicao ");
+			}
+	        return sql;
 	    } 
+	    
 }

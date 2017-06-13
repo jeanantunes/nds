@@ -61,6 +61,8 @@ public abstract class NFEImportUtil {
      */
     public static final int QTD_DIGITOS_CHAVE_ACESSO_NFE = 44;
     
+    private static final String W3C_XML_SCHEMA_NS_URI = "http://www.w3.org/2001/XMLSchema";
+    
     /**
      * Obtém os dados atualizados de Status do arquivo da NFe de Retorno.
      * 
@@ -272,7 +274,10 @@ public abstract class NFEImportUtil {
 		try {
 			
 			final String schemaFile = schemaPath+"xsdnfe/v"+ (versao != null ? versao : versaoNFE) + tipoSchema + (versao != null ? versao : versaoNFE) + ".xsd";
-			final SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			// alterando para java 1.7
+			//final SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			final SchemaFactory factory = SchemaFactory.newInstance(W3C_XML_SCHEMA_NS_URI);
+			
 			
 			if(LOGGER.isDebugEnabled()) {
 				LOGGER.debug("Schema: "+ schemaFile);

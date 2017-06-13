@@ -54,6 +54,7 @@ public class ParametrosDistribuidorVO {
     // Frame Recolhimento
     private TipoContabilizacaoCE tipoContabilizacaoCE;
     private boolean aceitaEncalheJuramentada;
+    private boolean vendaTotalEncalhe;
     private boolean diaRecolhimentoPrimeiro;
     private boolean diaRecolhimentoSegundo;
     private boolean diaRecolhimentoTerceiro;
@@ -419,8 +420,16 @@ public class ParametrosDistribuidorVO {
     public void setAceitaEncalheJuramentada(boolean aceitaEncalheJuramentada) {
         this.aceitaEncalheJuramentada = aceitaEncalheJuramentada;
     }
+    
+    public boolean isVendaTotalEncalhe() {
+		return vendaTotalEncalhe;
+	}
 
-    public boolean isDiaRecolhimentoPrimeiro() {
+	public void setVendaTotalEncalhe(boolean vendaTotalEncalhe) {
+		this.vendaTotalEncalhe = vendaTotalEncalhe;
+	}
+
+	public boolean isDiaRecolhimentoPrimeiro() {
         return diaRecolhimentoPrimeiro;
     }
 

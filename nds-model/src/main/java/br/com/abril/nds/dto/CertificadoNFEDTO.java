@@ -2,13 +2,14 @@ package br.com.abril.nds.dto;
 
 import java.io.File;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
 
 public class CertificadoNFEDTO implements Serializable {
 
 	private static final long serialVersionUID = -6593247184450400133L;
 
-	private Long id;
+	private BigInteger id;
 	
 	private Long idDistribuidor;	
 	
@@ -27,11 +28,11 @@ public class CertificadoNFEDTO implements Serializable {
 	
 	private File tempFile;
 	
-	public Long getId() {
+	public BigInteger getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(BigInteger id) {
 		this.id = id;
 	}
 	

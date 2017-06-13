@@ -21,6 +21,7 @@ public class NotaFiscalV310Test {
 //	private static String xmlFile = "C:/Users/wrpaiva/Desktop/NFE/nfeassinada_v3.xml";
 	private String xmlFile = this.getClass().getClassLoader().getResource("").getPath()+ "../../src/main/resources/xmlTestes/NF-e-21-00000237-assinada.xml";
 	private String versaoNFE = "3.10";
+	private static final String URI = "http://www.w3.org/2001/XMLSchema";
 	
 	@Test
 	public void validateXML() throws Exception {
@@ -28,7 +29,7 @@ public class NotaFiscalV310Test {
 		try {
 			String schemaFile = "src/main/resources/xsd/v"+ versaoNFE +"/nfe_v"+ versaoNFE +".xsd";
 			
-			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			SchemaFactory factory = SchemaFactory.newInstance(URI);
 			LOGGER.debug("Schema: "+ schemaFile);
 			Schema schema = factory.newSchema(new File(schemaFile));
 			Validator validator = schema.newValidator();
@@ -57,7 +58,7 @@ public class NotaFiscalV310Test {
 			String schemaFile = "src/main/resources/xsd/v"+ versaoNFE +"/cancNFe_v"+ versaoNFE +".xsd";
 			//String xmlFile = "src/main/resources/xmlGerado.xml";
 			String xmlFile = "C://opt/parametros_nds/notas/importacao/retCancNFe.xml";
-			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			SchemaFactory factory = SchemaFactory.newInstance(URI);
 			LOGGER.debug("Schema: "+ schemaFile);
 			Schema schema = factory.newSchema(new File(schemaFile));
 			Validator validator = schema.newValidator();

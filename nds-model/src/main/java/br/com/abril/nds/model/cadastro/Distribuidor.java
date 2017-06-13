@@ -27,6 +27,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.Validate;
 
@@ -404,6 +405,8 @@ public class Distribuidor {
 	@Column(name = "LIBERAR_TRANSFERENCIA_PARCIAL")
 	private boolean liberarTranferenciaParcial;
 	
+	@Column(name = "VENDA_TOTAL_ENCALHE")
+	private boolean vendaTotalEncalhe;
 	
 	public Long getId() {
 		return id;
@@ -1400,6 +1403,14 @@ public class Distribuidor {
 
 	public void setArquivoInterfaceLedPicking4(String arquivoInterfaceLedPicking4) {
 		this.arquivoInterfaceLedPicking4 = arquivoInterfaceLedPicking4;
+	}
+	
+	public boolean isVendaTotalEncalhe() {
+		return vendaTotalEncalhe;
+	}
+	
+	public void setVendaTotalEncalhe(boolean vendaTotalEncalhe) {
+		this.vendaTotalEncalhe = vendaTotalEncalhe;
 	}
 
 	@Override

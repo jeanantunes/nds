@@ -101,6 +101,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			
 			{name:'parametrosDistribuidor.relancamentoParciaisEmDias', value: $('#relancamentoParciaisEmDias', this.workspace).val()},
 			{name:'parametrosDistribuidor.aceitaEncalheJuramentada', value: $('#aceitaEncalheJuramentada', this.workspace).is(':checked')},
+			{name:'parametrosDistribuidor.vendaTotalEncalhe', value: $('#vendaTotalEncalhe', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.tipoContabilizacaoCE', value: $("input[name='parametrosDistribuidor.tipoContabilizacaoCE']:checked", this.workspace).val()},
 			{name:'parametrosDistribuidor.aceitaRecolhimentoParcialAtraso', value: $('#aceitaRecolhimentoParcialAtraso', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.supervisionaVendaNegativa', value: $('#supervisionaVendaNegativa', this.workspace).is(':checked')},

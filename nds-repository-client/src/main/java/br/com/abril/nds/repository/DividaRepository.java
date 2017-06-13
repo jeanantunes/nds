@@ -35,6 +35,13 @@ public interface DividaRepository extends Repository<Divida, Long>{
 	List<GeraDividaDTO> obterDividasGeradas(FiltroDividaGeradaDTO filtro);
 	
 	/**
+	 * Retorna as dividas geradas conforme parametros informados no filtro.
+	 * @param filtro
+	 * @return List<GeraDividaDTO> 
+	 */
+	List<GeraDividaDTO> obterDividasGeradasArquivo(FiltroDividaGeradaDTO filtro);
+	
+	/**
 	 *  Retorna as dividas geradas conforme parametros informados no filtro, sem dividas do tipo Boleto.
 	 * @param filtro
 	 * @return
@@ -178,4 +185,6 @@ public interface DividaRepository extends Repository<Divida, Long>{
     Long verificarEnvioDeEmail(GeraDividaDTO dividaGerada);
 
     BigInteger obterIdDividaPendente(ConsolidadoFinanceiroCota consolidado, Date dataOperaçao);
+    
+    public BigDecimal obterTotalGeral(FiltroDividaGeradaDTO filtro);
 }

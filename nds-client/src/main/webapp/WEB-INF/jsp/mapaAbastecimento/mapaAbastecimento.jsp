@@ -18,7 +18,6 @@
 		
 	</script>
 	
-		
 	<script language="javascript" type="text/javascript">
 					
 		function popup_detalhe_box() {
@@ -70,7 +69,6 @@
 		<a> Utilize o Control A (Ctrl+A) para selecionar todos os produtos</a>
 	</div>
 </form>
-
 
 <form id="form-detalhesAbastecimento">
 <div id="dialog-detalhesAbastecimento" title="Produtos do Box" style="display:none;">

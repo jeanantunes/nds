@@ -16,6 +16,9 @@ import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.InformeLancamentoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
+import br.com.abril.nds.dto.integracao.micro.Ems0106Deapr;
+import br.com.abril.nds.dto.integracao.micro.Ems0107Deajo;
+import br.com.abril.nds.dto.integracao.micro.Ems0108Matriz;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -215,6 +218,11 @@ public interface LancamentoService {
 	
 	String verificarStatusRecolhimentoBalanceado(final ExpedicaoDTO expedicaoDTO);
 
+	List<Ems0108Matriz> obterDadosMatriz(Date data);
+
+	List<Ems0106Deapr> obterDadosDeapr(Date data);
+	
+	List<Ems0107Deajo> obterDadosDeajo(Date data);
 	
 }
  

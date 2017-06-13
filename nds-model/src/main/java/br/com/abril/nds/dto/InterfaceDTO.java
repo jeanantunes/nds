@@ -18,6 +18,8 @@ public class InterfaceDTO implements Serializable {
 	
 	private String nome;
 	
+	private String tipoInterfaceExecucao;
+	
 	@Export(label="Arquivo", exhibitionOrder=2)
 	private String nomeArquivo;
 	
@@ -136,6 +138,14 @@ public class InterfaceDTO implements Serializable {
 
 	public void setIdInterface(String idInterface) {
 		this.idInterface = idInterface;
+	}
+
+	public String getTipoInterfaceExecucao() {
+		return tipoInterfaceExecucao;
+	}
+
+	public void setTipoInterfaceExecucao(String tipoInterfaceExecucao) {
+		this.tipoInterfaceExecucao = tipoInterfaceExecucao;
 	}
 
 }

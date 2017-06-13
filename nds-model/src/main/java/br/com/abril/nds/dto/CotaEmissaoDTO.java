@@ -167,6 +167,8 @@ public class CotaEmissaoDTO implements Serializable{
 	
 	private Long qtdGrupoCota;
 	
+	private Integer numeroSemana;
+	
 	private BigDecimal totalEmissaoCE = new BigDecimal(0);
 	
 	public String getDestinatarioCNPJ() {
@@ -887,5 +889,13 @@ public class CotaEmissaoDTO implements Serializable{
 
 	public BigDecimal getTotalEmissaoCE() {
 		return totalEmissaoCE;
+	}
+
+	public Integer getNumeroSemana() {
+		return numeroSemana;
+	}
+
+	public void setNumeroSemana(Integer numeroSemana) {
+		this.numeroSemana = numeroSemana;
 	}
 }

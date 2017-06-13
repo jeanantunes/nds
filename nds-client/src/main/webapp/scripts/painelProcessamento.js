@@ -122,7 +122,7 @@ var painelProcessamentoController = $.extend(true, {
 			}],
 			sortname : "descricaoInterface",
 			sortorder : "asc",
-			usepager : false,
+			usepager : false, 
 			useRp : false,
 			rp : 0,
 			showTableToggleBtn : true,
@@ -181,18 +181,40 @@ var painelProcessamentoController = $.extend(true, {
 		painelProcessamentoController.bindButtonsInterfaces();
 		
 		var codigoDistribuidor = $("#toggleFornecedores :radio:checked").val();
+		$("#divCalendarInterfaceExecucao").hide();
 		
 		if (codigoDistribuidor == "") {
-			
+			$( "#calendarInterfaceExecucao").hide();
 			$(".areaBts", painelProcessamentoController.workspace).hide();
 			$(".grids", painelProcessamentoController.workspace).hide();
 			$("#divProcessamento", painelProcessamentoController.workspace).show();
+			$("#divMicrodistribuicao", painelProcessamentoController.workspace).hide();
 			
 			return;
 		}
 		
+		if (codigoDistribuidor == "mi") {
+			$( "#calendarInterfaceExecucao").show();
+			$(".areaBts", painelProcessamentoController.workspace).show();
+			$(".grids", painelProcessamentoController.workspace).show();
+			$("#divProcessamento", painelProcessamentoController.workspace).hide();
+			$("#divCalendarInterfaceExecucao").show();
+		//	$( "#calendarInterfaceExecucao").show();
+			//$("#divMicrodistribuicao", painelProcessamentoController.workspace).hide();
+			$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexOptions({
+				url : contextPath + '/administracao/painelProcessamento/pesquisarInterfacesMicroDistribuicao',
+				params: [],
+				newp: 1,
+			});
+			$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
+			
+			
+			return;
+		}
 		
+		$( "#calendarInterfaceExecucao").hide();
 		$("#divProcessamento", painelProcessamentoController.workspace).hide();
+		$("#divMicrodistribuicao", painelProcessamentoController.workspace).hide();
 		$(".areaBts", painelProcessamentoController.workspace).show();
 		$(".grids", painelProcessamentoController.workspace).show();
 		
@@ -218,9 +240,17 @@ var painelProcessamentoController = $.extend(true, {
 		var brDetalhes        = "";
 		
 		$.each(resultado.rows, function(index, row) {
-
-			btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterface(\"" + row.cell.idInterface + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
-			brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.idLogExecucao + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
+			
+			if(row.cell.tipoInterfaceExecucao=='microDistribuicao'){
+				btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterfaceMicroDistribuicao(\"" + row.cell.nome+ "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
+				brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceMicroDistribuicao(" + row.cell.idInterface+ ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.idLogExecucao + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
+			}else{
+				btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterface(\"" + row.cell.idInterface + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
+				brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.idLogExecucao + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
+			}
+			
+			
+			
 
 			if(row.cell.idLogProcessamento != "" && row.cell.dataProcessmento != "" && row.cell.idLogExecucao != "" && row.cell.status != 'S' && row.cell.status != 'V'){
 				row.cell.reprocessar = btReprocessamento + brDetalhes;
@@ -308,6 +338,23 @@ var painelProcessamentoController = $.extend(true, {
 		$(".detalheProcessamentoGrid", painelProcessamentoController.workspace).flexReload();
 		painelProcessamentoController.popup(idLogProcessamento, dataProcessamento, horaProcessamento);			
 	},
+	
+	abrirPopUpDetalhesInterfaceMicroDistribuicao : function(idInterface, dataProcessamento, idLogExecucao, horaProcessamento) {
+		$(".detalheProcessamentoGrid", painelProcessamentoController.workspace).flexOptions({
+			url: contextPath + '/administracao/painelProcessamento/pesquisarDetalhesInterfaceMicroDistribuicao',
+			params: [
+		         {name:'idInterface', value: idInterface},
+		          {name:'dataProcessamento', value: dataProcessamento},
+		         {name:'idLogExecucao', value: idLogExecucao}
+		    ],
+		    newp: 1,
+		});
+		
+		$(".detalheProcessamentoGrid", painelProcessamentoController.workspace).flexReload();
+		painelProcessamentoController.popup(idInterface, dataProcessamento, horaProcessamento);			
+	},
+	
+	
 	executarPreProcessamentoGrid : function(resultado) {
 		
 		if (resultado.mensagens) {
@@ -362,6 +409,56 @@ var painelProcessamentoController = $.extend(true, {
 		});
 	},
 	
+   reprocessarInterfaceMicroDistribuicao : function(nomeInterface) {
+	   
+	   
+	 var dataInterfaceExecucao =  $( "#calendarInterfaceExecucao" ).datepicker({
+		   dateFormat: 'dd/mm/yy',
+		   showOn: "button",
+           buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif",
+           buttonImageOnly: true,
+           buttonText: "Selecione uma data"
+       });
+	   
+	   
+		$( "#dialog-excutarInterface" ).dialog({
+			resizable: false,
+			height:'auto',
+			width:400,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					
+					
+					var data = [{name: 'dataInterfaceExecucao', value: dataInterfaceExecucao.val()},
+					{name: 'nomeInterface', value: nomeInterface}];
+					
+					$.postJSON(contextPath + "/administracao/painelProcessamento/downloadArquivo",
+							   data,
+							   function (result) {
+									exibirMensagem(result.tipoMensagem, result.listaMensagens);
+									$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
+								});
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+		$(".areaBts", painelProcessamentoController.workspace).flexReload();
+		$(".grids", painelProcessamentoController.workspace).flexReload();
+		$("#divProcessamento", painelProcessamentoController.workspace).flexReload();
+		$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
+	},
+	
+	
+	
+	
+	
+	
+	
 	reprocessarInterface : function(idInterface) {
 		
 		$( "#dialog-excutarInterface" ).dialog({
@@ -374,6 +471,7 @@ var painelProcessamentoController = $.extend(true, {
 					$( this ).dialog( "close" );
 					
 					var data = [{name: 'idInterface', value: idInterface}];
+					
 					$.postJSON(contextPath + "/administracao/painelProcessamento/executarInterface",
 							   data,
 							   function (resultado) {
@@ -533,7 +631,20 @@ var painelProcessamentoController = $.extend(true, {
 				}
 			}
 		});
+		$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
+	},
+	
+	processarArquivosMatriz : function() {
 		
+		var data = {};
+		
+		$.postJSON(contextPath + "/administracao/painelProcessamento/uploadArquivo",
+				   data,
+				   function (resultado) {
+				
+						
+					}
+				);
 	}
 
 }, BaseController);

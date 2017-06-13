@@ -1,7 +1,7 @@
 NDS
 ===
 
-Repo de dados de teste: https://github.com/DGBti/NDS-Fixture
+Repo de dados de teste: https://github.com/abrilmdia/NDS-Fixture
 ============================================================
 
 build Status
@@ -49,7 +49,7 @@ add datasource config in tomcat
 to build
 --------
 
-go to https://github.com/DGBti/NDS
+go to https://github.com/abrilmdia/NDS
 Fork!
 git clone git@github.com:<yourgithubuser>/NDS.git
 cd NDS
@@ -60,5 +60,3 @@ to run
 
 cp /nds-client/target/*.war <TOMCAT_HOME>/webapp
 localhost:8080/nds-client
-
-

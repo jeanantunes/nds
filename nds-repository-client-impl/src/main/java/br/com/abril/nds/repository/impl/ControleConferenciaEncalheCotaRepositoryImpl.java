@@ -9,10 +9,12 @@ import javax.sql.DataSource;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ControleConferenciaEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
@@ -523,8 +525,26 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		
 		query.setParameter("idCota", idCota);
 		
-	
-		
 		return (query.list().size() > 0);
+	}
+    
+    public ControleConferenciaEncalheCotaDTO obterControleConferenciaEncalheCota(Long idControleConfEncalheCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select c.numeroCota as numeroCota, c.id as idCota, ccec.dataOperacao as dataOperacao");
+		hql.append(" from ControleConferenciaEncalheCota ccec ");
+		hql.append(" inner join ccec.cota c ");
+		hql.append(" where ");
+		hql.append(" ccec.id = :idControleConfEncalheCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idControleConfEncalheCota", idControleConfEncalheCota);
+		
+		query.setResultTransformer(Transformers.aliasToBean(ControleConferenciaEncalheCotaDTO.class));
+		
+		return (ControleConferenciaEncalheCotaDTO) query.uniqueResult();
+		
 	}
 }
