@@ -61,7 +61,7 @@ import br.com.abril.ndsled.thread.LimparLed;
 /**
  * Classe da Janela Principal do aplicativo
  * 
- * @author André W da Silva
+ * @author Andrï¿½ W da Silva
  * @since 1.0
  */
 public class Janela {
@@ -133,9 +133,9 @@ public class Janela {
 	// Private Methods
 	// ================================================================================
 	/**
-	 * Método utilizado para inicializar todos os objetos da Janela.
+	 * Mï¿½todo utilizado para inicializar todos os objetos da Janela.
 	 * 
-	 * @author André W da Silva
+	 * @author Andrï¿½ W da Silva
 	 * @since 1.0
 	 * @param Nothing
 	 * @return Nothing
@@ -507,7 +507,7 @@ public class Janela {
 	 * Metodo local utilizado para carregar o lancamento por data, Atribui todos
 	 * os dados carregados do couchDB para os objetos da tela.
 	 * 
-	 * @author André W da Silva
+	 * @author Andrï¿½ W da Silva
 	 * @since 1.0
 	 * @param date
 	 *            Deve vir da data selecionada no calendario.
@@ -628,6 +628,7 @@ public class Janela {
 			while (itListProdutosAgrupados.hasNext()) {
 				Produto prd = itListProdutosAgrupados.next();
 				cbxListaProdutos.addItem(prd);
+//				cbxListaProdutos.setRenderer(new ComboBoxRenderer());
 			}
 
 			itListProdutosAgrupados = null;
@@ -668,7 +669,7 @@ public class Janela {
 				desabilitarObjetosView();
 			} else {
 				// Exibe mensagem na Barra de Status.
-				lblStatusBarMessage.setText("Lançamento "
+				lblStatusBarMessage.setText("Lanï¿½amento "
 						+ new SimpleDateFormat("dd/MM/yyyy").format(date)
 						+ " carregado.");
 				habilitarObjetosView();
@@ -693,7 +694,7 @@ public class Janela {
 			desabilitarObjetosView();
 		}
 	}
-
+	
 	/**
 	 * Metodo utilizado para carregar a JTable com os dados da Cota do dia pelo
 	 * Produto selecionado.
@@ -819,8 +820,8 @@ public class Janela {
 	}
 
 	/**
-	 * Metodo utliziado para desabilitar os objetos da tela que não devem ser
-	 * manipulado quando um lançamento não foi carregado.
+	 * Metodo utliziado para desabilitar os objetos da tela que nï¿½o devem ser
+	 * manipulado quando um lanï¿½amento nï¿½o foi carregado.
 	 * 
 	 * @author Andre W Silva
 	 * @since 1.0

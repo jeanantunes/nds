@@ -1,10 +1,13 @@
 package br.com.abril.ndsled.thread;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -60,37 +63,42 @@ public class EnviarLed extends Thread {
 		lblStatusBarMessage.setText("Aguarde, enviando dados para os LEDs.");
 		btnEnviar.setEnabled(false);
 
-		PortaCom pCom = new PortaCom(cbxPortaSerial.getSelectedItem()
-				.toString(), 9600, 0);
-		pCom.ObterIdDaPorta();
-		pCom.AbrirPorta();
-
-		// limparLeds();
-		String charZerado = " ";
-		if (!txtCatactereReparteZero.getText().isEmpty()) {
-			charZerado = txtCatactereReparteZero.getText();
-		}
-
-		if (lstCotas != null) {
-			Iterator<Cota> cotaIterator = lstCotas.iterator();
-			while (cotaIterator.hasNext()) {
-				String codLed = String.format("%04d", cotaIterator.next()
-						.getCodLed());
-				pCom.EnviarComando("p" + codLed + charZerado + charZerado
-						+ charZerado + charZerado);
-				try {
-					Thread.sleep(50);
-				} catch (InterruptedException e) {
-					// e.printStackTrace();
-					logger.error(e.getMessage());
-				}
-			}
-			cotaIterator = null;
-		}
+		
+		
+		
+//		PortaCom pCom = new PortaCom(cbxPortaSerial.getSelectedItem()
+//				.toString(), 9600, 0);
+//		pCom.ObterIdDaPorta();
+//		pCom.AbrirPorta();
+//
+//		// limparLeds();
+//		String charZerado = " ";
+//		if (!txtCatactereReparteZero.getText().isEmpty()) {
+//			charZerado = txtCatactereReparteZero.getText();
+//		}
+//
+//		if (lstCotas != null) {
+//			Iterator<Cota> cotaIterator = lstCotas.iterator();
+//			while (cotaIterator.hasNext()) {
+//				String codLed = String.format("%04d", cotaIterator.next()
+//						.getCodLed());
+//				pCom.EnviarComando("p" + codLed + charZerado + charZerado
+//						+ charZerado + charZerado);
+//				try {
+//					Thread.sleep(50);
+//				} catch (InterruptedException e) {
+//					// e.printStackTrace();
+//					logger.error(e.getMessage());
+//				}
+//			}
+//			cotaIterator = null;
+//		}
 
 		// enviarLeds
 		Produto produtoSelecionado = (Produto) cbxListaProdutos
 				.getSelectedItem();
+		
+		
 		Iterator<Lancamento> iLanc = lstLancamentos.iterator();
 		while (iLanc.hasNext()) {
 			Lancamento lanc = iLanc.next();
@@ -101,7 +109,7 @@ public class EnviarLed extends Thread {
 				String codLed = String.format("%04d", lanc.getCodigoLed());
 				String qtde = String
 						.format("%04d", lanc.getQuantidadeReparte());
-				pCom.EnviarComando("p" + codLed + qtde);
+//				pCom.EnviarComando("p" + codLed + qtde);
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
@@ -149,6 +157,22 @@ public class EnviarLed extends Thread {
 		while (itListProdutosAgrupados.hasNext()) {
 			Produto prd = itListProdutosAgrupados.next();
 			cbxListaProdutos.addItem(prd);
+			
+//			if(prd.getCodigoProduto() == produtoSelecionado.getCodigoProduto() && 
+//					prd.getEdicaoProduto() == produtoSelecionado.getEdicaoProduto()){
+//				cbxListaProdutos.addItem(prd);  
+//				cbxListaProdutos.setRenderer(new DefaultListCellRenderer() {
+//					  @Override
+//					  public void paint(Graphics g) {
+//					      setBackground(Color.WHITE);
+//					      setForeground(Color.GREEN);
+//					      super.paint(g);
+//					  }
+//				});
+//			}else{
+//				cbxListaProdutos.addItem(prd);
+//			}
+			
 		}
 
 		itListProdutosAgrupados = null;
@@ -160,7 +184,7 @@ public class EnviarLed extends Thread {
 
 		iLanc = null;
 
-		pCom.FecharCom();
+//		pCom.FecharCom();
 
 		lstCotas = null;
 		lstLancamentos = null;
