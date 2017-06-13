@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -28,11 +29,11 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	private static final long serialVersionUID = 1395654431152408327L;
 
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@OneToMany(mappedBy="movimentoFinanceiroCota", cascade=CascadeType.REMOVE)
+	@OneToMany(fetch=FetchType.LAZY, mappedBy="movimentoFinanceiroCota", cascade=CascadeType.REMOVE)
 	private List<MovimentoEstoqueCota> movimentos;
 	
 	@Column(name = "OBSERVACAO")
@@ -45,16 +46,16 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	@Column(name = "LANCAMENTO_MANUAL", nullable = false)
 	private boolean lancamentoManual;
 	
-	@OneToMany(mappedBy = "movimentoFinanceiroCota", cascade=CascadeType.ALL)
+	@OneToMany(fetch=FetchType.LAZY, mappedBy = "movimentoFinanceiroCota", cascade=CascadeType.ALL)
 	private List<HistoricoMovimentoFinanceiroCota> historicos = new ArrayList<HistoricoMovimentoFinanceiroCota>();
 
 	@OneToOne(mappedBy="movimentoFinanceiroCota")
 	private ParcelaNegociacao parcelaNegociacao;
 	
-	@ManyToMany(mappedBy="movimentos")
+	@ManyToMany(fetch=FetchType.LAZY, mappedBy="movimentos")
 	private List<ConsolidadoFinanceiroCota> consolidadoFinanceiroCota;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(fetch=FetchType.LAZY)
 	private Fornecedor fornecedor;
 	
 	public Cota getCota() {

@@ -30,6 +30,7 @@ import br.com.abril.nfe.util.StringToInputStream;
  */
 public class ValidateXML {
 
+	private final String URI  = "http://www.w3.org/2001/XMLSchema";
     /**
      * <b>Método que faz a validação de arquivos XML.</b>
      *
@@ -108,7 +109,7 @@ public class ValidateXML {
             return false;
         }
 
-        SchemaFactory schemaFactory = SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(URI);
 
         // carrega um WXS schema, representada por uma instacia Schema.
         Source schemaFile = new StreamSource(new File(xsdFullFileName));

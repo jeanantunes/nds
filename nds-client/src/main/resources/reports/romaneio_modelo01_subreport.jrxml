@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-03-31T14:30:08 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo01_subreport" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" whenResourceMissingType="Empty" isIgnorePagination="true" uuid="2c487403-7084-47c6-ae90-c78f0c73e450">
 	<property name="ireport.zoom" value="1.9487171000000065"/>
 	<property name="ireport.x" value="115"/>
@@ -75,7 +77,7 @@
 	</field>
 	<field name="endereco" class="java.lang.String"/>
 	<columnHeader>
-		<band height="25" splitType="Stretch">
+		<band height="30" splitType="Stretch">
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="0" width="50" height="25" backcolor="#999999" uuid="7a08c427-0ac5-452e-886c-23f0c07c3862"/>
 				<box>
@@ -104,7 +106,7 @@
 				<text><![CDATA[ Cota]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="90" y="0" width="190" height="25" backcolor="#999999" uuid="904c0aed-4a1b-4b65-b897-4827e586689b"/>
+				<reportElement mode="Opaque" x="150" y="0" width="170" height="25" backcolor="#999999" uuid="904c0aed-4a1b-4b65-b897-4827e586689b"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -118,7 +120,7 @@
 				<text><![CDATA[ Nome]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="280" y="0" width="350" height="25" backcolor="#999999" uuid="562acd86-76e0-4741-ab2a-a146b78ea1dd"/>
+				<reportElement mode="Opaque" x="320" y="0" width="310" height="25" backcolor="#999999" uuid="562acd86-76e0-4741-ab2a-a146b78ea1dd"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -159,10 +161,24 @@
 				</textElement>
 				<text><![CDATA[Assinatura]]></text>
 			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="90" y="0" width="60" height="25" backcolor="#999999" uuid="606e25a3-75b0-4d6b-88aa-7d5dfb870a42"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[  Volume]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="25" splitType="Stretch">
+		<band height="30" splitType="Stretch">
 			<textField isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="50" height="25" uuid="c221fb00-25e9-4898-bee1-b8336395c68e"/>
 				<box>
@@ -188,7 +204,7 @@
 				<textFieldExpression><![CDATA[$F{numeroCota}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="90" y="0" width="190" height="25" uuid="8ba95a57-9df0-4d53-8f10-aac059046378"/>
+				<reportElement stretchType="RelativeToTallestObject" x="150" y="0" width="170" height="25" uuid="8ba95a57-9df0-4d53-8f10-aac059046378"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -199,7 +215,7 @@
 				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="350" height="25" uuid="e4ed3fd2-311a-49cd-b4f1-1ffb097267bf"/>
+				<reportElement stretchType="RelativeToTallestObject" x="320" y="0" width="310" height="25" uuid="e4ed3fd2-311a-49cd-b4f1-1ffb097267bf"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -231,6 +247,16 @@
 				<textElement markup="none"/>
 				<text><![CDATA[]]></text>
 			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="90" y="0" width="60" height="25" uuid="2c52b5ba-dd86-4659-b6cc-57655d163c18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+			</textField>
 		</band>
 	</detail>
 	<lastPageFooter>

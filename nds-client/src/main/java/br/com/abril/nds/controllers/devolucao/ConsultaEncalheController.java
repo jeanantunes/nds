@@ -86,8 +86,7 @@ import br.com.caelum.vraptor.view.Results;
 public class ConsultaEncalheController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsultaEncalheController.class);
-
-	   
+    
 	@Autowired
 	private FornecedorService fornecedorService;
 	
@@ -137,9 +136,7 @@ public class ConsultaEncalheController extends BaseController {
 	@Path("/")
 	public void index(){
 		
-		carregarComboFornecedores();
-		result.include("listaBoxes", carregarBoxes(boxService.buscarTodos(TipoBox.ENCALHE)));
-		result.include("data", DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
+		this.carregarComboFornecedores();
 		
 		this.iniciarComboBox();
 
@@ -148,8 +145,12 @@ public class ConsultaEncalheController extends BaseController {
         this.iniciarComboRoteiro();
         
         boolean isRecebe = distribuidorService.verificarParametroDistribuidorEmissaoDocumentosImpressaoCheck(null, TipoParametrosDistribuidorEmissaoDocumento.SLIP);
-		result.include("isDistribGeraSlip", isRecebe);
 		
+        result.include("isDistribGeraSlip", isRecebe);
+		
+        result.include("listaBoxes", carregarBoxes(boxService.buscarTodos(TipoBox.ENCALHE)));
+        
+		result.include("data", DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
 	}
 	
 	 /**
@@ -422,8 +423,6 @@ public class ConsultaEncalheController extends BaseController {
 		
 		efetuarPesquisaReparte(filtro1);
 	}
-	
-	
 
 	/**
 	 * Executa a pesquisa de consulta encalhe.

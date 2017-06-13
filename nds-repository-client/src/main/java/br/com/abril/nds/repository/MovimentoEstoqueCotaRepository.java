@@ -547,4 +547,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
    
 	List<ConsultaEncalheDTO> obterListaConsultaReparte(final FiltroConsultaEncalheDTO filtro);
 	
+	List<ConsultaEncalheDTO> obterListaConsultaBaseReparte(final FiltroConsultaEncalheDTO filtro);
+	
 }

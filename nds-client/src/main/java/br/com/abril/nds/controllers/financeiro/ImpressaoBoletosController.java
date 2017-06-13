@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +32,7 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.BancoService;
@@ -402,21 +404,18 @@ public class ImpressaoBoletosController extends BaseController {
 		}
 
 		Long totalRegistros = dividaService.obterQuantidadeDividasGeradas(filtro);
-
-		List<DividaGeradaVO> listaDividasGeradasVO = getListaDividaGeradaVO(listaDividasGeradas);
+		
+		List<DividaGeradaVO> listaDividasGeradasVO = getListaDividaGeradaVO(listaDividasGeradas, filtro);
 
 		TableModel<CellModelKeyValue<DividaGeradaVO>> tableModel = new TableModel<CellModelKeyValue<DividaGeradaVO>>();
 
-		tableModel.setRows(CellModelKeyValue
-				.toCellModelKeyValue(listaDividasGeradasVO));
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDividasGeradasVO));
 
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 
-		tableModel.setTotal((totalRegistros == null) ? 0 : totalRegistros
-				.intValue());
-
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive()
-				.serialize();
+		tableModel.setTotal((totalRegistros == null) ? 0 : totalRegistros.intValue());
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 
 	}
 
@@ -426,12 +425,14 @@ public class ImpressaoBoletosController extends BaseController {
 	 * @param listaGeraDividaDTO
 	 * @return List<DividaGeradaVO>
 	 */
-	private List<DividaGeradaVO> getListaDividaGeradaVO(List<GeraDividaDTO> listaGeraDividaDTO) {
+	private List<DividaGeradaVO> getListaDividaGeradaVO(List<GeraDividaDTO> listaGeraDividaDTO, FiltroDividaGeradaDTO filtro) {
 
 		List<DividaGeradaVO> listaDividasGeradasVO = new ArrayList<DividaGeradaVO>();
 
 		DividaGeradaVO dividaGeradaVO = null;
-
+		
+		BigDecimal totalGeral = dividaService.obterTotalGeral(filtro);
+		
 		for (GeraDividaDTO divida : listaGeraDividaDTO) {
 
 			dividaGeradaVO = new DividaGeradaVO();
@@ -447,7 +448,9 @@ public class ImpressaoBoletosController extends BaseController {
 			dividaGeradaVO.setValor(CurrencyUtil.formatarValor(divida.getValor()));
 			dividaGeradaVO.setVias(String.valueOf(divida.getVias()));
 			dividaGeradaVO.setNossoNumero(divida.getNossoNumero());
-
+			dividaGeradaVO.setStatus(divida.getStatus() != null ? divida.getStatus().getDescricao() : "");
+			dividaGeradaVO.setMostrar(divida.getStatus().equals(StatusDivida.EM_ABERTO) ? true : false);
+			dividaGeradaVO.setTotalGeral(totalGeral);
 			listaDividasGeradasVO.add(dividaGeradaVO);
 		}
 

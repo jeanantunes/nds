@@ -1,7 +1,9 @@
 package br.com.abril.nds.service.integracao;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.lightcouch.NoDocumentException;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
+import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.InterfaceExecucaoService;
 

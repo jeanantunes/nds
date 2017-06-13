@@ -35,4 +35,5 @@ public interface ConsultaEncalheService {
 
 	void enviarEmailLoteSlip(FiltroConsultaEncalheDTO filtro);
 	
+	InfoConsultaEncalheDTO pesquisarBaseReparte(FiltroConsultaEncalheDTO filtro);
 }

@@ -1,7 +1,10 @@
 package br.com.abril.nds.service;
 
+import java.util.List;
+
 import org.springframework.beans.BeansException;
 
+import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 /**

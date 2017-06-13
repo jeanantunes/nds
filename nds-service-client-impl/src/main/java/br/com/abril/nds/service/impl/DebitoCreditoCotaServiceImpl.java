@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.BoletoAvulsoDTO;
+import br.com.abril.nds.dto.ControleConferenciaEncalheCotaDTO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
@@ -417,6 +418,63 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		//DÉBIDO OU CRÉDITO DO CONSOLIDADO
 		final List<DebitoCreditoCota> outrosDebitoCreditoDoConsolidado =
 		        this.consolidadoFinanceiroRepository.buscarMovFinanPorCotaEData(cota.getId(), datas, idFornecedor);
+		
+		if(outrosDebitoCreditoDoConsolidado != null) {
+			for(DebitoCreditoCota dc : outrosDebitoCreditoDoConsolidado) {
+				if(GrupoMovimentoFinaceiro.TAXA_EXTRA.equals(dc.getTipoMovimento())) {
+					dc.setObservacoes(distribuidorService.obter().getDescricaoTaxaExtra() +" ("+ DateUtil.formatarDataPTBR(dc.getDataLancamento()) +")");
+				}
+			}
+		}
+		
+		if(outrosDebitoCreditoDoConsolidado!=null && !outrosDebitoCreditoDoConsolidado.isEmpty()) {
+			listaDebitoCreditoCompleta.addAll(outrosDebitoCreditoDoConsolidado);
+		}
+		
+		return listaDebitoCreditoCompleta;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<DebitoCreditoCota> obterListaDebitoCreditoCotaDTO(ControleConferenciaEncalheCotaDTO controleConfEncalheCota, final List<Date> datas,
+	        final Long idFornecedor){
+		
+		final List<DebitoCreditoCota> listaDebitoCreditoCompleta = new ArrayList<DebitoCreditoCota>();
+		
+		if(datas == null || datas.isEmpty()) {
+			return listaDebitoCreditoCompleta;
+		}
+		
+		final List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = 
+		        this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiro(
+		                Arrays.asList(
+		                        GrupoMovimentoFinaceiro.ENVIO_ENCALHE,
+		                        GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
+		                        GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO,
+		                        GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO));
+
+		//DEBITOS E CREDITOS DA COTA NA DATA DE OPERACAO
+		final List<DebitoCreditoCota> listaDebitoCreditoCotaNaoConsolidado = 
+				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(controleConfEncalheCota.getNumeroCota(), 
+													datas, 
+													tiposMovimentoFinanceiroIgnorados,
+													idFornecedor);
+
+		listaDebitoCreditoCompleta.addAll(listaDebitoCreditoCotaNaoConsolidado);
+		
+		//NEGOCIACOES AVULSAS DA COTA
+		final List<DebitoCreditoCota> listaDebitoNegociacaoNaoAvulsaMaisEncargos = 
+				movimentoFinanceiroCotaRepository.obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(
+						controleConfEncalheCota.getNumeroCota(), datas, idFornecedor);
+		
+		if(listaDebitoNegociacaoNaoAvulsaMaisEncargos != null && !listaDebitoNegociacaoNaoAvulsaMaisEncargos.isEmpty()) {
+			
+		    listaDebitoCreditoCompleta.addAll(listaDebitoNegociacaoNaoAvulsaMaisEncargos);
+		}
+
+		//DÉBIDO OU CRÉDITO DO CONSOLIDADO
+		final List<DebitoCreditoCota> outrosDebitoCreditoDoConsolidado =
+		        this.consolidadoFinanceiroRepository.buscarMovFinanPorCotaEData(controleConfEncalheCota.getIdCota(), datas, idFornecedor);
 		
 		if(outrosDebitoCreditoDoConsolidado != null) {
 			for(DebitoCreditoCota dc : outrosDebitoCreditoDoConsolidado) {

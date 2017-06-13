@@ -13,6 +13,22 @@ public class FiltroDetalheProcessamentoDTO extends FiltroDTO implements Serializ
 	private Long idLogExecucao;
 	
 	
+	public FiltroDetalheProcessamentoDTO(){
+		
+	}
+	
+	
+	
+	public FiltroDetalheProcessamentoDTO(OrdenacaoColunaConsulta ordenacaoColuna, Date dataProcessamento,
+			Long codigoLogExecucao, Long idLogExecucao) {
+		this.ordenacaoColuna = ordenacaoColuna;
+		this.dataProcessamento = dataProcessamento;
+		this.codigoLogExecucao = codigoLogExecucao;
+		this.idLogExecucao = idLogExecucao;
+	}
+
+
+
 	public enum OrdenacaoColunaConsulta {
 		
 		TIPO_ERRO("tipoErro"),

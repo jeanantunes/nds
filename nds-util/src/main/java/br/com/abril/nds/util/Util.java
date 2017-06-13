@@ -952,4 +952,14 @@ public abstract class Util {
 		return valor;
 	}
 	
+	/**
+	 * Obtém valor qtde formatada.
+	 * 
+	 * @param qtde
+	 * 
+	 * @return String
+	 */
+	public static String getValorQtdeIntegerFormatado(int qtde) {
+		return (qtde > 0) ? String.valueOf(qtde) : "";
+	}
 }

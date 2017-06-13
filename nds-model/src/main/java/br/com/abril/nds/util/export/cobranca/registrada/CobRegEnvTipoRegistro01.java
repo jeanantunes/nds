@@ -208,7 +208,7 @@ public class CobRegEnvTipoRegistro01 extends CobRegBaseDTO {
 	}
 
 	public void setNumeroControle(String numeroControle) {
-		this.numeroControle = numeroControle;
+		this.numeroControle = StringUtils.leftPad(numeroControle, 25, '0');
 	}
 
 	public String getNossoNumero() {

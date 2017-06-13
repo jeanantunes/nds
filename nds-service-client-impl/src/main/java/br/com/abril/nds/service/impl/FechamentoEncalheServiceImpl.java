@@ -47,6 +47,7 @@ import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorSequencia;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorTotalDevolucao;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorexemplaresJuramentado;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorexemplaresVendaEncalhe;
+import br.com.abril.nds.dto.HistoricoEncalheDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.fechamentoencalhe.GridFechamentoEncalheDTO;
@@ -1969,6 +1970,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     public List<Integer> extracaoContaCorrente_BuscarCotasObservacoes(FiltroExtracaoContaCorrenteDTO filtro){
     	return fechamentoEncalheRepository.extracaoContaCorrente_BuscarCotasObservacoes(filtro);
     }
+
+	@Override
+	@Transactional
+	public List<HistoricoEncalheDTO> obterHistoricosConferenciaEncalhe(String numeroCota, Date dataEncalhe) {
+		return conferenciaEncalheRepository.obterHistoricosConferenciaEncalhe(numeroCota, dataEncalhe);
+		
+	}
     
     
 }

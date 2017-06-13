@@ -1,5 +1,7 @@
 <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numberformatter-1.2.3.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
@@ -215,7 +217,13 @@
 			<div class="grids" id="grids" style="display:none;">
 				<table class="impressosGrid" id="impressosGrid"></table>
          			
-				
+				<table width="950" border="0" cellspacing="2" cellpadding="2">
+	        	<tr>
+	            	<td width="626">&nbsp;</td>
+		            <td width="50"><strong >Total R$:</strong></td>
+		            <td width="81" id="totalGeralBoletos" >0,00</td>
+	          	</tr>
+	        </table>
 			</div>
      	</fieldset>
 		

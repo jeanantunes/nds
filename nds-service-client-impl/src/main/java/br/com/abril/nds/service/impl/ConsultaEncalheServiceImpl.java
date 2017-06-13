@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
+import br.com.abril.nds.dto.ControleConferenciaEncalheCotaDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
@@ -107,29 +108,39 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		List<DebitoCreditoCota> listaDebitoCreditoCotaDTO = new ArrayList<DebitoCreditoCota>();
 		
-		List<Long> listaIdControleConfEncalheCota = controleConferenciaEncalheCotaRepository.obterListaIdControleConferenciaEncalheCota(filtro);
-		
-		if(listaIdControleConfEncalheCota != null && !listaIdControleConfEncalheCota.isEmpty()) {
-
-			for(Long idControleConfEncalheCota : listaIdControleConfEncalheCota) {
+//		if(filtro.getCodigoProduto() == null || filtro.getCodigoProduto().equals("")) {
+			
+			List<Long> listaIdControleConfEncalheCota = controleConferenciaEncalheCotaRepository.obterListaIdControleConferenciaEncalheCota(filtro);
+			
+			if(listaIdControleConfEncalheCota != null && !listaIdControleConfEncalheCota.isEmpty()) {
 				
-				ControleConferenciaEncalheCota controleConfEncalheCota = controleConferenciaEncalheCotaRepository.buscarPorId(idControleConfEncalheCota);
-				
-				if(controleConfEncalheCota != null) {
+				for(Long idControleConfEncalheCota : listaIdControleConfEncalheCota) {
 					
-					List<DebitoCreditoCota> listDebCred = 
-					        conferenciaEncalheService.obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(
-					                controleConfEncalheCota,
-					                filtro.getIdFornecedor());
-				
-					if(listDebCred!= null && !listDebCred.isEmpty()) {
-						listaDebitoCreditoCotaDTO.addAll(listDebCred);
+//					ControleConferenciaEncalheCota controleConfEncalheCota = controleConferenciaEncalheCotaRepository.buscarPorId(idControleConfEncalheCota);
+					
+					ControleConferenciaEncalheCotaDTO controleConfEncalheCota = controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(idControleConfEncalheCota);
+					
+					if(controleConfEncalheCota != null) {
+						
+//						List<DebitoCreditoCota> listDebCred = 
+//								conferenciaEncalheService.obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(
+//										controleConfEncalheCota,
+//										filtro.getIdFornecedor());
+						
+						List<DebitoCreditoCota> listDebCred = 
+								conferenciaEncalheService.obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(
+										controleConfEncalheCota,
+										filtro.getIdFornecedor());
+						
+						if(listDebCred!= null && !listDebCred.isEmpty()) {
+							listaDebitoCreditoCotaDTO.addAll(listDebCred);
+						}
 					}
 				}
+				
 			}
 			
-		}
-		
+//		}
 		BigDecimal valorDebitoCredito = BigDecimal.ZERO;
 		
 		if (listaDebitoCreditoCotaDTO != null) {
@@ -174,17 +185,24 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		InfoConsultaEncalheDTO info = new InfoConsultaEncalheDTO();
 		
-		
 		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaReparte(filtro);
 		
-		
 		info.setListaConsultaEncalhe(listaConsultaEncalhe);
-		
-		
 		
 		return info;
 	}
 	
+	@Transactional(readOnly = true)
+	public InfoConsultaEncalheDTO pesquisarBaseReparte(FiltroConsultaEncalheDTO filtro) {
+		
+		InfoConsultaEncalheDTO info = new InfoConsultaEncalheDTO();
+		
+		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaBaseReparte(filtro);
+		
+		info.setListaConsultaEncalhe(listaConsultaEncalhe);
+		
+		return info;
+	}
 	
 	@Transactional
 	public ConsultaEncalheRodapeDTO obterResultadosConsultaEncalhe(FiltroConsultaEncalheDTO filtro) {

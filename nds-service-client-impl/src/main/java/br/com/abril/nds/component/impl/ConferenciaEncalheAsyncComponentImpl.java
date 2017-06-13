@@ -71,6 +71,8 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 			
 		}
 		
+		this.conferenciaEncalheService.criarHistoricoConfEncalheCota(usuario, listaConferenciaEncalhe, controleConfEncalheCota);
+		
 	}
 	
 	@Override

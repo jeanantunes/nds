@@ -72,6 +72,7 @@ import br.com.abril.nds.dto.ExtracaoContaCorrenteDTO;
 import br.com.abril.nds.dto.ExtracaoContaCorrenteTotaisDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTOCego;
+import br.com.abril.nds.dto.HistoricoEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroExtracaoContaCorrenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -175,6 +176,12 @@ public class FechamentoEncalheController extends BaseController {
 	
 	private static final ConcurrentMap<String, String> CACHE_COBRANCA_COTAS = new ConcurrentHashMap<>();
 	
+	
+	private enum Visao {
+		REPARTE, ENCALHE
+	}
+	
+	
 	@Path("/")
 	public void index() {
 		
@@ -185,6 +192,8 @@ public class FechamentoEncalheController extends BaseController {
 		result.include("aceitaJuramentado", this.distribuidorService.aceitaJuramentado());
 		result.include("listaFornecedores", listaFornecedores);
 		result.include("listaBoxes", listaBoxes);
+		
+		result.include("listaVisao", Arrays.asList(Visao.ENCALHE, Visao.REPARTE));
 		
 		boolean confCega = !usuarioPossuiRule(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_CONF_CEGA);
 		
@@ -1938,8 +1947,10 @@ public class FechamentoEncalheController extends BaseController {
 			valorTotalAnalitico = BigDecimal.ZERO;
 		}
 		
-		List<AnaliticoEncalheVO> listVO = new ArrayList<AnaliticoEncalheVO>();
+		// lambdas
+//		final List<AnaliticoEncalheVO> listVO = listDTO.stream().map(dto -> new AnaliticoEncalheVO(dto)).collect(Collectors.toList());
 		
+		List<AnaliticoEncalheVO> listVO = new ArrayList<AnaliticoEncalheVO>();
 		for (AnaliticoEncalheDTO dto : listDTO) {
 			listVO.add(new AnaliticoEncalheVO(dto));
 		}
@@ -1977,8 +1988,8 @@ public class FechamentoEncalheController extends BaseController {
 			try {
 				
 				FileExporter.to("analitico-encalhe", fileType).inHTTPResponse(
-					this.getNDSFileHeader(), null, null, listVO, 
-					AnaliticoEncalheVO.class, this.response);
+						this.getNDSFileHeader(), null, null, listVO, 
+						AnaliticoEncalheVO.class, this.response);
 				
 			} catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
@@ -2098,6 +2109,20 @@ public class FechamentoEncalheController extends BaseController {
 	private void limparStatusCobrancaCotas() {
 		
 		CACHE_COBRANCA_COTAS.clear();
+	}
+	
+	@Post
+	public void obterHistoricosConferenciaEncalhe(String numeroCota, Date dataEncalhe){
+		
+		List<HistoricoEncalheDTO> listaHistoricoEncalhe = fechamentoEncalheService.obterHistoricosConferenciaEncalhe(numeroCota, dataEncalhe);
+		
+		TableModel<CellModelKeyValue<HistoricoEncalheDTO>> tableModel = new TableModel<CellModelKeyValue<HistoricoEncalheDTO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaHistoricoEncalhe));
+		tableModel.setPage(1);
+		tableModel.setTotal(15);
+		
+		this.result.use(FlexiGridJson.class).from(listaHistoricoEncalhe).total(listaHistoricoEncalhe.size()).page(1).serialize();
 	}
 	
 }

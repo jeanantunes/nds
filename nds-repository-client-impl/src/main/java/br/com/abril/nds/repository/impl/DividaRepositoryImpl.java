@@ -100,19 +100,34 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         return (long) query.list().size();
     }
     
+    @Override
+    public BigDecimal obterTotalGeral(FiltroDividaGeradaDTO filtro) {
+    	final StringBuilder hql = new StringBuilder();
+        
+        hql.append(getSqlSumDividas(true, filtro, true));
+        
+        final Query query = super.getSession().createQuery(hql.toString());
+        
+        final Map<String, Object> param = getParametrosConsultaDividas(filtro, true);
+        
+        setParameters(query, param);
+        
+        return (BigDecimal) query.uniqueResult();
+    }
+    
     @SuppressWarnings("unchecked")
     @Override
     public List<GeraDividaDTO> obterDividasGeradasSemBoleto(final FiltroDividaGeradaDTO filtro) {
         
         final StringBuilder hql = new StringBuilder();
         
-        hql.append(getSqldividas(false, filtro, false));
+        hql.append(getSqldividasArquivo(false, filtro, false));
         
-        hql.append(getOrdenacaoDivida(filtro));
+        hql.append(getOrdenacaoDividaArquivo(filtro));
         
         final Query query = super.getSession().createQuery(hql.toString());
         
-        final Map<String, Object> param = getParametrosConsultaDividas(filtro, false);
+        final Map<String, Object> param = getParametrosConsultaDividasArquivo(filtro, false);
         
         setParameters(query, param);
         
@@ -152,6 +167,37 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         return query.list();
     }
     
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<GeraDividaDTO> obterDividasGeradasArquivo(final FiltroDividaGeradaDTO filtro) {
+        
+        final StringBuilder hql = new StringBuilder();
+        
+        hql.append(getSqldividasArquivo(false, filtro, true));
+        
+        hql.append(getOrdenacaoDividaArquivo(filtro));
+        
+        final Query query = super.getSession().createQuery(hql.toString());
+        
+        final Map<String, Object> param = getParametrosConsultaDividasArquivo(filtro, true);
+        
+        setParameters(query, param);
+        
+        query.setResultTransformer(Transformers.aliasToBean(GeraDividaDTO.class));
+        
+        if (filtro.getPaginacao() != null) {
+            
+            if (filtro.getPaginacao().getPosicaoInicial() != null) {
+                query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+            }
+            
+            if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+                query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+            }
+        }
+        return query.list();
+    }
+    
     /**
      * Retorna os parametros da consulta de dividas.
      * 
@@ -159,6 +205,57 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      * @return HashMap<String,Object>
      */
     private Map<String, Object> getParametrosConsultaDividas(final FiltroDividaGeradaDTO filtro, final boolean isBoleto) {
+        
+        final Map<String, Object> param = new HashMap<String, Object>();
+        
+        param.put("data", filtro.getDataMovimento());
+        param.put("acumulaDivida", Boolean.FALSE);
+        //param.put("statusCobranca", StatusCobranca.NAO_PAGO);
+        //param.put("pendenteAcumulada", StatusDivida.PENDENTE_INADIMPLENCIA);
+        param.put("tipoRoteiroEspecial", TipoRoteiro.ESPECIAL);
+        
+        if (!isBoleto) {
+            param.put("tipoCobrancaBoleto", Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO));
+        }
+        
+        if (filtro.getNumeroCota() != null) {
+            param.put("numeroCota", filtro.getNumeroCota());
+        }
+        
+        if (filtro.getTipoCobranca() != null) {
+            param.put("tipoCobranca", filtro.getTipoCobranca());
+        }
+        
+        if (filtro.getIdBox() != null) {
+            param.put("box", filtro.getIdBox());
+        }
+        
+        if (filtro.getIdRota() != null) {
+            param.put("rota", filtro.getIdRota());
+        }
+        
+        if (filtro.getIdRoteiro() != null) {
+            param.put("roteiro", filtro.getIdRoteiro());
+        }
+        
+        if (filtro.getIdBanco() != null) {
+            param.put("idBanco", filtro.getIdBanco());
+        }
+        
+//        param.put("statusDivida", Arrays.asList(StatusDivida.EM_ABERTO, 
+//                        StatusDivida.BOLETO_ANTECIPADO_EM_ABERTO, 
+//                        StatusDivida.PENDENTE_INADIMPLENCIA));
+        
+        return param;
+    }
+    
+    /**
+     * Retorna os parametros da consulta de dividas.
+     * 
+     * @param filtro
+     * @return HashMap<String,Object>
+     */
+    private Map<String, Object> getParametrosConsultaDividasArquivo(final FiltroDividaGeradaDTO filtro, final boolean isBoleto) {
         
         final Map<String, Object> param = new HashMap<String, Object>();
         
@@ -212,6 +309,169 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      * @return String
      */
     private String getSqldividas(final boolean count, final FiltroDividaGeradaDTO filtro, final boolean isBoleto) {
+        
+        final StringBuilder hql = new StringBuilder();
+        
+        if (count) {
+            hql.append(" SELECT count(divida.id)");
+        } else {
+            hql.append(" select cobranca.id as cobrancaId,")
+               .append(" box.codigo || '-'|| box.nome as box,")
+               .append(" rota.descricaoRota as rota,")
+               .append(" roteiro.descricaoRoteiro as roteiro,")
+               .append(" cota.id as idCota, ")
+               .append(" cota.numeroCota as numeroCota, ")
+               .append(" coalesce(pessoa.nome, pessoa.razaoSocial) as nomeCota,")
+               .append(" cobranca.dataVencimento as dataVencimento,")
+               .append(" cobranca.dataEmissao as dataEmissao,")
+               .append(" cobranca.valor as valor,")
+               .append(" cobranca.tipoCobranca as tipoCobranca,")
+               .append(" coalesce(cobranca.vias, 0) as vias, ")
+               .append(" cobranca.nossoNumero as nossoNumero, ")
+               .append(" divida.status as status, ")
+               .append(" sum(cobranca.valor) as totalGeral ");	
+        }
+        
+        hql.append(" FROM ")
+           .append(" Divida divida ")
+           .append(" JOIN divida.cobranca cobranca ")
+           .append(" JOIN divida.consolidados consolidado ")
+           .append(" JOIN cobranca.cota cota ");
+           
+           if(filtro.getIdBanco() != null) {
+        	   hql.append(" JOIN cobranca.banco banco ");
+           }
+           
+           hql.append(" left JOIN cota.box box ")
+           .append(" left JOIN cota.pdvs pdv ")
+           .append(" left JOIN cota.pessoa pessoa ")
+           .append(" left JOIN cota.parametroCobranca parametroCobranca ")
+           .append(" left JOIN pdv.rotas rotaPdv  ").append(" left JOIN rotaPdv.rota rota  ")
+           .append(" left JOIN rota.roteiro roteiro ")
+           .append(" WHERE ")
+           .append(" divida.data =:data ")
+           .append(" AND divida.acumulada =:acumulaDivida ")
+//           .append(" AND cobranca.statusCobranca=:statusCobranca ")
+           .append(" AND pdv.caracteristicas.pontoPrincipal = true ")
+           //.append(" AND divida.status != :pendenteAcumulada ")
+           .append(" AND roteiro.tipoRoteiro != :tipoRoteiroEspecial ");
+           //.append(" AND cobranca.dataPagamento is null ")
+         //  .append(" AND divida.status in (:statusDivida) ");
+        
+        if (filtro.getNumeroCota() != null) {
+            hql.append(" AND cota.numeroCota =:numeroCota ");
+        }
+        
+        if (filtro.getTipoCobranca() != null) {
+            
+            hql.append(" AND cobranca.tipoCobranca =:tipoCobranca  ");
+        }
+        
+        if (!isBoleto) {
+            hql.append(" AND cobranca.tipoCobranca not in (:tipoCobrancaBoleto ) ");
+        }
+        
+        if (filtro.getIdBox() != null) {
+            hql.append(" AND box.id =:box ");
+        }
+        
+        if (filtro.getIdRota() != null) {
+            hql.append(" AND rota.id =:rota ");
+        }
+        
+        if (filtro.getIdRoteiro() != null) {
+            hql.append(" AND roteiro.id =:roteiro ");
+        }
+        
+        if (filtro.getIdBanco() != null) {
+            hql.append(" AND banco.id = :idBanco ");
+        }
+        
+        hql.append(" GROUP BY cobranca.id ");
+        
+        return hql.toString();
+    }
+    
+    /**
+     * Retorna o hql da consulta de dividas.
+     * 
+     * @param count
+     * @param filtro
+     * @return String
+     */
+    private String getSqlSumDividas(final boolean count, final FiltroDividaGeradaDTO filtro, final boolean isBoleto) {
+        
+        final StringBuilder hql = new StringBuilder();
+        
+        hql.append(" select sum(cobranca.valor) as totalGeral ");	
+        hql.append(" FROM ")
+           .append(" Divida divida ")
+           .append(" JOIN divida.cobranca cobranca ")
+           .append(" JOIN divida.consolidados consolidado ")
+           .append(" JOIN cobranca.cota cota ");
+           
+           if(filtro.getIdBanco() != null) {
+        	   hql.append(" JOIN cobranca.banco banco ");
+           }
+           
+           hql.append(" left JOIN cota.box box ")
+           .append(" left JOIN cota.pdvs pdv ")
+           .append(" left JOIN cota.pessoa pessoa ")
+           .append(" left JOIN cota.parametroCobranca parametroCobranca ")
+           .append(" left JOIN pdv.rotas rotaPdv  ").append(" left JOIN rotaPdv.rota rota  ")
+           .append(" left JOIN rota.roteiro roteiro ")
+           .append(" WHERE ")
+           .append(" divida.data =:data ")
+           .append(" AND divida.acumulada =:acumulaDivida ")
+//           .append(" AND cobranca.statusCobranca=:statusCobranca ")
+           .append(" AND pdv.caracteristicas.pontoPrincipal = true ")
+           //.append(" AND divida.status != :pendenteAcumulada ")
+           .append(" AND roteiro.tipoRoteiro != :tipoRoteiroEspecial ");
+           //.append(" AND cobranca.dataPagamento is null ")
+         //  .append(" AND divida.status in (:statusDivida) ");
+        
+        if (filtro.getNumeroCota() != null) {
+            hql.append(" AND cota.numeroCota =:numeroCota ");
+        }
+        
+        if (filtro.getTipoCobranca() != null) {
+            
+            hql.append(" AND cobranca.tipoCobranca =:tipoCobranca  ");
+        }
+        
+        if (!isBoleto) {
+            hql.append(" AND cobranca.tipoCobranca not in (:tipoCobrancaBoleto ) ");
+        }
+        
+        if (filtro.getIdBox() != null) {
+            hql.append(" AND box.id =:box ");
+        }
+        
+        if (filtro.getIdRota() != null) {
+            hql.append(" AND rota.id =:rota ");
+        }
+        
+        if (filtro.getIdRoteiro() != null) {
+            hql.append(" AND roteiro.id =:roteiro ");
+        }
+        
+        if (filtro.getIdBanco() != null) {
+            hql.append(" AND banco.id = :idBanco ");
+        }
+        
+        //hql.append(" GROUP BY cobranca.id ");
+        
+        return hql.toString();
+    }
+    
+    /**
+     * Retorna o hql da consulta de dividas.
+     * 
+     * @param count
+     * @param filtro
+     * @return String
+     */
+    private String getSqldividasArquivo(final boolean count, final FiltroDividaGeradaDTO filtro, final boolean isBoleto) {
         
         final StringBuilder hql = new StringBuilder();
         
@@ -304,6 +564,85 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      * @return String
      */
     private String getOrdenacaoDivida(final FiltroDividaGeradaDTO filtro) {
+    	
+        if (FiltroDividaGeradaDTO.ColunaOrdenacao.ROTEIRIZACAO.equals(filtro.getColunaOrdenacao())) {
+            return " ORDER BY box.codigo, roteiro.ordem, rota.ordem, rotaPdv.ordem ";
+        }
+        
+        if (filtro.getListaColunaOrdenacao() == null || filtro.getListaColunaOrdenacao().isEmpty()) {
+            return "";
+        }
+        
+        String orderByColumn = "";
+        
+        for (final ColunaOrdenacao ordenacao : filtro.getListaColunaOrdenacao()) {
+            
+            switch (ordenacao) {
+            case BOX:
+                orderByColumn += orderByColumn.isEmpty() ? "" : ",";
+                orderByColumn += " box ";
+                break;
+            case DATA_EMISSAO:
+                orderByColumn += orderByColumn.isEmpty() ? "" : ",";
+                orderByColumn += " dataEmissao ";
+                break;
+            case DATA_VENCIMENTO:
+                orderByColumn += orderByColumn.isEmpty() ? "" : ",";
+                orderByColumn += " dataVencimento ";
+                break;
+            case NOME_COTA:
+                orderByColumn += orderByColumn.isEmpty() ? "" : ",";
+                orderByColumn += " nomeCota ";
+                break;
+            case NUMERO_COTA:
+                orderByColumn += orderByColumn.isEmpty() ? "" : ",";
+                orderByColumn += " numeroCota ";
+                break;
+            case ROTA:
+                orderByColumn += orderByColumn.isEmpty() ? "" : ",";
+                orderByColumn += " rota ";
+                break;
+            case ROTEIRO:
+                orderByColumn += orderByColumn.isEmpty() ? "" : ",";
+                orderByColumn += " roteiro ";
+                break;
+            case TIPO_COBRANCA:
+                orderByColumn += orderByColumn.isEmpty() ? "" : ",";
+                orderByColumn += " tipoCobranca ";
+                break;
+            case VALOR:
+                orderByColumn += orderByColumn.isEmpty() ? "" : ",";
+                orderByColumn += " valor ";
+                break;
+            case VIA:
+                orderByColumn += orderByColumn.isEmpty() ? "" : ",";
+                orderByColumn += " vias ";
+                break;
+            default:
+                break;
+
+            }
+        }
+        
+        final StringBuilder hql = new StringBuilder();
+        
+        hql.append(" ORDER BY ").append(orderByColumn);
+        
+        if (filtro.getPaginacao().getOrdenacao() != null) {
+            
+            hql.append(filtro.getPaginacao().getOrdenacao().toString());
+        }
+        
+        return hql.toString();
+    }
+    
+    /**
+     * Retorna a string hql com a oredenação da consulta
+     * 
+     * @param filtro
+     * @return String
+     */
+    private String getOrdenacaoDividaArquivo(final FiltroDividaGeradaDTO filtro) {
     	
         if (FiltroDividaGeradaDTO.ColunaOrdenacao.ROTEIRIZACAO.equals(filtro.getColunaOrdenacao())) {
             return " ORDER BY box.codigo, roteiro.ordem, rota.ordem, rotaPdv.ordem ";

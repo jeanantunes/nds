@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -42,6 +43,9 @@ import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
+import br.com.abril.nds.dto.integracao.micro.Ems0106Deapr;
+import br.com.abril.nds.dto.integracao.micro.Ems0107Deajo;
+import br.com.abril.nds.dto.integracao.micro.Ems0108Matriz;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -3443,6 +3447,167 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 		if (paginacao.getPosicaoInicial() != null) {
 			query.setFirstResult(paginacao.getPosicaoInicial());
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoLancamentoDTO> obterProdutosSemEstudo(FiltroLancamentoDTO filtro) {
+
+		StringBuilder hql = new StringBuilder();
+		hql.append("select  pe.numeroEdicao as numeroEdicao, pe.precoVenda as precoVenda, ");
+		hql.append("p.codigo as codigoProduto, p.nomeComercial as nomeProduto ");
+		hql.append("from Lancamento l ");
+		hql.append("inner join l.produtoEdicao as pe ");
+		hql.append("inner join pe.produto as p ");
+		hql.append("left outer join l.estudo as e ");
+		hql.append("where l.dataLancamentoDistribuidor = :data ");
+		hql.append("and l.status in (:statusBalanceado, :statusExpedido) ");
+		hql.append("and l.estudo is null ");
+
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", filtro.getData());
+		query.setParameter("statusBalanceado", StatusLancamento.BALANCEADO);
+		query.setParameter("statusExpedido", StatusLancamento.EXPEDIDO);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoLancamentoDTO.class));
+		List<ProdutoLancamentoDTO> resultado = query.list();
+		
+		return resultado;
+	}
+
+	@Override
+	public List<Ems0108Matriz> buscarDadosMatriz(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append("select l.DATA_LCTO_DISTRIBUIDOR, p.codigo, pe.NUMERO_EDICAO, ");
+		hql.append("pe.NUMERO_EDICAO as edicao_recolhimento, l.DATA_LCTO_DISTRIBUIDOR as data_edicao_recoljimento, ");
+		hql.append("'N' as condRelancamento, 'S' as condImprimeBoleto, 'N' as condEncalheRetido, 'N' as flagAtual, 'F' as tipoRecolhimento, ");
+		hql.append("'S' as condCobrancaTotal, 'N' as condProdutoEspecial, pe.PESO ");
+		hql.append("from Lancamento l ");
+		hql.append("inner join produto_edicao pe on pe.id = l.PRODUTO_EDICAO_ID ");
+		hql.append("inner join produto p on p.id = pe.PRODUTO_ID ");
+		hql.append("where l.DATA_LCTO_DISTRIBUIDOR = :data ");
+		hql.append("and l.status in (:statusBalanceado, :statusExpedido ) ");
+		hql.append("group by 1,2,3,4,5,6,7,8,9,10,11,12 ");
+
+		Query query = getSession().createSQLQuery(hql.toString());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		query.setParameter("data", dateFormat.format(data));
+		//query.setParameter("data", "2017-04-12");
+		query.setParameter("statusBalanceado", StatusLancamento.BALANCEADO.name());
+		query.setParameter("statusExpedido", StatusLancamento.EXPEDIDO.name());
+		
+		List<Object[]> dados = query.list();
+		
+		List<Ems0108Matriz> resultado = new ArrayList<Ems0108Matriz>(dados.size());
+		
+		for (Object[] obj : dados) {
+			
+			int index = 0;
+						
+			Ems0108Matriz linha = new Ems0108Matriz();
+			
+			linha.setDataMovimento((Date)obj[index++]);
+			linha.setCodigoPublicacao((String)obj[index++]);
+			linha.setEdicaoLancamento(((BigInteger)obj[index++]).longValue());
+			linha.setEdicaoRecolhimento(((BigInteger)obj[index++]).longValue());
+			SimpleDateFormat dtFormat = new SimpleDateFormat("yyyyMMdd");
+			linha.setDataLancamentoRecolhimentoProduto(dtFormat.format((Date)obj[index++]));
+			linha.setCondRelancamento((String)obj[index++]);
+			linha.setCondImprimeBoleto((String)obj[index++]);
+			linha.setCondEncalheRetido((String)obj[index++]);
+			linha.setFlagAtual((String)obj[index++]);
+			linha.setTipoRecolhimento((String)obj[index++]);
+			linha.setCondCobrancaTotal((String)obj[index++]);
+			linha.setCondProdutoEspecial((String)obj[index++]);
+			linha.setPesoProduto(((BigInteger)obj[index++]).longValue());
+			
+			resultado.add(linha);
+		}
+		
+		return resultado;
+	}
+
+	@Override
+	public List<Ems0106Deapr> obterDadosDeapr(Date data) {
+		StringBuilder hql = new StringBuilder();
+		hql.append("select p.codigo, pe.NUMERO_EDICAO, e.QTDE_REPARTE ");
+		hql.append("from estudo e ");
+		hql.append("inner join lancamento l on l.ESTUDO_ID = e.id ");
+		hql.append("inner join produto_edicao pe on pe.id = e.PRODUTO_EDICAO_ID ");
+		hql.append("inner join produto p on p.id = pe.PRODUTO_ID ");
+		hql.append("where DATA_LCTO_DISTRIBUIDOR = :data ");
+		hql.append("and l.status in (:statusBalanceado, :statusExpedido ) ");
+		hql.append("group by 1,2,3 ");
+
+		Query query = getSession().createSQLQuery(hql.toString());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		query.setParameter("data", dateFormat.format(data));
+		//query.setParameter("data", "2017-04-12");//valor fixo para testar
+		query.setParameter("statusBalanceado", StatusLancamento.BALANCEADO.name());
+		query.setParameter("statusExpedido", StatusLancamento.EXPEDIDO.name());
+		
+		List<Object[]> dados = query.list();
+		
+		List<Ems0106Deapr> resultado = new ArrayList<Ems0106Deapr>(dados.size());
+		
+		for (Object[] obj : dados) {
+			
+			int index = 0;
+						
+			Ems0106Deapr linha = new Ems0106Deapr();
+			linha.setCodigoPublicacao((String)obj[index++]);
+			linha.setEdicao(((BigInteger)obj[index++]).longValue());
+			linha.setReparteDistribuir(((BigDecimal)obj[index++]).longValue());
+			
+			resultado.add(linha);
+		}
+		
+		return resultado;
+	}
+
+	@Override
+	public List<Ems0107Deajo> obterDadosDeajo(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append("select p.codigo, pe.NUMERO_EDICAO, c.numero_cota, ec.QTDE_EFETIVA, 'N' ");
+		hql.append("from estudo e ");
+		hql.append("inner join estudo_cota ec on ec.ESTUDO_ID = e.id ");
+		hql.append("inner join lancamento l on l.ESTUDO_ID = e.id ");
+		hql.append("inner join produto_edicao pe on pe.id = e.PRODUTO_EDICAO_ID ");
+		hql.append("inner join produto p on p.id = pe.PRODUTO_ID ");
+		hql.append("inner join cota c on c.id = ec.COTA_ID ");
+		hql.append("where l.DATA_LCTO_DISTRIBUIDOR = :data ");
+		hql.append("and l.status in (:statusBalanceado, :statusExpedido ) ");
+		hql.append("group by 1,2,3,4,5 ");
+
+		Query query = getSession().createSQLQuery(hql.toString());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		query.setParameter("data", dateFormat.format(data));
+		//query.setParameter("data", "2017-04-12");
+		query.setParameter("statusBalanceado", StatusLancamento.BALANCEADO.name());
+		query.setParameter("statusExpedido", StatusLancamento.EXPEDIDO.name());
+		
+		List<Object[]> dados = query.list();
+		
+		List<Ems0107Deajo> resultado = new ArrayList<Ems0107Deajo>(dados.size());
+		
+		for (Object[] obj : dados) {
+			
+			int index = 0;
+						
+			Ems0107Deajo linha = new Ems0107Deajo();
+			linha.setCodigoPublicacao((String)obj[index++]);
+			linha.setEdicao(((BigInteger)obj[index++]).longValue());
+			linha.setCodigoCota((Integer)obj[index++]);
+			linha.setQuantidadeReparte(((BigDecimal)obj[index++]).longValue());
+			linha.setRepartePDV((String)obj[index++]);
+			
+			resultado.add(linha);
+		}
+		
+		return resultado;
 	}
 	
 }

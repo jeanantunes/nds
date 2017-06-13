@@ -1,4 +1,8 @@
+var permiteVerEncalheVendaTotal = false;
+
 var ConferenciaEncalheCont = $.extend(true, {
+	
+	path : contextPath + '/devolucao/conferenciaEncalhe/',
 	
 	processandoConferenciaEncalhe: false,
 	
@@ -11,7 +15,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 	valorAnteriorInput : undefined,
 	
 	resetValue : true,
-
+	
 	init : function() {
 		
 		$(".outrosVlrsGrid", ConferenciaEncalheCont.workspace).flexigrid({
@@ -113,6 +117,56 @@ var ConferenciaEncalheCont = $.extend(true, {
 		ConferenciaEncalheCont.atribuirAtalhos();
 		
 		ConferenciaEncalheCont.numeroCotaEditavel(true);
+		
+		this.initGridProdutosSemEncalhe();
+	},
+	
+	initGridProdutosSemEncalhe : function() {
+	    //GRID DE HISTORICO DE ENCALHE
+		$(function() {
+			$(".dadosHistoricoEncalheGrid", ConferenciaEncalheCont.workspace).flexigrid({
+				dataType : 'json',
+				colModel : [ {
+					display : 'Seq',
+					name : 'codigoSM',
+					width : 40,
+					sortable : true,
+					align : 'center'
+				},{
+					display : 'Codigo',
+					name : 'codigo',
+					width : 70,
+					sortable : true,
+					align : 'center'
+				},{
+					display : 'Produto',
+					name : 'nomeProduto',
+					width : 200,
+					sortable : true,
+					align : 'left'
+				},{
+					display : 'Edição',
+					name : 'numeroEdicao',
+					width : 70,
+					sortable : true,
+					align : 'center'
+				},{
+					display : 'Preço',
+					name : 'precoComDesconto',
+					width : 70,
+					sortable : true,
+					align : 'center'		
+				},{
+					display : 'Reparte',
+					name : 'qtdReparte',
+					width : 70,
+					sortable : true,
+					align : 'center'
+				}],
+				width : 620,
+				height : 230
+			});
+		});
 	},
 
 	removerAtalhos: function() {
@@ -197,24 +251,26 @@ var ConferenciaEncalheCont = $.extend(true, {
 			exibirAcessoNegado();
 			return;
 		}
-		if (!ConferenciaEncalheCont.modalAberta) {
-
-			if(document.activeElement != undefined && document.activeElement.id != undefined && document.activeElement.id.indexOf('qtdExemplaresGrid_') > -1) {
-				elNdx = $(document.activeElement).attr('elIndex');
-				$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
-				ConferenciaEncalheCont.verificarPermissaoSuperVisor(elNdx, 'keydown.finalizarConferencia');
-				return;
-			}
-			
-			ConferenciaEncalheCont.processandoConferenciaEncalhe = true;
-			
-			$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
-			
-			setTimeout(function() {
-				ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.verificarCobrancaGerada);
-			}, 1000);
-		};
 		
+		if(!permiteVerEncalheVendaTotal) {
+			ConferenciaEncalheCont.processarConferencia();
+		} else {
+			ConferenciaEncalheCont.reparteMaiorQueZero();
+		}
+		
+	},
+	
+	reparteMaiorQueZero : function() {
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/reparteMaiorQueZero', null,
+			function(result){
+				
+				if (result == 'SIM'){
+					ConferenciaEncalheCont.processarConferencia();
+				} else {
+					ConferenciaEncalheCont.verificarProdutosSemEncalhe();
+				}
+			}
+		);
 	},
 	
 	confirmarConferencia: function() {
@@ -284,6 +340,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 								ConferenciaEncalheCont.carregarListaConferencia(data);
 								
 								ConferenciaEncalheCont.numeroCotaEditavel(false);
+								
+								permiteVerEncalheVendaTotal = result.permiteVerEncalheVendaTotal;
 							},
 							"Não" : function() {
 								
@@ -323,6 +381,12 @@ var ConferenciaEncalheCont = $.extend(true, {
 						exibirMensagem('WARNING', [result.msg]);
 						
 					} 
+					
+					permiteVerEncalheVendaTotal = result.permiteVerEncalheVendaTotal;
+					
+					console.log(permiteVerEncalheVendaTotal);
+					
+					permiteVerEncalheVendaTotal = result.permiteVerEncalheVendaTotal;
 					
 					ConferenciaEncalheCont.carregarListaConferencia(data);
 					
@@ -1967,6 +2031,69 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 			}, null, true, "dialog-confirmar-regerar-cobranca"
 		);
+	},
+	
+	verificarProdutosSemEncalhe: function(){
+		
+		$(".dadosHistoricoEncalheGrid", this.workspace).flexOptions({
+			url: this.path + "verificarProdutosSemConferenciaNormalEncalhe",
+			newp: 1,
+		});
+		
+		$("#dialog-produtos-sem-encalhe", ConferenciaEncalheCont.workspace).dialog({
+			resizable : false,
+			height : 400,
+			width : 680,
+			modal : true,
+			buttons : {
+				"Confirmar" : function() {
+					
+					$("#dialog-produtos-sem-encalhe", ConferenciaEncalheCont.workspace).dialog("close");
+					
+					ConferenciaEncalhe.processarConferencia();
+					
+				},
+				"Cancelar" : function(){
+				
+					$("#dialog-produtos-sem-encalhe", ConferenciaEncalheCont.workspace).dialog("close");
+				}
+			},
+			
+			open : function() {
+				
+				ConferenciaEncalheCont.configurarNavegacaoSetas($('#form-produtos-sem-encalhe').find('button'));
+				$(".dadosHistoricoEncalheGrid", this.workspace).flexReload();
+				setTimeout(function(){
+					$($('#form-produtos-sem-encalhe').find('button')[0]).focus();
+				}, 1);
+				
+			},
+			
+			form: $("#dialog-produtos-sem-encalhe", ConferenciaEncalheCont.workspace).parents("form")
+		});
+		
+		$(".dadosHistoricoEncalheGrid", this.workspace).flexReload();
+		$(".grids", ConferenciaEncalheCont.workspace).show();
+	},
+	
+	processarConferencia : function() {
+		if (!ConferenciaEncalheCont.modalAberta) {
+
+			if(document.activeElement != undefined && document.activeElement.id != undefined && document.activeElement.id.indexOf('qtdExemplaresGrid_') > -1) {
+				elNdx = $(document.activeElement).attr('elIndex');
+				$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
+				ConferenciaEncalheCont.verificarPermissaoSuperVisor(elNdx, 'keydown.finalizarConferencia');
+				return;
+			}
+			
+			ConferenciaEncalheCont.processandoConferenciaEncalhe = true;
+			
+			$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
+			
+			setTimeout(function() {
+				ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.verificarCobrancaGerada);
+			}, 1000);
+		};
 	},
 	
 	limparTela : function() {

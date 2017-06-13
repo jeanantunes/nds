@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
@@ -272,7 +273,7 @@ public class CertificadoServiceImpl implements CerfiticadoService {
 		 
 		 CertificadoNFEDTO certificadoNFEDTO = new CertificadoNFEDTO();
 		 
-		 certificadoNFEDTO.setId(certificado.getId());
+		 certificadoNFEDTO.setId(BigInteger.valueOf(certificado.getId()));
 		 certificadoNFEDTO.setAlias(certificado.getAlias());
 		 certificadoNFEDTO.setSenha(certificado.getSenha());
 		 certificadoNFEDTO.setDataInicio(certificado.getDataInicio());

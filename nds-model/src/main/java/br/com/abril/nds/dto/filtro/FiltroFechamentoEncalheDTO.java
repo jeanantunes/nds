@@ -14,43 +14,55 @@ public class FiltroFechamentoEncalheDTO implements Serializable {
 	private List<Long> fisico;
 	private boolean indAgrupaPorCota;
 	private boolean checkAll;
+	private String visao;
 	
 	public Date getDataEncalhe() {
 		return dataEncalhe;
 	}
+	
 	public void setDataEncalhe(Date dataEncalhe) {
 		this.dataEncalhe = dataEncalhe;
 	}
+	
 	public Long getFornecedorId() {
 		return fornecedorId;
 	}
+	
 	public void setFornecedorId(Long fornecedorId) {
 		this.fornecedorId = fornecedorId;
 	}
+	
 	public Long getBoxId() {
 		return boxId;
 	}
+	
 	public void setBoxId(Long boxId) {
 		this.boxId = boxId;
 	}
+	
 	public List<Long> getFisico() {
 		return fisico;
 	}
+	
 	public void setFisico(List<Long> fisico) {
 		this.fisico = fisico;
 	}
+	
 	public boolean isIndAgrupaPorCota() {
 		return indAgrupaPorCota;
 	}
+	
 	public void setIndAgrupaPorCota(boolean indAgrupaPorCota) {
 		this.indAgrupaPorCota = indAgrupaPorCota;
 	}
+	
 	/**
 	 * @return the checkAll
 	 */
 	public boolean isCheckAll() {
 		return checkAll;
 	}
+	
 	/**
 	 * @param checkAll the checkAll to set
 	 */
@@ -58,4 +70,11 @@ public class FiltroFechamentoEncalheDTO implements Serializable {
 		this.checkAll = checkAll;
 	}
 	
+	public String getVisao() {
+		return visao;
+	}
+	
+	public void setVisao(String visao) {
+		this.visao = visao;
+	}	
 }

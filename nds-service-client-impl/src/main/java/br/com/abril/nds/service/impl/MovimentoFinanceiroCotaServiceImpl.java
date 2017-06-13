@@ -482,6 +482,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         return movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
     }
 
+    @Transactional
 	private void aplicarParametrosDebitoTaxaDeEntrega(
 			final FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 		
@@ -1226,13 +1227,13 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     private Map<Long, List<MovimentosEstoqueEncalheDTO>> obterMovimentosEstoqueReparteComChamadaEncalheOuProdutoContaFirme(
             final Long idCota, final List<Date> datas) {
         
-    	
     	List<Long> idTiposMovimentoEstoque = tipoMovimentoEstoqueRepository.buscarIdTiposMovimentoEstoque(Arrays.asList(
         		GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR,
                 GrupoMovimentoEstoque.COMPRA_ENCALHE,
                 GrupoMovimentoEstoque.RECEBIMENTO_REPARTE,
                 GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE,
-                GrupoMovimentoEstoque.SOBRA_EM_COTA));
+                GrupoMovimentoEstoque.SOBRA_EM_COTA,
+                GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE));
     	
         final List<MovimentosEstoqueEncalheDTO> movimentosEstoqueCotaOperacaoEnvioReparte = movimentoEstoqueCotaRepository
                 .obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(idCota, datas, idTiposMovimentoEstoque);

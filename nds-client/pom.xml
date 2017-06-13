@@ -17,36 +17,36 @@
 	<name>NDS - Client</name>
 
 	<dependencies>
-	
+
 		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi</artifactId>
-		    <version>3.15</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.15</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
 		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi-ooxml</artifactId>
-		    <version>3.15</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.15</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml-schemas -->
 		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi-ooxml-schemas</artifactId>
-		    <version>3.15-beta1</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml-schemas</artifactId>
+			<version>3.15-beta1</version>
 		</dependency>
-				
+
 		<dependency>
-	          <groupId>org.apache.axis2</groupId>
-	          <artifactId>axis2</artifactId>
-	          <version>1.6.2</version>
-	    </dependency>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2</artifactId>
+			<version>1.6.2</version>
+		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-		</dependency>    
+		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
@@ -68,10 +68,8 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-ehcache</artifactId>
 		</dependency>
-		<!-- <dependency>
-			<groupId>javassist</groupId>
-			<artifactId>javassist</artifactId>
-		</dependency> -->
+		<!-- <dependency> <groupId>javassist</groupId> <artifactId>javassist</artifactId> 
+			</dependency> -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
@@ -175,10 +173,10 @@
 			<artifactId>gson</artifactId>
 		</dependency>
 		<dependency>
-  			<groupId>org.imgscalr</groupId>
-  		 	<artifactId>imgscalr-lib</artifactId>
-  		 	<version>4.2</version>
-		</dependency>	
+			<groupId>org.imgscalr</groupId>
+			<artifactId>imgscalr-lib</artifactId>
+			<version>4.2</version>
+		</dependency>
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
@@ -279,7 +277,23 @@
 			<groupId>org.ektorp</groupId>
 			<artifactId>org.ektorp.spring</artifactId>
 		</dependency>
+
+
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.2.7</version>
+			<exclusions>
+				<exclusion>
+					<groupId>jsr173_api</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+
 	</dependencies>
+
+
 
 	<build>
 
@@ -302,6 +316,15 @@
 		<finalName>nds-client</finalName>
 
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -371,6 +394,15 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.1</version>
+						<configuration>
+							<source>1.7</source>
+							<target>1.7</target>
+						</configuration>
+					</plugin>
+					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>jasperreports-maven-plugin</artifactId>
 						<configuration>
@@ -424,6 +456,15 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.1</version>
+						<configuration>
+							<source>1.7</source>
+							<target>1.7</target>
+						</configuration>
+					</plugin>
+					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>tomcat-maven-plugin</artifactId>
 						<version>1.1</version>
@@ -449,6 +490,15 @@
 			</properties>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.1</version>
+						<configuration>
+							<source>1.7</source>
+							<target>1.7</target>
+						</configuration>
+					</plugin>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>jasperreports-maven-plugin</artifactId>
@@ -499,6 +549,15 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.1</version>
+						<configuration>
+							<source>1.7</source>
+							<target>1.7</target>
+						</configuration>
+					</plugin>
+					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>jasperreports-maven-plugin</artifactId>
 						<configuration>
@@ -537,7 +596,7 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
 		<profile>
 			<id>boletoAvulso</id>
 			<properties>
@@ -549,55 +608,14 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>jasperreports-maven-plugin</artifactId>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.1</version>
 						<configuration>
-							<outputDirectory>${project.build.directory}/classes/reports</outputDirectory>
-							<sourceDirectory>src/main/resources/reports</sourceDirectory>
-
-							<server>tomcat-server</server>
-							<url>http://localhost:8080/manager/text</url>
-						</configuration>
-						<version>1.0-beta-2</version>
-						<executions>
-							<execution>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>compile-reports</goal>
-								</goals>
-							</execution>
-						</executions>
-						<dependencies>
-							<dependency>
-								<groupId>net.sf.jasperreports</groupId>
-								<artifactId>jasperreports</artifactId>
-								<version>5.0.0</version>
-							</dependency>
-						</dependencies>
-					</plugin>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>tomcat-maven-plugin</artifactId>
-						<version>1.1</version>
-						<configuration>
-							<server>tomcat-server-homolog-abril</server>
-							<url>http://177.71.255.76:8080/manager/text</url>
+							<source>1.7</source>
+							<target>1.7</target>
 						</configuration>
 					</plugin>
-				</plugins>
-			</build>
-		</profile>		
-				
-		<profile>
-			<id>nds-client-homolog-f2</id>
-			<properties>
-				<jndi-name>java:comp/env/jdbc/nds-client-homolog-f2</jndi-name>
-				<dataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client-homolog-f2</dataSourceURL>
-				<dataSourceUsername>admin</dataSourceUsername>
-				<dataSourcePassword>abrildgb01</dataSourcePassword>
-			</properties>
-			<build>
-				<plugins>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>jasperreports-maven-plugin</artifactId>
@@ -637,7 +655,66 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
+		<profile>
+			<id>nds-client-homolog-f2</id>
+			<properties>
+				<jndi-name>java:comp/env/jdbc/nds-client-homolog-f2</jndi-name>
+				<dataSourceURL>jdbc:mysql://abrildgbdb01.cdgtwjqgurfb.sa-east-1.rds.amazonaws.com:3306/nds-client-homolog-f2</dataSourceURL>
+				<dataSourceUsername>admin</dataSourceUsername>
+				<dataSourcePassword>abrildgb01</dataSourcePassword>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.1</version>
+						<configuration>
+							<source>1.7</source>
+							<target>1.7</target>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>jasperreports-maven-plugin</artifactId>
+						<configuration>
+							<outputDirectory>${project.build.directory}/classes/reports</outputDirectory>
+							<sourceDirectory>src/main/resources/reports</sourceDirectory>
+
+							<server>tomcat-server</server>
+							<url>http://localhost:8080/manager/text</url>
+						</configuration>
+						<version>1.0-beta-2</version>
+						<executions>
+							<execution>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>compile-reports</goal>
+								</goals>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>net.sf.jasperreports</groupId>
+								<artifactId>jasperreports</artifactId>
+								<version>5.0.0</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>tomcat-maven-plugin</artifactId>
+						<version>1.1</version>
+						<configuration>
+							<server>tomcat-server-homolog-abril</server>
+							<url>http://177.71.255.76:8080/manager/text</url>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
 		<profile>
 			<id>qa</id>
 			<properties>
@@ -651,6 +728,15 @@
 			</properties>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.1</version>
+						<configuration>
+							<source>1.7</source>
+							<target>1.7</target>
+						</configuration>
+					</plugin>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>jasperreports-maven-plugin</artifactId>
@@ -704,6 +790,15 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.1</version>
+						<configuration>
+							<source>1.7</source>
+							<target>1.7</target>
+						</configuration>
+					</plugin>
+					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>jasperreports-maven-plugin</artifactId>
 						<configuration>
@@ -756,6 +851,15 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.1</version>
+						<configuration>
+							<source>1.7</source>
+							<target>1.7</target>
+						</configuration>
+					</plugin>
+					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>jasperreports-maven-plugin</artifactId>
 						<configuration>
@@ -807,6 +911,15 @@
 			</properties>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.1</version>
+						<configuration>
+							<source>1.7</source>
+							<target>1.7</target>
+						</configuration>
+					</plugin>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>jasperreports-maven-plugin</artifactId>

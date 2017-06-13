@@ -1,9 +1,10 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -16,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSServiceClient;
-import br.com.abril.icd.axis.util.SemanaUtil;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.DetalheInterfaceVO;
@@ -38,6 +38,7 @@ import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.FTFService;
+import br.com.abril.nds.service.GerarArquivosMicroDistribuicaoService;
 import br.com.abril.nds.service.InterfaceExecucaoService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.PainelProcessamentoService;
@@ -84,6 +85,9 @@ public class PainelProcessamentoController extends BaseController {
     private static final String FILTRO_PESQUISA_DETALHES_INTERFACE_SESSION_ATTRIBUTE = "filtroPesquisaDetalheInterfaceGrid";
     private static final String FILTRO_PESQUISA_DETALHES_PROCESSAMENTO_SESSION_ATTRIBUTE = "filtroPesquisaDetalheProcessamentoGrid";
     
+    private static final String INTERFACE_EXECUCAO_MATRIZ = "EMS9001";
+    private static final String INTERFACE_EXECUCAO_ESTUDO = "EMS9002";
+    
     @Autowired
     private PainelProcessamentoService painelProcessamentoService;
     
@@ -113,6 +117,9 @@ public class PainelProcessamentoController extends BaseController {
     
     @Autowired
     private FTFService ftfService;
+	
+	@Autowired
+	private GerarArquivosMicroDistribuicaoService gerarArquivoMatrizService;
     
     private static final int INTERFACE = 1;
     private static final int PROCESSO  = 2;
@@ -227,6 +234,27 @@ public class PainelProcessamentoController extends BaseController {
         
     }
     
+    
+    
+    @Path("/pesquisarInterfacesMicroDistribuicao")
+    public void pesquisarInterfacesMicroDistribuicao() throws Exception {
+        
+    	 List<InterfaceDTO> resultado = painelProcessamentoService.listarInterfacesExecucaoMicroDistribuicao();
+        
+        if (resultado == null || resultado.isEmpty()) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+        } else {
+            
+            final TableModel<CellModelKeyValue<InterfaceDTO>> tableModel = new TableModel<CellModelKeyValue<InterfaceDTO>>();
+            tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultado));
+            tableModel.setPage(1);
+            tableModel.setTotal(1);
+            
+            result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+        }
+        
+    }
+    
     /**
      * Retorna a lista de mensagens de processamento da interface
      * @param idLogProcessamento
@@ -293,6 +321,33 @@ public class PainelProcessamentoController extends BaseController {
         result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
         
     }
+    
+    public void pesquisarDetalhesInterfaceMicroDistribuicao(final String idInterface, final String dataProcessamento, final String idLogExecucao,
+            final String sortname, final String sortorder, final int rp, final int page) throws Exception {
+        
+        try {
+        	DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			Date date = formatter.parse(dataProcessamento);
+		   	List<DetalheProcessamentoVO> lista = painelProcessamentoService.listardetalhesProcessamentoInterface(new FiltroDetalheProcessamentoDTO(null,date, new Long(idInterface),new Long(idLogExecucao)));
+	    	
+	           
+           final TableModel<CellModelKeyValue<DetalheProcessamentoVO>> tableModel = new TableModel<CellModelKeyValue<DetalheProcessamentoVO>>();
+           tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
+           tableModel.setPage(1);
+           tableModel.setTotal(lista.size());
+           result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+ 
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            if (e instanceof ValidacaoException) {
+                throw e;
+            } else {
+                throw new ValidacaoException(TipoMensagem.ERROR,
+                        "Erro ao pesquisar registros: " + e.getMessage());
+            }
+        }
+    }
+    
     
     private FiltroDetalheProcessamentoDTO carregarFiltroDetalhesProcessamento(final String sortorder, final String sortname, final int page, final int rp) {
         final FiltroDetalheProcessamentoDTO filtro = new FiltroDetalheProcessamentoDTO();
@@ -740,5 +795,27 @@ public class PainelProcessamentoController extends BaseController {
             new ValidacaoVO(TipoMensagem.SUCCESS,
                 "Execução da geração de ranking de faturamento foi realizada com sucesso"), "result").recursive().serialize();
     }
+    
+    @Path("/downloadArquivo")
+	public void downloadArquivo(final String nomeInterface, final String dataInterfaceExecucao) throws FileNotFoundException, IOException{
+    	try {
+			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			Date date = formatter.parse(dataInterfaceExecucao);
+			if(nomeInterface.equals(INTERFACE_EXECUCAO_MATRIZ)){
+				gerarArquivoMatrizService.gerarArquivoMatriz(null, date,  getUsuarioLogado(), nomeInterface);
+    		}else if(nomeInterface.equals(INTERFACE_EXECUCAO_ESTUDO)){
+    			gerarArquivoMatrizService.gerarArquivoDeapr(date, getUsuarioLogado());
+    			gerarArquivoMatrizService.gerarArquivoDeajo(date, getUsuarioLogado());
+    		}
+		//	gerarArquivoMatrizService.gerarArquivoDeapr(cl.getTime());  // 9002
+		//	gerarArquivoMatrizService.gerarArquivoDeajo(cl.getTime());  // 9002
+			
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Arquivo enviado com sucesso!"),"result").recursive().serialize();
+		}
+    	
+    	catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
     
 }

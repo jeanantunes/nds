@@ -6,6 +6,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
@@ -48,6 +49,7 @@ public class TipoMovimentoFinanceiroRepositoryImpl extends AbstractRepositoryMod
 	
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional
 	public List<Long> buscarIdsTiposMovimentoFinanceiro(List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro){
 		
 		StringBuilder hql = new StringBuilder("select t.id ");

@@ -118,7 +118,7 @@ public class Fornecedor implements Serializable {
 	/**
 	 * Fornecedores associados à Cota
 	 */
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(name = "COTA_FORNECEDOR", joinColumns = {@JoinColumn(name = "FORNECEDOR_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "COTA_ID")})
 	private Set<Cota> cotas = new HashSet<Cota>();

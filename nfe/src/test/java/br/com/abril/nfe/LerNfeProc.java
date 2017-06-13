@@ -30,7 +30,8 @@ public class LerNfeProc {
 	private static String versaoNFE = "3.10";
 	private static String PATH_IMPORTACAO = "/opt/parametros_nds/nfe-terceiros/";
 	private static final String XSD_PROC_CANC_NFE = "/procEventoCancNFe_v";
-
+	private static final String W3C_XML_SCHEMA_NS_URI = "http://www.w3.org/2001/XMLSchema";
+	
 	@Test
 	public void lerArquivoRetorno() {  
 		
@@ -101,7 +102,7 @@ public class LerNfeProc {
 		try {
 			
 			final String schemaFile = schemaPath+"xsd/v"+ (versao != null ? versao : versaoNFE) + tipoSchema + (versao != null ? versao : versaoNFE) + ".xsd";
-			final SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			final SchemaFactory factory = SchemaFactory.newInstance(W3C_XML_SCHEMA_NS_URI);
 			
 			if(LOGGER.isDebugEnabled()) {
 				LOGGER.debug("Schema: "+ schemaFile);

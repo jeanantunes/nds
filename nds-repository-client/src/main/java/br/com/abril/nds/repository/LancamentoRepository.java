@@ -20,6 +20,9 @@ import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
+import br.com.abril.nds.dto.integracao.micro.Ems0106Deapr;
+import br.com.abril.nds.dto.integracao.micro.Ems0107Deajo;
+import br.com.abril.nds.dto.integracao.micro.Ems0108Matriz;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -454,5 +457,13 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	Lancamento obterProximoLancamentoDaEdicao(Long idProdutoEdicao,
 			Date dataLimiteLancamento);
+
+	List<ProdutoLancamentoDTO> obterProdutosSemEstudo(FiltroLancamentoDTO filtro);
+
+	public List<Ems0108Matriz> buscarDadosMatriz(Date data);
+
+	public List<Ems0106Deapr> obterDadosDeapr(Date data);
+
+	public List<Ems0107Deajo> obterDadosDeajo(Date data);
 	
 }

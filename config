@@ -1,0 +1,17 @@
+[core]
+repositoryformatversion = 0
+filemode = false
+bare = false
+logallrefupdates = true
+symlinks = false
+ignorecase = true
+hideDotFiles = dotGitOnly
+[remote "origin"]
+url = https://Leandro_Abril@bitbucket.org/Leandro_Abril/nds.git
+fetch = +refs/heads/*:refs/remotes/origin/*
+[remote "DGBti"]
+url = https://Leandro_Abril@bitbucket.org/abrilmdia/nds.git
+fetch = +refs/heads/*:refs/remotes/DGBti/*
+[branch "master"]
+remote = origin
+merge = refs/heads/master

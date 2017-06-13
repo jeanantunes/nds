@@ -214,30 +214,42 @@
                     </tr>
               
                    <tr>
-                <td>Aceita Encalhe Juramentada:</td>
-                <td width="22">
-                    <c:if test="${parametrosDistribuidor.aceitaEncalheJuramentada}">
-                      <input name="parametrosDistribuidor.aceitaEncalheJuramentada" 
-                          type="checkbox" 
-                          id="aceitaEncalheJuramentada" checked="checked" />
-                    </c:if>   
-                      <c:if test="${not parametrosDistribuidor.aceitaEncalheJuramentada}">
-                      <input name="parametrosDistribuidor.aceitaEncalheJuramentada" 
-                          type="checkbox" 
-                          id="aceitaEncalheJuramentada"/>
-                    </c:if>        
-                </td>
-                <td width="15">&nbsp;</td>
-                <td width="21">&nbsp;</td>
-                <td width="16">&nbsp;</td>
-                <td width="20">&nbsp;</td>
-                <td width="16">&nbsp;</td>
-                <td width="21">&nbsp;</td>
-                <td width="13">&nbsp;</td>
-                <td width="20">&nbsp;</td>
-                <td width="15">&nbsp;</td>
-                <td width="22">&nbsp;</td>
-              </tr>
+                	<td>Aceita Encalhe Juramentada:</td>
+	                <td width="22">
+	                    <c:if test="${parametrosDistribuidor.aceitaEncalheJuramentada}">
+	                      <input name="parametrosDistribuidor.aceitaEncalheJuramentada" 
+	                          type="checkbox" 
+	                          id="aceitaEncalheJuramentada" checked="checked" />
+	                    </c:if>   
+	                      <c:if test="${not parametrosDistribuidor.aceitaEncalheJuramentada}">
+	                      <input name="parametrosDistribuidor.aceitaEncalheJuramentada" 
+	                          type="checkbox" 
+	                          id="aceitaEncalheJuramentada"/>
+	                    </c:if>        
+	                </td>
+	                <td width="15">&nbsp;</td>
+	                <td width="21">&nbsp;</td>
+	                <td width="16">&nbsp;</td>
+	                <td width="20">&nbsp;</td>
+	                <td width="16">&nbsp;</td>
+	                <td width="21">&nbsp;</td>
+	                <td width="13">&nbsp;</td>
+	                <td width="20">&nbsp;</td>
+	                <td width="15">&nbsp;</td>
+	                <td width="22">&nbsp;</td>
+	              </tr>
+	              <tr>
+                	<td colspan="11">Visualizar encalhe n&atilde;o processado / Venda Total:</td>
+	               
+	               	<td width="22">
+	                    <c:if test="${parametrosDistribuidor.vendaTotalEncalhe}">
+	                      <input name="parametrosDistribuidor.vendaTotalEncalhe" type="checkbox" id="vendaTotalEncalhe" checked="checked" />
+	                    </c:if>   
+	                      <c:if test="${not parametrosDistribuidor.vendaTotalEncalhe}">
+	                      <input name="parametrosDistribuidor.vendaTotalEncalhe" type="checkbox" id="vendaTotalEncalhe"/>
+	                    </c:if>        
+	                </td>
+	              </tr>
               <tr>
                 <td>Dias de Recolhimento:</td>
                 <td>
