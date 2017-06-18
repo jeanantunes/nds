@@ -534,6 +534,21 @@ var painelProcessamentoController = $.extend(true, {
 		);
 	},
 	
+	processarRetornoPinking : function() {
+		
+		$.postJSON(contextPath + "/administracao/painelProcessamento/processarRetornoPinking",
+				null,
+				function (resultado) {
+				
+					exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+			   	},
+			   	function (resultado) {
+					
+					exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+			   	}
+		);
+	},
+	
 	exportarCobranca : function() {
 		
 		$.postJSON(contextPath + "/administracao/painelProcessamento/exportarCobranca",

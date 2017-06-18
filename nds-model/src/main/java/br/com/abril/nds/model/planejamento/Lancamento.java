@@ -146,6 +146,12 @@ public class Lancamento implements Serializable {
 	@Column(name="JURAMENTADO", nullable = true)
     private Boolean juramentado;
 	
+	@Column(name = "DATA_LED")
+	private String dataLed;
+	
+	@Column(name = "HORA_LED")
+	private String horaLed;
+	
 	@Transient
 	public static final long PEB_MINIMA_LANCAMENTO = 7;
 
@@ -443,6 +449,22 @@ public class Lancamento implements Serializable {
 		this.dataFinMatDistrib = dataFinMatDistrib;
 	}
 	
+	public String getDataLed() {
+		return dataLed;
+	}
+
+	public void setDataLed(String dataLed) {
+		this.dataLed = dataLed;
+	}
+
+	public String getHoraLed() {
+		return horaLed;
+	}
+
+	public void setHoraLed(String horaLed) {
+		this.horaLed = horaLed;
+	}
+
 	public void voltarStatusOriginal() {
 		
 		if (this.produtoEdicao == null) {

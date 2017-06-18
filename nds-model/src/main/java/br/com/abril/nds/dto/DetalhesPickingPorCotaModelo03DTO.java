@@ -24,6 +24,10 @@ public class DetalhesPickingPorCotaModelo03DTO {
 	
 	private String codigoDeBarras;
 	
+	private String dataLed;
+	
+	private String horaLed;
+	
 	public String getCodigoCota() {
 		return codigoCota;
 	}
@@ -111,4 +115,21 @@ public class DetalhesPickingPorCotaModelo03DTO {
 	public void setCodigoDeBarras(String codigoDeBarras) {
 		this.codigoDeBarras = codigoDeBarras;
 	}
+
+	public String getDataLed() {
+		return dataLed;
+	}
+
+	public void setDataLed(String dataLed) {
+		this.dataLed = dataLed;
+	}
+
+	public String getHoraLed() {
+		return horaLed;
+	}
+
+	public void setHoraLed(String horaLed) {
+		this.horaLed = horaLed;
+	}
+	
 }

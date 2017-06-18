@@ -40,6 +40,7 @@ import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.FTFService;
 import br.com.abril.nds.service.GerarArquivosMicroDistribuicaoService;
 import br.com.abril.nds.service.InterfaceExecucaoService;
+import br.com.abril.nds.service.LedModelo4IntegracaoService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.PainelProcessamentoService;
 import br.com.abril.nds.service.RankingFaturamentoService;
@@ -120,6 +121,9 @@ public class PainelProcessamentoController extends BaseController {
 	
 	@Autowired
 	private GerarArquivosMicroDistribuicaoService gerarArquivoMatrizService;
+	
+	@Autowired
+	private LedModelo4IntegracaoService ledModelo4IntegracaoService;
     
     private static final int INTERFACE = 1;
     private static final int PROCESSO  = 2;
@@ -784,6 +788,13 @@ public class PainelProcessamentoController extends BaseController {
     	result.use(Results.json()).from(
             new ValidacaoVO(TipoMensagem.WARNING,
                 msg), "result").recursive().serialize();
+    }
+    
+    @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
+    public void processarRetornoPinking() {
+    	
+    	ledModelo4IntegracaoService.processarRetornoPicking();
+    	
     }
     
     @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
