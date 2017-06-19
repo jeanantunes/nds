@@ -4954,7 +4954,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             hql.append(" from MovimentoEstoqueCota mec ");
             hql.append(" left join mec.cota cota ");
             hql.append(" left join mec.produtoEdicao produtoEdicao ");
-            hql.append(" where produtoEdicao = :produtoEdicaoId and mec.statusEstoqueFinanceiro = 'FINANCEIRO_NAO_PROCESSADO' ");
+            hql.append(" where produtoEdicao.id = :produtoEdicaoId and mec.statusEstoqueFinanceiro = 'FINANCEIRO_NAO_PROCESSADO' ");
 
             Query query = getSession().createQuery(hql.toString());
 
