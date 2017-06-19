@@ -70,7 +70,9 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	@Autowired
 	private DistribuidorService distribuidorService;
 
+	@Autowired
 	private HistoricoAlteracaoPrecoVendaRepository historicoAlteracaoPrecoVendaRepository;
+
 	@Transactional
 	public List<MovimentoEstoqueCota> obterMovimentoCotaPorTipoMovimento(Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque){
 		return movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, idCota, grupoMovimentoEstoque);
