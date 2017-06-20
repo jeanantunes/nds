@@ -131,7 +131,8 @@ var manutencaoPublicacaoController = $.extend(true, {
 	},
 	
 	precoAlteradoComSucesso:function(result){
-		
+
+		console.log(result);
 		if(result.listaMensagens){
 			exibirMensagem(result.tipoMensagem,result.listaMensagens);
 		}
@@ -143,6 +144,7 @@ var manutencaoPublicacaoController = $.extend(true, {
 		$("#manut-publicacao-novoPrecoProduto",manutencaoPublicacaoController.workspace).val("");
 		manutencaoPublicacaoController.codigoProduto = null;
 		manutencaoPublicacaoController.numeroEdicao = null;
+        $('#novoDescontoFields').hide()
 	},
 	
 	isPublicacaoInformada:function(){

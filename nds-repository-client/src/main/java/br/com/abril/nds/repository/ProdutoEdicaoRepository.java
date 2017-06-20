@@ -391,4 +391,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 
 
 	public abstract List<ProdutoEdicao> obterProdutosEdicaoComVendaEntreDatas(FiltroCurvaABCDistribuidorDTO filtro);
+
+	public void atualizarDesconto(String codigoProduto, Long numeroEdicao,Double descontoAtual,Double novoDesconto);
+
 }

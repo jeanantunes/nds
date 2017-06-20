@@ -2522,4 +2522,31 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		return query.list();
 	}
+
+
+	public void atualizarDesconto(String codigoProduto, Long numeroEdicao,Double descontoAtual,Double novoDesconto){
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("update movimento_estoque_cota mec ");
+		sql.append("INNER JOIN produto_edicao pe ON mec.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append("INNER JOIN produto produto ON pe.PRODUTO_ID = produto.ID ");
+		sql.append("set mec.valor_desconto = :novoValorDesconto, ");
+		sql.append("mec.preco_com_desconto = mec.preco_venda - (mec.preco_venda * (:novoValorDesconto /100)) ");
+		sql.append("where ");
+		sql.append("mec.cota_id not in (40,6,48) and ");
+		sql.append("produto.codigo = :codigoProduto and ");
+		sql.append("pe.numero_edicao = :numeroEdicao and ");
+		sql.append("mec.valor_desconto = :descontoAtual ");
+
+		SQLQuery q = getSession().createSQLQuery(sql.toString());
+
+		q.setParameter("codigoProduto", codigoProduto);
+		q.setParameter("numeroEdicao", numeroEdicao);
+		q.setParameter("novoValorDesconto", novoDesconto);
+		q.setParameter("descontoAtual", descontoAtual);
+
+		q.executeUpdate();
+	}
+
 }
