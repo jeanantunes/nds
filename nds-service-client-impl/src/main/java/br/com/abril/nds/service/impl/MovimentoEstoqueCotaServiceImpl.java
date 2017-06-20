@@ -392,28 +392,14 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	@Override
 	public void atualizarDescontosDaPublicacao(String codigoProduto, Long numeroEdicao,Double descontoAtual,Double novoDesconto){
 
+
+		this.produtoEdicaoRepository.atualizarDesconto(codigoProduto,numeroEdicao,descontoAtual,novoDesconto);
+
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto,numeroEdicao);
-		List<MovimentoEstoqueCota> movimentoEstoqueCotas = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaFinanceiroNaoProcessadoDePublicaoExpedida(produtoEdicao.getId());
 		BigDecimal desconto = BigDecimal.valueOf(novoDesconto);
-
-		for (MovimentoEstoqueCota mec: movimentoEstoqueCotas) {
-
-			if(mec.getValoresAplicados().getValorDesconto().equals(BigDecimal.valueOf(descontoAtual))){
-
-				mec.getValoresAplicados().setValorDesconto(desconto);
-
-				mec.getValoresAplicados().setPrecoComDesconto( mec.getValoresAplicados().getPrecoVenda().min(mec.getValoresAplicados().getValorDesconto()));
-				this.movimentoEstoqueCotaRepository.saveOrUpdate(mec);
-			}
-
-		}
-
 		BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-		produtoEdicao.setDesconto(desconto);
 
-		//:precoProduto - ((mc.valor_desconto/100)* :precoProduto)
 		BigDecimal valoAtualizado = precoVenda.min(precoVenda.multiply(desconto.divide(BigDecimal.valueOf(100))));
-		produtoEdicao.setPrecoVenda(valoAtualizado);
 
 		HistoricoAlteracaoPrecoVenda hapc = new HistoricoAlteracaoPrecoVenda();
 		hapc.setDataOperacao(distribuidorService.obterDataOperacaoDistribuidor());
@@ -435,19 +421,15 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 		for (MovimentoEstoqueCota mec: movimentoEstoqueCotas) {
 
 			if(mec.getValoresAplicados().getValorDesconto().equals(BigDecimal.valueOf(descontoAtual))){
-				mec.getValoresAplicados().setValorDesconto(BigDecimal.valueOf(novoDesconto));
 
-				mec.getValoresAplicados().setPrecoComDesconto( mec.getValoresAplicados().getPrecoVenda().min(mec.getValoresAplicados().getValorDesconto()));
 				this.movimentoEstoqueCotaRepository.saveOrUpdate(mec);
+
+				this.atualizarDescontosDaPublicacao(mec.getProdutoEdicao().getProduto().getCodigo(), mec.getProdutoEdicao().getNumeroEdicao(), descontoAtual, novoDesconto);
 
 				ProdutoEdicao produtoEdicao = mec.getProdutoEdicao();
 
 				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-				produtoEdicao.setDesconto(desconto);
-
-				//:precoProduto - ((mc.valor_desconto/100)* :precoProduto)
 				BigDecimal valoAtualizado = precoVenda.min(precoVenda.multiply(desconto.divide(BigDecimal.valueOf(100))));
-				produtoEdicao.setPrecoVenda(valoAtualizado);
 
 				HistoricoAlteracaoPrecoVenda hapc = new HistoricoAlteracaoPrecoVenda();
 				hapc.setDataOperacao(distribuidorService.obterDataOperacaoDistribuidor());
@@ -456,7 +438,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 				hapc.setValorAntigo(precoVenda);
 				hapc.setValorAtual(valoAtualizado);
 				hapc.setCota(mec.getCota());
-				hapc.setTipoAlteracao("DESCONTO");
+				hapc.setTipoAlteracao("COTA");
 
 				historicoAlteracaoPrecoVendaRepository.adicionar(hapc);
 			}
