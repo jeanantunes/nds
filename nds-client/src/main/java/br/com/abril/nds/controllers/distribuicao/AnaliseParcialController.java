@@ -362,7 +362,16 @@ public class AnaliseParcialController extends BaseController {
     	vo.setPercentualAbrangencia(resumo.getAbrangenciaEstudo());
     	vo.setReparteTotalEdicao(analise.getReparteTotalEdicao());
     	vo.setVendaTotalEdicao(analise.getVendaTotalEdicao());
-    	vo.setEdicoesBase(filtroQueryDTO.getEdicoesBase() != null ? filtroQueryDTO.getEdicoesBase() : getEdicoesBase(edicoesBase, id, numeroParcial));
+    	
+    	List<EdicoesProdutosDTO> listBaseEstudo = new ArrayList<>();
+    	
+    	if(filtroQueryDTO.isMudarBaseVisualizacao() && filtroQueryDTO.getEdicoesBase() != null){
+    		listBaseEstudo = filtroQueryDTO.getEdicoesBase();
+    	}else{
+    		listBaseEstudo = getEdicoesBase(edicoesBase, id, numeroParcial); 
+    	}
+    	
+    	vo.setEdicoesBase(listBaseEstudo);
     	
     	if (resumo.getSaldo() != null) {
     		vo.setSaldo(resumo.getSaldo().toBigInteger());

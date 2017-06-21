@@ -38,6 +38,9 @@ var analiseParcialController = $.extend(true, {
         var tipoClassificacao = $('#filtroClassificacao').html().replace('selected="selected"', '');
 
         for (var i = 0; i < analiseParcialController.edicoesBase.length; i++) {
+        	if(i >= 6){
+        		continue;
+        	}
             var edicao = analiseParcialController.edicoesBase[i];
             var optionClassificacao = 'value="id"'.replace('id',edicao.idTipoClassificacao);
             objEdicoesBase.rows.push({ cell: {

@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.CopiaProporcionalDeDistribuicaoVO;
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.client.vo.TotalizadorProdutoDistribuicaoVO;
+import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -53,6 +54,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.EstudoProdutoEdicaoBaseService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.UsuarioService;
@@ -104,6 +106,9 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	
 	@Autowired
 	private AnaliseParcialService analiseParcialService;
+	
+	@Autowired
+	private EstudoProdutoEdicaoBaseService estudoProdutoEdicaoBaseService;
 	
 	@Autowired
 	private InformacoesReparteEstudoComplementarRepository infoEstudoComplementarRepository;
@@ -937,7 +942,13 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 		estudoCopia.setEstudoCotas(new HashSet<EstudoCotaGerado>(cotas));
 		
-		estudoCotaGeradoRepository.inserirProdutoBase(estudoCopia);
+		List<EdicaoBaseEstudoDTO> edicaoBaseEstudoDTOs = estudoProdutoEdicaoBaseService.obterEdicoesBase(vo.getIdEstudo());
+		
+		for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicaoBaseEstudoDTOs) {
+			estudoCotaGeradoRepository.inserirProdutoBase(estudoCopia.getId(), edicaoBaseEstudoDTO.getIdProdutoEdicao(), edicaoBaseEstudoDTO.getPeso().longValue());
+		}
+		
+//		estudoCotaGeradoRepository.inserirProdutoBase(estudoCopia);
 		
 		this.atualizarPercentualAbrangencia(estudoCopia.getId());
 		
