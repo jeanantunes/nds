@@ -628,7 +628,7 @@ public class Janela {
 			while (itListProdutosAgrupados.hasNext()) {
 				Produto prd = itListProdutosAgrupados.next();
 				cbxListaProdutos.addItem(prd);
-//				cbxListaProdutos.setRenderer(new ComboBoxRenderer());
+				cbxListaProdutos.setRenderer(new ComboBoxRenderer());
 			}
 
 			itListProdutosAgrupados = null;

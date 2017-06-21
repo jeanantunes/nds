@@ -663,7 +663,7 @@ public class PainelProcessamentoController extends BaseController {
     // enviar notas de devolucao para fornecedor via web service quando nota ainda nao foi enviado
     @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
     public void processarInterfaceDevolucaoFornecedor() {
-    	int nn=0;
+//    	int nn=0;
     	//Date dataDistribuicaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
     	/*  
         try {
@@ -791,12 +791,14 @@ public class PainelProcessamentoController extends BaseController {
     }
     
     @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
-    public void processarRetornoPinking() {
+    public void processarRetornoPinking(String data) {
     	
-    	ledModelo4IntegracaoService.processarRetornoPicking();
+    	Date dataDistribuicaoDistribuidor = DateUtil.parseDataPTBR(data);
+    	
+    	ledModelo4IntegracaoService.processarRetornoPicking(dataDistribuicaoDistribuidor);
     	
     }
-    
+       
     @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
     public void gerarRankingFaturamento() {
         

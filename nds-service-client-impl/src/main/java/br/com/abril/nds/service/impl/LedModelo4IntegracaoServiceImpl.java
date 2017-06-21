@@ -99,11 +99,7 @@ public class LedModelo4IntegracaoServiceImpl implements LedModelo4IntegracaoServ
 	
 	@Override
 	@Transactional
-	public void processarRetornoPicking(){
-		
-//		Date date = this.distribuidorService.obterDataOperacaoDistribuidor();
-		
-		Date date = DateUtil.parseDataPTBR("23/01/2017");
+	public void processarRetornoPicking(Date date){
 		
 		this.couchDbClient = getCouchDB_Client();
 
@@ -116,8 +112,7 @@ public class LedModelo4IntegracaoServiceImpl implements LedModelo4IntegracaoServ
 		try {
 			jsonDoc = couchDbClient.find(JsonObject.class, docName);
 		} catch (NoDocumentException e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao processar retorno picking.");
-//			throw new CarregarLancamentoException("Lan�amento n�o encontrado para essa Data.");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao processar retorno picking. Documento não encontrado! ");
 		}
 
 		if (jsonDoc != null) {
@@ -150,8 +145,8 @@ public class LedModelo4IntegracaoServiceImpl implements LedModelo4IntegracaoServ
 			}
 		}
 		
+		//Finalizar atualizacao dos lancamentos
 		System.out.println("qtd lancamentos: " + listLancamentos.size()); 
-		
 		
 	}
 	

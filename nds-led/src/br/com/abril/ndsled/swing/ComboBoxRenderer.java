@@ -45,6 +45,14 @@ public class ComboBoxRenderer extends JLabel implements ListCellRenderer<Object>
 
         setBackground(background);
         setForeground(foreground);
+        
+        if(value.toString().startsWith("*")){
+        	Color backgroundSelecionado = Color.white;
+            Color foregroundSelecionado = Color.red;
+        	
+        	setBackground(backgroundSelecionado);
+            setForeground(foregroundSelecionado);
+        }
 
         return this;
     }
