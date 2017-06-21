@@ -273,7 +273,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             if (queryDTO.possuiReducaoReparte()) {
 
 //                sql.append(" and CAST((((coalesce(ec.reparte_inicial, 0) - coalesce(ec.reparte, 0))/ec.qtde_efetiva)*10000)/100 as SIGNED INT) between :filterSortFrom and :filterSortTo ");
-            	sql.append(" and cast(100-((coalesce(ec.qtde_efetiva,0)*100)/ec.reparte_inicial) as SIGNED int) between :filterSortFrom and :filterSortTo ");
+            	sql.append(" and (cast(100-((coalesce(ec.qtde_efetiva,0)*100)/ec.reparte_inicial) as SIGNED int) between :filterSortFrom and :filterSortTo ");
+            	sql.append(" or cast(100-((coalesce(ec.qtde_efetiva,0)*100)/ec.reparte_inicial) as SIGNED int) between (:filterSortTo * -1) and -1 )");
             }
         }    
   
@@ -907,7 +908,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append("   T.numCota, ");
     	
     	if(queryDTO.possuiOrdenacaoQtdDeVenda()){
-    		sql.append("  sum( T.venda ) as QtdVenda ");
+    		sql.append("  (sum( T.venda )/:qtdEdicoes) as QtdVenda ");
     	}else{
     		sql.append("   (sum(T.venda)*100)/SUM(T.REPARTE) as percVenda ");
     	}
@@ -969,6 +970,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	
     	query.setParameterList("listaCota", listCotaId);
     	query.setParameterList("listaPE", listProdutoEdicaoId);
+    	query.setParameter("qtdEdicoes", listProdutoEdicaoId.size());
     	query.setParameterList("statusLanc", statusLancamento);
     	query.setParameter("de", queryDTO.getFilterSortFrom());
     	query.setParameter("ate", queryDTO.getFilterSortTo());

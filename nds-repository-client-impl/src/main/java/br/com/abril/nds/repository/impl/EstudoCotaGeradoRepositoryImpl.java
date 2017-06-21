@@ -245,15 +245,34 @@ public class EstudoCotaGeradoRepositoryImpl extends AbstractRepositoryModel<Estu
     @Override
     @Transactional
     public void inserirProdutoBase(EstudoGerado estudo) {
-	StringBuilder sql = new StringBuilder();
-	sql.append("insert into estudo_produto_edicao_base ");
-	sql.append(" (estudo_id, produto_edicao_id, colecao, parcial, edicao_aberta, peso) ");
-	sql.append(" values (:estudo_id, :produto_edicao_id, 0, 0, 0, 1) ");
-	
-	Query query = getSession().createSQLQuery(sql.toString());
-	query.setParameter("estudo_id", estudo.getId());
-	query.setParameter("produto_edicao_id", estudo.getProdutoEdicao().getId());
-	query.executeUpdate();
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("insert into estudo_produto_edicao_base ");
+		sql.append(" (estudo_id, produto_edicao_id, colecao, parcial, edicao_aberta, peso) ");
+		sql.append(" values (:estudo_id, :produto_edicao_id, 0, 0, 0, 1) ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		query.setParameter("estudo_id", estudo.getId());
+		query.setParameter("produto_edicao_id", estudo.getProdutoEdicao().getId());
+		query.executeUpdate();
+    }
+    
+    @Override
+	@Transactional
+    public void inserirProdutoBase(Long idEstudo, Long idProdutoEdicao, Long pesoEdicao) {
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("insert into estudo_produto_edicao_base ");
+		sql.append(" (estudo_id, produto_edicao_id, colecao, parcial, edicao_aberta, peso) ");
+		sql.append(" values (:estudo_id, :produto_edicao_id, 0, 0, 0, :peso) ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("estudo_id", idEstudo);
+		query.setParameter("produto_edicao_id", idProdutoEdicao);
+		query.setParameter("peso", pesoEdicao);
+		
+		query.executeUpdate();
     }
     
     @Override
