@@ -422,8 +422,6 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 
 			if(mec.getValoresAplicados().getValorDesconto().equals(BigDecimal.valueOf(descontoAtual))){
 
-				this.movimentoEstoqueCotaRepository.saveOrUpdate(mec);
-
 				this.atualizarDescontosDaPublicacao(mec.getProdutoEdicao().getProduto().getCodigo(), mec.getProdutoEdicao().getNumeroEdicao(), descontoAtual, novoDesconto);
 
 				ProdutoEdicao produtoEdicao = mec.getProdutoEdicao();
