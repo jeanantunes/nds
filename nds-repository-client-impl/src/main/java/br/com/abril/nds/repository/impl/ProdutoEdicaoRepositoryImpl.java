@@ -2534,7 +2534,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		sql.append("set mec.valor_desconto = :novoValorDesconto, ");
 		sql.append("mec.preco_com_desconto = mec.preco_venda - (mec.preco_venda * (:novoValorDesconto /100)) ");
 		sql.append("where ");
-		sql.append("mec.cota_id not in (40,6,48) and ");
 		sql.append("produto.codigo = :codigoProduto and ");
 		sql.append("pe.numero_edicao = :numeroEdicao and ");
 		sql.append("mec.valor_desconto = :descontoAtual ");
