@@ -41,9 +41,11 @@
   <tr>
     <td style="padding-bottom:5px;">&nbsp;
       <div class="bg_login">
-        <table width="549" align="center" cellpadding="2" cellspacing="0">
+        <table width="549" align="center" cellpadding="0" cellspacing="0">
           <tr>
-            <td width="28%"  height="140px" align="right"><img src="images/logo_nds1_new.png" width="270" height="144" alt="NDS -Sistem TREELOG"  /></td>
+            <td width="28%"  height="140px" align="right">
+              <img src="images/logo_nds1_new.png" width="270" height="144" alt="NDS -Sistem TREELOG"  />
+            </td>
             <td width="65%" style="border:1px solid #d6d6d6; background:#FFF;"><table width="70%" border="0" align="center" cellpadding="2" cellspacing="2" id="tabLogin">
               
               <tr align="center" >
