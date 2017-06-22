@@ -53,34 +53,25 @@
                 <td width="78%">
                   <select id="distribuidores" style="width:200px;">
                     <option>Selecione</option>
-                    <option value="rjar.nds.treelog.com.br">AR RJ</option>
-                    <option value="spar.nds.treelog.com.br">AR SP</option>
-                    <option value="spts.nds.treelog.com.br">TELESENA SP</option>
                     <option value="rjtr.nds.treelog.com.br">Agência RJ</option>
                     <option value="sptr.nds.treelog.com.br">Agência SP</option>
-                    <option value="rjts.nds.treelog.com.br">Telesena RJ</option>
-                    <option value="rjbau.nds.treelog.com.br">Rj BAU</option>
+                    <option value="aju.nds.treelog.com.br">Aracajú</option>
+                    <option value="rjar.nds.treelog.com.br">AR RJ</option>
+                    <option value="spar.nds.treelog.com.br">AR SP</option>
+                    <option value="bnu.nds.treelog.com.br">Blumenau</option>
+                    <option value="bsb.nds.treelog.com.br">Brasília</option>
+                    <option value="ccp.nds.treelog.com.br">Caçapava</option>
                     <option value="cmp.nds.treelog.com.br">Campinas</option>
-                    <option value="sjc.nds.treelog.com.br">São José dos Campos</option>
-                    <option value="soc.nds.treelog.com.br">Sorocaba</option>
-                    <option value="mcz.nds.treelog.com.br">Maceió</option>
+                    <option value="gyn.nds.treelog.com.br">Goiânia</option>
+                    <option value="imp.nds.treelog.com.br">Imperatriz</option>
                     <option value="joi.nds.treelog.com.br">Joinville</option>
                     <option value="lag.nds.treelog.com.br">Lages</option>
-                    <option value="bsb.nds.treelog.com.br">Brasília</option>
-                    <option value="bau.nds.treelog.com.br">BAU</option>
-                    <option value="cmpts.nds.treelog.com.br">CMPTS</option>
-                    <option value="socts.nds.treelog.com.br">SOCTS</option>
-                    <option value="spbau.nds.treelog.com.br">SPBAU</option>
-                    <option value="bnu.nds.treelog.com.br">Blumenau</option>
+                    <option value="mcz.nds.treelog.com.br">Maceió</option>
                     <option value="nat.nds.treelog.com.br">Natal</option>
-                    <option value="gyn.nds.treelog.com.br">Goiânia</option>
-                    <option value="pfp.nds.treelog.com.br">Passo Fundo</option>
-                    <option value="aju.nds.treelog.com.br">Aracajú</option>
-                    <option value="imp.nds.treelog.com.br">Imperatriz</option>
+                    <option value="sjc.nds.treelog.com.br">São José dos Campos</option>
+                    <option value="soc.nds.treelog.com.br">Sorocaba</option>
                     <option value="the.nds.treelog.com.br">Teresina</option>
-                    <option value="ccp.nds.treelog.com.br">Caçapava</option>
                   </select>
-
                 </td>
               </tr>
 
