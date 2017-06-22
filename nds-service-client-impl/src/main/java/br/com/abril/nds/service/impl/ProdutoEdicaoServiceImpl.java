@@ -50,6 +50,7 @@ import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SegmentacaoProduto;
@@ -2054,6 +2055,10 @@ if ( dto.getRepartePrevisto() != null) {
     			filtro.setBuscarPeriodosParciais(true);
     		}
     	}
+    	
+    	Produto produto = produtoRepository.obterProdutoPorCodigoProdin(filtro.getProdutoDto().getCodigoProduto());
+    	
+    	filtro.setLimiteBuscaPorEdicao( produto.getPeriodicidade().equals(PeriodicidadeProduto.SEMANAL) ? 24 : 12 );
     	
     	List<ProdutoEdicaoDTO> listEdicoesProdutoDto = produtoEdicaoRepository.obterEdicoesProduto(filtro);
 
