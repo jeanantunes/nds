@@ -2534,6 +2534,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		sql.append("set mec.valor_desconto = :novoValorDesconto, ");
 		sql.append("mec.preco_com_desconto = mec.preco_venda - (mec.preco_venda * (:novoValorDesconto /100)) ");
 		sql.append("where ");
+		sql.append(" mec.status_estoque_financeiro = 'FINANCEIRO_NAO_PROCESSADO'  and ");
 		sql.append("produto.codigo = :codigoProduto and ");
 		sql.append("pe.numero_edicao = :numeroEdicao and ");
 		sql.append("mec.valor_desconto = :descontoAtual ");
@@ -2542,6 +2543,27 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		q.setParameter("codigoProduto", codigoProduto);
 		q.setParameter("numeroEdicao", numeroEdicao);
+		q.setParameter("novoValorDesconto", novoDesconto);
+		q.setParameter("descontoAtual", descontoAtual);
+
+		q.executeUpdate();
+	}
+
+	public void atualizarDescontoCota(Long cotaId,Double descontoAtual,Double novoDesconto){
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("update movimento_estoque_cota mec ");
+		sql.append("set mec.valor_desconto = :novoValorDesconto, ");
+		sql.append("mec.preco_com_desconto = mec.preco_venda - (mec.preco_venda * (:novoValorDesconto /100)) ");
+		sql.append("where ");
+		sql.append(" mec.status_estoque_financeiro = 'FINANCEIRO_NAO_PROCESSADO'  and ");
+		sql.append(" mec.cota_id = :cotaId and ");
+		sql.append(" mec.valor_desconto = :descontoAtual ");
+
+		SQLQuery q = getSession().createSQLQuery(sql.toString());
+
+		q.setParameter("cotaId", cotaId);
 		q.setParameter("novoValorDesconto", novoDesconto);
 		q.setParameter("descontoAtual", descontoAtual);
 

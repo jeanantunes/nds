@@ -394,4 +394,6 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 
 	public void atualizarDesconto(String codigoProduto, Long numeroEdicao,Double descontoAtual,Double novoDesconto);
 
+	public void atualizarDescontoCota(Long cotaId,Double descontoAtual,Double novoDesconto);
+
 }

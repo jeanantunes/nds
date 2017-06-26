@@ -413,16 +413,17 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 
 	@Transactional
 	@Override
-	public void atualizarDescontosDaCota(Long cotaId,Double descontoAtual,Double novoDesconto){
+	public void atualizarDescontosDaCota(Cota cota,Double descontoAtual,Double novoDesconto){
 
-		List<MovimentoEstoqueCota> movimentoEstoqueCotas = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaFinanceiroNaoProcessadoDaCota(cotaId);
+
+		this.produtoEdicaoRepository.atualizarDescontoCota(cota.getId(),descontoAtual,novoDesconto);
+
+		List<MovimentoEstoqueCota> movimentoEstoqueCotas = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaFinanceiroNaoProcessadoDaCota(cota.getId());
 		BigDecimal desconto = BigDecimal.valueOf(novoDesconto);
 
 		for (MovimentoEstoqueCota mec: movimentoEstoqueCotas) {
 
 			if(mec.getValoresAplicados().getValorDesconto().equals(BigDecimal.valueOf(descontoAtual))){
-
-				this.atualizarDescontosDaPublicacao(mec.getProdutoEdicao().getProduto().getCodigo(), mec.getProdutoEdicao().getNumeroEdicao(), descontoAtual, novoDesconto);
 
 				ProdutoEdicao produtoEdicao = mec.getProdutoEdicao();
 

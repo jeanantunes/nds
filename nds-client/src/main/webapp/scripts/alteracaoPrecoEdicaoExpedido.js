@@ -142,6 +142,7 @@ var manutencaoPublicacaoController = $.extend(true, {
 		$("#manut-publicacao-edicaoProduto", manutencaoPublicacaoController.workspace).val("");
 		$("#manut-publicacao-nomeProduto", manutencaoPublicacaoController.workspace).val("");
 		$("#manut-publicacao-novoPrecoProduto",manutencaoPublicacaoController.workspace).val("");
+        $('#novoDescontoInput').val('');
 		manutencaoPublicacaoController.codigoProduto = null;
 		manutencaoPublicacaoController.numeroEdicao = null;
         $('#novoDescontoFields').hide()
