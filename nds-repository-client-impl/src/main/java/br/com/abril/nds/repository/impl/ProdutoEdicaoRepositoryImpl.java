@@ -44,6 +44,7 @@ import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
@@ -60,6 +61,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.ItemAutoComplete;
+import br.com.abril.nds.util.QueryUtil;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -1660,7 +1662,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
 
 		this.setParameters(query, parameters);
-
+		
 		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
 		query.addScalar("id", StandardBasicTypes.LONG);
 		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
@@ -1672,6 +1674,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.addScalar("descricaoSituacaoLancamento", StandardBasicTypes.STRING);
 		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
 		query.addScalar("descricaoClassificacao", StandardBasicTypes.STRING);
+		
+		query.setMaxResults(filtro.getLimiteBuscaPorEdicao());
 		
 		return query.list();
 	}

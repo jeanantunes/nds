@@ -969,13 +969,13 @@ var ConsultaEncalhe = $
 						}, {
 							display : 'Preço Capa R$',
 							name : 'precoVenda',
-							width : 80,
+							width : 50,
 							sortable : true,
 							align : 'right'
 						}, {
 							display : 'Preço com Desc. R$',
 							name : 'precoComDesconto',
-							width : 110,
+							width : 90,
 							sortable : true,
 							align : 'right'
 						}, {
@@ -991,6 +991,12 @@ var ConsultaEncalhe = $
 							sortable : true,
 							align : 'center'
 						}, {
+							display : 'Venda',
+							name : 'venda',
+							width : 40,
+							sortable : true,
+							align : 'center'
+						}, {	
 							display : 'Fornecedor',
 							name : 'fornecedor',
 							width : 85,
