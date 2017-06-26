@@ -561,6 +561,7 @@ var painelProcessamentoController = $.extend(true, {
 							function (resultado) {
 							
 								exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+								$(this).dialog("close");
 						   	},
 						   	function (resultado) {
 								

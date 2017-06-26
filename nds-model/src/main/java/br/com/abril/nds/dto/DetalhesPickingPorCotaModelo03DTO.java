@@ -22,11 +22,11 @@ public class DetalhesPickingPorCotaModelo03DTO {
 	
 	private String quantidade;
 	
-	private String codigoDeBarras;
+	private String codigoDeBarras = "";
 	
-	private String dataLed;
+	private String dataLed = "";
 	
-	private String horaLed;
+	private String horaLed = "";
 	
 	public String getCodigoCota() {
 		return codigoCota;

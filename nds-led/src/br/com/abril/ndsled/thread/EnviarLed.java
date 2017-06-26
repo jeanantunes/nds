@@ -1,13 +1,11 @@
 package br.com.abril.ndsled.thread;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -19,7 +17,6 @@ import org.apache.log4j.Logger;
 import br.com.abril.ndsled.modelo.Cota;
 import br.com.abril.ndsled.modelo.Lancamento;
 import br.com.abril.ndsled.modelo.Produto;
-import br.com.abril.ndsled.serialcom.PortaCom;
 
 /**
  * Classe Thread para manipulacao dos leds em processo paralelo.
@@ -98,7 +95,6 @@ public class EnviarLed extends Thread {
 		Produto produtoSelecionado = (Produto) cbxListaProdutos
 				.getSelectedItem();
 		
-		
 		Iterator<Lancamento> iLanc = lstLancamentos.iterator();
 		while (iLanc.hasNext()) {
 			Lancamento lanc = iLanc.next();
@@ -110,6 +106,7 @@ public class EnviarLed extends Thread {
 				String qtde = String
 						.format("%04d", lanc.getQuantidadeReparte());
 //				pCom.EnviarComando("p" + codLed + qtde);
+				
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
@@ -120,10 +117,8 @@ public class EnviarLed extends Thread {
 		}
 
 		produtoSelecionado.setDistribuido(true);
-		produtoSelecionado.setNomeProduto("* "
-				+ produtoSelecionado.getNomeProduto());
+		produtoSelecionado.setNomeProduto("* "+ produtoSelecionado.getNomeProduto());
 		
-
 		// Ordena a lista de produtos agrupados por nome.
 		Collections.sort(lstProdutosAgrupados, new Comparator<Produto>() {
 			@Override
@@ -151,30 +146,29 @@ public class EnviarLed extends Thread {
 		
 		// Alimenta o Combobox de Produtos com a lista de produtos agrupado
 		// do dia selecionado.
-		Iterator<Produto> itListProdutosAgrupados = lstProdutosAgrupados
-				.iterator();
-
+//		Iterator<Produto> itListProdutosAgrupados = lstProdutosAgrupados.iterator();
+		
+		List<Produto> produtosOrdenadosPosMarcacao = new ArrayList<Produto>();
+		
+		for (Produto produto : lstProdutosAgrupados) {
+			if(!produto.getNomeProduto().startsWith("*")){
+				produtosOrdenadosPosMarcacao.add(produto);
+			}
+		}
+		
+		for (Produto produto : lstProdutosAgrupados) {
+			if(produto.getNomeProduto().startsWith("*")){
+				produtosOrdenadosPosMarcacao.add(produto);
+			}
+		}
+		
+		Iterator<Produto> itListProdutosAgrupados = produtosOrdenadosPosMarcacao.iterator();
+			
 		while (itListProdutosAgrupados.hasNext()) {
 			Produto prd = itListProdutosAgrupados.next();
 			cbxListaProdutos.addItem(prd);
-			
-//			if(prd.getCodigoProduto() == produtoSelecionado.getCodigoProduto() && 
-//					prd.getEdicaoProduto() == produtoSelecionado.getEdicaoProduto()){
-//				cbxListaProdutos.addItem(prd);  
-//				cbxListaProdutos.setRenderer(new DefaultListCellRenderer() {
-//					  @Override
-//					  public void paint(Graphics g) {
-//					      setBackground(Color.WHITE);
-//					      setForeground(Color.GREEN);
-//					      super.paint(g);
-//					  }
-//				});
-//			}else{
-//				cbxListaProdutos.addItem(prd);
-//			}
-			
 		}
-
+		
 		itListProdutosAgrupados = null;
 		
 		cbxListaProdutos.setSelectedItem(produtoSelecionado);
@@ -190,6 +184,7 @@ public class EnviarLed extends Thread {
 		lstLancamentos = null;
 		btnEnviar.setEnabled(true);
 		lblStatusBarMessage.setText("");
+		
 	}
 
 }

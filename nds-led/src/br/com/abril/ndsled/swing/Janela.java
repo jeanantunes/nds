@@ -17,8 +17,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.swing.JButton;
@@ -84,6 +86,7 @@ public class Janela {
 	private JLabel lblStatusBarMessage;
 	private JButton btnEnviar;
 	private JButton btnAcenderLeds;
+	private JButton btnDesmarcarProduto;
 	private JScrollPane pnlCotaLed;
 	private JTable tblCotaLed;
 	private JButton btnApagarLeds;
@@ -101,6 +104,8 @@ public class Janela {
 	private JButton btnAcenderCota;
 	private JTextField txtCodigoDeBarras;
 	private JLabel lblCodigoDeBarras;
+	
+	private Map<String, Lancamento> mapLancamentosParaUpdate;
 
 	// ================================================================================
 	// Constructors
@@ -205,11 +210,16 @@ public class Janela {
 
 		btnAcenderLeds = new JButton("Acender Leds");
 		btnAcenderLeds.setFont(new Font("Tahoma", Font.BOLD, 16));
-		btnAcenderLeds
-				.setToolTipText("Acende todos com 8888 os Leds para verificar os luminosos.");
+		btnAcenderLeds.setToolTipText("Acende todos com 8888 os Leds para verificar os luminosos.");
 		btnAcenderLeds.setBounds(10, 78, 168, 34);
 		pnlConfiguracao.add(btnAcenderLeds);
-
+		
+		
+		btnDesmarcarProduto = new JButton("<html><center>Desmarcar<br>Produto</center></html>");
+		btnDesmarcarProduto.setFont(new Font("Tahoma", Font.BOLD, 16));
+		btnDesmarcarProduto.setBounds(443, 20, 131, 54);
+		frmProjetoLedV.getContentPane().add(btnDesmarcarProduto);
+		
 		lblPortaSerial = new JLabel("Porta Serial");
 		lblPortaSerial.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblPortaSerial.setBounds(10, 22, 142, 14);
@@ -273,8 +283,7 @@ public class Janela {
 		tblCotaLed.setBounds(0, 0, 100, 100);
 		pnlCotaLed.setViewportView(tblCotaLed);
 
-		tblCotaLed
-				.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		tblCotaLed.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		tblCotaLed.setRowSelectionAllowed(false);
 		tblCotaLed.setModel(new DefaultTableModel(new Object[][][] {},
 				new String[] { "Cota", "Reparte", "Led" }) {
@@ -327,6 +336,8 @@ public class Janela {
 		lblCodigoDeBarras.setBounds(233, 10, 277, 23);
 		frmProjetoLedV.getContentPane().add(lblCodigoDeBarras);
 
+		mapLancamentosParaUpdate = new HashMap<String, Lancamento>();
+		
 		// ================================================================================
 		// Events
 		// ================================================================================
@@ -340,9 +351,16 @@ public class Janela {
 
 		mnitSair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
+				lblStatusBarMessage.setText("Aguarde... aplicação sendo encerrada.");
+				desabilitarObjetosView();
+				
+				AppActions.atualizarLancamentos(mapLancamentosParaUpdate, (Date) pckDataLancamento.getModel().getValue());
+
 				LimparLed limparLed = new LimparLed(txtCatactereReparteZero,
 						cbxPortaSerial, lstCotas, lblStatusBarMessage);
 				limparLed.start();
+				
 				FecharAplicacao fecharAplicacao = new FecharAplicacao(
 						limparLed, lblStatusBarMessage);
 				fecharAplicacao.start();
@@ -465,16 +483,42 @@ public class Janela {
 						txtCatactereReparteZero, lstCotas, lblStatusBarMessage,
 						btnEnviar, txtCodigoDeBarras, lstProdutosAgrupados);
 				enviarLed.start();
+				
+				addLancamentoParaUpdate(cbxListaProdutos, false);
+				
 				txtCodigoDeBarras.requestFocus();
+			}
+		});
+		
+		btnDesmarcarProduto.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				Produto produtoSelecionado = (Produto) cbxListaProdutos.getSelectedItem();
+				
+				produtoSelecionado.setDistribuido(false);
+				
+				if(produtoSelecionado.getNomeProduto().startsWith("* ")){
+					produtoSelecionado.setNomeProduto(produtoSelecionado.getNomeProduto().substring(2));	
+				}
+				
+				addLancamentoParaUpdate(cbxListaProdutos, true);
+				
+				cbxListaProdutos.requestFocus();
 			}
 		});
 
 		frmProjetoLedV.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
+				lblStatusBarMessage.setText("Aguarde... aplicação sendo encerrada.");
+				desabilitarObjetosView();
+				
+				AppActions.atualizarLancamentos(mapLancamentosParaUpdate, (Date) pckDataLancamento.getModel().getValue());
+
 				LimparLed limparLed = new LimparLed(txtCatactereReparteZero,
 						cbxPortaSerial, lstCotas, lblStatusBarMessage);
 				limparLed.start();
+				
 				FecharAplicacao fecharAplicacao = new FecharAplicacao(
 						limparLed, lblStatusBarMessage);
 				fecharAplicacao.start();
@@ -501,6 +545,51 @@ public class Janela {
 		});
 
 		desabilitarObjetosView();
+	}
+	
+	private void addLancamentoParaUpdate(JComboBox cbxListaProdutos, boolean isLimpar){
+		Lancamento lancamentoParaAtualizar = new Lancamento();
+		
+		Produto produtoSelecionado = (Produto) cbxListaProdutos.getSelectedItem();
+		
+		lancamentoParaAtualizar.setCodigoProduto(produtoSelecionado.getCodigoProduto());
+		lancamentoParaAtualizar.setEdicaoProduto(produtoSelecionado.getEdicaoProduto());
+		
+		if(!isLimpar){
+			Date dataAtual = new Date();
+			
+			String hora = new SimpleDateFormat("HH:mm").format(dataAtual);
+			String data = new SimpleDateFormat("dd/MM/yyyy").format(dataAtual);
+			
+			lancamentoParaAtualizar.setHoraLed(hora);
+			lancamentoParaAtualizar.setDataLed(data);
+		}else{
+			lancamentoParaAtualizar.setHoraLed("");
+			lancamentoParaAtualizar.setDataLed("");
+		}
+		
+		if(mapLancamentosParaUpdate.containsKey(obterKeyMap(lancamentoParaAtualizar))){
+			mapLancamentosParaUpdate.remove(obterKeyMap(lancamentoParaAtualizar));
+		}
+		
+		mapLancamentosParaUpdate.put(obterKeyMap(lancamentoParaAtualizar), lancamentoParaAtualizar);
+		
+		//AppActions.atualizarLancamentos(lancamentoParaAtualizar, false);
+	}
+	
+	private String obterKeyMap(Lancamento lcmt){
+		
+		String key = "";
+		
+		if(lcmt.getCodigoProduto() != null){
+			key += lcmt.getCodigoProduto();
+		}
+		
+		if(lcmt.getEdicaoProduto() != null){
+			key += lcmt.getEdicaoProduto();
+		}
+		
+		return key;
 	}
 
 	/**
@@ -567,7 +656,7 @@ public class Janela {
 			lstProdutosAgrupados = new ArrayList<Produto>();
 			while (iListLancamentos.hasNext()) {
 				Lancamento it1 = iListLancamentos.next();
-
+				
 				if (lstProdutosAgrupados.size() == 0) {
 					Produto pd = new Produto();
 					pd.setCodigoProduto(it1.getCodigoProduto());
@@ -624,7 +713,7 @@ public class Janela {
 			// do dia selecionado.
 			Iterator<Produto> itListProdutosAgrupados = lstProdutosAgrupados
 					.iterator();
-
+			
 			while (itListProdutosAgrupados.hasNext()) {
 				Produto prd = itListProdutosAgrupados.next();
 				cbxListaProdutos.addItem(prd);
@@ -692,6 +781,7 @@ public class Janela {
 			logger.error(e.getMessage());
 			lblStatusBarMessage.setText(e.getMessage());
 			desabilitarObjetosView();
+			e.printStackTrace();
 		}
 	}
 	

@@ -17,6 +17,8 @@ public class Lancamento {
 	private Date dataLacamento;
 	private Integer codigoLed;
 	private Long codigoBarras;
+	private String horaLed;
+	private String dataLed;
 
 	public Integer getCodigoCota() {
 		return codigoCota;
@@ -112,6 +114,23 @@ public class Lancamento {
 
 	public void setCodigoBarras(Long codigoBarras) {
 		this.codigoBarras = codigoBarras;
+	}
+	
+
+	public String getHoraLed() {
+		return horaLed;
+	}
+
+	public void setHoraLed(String horaLed) {
+		this.horaLed = horaLed;
+	}
+
+	public String getDataLed() {
+		return dataLed;
+	}
+
+	public void setDataLed(String dataLed) {
+		this.dataLed = dataLed;
 	}
 
 	@Override

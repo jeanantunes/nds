@@ -25,6 +25,7 @@ import br.com.abril.nds.dto.RetornoPickingDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.LedModelo4IntegracaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
@@ -38,6 +39,9 @@ public class LedModelo4IntegracaoServiceImpl implements LedModelo4IntegracaoServ
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private LancamentoRepository lancamentoRepository;
 	
 	public CouchDbClient getCouchDB_Client(){
 		String db_name = "picking_led";
@@ -140,13 +144,27 @@ public class LedModelo4IntegracaoServiceImpl implements LedModelo4IntegracaoServ
 					retornoPicking.setDataLed(retornoPickingDTO.getDataLed());
 					retornoPicking.setHoraLed(retornoPickingDTO.getHoraLed());
 					
+					if(!retornoPickingDTO.getProduto().isEmpty() &&
+					   !retornoPickingDTO.getEdicao().isEmpty() && 
+					   !pickingLEDFullDTO.getDataLancamento().isEmpty()){
+						
+						Long numEdicao = Long.parseLong(retornoPickingDTO.getEdicao().replace(";", ""));
+						Date dataLanc = date;
+						String codProduto = ""+Integer.parseInt(retornoPickingDTO.getProduto().replace(";", ""));
+						
+						retornoPicking.setIdLancamentos(lancamentoRepository.
+								buscarIdLancamentoPorDataLancamentoCodProdutoNumEdicaoDataLancamento(codProduto, numEdicao, dataLanc));
+					}
+					
 					listLancamentos.add(retornoPicking);
 				}
 			}
 		}
 		
-		//Finalizar atualizacao dos lancamentos
-		System.out.println("qtd lancamentos: " + listLancamentos.size()); 
+		for (RetornoPickingDTO lancamentoPicking : listLancamentos) {
+			lancamentoRepository.atualizarLancamentoSetDadosLED(lancamentoPicking.getIdLancamentos(), 
+					lancamentoPicking.getDataLed(), lancamentoPicking.getHoraLed());
+		}
 		
 	}
 	

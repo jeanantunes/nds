@@ -132,6 +132,23 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 
 		query.executeUpdate();
 	}
+	
+	@Override
+	public void atualizarLancamentoSetDadosLED(List<Long> idLancamentos, String dataLed, String horaLEd) {
+		
+		StringBuilder sql = new StringBuilder("update Lancamento set ");
+		
+		sql.append(" DATA_LED = :dataLed, ")
+		   .append(" HORA_LED = :horaLed ").append(" where id in (:ids)");
+
+		Query query = this.getSession().createSQLQuery(sql.toString());
+
+		query.setParameter("dataLed",dataLed);
+		query.setParameter("horaLed", horaLEd);
+		query.setParameterList("ids", idLancamentos);
+
+		query.executeUpdate();
+	}
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -2666,6 +2683,31 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 		query.setParameter("produtoEdicaoId", produtoEdicaoId);
 
 		return (Lancamento) query.uniqueResult();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Long> buscarIdLancamentoPorDataLancamentoCodProdutoNumEdicaoDataLancamento(String codProduto, Long numEdicao, Date dtLancamento) {
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" select ");
+		sql.append(" 	l.id ");
+		sql.append(" from ");
+		sql.append(" 	lancamento l join produto_edicao pe on ");
+		sql.append(" 	l.produto_edicao_id = pe.id join produto pd on ");
+		sql.append(" 	pe.produto_id = pd.id ");
+		sql.append(" where ");
+		sql.append(" 	pd.codigo = :codProduto ");
+		sql.append(" 	and pe.numero_edicao = :numEdicao "); 
+		sql.append(" 	and l.data_lcto_distribuidor = :dtLancamento ");
+
+		Query query = getSession().createSQLQuery(sql.toString());
+
+		query.setParameter("codProduto", codProduto);
+		query.setParameter("numEdicao", numEdicao);
+		query.setParameter("dtLancamento", dtLancamento);
+
+		return query.list();
 	}
 
 	@SuppressWarnings("unchecked")

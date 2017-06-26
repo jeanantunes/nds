@@ -797,6 +797,9 @@ public class PainelProcessamentoController extends BaseController {
     	
     	ledModelo4IntegracaoService.processarRetornoPicking(dataDistribuicaoDistribuidor);
     	
+    	 result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
+    	                "Dados do LED atualizados com sucesso!"), "result").recursive().serialize();
+    	
     }
        
     @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
