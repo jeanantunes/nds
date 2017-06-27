@@ -265,6 +265,9 @@ public class NFeGerarTxt {
 	                            .append(det.getProdutoServico().getValorDesconto()).append("|")
 	                            .append(det.getProdutoServico().getValorOutros()).append("|")
 	                            .append(det.getProdutoServico().isValorCompoeValorNF() ? 1L : 0L).append("|")
+	                            // alterado para incluir dois campos sem dados para chamado
+	                            .append("").append("|") // chamado 4972597 nItemPed
+	                            .append("").append("|") // chamado 4972597 NFCI
 	                            .append("").append("|")
 	                            .append("").append(System.getProperty("line.separator"));
 
@@ -678,28 +681,106 @@ public class NFeGerarTxt {
 	    	
 	    	NotaFiscalValorCalculado total =  notafiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados();
 	    	
+	    	String c1,c2,c3,c4,c5,c6,c7,c8;
 	        try {
 	            StringBuilder w = new StringBuilder();
 	            w.append("W|").append(System.getProperty("line.separator"));
 
-	            if (total != null && total.getValoresCalculados() != null) {
+
+	            if (total != null && total.getValoresCalculados() != null) 
+	            {
+		            
+		            // linhas incluidas para colocar 2 casas deciamais segundo chamado 4972597
+		            c1 = String.valueOf(total.getValoresCalculados().getValorBaseICMS());
+		            if ( c1.indexOf('.') >= 0 || c1.indexOf(',') >= 0 )
+		            {
+		            	 c1="";
+		            }
+		            else
+		            {
+		            	c1=".00";
+		            }
+		            c2 = String.valueOf(total.getValoresCalculados().getvICMSDeson());
+		            if ( c2.indexOf('.') >= 0 || c2.indexOf(',') >= 0 )
+		            {
+		            	 c2="";
+		            }
+		            else
+		            {
+		            	c2=".00";
+		            }
+		            c3 = String.valueOf(total.getValoresCalculados().getValorBaseICMSSubstituto());
+		            if ( c3.indexOf('.') >= 0 || c3.indexOf(',') >= 0 )
+		            {
+		            	 c3="";
+		            }
+		            else
+		            {
+		            	c3=".00";
+		            }
+		            c4 = String.valueOf(total.getValoresCalculados().getValorFrete());
+		            if ( c4.indexOf('.') >= 0 || c4.indexOf(',') >= 0 )
+		            {
+		            	 c4="";
+		            }
+		            else
+		            {
+		            	c4=".00";
+		            }
+		            c5 = String.valueOf(total.getValoresCalculados().getValorSeguro());
+		            if ( c5.indexOf('.') >= 0 || c5.indexOf(',') >= 0 )
+		            {
+		            	 c5="";
+		            }
+		            else
+		            {
+		            	c5=".00";
+		            }
+		            c6 = String.valueOf(total.getValoresCalculados().getValorDesconto());
+		            if ( c6.indexOf('.') >= 0 || c6.indexOf(',') >= 0 )
+		            {
+		            	 c6="";
+		            }
+		            else
+		            {
+		            	c6=".00";
+		            }
+		            c7 = String.valueOf(total.getValoresCalculados().getValorImpostoImportacao());
+		            if ( c7.indexOf('.') >= 0 || c7.indexOf(',') >= 0 )
+		            {
+		            	 c7="";
+		            }
+		            else
+		            {
+		            	c7=".00";
+		            }
+		            c8 = String.valueOf(total.getValoresCalculados().getValorOutro());
+		            if ( c8.indexOf('.') >= 0 || c8.indexOf(',') >= 0 )
+		            {
+		            	 c8="";
+		            }
+		            else
+		            {
+		            	c8=".00";
+		            }
+		            // --
 	                w.append("W02|")
-	                		.append(total.getValoresCalculados().getValorBaseICMS()).append("|")
+	                		.append(total.getValoresCalculados().getValorBaseICMS()).append(c1).append("|") // --c1
 	                        .append(total.getValoresCalculados().getValorICMS()).append("|")
-	                        .append(total.getValoresCalculados().getvICMSDeson()).append("|")
-	                        .append(total.getValoresCalculados().getValorBaseICMS()).append("|")
-	                        .append(total.getValoresCalculados().getValorBaseICMSSubstituto()).append("|")
-	                        .append(total.getValoresCalculados().getValorProdutos()).append("|")
-	                        .append(total.getValoresCalculados().getValorFrete()).append("|")
-	                        .append(total.getValoresCalculados().getValorSeguro()).append("|")
-	                        .append(total.getValoresCalculados().getValorDesconto()).append("|")
-	                        .append(total.getValoresCalculados().getValorImpostoImportacao()).append("|")
+	                        .append(total.getValoresCalculados().getvICMSDeson()).append(c2).append("|") // --c2
+	                        .append(total.getValoresCalculados().getValorBaseICMS()).append(c1).append("|") // --c1
+	                        .append(total.getValoresCalculados().getValorBaseICMSSubstituto()).append(c3).append("|") //--c3
+	                        .append(total.getValoresCalculados().getValorProdutos()).append("|") // 2115.73
+	                        .append(total.getValoresCalculados().getValorFrete()).append(c4).append("|") // --c4
+	                        .append(total.getValoresCalculados().getValorSeguro()).append(c5).append("|") // --c5
+	                        .append(total.getValoresCalculados().getValorDesconto()).append(c6).append("|") // --c6
+	                        .append(total.getValoresCalculados().getValorImpostoImportacao()).append(c7).append("|") // --c7
 	                        .append(total.getValoresCalculados().getValorIPI()).append("|")
 	                        .append(total.getValoresCalculados().getValorPIS()).append("|")
 	                        .append(total.getValoresCalculados().getValorCOFINS()).append("|")
-	                        .append(total.getValoresCalculados().getValorOutro()).append("|")
-	                        .append(total.getValoresCalculados().getValorNF()).append("|")
-	                        .append(total.getValoresCalculados().getValorOutro()).append("|").append(System.getProperty("line.separator"));
+	                        .append(total.getValoresCalculados().getValorOutro()).append(c8).append("|") // --c8
+	                        .append(total.getValoresCalculados().getValorNF()).append("|") // 2115.73
+	                        .append(total.getValoresCalculados().getValorOutro()).append(c8).append("|").append(System.getProperty("line.separator")); // --c8
 	            }
 	            
 	            InformacaoValoresTotais totalSSQN =  notafiscal.getNotaFiscalInformacoes().getInformacaoValoresTotais();

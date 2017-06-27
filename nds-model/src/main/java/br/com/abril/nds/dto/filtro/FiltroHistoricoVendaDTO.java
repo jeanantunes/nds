@@ -32,7 +32,7 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 	
 	private boolean buscarPeriodosParciais;
 	
-	
+	private Integer limiteBuscaPorEdicao;
 	private OrdemColuna ordemColuna;
 	
 	public enum OrdemColuna{
@@ -290,5 +290,14 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 	public void setBuscarPeriodosParciais(boolean buscarPeriodosParciais) {
 		this.buscarPeriodosParciais = buscarPeriodosParciais;
 	}
+
+	public Integer getLimiteBuscaPorEdicao() {
+		return limiteBuscaPorEdicao;
+	}
+
+	public void setLimiteBuscaPorEdicao(Integer limiteBuscaPorEdicao) {
+		this.limiteBuscaPorEdicao = limiteBuscaPorEdicao;
+	}
+
 
 }
