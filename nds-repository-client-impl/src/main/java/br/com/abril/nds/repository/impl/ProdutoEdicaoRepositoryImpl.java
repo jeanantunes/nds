@@ -2553,6 +2553,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		StringBuilder sql = new StringBuilder();
 
+
 		sql.append("update movimento_estoque_cota mec ");
 		sql.append("set mec.valor_desconto = :novoValorDesconto, ");
 		sql.append("mec.preco_com_desconto = mec.preco_venda - (mec.preco_venda * (:novoValorDesconto /100)) ");

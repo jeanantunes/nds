@@ -427,6 +427,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 
 				ProdutoEdicao produtoEdicao = mec.getProdutoEdicao();
 
+
 				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 				BigDecimal valoAtualizado = precoVenda.min(precoVenda.multiply(desconto.divide(BigDecimal.valueOf(100))));
 

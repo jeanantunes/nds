@@ -209,6 +209,5 @@ var manutencaoPublicacaoController = $.extend(true, {
 
 	}
 
-
 }, BaseController);
 //@ sourceURL=manutencaoPublicacao.js

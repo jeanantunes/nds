@@ -4957,8 +4957,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             hql.append(" where produtoEdicao.id = :produtoEdicaoId and mec.statusEstoqueFinanceiro = 'FINANCEIRO_NAO_PROCESSADO' ");
 
             Query query = getSession().createQuery(hql.toString());
-
-
             query.setParameter("produtoEdicaoId", produtoEdicaoId);
 
             List<MovimentoEstoqueCota> list = query.list();
