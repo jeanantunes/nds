@@ -195,7 +195,7 @@ public class AppActions {
 		try {
 			jsonDoc = couchDbClient.find(JsonObject.class, docName);
 		} catch (NoDocumentException e) {
-			throw new CarregarLancamentoException("Lan�amento n�o encontrado para essa Data.");
+			throw new CarregarLancamentoException("Lançamento não encontrado para essa Data.");
 		}
 		return jsonDoc;
 	}

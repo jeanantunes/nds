@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import br.com.abril.ndsled.modelo.Cota;
 import br.com.abril.ndsled.modelo.Lancamento;
 import br.com.abril.ndsled.modelo.Produto;
+import br.com.abril.ndsled.serialcom.PortaCom;
 
 /**
  * Classe Thread para manipulacao dos leds em processo paralelo.
@@ -59,37 +60,34 @@ public class EnviarLed extends Thread {
 
 		lblStatusBarMessage.setText("Aguarde, enviando dados para os LEDs.");
 		btnEnviar.setEnabled(false);
+		
+		PortaCom pCom = new PortaCom(cbxPortaSerial.getSelectedItem()
+				.toString(), 9600, 0);
+		pCom.ObterIdDaPorta();
+		pCom.AbrirPorta();
 
-		
-		
-		
-//		PortaCom pCom = new PortaCom(cbxPortaSerial.getSelectedItem()
-//				.toString(), 9600, 0);
-//		pCom.ObterIdDaPorta();
-//		pCom.AbrirPorta();
-//
-//		// limparLeds();
-//		String charZerado = " ";
-//		if (!txtCatactereReparteZero.getText().isEmpty()) {
-//			charZerado = txtCatactereReparteZero.getText();
-//		}
-//
-//		if (lstCotas != null) {
-//			Iterator<Cota> cotaIterator = lstCotas.iterator();
-//			while (cotaIterator.hasNext()) {
-//				String codLed = String.format("%04d", cotaIterator.next()
-//						.getCodLed());
-//				pCom.EnviarComando("p" + codLed + charZerado + charZerado
-//						+ charZerado + charZerado);
-//				try {
-//					Thread.sleep(50);
-//				} catch (InterruptedException e) {
-//					// e.printStackTrace();
-//					logger.error(e.getMessage());
-//				}
-//			}
-//			cotaIterator = null;
-//		}
+		// limparLeds();
+		String charZerado = " ";
+		if (!txtCatactereReparteZero.getText().isEmpty()) {
+			charZerado = txtCatactereReparteZero.getText();
+		}
+
+		if (lstCotas != null) {
+			Iterator<Cota> cotaIterator = lstCotas.iterator();
+			while (cotaIterator.hasNext()) {
+				String codLed = String.format("%04d", cotaIterator.next()
+						.getCodLed());
+				pCom.EnviarComando("p" + codLed + charZerado + charZerado
+						+ charZerado + charZerado);
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					// e.printStackTrace();
+					logger.error(e.getMessage());
+				}
+			}
+			cotaIterator = null;
+		}
 
 		// enviarLeds
 		Produto produtoSelecionado = (Produto) cbxListaProdutos
@@ -105,7 +103,7 @@ public class EnviarLed extends Thread {
 				String codLed = String.format("%04d", lanc.getCodigoLed());
 				String qtde = String
 						.format("%04d", lanc.getQuantidadeReparte());
-//				pCom.EnviarComando("p" + codLed + qtde);
+				pCom.EnviarComando("p" + codLed + qtde);
 				
 				try {
 					Thread.sleep(50);
@@ -178,7 +176,7 @@ public class EnviarLed extends Thread {
 
 		iLanc = null;
 
-//		pCom.FecharCom();
+		pCom.FecharCom();
 
 		lstCotas = null;
 		lstLancamentos = null;

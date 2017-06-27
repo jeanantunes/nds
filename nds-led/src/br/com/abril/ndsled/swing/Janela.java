@@ -758,7 +758,7 @@ public class Janela {
 				desabilitarObjetosView();
 			} else {
 				// Exibe mensagem na Barra de Status.
-				lblStatusBarMessage.setText("Lan�amento "
+				lblStatusBarMessage.setText("Lançamento "
 						+ new SimpleDateFormat("dd/MM/yyyy").format(date)
 						+ " carregado.");
 				habilitarObjetosView();

@@ -190,10 +190,8 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 		try {
 
-//			FileWriter fileWriter = new FileWriter(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_PICKING_EXPORTACAO.name())	+ 
-//					File.separator  + nomeArquivoPickingInterfaceLED);
-			
-			FileWriter fileWriter = new FileWriter("/Users/romulohpa/opt/ambiente1/parametros_nds/picking/" + nomeArquivoPickingInterfaceLED);
+			FileWriter fileWriter = new FileWriter(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_PICKING_EXPORTACAO.name())	+ 
+					File.separator  + nomeArquivoPickingInterfaceLED);
 			
 			PrintWriter print = new PrintWriter(fileWriter, true);
 			
