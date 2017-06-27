@@ -117,7 +117,7 @@ public class ManutencaoPublicacaoController {
 
 		if (cotaNumero!=null){
 			Cota cota = cotaService.obterCotaPDVPorNumeroDaCota(cotaNumero);
-			this.movimentoEstoqueCotaService.atualizarDescontosDaCota(cota.getId(),descontoAtual,novoDesconto);
+			this.movimentoEstoqueCotaService.atualizarDescontosDaCota(cota,descontoAtual,novoDesconto);
 		}else{
 			this.movimentoEstoqueCotaService.atualizarDescontosDaPublicacao(codigoProduto,numeroEdicao,descontoAtual,novoDesconto);
 		}
