@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.hibernate.Query;
+
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
@@ -465,5 +467,9 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	public List<Ems0106Deapr> obterDadosDeapr(Date data);
 
 	public List<Ems0107Deajo> obterDadosDeajo(Date data);
+
+	List<Long> buscarIdLancamentoPorDataLancamentoCodProdutoNumEdicaoDataLancamento(String codProduto, Long numEdicao, Date dtLancamento);
+
+	void atualizarLancamentoSetDadosLED(List<Long> idLancamentos, String dataLed, String horaLEd);
 	
 }

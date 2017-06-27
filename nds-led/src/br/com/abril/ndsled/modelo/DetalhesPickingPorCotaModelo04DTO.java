@@ -1,6 +1,10 @@
-package br.com.abril.nds.dto;
+package br.com.abril.ndsled.modelo;
 
-public class DetalhesPickingPorCotaModelo03DTO {
+import java.io.Serializable;
+
+public class DetalhesPickingPorCotaModelo04DTO implements Serializable{
+
+	private static final long serialVersionUID = 20628541463349260L;
 	
 	private String identificadorLinha;
 	
@@ -22,11 +26,11 @@ public class DetalhesPickingPorCotaModelo03DTO {
 	
 	private String quantidade;
 	
-	private String codigoDeBarras = "";
+	private String codigoDeBarras;
 	
-	private String dataLed = "";
+	private String dataLed;
 	
-	private String horaLed = "";
+	private String horaLed;
 	
 	public String getCodigoCota() {
 		return codigoCota;
@@ -107,7 +111,7 @@ public class DetalhesPickingPorCotaModelo03DTO {
 	public void setIdentificadorLinha(String identificadorLinha) {
 		this.identificadorLinha = identificadorLinha;
 	}
-	
+
 	public String getCodigoDeBarras() {
 		return codigoDeBarras;
 	}
@@ -131,5 +135,5 @@ public class DetalhesPickingPorCotaModelo03DTO {
 	public void setHoraLed(String horaLed) {
 		this.horaLed = horaLed;
 	}
-	
+
 }
