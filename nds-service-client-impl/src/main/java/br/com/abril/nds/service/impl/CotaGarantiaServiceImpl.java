@@ -338,23 +338,15 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	public CotaGarantiaImovel salvaImovel(List<Imovel> listaImoveis, Long idCota)
 			throws ValidacaoException, InstantiationException, IllegalAccessException {
 
-		CotaGarantiaImovel cotaGarantiaImovel = prepareCotaGarantia(idCota,
-				CotaGarantiaImovel.class);
+		CotaGarantiaImovel cotaGarantiaImovel = prepareCotaGarantia(idCota, CotaGarantiaImovel.class);
 		
 		cotaGarantiaImovel.setTipoGarantia(TipoGarantia.IMOVEL);
-	
-		if (cotaGarantiaImovel.getImoveis() != null
-				&& !cotaGarantiaImovel.getImoveis().isEmpty()) {
-			this.cotaGarantiaRepository
-					.deleteListaImoveis(cotaGarantiaImovel.getId());
-		}
 		
 		cotaGarantiaImovel.setData(new Date());
 
 		cotaGarantiaImovel.setImoveis(listaImoveis);
 		
-		cotaGarantiaImovel = (CotaGarantiaImovel) cotaGarantiaRepository
-				.merge(cotaGarantiaImovel);
+		cotaGarantiaImovel = (CotaGarantiaImovel) cotaGarantiaRepository.merge(cotaGarantiaImovel);
 		
 		this.setFiadorCota(idCota, null);
 		
@@ -466,16 +458,33 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			IllegalAccessException {
 
 		CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		
 		Cota cota = getCota(idCota);
 		
 		if(cotaGarantia != null && cotaGarantia.getClass() != type) {
-			cotaGarantiaRepository.remover(cotaGarantia);
+			
+			if(CotaGarantiaImovel.class == cotaGarantia.getClass()){
+				this.cotaGarantiaRepository.deleteListaImoveis(cotaGarantia.getId());
+
+			} else if(CotaGarantiaOutros.class == cotaGarantia.getClass()){
+				this.cotaGarantiaRepository.deleteListaOutros(cotaGarantia.getId());
+
+			} else if(CotaGarantiaFiador.class == cotaGarantia.getClass()){
+				((CotaGarantiaFiador) cotaGarantia).setFiador(null);
+				cotaGarantiaRepository.flush();
+			}
+			
+			cota.setCotaGarantia(null);
+			cotaRepository.flush();
+			
+			cotaGarantiaRepository.removerPorId(cotaGarantia.getId());
 			cotaGarantia = null;
 		}
 		
 		if (cotaGarantia == null) {			
 			cotaGarantia = type.newInstance();
-			cota.setCotaGarantia(cotaGarantia);	
+			cota.setCotaGarantia(cotaGarantia);
+			cotaGarantia.setCota(cota);
 		}
 
 		return (T) cotaGarantia;
@@ -657,7 +666,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		NotaPromissoriaDTO dto = new NotaPromissoriaDTO();
 		
 		Cota cota = cotaRepository.buscarPorId(idCota);
-		CotaGarantiaNotaPromissoria cotaGarantiaNotaPromissoria = cotaGarantiaRepository.getByCota(idCota, CotaGarantiaNotaPromissoria.class);
+		CotaGarantiaNotaPromissoria cotaGarantiaNotaPromissoria = this.cotaGarantiaRepository.getByCota(idCota, CotaGarantiaNotaPromissoria.class);
 		if(cotaGarantiaNotaPromissoria == null) {
 			
 			throw new RuntimeException("Nota Promissória não cadastrada para esta cota.");
@@ -710,13 +719,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Transactional
 	public CotaGarantiaOutros salvaOutros(List<GarantiaCotaOutros> listaOutros, Long idCota) throws ValidacaoException, InstantiationException, IllegalAccessException {
 	
-		CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
-		
-		if(cotaGarantia != null){
-			cotaGarantiaRepository.remover(cotaGarantia);
-		}
-		
-		CotaGarantiaOutros cotaGarantiaOutros = new CotaGarantiaOutros();
+		CotaGarantiaOutros cotaGarantiaOutros = prepareCotaGarantia(idCota, CotaGarantiaOutros.class);
 		
 		cotaGarantiaOutros.setData(new Date());
 		cotaGarantiaOutros.setOutros(listaOutros);

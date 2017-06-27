@@ -3454,4 +3454,5 @@ public class CotaServiceImpl implements CotaService {
 	public List<Integer> buscarNumeroCotasPorEnderecoLED(Integer enderecoLED){
 		return cotaRepository.buscarNumeroCotasPorEnderecoLED(enderecoLED);
 	}
+	
 }
