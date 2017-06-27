@@ -33,6 +33,7 @@ import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
+import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -398,11 +399,12 @@ public class CotaGarantiaController extends BaseController {
 	@Post("/getFiadorByCota.json")
 	public void getFiadorByCota(Long idCota) {
 	
-    	Cota cota = cotaService.obterPorId(idCota);
-        
-    	Fiador fiador = cota.getFiador();	
+    	CotaGarantiaDTO<CotaGarantia> cotaGarantiaDto = cotaGarantiaService.getByCota(idCota);
+    	Fiador fiador = ((CotaGarantiaFiador) cotaGarantiaDto.getCotaGarantia()).getFiador();
 
-        result.use(CustomJson.class).from(fiador).serialize();
+        result.use(Results.json()).from(fiador).include(
+        	"pessoa", "enderecoFiador", "enderecoFiador.endereco", "telefonesFiador",
+        	"telefonesFiador.telefone", "garantias").serialize();
 	}
 
 	/**
@@ -500,7 +502,7 @@ public class CotaGarantiaController extends BaseController {
 	@Post("/getCotaGarantiaByCota.json")
 	public void getCotaGarantiaByCota(Long idCota) {
         	
-        CotaGarantia cg = cotaService.obterPorId(idCota).getCotaGarantia();
+		CotaGarantiaDTO<?> cg = cotaGarantiaService.getByCota(idCota);
         
         if (cg != null) {
 

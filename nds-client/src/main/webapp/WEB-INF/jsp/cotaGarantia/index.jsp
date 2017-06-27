@@ -20,7 +20,6 @@
 				onchange="tipoCotaGarantia.onChange($(this).val());"
 				style="width: 250px;">
 					<option value="" selected="selected">Selecione...</option>
-					<option value="FIADOR" selected="selected">Fiador</option>
 			</select></td>
 			
 			<td width="128">Classificação da Cota:</td>
