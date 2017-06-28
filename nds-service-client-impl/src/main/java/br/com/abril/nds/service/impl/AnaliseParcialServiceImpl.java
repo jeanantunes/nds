@@ -229,10 +229,17 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                         for (EdicoesProdutosDTO ed : edicoesComVenda) {
                             if (ed.getProdutoEdicaoId().equals(edicao.getProdutoEdicaoId())) {
                                 BeanUtils.copyProperties(edicao, ed, new String[] {"reparte", "venda"});
+                                
                                 if (ed.getOrdemExibicao() == null) {
                                     ed.setOrdemExibicao(ordemExibicaoHelper++);
                                 }
+
+                                if(edicao.getDataLancamento()!= null){ 
+                                	ed.setDataLancamento(edicao.getDataLancamento());
+                                }
+                                
                                 edicoesProdutosDTOMap.put(ed.getOrdemExibicao(), ed);
+                                
                                 putMapSomatorioTotaisEdicao(mapTotaisEd, ed);
                             }
                         }

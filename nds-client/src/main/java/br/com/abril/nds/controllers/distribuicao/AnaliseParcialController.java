@@ -368,7 +368,7 @@ public class AnaliseParcialController extends BaseController {
     	if(filtroQueryDTO.isMudarBaseVisualizacao() && filtroQueryDTO.getEdicoesBase() != null){
     		listBaseEstudo = filtroQueryDTO.getEdicoesBase();
     	}else{
-    		listBaseEstudo = getEdicoesBase(edicoesBase, id, numeroParcial); 
+    		listBaseEstudo = getEdicoesBase(edicoesBase != null ? edicoesBase : filtroQueryDTO.getEdicoesBase(), id, numeroParcial); 
     	}
     	
     	vo.setEdicoesBase(listBaseEstudo);

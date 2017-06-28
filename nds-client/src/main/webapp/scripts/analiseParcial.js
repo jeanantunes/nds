@@ -439,64 +439,111 @@ var analiseParcialController = $.extend(true, {
 
             } else {
             	
-            	var isContemBaseNormal = false;
+//            	var isContemBaseNormal = false;
+//            	
+//            	var indiceBasesNormais = []; 
+//            	
+//            	for(var i = 0; i< analiseParcialController.edicoesBase.length; i++){
+//            		if(!analiseParcialController.edicoesBase[i].parcial){
+//            			isContemBaseNormal = true;
+//            			indiceBasesNormais.push(i);
+//            		}
+//            	}
             	
-            	var indiceBasesNormais = []; 
+//            	colSpanEdicoesBase = colSpanEdicoesBase+1;
+//            	
+//            	var valueBase1 = $('#dataLancamentoParcial1').val();
+//            	var valueBase2 = $('#dataLancamentoParcial2').val();
+//            	var valueBase3 = $('#dataLancamentoParcial3').val();
             	
-            	for(var i = 0; i< analiseParcialController.edicoesBase.length; i++){
-            		if(!analiseParcialController.edicoesBase[i].parcial){
-            			isContemBaseNormal = true;
-            			indiceBasesNormais.push(i);
-            		}
-            	}
+//            	if(isContemBaseNormal){
+//            		for(var i = 0; i < analiseParcialController.edicoesBase.length; i++){
+//            			var edicao = $.extend({}, {edicao:'-'}, analiseParcialController.edicoesBase[i]);
+//            			
+//            			if(!edicao.parcial){
+//            				
+//            				switch(indiceBasesNormais[i]) {
+//            			    case 0:
+//            			    	valueBase1 = edicao.edicao;
+//            			        break;
+//            			    case 1:
+//            			    	valueBase2 = edicao.edicao;
+//            			        break;
+//            			    case 2:
+//            			    	valueBase3 = edicao.edicao;
+//            			        break;
+//            			    default:
+//            			        
+//            				}
+//            				
+//            			}else{
+//            				switch(i) {
+//            			    case 0:
+//            			    	valueBase1 = edicao.dataLancamento != undefined ? edicao.dataLancamento : "";
+//            			        break;
+//            			    case 1:
+//            			    	valueBase2 = edicao.dataLancamento != undefined ? edicao.dataLancamento : "";
+//            			        break;
+//            			    case 2:
+//            			    	valueBase3 = edicao.dataLancamento != undefined ? edicao.dataLancamento : "";
+//            			        break;
+//            			    default:
+//            			        
+//            				}
+//            			}
+//            			
+//            		}
+//            		
+//            		if(indiceBasesNormais.length < analiseParcialController.edicoesBase.length){
+//            			
+//            		}
+//            	}
             	
             	colSpanEdicoesBase = colSpanEdicoesBase+1;
             	
-            	var valueBase1 = $('#dataLancamentoParcial1').val();
-            	var valueBase2 = $('#dataLancamentoParcial2').val();
-            	var valueBase3 = $('#dataLancamentoParcial3').val();
+            	var valueBase1 = "";
+            	var valueBase2 = "";
+            	var valueBase3 = "";
+            	var valueBase4 = "";
+            	var valueBase5 = "";
+            	var valueBase6 = "";
             	
-            	if(isContemBaseNormal){
-            		for(var i = 0; i < analiseParcialController.edicoesBase.length; i++){
-            			var edicao = $.extend({}, {edicao:'-'}, analiseParcialController.edicoesBase[i]);
-            			
-            			if(!edicao.parcial){
-            				
-            				switch(indiceBasesNormais[i]) {
-            			    case 0:
-            			    	valueBase1 = edicao.edicao;
-            			        break;
-            			    case 1:
-            			    	valueBase2 = edicao.edicao;
-            			        break;
-            			    case 2:
-            			    	valueBase3 = edicao.edicao;
-            			        break;
-            			    default:
-            			        
-            				}
-            				
-            			}else{
-            				switch(i) {
-            			    case 0:
-            			    	valueBase1 = edicao.dataLancamento != undefined ? edicao.dataLancamento : "";
-            			        break;
-            			    case 1:
-            			    	valueBase2 = edicao.dataLancamento != undefined ? edicao.dataLancamento : "";
-            			        break;
-            			    case 2:
-            			    	valueBase3 = edicao.dataLancamento != undefined ? edicao.dataLancamento : "";
-            			        break;
-            			    default:
-            			        
-            				}
-            			}
-            			
-            		}
-            		
-            		if(indiceBasesNormais.length < analiseParcialController.edicoesBase.length){
-            			
-            		}
+            	for(var i = 0; i < analiseParcialController.edicoesBase.length; i++){
+        			var edicao = $.extend({}, {edicao:'-'}, analiseParcialController.edicoesBase[i]);
+        			
+        			var tituloBase = "";
+        			
+        			if(edicao.parcial){
+        				tituloBase = "L - " + edicao.dataLancamento != undefined ? edicao.dataLancamento : "";
+        			}else{
+        				tituloBase = edicao.edicao;
+        			}
+        			
+        			
+        			switch(i) {
+	    			    case 0:
+	    			    	valueBase1 = tituloBase;
+	    			        break;
+	    			    case 1:
+	    			    	valueBase2 = tituloBase;
+	    			        break;
+	    			    case 2:
+	    			    	valueBase3 = tituloBase;
+	    			        break;
+	    			    case 3:
+	    			    	valueBase4 = tituloBase;
+	    			        break;
+	    			    case 4:
+	    			    	valueBase5 = tituloBase;
+	    			        break;
+	    			    case 5:
+	    			    	valueBase6 = tituloBase;
+	    			        break;
+    			    default:
+    			        
+    				}
+        			
+        			
             	}
             	
                 $header.prepend(
@@ -506,9 +553,9 @@ var analiseParcialController = $.extend(true, {
                         .append($('<th colspan="2">').append($('<div style="text-align: center;">').append(valueBase1)))
                         .append($('<th colspan="2">').append($('<div style="text-align: center;">').append(valueBase2)))
                         .append($('<th colspan="2">').append($('<div style="text-align: center;">').append(valueBase3)))
-                        .append($('<th colspan="2">').append($('<div style="text-align: center;">').append(valueBase1)))
-                        .append($('<th colspan="2">').append($('<div style="text-align: center;">').append(valueBase2)))
-                        .append($('<th colspan="2">').append($('<div style="text-align: center;">').append(valueBase3)))
+                        .append($('<th colspan="2">').append($('<div style="text-align: center;">').append(valueBase4)))
+                        .append($('<th colspan="2">').append($('<div style="text-align: center;">').append(valueBase5)))
+                        .append($('<th colspan="2">').append($('<div style="text-align: center;">').append(valueBase6)))
                         .append($('<th colspan="2">').append($('<div style="text-align: center;">').append('Acumulado')))
                 );
             }
@@ -784,11 +831,13 @@ var analiseParcialController = $.extend(true, {
         	
         	var qtdBasesParcialAlterarBaseVisualizacao = 0;
         	
-        	if(analiseParcialController.tipoExibicao === 'PARCIAL' && analiseParcialController.isMudarBaseVisualizacao){
-        		qtdBasesParcialAlterarBaseVisualizacao = 3;
-        	}else{
-        		qtdBasesParcialAlterarBaseVisualizacao = 6;
-        	}
+//        	if(analiseParcialController.tipoExibicao === 'PARCIAL' && analiseParcialController.isMudarBaseVisualizacao){
+//        		qtdBasesParcialAlterarBaseVisualizacao = 3;
+//        	}else{
+//        		qtdBasesParcialAlterarBaseVisualizacao = 6;
+//        	}
+        	
+        	qtdBasesParcialAlterarBaseVisualizacao = 6;
 
         	for (var j = 0; j < 6; j++) {
                 if (typeof cell.edicoesBase[j] === 'undefined' || typeof cell.edicoesBase[j].reparte === 'undefined') {
@@ -825,6 +874,12 @@ var analiseParcialController = $.extend(true, {
                 cell['venda'+ (j + 1)] = '<span abbr="venda' + (j + 1) + '" class="vermelho">'+cell['venda'+ (j + 1)]+'</span>';
                 cell['reparte'+ (j + 1)] = '<span abbr="reparte' + (j + 1) + '">'+cell['reparte'+ (j + 1)]+'</span>';
             }
+        	
+        	var reparte7 = somaReparteCota > 0 ? somaReparteCota : "";
+        	var venda7 = somaVendasCota > 0 ? somaVendasCota : "";
+        	
+        	cell['reparte7'] = '<span abbr="reparte7">'+reparte7+'</span>';
+	        cell['venda7'] = '<span abbr="venda7" class="vermelho">'+venda7+'</span>';
         	
         	if(somaVendasCota > 0){
         		porcentagemVendaCota = ((somaVendasCota)/(somaReparteCota))*100;
@@ -890,9 +945,6 @@ var analiseParcialController = $.extend(true, {
             if((cell.reparteEstudo != reparteSugerido) || cell.ajustado == true){
                cell.leg = cell.leg+'<span class="asterisco"></span>';
             }
-            
-	        cell['reparte7'] = '';
-	        cell['venda7'] = '';
             
         }
 
@@ -1034,8 +1086,8 @@ var analiseParcialController = $.extend(true, {
             {display: 'VDA',        name: 'venda5',             width: 25, sortable: false, align: 'right'},
             {display: 'REP',        name: 'reparte6',           width: 25, sortable: false, align: 'right'},
             {display: 'VDA',        name: 'venda6',             width: 25, sortable: false, align: 'right'},
-            {display: 'REP',        name: 'reparte7',           width: 25, sortable: false, align: 'right'},
-            {display: 'VDA',        name: 'venda7',             width: 25, sortable: false, align: 'right'}];
+            {display: 'REP',        name: 'reparte7',           width: 25, sortable: false, align: 'center'},
+            {display: 'VDA',        name: 'venda7',             width: 25, sortable: false, align: 'center'}];
     },
 
 //    sortGrid : function (sortname, sortorder) {
