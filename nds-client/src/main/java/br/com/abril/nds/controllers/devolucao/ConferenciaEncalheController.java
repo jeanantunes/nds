@@ -2817,9 +2817,13 @@ public class ConferenciaEncalheController extends BaseController {
      */
 	private void calcularValoresMonetarios(final Map<String, Object> dados, boolean apenasProcessoUtilizaNfe){
 		
+		BigDecimal valorReparteCapa = BigDecimal.ZERO;
 		BigDecimal valorEncalhe = BigDecimal.ZERO;
+		BigDecimal valorEncalheCapa = BigDecimal.ZERO;
 		BigDecimal valorVendaDia = BigDecimal.ZERO;
+		BigDecimal valorVendaDiaCapa = BigDecimal.ZERO;
 		BigDecimal valorDebitoCredito = BigDecimal.ZERO;
+//		BigDecimal valorDebitoCreditoCapa = BigDecimal.ZERO;
 		BigDecimal valorTotal = BigDecimal.ZERO;
 		BigDecimal valorEncalheAtualizado = BigDecimal.ZERO;
 		BigDecimal valorVendaDiaAtualizado = BigDecimal.ZERO;
@@ -2842,11 +2846,17 @@ public class ConferenciaEncalheController extends BaseController {
 	                    
 	                    final BigDecimal qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdExemplar());
 	                    
+	                    final BigDecimal qtdReparte = conferenciaEncalheDTO.getQtdReparte() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdReparte());
+	                    
 	                    valorTotal = valorTotal.add(precoCapa.subtract(desconto).multiply(new BigDecimal(conferenciaEncalheDTO.getQtdInformada())));
 	                    
 	                    valorTotalNota = valorTotalNota.add(precoComDesconto.multiply(new BigDecimal(conferenciaEncalheDTO.getQtdInformada())));
 	                    
 	                    valorEncalhe = valorEncalhe.add(precoComDesconto.multiply(qtdExemplar));
+	                    
+	                    valorEncalheCapa = valorEncalheCapa.add(CurrencyUtil.arredondarValorParaQuatroCasas(precoCapa).multiply(qtdExemplar));
+	                    
+	                    valorReparteCapa = valorReparteCapa.add(CurrencyUtil.arredondarValorParaQuatroCasas(precoCapa).multiply(qtdReparte));
 	                    
 	                    valorEncalheAtualizado = valorEncalheAtualizado.add(precoCapa.subtract(desconto).multiply(new BigDecimal(conferenciaEncalheDTO.getQtdInformada())));
 				        
@@ -2855,6 +2865,9 @@ public class ConferenciaEncalheController extends BaseController {
 			}
 			
 			valorVendaDia = valorVendaDia.add(info.getReparte().subtract(valorEncalhe));
+			
+			valorVendaDiaCapa = valorVendaDiaCapa.add(info.getReparte().subtract(valorEncalheCapa));
+			
 			valorVendaDiaAtualizado = valorVendaDiaAtualizado.add(info.getReparte().subtract(valorEncalheAtualizado));
 			
 			if (info.getListaDebitoCreditoCota() != null) {
@@ -2876,23 +2889,30 @@ public class ConferenciaEncalheController extends BaseController {
 			}
 		}
 		
-		BigDecimal valorPagar = BigDecimal.ZERO;	
+		BigDecimal valorPagar = BigDecimal.ZERO;
+		BigDecimal valorPagarCapa = BigDecimal.ZERO;
 		BigDecimal valorPagarAtualizado = BigDecimal.ZERO;
 		
 		if(BigDecimal.ZERO.compareTo(valorDebitoCredito)>0) {
 			valorPagar = valorVendaDia.add(valorDebitoCredito.abs());
+			valorPagarCapa = valorVendaDiaCapa.add(valorDebitoCredito.abs());
 			valorPagarAtualizado = valorVendaDiaAtualizado.add(valorDebitoCredito.abs());
 		} else {
 			valorPagar = valorVendaDia.subtract(valorDebitoCredito.abs());
+			valorPagarCapa = valorVendaDiaCapa.subtract(valorDebitoCredito.abs());
 			valorPagarAtualizado = valorVendaDiaAtualizado.subtract(valorDebitoCredito.abs());
 		}
 		
 		if (dados != null){
 			
+			dados.put("reparteCapa", (valorReparteCapa == null ? BigDecimal.ZERO : valorReparteCapa).setScale(4, RoundingMode.HALF_UP));
 			dados.put("valorEncalhe", valorEncalhe.setScale(4, RoundingMode.HALF_UP));
+			dados.put("valorEncalheCapa", valorEncalheCapa.setScale(4, RoundingMode.HALF_UP));
 			dados.put("valorVendaDia", valorVendaDia.setScale(4, RoundingMode.HALF_UP));
+			dados.put("valorVendaDiaCapa", valorVendaDiaCapa.setScale(4, RoundingMode.HALF_UP));
 			dados.put("valorDebitoCredito", valorDebitoCredito.abs());
 			dados.put("valorPagar",  CurrencyUtil.arredondarValorParaDuasCasas(valorPagar.setScale(2, RoundingMode.HALF_UP)));
+			dados.put("valorPagarCapa",  CurrencyUtil.arredondarValorParaDuasCasas(valorPagarCapa.setScale(2, RoundingMode.HALF_UP)));
 			dados.put("valorTotal",  valorTotal.setScale(2, RoundingMode.HALF_UP));
 			dados.put("valorTotalNota", valorTotalNota.setScale(2, RoundingMode.HALF_UP));
 			dados.put("valorPagarAtualizado",  CurrencyUtil.arredondarValorParaQuatroCasas(valorPagarAtualizado));

@@ -236,6 +236,33 @@
 						<td width="17">&nbsp;</td>
 					</tr>
 				</table>
+
+				<div style="padding-top: 7px; padding-bottom: 7px;">
+					<hr width="100%" align="center" noshade>
+				</div>
+
+				<table>
+					<tr>
+						<td width="51"><strong>DESCONTO</strong></td>
+						<td width="51"><strong>Reparte:</strong></td>
+						<td width="83" id="totalReparteCapa"></td>
+						<td width="83"><strong> ( - ) Encalhe:</strong></td>
+						<td width="85" id="totalEncalheCapa"></td>
+						<td width="126" align="center" bgcolor="#EFEFEF" style="border: 1px solid #000;">
+							<strong>( = )Valor Venda Dia:</strong>
+						</td>
+						<td width="80" align="center" bgcolor="#EFEFEF"	style="border: 1px solid #000;" id="conferencia-valorVendaDiaCapa"></td>
+						<td width="130">&nbsp;&nbsp;
+							<strong>
+								<a href="javascript:;" onclick="ConferenciaEncalhe.popup_outros_valores();"> ( + )Outros valores </a>:
+							</strong>
+						</td>
+						<td width="68" id="totalOutrosValoresCapa"></td>
+						<td width="125"><strong>( = )Valor a pagar R$:</strong></td>
+						<td width="77" id="conferencia-valorAPagarCapa"></td>
+						<td width="17">&nbsp;</td>
+					</tr>
+				</table>
 			</div>
 		</fieldset>
 		
