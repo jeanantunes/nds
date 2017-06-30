@@ -29,7 +29,7 @@
 <body>
 	<form action="financeiro/manutencaoPublicacao/pesquisarProduto" method="post">	
 	
-		<div id="dialog-confirmacao-alteracao-preco" title="Manutenção de Preço de Publicação Expedida" style="display: none;">
+		<div id="dialog-confirmacao-alteracao-preco" title="Manutenção de Publicação Expedida" style="display: none;">
 			<strong>O valor do consignado das cotas que receberam o produto será atualizado, Confirma?</strong>
 		</div>
 		
@@ -43,37 +43,45 @@
 		<div class="linha_separa_fields">&nbsp;</div>
 
 		<div style="padding-top:45px;">
-			<table width="575" border="0" cellspacing="1" cellpadding="2">
-				<tr>
-					<td width="20">
-						<input type="radio" id="opcoesVisualizacao1" value="PRECO_CAPA" name="opcoesVisualizacao" onchange="$('#cotaDesconto,.descontoOpcoes').hide();$('#publicaoExpedida').show()"/>
-					</td>
-					<td width="99">
-						<label for="opcoesVisualizacao1"><strong>Preço por capa</strong></label>
-					</span>
-					</td>
-					<td width="20">
-						<input type="radio" id="opcoesVisualizacao2" value="DESCONTO" name="opcoesVisualizacao" onchange="$('#cotaDesconto,#publicaoExpedida,#manut-publicacao-resultado').hide(); $('.descontoOpcoes').show()"/>
-					</td>
-					<td width="99">
-						<label for="opcoesVisualizacao2"><strong>Desconto</strong></label>
-					</td>
 
-					<td width="20" >
-						<input class="descontoOpcoes" style="display:none;" type="radio" id="descontoOpcoesProduto" value="PRODUTO" name="descontoOpcoes" onchange="$('#descontoCota,#cotaDesconto').hide();$('#publicaoExpedida').show()"/>
-					</td>
-					<td width="99" >
-						<label class="descontoOpcoes" style="display:none;" for="descontoOpcoesProduto"><strong>Produto</strong></label>
-					</td>
+			<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 
-					<td width="20" >
-						<input class="descontoOpcoes" style="display:none;" type="radio" id="descontoOpcoesCota" value="COTA" name="descontoOpcoes" onchange="$('#publicaoExpedida,#novoDescontoFields').hide();$('#cotaDesconto').show()"/>
-					</td>
-					<td width="99" >
-						<label class="descontoOpcoes" style="display:none;" for="descontoOpcoesCota"><strong>Cota</strong></label>
-					</td>
-				</tr>
-			</table>
+				<legend>Baixa Financeira</legend>
+
+
+				<table width="575" border="0" cellspacing="1" cellpadding="2">
+					<tr>
+						<td width="20">
+							<input type="radio" id="opcoesVisualizacao1" value="PRECO_CAPA" name="opcoesVisualizacao" onchange="$('#cotaDesconto,.descontoOpcoes').hide();$('#publicaoExpedida').show()"/>
+						</td>
+						<td width="99">
+							<label for="opcoesVisualizacao1"><strong>Preço por capa</strong></label>
+							</span>
+						</td>
+						<td width="20">
+							<input type="radio" id="opcoesVisualizacao2" value="DESCONTO" name="opcoesVisualizacao" onchange="$('#cotaDesconto,#publicaoExpedida,#manut-publicacao-resultado').hide(); $('.descontoOpcoes').show()"/>
+						</td>
+						<td width="99">
+							<label for="opcoesVisualizacao2"><strong>Desconto</strong></label>
+						</td>
+
+						<td width="20" >
+							<input class="descontoOpcoes" style="display:none;" type="radio" id="descontoOpcoesProduto" value="PRODUTO" name="descontoOpcoes" onchange="$('#descontoCota,#cotaDesconto').hide();$('#publicaoExpedida').show()"/>
+						</td>
+						<td width="99" >
+							<label class="descontoOpcoes" style="display:none;" for="descontoOpcoesProduto"><strong>Produto</strong></label>
+						</td>
+
+						<td width="20" >
+							<input class="descontoOpcoes" style="display:none;" type="radio" id="descontoOpcoesCota" value="COTA" name="descontoOpcoes" onchange="$('#publicaoExpedida,#novoDescontoFields').hide();$('#cotaDesconto').show()"/>
+						</td>
+						<td width="99" >
+							<label class="descontoOpcoes" style="display:none;" for="descontoOpcoesCota"><strong>Cota</strong></label>
+						</td>
+					</tr>
+				</table>
+			</fieldset>
+
 
 		</div>
 

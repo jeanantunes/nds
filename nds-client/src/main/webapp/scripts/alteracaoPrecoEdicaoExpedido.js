@@ -9,11 +9,18 @@ var manutencaoPublicacaoController = $.extend(true, {
 		
 		$("#manut-publicacao-edicaoProduto", manutencaoPublicacaoController.workspace).numeric();
 		
-		$('#manut-publicacao-novoPrecoProduto,#novoDescontoInput', manutencaoPublicacaoController.workspace).maskMoney({
+		$('#manut-publicacao-novoPrecoProduto', manutencaoPublicacaoController.workspace).maskMoney({
 			 thousands:'.', 
-			 decimal:',', 
-			 precision:2
+			 decimal:',',
+            precision:2
 		});
+
+		$('#novoDescontoInput', manutencaoPublicacaoController.workspace).maskMoney({
+        	thousands:'.',
+            decimal:',',
+            suffix:"%",
+            precision:2
+    });
 		
 		focusSelectRefField($("#codigoProduto"));
 	},
@@ -42,7 +49,6 @@ var manutencaoPublicacaoController = $.extend(true, {
 
         	$.postJSON(manutencaoPublicacaoController.url + target,data,function(result){
 
-        		console.log(result);
         		var descontos = result.list;
                 $('#descontoAtualSel').empty();
         		for(var x=0;x < descontos.length;x++){
@@ -59,7 +65,7 @@ var manutencaoPublicacaoController = $.extend(true, {
                         " - ",manutencaoPublicacaoController.nomeProduto,
                         " - ",manutencaoPublicacaoController.numeroEdicao);
                 }else  if($('#descontoOpcoesCota').is(':checked')){
-                    nomePublicacao = "Cota " +(cota.value) + " - "+ (nomeCota.value);
+                    nomePublicacao = "Cota " +(cota.value) + " - "+ ($('#nomeCota').val());
 				}
 
                 $('#novoDesconto-txtLegenda').text(nomePublicacao);
@@ -132,7 +138,6 @@ var manutencaoPublicacaoController = $.extend(true, {
 	
 	precoAlteradoComSucesso:function(result){
 
-		console.log(result);
 		if(result.listaMensagens){
 			exibirMensagem(result.tipoMensagem,result.listaMensagens);
 		}
@@ -163,6 +168,20 @@ var manutencaoPublicacaoController = $.extend(true, {
 			exibirMensagem("WARNING",["Informe uma publicação para alteração."]);
 			return;
 		}
+
+        if(
+            ($('#opcoesVisualizacao2').is(':checked') && ($('#descontoOpcoesProduto').is(':checked') || $('#descontoOpcoesCota').is(':checked')) )
+        ){
+
+			var valor = parseFloat($('#novoDescontoInput').val());
+			if(valor > 100.0){
+                exibirMensagem("WARNING",["Valor de desconto inválido."]);
+                return;
+			}
+
+        }
+
+
 		
 		$("#dialog-confirmacao-alteracao-preco", manutencaoPublicacaoController.workspace).dialog({
 			resizable: false,
