@@ -550,7 +550,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     
     @SuppressWarnings("unchecked")
     @Override
-    public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase, boolean parcialComRedistribuicao) {
+    public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase, 
+    		boolean parcialComRedistribuicao, boolean buscarPeriodoExato) {
 
         StringBuilder sql = new StringBuilder();
         
@@ -610,10 +611,14 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append(" where eg.id = :estudoId ");
         sql.append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
         
-        if(parcialComRedistribuicao || numeroPeriodoBase == 1){
-        	sql.append(" and plp.NUMERO_PERIODO <= :numeroPeriodoBase ");
+        if(!buscarPeriodoExato){
+        	if(parcialComRedistribuicao || numeroPeriodoBase == 1){
+        		sql.append(" and plp.NUMERO_PERIODO <= :numeroPeriodoBase ");
+        	}else{
+        		sql.append(" and plp.NUMERO_PERIODO < :numeroPeriodoBase ");
+        	}
         }else{
-        	sql.append(" and plp.NUMERO_PERIODO < :numeroPeriodoBase ");
+        	sql.append(" and plp.NUMERO_PERIODO = :numeroPeriodoBase ");
         }
         
 //        sql.append( (parcialComRedistribuicao) ? " and plp.NUMERO_PERIODO <= :numeroPeriodoBase " : " and plp.NUMERO_PERIODO < :numeroPeriodoBase ");
@@ -1367,7 +1372,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		sql.append("   on epe.ESTUDO_ID = :estudoId ");
 		sql.append(" where lc.PRODUTO_EDICAO_ID = :produtoEdicaoId  ");
 		sql.append("     and plp.NUMERO_PERIODO = epe.PERIODO_PARCIAL  ");
-		sql.append(" order by plp.NUMERO_PERIODO desc limit 3; ");
+		sql.append(" group by plp.NUMERO_PERIODO order by plp.NUMERO_PERIODO desc ; ");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		

@@ -1,15 +1,7 @@
 package br.com.abril.nds.repository;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.hibernate.type.StandardBasicTypes;
 
 import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.AnaliseParcialExportXLSDTO;
@@ -20,9 +12,7 @@ import br.com.abril.nds.dto.DetalhesEdicoesBasesAnaliseEstudoDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
-import br.com.abril.nds.helper.LancamentoHelper;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
-import br.com.abril.nds.model.planejamento.StatusLancamento;
 
 public interface AnaliseParcialRepository {
 	
@@ -34,7 +24,7 @@ public interface AnaliseParcialRepository {
 	List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo);
 	List<EdicoesProdutosDTO> buscaHistoricoDeVendaParaCota(Long numeroCota, List<Long> listProdutoEdicaoId);
 	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId);
-	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase, boolean parcialComRedistribuicao);
+	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase, boolean parcialComRedistribuicao, boolean buscarPeriodoExato);
 	List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO);
     public List<EdicoesProdutosDTO> carregarPublicacaoDoEstudo(Long estudoId);
     AnaliseParcialDTO buscarReparteDoEstudo(Long estudoOrigem, Long cotaId);
