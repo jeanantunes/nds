@@ -217,7 +217,8 @@
 
 				<table width="950" border="0" cellspacing="1" cellpadding="1">
 					<tr>
-						<td width="51"><strong>Reparte:</strong></td>
+						<td width="60" align="center"><strong>Desconto</strong></td>
+						<td width="51"><strong>| Reparte:</strong></td>
 						<td width="85" id="totalReparte"></td>
 						<td width="83"><strong> ( - ) Encalhe:</strong></td>
 						<td width="87" id="totalEncalhe"></td>
@@ -241,13 +242,13 @@
 					<hr width="100%" align="center" noshade>
 				</div>
 
-				<table>
+				<table width="950" border="0" cellspacing="1" cellpadding="1">
 					<tr>
-						<td width="51"><strong>DESCONTO</strong></td>
-						<td width="51"><strong>Reparte:</strong></td>
-						<td width="83" id="totalReparteCapa"></td>
+						<td width="60" align="center"><strong>Capa</strong></td>
+						<td width="51"><strong>| Reparte:</strong></td>
+						<td width="85" id="totalReparteCapa"></td>
 						<td width="83"><strong> ( - ) Encalhe:</strong></td>
-						<td width="85" id="totalEncalheCapa"></td>
+						<td width="87" id="totalEncalheCapa"></td>
 						<td width="126" align="center" bgcolor="#EFEFEF" style="border: 1px solid #000;">
 							<strong>( = )Valor Venda Dia:</strong>
 						</td>

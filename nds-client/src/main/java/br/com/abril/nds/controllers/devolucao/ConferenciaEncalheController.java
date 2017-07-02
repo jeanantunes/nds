@@ -2846,7 +2846,7 @@ public class ConferenciaEncalheController extends BaseController {
 	                    
 	                    final BigDecimal qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdExemplar());
 	                    
-	                    final BigDecimal qtdReparte = conferenciaEncalheDTO.getQtdReparte() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdReparte());
+//	                    final BigDecimal qtdReparte = conferenciaEncalheDTO.getQtdReparte() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdReparte());
 	                    
 	                    valorTotal = valorTotal.add(precoCapa.subtract(desconto).multiply(new BigDecimal(conferenciaEncalheDTO.getQtdInformada())));
 	                    
@@ -2856,17 +2856,17 @@ public class ConferenciaEncalheController extends BaseController {
 	                    
 	                    valorEncalheCapa = valorEncalheCapa.add(CurrencyUtil.arredondarValorParaQuatroCasas(precoCapa).multiply(qtdExemplar));
 	                    
-	                    valorReparteCapa = valorReparteCapa.add(CurrencyUtil.arredondarValorParaQuatroCasas(precoCapa).multiply(qtdReparte));
-	                    
 	                    valorEncalheAtualizado = valorEncalheAtualizado.add(precoCapa.subtract(desconto).multiply(new BigDecimal(conferenciaEncalheDTO.getQtdInformada())));
 				        
 				    }
 				}
 			}
 			
+			valorReparteCapa = valorReparteCapa.add(CurrencyUtil.arredondarValorParaQuatroCasas(info.getReparteCapa() != null ? info.getReparteCapa() : BigDecimal.ZERO));
+			
 			valorVendaDia = valorVendaDia.add(info.getReparte().subtract(valorEncalhe));
 			
-			valorVendaDiaCapa = valorVendaDiaCapa.add(info.getReparte().subtract(valorEncalheCapa));
+			valorVendaDiaCapa = valorVendaDiaCapa.add(info.getReparteCapa().subtract(valorEncalheCapa));
 			
 			valorVendaDiaAtualizado = valorVendaDiaAtualizado.add(info.getReparte().subtract(valorEncalheAtualizado));
 			

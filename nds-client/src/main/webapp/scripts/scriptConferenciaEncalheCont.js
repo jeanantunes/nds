@@ -791,6 +791,12 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$("#totalOutrosValores", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorDebitoCredito).toFixed(2));
 		$("#contingencia-valorAPagar", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagar).toFixed(2));
 		
+		$("#totalReparteCapa", ConferenciaEncalheCont.workspace).text(parseFloat(result.reparteCapa != undefined ? result.reparteCapa : 0).toFixed(4));
+		$("#totalEncalheCapa", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorEncalheCapa != undefined? result.valorEncalheCapa : 0).toFixed(4));
+		$("#contingencia-valorVendaDiaCapa", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorVendaDiaCapa != undefined ? result.valorVendaDiaCapa : 0).toFixed(4));
+		$("#totalOutrosValoresCapa", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorDebitoCredito != undefined ? result.valorDebitoCredito : 0).toFixed(2));
+		$("#contingencia-valorAPagarCapa", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagarCapa != undefined ? result.valorPagarCapa : 0).toFixed(2));
+		
 		$(".dadosFiltro", ConferenciaEncalheCont.workspace).show();
 		$("#nomeCota", ConferenciaEncalheCont.workspace).text(result.razaoSocial);
 		$("#statusCota", ConferenciaEncalheCont.workspace).text(result.situacao);
@@ -905,7 +911,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 				$("#totalOutrosValores", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorDebitoCredito).toFixed(2));
 				$("#contingencia-valorAPagar", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagar).toFixed(2));
 				
-				ConferenciaEncalheCont.numeroCotaEditavel(false);
+				$("#totalReparteCapa", ConferenciaEncalheCont.workspace).text(parseFloat(result.reparteCapa).toFixed(4));
+				$("#totalEncalheCapa", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorEncalheCapa).toFixed(4));
+				$("#contingencia-valorVendaDiaCapa", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorVendaDiaCapa).toFixed(4));
+				$("#totalOutrosValoresCapa", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorDebitoCreditoCapa).toFixed(2));
+				$("#contingencia-valorAPagarCapa", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagarCapa).toFixed(2));
+				
+				ConferenciaEncalheCont.numeroCotaEditavel(false); 
 				
 				if(focusOnInput) {
 					

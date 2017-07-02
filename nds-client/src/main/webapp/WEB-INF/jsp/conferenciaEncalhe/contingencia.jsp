@@ -136,6 +136,7 @@
 				
 				<table width="950" border="0" cellspacing="1" cellpadding="1">
 					<tr>
+						<td width="60" align="center"><strong>Desconto</strong></td>
 						<td width="51"><strong>Reparte:</strong></td>
 						<td width="85" id="totalReparte"></td>
 						<td width="83"><strong> ( - ) Encalhe:</strong></td>
@@ -149,6 +150,28 @@
 						<td width="68" id="totalOutrosValores"></td>
 						<td width="125"><strong>( = )Valor a pagar R$:</strong></td>
 						<td width="77" id="contingencia-valorAPagar"></td>
+						<td width="17">&nbsp;</td>
+					</tr>
+				</table>
+				<div style="padding-top: 7px; padding-bottom: 7px;">
+					<hr width="100%" align="center" noshade>
+				</div>
+				<table width="950" border="0" cellspacing="1" cellpadding="1">
+					<tr>
+						<td width="60" align="center"><strong>Capa</strong></td>
+						<td width="51"><strong>Reparte:</strong></td>
+						<td width="85" id="totalReparteCapa"></td>
+						<td width="83"><strong> ( - ) Encalhe:</strong></td>
+						<td width="87" id="totalEncalheCapa"></td>
+						<td width="126" align="center" bgcolor="#EFEFEF" style="border: 1px solid #000;">
+							<strong>( = )Valor Venda Dia:</strong>
+						</td>
+						<td width="80" align="center" bgcolor="#EFEFEF" style="border: 1px solid #000;" id="contingencia-valorVendaDiaCapa"></td>
+						<td width="130">&nbsp;&nbsp;<strong>
+							<a href="javascript:;" onclick="ConferenciaEncalheCont.popup_outros_valores();">( + )Outros valores</a>:</strong></td>
+						<td width="68" id="totalOutrosValoresCapa"></td>
+						<td width="125"><strong>( = )Valor a pagar R$:</strong></td>
+						<td width="77" id="contingencia-valorAPagarCapa"></td>
 						<td width="17">&nbsp;</td>
 					</tr>
 				</table>

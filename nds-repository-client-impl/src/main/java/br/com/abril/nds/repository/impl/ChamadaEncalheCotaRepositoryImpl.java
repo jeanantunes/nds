@@ -21,7 +21,6 @@ import br.com.abril.nds.dto.chamadaencalhe.ChamadaEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -119,12 +118,12 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 	@Override
 	public BigDecimal obterTotalDaChamaEncalheCotaSemDesconto(
 			Integer numeroCota, 
-			Date dataOperacao,
+			List<Date> datasOperacao,
 			Boolean conferido, Boolean postergado) {
 		
 		Query query = this.getSession().createSQLQuery(this.getSqlValor(conferido, postergado, REPARTE_SEM_DESCONTO));
 
-		query.setParameterList("datas", Arrays.asList(dataOperacao));
+		query.setParameterList("datas", datasOperacao);
 		
 		query.setParameter("numeroCota", numeroCota);
 		
