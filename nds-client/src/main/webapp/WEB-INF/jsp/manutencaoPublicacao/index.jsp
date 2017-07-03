@@ -169,7 +169,7 @@
 				<br />
 				<p>
 					<strong>Novo desconto:</strong>
-					<input type="text" name="manut-publicacao-novoPrecoProduto" id="novoDescontoInput" style="width:80px; margin-left:5px;" maxlength="10"/>
+					<input type="text" name="manut-publicacao-novoPrecoProduto" id="novoDescontoInput" style="width:80px; margin-left:5px;" maxlength="5"/>
 				</p>
 				<br />
 			</div>
