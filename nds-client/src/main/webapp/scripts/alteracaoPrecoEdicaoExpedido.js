@@ -6,22 +6,18 @@ var manutencaoPublicacaoController = $.extend(true, {
 	nomeProduto:null,
 	
 	init : function() {
-		
+
+
+
 		$("#manut-publicacao-edicaoProduto", manutencaoPublicacaoController.workspace).numeric();
 		
 		$('#manut-publicacao-novoPrecoProduto', manutencaoPublicacaoController.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',',
-            precision:2
+             precision:2
 		});
 
-		$('#novoDescontoInput', manutencaoPublicacaoController.workspace).maskMoney({
-        	thousands:'.',
-            decimal:',',
-            suffix:"%",
-            precision:2
-    });
-		
+		$('#novoDescontoInput').mask('9?9,99');
 		focusSelectRefField($("#codigoProduto"));
 	},
 	
@@ -32,6 +28,9 @@ var manutencaoPublicacaoController = $.extend(true, {
         manutencaoPublicacaoController.nomeProduto = $("#manut-publicacao-nomeProduto", manutencaoPublicacaoController.workspace).val();
 
 
+        if(manutencaoPublicacaoController.numeroEdicao){
+
+		}
         var data = {
             codigo: $("#manut-publicacao-codigoProduto", manutencaoPublicacaoController.workspace).val(),
             numeroEdicao: $("#manut-publicacao-edicaoProduto", manutencaoPublicacaoController.workspace).val()
@@ -41,6 +40,13 @@ var manutencaoPublicacaoController = $.extend(true, {
 
         	var target = null;
         	if($('#descontoOpcoesProduto').is(':checked')){
+
+
+        		if( $("#manut-publicacao-edicaoProduto").data('values').split(',').indexOf(data.numeroEdicao) == -1){
+
+                    manutencaoPublicacaoController.mensagemErro('Número de edição inválido');
+        			return;
+				}
                 target = "/pesquisarDescontosProduto";
 			}else if($('#descontoOpcoesCota').is(':checked')){
                 target = "/pesquisarDescontosPorCota";
@@ -105,9 +111,6 @@ var manutencaoPublicacaoController = $.extend(true, {
 
 	},
 
-	pesquisarDescontoCota:function(){
-
-	},
 	
 	montarTituloFieldPublicacao:function(){
 		
@@ -226,7 +229,13 @@ var manutencaoPublicacaoController = $.extend(true, {
             data,
             manutencaoPublicacaoController.precoAlteradoComSucesso);
 
-	}
+	},
+    mensagemErro : function (mensagem){
+        var erros = new Array();
+        erros[0] = ""+mensagem;
+        exibirMensagemDialog('WARNING',   erros,"");
+        return;
+    }
 
 }, BaseController);
 //@ sourceURL=manutencaoPublicacao.js
