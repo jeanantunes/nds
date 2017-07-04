@@ -46,7 +46,7 @@
 
 			<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 
-				<legend>Baixa Financeira</legend>
+				<legend>Manutenção de publicação expedida</legend>
 
 
 				<table width="575" border="0" cellspacing="1" cellpadding="2">
