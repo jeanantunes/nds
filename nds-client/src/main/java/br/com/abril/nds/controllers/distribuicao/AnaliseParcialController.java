@@ -594,8 +594,11 @@ public class AnaliseParcialController extends BaseController {
     @Post("/pesquisarProdutoEdicao")
     public void pesquisarProdutoEdicao(String codigoProduto, String nomeProduto, Long edicao, Long idClassificacao) {
         Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
+        
         List<ProdutoEdicaoVendaMediaDTO> edicoes = distribuicaoVendaMediaRepository.pesquisar(produto.getCodigoICD(), nomeProduto, edicao, idClassificacao);
+        
         TableModel<CellModelKeyValue<ProdutoEdicaoVendaMediaDTO>> table = new TableModel<>();
+        
         table.setRows(CellModelKeyValue.toCellModelKeyValue(edicoes));
         table.setTotal(edicoes.size());
         table.setPage(1);

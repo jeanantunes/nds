@@ -43,10 +43,13 @@ var analiseParcialController = $.extend(true, {
         	}
             var edicao = analiseParcialController.edicoesBase[i];
             var optionClassificacao = 'value="id"'.replace('id',edicao.idTipoClassificacao);
+            var parcial = edicao.periodo != undefined ? edicao.periodo : "";
+            
             objEdicoesBase.rows.push({ cell: {
                 codigo:         '<input class="inputCodigoEB" value="#">'.replace('#',edicao.codigoProduto),
                 produto:        '<input class="inputProdutoEB" value="#">'.replace('#',edicao.nomeProduto),
                 edicao:         '<input id="$" class="inputEdicaoEB" value="#">'.replace('$',edicao.produtoEdicaoId).replace('#',edicao.edicao),
+                periodo:        '<input id="inputPeriodoEB" class="inputPeriodoEB" style="width: 70px;" value="#">'.replace('#',parcial),
                 classificacao:  '<select class="selectClassEB">#options#</select>'.replace('#options#', tipoClassificacao.replace(optionClassificacao, optionClassificacao + ' selected')),
                 acao:           '<img src="images/ico_editar.gif" alt="Alterar Edição" class="icoEditarEB">' +
                                 '<img src="images/ico_excluir.gif" alt="Excluir Base" class="icoExcluirEB">' +
@@ -65,7 +68,7 @@ var analiseParcialController = $.extend(true, {
             escondeHeader: false,
             resizable : false,
             height : 470,
-            width : 650,
+            width : 800,
             modal : true,
             buttons : {
                 "Base Original" : function() {
@@ -83,7 +86,7 @@ var analiseParcialController = $.extend(true, {
                         var codigoProduto = $this.find('.inputCodigoEB').val();
                         var nomeProduto = $this.find('.inputProdutoEB').val();
                         var edicao = $this.find('.inputEdicaoEB').val();
-
+                        
                         if (codigoProduto === '' || nomeProduto === '' || edicao === '') {
                             analiseParcialController.exibirMsg('WARNING', ['É necessário informar todos os campos!']);
                             hasErros = true;
@@ -95,6 +98,11 @@ var analiseParcialController = $.extend(true, {
                         parameters.push({name: 'edicoesBase['+ i +'].nomeProduto',      value: nomeProduto});
                         parameters.push({name: 'edicoesBase['+ i +'].edicao',           value: edicao});
                         parameters.push({name: 'edicoesBase['+ i +'].produtoEdicaoId',  value: $this.find('.inputEdicaoEB').attr('id')});
+                        
+                        if($this.find('.inputPeriodoEB').val() != ""){
+                        	parameters.push({name: 'edicoesBase['+ i +'].periodo',          value: $this.find('.inputPeriodoEB').val()});
+                        	parameters.push({name: 'edicoesBase['+ i +'].parcial',          value: true});
+                        }
 
                     });
                     
@@ -817,6 +825,9 @@ var analiseParcialController = $.extend(true, {
 
         var totalSaldoReparte = 0;
         
+        var reparteAcumulado = 0;
+        var vendaAcumulada = 0;
+        
         // atualização dos valores da grid
         for (var i = 0; i < resultado.rows.length; i++) {
         	
@@ -877,6 +888,9 @@ var analiseParcialController = $.extend(true, {
         	
         	var reparte7 = somaReparteCota > 0 ? somaReparteCota : "";
         	var venda7 = somaVendasCota > 0 ? somaVendasCota : "";
+        	
+        	reparteAcumulado = reparteAcumulado + somaReparteCota;
+        	vendaAcumulada = vendaAcumulada + somaVendasCota;
         	
         	cell['reparte7'] = '<span abbr="reparte7">'+reparte7+'</span>';
 	        cell['venda7'] = '<span abbr="venda7" class="vermelho">'+venda7+'</span>';
@@ -947,6 +961,9 @@ var analiseParcialController = $.extend(true, {
             }
             
         }
+        
+        $("#total_reparte7").text(reparteAcumulado);
+        $("#total_venda7").text(vendaAcumulada);
 
         if(resultado.rows[0].cell.edicoesBase != undefined){
       	   
@@ -2476,24 +2493,26 @@ $(".pdvCotaGrid_AP", analiseParcialController.workspace).flexigrid({
 });
 
 $("#prodCadastradosGrid").flexigrid({
-    colModel : [{display: 'Código',        name: 'codigo',        width: 80,  sortable: false, align: 'left'},
-                {display: 'Produto',       name: 'produto',       width: 180, sortable: false, align: 'left'},
-                {display: 'Edição',        name: 'edicao',        width: 80,  sortable: false, align: 'left'},
-                {display: 'Classificação', name: 'classificacao', width: 120,  sortable: false, align: 'left'},
-                {display: 'Açao',          name: 'acao',          width: 70,  sortable: false, align: 'center'}],
+    colModel : [{display: 'Código',        name: 'codigo',        width: 100,  sortable: false, align: 'center'},
+                {display: 'Produto',       name: 'produto',       width: 180, sortable: false, align: 'center'},
+                {display: 'Edição',        name: 'edicao',        width: 80,  sortable: false, align: 'center'},
+                {display: 'Período',       name: 'periodo',       width: 80,  sortable: false, align: 'center'},
+                {display: 'Classificação', name: 'classificacao', width: 150,  sortable: false, align: 'center'},
+                {display: 'Açao',          name: 'acao',          width: 80,  sortable: false, align: 'center'}],
     dataType: 'json',
     striped: false,
-    width : 595,
+    width : 750,
     height : 225
 });
 
 $("#edicaoProdCadastradosGrid").flexigrid({
     colModel: [ {display: 'Id Edição',     name: 'id',                      width: 1,   sortable: true, hide: true},
                 {display: 'Id Class.',     name: 'idClassificacao',         width: 1,   sortable: true, hide: true},
-                {display: 'Cod Produto',   name: 'codigoProduto',           width: 80,  sortable: true, align: 'left'},
-                {display: 'Classificação', name: 'classificacao',           width: 95,   sortable: true, align: 'center'},
+                {display: 'Cod Produto',   name: 'codigoProduto',           width: 65,  sortable: true, align: 'left'},
+                {display: 'Classificação', name: 'classificacao',           width: 90,   sortable: true, align: 'center'},
                 {display: 'Edição',        name: 'numeroEdicao',            width: 45,  sortable: true, align: 'left'},
-                {display: 'Data Lancto',   name: 'dataLancamentoFormatada', width: 100, sortable: true, align: 'center'},
+                {display: 'Periodo',       name: 'periodo',                 width: 45,  sortable: true, align: 'center'},
+                {display: 'Data Lancto',   name: 'dataLancamentoFormatada', width: 80, sortable: true, align: 'center'},
                 {display: 'Reparte',       name: 'reparte',                 width: 40,  sortable: true, align: 'right'},
                 {display: 'Venda',         name: 'venda',                   width: 40,  sortable: true, align: 'right'},
                 {display: 'Status',        name: 'status',                  width: 110, sortable: true, align: 'left'},
