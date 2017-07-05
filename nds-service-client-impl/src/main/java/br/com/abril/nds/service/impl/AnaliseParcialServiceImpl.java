@@ -477,6 +477,12 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     		for (EdicoesProdutosDTO edicaoBase : ordenacaoCota) {
 				if(edicaoBase.isParcial()){
 					for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
+						
+						if(edicaoBase.getProdutoEdicaoId() == null || edicoesProdutosDTO.getProdutoEdicaoId() == null
+								|| edicaoBase.getPeriodo() == null || edicoesProdutosDTO.getPeriodo() == null){
+							continue;
+						}
+						
 						if((edicaoBase.getProdutoEdicaoId().equals(edicoesProdutosDTO.getProdutoEdicaoId()))
 								&& (edicaoBase.getPeriodo().equals(edicoesProdutosDTO.getPeriodo()))){
 							novaOrdenacaoEdicoesBase.add(edicoesProdutosDTO);
@@ -486,6 +492,11 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 				}else{
 					
 					for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
+						
+						if(edicaoBase.getProdutoEdicaoId() == null || edicoesProdutosDTO.getProdutoEdicaoId() == null){
+							continue;
+						}
+						
 						if(edicaoBase.getProdutoEdicaoId().equals(edicoesProdutosDTO.getProdutoEdicaoId())){
 							novaOrdenacaoEdicoesBase.add(edicoesProdutosDTO);
 						}
