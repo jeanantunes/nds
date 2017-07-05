@@ -313,17 +313,17 @@ public class AnaliseParcialController extends BaseController {
         filtroQueryDTO.setMudarBaseVisualizacao(isMudarBaseVisualizacao);
         
         if(filtroQueryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL")){
-        	boolean isParcialComEdicaoNormal = false;
+//        	boolean isParcialComEdicaoNormal = false;
+//        	
+//        	if(filtroQueryDTO.getEdicoesBase() != null){
+//        		for (EdicoesProdutosDTO edicoesProdutosDTO : filtroQueryDTO.getEdicoesBase()) {
+//					if(!edicoesProdutosDTO.isParcial()){
+//						isParcialComEdicaoNormal = true;
+//					}
+//				}
+//        	}
         	
-        	if(filtroQueryDTO.getEdicoesBase() != null){
-        		for (EdicoesProdutosDTO edicoesProdutosDTO : filtroQueryDTO.getEdicoesBase()) {
-					if(!edicoesProdutosDTO.isParcial()){
-						isParcialComEdicaoNormal = true;
-					}
-				}
-        	}
-        	
-        	filtroQueryDTO.setParcialComEdicaoBaseNormal(isParcialComEdicaoNormal);
+        	filtroQueryDTO.setParcialComEdicaoBaseNormal(true);
         }
         
         AnaliseEstudoNormal_E_ParcialDTO analise = analiseParcialService.buscaAnaliseParcialPorEstudo(filtroQueryDTO);
