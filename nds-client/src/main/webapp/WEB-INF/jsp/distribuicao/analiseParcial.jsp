@@ -335,23 +335,31 @@ table.dadosTab { margin-left: 370px;}
 					</table>
 				</c:if>
 				<c:if test="${tipoExibicao == 'PARCIAL'}">
-					<table border="0" cellspacing="0" cellpadding="0" class="tableTotais">
-						<tr class="class_linha_1 paddingTotais">
-							<td id="lbl_qtd_cotas">Qtde Cotas:</td>
-							<td id="total_de_cotas">0</td>
-                            <td id="total_ultimo_reparte">0</td>
-                            <td id="total_reparte_sugerido">0</td>
-							<td id="lbl_legenda">&nbsp;</td>
-							<td id="total_juramento">0</td>
+					<table border="0" cellspacing="0" cellpadding="0" class="tableTotais" style="width: 1040px !important;">
+						<tr class="class_linha_1 paddingTotais" style="width: 1040px !important;">
+							<td id="lbl_qtd_cotas" style="width: 95px !important;">Qtde Cotas:</td>
+							<td id="total_de_cotas" style="width: 155px !important;">0</td>
+							<td id="lbl_NPDV" style="width: 100px !important;">&nbsp;</td>
+                            <td id="total_ultimo_reparte" style="width: 60px !important; text-align: center;">0</td>
+                            <td id="total_reparte_sugerido" style="width: 60px !important; text-align: center;">0</td>
+							<td id="lbl_legenda" style="width: 150px !important;">&nbsp;</td>
+							<td id="total_juramento" style="width: 47px !important;">0</td>
 							<%--<td align="right" id="total_media_venda">0</td>--%>
-							<td id="total_reparte1">0</td>
-							<td id="total_venda1" class="vermelho">0</td>
-							<td id="total_reparte2">0</td>
-							<td id="total_venda2" class="vermelho">0</td>
-							<td id="total_reparte3">0</td>
-							<td id="total_venda3" class="vermelho">0</td>
-							<td id="total_reparte4">0</td>
-							<td id="total_venda4" class="vermelho">0</td>
+							<td id="total_reparte1" style="width: 36px !important;">0</td>
+							<td id="total_venda1" class="vermelho" style="width: 36px !important;">0</td>
+							<td id="total_reparte2" style="width: 36px !important;">0</td>
+							<td id="total_venda2" class="vermelho" style="width: 36px !important;">0</td>
+							<td id="total_reparte3" style="width: 36px !important;">0</td>
+							<td id="total_venda3" class="vermelho" style="width: 36px !important;">0</td>
+							<td id="total_reparte4" style="width: 36px !important;">0</td>
+							<td id="total_venda4" class="vermelho" style="width: 36px !important;">0</td>
+							<td id="total_reparte5" style="width: 36px !important;">0</td>
+							<td id="total_venda5" class="vermelho" style="width: 36px !important;">0</td>
+							<td id="total_reparte6" style="width: 36px !important;">0</td>
+							<td id="total_venda6" class="vermelho" style="width: 36px !important;">0</td>
+							<td id="total_reparte7" style="width: 36px !important;">0</td>
+							<td id="total_venda7" class="vermelho" style="width: 36px !important;">0</td>
+							<td id="lbl_paddingRight" style="width: 25px !important;">&nbsp;</td>
 						</tr>
 					</table>
 				</c:if>
@@ -492,7 +500,7 @@ table.dadosTab { margin-left: 370px;}
 
 	<div id="dialog-mudar-base" title="Mudar Base de Visualização" style="display: none;">
 
-		<fieldset style="width: 600px !important;">
+		<fieldset style="width: 750px !important;">
 			<legend>Base Produto</legend>
 
 			<table width="600" border="0" cellpadding="2" cellspacing="1">
@@ -519,7 +527,7 @@ table.dadosTab { margin-left: 370px;}
 
 		</fieldset>
 
-		<fieldset style="width: 600px !important; margin-top: 10px;">
+		<fieldset style="width: 750px !important; margin-top: 10px;">
 			<legend>Produtos Cadastrados</legend>
 			<table class="prodCadastradosGrid" id="prodCadastradosGrid"></table>
 		</fieldset>
