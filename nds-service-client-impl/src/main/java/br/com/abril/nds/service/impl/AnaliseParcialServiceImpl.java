@@ -235,8 +235,38 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 if(idsProdutoEdicao.size() > 0) {
                 	Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas = buscaHistoricoDeVendas(item.getCotaId(), idsProdutoEdicao, cotasComVenda);
 //                	Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas = buscaHistoricoDeVendas(item.getCotaId(), idsProdutoEdicao);
-                    edicoesComVenda.addAll(buscaHistoricoDeVendas);
+                	
+                	if((buscaHistoricoDeVendas != null && queryDTO.getEdicoesBase() != null) 
+                			&& buscaHistoricoDeVendas.size() > queryDTO.getEdicoesBase().size()){
+                		
+                		List<EdicoesProdutosDTO> buscaHistoricoDeVendasCorreto = new ArrayList<>();
+                		
+                		for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
+                			for (EdicoesProdutosDTO edicoesProdutosBseDTO : buscaHistoricoDeVendas) {
+								if(edicoesProdutosDTO.isParcial()){
+									if(edicoesProdutosDTO.getPeriodo() == null || edicoesProdutosBseDTO.getPeriodo() == null){
+										continue;
+									}
+									
+									if(edicoesProdutosBseDTO.getProdutoEdicaoId().equals(edicoesProdutosDTO.getProdutoEdicaoId())
+											&& edicoesProdutosBseDTO.getPeriodo().equals(edicoesProdutosDTO.getPeriodo())){
+										buscaHistoricoDeVendasCorreto.add(edicoesProdutosBseDTO);
+									}
+								}else{
+									if(edicoesProdutosBseDTO.getProdutoEdicaoId().equals(edicoesProdutosDTO.getProdutoEdicaoId())){
+										buscaHistoricoDeVendasCorreto.add(edicoesProdutosBseDTO);
+									}
+								}
+							}
+							
+						}
+                		
+                		buscaHistoricoDeVendas = buscaHistoricoDeVendasCorreto;
+                		
+                	}
 
+            		edicoesComVenda.addAll(buscaHistoricoDeVendas);
+                    
                     // reparte, venda e dataLancamento
                     for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
                     		
@@ -295,6 +325,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                                 	}
 	                    				if (ed.getOrdemExibicao() == null) {
 	                    					ed.setOrdemExibicao(ordemExibicaoHelper++);
+	                    				}else{
+	                    					ordemExibicaoHelper++;
 	                    				}
 	                    				
 	                    				edicoesProdutosDTOMap.put(ed.getOrdemExibicao(), ed);
