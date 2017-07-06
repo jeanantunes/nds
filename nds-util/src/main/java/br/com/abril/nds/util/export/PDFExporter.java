@@ -274,8 +274,18 @@ public class PDFExporter implements Exporter {
 	private void processFilters(ExportModel exportModel, Document document) throws DocumentException {
 		
 		List<ExportFilter> exportFilters = exportModel.getFilters();
+		
+		boolean isFiltroValido = false;
+		
+		for (ExportFilter exportFilter : exportFilters) {
+			if(exportFilter.getValue() != null && !exportFilter.getValue().isEmpty() && !exportFilter.getValue().equalsIgnoreCase("0")){
+				isFiltroValido = true;
+				break;
+			}
+		}
+		
         
-        if (exportFilters != null && !exportFilters.isEmpty()) {
+        if (exportFilters != null && !exportFilters.isEmpty() && isFiltroValido == true) {
         	
         	document.add(Chunk.NEWLINE);
         	
@@ -291,9 +301,9 @@ public class PDFExporter implements Exporter {
     		
     		PdfPTable filterPdfTable = new PdfPTable(qtdCampos);
     		
-    		filterPdfTable.setSpacingBefore(10F);
+    		filterPdfTable.setSpacingBefore(3F);
     		
-    		filterPdfTable.setSpacingAfter(10F);
+    		filterPdfTable.setSpacingAfter(3F);
     		
     		filterPdfTable.setWidthPercentage(100F);
     		
