@@ -52,14 +52,14 @@
 				<table width="575" border="0" cellspacing="1" cellpadding="2">
 					<tr>
 						<td width="20">
-							<input type="radio" id="opcoesVisualizacao1" value="PRECO_CAPA" name="opcoesVisualizacao" onchange="$('#cotaDesconto,.descontoOpcoes').hide();$('#publicaoExpedida').show()"/>
+							<input type="radio" id="opcoesVisualizacao1" value="PRECO_CAPA" name="opcoesVisualizacao" onchange="$('#tipoALteracaoSpan').text('Preço'); $('#cotaDesconto,.descontoOpcoes').hide();$('#publicaoExpedida').show()"/>
 						</td>
 						<td width="99">
 							<label for="opcoesVisualizacao1"><strong>Preço por capa</strong></label>
 							</span>
 						</td>
 						<td width="20">
-							<input type="radio" id="opcoesVisualizacao2" value="DESCONTO" name="opcoesVisualizacao" onchange="$('#cotaDesconto,#publicaoExpedida,#manut-publicacao-resultado').hide(); $('.descontoOpcoes').show()"/>
+							<input type="radio" id="opcoesVisualizacao2" value="DESCONTO" name="opcoesVisualizacao" onchange="$('#tipoALteracaoSpan').text('Desconto'); $('#cotaDesconto,#publicaoExpedida,#manut-publicacao-resultado').hide(); $('.descontoOpcoes').show()"/>
 						</td>
 						<td width="99">
 							<label for="opcoesVisualizacao2"><strong>Desconto</strong></label>
@@ -88,7 +88,7 @@
 
 
 		<fieldset id="publicaoExpedida" class="fieldFiltro fieldFiltroItensNaoBloqueados" style="display:none">
-			<legend> Manutenção de Publicação Expedida - Preço</legend>
+			<legend> Manutenção de Publicação Expedida - <span id="tipoALteracaoSpan"></span></legend>
 	        <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	        	<tr>
 	        		<td width="45" align="right">Código:</td>
