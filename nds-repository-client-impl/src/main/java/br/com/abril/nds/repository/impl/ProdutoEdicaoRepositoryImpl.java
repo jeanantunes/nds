@@ -1356,7 +1356,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				" from " +
 				" ( select  " +
 				
-				" 	case when sum(estoqueProdutoCota.QTDE_DEVOLVIDA) = sum(estoqueProdutoCota.QTDE_RECEBIDA) then 1 else 0 end as qtdeCotasSemVenda," +
+				" 	case when sum(estoqueProdutoCota.QTDE_DEVOLVIDA) >= sum(estoqueProdutoCota.QTDE_RECEBIDA) then 1 else 0 end as qtdeCotasSemVenda," +
 				"   case when cota2_.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end as cotaAtiva," +
 				"	  sum(estoqueProdutoCota.QTDE_RECEBIDA) as reparteTotal," +	
 				" 	estoqueProdutoCota.ID as col_2_0_, " +
