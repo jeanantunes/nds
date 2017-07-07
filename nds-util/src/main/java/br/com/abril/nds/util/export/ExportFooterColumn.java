@@ -17,11 +17,13 @@ public class ExportFooterColumn extends ExportColumn {
 	private boolean verticalPrinting;
 	
 	private FooterType footerType;
+	
+	private int colspan;
 
 	public ExportFooterColumn() { }
 	
 	public ExportFooterColumn(String value, Export.Alignment alignment, 
-							  Integer exhibitionOrder, ColumnType columnType, Float fontSize) {
+			  Integer exhibitionOrder, ColumnType columnType, Float fontSize) {
 		super(value, alignment, exhibitionOrder, columnType, fontSize);
 	}
 	
@@ -94,4 +96,13 @@ public class ExportFooterColumn extends ExportColumn {
 	public void setFooterType(FooterType footerType) {
 		this.footerType = footerType;
 	}
+
+	public int getColspan() {
+		return colspan;
+	}
+
+	public void setColspan(int colspan) {
+		this.colspan = colspan;
+	}
+	
 }

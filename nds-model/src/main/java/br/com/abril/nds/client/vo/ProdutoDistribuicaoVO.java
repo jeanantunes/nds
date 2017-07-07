@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Footer;
 
 @Exportable
 public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoDistribuicaoVO> {
@@ -62,6 +63,12 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 
 	@Export(label="Estudo", exhibitionOrder = 13)
 	private BigInteger idEstudo;
+	
+	@Footer(label = "Publicações Liberadas:", alignWithHeader = "Codigo", colspan=2)
+	private Integer totalEstudosLiberados;
+    
+	@Footer(label = "Publicações sem Estudo:", alignWithHeader = "Clas.", colspan=2)
+	private Integer totalSemEstudo;
 	
 	private BigInteger idProdutoEdicao;
 	
@@ -445,6 +452,22 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 
 	public void setModoAnaliseDefault(String modoAnaliseDefault) {
 		this.modoAnaliseDefault = modoAnaliseDefault;
+	}
+
+	public Integer getTotalEstudosLiberados() {
+		return totalEstudosLiberados;
+	}
+
+	public void setTotalEstudosLiberados(Integer totalEstudosLiberados) {
+		this.totalEstudosLiberados = totalEstudosLiberados;
+	}
+
+	public Integer getTotalSemEstudo() {
+		return totalSemEstudo;
+	}
+
+	public void setTotalSemEstudo(Integer totalSemEstudo) {
+		this.totalSemEstudo = totalSemEstudo;
 	}
 	
 }

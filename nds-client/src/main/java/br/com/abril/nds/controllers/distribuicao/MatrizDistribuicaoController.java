@@ -396,13 +396,12 @@ public class MatrizDistribuicaoController extends BaseController {
                 totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao() != null &&
                 !totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao().isEmpty()) {
 
-            RodapeDTO rodapeDTO = new RodapeDTO(CurrencyUtil.formatarValor(totalizadorProdutoDistribuicaoVO.getTotalSemEstudo()),
-                    CurrencyUtil.formatarValor(totalizadorProdutoDistribuicaoVO.getTotalEstudosLiberados()));
+//            RodapeDTO rodapeDTO = new RodapeDTO(CurrencyUtil.formatarValor(totalizadorProdutoDistribuicaoVO.getTotalSemEstudo()),
+//                    CurrencyUtil.formatarValor(totalizadorProdutoDistribuicaoVO.getTotalEstudosLiberados()));
 
             FileExporter.to("matriz_distribuicao", fileType).inHTTPResponse(
                     this.getNDSFileHeader(),
                     filtro,
-                    rodapeDTO,
                     totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao(),
                     ProdutoDistribuicaoVO.class, this.httpResponse);
         }

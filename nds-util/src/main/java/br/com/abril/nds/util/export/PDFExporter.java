@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import org.apache.commons.lang.StringUtils;
 
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.export.Export.Alignment;
 
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
@@ -529,13 +530,17 @@ public class PDFExporter implements Exporter {
     				}
         		}
         		
+        		if(exportFooter.getColspan() > 1){
+        			cellNum = (cellNum - (exportFooter.getColspan() - 1));
+        		}
+        		
         		if (cellNum > 0) {
 
     				while (footerCellCount <= (cellNum - 1)) {
     				
     					PdfPCell emptyCell = new PdfPCell();
 
-    					emptyCell.setBackgroundColor(rowBaseColor);        			
+//    					emptyCell.setBackgroundColor(rowBaseColor);        			
 
     					pdfTable.addCell(emptyCell);
     					
@@ -551,11 +556,23 @@ public class PDFExporter implements Exporter {
         			   
         			String label = StringUtils.defaultString(exportFooter.getLabel());
         			
-            		Paragraph footerLabelParagraph = new Paragraph(label, footerLabelFont);
+//            		Paragraph footerLabelParagraph = new Paragraph(label, footerLabelFont);
+            		
+//            		footerLabelParagraph.setAlignment(Alignment.CENTER.getValue());
+        			
+        			Paragraph footerLabelParagraph = new Paragraph(label, tableHeaderFont);
+        	    		
+        			footerLabelPdfCell.setColspan(exportFooter.getColspan());
+
+        			footerLabelParagraph.setAlignment(Alignment.CENTER.getValue());
+        			
+        			footerLabelPdfCell.setUseAscender(true);
+            		
+            		footerLabelPdfCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             		
             		footerLabelPdfCell.addElement(footerLabelParagraph);
 
-            		footerLabelPdfCell.setBackgroundColor(rowBaseColor);        			
+            		footerLabelPdfCell.setBackgroundColor(headerBaseColor);   
             		
             		pdfTable.addCell(footerLabelPdfCell);
             		
@@ -620,8 +637,7 @@ public class PDFExporter implements Exporter {
         }
 	}
 	
-	private void createFooterSeparationLine(PdfPTable pdfTable, 
-											List<ExportHeader> exportHeaders) {
+	private void createFooterSeparationLine(PdfPTable pdfTable, List<ExportHeader> exportHeaders) {
 		
 		if (exportHeaders == null || exportHeaders.isEmpty()) {
 			
@@ -632,7 +648,7 @@ public class PDFExporter implements Exporter {
 			
 			PdfPCell emptyCell = new PdfPCell();
 			
-			emptyCell.setFixedHeight(10);
+			emptyCell.setFixedHeight(100);
 			
 			pdfTable.addCell(emptyCell);
 		}
