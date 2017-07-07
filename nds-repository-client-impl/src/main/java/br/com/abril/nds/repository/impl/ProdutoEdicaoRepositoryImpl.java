@@ -1526,8 +1526,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		queryStringProdutoEdicao.append(" select  T2.numCota as numeroCota from (  ");
 		queryStringProdutoEdicao.append("    ");
-		queryStringProdutoEdicao.append(" Select sum(T.REPARTE) AS reparte, sum(T.qtdeVendas) AS qtdeVendas,  ");
-		queryStringProdutoEdicao.append("  		sum( T.qtdeVendas )/T.qtdEdicoesRecebida as vendaMedia,  ");
+		queryStringProdutoEdicao.append(" Select sum(T.REPARTE) AS reparte,  ");
+		queryStringProdutoEdicao.append(" sum( (case when T.qtdeVendas is not null then T.qtdeVendas else (select sum(epc.QTDE_RECEBIDA)-sum(epc.QTDE_DEVOLVIDA) as venda from estoque_produto_cota epc, cota ct where epc.PRODUTO_EDICAO_ID = T.id and epc.COTA_ID = ct.ID and ct.NUMERO_COTA = T.numCota) end) ) AS qtdeVendas,  ");
+		queryStringProdutoEdicao.append("  		sum( (case when T.qtdeVendas is not null then T.qtdeVendas else (select sum(epc.QTDE_RECEBIDA)-sum(epc.QTDE_DEVOLVIDA) as venda from estoque_produto_cota epc, cota ct where epc.PRODUTO_EDICAO_ID = T.id and epc.COTA_ID = ct.ID and ct.NUMERO_COTA = T.numCota) end) )/T.qtdEdicoesRecebida as vendaMedia,  ");
 		queryStringProdutoEdicao.append("  		T.numCota AS numCota  ");
 		queryStringProdutoEdicao.append("    ");
 		queryStringProdutoEdicao.append("  from (  ");
