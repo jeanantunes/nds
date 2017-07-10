@@ -116,7 +116,7 @@
 
 		<!-- COTA -->
 		<fieldset id="cotaDesconto" class="fieldFiltro fieldFiltroItensNaoBloqueados" style="display:none">
-			<legend> Manutenção de Publicação Expedida - Descconto </legend>
+			<legend> Manutenção de Publicação Expedida - Desconto </legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<td width="5%" align="right">Cota:</td>
