@@ -10,10 +10,12 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Footer;
+import br.com.abril.nds.util.export.Export.Alignment;
 
 @Exportable
 public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoDistribuicaoVO> {
@@ -22,46 +24,47 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	
 	private BigInteger idLancamento;
 	
-	@Export(label="Codigo", exhibitionOrder = 0)
+	//@Export(label="Codigo", exhibitionOrder = 0, alignment = Alignment.CENTER, fontSize=6, widthPercent = 6)3
+	@Export(label="Codigo", exhibitionOrder = 0, widthPercent = 8, alignment = Alignment.CENTER, fontSize=6)
 	private String codigoProduto;
 	
-	@Export(label="Produto", exhibitionOrder = 1)
+	@Export(label="Produto", exhibitionOrder = 1, widthPercent = 11, alignment = Alignment.CENTER, fontSize=6)
 	private String nomeProduto;
 	
-	@Export(label="Edição", exhibitionOrder = 2)
+	@Export(label="Edição", exhibitionOrder = 2, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
 	private BigInteger numeroEdicao;
 
-	@Export(label="Periodo", exhibitionOrder = 3)
+	@Export(label="Periodo", exhibitionOrder = 3, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
 	private String periodo;
 	
-	@Export(label="Preço RS", exhibitionOrder = 4)
+	@Export(label="Preço RS", exhibitionOrder = 4, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
 	private String precoVenda;
 
-	@Export(label="Clas.", exhibitionOrder = 5)
+	@Export(label="Clas.", exhibitionOrder = 5, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
 	private String classificacao;
 	
-	@Export(label="Pct. Padrão", exhibitionOrder = 6)
+	@Export(label="Pct. Padrão", exhibitionOrder = 6, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
 	private Integer pctPadrao;
 	
-	@Export(label="Fornecedor", exhibitionOrder = 7)
+	@Export(label="Fornecedor", exhibitionOrder = 7, widthPercent = 11, alignment = Alignment.CENTER, fontSize=6)
 	private String nomeFornecedor;
 	
-	@Export(label="Juram.", exhibitionOrder = 8)
+	@Export(label="Juram.", exhibitionOrder = 8, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
 	private BigDecimal juram;
 	
-	@Export(label="Suplem..", exhibitionOrder = 9)
+	@Export(label="Suplem..", exhibitionOrder = 9, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
 	private BigDecimal suplem;
 	
-	@Export(label="Lancto.", exhibitionOrder = 10)
+	@Export(label="Lancto.", exhibitionOrder = 10, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
 	private BigDecimal lancto;
 	
-	@Export(label="Promo.", exhibitionOrder = 11)
+	@Export(label="Promo.", exhibitionOrder = 11, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
 	private BigDecimal promo;
 	
-	@Export(label="Lib.", exhibitionOrder = 12)
+	@Export(label="Lib.", exhibitionOrder = 12, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
 	private String liberado;
 
-	@Export(label="Estudo", exhibitionOrder = 13)
+	@Export(label="Estudo", exhibitionOrder = 13, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
 	private BigInteger idEstudo;
 	
 	@Footer(label = "Publicações Liberadas:", alignWithHeader = "Codigo", colspan=2)
@@ -199,7 +202,7 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	}
 
 	public void setJuram(BigDecimal juram) {
-		this.juram = juram;
+		this.juram = CurrencyUtil.truncateDecimal(juram, 0);
 	}
 
 	public BigDecimal getSuplem() {
@@ -207,7 +210,7 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	}
 
 	public void setSuplem(BigDecimal suplem) {
-		this.suplem = suplem;
+		this.suplem = CurrencyUtil.truncateDecimal(suplem, 0);
 	}
 
 	public BigDecimal getLancto() {
@@ -215,7 +218,7 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	}
 
 	public void setLancto(BigDecimal lancto) {
-		this.lancto = lancto;
+		this.lancto = CurrencyUtil.truncateDecimal(lancto, 0);
 	}
 
 	public BigDecimal getPromo() {
@@ -223,7 +226,7 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	}
 
 	public void setPromo(BigDecimal promo) {
-		this.promo = promo;
+		this.promo = CurrencyUtil.truncateDecimal(promo, 0);
 	}
 
 	public BigInteger getIdEstudo() {
