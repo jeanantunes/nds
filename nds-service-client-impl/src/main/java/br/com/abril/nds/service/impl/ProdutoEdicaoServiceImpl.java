@@ -1885,20 +1885,9 @@ if ( dto.getRepartePrevisto() != null) {
                     produtoEdicaoRepository.obterBaseEstudoHistogramaPorFaixaVenda(
                             filtro, codigoProduto, Integer.parseInt(faixa[0]), Integer.parseInt(faixa[1]), edicoes);
             
-            //refatorar, buscar cotas na MEC
-            
             final List<Integer> cotas = produtoEdicaoRepository.obterCotasBaseEstudoHistogramaPorFaixaVenda(filtro, codigoProduto, Integer.parseInt(faixa[0]), Integer.parseInt(faixa[1]), edicoes);
             
             obj.setQtdeCotas(BigInteger.valueOf(cotas.size()));
-            
-//            if (!obj.getIdCotaStr().isEmpty()){
-//                
-//                for (final String strCota : obj.getIdCotaStr().split(",")){
-//                    cotas.add(Integer.valueOf(strCota));
-//                }
-//                
-//                strCotas.append(strCotas.length() == 0 ? obj.getIdCotaStr() : "," + obj.getIdCotaStr());
-//            }
             
             if (!cotas.isEmpty()){
             	

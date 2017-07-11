@@ -395,8 +395,7 @@ public class HistogramaVendasController extends BaseController {
 	}
 
 	private FiltroHistogramaVendas getFiltroSessao(){
-		FiltroHistogramaVendas filtroSession = (FiltroHistogramaVendas) session
-				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroHistogramaVendas filtroSession = (FiltroHistogramaVendas) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		return filtroSession;
 	}
 	
