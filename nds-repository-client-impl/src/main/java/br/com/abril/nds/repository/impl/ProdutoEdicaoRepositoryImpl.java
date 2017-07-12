@@ -1698,10 +1698,13 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		queryStringProdutoEdicao.append(" 		 WHERE ");
 		
-		queryStringProdutoEdicao.append(" 		 T2.vendaMedia >= :de and T2.vendaMedia < :ate ");
+		queryStringProdutoEdicao.append(" 		 round(T2.vendaMedia - 0.01) >= :de and round(T2.vendaMedia - 0.01) <= :ate ");
+		
+//		queryStringProdutoEdicao.append(" 		 T2.vendaMedia >= :de and T2.vendaMedia < :ate ");
 		
 		if(de.intValue() == 0 && ate.intValue() == 0){
 			queryStringProdutoEdicao.append("    or T2.vendaMedia is null   ");
+			queryStringProdutoEdicao.append("    or T2.vendaMedia < 0   ");
 		}
 		
 
@@ -1710,7 +1713,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		final SQLQuery query = this.getSession().createSQLQuery(queryStringProdutoEdicao.toString());
 		query.setParameter("de", de);
-		query.setParameter("ate", (ate.intValue()+1));
+		query.setParameter("ate", ate);
 		query.setParameterList("idsEdicoes", filtro.getIdsEdicoes());
 		
 //		query.setParameter("produtoCodigo", codigoProduto);
