@@ -168,8 +168,6 @@ public class AppActions {
 	private static void getRegistrosCouch(Date date, CouchDbClient couchDbClient, List<PickingLEDFullDTO> registros)
 			throws CarregarLancamentoException {
 		
-		System.out.println("buscar lancamento");
-		
 		JsonObject jsonDoc = null;
 
 		String dataFormatada = new SimpleDateFormat("ddMMyyyy").format(date);
@@ -185,7 +183,6 @@ public class AppActions {
 				registros.add(registroArquivo);
 			}
 		}
-		System.out.println("retorno lancamento, qtd: "+registros.size());
 	}
 
 	private static JsonObject obterDocCouch(CouchDbClient couchDbClient, JsonObject jsonDoc, String dataFormatada)
