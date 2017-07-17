@@ -914,7 +914,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				$("#totalReparteCapa", ConferenciaEncalheCont.workspace).text(parseFloat(result.reparteCapa).toFixed(4));
 				$("#totalEncalheCapa", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorEncalheCapa).toFixed(4));
 				$("#contingencia-valorVendaDiaCapa", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorVendaDiaCapa).toFixed(4));
-				$("#totalOutrosValoresCapa", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorDebitoCreditoCapa).toFixed(2));
+				$("#totalOutrosValoresCapa", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorDebitoCredito).toFixed(2));
 				$("#contingencia-valorAPagarCapa", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagarCapa).toFixed(2));
 				
 				ConferenciaEncalheCont.numeroCotaEditavel(false); 
