@@ -475,6 +475,10 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     		List<EdicoesProdutosDTO> novaOrdenacaoEdicoesBase = new ArrayList<>();
     		
     		for (EdicoesProdutosDTO edicaoBase : ordenacaoCota) {
+    			if(edicaoBase.getProdutoEdicaoId() == null){
+    				continue;
+    			}
+    			
 				if(edicaoBase.isParcial()){
 					for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
 						if((edicaoBase.getProdutoEdicaoId().equals(edicoesProdutosDTO.getProdutoEdicaoId()))

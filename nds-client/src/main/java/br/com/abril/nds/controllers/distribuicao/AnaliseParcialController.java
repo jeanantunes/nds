@@ -48,9 +48,9 @@ import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DistribuicaoVendaMediaService;
 import br.com.abril.nds.service.EstudoProdutoEdicaoBaseService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
@@ -100,7 +100,7 @@ public class AnaliseParcialController extends BaseController {
     private ProdutoEdicaoService produtoEdicaoService;
 
     @Autowired
-    private DistribuicaoVendaMediaRepository distribuicaoVendaMediaRepository;
+    private DistribuicaoVendaMediaService distribuicaoVendaMediaService;
     
     @Autowired
     private HttpSession session;
@@ -595,7 +595,9 @@ public class AnaliseParcialController extends BaseController {
     public void pesquisarProdutoEdicao(String codigoProduto, String nomeProduto, Long edicao, Long idClassificacao) {
         Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
         
-        List<ProdutoEdicaoVendaMediaDTO> edicoes = distribuicaoVendaMediaRepository.pesquisar(produto.getCodigoICD(), nomeProduto, edicao, idClassificacao);
+//        List<ProdutoEdicaoVendaMediaDTO> edicoes = distribuicaoVendaMediaRepository.pesquisar(produto.getCodigoICD(), nomeProduto, edicao, idClassificacao);
+        
+        List<ProdutoEdicaoVendaMediaDTO> edicoes = distribuicaoVendaMediaService.pesquisar(produto.getCodigoICD(), nomeProduto, edicao, idClassificacao);
         
         TableModel<CellModelKeyValue<ProdutoEdicaoVendaMediaDTO>> table = new TableModel<>();
         
