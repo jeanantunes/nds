@@ -410,4 +410,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 
 
 	Long obterIdEdicaoPorCodigoNumeroEdicao(String codigoProduto, String numeroEdicoes);
+
+
+	boolean isEdicaoAbertaPeriodoParcial(Long produtoEdicaoId, String periodo);
 }

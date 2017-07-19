@@ -36,6 +36,7 @@ public class EstudoProdutoEdicaoBaseRepositoryImpl extends AbstractRepositoryMod
 		hql.append("     produto_edicao.id as idProdutoEdicao, ");
 		hql.append("     estudo_produto_edicao_base.isConsolidado as isParcialConsolidado, ");
 		hql.append("     estudo_produto_edicao_base.periodo_parcial as periodoParcial, ");
+		hql.append("     estudo_produto_edicao_base.edicao_aberta as isEdicaoAberta, ");
 		hql.append("     estudo_produto_edicao_base.peso as peso    ");
 		hql.append(" FROM estudo_produto_edicao_base     ");
 		hql.append(" INNER JOIN produto_edicao ON produto_edicao.id = estudo_produto_edicao_base.PRODUTO_EDICAO_ID  ");
@@ -52,6 +53,7 @@ public class EstudoProdutoEdicaoBaseRepositoryImpl extends AbstractRepositoryMod
 		query.addScalar("isParcial", StandardBasicTypes.BOOLEAN);
 		query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
 		query.addScalar("isParcialConsolidado", StandardBasicTypes.BOOLEAN);
+		query.addScalar("isEdicaoAberta", StandardBasicTypes.BOOLEAN);
 		query.addScalar("periodoParcial", StandardBasicTypes.LONG);
 		query.addScalar("peso", StandardBasicTypes.BIG_INTEGER);
 		

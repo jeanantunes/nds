@@ -12,6 +12,7 @@ public class EdicaoBaseEstudoDTO {
 	private boolean isParcialConsolidado;
 	private Long idProdutoEdicao;
 	private Long periodoParcial;
+	private boolean isEdicaoAberta;
 
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -77,4 +78,12 @@ public class EdicaoBaseEstudoDTO {
 		this.periodoParcial = periodoParcial;
 	}
 
+	public boolean isEdicaoAberta() {
+		return isEdicaoAberta;
+	}
+
+	public void setEdicaoAberta(boolean isEdicaoAberta) {
+		this.isEdicaoAberta = isEdicaoAberta;
+	}
+	
 }

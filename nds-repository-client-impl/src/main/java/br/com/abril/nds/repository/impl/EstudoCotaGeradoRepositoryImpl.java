@@ -259,18 +259,21 @@ public class EstudoCotaGeradoRepositoryImpl extends AbstractRepositoryModel<Estu
     
     @Override
 	@Transactional
-    public void inserirProdutoBase(Long idEstudo, Long idProdutoEdicao, Long pesoEdicao) {
+    public void inserirProdutoBase(Long idEstudo, Long idProdutoEdicao, Long pesoEdicao, boolean parcial, boolean edicao_aberta, Long periodoParcial) {
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append("insert into estudo_produto_edicao_base ");
-		sql.append(" (estudo_id, produto_edicao_id, colecao, parcial, edicao_aberta, peso) ");
-		sql.append(" values (:estudo_id, :produto_edicao_id, 0, 0, 0, :peso) ");
+		sql.append(" (estudo_id, produto_edicao_id, colecao, parcial, edicao_aberta, peso, periodo_parcial) ");
+		sql.append(" values (:estudo_id, :produto_edicao_id, 0, :parcial, :edicao_aberta, :peso, :periodoParcial) ");
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("estudo_id", idEstudo);
 		query.setParameter("produto_edicao_id", idProdutoEdicao);
 		query.setParameter("peso", pesoEdicao);
+		query.setParameter("parcial", parcial);
+		query.setParameter("edicao_aberta", edicao_aberta);
+		query.setParameter("periodoParcial", periodoParcial);
 		
 		query.executeUpdate();
     }

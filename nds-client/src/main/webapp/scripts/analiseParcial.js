@@ -855,11 +855,21 @@ var analiseParcialController = $.extend(true, {
                     cell['reparte'+ (j + 1)] = '';
                     cell['venda'+ (j + 1)] = '';
                 } else {
+                	
                     cell['reparte'+ (j + 1)] = cell.edicoesBase[j].reparte;
                     somaReparteCota += Number(cell.edicoesBase[j].reparte);
                     
                     if (cell.edicoesBase[j].venda){
-                    	cell['venda'+ (j + 1)] = cell.edicoesBase[j].venda;
+                    	
+                    	var venda;
+                    	
+                    	if(cell.edicoesBase[j].edicaoAberta && (cell.edicoesBase[j].venda == 0 || cell.edicoesBase[j].venda == undefined)){
+                    		venda = '';
+                    	}else{
+                    		venda = cell.edicoesBase[j].venda
+                    	}
+                    	
+                    	cell['venda'+ (j + 1)] = venda;
                     	somaVendasCota += Number(cell.edicoesBase[j].venda);
                     } else {
                     	cell['venda'+ (j + 1)] = '';
@@ -2327,6 +2337,9 @@ var analiseParcialController = $.extend(true, {
 			$("#analiseParcialPopUpVenda", analiseParcialController.workspace).append(
 					'<td align="right" class="class_linha_1"></td>');
 		}
+		
+		$(".class_linha_1", analiseParcialController.workspace).show();
+		$(".class_linha_2", analiseParcialController.workspace).show();
 					
 	},
 	
@@ -2569,11 +2582,12 @@ function popup_edicoes_produto() {
                 } else {
                     var tbodyAppend = '';
                     var modelRow = '<tr>' +
-                        '<td align="left"><div style="text-align: left; width: 80px;"><input class="inputCodigoEB" value="#codigoProduto#"></div></td>' +
-                        '<td align="left"><div style="text-align: left; width: 180px;"><input class="inputProdutoEB" value="#nomeProduto#"></div></td>' +
-                        '<td align="left"><div style="text-align: left; width: 80px;"><input id="#idEdicao#" class="inputEdicaoEB" value="#numeroEdicao#"></div></td>' +
-                        '<td align="left"><div style="text-align: left; width: 120px;"><select class="selectClassEB">#options#</select></div></td>' +
-                        '<td align="center"><div style="text-align: center; width: 70px;">' +
+                        '<td align="left"><div style="text-align: center; width: 100px;"><input class="inputCodigoEB" value="#codigoProduto#"></div></td>' +
+                        '<td align="left"><div style="text-align: center; width: 180px;"><input class="inputProdutoEB" value="#nomeProduto#"></div></td>' +
+                        '<td align="left"><div style="text-align: center; width: 80px;"><input id="#idEdicao#" class="inputEdicaoEB" value="#numeroEdicao#"></div></td>' +
+                        '<td align="left"><div style="text-align: center; width: 80px;"><input id="#inputPeriodoEB#" class="inputPeriodoEB" value="#parcial#" style="width: 70px;"></div></td>' +
+                        '<td align="left"><div style="text-align: center; width: 150px;"><select class="selectClassEB">#options#</select></div></td>' +
+                        '<td align="center"><div style="text-align: center; width: 80px;">' +
                             '<img src="images/ico_editar.gif" alt="Alterar Edição" class="icoEditarEB">' +
                             '<img src="images/ico_excluir.gif" alt="Excluir Base" class="icoExcluirEB">' +
                             '<img src="images/ico_arrow_resize.png" alt="Mover Base" class="icoMoverEB">' +
@@ -2585,6 +2599,7 @@ function popup_edicoes_produto() {
                         tbodyAppend += modelRow.replace(/#codigoProduto#/, $thisTR.find('td[abbr="codigoProduto"] div').text())
                                                .replace(/#idEdicao#/, $thisTR.find('td[abbr="id"] div').text())
                                                .replace(/#numeroEdicao#/, $thisTR.find('td[abbr="numeroEdicao"] div').text())
+                                               .replace(/#parcial#/, $thisTR.find('td[abbr="periodo"] div').text())
                                                .replace(/#options#/, tipoClassificacao.replace(idClassificacao, idClassificacao + ' selected'));
                     });
                     $tbody.append(tbodyAppend);

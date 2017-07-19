@@ -2524,10 +2524,35 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	    sql.append(" where produto_edicao_id = :produtoEdicaoId ");
 
 	    final Query query = getSession().createSQLQuery(sql.toString());
+	    
 	    query.setParameter("produtoEdicaoId", produtoEdicaoId);
 	    final List<String> lista = query.list();
+	    
 	    if (lista.size() > 0 && (lista.get(0).equals("FECHADO") || lista.get(0).equals("RECOLHIDO"))) {
-		return false;
+	    	return false;
+	    }
+	    return true;
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public boolean isEdicaoAbertaPeriodoParcial(Long produtoEdicaoId, String periodo) {
+	    final StringBuilder sql = new StringBuilder();
+	    sql.append("select lc.status ");
+	    sql.append("  from lancamento lc");
+	    sql.append("  join periodo_lancamento_parcial plp on lc.periodo_lancamento_parcial_id = plp.id ");
+	    sql.append("  where lc.produto_edicao_id = :produtoEdicaoId ");
+	    sql.append("  and plp.numero_periodo = :periodo ");
+
+	    final Query query = getSession().createSQLQuery(sql.toString());
+	    
+	    query.setParameter("produtoEdicaoId", produtoEdicaoId);
+	    query.setParameter("periodo", periodo);
+	    
+	    final List<String> lista = query.list();
+	    
+	    if (lista.size() > 0 && (lista.get(0).equals("FECHADO") || lista.get(0).equals("RECOLHIDO"))) {
+	    	return false;
 	    }
 	    return true;
 	}

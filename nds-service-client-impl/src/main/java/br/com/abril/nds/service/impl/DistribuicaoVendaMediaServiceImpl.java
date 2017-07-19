@@ -66,6 +66,7 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
      *      java.lang.String, java.lang.Long, java.lang.Long)
      */
     @Override
+    @Transactional
     public List<ProdutoEdicaoVendaMediaDTO> pesquisar(String codigoProduto, String nomeProduto, Long edicao,
             Long idClassificacao) {
         return distribuicaoVendaMediaRepository.pesquisar(codigoProduto, nomeProduto, edicao, idClassificacao);
