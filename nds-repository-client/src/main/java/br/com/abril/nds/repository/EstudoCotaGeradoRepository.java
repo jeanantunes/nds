@@ -3,9 +3,6 @@ package br.com.abril.nds.repository;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
-
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
@@ -65,5 +62,5 @@ public interface EstudoCotaGeradoRepository extends Repository<EstudoCotaGerado,
 
 	void gravarCotasEstudoCotaGerado(final List<EstudoCotaGerado> cotas);
 
-	void inserirProdutoBase(Long idEstudo, Long idProdutoEdicao, Long pesoEdicao);
+	void inserirProdutoBase(Long idEstudo, Long idProdutoEdicao, Long pesoEdicao, boolean isParcial, boolean isEdicaoAberta, Long periodoParcial);
 }

@@ -451,7 +451,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	List<Date> obterDatasRecolhimentoValidasAux();
 
-	List<Long> getIdUltimoLancamentoFechado(String codigoProduto);
+	List<Long> getIdUltimoLancamentoFechado(String codigoProduto, long estudoId);
 
 	List<InformeLancamentoDTO> buscarInformeLancamento(Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento, PaginacaoVO paginacao);
 

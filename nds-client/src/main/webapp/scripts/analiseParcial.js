@@ -855,11 +855,21 @@ var analiseParcialController = $.extend(true, {
                     cell['reparte'+ (j + 1)] = '';
                     cell['venda'+ (j + 1)] = '';
                 } else {
+                	
                     cell['reparte'+ (j + 1)] = cell.edicoesBase[j].reparte;
                     somaReparteCota += Number(cell.edicoesBase[j].reparte);
                     
                     if (cell.edicoesBase[j].venda){
-                    	cell['venda'+ (j + 1)] = cell.edicoesBase[j].venda;
+                    	
+                    	var venda;
+                    	
+                    	if(cell.edicoesBase[j].edicaoAberta && (cell.edicoesBase[j].venda == 0 || cell.edicoesBase[j].venda == undefined)){
+                    		venda = '';
+                    	}else{
+                    		venda = cell.edicoesBase[j].venda
+                    	}
+                    	
+                    	cell['venda'+ (j + 1)] = venda;
                     	somaVendasCota += Number(cell.edicoesBase[j].venda);
                     } else {
                     	cell['venda'+ (j + 1)] = '';
@@ -2327,6 +2337,9 @@ var analiseParcialController = $.extend(true, {
 			$("#analiseParcialPopUpVenda", analiseParcialController.workspace).append(
 					'<td align="right" class="class_linha_1"></td>');
 		}
+		
+		$(".class_linha_1", analiseParcialController.workspace).show();
+		$(".class_linha_2", analiseParcialController.workspace).show();
 					
 	},
 	

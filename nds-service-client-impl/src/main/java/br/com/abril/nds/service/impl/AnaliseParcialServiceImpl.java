@@ -24,7 +24,6 @@ import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
 import br.com.abril.nds.dto.DataLancamentoPeriodoEdicoesBasesDTO;
 import br.com.abril.nds.dto.DetalhesEdicoesBasesAnaliseEstudoDTO;
-import br.com.abril.nds.dto.EdicaoProdutoDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ReparteFixacaoMixWrapper;
@@ -121,7 +120,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Transactional(readOnly=true)
     public AnaliseEstudoNormal_E_ParcialDTO buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO) {
     	
-    	queryDTO.setIdUltimoLancamento(lancamentoRepository.getIdUltimoLancamentoFechado(queryDTO.getCodigoProduto()));
+    	queryDTO.setIdUltimoLancamento(lancamentoRepository.getIdUltimoLancamentoFechado(queryDTO.getCodigoProduto(), queryDTO.getEstudoId()));
     	
     	List<AnaliseParcialDTO> lista = analiseParcialRepository.buscaAnaliseParcialPorEstudo(queryDTO);
     	
@@ -227,10 +226,25 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));
                 
                 List<EdicoesProdutosDTO> edicoesComVenda = new LinkedList<>();
-                Map<Integer, EdicoesProdutosDTO> edicoesProdutosDTOMap = new HashMap<>();
+                Map<String, EdicoesProdutosDTO> edicoesProdutosDTOMap = new HashMap<>();
                 Integer ordemExibicaoHelper = 0;
 
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>());
+                
+                if(queryDTO.getEdicoesBase() != null && queryDTO.getEdicoesBase().size() > 0){
+        			for (int i = 0; i < queryDTO.getEdicoesBase().size(); i++) {
+							
+						String mapKey = obterMapKey(queryDTO.getEdicoesBase().get(i));
+						queryDTO.getEdicoesBase().get(i).setReparte(null);
+						queryDTO.getEdicoesBase().get(i).setVenda(null);
+						
+						if(queryDTO.getEdicoesBase().get(i).getOrdemExibicao() == null){
+							queryDTO.getEdicoesBase().get(i).setOrdemExibicao(i);
+						}
+						
+						edicoesProdutosDTOMap.put(mapKey, queryDTO.getEdicoesBase().get(i));
+					}
+        		}
 
                 if(idsProdutoEdicao.size() > 0) {
                 	Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas = buscaHistoricoDeVendas(item.getCotaId(), idsProdutoEdicao, cotasComVenda);
@@ -266,7 +280,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 	}
 
             		edicoesComVenda.addAll(buscaHistoricoDeVendas);
-                    
+            		
                     // reparte, venda e dataLancamento
                     for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
                     		
@@ -274,6 +288,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                     			if (ed.getProdutoEdicaoId().equals(edicao.getProdutoEdicaoId())) {
                     				if(!edicao.isParcial()){
 	                    				BeanUtils.copyProperties(edicao, ed, new String[] {"reparte", "venda"});
+	                    				ed.setOrdemExibicao(edicao.getOrdemExibicao());
                     				}else{
                     					
                     					if(edicao.getPeriodo() != null && !edicao.getPeriodo().isEmpty()){
@@ -306,6 +321,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                     									
                     									ed.setReparte(reparte);
                     									ed.setVenda(venda);
+                    									ed.setEdicaoAberta(edicoesProdutosDTO.isEdicaoAberta());
                     									
                     									if(edicoesProdutosDTO.getDataLancamento() != null){ 
                 	                    					ed.setDataLancamento(edicoesProdutosDTO.getDataLancamento());
@@ -323,21 +339,61 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                     					
                                 	
                                 	}
-	                    				if (ed.getOrdemExibicao() == null) {
-	                    					ed.setOrdemExibicao(ordemExibicaoHelper++);
-	                    				}else{
-	                    					ordemExibicaoHelper++;
-	                    				}
-	                    				
-	                    				edicoesProdutosDTOMap.put(ed.getOrdemExibicao(), ed);
-	                    				
-	                    				putMapSomatorioTotaisEdicao(mapTotaisEd, ed);
-	                    			}
+                    				
+//                    				if (ed.getOrdemExibicao() == null) {
+//                    					ed.setOrdemExibicao(ordemExibicaoHelper++);
+//                    				}else{
+//                    					ordemExibicaoHelper++;
+//	                    			}
+                    				
+                    				String mapKey = obterMapKey(ed);
+                    				
+                    				EdicoesProdutosDTO mapElement = edicoesProdutosDTOMap.get(mapKey);
+                    				
+//                    				edicoesProdutosDTOMap.put(ed.getOrdemExibicao(), ed);
+                    				
+                    				if(mapElement != null){
+                    					ed.setOrdemExibicao(mapElement.getOrdemExibicao());
+                    				}
+                    				
+                    				edicoesProdutosDTOMap.put(mapKey, ed);
+                    				
+                    				putMapSomatorioTotaisEdicao(mapTotaisEd, ed);
+                    			}
                     			
                     		}
                     	
                     }
                 }
+//                
+//                LinkedList<EdicoesProdutosDTO> edicoesCota = new LinkedList<>();
+//                
+//                if(edicoesComVenda.size() < queryDTO.getEdicoesBase().size()){
+//                	if(edicoesComVenda.size() > 0){
+//                		for (EdicoesProdutosDTO edicoeDTO : queryDTO.getEdicoesBase()) {
+//							EdicoesProdutosDTO edicaoBaseCota = null;
+//							
+//							for (EdicoesProdutosDTO edicoesDTO2 : edicoesComVenda) {
+//								if(edicoeDTO.getOrdemExibicao().equals(edicoesDTO2.getOrdemExibicao())){
+//									edicaoBaseCota = edicoesDTO2;
+//								}
+//							}
+//							
+//							if(edicaoBaseCota != null){
+//								edicoesCota.add(edicaoBaseCota);
+//							}else{
+//								edicoeDTO.setReparte(null);
+//								edicoeDTO.setVenda(null);
+//								
+//								edicoesCota.add(edicoeDTO);
+//							}
+//						}
+//                	}
+//                }else{
+//                	edicoesCota.addAll(edicoesProdutosDTOMap.values());
+//                }
+                
+//                item.setEdicoesBase(edicoesCota);
                 
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>(edicoesProdutosDTOMap.values()));
                 
@@ -527,6 +583,22 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	
         return dto;
     }
+    
+    private String obterMapKey(EdicoesProdutosDTO edicao){
+    	String key = "";
+    	
+    	if(edicao.isParcial()){
+    		if(edicao.getProdutoEdicaoId() != null && edicao.getPeriodo() != null){
+    			key = ""+edicao.getProdutoEdicaoId()+""+edicao.getPeriodo();
+    		}
+    	}else{
+    		if(edicao.getProdutoEdicaoId() != null){
+    			key = ""+edicao.getProdutoEdicaoId();
+    		}
+    	}
+    	
+    	return key;
+    }
 
 	private BigInteger somatorioReparteSugerido(BigInteger total_somatorioReparteSugerido, AnaliseParcialDTO item) {
 		if(BigIntegerUtil.isMaiorQueZero(item.getReparteSugerido())){
@@ -690,7 +762,11 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     
     private void carregarInformacoesEdicoesBase(List<EdicoesProdutosDTO> edicoesBase) {
         for (EdicoesProdutosDTO edicao : edicoesBase) {
-            edicao.setEdicaoAberta(produtoEdicaoRepository.isEdicaoAberta(edicao.getProdutoEdicaoId()));
+            if(edicao.isParcial()){
+            	edicao.setEdicaoAberta(produtoEdicaoRepository.isEdicaoAbertaPeriodoParcial(edicao.getProdutoEdicaoId(), edicao.getPeriodo()));
+            }else{
+            	edicao.setEdicaoAberta(produtoEdicaoRepository.isEdicaoAberta(edicao.getProdutoEdicaoId()));
+            }
         }
     }
 
