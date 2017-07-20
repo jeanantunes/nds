@@ -339,7 +339,7 @@ table.dadosTab { margin-left: 370px;}
 						<tr class="class_linha_1 paddingTotais" style="width: 1040px !important;">
 							<td id="lbl_qtd_cotas" style="width: 95px !important;">Qtde Cotas:</td>
 							<td id="total_de_cotas" style="width: 155px !important;">0</td>
-							<td id="lbl_NPDV" style="width: 100px !important;">&nbsp;</td>
+							<td id="lbl_NPDV" style="width: 70px !important;">&nbsp;</td>
                             <td id="total_ultimo_reparte" style="width: 60px !important; text-align: center;">0</td>
                             <td id="total_reparte_sugerido" style="width: 60px !important; text-align: center;">0</td>
 							<td id="lbl_legenda" style="width: 150px !important;">&nbsp;</td>

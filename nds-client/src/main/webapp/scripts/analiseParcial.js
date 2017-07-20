@@ -99,7 +99,7 @@ var analiseParcialController = $.extend(true, {
                         parameters.push({name: 'edicoesBase['+ i +'].edicao',           value: edicao});
                         parameters.push({name: 'edicoesBase['+ i +'].produtoEdicaoId',  value: $this.find('.inputEdicaoEB').attr('id')});
                         
-                        if($this.find('.inputPeriodoEB').val() != ""){
+                        if($this.find('.inputPeriodoEB').val().trim() != ""){
                         	parameters.push({name: 'edicoesBase['+ i +'].periodo',          value: $this.find('.inputPeriodoEB').val()});
                         	parameters.push({name: 'edicoesBase['+ i +'].parcial',          value: true});
                         }
@@ -2542,6 +2542,7 @@ $("#edicaoProdCadastradosGrid").flexigrid({
             codigoProduto:'',
             classificacao:'',
             numeroEdicao:'',
+            periodo:'',
             dataLancamentoFormatada:'',
             reparte:'',
             venda:'',
