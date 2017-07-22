@@ -15,6 +15,7 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Footer;
+import br.com.abril.nds.util.export.FooterType;
 import br.com.abril.nds.util.export.Export.Alignment;
 
 @Exportable
@@ -31,31 +32,31 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	@Export(label="Produto", exhibitionOrder = 1, widthPercent = 11, alignment = Alignment.CENTER, fontSize=6)
 	private String nomeProduto;
 	
-	@Export(label="Edição", exhibitionOrder = 2, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
+	@Export(label="Edição", exhibitionOrder = 2, widthPercent = 6, alignment = Alignment.CENTER, fontSize=6)
 	private BigInteger numeroEdicao;
 
-	@Export(label="Periodo", exhibitionOrder = 3, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
+	@Export(label="Periodo", exhibitionOrder = 3, widthPercent = 6, alignment = Alignment.CENTER, fontSize=6)
 	private String periodo;
 	
-	@Export(label="Preço RS", exhibitionOrder = 4, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
+	@Export(label="Preço RS", exhibitionOrder = 4, widthPercent = 6, alignment = Alignment.CENTER, fontSize=6)
 	private String precoVenda;
 
-	@Export(label="Clas.", exhibitionOrder = 5, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
+	@Export(label="Clas.", exhibitionOrder = 5, widthPercent = 6, alignment = Alignment.CENTER, fontSize=6)
 	private String classificacao;
 	
-	@Export(label="Pct. Padrão", exhibitionOrder = 6, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
+	@Export(label="Pct. Padrão", exhibitionOrder = 6, widthPercent = 6, alignment = Alignment.CENTER, fontSize=6)
 	private Integer pctPadrao;
 	
 	@Export(label="Fornecedor", exhibitionOrder = 7, widthPercent = 11, alignment = Alignment.CENTER, fontSize=6)
 	private String nomeFornecedor;
 	
-	@Export(label="Juram.", exhibitionOrder = 8, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
+	@Export(label="Juram.", exhibitionOrder = 8, widthPercent = 6, alignment = Alignment.CENTER, fontSize=6)
 	private BigDecimal juram;
 	
-	@Export(label="Suplem..", exhibitionOrder = 9, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
+	@Export(label="Suplem..", exhibitionOrder = 9, widthPercent = 6, alignment = Alignment.CENTER, fontSize=6)
 	private BigDecimal suplem;
 	
-	@Export(label="Lancto.", exhibitionOrder = 10, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
+	@Export(label="Lancto.", exhibitionOrder = 10, widthPercent = 6, alignment = Alignment.CENTER, fontSize=6)
 	private BigDecimal lancto;
 	
 	@Export(label="Promo.", exhibitionOrder = 11, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
@@ -67,10 +68,10 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	@Export(label="Estudo", exhibitionOrder = 13, widthPercent = 7, alignment = Alignment.CENTER, fontSize=6)
 	private BigInteger idEstudo;
 	
-	@Footer(label = "Publicações Liberadas:", alignWithHeader = "Codigo", colspan=2)
+	@Footer(label = "Publicações Liberadas:", alignWithHeader = "Codigo", colspan=2, type = FooterType.COUNT)
 	private Integer totalEstudosLiberados;
     
-	@Footer(label = "Publicações sem Estudo:", alignWithHeader = "Clas.", colspan=2)
+	@Footer(label = "Publicações sem Estudo:", alignWithHeader = "Clas.", colspan=2, type = FooterType.COUNT)
 	private Integer totalSemEstudo;
 	
 	private BigInteger idProdutoEdicao;

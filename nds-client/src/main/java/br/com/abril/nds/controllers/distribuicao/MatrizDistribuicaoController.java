@@ -52,8 +52,11 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.HTMLTableUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.ExportFooter;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.Footer;
+import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -356,10 +359,10 @@ public class MatrizDistribuicaoController extends BaseController {
     @Exportable
     public class RodapeDTO {
         
-        @Export(label = "Publicações Liberadas:")
+        @Footer(label = "Publicações Liberadas:", alignWithHeader = "Codigo", colspan=2)
         private String totalEstudosLiberado;
         
-        @Export(label = "Publicações sem Estudo:")
+        @Footer(label = "Publicações sem Estudo:", alignWithHeader = "Clas.", colspan=2)
         private String totalSemEstudo;
         
 
@@ -399,9 +402,32 @@ public class MatrizDistribuicaoController extends BaseController {
 //            RodapeDTO rodapeDTO = new RodapeDTO(CurrencyUtil.formatarValor(totalizadorProdutoDistribuicaoVO.getTotalSemEstudo()),
 //                    CurrencyUtil.formatarValor(totalizadorProdutoDistribuicaoVO.getTotalEstudosLiberados()));
 
+        	filtro.setTotalEstudosLiberados(totalizadorProdutoDistribuicaoVO.getTotalEstudosLiberados());
+        	filtro.setTotalSemEstudo(totalizadorProdutoDistribuicaoVO.getTotalSemEstudo());
+        	
+        	List<ExportFooter> exportFooters = new ArrayList<ExportFooter>();
+        	
+        	ExportFooter exportFooter1 = new ExportFooter();
+			exportFooter1.setLabel("Publicações Liberadas");
+			exportFooter1.setHeaderToAlign("Codigo");
+			exportFooter1.setColspan(2);
+			exportFooter1.setValue(totalizadorProdutoDistribuicaoVO.getTotalEstudosLiberados().toString());
+			exportFooter1.setAlignment(Alignment.CENTER);
+			
+			ExportFooter exportFooter2 = new ExportFooter();
+			exportFooter2.setLabel("Publicações sem Estudo");
+			exportFooter2.setHeaderToAlign("Clas.");
+			exportFooter2.setColspan(2);
+			exportFooter2.setValue(totalizadorProdutoDistribuicaoVO.getTotalSemEstudo().toString());
+			exportFooter2.setAlignment(Alignment.CENTER);
+			
+			exportFooters.add(exportFooter1);
+			exportFooters.add(exportFooter2);
+        	
             FileExporter.to("matriz_distribuicao", fileType).inHTTPResponse(
                     this.getNDSFileHeader(),
-                    filtro,
+                    filtro, 
+//                    exportFooters,
                     totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao(),
                     ProdutoDistribuicaoVO.class, this.httpResponse);
         }
@@ -444,7 +470,7 @@ public class MatrizDistribuicaoController extends BaseController {
                     nomeFornecedores += " / ";
                 }
 
-                nomeFornecedores += fornecedor.getJuridica().getRazaoSocial();
+                nomeFornecedores += fornecedor.getJuridica().getNomeFantasia();
             }
         }
 

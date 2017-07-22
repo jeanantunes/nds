@@ -96,7 +96,9 @@ public class PDFExporter implements Exporter {
 	        
 	        this.processReportHeader(document, ndsFileHeader);
 	        
-	        this.processFilters(exportModel, document);
+	        if(exportModel.getFilters() != null){
+	        	this.processFilters(exportModel, document);
+	        }
 	        
 	        this.processRows(exportModel, document);
 
@@ -279,7 +281,7 @@ public class PDFExporter implements Exporter {
 		boolean isFiltroValido = false;
 		
 		for (ExportFilter exportFilter : exportFilters) {
-			if(exportFilter.getValue() != null && !exportFilter.getValue().isEmpty() && !exportFilter.getValue().equalsIgnoreCase("0")){
+			if(exportFilter.getValue() != null && !exportFilter.getValue().isEmpty()){
 				isFiltroValido = true;
 				break;
 			}
@@ -295,7 +297,11 @@ public class PDFExporter implements Exporter {
     		int qtdCampos = 0;
     		
     		for (ExportFilter exportFilter : exportFilters) {
-				if(exportFilter.getValue() != null && !exportFilter.getValue().isEmpty() && !exportFilter.getValue().equalsIgnoreCase("0")){
+				if(exportFilter.getValue() != null && !exportFilter.getValue().isEmpty()){
+					if(exportFilter.getValue().equalsIgnoreCase("0") && exportFilter.getLabel().equalsIgnoreCase("Segmento")){
+						continue;
+					}
+					
 					++qtdCampos;
 				}
 			}
@@ -314,9 +320,13 @@ public class PDFExporter implements Exporter {
 
         	for (ExportFilter exportFilter : exportFilters) {
         		
-        		if(exportFilter.getValue() == null || exportFilter.getValue().isEmpty() || exportFilter.getValue().equalsIgnoreCase("0")){
+        		if(exportFilter.getValue() == null || exportFilter.getValue().isEmpty()){
         			continue;
         		}
+        		
+        		if(exportFilter.getValue().equalsIgnoreCase("0") && exportFilter.getLabel().equalsIgnoreCase("Segmento")){
+					continue;
+				}
         		
         		PdfPCell filterPdfCell = new PdfPCell();
         		

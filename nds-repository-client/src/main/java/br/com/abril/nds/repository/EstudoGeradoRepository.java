@@ -4,8 +4,12 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Query;
+import org.hibernate.type.StandardBasicTypes;
+
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
+import br.com.abril.nds.dto.filtro.AnaliseEstudoFiltroExportPDFDTO;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.EstudoGeradoPreAnaliseDTO;
 
@@ -45,5 +49,7 @@ public interface EstudoGeradoRepository extends Repository<EstudoGerado, Long> {
 	List<EstudoGerado> obterPorLancamentoId(Long idLancamento);
 	
    EstudoGerado obterEstudoSql(Long id);
+
+AnaliseEstudoFiltroExportPDFDTO obterDadosDoProdutoParaFiltroExport(Long idEstudo);
 	
 }

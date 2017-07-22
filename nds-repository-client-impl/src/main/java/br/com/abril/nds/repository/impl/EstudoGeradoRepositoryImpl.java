@@ -426,8 +426,8 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		return estudoGerado;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List<AnaliseEstudoFiltroExportPDFDTO> obterDadosDoProdutoParaFiltroExport(Long idEstudo){
+	@Override
+	public AnaliseEstudoFiltroExportPDFDTO obterDadosDoProdutoParaFiltroExport(Long idEstudo){
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" SELECT   ");
@@ -439,14 +439,18 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append(" 	ON pe.id = eg.PRODUTO_EDICAO_ID  ");
 		sql.append(" JOIN produto pd  ");
 		sql.append(" 	ON pe.PRODUTO_ID = pd.id  ");
-		sql.append(" WHERE eg.id =   ");
+		sql.append(" WHERE eg.id = :idEstudo ");
 		
 		Query query = getSession().createSQLQuery(sql.toString())
 				.addScalar("codigoProduto", StandardBasicTypes.STRING)
 				.addScalar("nomeProduto", StandardBasicTypes.STRING)
 				.addScalar("numeroEdicao", StandardBasicTypes.LONG);
 		
-		return query.list();
+		query.setParameter("idEstudo", idEstudo);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseEstudoFiltroExportPDFDTO.class));
+		
+		return (AnaliseEstudoFiltroExportPDFDTO) query.uniqueResult();
 		
 	}
 	
