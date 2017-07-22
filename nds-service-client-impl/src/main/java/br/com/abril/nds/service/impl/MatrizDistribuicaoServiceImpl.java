@@ -125,10 +125,10 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 		totalizadorProdutoDistribuicaoVO.setMatrizFinalizada(matrizFinalizada);
 		
-		for (ProdutoDistribuicaoVO produtoDistribuicaoVO : totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao()) {
-			produtoDistribuicaoVO.setTotalEstudosLiberados(totalizadorProdutoDistribuicaoVO.getTotalEstudosLiberados());
-			produtoDistribuicaoVO.setTotalSemEstudo(produtoDistribuicaoVO.getTotalSemEstudo());
-		}
+//		for (ProdutoDistribuicaoVO produtoDistribuicaoVO : totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao()) {
+//			produtoDistribuicaoVO.setTotalEstudosLiberados(totalizadorProdutoDistribuicaoVO.getTotalEstudosLiberados());
+//			produtoDistribuicaoVO.setTotalSemEstudo(produtoDistribuicaoVO.getTotalSemEstudo());
+//		}
 
 		return totalizadorProdutoDistribuicaoVO;
 	}

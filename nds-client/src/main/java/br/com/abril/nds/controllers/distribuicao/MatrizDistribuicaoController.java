@@ -405,29 +405,9 @@ public class MatrizDistribuicaoController extends BaseController {
         	filtro.setTotalEstudosLiberados(totalizadorProdutoDistribuicaoVO.getTotalEstudosLiberados());
         	filtro.setTotalSemEstudo(totalizadorProdutoDistribuicaoVO.getTotalSemEstudo());
         	
-        	List<ExportFooter> exportFooters = new ArrayList<ExportFooter>();
-        	
-        	ExportFooter exportFooter1 = new ExportFooter();
-			exportFooter1.setLabel("Publicações Liberadas");
-			exportFooter1.setHeaderToAlign("Codigo");
-			exportFooter1.setColspan(2);
-			exportFooter1.setValue(totalizadorProdutoDistribuicaoVO.getTotalEstudosLiberados().toString());
-			exportFooter1.setAlignment(Alignment.CENTER);
-			
-			ExportFooter exportFooter2 = new ExportFooter();
-			exportFooter2.setLabel("Publicações sem Estudo");
-			exportFooter2.setHeaderToAlign("Clas.");
-			exportFooter2.setColspan(2);
-			exportFooter2.setValue(totalizadorProdutoDistribuicaoVO.getTotalSemEstudo().toString());
-			exportFooter2.setAlignment(Alignment.CENTER);
-			
-			exportFooters.add(exportFooter1);
-			exportFooters.add(exportFooter2);
-        	
             FileExporter.to("matriz_distribuicao", fileType).inHTTPResponse(
                     this.getNDSFileHeader(),
                     filtro, 
-//                    exportFooters,
                     totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao(),
                     ProdutoDistribuicaoVO.class, this.httpResponse);
         }
