@@ -1497,13 +1497,13 @@ public class MatrizLancamentoController extends BaseController {
         
         if (listaProdutoBalanceamento != null && !listaProdutoBalanceamento.isEmpty()) {
             
-            final Double valorTotal = getValorTotal(listaProdutoBalanceamento);
+//            final Double valorTotal = getValorTotal(listaProdutoBalanceamento);
             
             final List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO = getProdutosLancamentoVO(listaProdutoBalanceamento);
             
-            final RodapeDTO rodape = new RodapeDTO(CurrencyUtil.formatarValor(valorTotal));
+//            final RodapeDTO rodape = new RodapeDTO(CurrencyUtil.formatarValor(valorTotal));
             
-            FileExporter.to("matriz_lançamento", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, rodape,
+            FileExporter.to("matriz_lançamento", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro,
                     listaProdutoBalanceamentoVO, ProdutoLancamentoVO.class, httpResponse);
         }
         

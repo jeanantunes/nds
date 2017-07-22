@@ -67,7 +67,7 @@ CaracteristicaDistribuicaoRepository {
         sql.append(" select distinct ")
         .append(" pro.codigo as 'codigoProduto', ")
         .append(" pro.nome as 'nomeProduto', ")
-        .append(" pes2.NOME_FANTASIA as 'nomeEditor', ")
+        .append(" pes2.RAZAO_SOCIAL as 'nomeEditor', ")
         .append(" ped.CHAMADA_CAPA as 'chamadaCapa', ")
         .append(" ped.id as idProdEd, ")
         .append(" cast(lan.STATUS as char) as statusLancamento, ")

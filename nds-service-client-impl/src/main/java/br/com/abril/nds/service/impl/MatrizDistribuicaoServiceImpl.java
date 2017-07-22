@@ -124,6 +124,11 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		TotalizadorProdutoDistribuicaoVO totalizadorProdutoDistribuicaoVO = getProdutoDistribuicaoVOTotalizado(produtoDistribuicaoVOs);
 
 		totalizadorProdutoDistribuicaoVO.setMatrizFinalizada(matrizFinalizada);
+		
+		for (ProdutoDistribuicaoVO produtoDistribuicaoVO : totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao()) {
+			produtoDistribuicaoVO.setTotalEstudosLiberados(totalizadorProdutoDistribuicaoVO.getTotalEstudosLiberados());
+			produtoDistribuicaoVO.setTotalSemEstudo(produtoDistribuicaoVO.getTotalSemEstudo());
+		}
 
 		return totalizadorProdutoDistribuicaoVO;
 	}

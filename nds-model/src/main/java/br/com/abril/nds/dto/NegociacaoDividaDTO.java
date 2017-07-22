@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Date;
 
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -12,28 +13,28 @@ public class NegociacaoDividaDTO implements Serializable {
 	
 	private static final long serialVersionUID = 8273101897954671949L;
 	
-	@Export(label = "Número Cota")
+	@Export(label = "Número Cota", widthPercent = 9)
 	private Integer numeroCota;
 	
-	@Export(label = "Data Emissão")
+	@Export(label = "Data Emissão", widthPercent = 9)
 	private Date dtEmissao;
 	
-	@Export(label = "Data Vencimento")
+	@Export(label = "Data Vencimento", widthPercent = 10)
 	private Date dtVencimento;
 	
-	@Export(label = "Prazo")
+	@Export(label = "Prazo", widthPercent = 9)
 	private Integer prazo;
 
-	@Export(label = "Valor Dívida R$")
+	@Export(label = "Valor Dívida R$", widthPercent = 9)
 	private BigDecimal vlDivida;
 
-	@Export(label = "Encargos")
+	@Export(label = "Encargos", widthPercent = 8)
 	private BigDecimal encargos;
 
-	@Export(label = "Total R$")
+	@Export(label = "Total R$", widthPercent = 9)
 	private BigDecimal total;
 	
-	@Export(label = "Detalhes")
+	@Export(label = "Detalhes", widthPercent = 36)
 	private String detalhes;
 	
 	private Long idDivida;
@@ -85,7 +86,13 @@ public class NegociacaoDividaDTO implements Serializable {
 	}
 
 	public void setTotal(BigDecimal total) {
-		this.total = total;
+		
+		if(total != null){
+			this.total = CurrencyUtil.arredondarValorParaDuasCasas(total);
+		}else{
+			this.total = total;
+		}
+		
 	}
 
 	public Long getIdCobranca() {
@@ -125,11 +132,11 @@ public class NegociacaoDividaDTO implements Serializable {
 		}
 		
 		if(!data.isEmpty()){
-			detalhes += "Data: "+data+" \n ";
+			detalhes += "Data: "+data+". ";
 		}
 		
 		if(!valor.isEmpty()){
-			detalhes += "Valor: R$ "+valor+" \n ";
+			detalhes += "Valor: R$ "+valor+". \n";
 		}
 		
 		if(!valor.isEmpty()){

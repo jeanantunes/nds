@@ -96,6 +96,7 @@ public class FooterHandler {
 		exportFooter.setLabel(column.getLabel());
 		exportFooter.setVerticalPrinting(column.isVerticalPrinting());
 		exportFooter.setValue(ExportHandler.getExportValue(helper.getValue(), column.getColumnType()));
+		exportFooter.setColspan(column.getColspan());
 
 		return exportFooter;
 	}
