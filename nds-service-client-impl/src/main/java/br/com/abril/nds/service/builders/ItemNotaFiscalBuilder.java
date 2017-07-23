@@ -55,9 +55,9 @@ import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
 import br.com.abril.nds.service.impl.NFeCalculatorImpl;
+import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.Util;
 
 public class ItemNotaFiscalBuilder  {
 	
@@ -840,9 +840,13 @@ public class ItemNotaFiscalBuilder  {
 		
 		if(movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalCota) {
 			
+			BigDecimal precoComDesconto = ((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getValoresAplicados().getPrecoComDesconto();
+			
+			precoComDesconto = aplicarValorDescontoFornecedor(movimentoFechamentoFiscal, precoComDesconto);
+			
 			valorUnitario = ((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getValoresAplicados().getPrecoComDesconto();
 			valorDesconto = ((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getValoresAplicados().getValorDesconto();
-			valorTotalBruto = ((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoFechamentoFiscal.getQtde()));
+			valorTotalBruto = precoComDesconto.multiply(new BigDecimal(movimentoFechamentoFiscal.getQtde()));
 			
 		} else if(movimentoFechamentoFiscal instanceof MovimentoFechamentoFiscalFornecedor) {
 			
@@ -855,7 +859,10 @@ public class ItemNotaFiscalBuilder  {
 				valorDesconto = movimentoFechamentoFiscal.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto();
 			}
 			
-			precoComDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100))));			
+			precoComDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100))));
+			
+			precoComDesconto = aplicarValorDescontoFornecedor(movimentoFechamentoFiscal, precoComDesconto);
+			
 			valorUnitario = precoComDesconto;
 			valorTotalBruto = precoComDesconto.multiply(new BigDecimal(movimentoFechamentoFiscal.getQtde()));
 		} else {
@@ -936,6 +943,19 @@ public class ItemNotaFiscalBuilder  {
 		}
 		
 		return detalheNotaFiscal;
+	}
+
+	private static BigDecimal aplicarValorDescontoFornecedor(MovimentoFechamentoFiscal movimentoFechamentoFiscal, BigDecimal precoComDesconto) {
+		if(movimentoFechamentoFiscal.getProdutoEdicao() != null){
+			if(movimentoFechamentoFiscal.getProdutoEdicao().getProduto() != null){
+				if(movimentoFechamentoFiscal.getProdutoEdicao().getProduto().getFornecedor() != null){
+					if(BigDecimalUtil.isMaiorQueZero(movimentoFechamentoFiscal.getProdutoEdicao().getProduto().getFornecedor().getMargemDistribuidor())){
+						precoComDesconto = precoComDesconto.multiply(BigDecimal.ONE.subtract(movimentoFechamentoFiscal.getProdutoEdicao().getProduto().getFornecedor().getMargemDistribuidor().divide(new BigDecimal(100))));
+					}
+				}
+			}
+		}
+		return precoComDesconto;
 	}
 
 	public static void montaItemNotaFiscal(NotaFiscal notaFiscal, MovimentoEstoque movimentoEstoque, Map<String, TributoAliquota> tributoAliquota, ParametroSistema ps) {
