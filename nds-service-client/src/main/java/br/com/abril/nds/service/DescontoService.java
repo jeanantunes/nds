@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.DescontoEditorDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
@@ -202,5 +204,7 @@ public interface DescontoService {
 	void copiarDescontoCotasPorProdutoExcecoes(Cota cotaDestino, Usuario usuarioLogado, long idDescontoEspecifico);
 
 	void copiarDescontoCotasPorProximosLancamento(Cota cotaDestino, Usuario usuarioLogado, long idDescontoEspecifico);
+
+	List<DescontoDTO> obterDescontosPorFornecedor(Long idFornecedor);
 
 }
