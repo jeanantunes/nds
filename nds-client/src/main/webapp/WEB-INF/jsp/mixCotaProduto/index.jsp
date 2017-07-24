@@ -322,6 +322,7 @@
          		<td><strong>Classificação:</strong></td>
          		<td><strong>Rep. Mínimo:</strong></td>
          		<td><strong>Rep. Máximo:</strong></td>
+         		<td><strong>Usar ICD estudo: </strong></td>
          		<td><a href="javascript:mixCotaProdutoController.addLinha();"><img src="images/ico_add.gif"/></a></td>
         		</tr>
          </thead>
@@ -340,6 +341,7 @@
                 </td>
            		<td><input type="text"  style="width:80px;" maxlength="5"></td>
            		<td><input type="text"  style="width:80px;" maxlength="5"></td>
+           		<td><input type="checkbox" name="usarICDEstudo" checked/></td>
            		<td><input type="image" id="excluirLinha0" src="images/ico_excluir.gif" onclick="mixCotaProdutoController.excluirLinha($(this));" /></td>
    			</tr>
    			</tbody>
