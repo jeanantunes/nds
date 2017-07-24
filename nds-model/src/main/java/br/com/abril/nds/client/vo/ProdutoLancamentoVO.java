@@ -41,7 +41,6 @@ public class ProdutoLancamentoVO  implements Serializable {
 	private String dataRecolhimentoDistribuidor;
 	
 	@Export(label="Total R$", exhibitionOrder = 8, alignment = Alignment.CENTER, fontSize=6, widthPercent = 7)
-	@Footer(label="Total R$", colspan = 2, type = FooterType.SUM,  columnType = ColumnType.MOEDA)
 	private String valorTotal;
 	
 	@Export(label="PEB", exhibitionOrder = 9, alignment = Alignment.CENTER, fontSize=6, widthPercent = 3)
