@@ -53,9 +53,9 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.FileExporter;
-import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ConfirmacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -1497,8 +1497,8 @@ public class MatrizLancamentoController extends BaseController {
         
         if (listaProdutoBalanceamento != null && !listaProdutoBalanceamento.isEmpty()) {
             
-//            final Double valorTotal = getValorTotal(listaProdutoBalanceamento);
-            
+        	filtro.setValorTotal(CurrencyUtil.formatarValor(getValorTotal(listaProdutoBalanceamento)));
+        	
             final List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO = getProdutosLancamentoVO(listaProdutoBalanceamento);
             
 //            final RodapeDTO rodape = new RodapeDTO(CurrencyUtil.formatarValor(valorTotal));
