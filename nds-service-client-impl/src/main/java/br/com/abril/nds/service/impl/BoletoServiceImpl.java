@@ -50,7 +50,6 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
-import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
@@ -3104,9 +3103,10 @@ public class BoletoServiceImpl implements BoletoService {
 
 		int somaSquencial = 0;
 		
+		PoliticaCobranca politicaCobranca = politicaCobrancaService.obterPoliticaCobrancaBoleto();
+
 		List<Long> idsCobrancasParaUpdate = new ArrayList<>();
 		
-
 		for(GeraDividaDTO divida : dividas) {
 
 			Boleto boleto = boletoRepository.obterPorNossoNumero(divida.getNossoNumero(), null, false);
