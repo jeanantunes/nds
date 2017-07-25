@@ -116,7 +116,7 @@ public class LedModelo4IntegracaoServiceImpl implements LedModelo4IntegracaoServ
 		try {
 			jsonDoc = couchDbClient.find(JsonObject.class, docName);
 		} catch (NoDocumentException e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao processar retorno picking. Documento não encontrado! ");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao processar retorno picking. Documento não encontrado! ");
 		}
 
 		if (jsonDoc != null) {
@@ -135,6 +135,11 @@ public class LedModelo4IntegracaoServiceImpl implements LedModelo4IntegracaoServ
 		for (PickingLEDFullDTO pickingLEDFullDTO : registros) {
 			for (DetalhesPickingPorCotaModelo03DTO retornoPickingDTO : pickingLEDFullDTO.getListTrailer2()) {
 				if(!isContemLancamento(listLancamentos, retornoPickingDTO.getProduto(), retornoPickingDTO.getEdicao(),pickingLEDFullDTO.getDataLancamento())){
+					
+					if((retornoPickingDTO.getDataLed() == null || retornoPickingDTO.getDataLed().isEmpty()) || 
+							(retornoPickingDTO.getHoraLed() == null || retornoPickingDTO.getHoraLed().isEmpty())){
+						continue;
+					}
 					
 					RetornoPickingDTO retornoPicking = new RetornoPickingDTO();
 					
@@ -162,8 +167,10 @@ public class LedModelo4IntegracaoServiceImpl implements LedModelo4IntegracaoServ
 		}
 		
 		for (RetornoPickingDTO lancamentoPicking : listLancamentos) {
-			lancamentoRepository.atualizarLancamentoSetDadosLED(lancamentoPicking.getIdLancamentos(), 
-					lancamentoPicking.getDataLed(), lancamentoPicking.getHoraLed());
+			if(lancamentoPicking.getIdLancamentos().size() > 0){
+				lancamentoRepository.atualizarLancamentoSetDadosLED(lancamentoPicking.getIdLancamentos(), 
+						lancamentoPicking.getDataLed(), lancamentoPicking.getHoraLed());
+			}
 		}
 		
 	}

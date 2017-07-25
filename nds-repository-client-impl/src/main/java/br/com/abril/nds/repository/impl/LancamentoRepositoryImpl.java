@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import static org.apache.commons.lang.StringUtils.leftPad;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
@@ -2703,7 +2705,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 
 		Query query = getSession().createSQLQuery(sql.toString());
 
-		query.setParameter("codProduto", codProduto);
+		query.setParameter("codProduto", leftPad(codProduto, 8, "0"));
 		query.setParameter("numEdicao", numEdicao);
 		query.setParameter("dtLancamento", dtLancamento);
 
