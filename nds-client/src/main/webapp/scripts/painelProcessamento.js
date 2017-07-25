@@ -554,6 +554,12 @@ var painelProcessamentoController = $.extend(true, {
 				"Processar" : function() {
 					
 					var dataProcessamento = $("#datepickerRetornoPicking").val();
+					
+					if(dataProcessamento.trim() === ""){
+						exibirMensagem("WARNING", ["Selecione uma data válida!"]);
+						return;
+					}
+					
 					var data = [{name:'data', value:dataProcessamento}];
 					
 					$.postJSON(contextPath + "/administracao/painelProcessamento/processarRetornoPinking",
@@ -561,7 +567,7 @@ var painelProcessamentoController = $.extend(true, {
 							function (resultado) {
 							
 								exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
-								$(this).dialog("close");
+								$("#dialog-processarRetornoPicking").dialog("close");
 						   	},
 						   	function (resultado) {
 								
