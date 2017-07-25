@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -41,6 +42,7 @@ import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
+import br.com.abril.nds.dto.HistoricoVendaCotaDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
@@ -146,6 +148,7 @@ import br.com.abril.nds.service.HistoricoTitularidadeService;
 import br.com.abril.nds.service.MixCotaProdutoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PessoaService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.service.UsuarioService;
@@ -299,6 +302,9 @@ public class CotaServiceImpl implements CotaService {
     
     @Autowired
     private EstoqueProdutoService estoqueProdutoService;
+    
+    @Autowired	
+    private ProdutoService produtoService;
     
     @Transactional(readOnly = true)
     @Override
@@ -2933,9 +2939,41 @@ public class CotaServiceImpl implements CotaService {
     @Transactional(readOnly = true)
     @Override
     public List<AnaliseHistoricoDTO> buscarHistoricoCotas(final List<ProdutoEdicaoDTO> listProdutoEdicaoDto,
-            final List<Integer> cotas, final String sortorder, final String sortname) {
+            final List<Integer> cotasSessao, final String sortorder, final String sortname, Boolean isFiltroTodasCotas) {
         
-        final List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarHistoricoCotas(listProdutoEdicaoDto, cotas);
+    	List<Integer> cotas = new ArrayList<>();
+    	cotas.addAll(cotasSessao);
+    	
+        List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarHistoricoCotas(listProdutoEdicaoDto, cotas);
+        
+        List<AnaliseHistoricoDTO> listAnaliseHistoricoParaRemocao = new ArrayList<>(); 
+        
+        List<Integer> listCotasExistentes = new ArrayList<>();
+        
+        Map<String, String> mapNomeProdutos = new HashMap<>();
+        
+        Map<String, Map<Long, HistoricoVendaCotaDTO>> mapHistoricoEdicoes = new HashMap<>();
+        
+        Map<Long, HistoricoVendaCotaDTO> mapCotas = new HashMap<>();
+        
+        tratarListProdutoEdicao(listProdutoEdicaoDto);
+
+        for (ProdutoEdicaoDTO produtoEdicaoDTO : listProdutoEdicaoDto) {
+        	if(produtoEdicaoDTO.isParcial() && produtoEdicaoDTO.isParcialConsolidado() == false){
+        		mapCotas = produtoEdicaoRepository.obterCotasHistoricoProdutoEdicaoParcial(produtoEdicaoDTO.getId(), produtoEdicaoDTO.getPeriodo(),produtoEdicaoDTO.getNumeroEdicao());
+        	}else{
+        		mapCotas = produtoEdicaoRepository.obterCotasHistoricoProdutoEdicao(produtoEdicaoDTO.getId(), produtoEdicaoDTO.getNumeroEdicao());
+        	}
+        	
+        	String chaveMap = getChaveMapHistoricoEdicoes(produtoEdicaoDTO);
+        	
+        	mapHistoricoEdicoes.put(chaveMap, mapCotas);
+        	
+        	String nomeProduto = produtoService.obterNomeProdutoPorCodigo(produtoEdicaoDTO.getCodigoProduto());
+        	
+        	mapNomeProdutos.put(produtoEdicaoDTO.getCodigoProduto(), nomeProduto);
+        	
+		}
         
         for (final AnaliseHistoricoDTO analiseHistoricoDTO : listAnaliseHistoricoDTO) {
             
@@ -2945,13 +2983,26 @@ public class CotaServiceImpl implements CotaService {
                 final ProdutoEdicaoDTO produtoEdicaoDTO = listProdutoEdicaoDto.get(i);
                 
                 ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
+
+                Map<Long, HistoricoVendaCotaDTO> mapHistoricoCotas = mapHistoricoEdicoes.get(getChaveMapHistoricoEdicoes(produtoEdicaoDTO));
                 
-                if(produtoEdicaoDTO.isParcial() && produtoEdicaoDTO.isParcialConsolidado() == false){
-                	dto = produtoEdicaoRepository.obterHistoricoProdutoEdicaoParcial(produtoEdicaoDTO.getId(), produtoEdicaoDTO.getPeriodo(), 
-                													analiseHistoricoDTO.getNumeroCota(), produtoEdicaoDTO.getNumeroEdicao());
-                }else{
-                	dto = produtoEdicaoRepository.obterHistoricoProdutoEdicao(produtoEdicaoDTO.getCodigoProduto(), produtoEdicaoDTO.getNumeroEdicao(), 
-            														analiseHistoricoDTO.getNumeroCota());
+                HistoricoVendaCotaDTO cotaDTO = new HistoricoVendaCotaDTO();
+                
+//                if(produtoEdicaoDTO.isParcial() && produtoEdicaoDTO.isParcialConsolidado() == false){
+//                	dto = produtoEdicaoRepository.obterHistoricoProdutoEdicaoParcial(produtoEdicaoDTO.getId(), produtoEdicaoDTO.getPeriodo(), 
+//                													analiseHistoricoDTO.getNumeroCota(), produtoEdicaoDTO.getNumeroEdicao());
+//                }else{
+//                	dto = produtoEdicaoRepository.obterHistoricoProdutoEdicao(produtoEdicaoDTO.getCodigoProduto(), produtoEdicaoDTO.getNumeroEdicao(), analiseHistoricoDTO.getNumeroCota());
+//                	
+//                }
+
+                cotaDTO = mapHistoricoCotas.get(analiseHistoricoDTO.getNumeroCota().longValue());
+
+                if(cotaDTO != null){
+                	dto.setReparte(cotaDTO.getReparte() != null ? cotaDTO.getReparte() : BigInteger.ZERO);
+                	dto.setQtdeVendas(cotaDTO.getVenda() != null ? cotaDTO.getVenda() : BigInteger.ZERO);
+                	dto.setStatusLancamento(cotaDTO.getStatusLancamento());
+                	dto.setId(produtoEdicaoDTO.getId());
                 }
                 
                 if (dto != null && dto.getId() != null) {
@@ -2968,7 +3019,19 @@ public class CotaServiceImpl implements CotaService {
                 		
                 	}
                 	
+                	if(dto.getReparte().compareTo(BigInteger.ZERO) == 0){
+                		if(dto.getVenda() == null || dto.getQtdeVendas().compareTo(BigInteger.ZERO) == 0){
+                			dto.setReparte(null);
+                			dto.setQtdeVendas(null);
+                			continue;
+                		}
+                	}
+                	
                     qtdEdicaoVendida++;
+                    
+                    String nomeProduto = mapNomeProdutos.get(produtoEdicaoDTO.getCodigoProduto());
+                    
+    				String prodEdicao = produtoEdicaoDTO.getCodigoProduto() + " - " + nomeProduto + " - " + produtoEdicaoDTO.getNumeroEdicao();
                     
                     if (i == 0) {
                         if(dto.getReparte() != null){
@@ -2978,6 +3041,8 @@ public class CotaServiceImpl implements CotaService {
                         if(dto.getQtdeVendas() != null){
                             analiseHistoricoDTO.setEd1Venda(dto.getQtdeVendas().intValue());
                         }
+                        
+        				analiseHistoricoDTO.setProduto01(prodEdicao);
                     }
                     
                     if (i == 1) {
@@ -2988,6 +3053,8 @@ public class CotaServiceImpl implements CotaService {
                         if(dto.getQtdeVendas() != null){
                             analiseHistoricoDTO.setEd2Venda(dto.getQtdeVendas().intValue());
                         }
+                        
+                        analiseHistoricoDTO.setProduto02(prodEdicao);
                     }
                     
                     if (i == 2) {
@@ -2998,6 +3065,8 @@ public class CotaServiceImpl implements CotaService {
                         if(dto.getQtdeVendas() != null){
                             analiseHistoricoDTO.setEd3Venda(dto.getQtdeVendas().intValue());
                         }
+                        
+                        analiseHistoricoDTO.setProduto03(prodEdicao);
                     }
                     
                     if (i == 3) {
@@ -3008,6 +3077,8 @@ public class CotaServiceImpl implements CotaService {
                         if(dto.getQtdeVendas() != null){
                             analiseHistoricoDTO.setEd4Venda(dto.getQtdeVendas().intValue());
                         }
+                        
+                        analiseHistoricoDTO.setProduto04(prodEdicao);
                     }
                     
                     if (i == 4) {
@@ -3018,6 +3089,8 @@ public class CotaServiceImpl implements CotaService {
                         if(dto.getQtdeVendas() != null){
                             analiseHistoricoDTO.setEd5Venda(dto.getQtdeVendas().intValue());
                         }
+                        
+                        analiseHistoricoDTO.setProduto05(prodEdicao);
                     }
                     
                     if (i == 5) {
@@ -3028,17 +3101,63 @@ public class CotaServiceImpl implements CotaService {
                         if(dto.getQtdeVendas() != null){
                             analiseHistoricoDTO.setEd6Venda(dto.getQtdeVendas().intValue());
                         }
+                        
+                        analiseHistoricoDTO.setProduto06(prodEdicao);
                     }
                 }
             }
             
-            setMediaVendaEReparte(qtdEdicaoVendida, analiseHistoricoDTO);
+            if(qtdEdicaoVendida > 0){
+            	setMediaVendaEReparte(qtdEdicaoVendida, analiseHistoricoDTO);
+            }else{
+            	listAnaliseHistoricoParaRemocao.add(analiseHistoricoDTO);
+            }
+            
+            if(isFiltroTodasCotas){
+            	listCotasExistentes.add(analiseHistoricoDTO.getNumeroCota());
+            }
+            
         }
+        
+        listAnaliseHistoricoDTO.removeAll(listAnaliseHistoricoParaRemocao);
         
         formatarListaHistoricoVenda(listAnaliseHistoricoDTO);
         ordenarListaHistoricoVenda(sortorder, sortname, listAnaliseHistoricoDTO);
         
+        // add cotas sem reparte
+        
+        if(isFiltroTodasCotas){
+        	
+        	cotas.removeAll(listCotasExistentes);
+        	
+        	List<AnaliseHistoricoDTO> listCotasSemReparte = cotaRepository.buscarDadosCotasSemHistorico(cotas);
+        	
+        	listAnaliseHistoricoDTO.addAll(listCotasSemReparte);
+        }
+        
         return listAnaliseHistoricoDTO;
+    }
+
+	private void tratarListProdutoEdicao(final List<ProdutoEdicaoDTO> listProdutoEdicaoDto) {
+		for (ProdutoEdicaoDTO produtoEdicaoDTO : listProdutoEdicaoDto) {
+			if(produtoEdicaoDTO.getId() == null){
+				if(produtoEdicaoDTO.getCodigoProduto() != null && produtoEdicaoDTO.getNumeroEdicao() != null){
+					produtoEdicaoDTO.setId(produtoEdicaoRepository.obterIdEdicaoPorCodigoNumeroEdicao(produtoEdicaoDTO.getCodigoProduto(), produtoEdicaoDTO.getNumeroEdicao().toString()));
+				}
+			}
+		}
+	}
+    
+    private String getChaveMapHistoricoEdicoes(ProdutoEdicaoDTO peDTO){
+    	String chave = "";
+    	
+    	if(peDTO.isParcial()){
+    		chave = peDTO.getId().toString()+peDTO.getPeriodoString();
+    	}else{
+    		chave = peDTO.getId().toString()+peDTO.getNumeroEdicao();
+    	}
+    	
+    	return chave;
     }
     
     private void formatarListaHistoricoVenda(final List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO) {
@@ -3112,8 +3231,19 @@ public class CotaServiceImpl implements CotaService {
         vendaMedia += analiseHistoricoDTO.getEd5Venda() == null ? 0 : analiseHistoricoDTO.getEd5Venda();
         vendaMedia += analiseHistoricoDTO.getEd6Venda() == null ? 0 : analiseHistoricoDTO.getEd6Venda();
         
-        analiseHistoricoDTO.setReparteMedio((double)Math.round(reparteMedio / qtdEdicoes));
-        analiseHistoricoDTO.setVendaMedia((double)Math.round(vendaMedia / qtdEdicoes));
+        DecimalFormat f = new DecimalFormat("##.00");
+        
+        if(qtdEdicoes != 0){
+        	analiseHistoricoDTO.setReparteMedio(Double.valueOf(f.format(reparteMedio / qtdEdicoes).replace(',', '.')));
+        	analiseHistoricoDTO.setVendaMedia(Double.valueOf(f.format(vendaMedia / qtdEdicoes).replace(',', '.')));
+        }else{
+        	analiseHistoricoDTO.setReparteMedio(Double.valueOf(f.format(reparteMedio).replace(',', '.')));
+        	analiseHistoricoDTO.setVendaMedia(Double.valueOf(f.format(vendaMedia).replace(',', '.')));
+        }
+        
+        
+        //analiseHistoricoDTO.setReparteMedio((double)Math.round(reparteMedio / qtdEdicoes));
+        //analiseHistoricoDTO.setVendaMedia((double)Math.round(vendaMedia / qtdEdicoes));
     }
     
     @Transactional(readOnly = true)
@@ -3196,6 +3326,22 @@ public class CotaServiceImpl implements CotaService {
     public List<CotaDTO> buscarCotasHistorico(final List<ProdutoEdicaoDTO> listProdutoEdicaoDto, final boolean cotasAtivas) {
         
         return cotaRepository.buscarCotasHistorico(listProdutoEdicaoDto, cotasAtivas);
+    }
+    
+    @Override
+	@Transactional
+    public List<CotaDTO> buscarCotasComEsemReparte(List<ProdutoEdicaoDTO> listProdutoEdicaoDTO){
+    	
+//    	List<Long> listIdsProdutoEdicao = new ArrayList<>();
+//    	
+//    	for (ProdutoEdicaoDTO produtoEdicaoDTO : listProdutoEdicaoDTO) {
+//    		
+//    		String[] numeroEdicao = {produtoEdicaoDTO.getNumeroEdicao().toString()};
+//    		
+//    		listIdsProdutoEdicao.addAll(produtoEdicaoRepository.obterIdsEdicoesPorCodigoNumeroEdicoes(produtoEdicaoDTO.getCodigoProduto(), numeroEdicao));
+//		}
+    	
+    	return cotaRepository.buscarCotasCom_e_SemRaparte();
     }
     
     @Transactional(readOnly = true)

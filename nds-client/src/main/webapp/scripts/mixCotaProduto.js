@@ -30,19 +30,19 @@ var mixCotaProdutoController = $.extend(true, {
 				name : 'reparteMedio',
 				width : 60,
 				sortable : false,
-				align : 'right'
+				align : 'center'
 			},  {
 				display : 'Vda. Média',
 				name : 'vendaMedia',
 				width : 60,
 				sortable : false,
-				align : 'right'
+				align : 'center'
 			},  {
 				display : 'Ult. Rep.',
 				name : 'ultimoReparte',
 				width : 60,
 				sortable : false,
-				align : 'right'
+				align : 'center'
 			},  {
 				display : 'Rep. Inf. Min.',
 				name : 'reparteMinimoInput',
@@ -111,19 +111,19 @@ var mixCotaProdutoController = $.extend(true, {
 				name : 'reparteMedio',
 				width : 70,
 				sortable : false,
-				align : 'right'
+				align : 'center'
 			},  {
 				display : 'Vda. Média',
 				name : 'vendaMedia',
 				width : 70,
 				sortable : false,
-				align : 'right'
+				align : 'center'
 			},  {
 				display : 'Ult. Rep.',
 				name : 'ultimoReparte',
 				width : 70,
 				sortable : false,
-				align : 'right'
+				align : 'center'
 			},  {
 				display : 'Rep. Inf. Min.',
 				name : 'reparteMinimoInput',
@@ -505,6 +505,13 @@ var mixCotaProdutoController = $.extend(true, {
 			data.rows[i].cell["acao"]=mixCotaProdutoController.getActionsGridProduto(data.rows[i].cell);
 			data.rows[i].cell["reparteMinimoInput"]="<input type='text' id='updInputRepMin_"+data.rows[i].cell["id"]+"' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMinimo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MIN\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMinimo"]+", "+ (data.rows[i].cell["somaPdv"] > 0) +")' />";
 			data.rows[i].cell["reparteMaximoInput"]="<input type='text' id='updInputRepMax_"+data.rows[i].cell["id"]+"' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMaximo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MAX\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMaximo"]+", "+ (data.rows[i].cell["somaPdv"] > 0) +")' />";
+		
+		
+			var ar = ["reparteMedio","vendaMedia","ultimoReparte"];
+			for ( var int = 0; int < ar.length; int++) {
+				var valorarrumado = parseFloat(data.rows[i].cell[ar[int]]).toFixed(0);
+				data.rows[i].cell[ar[int]]=valorarrumado;
+			}
 		}
 		
 		$('.mixProdutosGrid').show();
@@ -1418,11 +1425,11 @@ var mixCotaProdutoController = $.extend(true, {
 			$("#"+target).dialog({
 				resizable: false,
 				height:'auto',
-				width:500,
+				width:700,
 				draggable: false,
 				modal: true,
 				buttons: {
-					"Iníciar cópia": function() {
+					"Iniciar cópia": function() {
 
 						var len=0;
 						
@@ -1460,8 +1467,11 @@ var mixCotaProdutoController = $.extend(true, {
 						
 						data.push({name:"copiaMix.codigoProdutoOrigem",	value: $("#codigoProdutoOrigemInput").val()});
 						data.push({name:"copiaMix.nomeProdutoOrigem",	value: $("#nomeProdutoOrigemInput").val()});
+						data.push({name:"copiaMix.segmentoOrigem",	value: $("#segmentoMixPopupOrigem option:selected").val()});
+						
 						data.push({name:"copiaMix.codigoProdutoDestino",	value: $("#codigoProdutoDestinoInput").val()});
 						data.push({name:"copiaMix.nomeProdutoDestino",	value: $("#nomeProdutoDestinoInput").val()});
+						data.push({name:"copiaMix.segmentoDestino",	value: $("#segmentoMixPopupDestino option:selected").val()});
 						
 						modal = this;
 						$.postJSON(contextPath + '/distribuicao/mixCotaProduto/gerarCopiaMix',  data, 
@@ -1482,7 +1492,11 @@ var mixCotaProdutoController = $.extend(true, {
 						$(this).dialog("close");
 					}
 				},
-				close:function(){$(idsCopiaCota+","+idsCopiaProduto).val('');}
+				close:function(){
+					$(idsCopiaCota+","+idsCopiaProduto).val('');
+					$("#segmentoMixPopupOrigem").val(0);
+					$("#segmentoMixPopupDestino").val(0);
+				}
 			});
 			
 			

@@ -12,8 +12,8 @@ var descontoDistribuidorController = $.extend(true,{
 			 
 			$( "#dialog-geral",this.workspace ).dialog({
 				resizable: false,
-				height:345,
-				width:550,
+				height:450,
+				width:700,
 				modal: true,
 				buttons: [{
 							id:"id_confirmar_geral",text:"Confirmar",
@@ -60,6 +60,18 @@ var descontoDistribuidorController = $.extend(true,{
 
 		}, 
 		
+		changeComboFornecedor : function(){
+			var valueCombo = $("#selectFornecedor_option", tipoDescontoController.workspace).val();
+			
+			$.postJSON(contextPath +"/financeiro/tipoDescontoCota/obterDescontoProdutoPorFornecedor", {idFornecedor:valueCombo},				   
+					   function(result) {
+							var result2 = result;
+			           },
+					   function(result){
+			        	   
+			           });
+		},
+		
 		init:function(){
 			
 			$("select[name='selectFornecedorSelecionado']",this.workspace).multiSelect("select[name='selectFornecedor']", {trigger: "#linkFornecedorVoltarTodos"});
@@ -67,6 +79,10 @@ var descontoDistribuidorController = $.extend(true,{
 			$("select[name='selectFornecedor']",this.workspace).multiSelect("select[name='selectFornecedorSelecionado']", {trigger: "#linkFornecedorEnviarTodos"});
 			
 			$("#descontoGeral",this.workspace).justPercent();
+			
+			$("#selectFornecedor_option", this.workspace).change(function(){
+				descontoDistribuidorController.changeComboFornecedor();
+			});
 			
 			$(".tiposDescGeralGrid",this.workspace).flexigrid({
 				preProcess: tipoDescontoController.executarPreProcessamento,

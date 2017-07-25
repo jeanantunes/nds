@@ -15,13 +15,13 @@ import br.com.abril.nds.util.export.Exportable;
 @SuppressWarnings("serial")
 public class FechamentoFisicoLogicoDTO implements Serializable {
 
-	@Export(label = "Código", alignment = Alignment.LEFT, exhibitionOrder = 2, fontSize=9)
+	@Export(label = "Código", alignment = Alignment.LEFT, exhibitionOrder = 2, fontSize=9, widthPercent=6)
 	private String codigo;
 	
-	@Export(label = "Produto", alignment = Alignment.LEFT, exhibitionOrder = 3, fontSize=9, widthPercent=30)
+	@Export(label = "Produto", alignment = Alignment.LEFT, exhibitionOrder = 3, fontSize=9, widthPercent=20)
 	private String produto;
 	
-	@Export(label = "Edição", alignment = Alignment.LEFT, exhibitionOrder = 4, fontSize=9)
+	@Export(label = "Edição", alignment = Alignment.LEFT, exhibitionOrder = 4, fontSize=9, widthPercent=4)
 	private Long edicao;
 	
 	private Long chamadaEncalheId;
@@ -55,47 +55,47 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 	@Export(label = "Físico", alignment = Alignment.RIGHT, exhibitionOrder = 12, fontSize=9)
 	private BigInteger fisico;
 	
-	@Export(label = "Diferença", alignment = Alignment.RIGHT, exhibitionOrder = 13, fontSize=9)
+	@Export(label = "Dif.", alignment = Alignment.RIGHT, exhibitionOrder = 13, fontSize=9)
 	private BigInteger diferenca = BigInteger.ZERO;
 	
-	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder = 5, fontSize=9)
+	@Export(label = "Capa R$", alignment = Alignment.RIGHT, exhibitionOrder = 5, fontSize=9)
 	private String precoCapaFormatado;
 
-	@Export(label = "Preço Capa Desc R$", alignment = Alignment.RIGHT, exhibitionOrder = 6, fontSize=9)
+	@Export(label = "Desc. R$", alignment = Alignment.RIGHT, exhibitionOrder = 6, fontSize=9)
 	private String precoCapaDescFormatado;
 	
-	@Export(label = "Devolução", alignment = Alignment.CENTER, exhibitionOrder = 8, fontSize=9)
+	@Export(label = "Dev.", alignment = Alignment.CENTER, exhibitionOrder = 8, fontSize=9)
 	private String exemplaresDevolucaoFormatado;
 	
 
-	@Export(label = "Recolhimento", alignment = Alignment.LEFT, exhibitionOrder = 9, fontSize=9)
+	@Export(label = "Rec.", alignment = Alignment.LEFT, exhibitionOrder = 9, fontSize=9, widthPercent=6)
 	private String recolhimento;
 	
 		
-	@Export(label = "Exe. Juramentado", alignment = Alignment.CENTER, exhibitionOrder = 10, fontSize=9)
+	@Export(label = "Exe. Juram.", alignment = Alignment.CENTER, exhibitionOrder = 10, fontSize=9)
     private String exemplaresJuramentadoFormatado;
 	
-	@Export(label = "Venda de Encalhe", alignment = Alignment.CENTER, exhibitionOrder = 11, fontSize=9)
+	@Export(label = "Vda Encalhe", alignment = Alignment.CENTER, exhibitionOrder = 11, fontSize=9)
     private String exemplaresVendaEncalheFormatado;
 	
-	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 7, fontSize=9)
+	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 7, fontSize=9, widthPercent=6)
 	private String totalFormatado;
 	
 	private String replicar = "";
 	
 	private Boolean fechado;
 	
-	@Export(label = "Estoque", alignment = Alignment.CENTER, exhibitionOrder = 14, fontSize=9)
+	@Export(label = "Estoque", alignment = Alignment.CENTER, exhibitionOrder = 14, fontSize=9, widthPercent=7)
 	private String estoque;
 	
 	
-	@Export(label = "Dia Recolhimento", alignment = Alignment.LEFT, exhibitionOrder = 15, fontSize=9)
+	@Export(label = "Dia Rec.", alignment = Alignment.LEFT, exhibitionOrder = 15, fontSize=9)
 	private String diaRecolhimento;
 	
 	@Export(label = "Pct Padrao", alignment = Alignment.LEFT, exhibitionOrder = 16, fontSize=9)
 	private Long pacotePadrao;
 
-	@Export(label = "Sequência", exhibitionOrder = 1, fontSize=10)
+	@Export(label = "Seq", exhibitionOrder = 1, fontSize=10, widthPercent=4)
 	private Integer sequencia;
 	
 	

@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -1223,9 +1222,27 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Override
     public BigDecimal obterValorTotalReparteSemDesconto(final Integer numeroCota, final Date dataOperacao) {
 		
+		List<Date> datas = new ArrayList<>();
+		
+		datas.add(dataOperacao);
+		
 		BigDecimal reparte =
 			chamadaEncalheCotaRepository.obterTotalDaChamaEncalheCotaSemDesconto(
-				numeroCota, dataOperacao, false, false);
+				numeroCota, datas, false, false);
+		
+		if (reparte == null) {
+			
+			reparte = BigDecimal.ZERO;
+		}
+		
+		return reparte;
+	}
+	
+    private BigDecimal obterValorTotalReparteSemDesconto(final Integer numeroCota, final List<Date> datasOperacao) {
+		
+		BigDecimal reparte =
+			chamadaEncalheCotaRepository.obterTotalDaChamaEncalheCotaSemDesconto(
+				numeroCota, datasOperacao, false, false);
 		
 		if (reparte == null) {
 			
@@ -1252,7 +1269,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return reparte;
 	}
-
+	
 	private String obterDescricaoDiasSemana(final List<DiaSemana> diasSemana) {
 		
 		final StringBuilder descricao = new StringBuilder();
@@ -1374,6 +1391,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		infoConfereciaEncalheCota.setCota(cota);
 		
 		infoConfereciaEncalheCota.setReparte(obterValorTotalReparte(numeroCota, datasRecolhimento));
+		
+		infoConfereciaEncalheCota.setReparteCapa(obterValorTotalReparteSemDesconto(numeroCota, datasRecolhimento));
 		
 		// impl Erik Scaranello
 		BigDecimal valorDebitoCreditoFinalizado = new BigDecimal(0);

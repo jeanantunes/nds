@@ -3045,7 +3045,10 @@ public class BoletoServiceImpl implements BoletoService {
 	public byte[] gerarArquivo(final FiltroDividaGeradaDTO filtro) throws Exception {
 
 		LOGGER.debug("Metodo gerar cobranca registrada.");
-
+		
+//		filtro.setArquivoCobrancaRegistrada(true);
+//		
+//		List<GeraDividaDTO> dividas = dividaRepository.obterDividasGeradas(filtro);
 		List<GeraDividaDTO> dividas = dividaRepository.obterDividasGeradasArquivo(filtro);
 
 		if(dividas == null || dividas.isEmpty()) {
@@ -3101,7 +3104,8 @@ public class BoletoServiceImpl implements BoletoService {
 
 		int somaSquencial = 0;
 		
-		PoliticaCobranca politicaCobranca = politicaCobrancaService.obterPoliticaCobrancaBoleto();
+		List<Long> idsCobrancasParaUpdate = new ArrayList<>();
+		
 
 		for(GeraDividaDTO divida : dividas) {
 
@@ -3139,9 +3143,16 @@ public class BoletoServiceImpl implements BoletoService {
         		count++;
 
         		somaSquencial = count;
+        		
+        		idsCobrancasParaUpdate.add(divida.getCobrancaId());
+        		
         	}
     	}
-
+		
+		if(somaSquencial == 0){
+			return null;
+		}
+		
 		list.add(this.montarRegistro09(somaSquencial));
 
 		BufferedWriter bw = null;
@@ -3164,8 +3175,11 @@ public class BoletoServiceImpl implements BoletoService {
 		}catch (Exception e) {
 			throw new ValidationException("Erro na geração do arquivo"+ e.getMessage());
 		}
+		
+		cobrancaService.atualizarFlagCobrancaRegistradaGerada(idsCobrancasParaUpdate);
+			
+		return baos.toByteArray();	
 
-		return baos.toByteArray();
 	}
 
 	private int qtdeSequenciaRegistro(CobRegEnvTipoRegistro00 registro00, CobRegEnvTipoRegistroItau00 registroItau) {

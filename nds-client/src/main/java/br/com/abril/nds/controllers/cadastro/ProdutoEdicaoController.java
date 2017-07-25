@@ -339,8 +339,7 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_CADASTRO_EDICAO_ALTERACAO)
-	public void salvar(UploadedFile imagemCapa,
-			ProdutoEdicaoDTO produtoEdicaoDTO, ModoTela modoTela, boolean istrac29) {
+	public void salvar(UploadedFile imagemCapa, ProdutoEdicaoDTO produtoEdicaoDTO, ModoTela modoTela, boolean istrac29) {
 			
 	//	if ( imagemCapa != null && imagemCapa.getSize() > 50000 ) {
 	//		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Imagem de capa muito grande("+imagemCapa.getSize()+" bytes)..Reduza o tamanho(limite de 50000 bytes)!"));
@@ -918,7 +917,7 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 		
 		
-		FileExporter.to("produtoEdicoes", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
+		FileExporter.to("produto_Edicoes", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
 				listaProdutoEdicoes, ConsultaProdutoEdicaoDTO.class, this.response);
 		
 		result.nothing();

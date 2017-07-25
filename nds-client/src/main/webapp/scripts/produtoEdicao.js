@@ -170,6 +170,8 @@ var produtoEdicaoController =$.extend(true,  {
 			 decimal:',', 
 			 precision:2
 		});
+		
+		$(".bt_arq", this.workspace).hide();
 
 		$("#produtoEdicaoController-desconto", this.workspace).mask("999,99"); 			
 		
@@ -467,6 +469,8 @@ var produtoEdicaoController =$.extend(true,  {
 	},
 		
 	pesquisarEdicoes : function(codigoProduto, nomeProduto) {
+		
+		$(".bt_arq", this.workspace).show();
 		
 		if (codigoProduto == "" || codigoProduto == undefined) {
 			codigoProduto = $("#produtoEdicaoController-pCodigoProduto",this.workspace).val();

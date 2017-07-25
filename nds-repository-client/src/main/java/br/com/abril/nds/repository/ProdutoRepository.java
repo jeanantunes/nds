@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Query;
+
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -97,5 +99,7 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	Produto obterProdutoPorICDSegmentoNotNull(String codigo_icd);
 	
 	List<Produto> obterProdutosPorDescontoLogistica(DescontoLogistica descontoLogistica);
+
+	Produto obterProdutoPorCodigoAndSegmento(String codigoProduto, String segmentoDescricao);
 	
 }

@@ -400,4 +400,36 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 		
 		return query.list();
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<DescontoDTO> obterDescontosPorFornecedor(Long idFornecedor){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select dc.valor as valor,   ");
+		sql.append(" fn.margem_distribuidor as margemDistribuidor,  ");
+		sql.append(" fn.id as idFornecedor  ");
+		sql.append(" from fornecedor fn  ");
+		sql.append(" join desconto dc  ");
+		sql.append(" 	on dc.id = fn.desconto_id  ");
+		sql.append(" join produto_fornecedor pf  ");
+		sql.append(" 	on pf.fornecedores_id = fn.id  ");
+		sql.append(" join produto pd  ");
+		sql.append(" 	on pf.produto_id = pd.id  ");
+		sql.append(" where fn.id = :idFornecedor  ");
+		sql.append(" group by dc.id  ");
+		
+		Query query = getSession().createSQLQuery(sql.toString()); 
+		
+		query.setParameter("idFornecedor", idFornecedor);
+		
+		((SQLQuery) query).addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
+		((SQLQuery) query).addScalar("margemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
+		((SQLQuery) query).addScalar("idFornecedor", StandardBasicTypes.LONG);
+		
+		query.setResultTransformer(Transformers.aliasToBean(DescontoDTO.class));
+		
+		return query.list();
+	}
 }

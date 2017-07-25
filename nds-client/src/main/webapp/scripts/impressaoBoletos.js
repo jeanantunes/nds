@@ -43,7 +43,7 @@ var impressaoBoletosController = $.extend(true, {
 	    $("#impressao-dialog-banco").dialog({
 			autoOpen : false,
 			resizable : false,
-			width : 400,
+			width : 430,
 			modal : true,
 			buttons : {
 				"Confirmar	" : function() {
@@ -384,6 +384,7 @@ var impressaoBoletosController = $.extend(true, {
 		params.push({name: 'filtro.dataMovimento',      	value: $("#dataMovimento", impressaoBoletosController.workspace).val()});
 		params.push({name: 'filtro.codigoBox', 	value:$("#impressao-boleto-box", impressaoBoletosController.workspace).val()});
 		params.push({name: 'filtro.idBanco', value: banco});
+		params.push({name: 'filtro.reprocessar', value: $("#impressao-boleto-banco-dialog-isReprocessar").attr("checked") == "checked"});
 		
     	$.fileDownload(path, {
     		httpMethod : "POST",

@@ -116,7 +116,9 @@ public class ProdutoServiceImpl implements ProdutoService {
 		if (StringUtils.isBlank(codigoProduto)){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Código é obrigatório.");
 		}
-        Produto produto;
+       
+		Produto produto;
+        
         switch (codigoProduto.length()) {
             case 6:
                 produto = produtoRepository.obterProdutoPorCodigoProdin(codigoProduto.concat("01"));
@@ -124,11 +126,18 @@ public class ProdutoServiceImpl implements ProdutoService {
             default:
                 produto = produtoRepository.obterProdutoPorCodigoProdin(codigoProduto);
         }
+       
         if (produto == null) {
             produto = produtoRepository.obterProdutoPorCodigoICD(codigoProduto);
         }
         
         return produto;
+	}
+	
+	@Override
+	@Transactional
+	public Produto obterProdutoPorCodigoAndSegmento(String codigo, String descricaoSegmento){
+		return this.produtoRepository.obterProdutoPorCodigoAndSegmento(codigo, descricaoSegmento);
 	}
 	
 	@Override

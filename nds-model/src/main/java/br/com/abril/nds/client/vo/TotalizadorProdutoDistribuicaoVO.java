@@ -9,9 +9,9 @@ public class TotalizadorProdutoDistribuicaoVO  implements Serializable {
 	
 	private List<ProdutoDistribuicaoVO> listProdutoDistribuicao;
 
-	private Integer totalEstudosLiberados;
+	private Integer totalEstudosLiberados = 0;
 	
-	private Integer totalSemEstudo;
+	private Integer totalSemEstudo = 0;
 	
 	private boolean matrizFinalizada;
 	

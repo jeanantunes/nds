@@ -1950,4 +1950,10 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		return descontosCota;
 	}
+	
+	@Override
+	@Transactional
+	public List<DescontoDTO> obterDescontosPorFornecedor(Long idFornecedor){
+		return this.descontoRepository.obterDescontosPorFornecedor(idFornecedor);
+	}
 }
