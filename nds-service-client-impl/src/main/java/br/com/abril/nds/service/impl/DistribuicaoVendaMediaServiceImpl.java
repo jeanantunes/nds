@@ -37,6 +37,7 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
      * @see br.com.abril.nds.repository.DistribuicaoVendaMediaRepository#pesquisar(br.com.abril.nds.dto.filtro.FiltroEdicaoBaseDistribuicaoVendaMedia)
      */
     @Override
+    @Transactional
     public List<ProdutoEdicaoVendaMediaDTO> pesquisar(FiltroEdicaoBaseDistribuicaoVendaMedia filtro) {
         
 		List<ProdutoEdicaoVendaMediaDTO> prodEdicaoParabaseEstudo = new ArrayList<>();
@@ -65,6 +66,7 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
      *      java.lang.String, java.lang.Long, java.lang.Long)
      */
     @Override
+    @Transactional
     public List<ProdutoEdicaoVendaMediaDTO> pesquisar(String codigoProduto, String nomeProduto, Long edicao,
             Long idClassificacao) {
         return distribuicaoVendaMediaRepository.pesquisar(codigoProduto, nomeProduto, edicao, idClassificacao);
@@ -77,7 +79,7 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
      * @param idClassificacao
      * @param usarICD
      * @return
-     * @see br.com.abril.nds.repository.DistribuicaoVendaMediaRepository#pesquisar(java.lang.String,
+     * @see br.com.abril.nds.repository.DistribuicaoVendaMediaRepository pesquisar(java.lang.String,
      *      java.lang.String, java.lang.Long, java.lang.Long, boolean)
      */
     @Override

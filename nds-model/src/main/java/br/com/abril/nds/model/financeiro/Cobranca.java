@@ -87,6 +87,9 @@ public abstract class Cobranca {
 	@Column(name = "CONTEMPLACAO", nullable = true)
 	protected boolean contemplacao;
 	
+	@Column(name = "COBRANCA_REGISTRADA_GERADA", nullable = true)
+	protected boolean cobrancaRegistradaGerada;
+	
 	@ManyToOne
 	@JoinColumn(name = "COTA_ID")
 	protected Cota cota;
@@ -373,5 +376,15 @@ public abstract class Cobranca {
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
 	}
+
+	public boolean isCobrancaRegistradaGerada() {
+		return cobrancaRegistradaGerada;
+	}
+
+	public void setCobrancaRegistradaGerada(boolean cobrancaRegistradaGerada) {
+		this.cobrancaRegistradaGerada = cobrancaRegistradaGerada;
+	}
+	
+	
 	
 }

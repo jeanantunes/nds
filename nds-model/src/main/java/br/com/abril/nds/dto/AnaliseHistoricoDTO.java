@@ -78,6 +78,13 @@ public class AnaliseHistoricoDTO {
 	private String codigoProduto;
 	
 	private Long numeroEdicao;
+	
+	private String produto01;
+	private String produto02;
+	private String produto03;
+	private String produto04;
+	private String produto05;
+	private String produto06;
 
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -101,6 +108,7 @@ public class AnaliseHistoricoDTO {
 
 	public void setStatusCotaFormatado(String statusCotaFormatado) {
 		this.statusCotaFormatado = statusCotaFormatado;
+		this.statusCota = SituacaoCadastro.valueOf(statusCotaFormatado);
 	}
 
 	public String getNomePessoa() {
@@ -268,4 +276,52 @@ public class AnaliseHistoricoDTO {
 		return ed6Venda;
 	}
 
+	public String getProduto01() {
+		return produto01;
+	}
+
+	public void setProduto01(String produto01) {
+		this.produto01 = produto01;
+	}
+
+	public String getProduto02() {
+		return produto02;
+	}
+
+	public void setProduto02(String produto02) {
+		this.produto02 = produto02;
+	}
+
+	public String getProduto03() {
+		return produto03;
+	}
+
+	public void setProduto03(String produto03) {
+		this.produto03 = produto03;
+	}
+
+	public String getProduto04() {
+		return produto04;
+	}
+
+	public void setProduto04(String produto04) {
+		this.produto04 = produto04;
+	}
+
+	public String getProduto05() {
+		return produto05;
+	}
+
+	public void setProduto05(String produto05) {
+		this.produto05 = produto05;
+	}
+
+	public String getProduto06() {
+		return produto06;
+	}
+
+	public void setProduto06(String produto06) {
+		this.produto06 = produto06;
+	}
+	
 }

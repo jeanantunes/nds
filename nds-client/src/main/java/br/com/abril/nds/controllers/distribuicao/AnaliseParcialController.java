@@ -7,11 +7,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -26,6 +30,7 @@ import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
 import br.com.abril.nds.dto.DataLancamentoPeriodoEdicoesBasesDTO;
 import br.com.abril.nds.dto.DetalhesEdicoesBasesAnaliseEstudoDTO;
+import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
@@ -44,9 +49,10 @@ import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DistribuicaoVendaMediaService;
+import br.com.abril.nds.service.EstudoProdutoEdicaoBaseService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MixCotaProdutoService;
@@ -54,6 +60,7 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RepartePdvService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -72,6 +79,8 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 @Path("/distribuicao/analise/parcial")
 public class AnaliseParcialController extends BaseController {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AnaliseParcialController.class);
 
     @Autowired
     private Validator validator;
@@ -92,7 +101,7 @@ public class AnaliseParcialController extends BaseController {
     private ProdutoEdicaoService produtoEdicaoService;
 
     @Autowired
-    private DistribuicaoVendaMediaRepository distribuicaoVendaMediaRepository;
+    private DistribuicaoVendaMediaService distribuicaoVendaMediaService;
     
     @Autowired
     private HttpSession session;
@@ -116,7 +125,15 @@ public class AnaliseParcialController extends BaseController {
     private EstudoService estudoService;
     
     @Autowired
+   	private UsuarioService usuarioService;
+    
+    @Autowired
+    private EstudoProdutoEdicaoBaseService estudoProdutoEdicaoBaseService;
+    
+    @Autowired
     private static final String EDICOES_BASE_SESSION_ATTRIBUTE = "";
+    
+    public static final String MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE = "mapa_analise_estudo";
 
     @Path("/")
     public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado, String dataLancamentoEdicao) {
@@ -184,14 +201,15 @@ public class AnaliseParcialController extends BaseController {
 
         ClassificacaoCota[] vetor = ClassificacaoCota.values();
         Arrays.sort(vetor, new Comparator<ClassificacaoCota>() {
-
-	    @Override
-	    public int compare(ClassificacaoCota o1, ClassificacaoCota o2) {
-		return o1.getTexto().compareToIgnoreCase(o2.getTexto());
-	    }
+		    @Override
+		    public int compare(ClassificacaoCota o1, ClassificacaoCota o2) {
+		    	return o1.getTexto().compareToIgnoreCase(o2.getTexto());
+		    }
         });
+
         result.include("classificacaoCotaList", vetor);
         result.forwardTo("/WEB-INF/jsp/distribuicao/analiseParcial.jsp");
+        
     }
     
     @Path("/abrirAnaliseFaixa")
@@ -229,7 +247,10 @@ public class AnaliseParcialController extends BaseController {
     public void carregarDetalhesCota(Integer numeroCota, String codigoProduto, Long idClassifProdEdicao) {
         Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
         CotaDTO cotaDTO = analiseParcialService.buscarDetalhesCota(numeroCota, produto.getCodigoICD(), idClassifProdEdicao);
-
+        
+        cotaDTO.setNomeProduto(produto.getNomeComercial());
+        cotaDTO.setCodigoProduto(produto.getCodigo());
+        
         result.use(Results.json()).withoutRoot().from(cotaDTO).recursive().serialize();
     }
 
@@ -269,7 +290,7 @@ public class AnaliseParcialController extends BaseController {
     @Path("/init")
     public void init(Long id, String sortname, String sortorder, int page, int rp, String filterSortName, Double filterSortFrom, Double filterSortTo, String elemento,
                      Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao, 
-                     String numeroCotaStr,Long estudoOrigem,String dataLancamentoEdicao, Integer numeroParcial) {
+                     String numeroCotaStr,Long estudoOrigem,String dataLancamentoEdicao, Integer numeroParcial, String cotasFiltro, boolean isMudarBaseVisualizacao) {
     	
         AnaliseParcialQueryDTO filtroQueryDTO = new AnaliseParcialQueryDTO();
         filtroQueryDTO.setSortName(sortname);
@@ -278,7 +299,7 @@ public class AnaliseParcialController extends BaseController {
         filtroQueryDTO.setFilterSortFrom(filterSortFrom);
         filtroQueryDTO.setFilterSortTo(filterSortTo);
         filtroQueryDTO.setElemento(elemento);
-        filtroQueryDTO.setEdicoesBase(getEdicoesBase(edicoesBase));
+        filtroQueryDTO.setEdicoesBase(getEdicoesBase(edicoesBase, id, numeroParcial));
         filtroQueryDTO.setEstudoId(id);
         filtroQueryDTO.setFaixaDe(faixaDe);
         filtroQueryDTO.setFaixaAte(faixaAte);
@@ -289,6 +310,22 @@ public class AnaliseParcialController extends BaseController {
         filtroQueryDTO.setEstudoOrigem(estudoOrigem);
         filtroQueryDTO.setDataLancamentoEdicao(DateUtil.parseDataPTBR(dataLancamentoEdicao));
         filtroQueryDTO.setNumeroParcial(numeroParcial);
+        filtroQueryDTO.setNumeroCotasFiltro(cotasFiltro);
+        filtroQueryDTO.setMudarBaseVisualizacao(isMudarBaseVisualizacao);
+        
+        if(filtroQueryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL")){
+//        	boolean isParcialComEdicaoNormal = false;
+//        	
+//        	if(filtroQueryDTO.getEdicoesBase() != null){
+//        		for (EdicoesProdutosDTO edicoesProdutosDTO : filtroQueryDTO.getEdicoesBase()) {
+//					if(!edicoesProdutosDTO.isParcial()){
+//						isParcialComEdicaoNormal = true;
+//					}
+//				}
+//        	}
+        	
+        	filtroQueryDTO.setParcialComEdicaoBaseNormal(true);
+        }
         
         AnaliseEstudoNormal_E_ParcialDTO analise = analiseParcialService.buscaAnaliseParcialPorEstudo(filtroQueryDTO);
         
@@ -327,6 +364,16 @@ public class AnaliseParcialController extends BaseController {
     	vo.setReparteTotalEdicao(analise.getReparteTotalEdicao());
     	vo.setVendaTotalEdicao(analise.getVendaTotalEdicao());
     	
+    	List<EdicoesProdutosDTO> listBaseEstudo = new ArrayList<>();
+    	
+    	if(filtroQueryDTO.isMudarBaseVisualizacao() && filtroQueryDTO.getEdicoesBase() != null){
+    		listBaseEstudo = filtroQueryDTO.getEdicoesBase();
+    	}else{
+    		listBaseEstudo = getEdicoesBase(edicoesBase != null ? edicoesBase : filtroQueryDTO.getEdicoesBase(), id, numeroParcial); 
+    	}
+    	
+    	vo.setEdicoesBase(listBaseEstudo);
+    	
     	if (resumo.getSaldo() != null) {
     		vo.setSaldo(resumo.getSaldo().toBigInteger());
 		}
@@ -352,7 +399,7 @@ public class AnaliseParcialController extends BaseController {
 	}
     
     @SuppressWarnings("unchecked")
-	private List<EdicoesProdutosDTO> getEdicoesBase(List<EdicoesProdutosDTO> edicoesBase) {
+	private List<EdicoesProdutosDTO> getEdicoesBase(List<EdicoesProdutosDTO> edicoesBase, Long idEstudo, Integer numeroParcial) {
     	
     	if (edicoesBase != null) {
     		
@@ -362,6 +409,41 @@ public class AnaliseParcialController extends BaseController {
     	}
     	
     	edicoesBase = (List<EdicoesProdutosDTO>) this.session.getAttribute(EDICOES_BASE_SESSION_ATTRIBUTE);
+    	
+    	if(edicoesBase == null){
+    		
+//    		if(!session.getAttribute("modoAnalise").toString().equalsIgnoreCase("PARCIAL")){
+    			
+			List<EdicaoBaseEstudoDTO> edicaoBaseEstudoDTOs = estudoProdutoEdicaoBaseService.obterEdicoesBase(idEstudo);
+			
+			if(edicaoBaseEstudoDTOs.size() > 0){
+				List<EdicoesProdutosDTO> bases = new ArrayList<>();
+				
+				for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicaoBaseEstudoDTOs) {
+					EdicoesProdutosDTO base = new EdicoesProdutosDTO();
+					
+					base.setCodigoProduto(edicaoBaseEstudoDTO.getCodigoProduto());
+					base.setNomeProduto(edicaoBaseEstudoDTO.getNomeProduto());
+					base.setEdicao(edicaoBaseEstudoDTO.getNumeroEdicao());
+					base.setParcial(edicaoBaseEstudoDTO.isParcial());
+					base.setPeriodo(edicaoBaseEstudoDTO.getPeriodoParcial() != null ? edicaoBaseEstudoDTO.getPeriodoParcial().toString() : null);
+					base.setProdutoEdicaoId(edicaoBaseEstudoDTO.getIdProdutoEdicao());
+					
+					bases.add(base);
+				}
+				
+				return bases;
+			}
+//    		}else{
+//    			List<EdicoesProdutosDTO> baseUtilizadas = analiseParcialService.carregarPeriodosAnterioresParcial(idEstudo, false);
+//    			
+//    			if(baseUtilizadas.size() == 0){
+//    				baseUtilizadas = analiseParcialService.carregarPeriodosAnterioresParcial(idEstudo, true);
+//    			}
+//    			
+//    			return baseUtilizadas;
+//    		}
+    	}
     	
     	return edicoesBase;
     }
@@ -415,9 +497,9 @@ public class AnaliseParcialController extends BaseController {
         	);
         }
         
-        BigDecimal percentualAbrangencia = analiseParcialService.calcularPercentualAbrangencia(estudoId);
+        //BigDecimal percentualAbrangencia = analiseParcialService.calcularPercentualAbrangencia(estudoId);
         
-        result.use(Results.json()).withoutRoot().from(percentualAbrangencia).serialize();
+        result.use(Results.json()).withoutRoot().from("").serialize();
     }
 
     @Post("/mudarReparteLote")
@@ -443,6 +525,8 @@ public class AnaliseParcialController extends BaseController {
     	ValidacaoException validacao = analiseParcialService.validarLiberacaoDeEstudo(estudoId);
     	
     	if(validacao == null || validacao.getValidacao().getTipoMensagem().equals(TipoMensagem.SUCCESS)) {
+    		
+    		analiseParcialService.calcularPercentualAbrangencia(estudoId);
     		
     		analiseParcialService.liberar(estudoId, cotas);
     	} else {
@@ -513,8 +597,13 @@ public class AnaliseParcialController extends BaseController {
     @Post("/pesquisarProdutoEdicao")
     public void pesquisarProdutoEdicao(String codigoProduto, String nomeProduto, Long edicao, Long idClassificacao) {
         Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
-        List<ProdutoEdicaoVendaMediaDTO> edicoes = distribuicaoVendaMediaRepository.pesquisar(produto.getCodigoICD(), nomeProduto, edicao, idClassificacao);
+        
+//        List<ProdutoEdicaoVendaMediaDTO> edicoes = distribuicaoVendaMediaRepository.pesquisar(produto.getCodigoICD(), nomeProduto, edicao, idClassificacao);
+        
+        List<ProdutoEdicaoVendaMediaDTO> edicoes = distribuicaoVendaMediaService.pesquisar(produto.getCodigoICD(), nomeProduto, edicao, idClassificacao);
+        
         TableModel<CellModelKeyValue<ProdutoEdicaoVendaMediaDTO>> table = new TableModel<>();
+        
         table.setRows(CellModelKeyValue.toCellModelKeyValue(edicoes));
         table.setTotal(edicoes.size());
         table.setPage(1);
@@ -583,5 +672,83 @@ public class AnaliseParcialController extends BaseController {
 	    ret[1] = this.repartePdvService.verificarRepartePdv(numeroCota, codigoProduto);
 	    
 	    this.result.use(Results.json()).from(ret, "result").serialize();
+	}
+	
+	@Post
+	public void efetuarBloqueioAnaliseEstudo(Long idProdutoEdicao){
+		
+		String loginUsuario = super.getUsuarioLogado().getLogin();
+		
+		this.bloquearAnaliseEstudo(idProdutoEdicao, this.session, loginUsuario);
+		
+		this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Estudo bloqueado com sucesso."), 
+				"result").recursive().serialize();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void bloquearAnaliseEstudo(Long idProdutoEdicao, HttpSession session, String loginUsuario) {
+		
+		if (idProdutoEdicao == null) {
+			 
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Estudo inválido!"));
+		}
+		
+		// conferir se ja nao tem um estudo aberto em outra aba nesta sessao
+    	String windowname_estudo=(String) session.getAttribute("WINDOWNAME_ESTUDO");
+    	String windowname=(String) session.getAttribute("WINDOWNAME");
+    	
+      	 
+    	if ( windowname_estudo != null && windowname != null && !windowname_estudo.equals(windowname)){
+    		 throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Ja existe um Estudo sendo analisado em outra aba/janela"));
+    	}
+    	
+    	
+		
+		Map<Long, String> mapaAnaliseEstudo = (Map<Long, String>) session.getServletContext().getAttribute(MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
+		
+		if (mapaAnaliseEstudo != null) {
+			
+			String loginUsuarioBloqueio = mapaAnaliseEstudo.get(idProdutoEdicao);
+			
+			if (loginUsuarioBloqueio != null && !loginUsuarioBloqueio.equals(loginUsuario+";"+windowname)) {
+				LOGGER.error("ESTE ESTUDO ja ESTA SENDO ANALISADO PELO USUARIO "+(loginUsuarioBloqueio)+
+						"  BLOQUEANDO COM="+loginUsuario+";"+windowname);
+				LOGGER.error("MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE=" +mapaAnaliseEstudo.toString());
+				
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Este estudo já está sendo analisado pelo usuário [" 
+							+ this.usuarioService.obterNomeUsuarioPorLogin(loginUsuarioBloqueio.split(";")[0]) + "]."));
+			}
+			
+		} else {
+		
+			mapaAnaliseEstudo = new HashMap<Long, String>();
+		}
+		session.setAttribute("WINDOWNAME_ESTUDO",windowname);
+		mapaAnaliseEstudo.put(idProdutoEdicao, loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
+		LOGGER.warn("TRAVANDO ESTUDO COM  "+loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
+		
+		session.getServletContext().setAttribute(MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE, mapaAnaliseEstudo);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static void desbloquearAnaliseEstudo(HttpSession session, String loginUsuario) {
+
+		Map<Long, String> mapaAnaliseEstudo = (Map<Long, String>) 
+				session.getServletContext().getAttribute(MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
+		
+		LOGGER.warn("DESBLOQUEANDO ESTUDO com "+loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
+		
+		if (mapaAnaliseEstudo != null) {
+			
+			for (Map.Entry<Long, String> entry : mapaAnaliseEstudo.entrySet()) {
+				
+				if (entry.getValue().equals(loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"))) {
+					mapaAnaliseEstudo.remove(entry.getKey());
+					session.removeAttribute("WINDOWNAME_ESTUDO");
+					break;
+				}
+			}
+		}
 	}
 }

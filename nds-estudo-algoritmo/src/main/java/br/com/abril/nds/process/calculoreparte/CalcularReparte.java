@@ -208,10 +208,18 @@ public class CalcularReparte extends ProcessoAbstrato {
     public void ajustarReparteCalculado(EstudoTransient estudo) {
 		for (CotaEstudo cota : estudo.getCotas()) {
 			
+			if(cota.getNumeroCota().equals(new Integer(932))){
+				System.out.println("");
+			}
+			
 			BigInteger reparteArredondado = EstudoAlgoritmoService.arredondarPacotePadrao(estudo, new BigDecimal(cota.getReparteCalculado()));
 			
 			if(reparteArredondado.compareTo(cota.getReparteMinimo()) < 0){
-				cota.setReparteCalculado(cota.getReparteMinimo(), estudo);
+				if(cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado,
+					ClassificacaoCota.MaximoMinimo, ClassificacaoCota.CotaMix,
+					ClassificacaoCota.RedutorAutomatico, ClassificacaoCota.BancaSoComEdicaoBaseAberta)){
+					cota.setReparteCalculado(cota.getReparteMinimo(), estudo);
+				}
 			}else{
 				cota.setReparteCalculado(reparteArredondado, estudo);
 			}

@@ -3355,7 +3355,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Long> getIdUltimoLancamentoFechado(String codigoProduto){
+	public List<Long> getIdUltimoLancamentoFechado(String codigoProduto, long estudoId){
 		
 		List<String> statusLancamento = Arrays.asList(StatusLancamento.EXPEDIDO.name(), 
     			StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(),
@@ -3371,6 +3371,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
         sql.append("         join produto_edicao pe ON lct.PRODUTO_EDICAO_ID = pe.ID   ");
         sql.append("         join produto pd ON pe.PRODUTO_ID = pd.ID   ");
         sql.append("       where pd.codigo = :codProduto ");
+        sql.append("       and lct.data_lcto_distribuidor < (select eg.data_lancamento from estudo_gerado eg where eg.id = :estudoId ) ");
         sql.append("       and lct.STATUS in (:statusLancamento)  ");
         sql.append("       and pe.NUMERO_EDICAO =                        ");
         sql.append("          (select pe.NUMERO_EDICAO ");
@@ -3380,12 +3381,15 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
         sql.append("                where pd.codigo = :codProduto ");
         sql.append("                and lct.STATUS in (:statusLancamento)  ");
         sql.append("                and lct.TIPO_LANCAMENTO = 'LANCAMENTO' ");
+        sql.append("                and lct.data_lcto_distribuidor < (select eg.data_lancamento from estudo_gerado eg where eg.id = :estudoId ) ");
         sql.append("                order by lct.DATA_LCTO_DISTRIBUIDOR desc   ");
         sql.append("                limit 1)  ");
+        sql.append("			 	order by lct.data_lcto_distribuidor desc limit 1 ");
         
         SQLQuery query = getSession().createSQLQuery(sql.toString());
         
         query.setParameter("codProduto", codigoProduto);
+        query.setParameter("estudoId", estudoId);
         query.setParameterList("statusLancamento", statusLancamento);
         
         query.addScalar("lancamentoId", StandardBasicTypes.LONG);

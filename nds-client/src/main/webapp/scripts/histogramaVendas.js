@@ -207,13 +207,13 @@ var histogramaVendasController = $.extend(true, {
 		var labelComponente="",labelElemento="";
 		if($("#inserirComponentes", histogramaVendasController.workspace).is(":checked") && 
 				$("#componente", histogramaVendasController.workspace).val()!="-1" && 
-				$("#elemento", histogramaVendasController.workspace).val()!="-1"){
+				$("#histograma_elemento", histogramaVendasController.workspace).val()!="-1"){
 			
 			labelComponente=
 				$("#componente", histogramaVendasController.workspace).children("option:selected:first").text();
 			
 			labelElemento=
-				$("#elemento", histogramaVendasController.workspace).children("option:selected:first").text();
+				$("#histograma_elemento", histogramaVendasController.workspace).children("option:selected:first").text();
 		}
 
         var classificacoes = 
@@ -279,10 +279,10 @@ var histogramaVendasController = $.extend(true, {
 			if ($('#componente', histogramaVendasController.workspace).val() !== "-1") {
 			  carregarCombo(contextPath + "/distribuicao/histogramaVendas/carregarElementos", 
 					  {"componente":$("#componente", histogramaVendasController.workspace).val()},
-			            $("#elemento", histogramaVendasController.workspace), null, null);
+			            $("#histograma_elemento", histogramaVendasController.workspace), null, null);
 			}else{
-				$('#elemento', histogramaVendasController.workspace).html('');
-				$('#elemento', histogramaVendasController.workspace).append("<option value='-1'>Selecione...</option>");
+				$('#histograma_elemento', histogramaVendasController.workspace).html('');
+				$('#histograma_elemento', histogramaVendasController.workspace).append("<option value='-1'>Selecione...</option>");
 			}
 		});
 	},
@@ -292,7 +292,7 @@ var histogramaVendasController = $.extend(true, {
 			formData = new Array();
 		
 		if ($('#inserirComponentes', histogramaVendasController.workspace).is(':checked')) {
-			selector = "input[type='radio'][name='filtroPor']:checked,#inserirComponentes,#componente,#elemento,#codigo,#produto,#edicao";
+			selector = "input[type='radio'][name='filtroPor']:checked,#inserirComponentes,#componente,#histograma_elemento,#codigo,#produto,#edicao";
 		}else {
 			selector = "input[type='radio'][name='filtroPor']:checked,#codigo,#produto,#edicao,#idTipoClassificacaoProduto";
 		}
@@ -375,14 +375,14 @@ var histogramaVendasController = $.extend(true, {
 		$('.filtroTodas', histogramaVendasController.workspace).show();
 		$('.filtroPracaSede', histogramaVendasController.workspace).hide();
 		$('.filtroPracaAtendida', histogramaVendasController.workspace).hide();
-		$('.filtroComponentes', histogramaVendasController.workspace).hide();
+		$('.filtroComponentesHistograma', histogramaVendasController.workspace).hide();
 	},
 	
 	filtroSede : function(){
 		$('.filtroTodas', histogramaVendasController.workspace).hide();
 		$('.filtroPracaSede', histogramaVendasController.workspace).show();
 		$('.filtroPracaAtendida', histogramaVendasController.workspace).hide();
-		$('.filtroComponentes', histogramaVendasController.workspace).hide();
+		$('.filtroComponentesHistograma', histogramaVendasController.workspace).hide();
 		$('#inserirComponentes', histogramaVendasController.workspace).attr('checked', false);
 	},
 	
@@ -390,7 +390,7 @@ var histogramaVendasController = $.extend(true, {
 		$('.filtroTodas', histogramaVendasController.workspace).hide();
 		$('.filtroPracaSede', histogramaVendasController.workspace).hide();
 		$('.filtroPracaAtendida', histogramaVendasController.workspace).show();
-		$('.filtroComponentes', histogramaVendasController.workspace).hide();
+		$('.filtroComponentesHistograma', histogramaVendasController.workspace).hide();
 		$('#inserirComponentes', histogramaVendasController.workspace).attr('checked', false);
 	},
 	
@@ -398,7 +398,7 @@ var histogramaVendasController = $.extend(true, {
 		$('.filtroTodas', histogramaVendasController.workspace).hide();
 		$('.filtroPracaSede', histogramaVendasController.workspace).hide();
 		$('.filtroPracaAtendida', histogramaVendasController.workspace).hide();
-		$('.filtroComponentes', histogramaVendasController.workspace).show();
+		$('.filtroComponentesHistograma', histogramaVendasController.workspace).show();
 	}
 },BaseController);
 //@ sourceURL=histogramaVendas.js

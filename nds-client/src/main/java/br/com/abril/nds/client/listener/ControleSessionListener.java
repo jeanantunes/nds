@@ -14,13 +14,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import br.com.abril.nds.client.component.BloqueioConferenciaEncalheComponent;
 import br.com.abril.nds.controllers.devolucao.MatrizRecolhimentoController;
-import br.com.abril.nds.controllers.distribuicao.HistogramaPosEstudoController;
+import br.com.abril.nds.controllers.distribuicao.AnaliseParcialController;
 import br.com.abril.nds.controllers.lancamento.MatrizLancamentoController;
 
 
@@ -133,7 +131,8 @@ public class ControleSessionListener implements HttpSessionListener {
       	  return;
       }
 	    
-		HistogramaPosEstudoController.desbloquearAnaliseEstudo(session,usuario);
+//		HistogramaPosEstudoController.desbloquearAnaliseEstudo(session,usuario);
+		AnaliseParcialController.desbloquearAnaliseEstudo(session, usuario);
 	}
 	
 	/**

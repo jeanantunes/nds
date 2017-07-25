@@ -97,6 +97,25 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 	}
 	
 	@Override
+	public Produto obterProdutoPorCodigoAndSegmento(String codigoProduto, String segmentoDescricao) {
+		
+		String hql = "from Produto produto "
+				   + " join produto.tipoSegmentoProduto segmento "
+				   + " where produto.codigo = :codigo or produto.codigo_icd = :codigo "
+				   + " 		 AND segmento.descricao = :segmento ";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		//query.setParameter("codigo", leftPad(codigoProduto, 8, "0"));
+		query.setParameter("codigo", codigoProduto);
+		query.setParameter("segmento", segmentoDescricao.toUpperCase());
+		
+		query.setMaxResults(1);
+		
+		return (Produto) query.uniqueResult();
+	}
+	
+	@Override
 	public Produto obterProdutoBalanceadosPorCodigo(String codigoProduto, Date dataLancamento) {
 		
 		String hql = " select produto "
@@ -119,7 +138,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 
 	@Override
 	public String obterNomeProdutoPorCodigo(String codigoProduto) {
-		Query query = this.getSession().createQuery("select p.nome from Produto p where p.codigo = :codigoProduto");
+		Query query = this.getSession().createQuery("select p.nomeComercial from Produto p where p.codigo = :codigoProduto");
 		query.setParameter("codigoProduto", codigoProduto);
 		
 		return (String) query.uniqueResult();

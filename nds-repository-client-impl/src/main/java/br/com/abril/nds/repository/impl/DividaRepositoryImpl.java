@@ -548,6 +548,10 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
             hql.append(" AND banco.id = :idBanco ");
         }
         
+        if (filtro.isArquivoCobrancaRegistrada() && !filtro.isReprocessar()){
+        	hql.append(" AND cobranca.cobrancaRegistradaGerada = false ");
+        }
+        
         hql.append(" GROUP BY cobranca.id ");
         
         return hql.toString();

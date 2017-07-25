@@ -266,12 +266,15 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             
             if (queryDTO.possuiOrdenacaoCota()) {
 
-                sql.append(" AND c.numero_cota between :filterSortFrom and :filterSortTo ");
+//                sql.append(" AND c.numero_cota between :filterSortFrom and :filterSortTo ");
+            	sql.append(" AND c.numero_cota in (:numeroCotasFiltro) ");
             }
             
             if (queryDTO.possuiReducaoReparte()) {
 
-                sql.append(" and CAST((((coalesce(ec.reparte_inicial, 0) - coalesce(ec.reparte, 0))/ec.qtde_efetiva)*10000)/100 as SIGNED INT) between :filterSortFrom and :filterSortTo ");
+//                sql.append(" and CAST((((coalesce(ec.reparte_inicial, 0) - coalesce(ec.reparte, 0))/ec.qtde_efetiva)*10000)/100 as SIGNED INT) between :filterSortFrom and :filterSortTo ");
+            	sql.append(" and (cast(100-((coalesce(ec.qtde_efetiva,0)*100)/ec.reparte_inicial) as SIGNED int) between :filterSortFrom and :filterSortTo ");
+            	sql.append(" or cast(100-((coalesce(ec.qtde_efetiva,0)*100)/ec.reparte_inicial) as SIGNED int) between (:filterSortTo * -1) and -1 )");
             }
         }    
   
@@ -350,12 +353,16 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
         	
-            if (queryDTO.possuiOrdenacaoReparte() || queryDTO.possuiOrdenacaoRanking() || 
-            		queryDTO.possuiOrdenacaoCota() || queryDTO.possuiReducaoReparte()) {
+            if (queryDTO.possuiOrdenacaoReparte() || queryDTO.possuiOrdenacaoRanking() || queryDTO.possuiReducaoReparte()) {
             	
             	query.setParameter("filterSortFrom", queryDTO.getFilterSortFrom());
             	
             	query.setParameter("filterSortTo", queryDTO.getFilterSortTo());
+            }
+            
+            if(queryDTO.possuiOrdenacaoCota()){
+            	
+            	query.setParameterList("numeroCotasFiltro", queryDTO.getNumeroCotasFiltro().split(","));
             }
         }    
         
@@ -460,7 +467,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("       pe.numero_edicao edicao, ");
         sql.append("       epe.periodo_parcial periodo, ");
         sql.append("       tcp.id idTipoClassificacao, ");
-        sql.append("       (case when l.tipo_lancamento = 'PARCIAL' then 1 else 0 end) parcial, ");
+        sql.append("       (case when l.periodo_lancamento_parcial_id is not null then 1 else 0 end) parcial, ");
         sql.append("       (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then 0 else 1 end) edicaoAberta, ");
         sql.append("       l.data_lcto_distribuidor as dtLancamento ");
         sql.append("  from estudo_produto_edicao_base epe ");
@@ -543,7 +550,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     
     @SuppressWarnings("unchecked")
     @Override
-    public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase, boolean parcialComRedistribuicao) {
+    public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase, 
+    		boolean parcialComRedistribuicao, boolean buscarPeriodoExato) {
 
         StringBuilder sql = new StringBuilder();
         
@@ -552,7 +560,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("        p.nome nomeProduto, ");
         sql.append("        pe.numero_edicao edicao, ");
         sql.append("        plp.numero_periodo periodo, ");
-        sql.append("        l.data_lcto_distribuidor dataLancamento, ");
+        sql.append("        l.data_lcto_distribuidor dtLancamento, ");
         sql.append("        tcp.id idTipoClassificacao, ");
         sql.append("        (case when plp.id is not null then 1 else 0 end) parcial, ");
         
@@ -602,18 +610,30 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("   LEFT JOIN tipo_movimento tipo ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID");
         sql.append(" where eg.id = :estudoId ");
         sql.append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
-        sql.append( (parcialComRedistribuicao) ? " and plp.NUMERO_PERIODO <= :numeroPeriodoBase " : " and plp.NUMERO_PERIODO < :numeroPeriodoBase ");
+        
+        if(!buscarPeriodoExato){
+        	if(parcialComRedistribuicao || numeroPeriodoBase == 1){
+        		sql.append(" and plp.NUMERO_PERIODO <= :numeroPeriodoBase ");
+        	}else{
+        		sql.append(" and plp.NUMERO_PERIODO < :numeroPeriodoBase ");
+        	}
+        }else{
+        	sql.append(" and plp.NUMERO_PERIODO = :numeroPeriodoBase ");
+        }
+        
+//        sql.append( (parcialComRedistribuicao) ? " and plp.NUMERO_PERIODO <= :numeroPeriodoBase " : " and plp.NUMERO_PERIODO < :numeroPeriodoBase ");
         sql.append(" group by plp.NUMERO_PERIODO, ecg.cota_id ");
         sql.append(" order by l.data_lcto_distribuidor desc, ");
         sql.append("   pe.numero_edicao desc, ");
         sql.append("   plp.numero_periodo desc ");
 
-        Query query = getSession().createSQLQuery(sql.toString())
+         Query query = getSession().createSQLQuery(sql.toString())
                 .addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
                 .addScalar("codigoProduto", StandardBasicTypes.STRING)
                 .addScalar("nomeProduto", StandardBasicTypes.STRING)
                 .addScalar("edicao", StandardBasicTypes.BIG_INTEGER)
                 .addScalar("periodo", StandardBasicTypes.STRING)
+                .addScalar("dtLancamento", StandardBasicTypes.DATE)
                 .addScalar("idTipoClassificacao", StandardBasicTypes.BIG_INTEGER)
                 .addScalar("parcial", StandardBasicTypes.BOOLEAN)
                 .addScalar("edicaoAberta", StandardBasicTypes.BOOLEAN)
@@ -754,16 +774,23 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     
     @Override
 	@SuppressWarnings("unchecked")
-	public Map<Integer, List<EdicoesProdutosDTO>> buscaHistoricoDeVendaTodasCotas(List<Long> listCotaId, List<Long> listProdutoEdicaoId) {
+	public Map<Integer, List<EdicoesProdutosDTO>> buscaHistoricoDeVendaTodasCotas(List<Long> listCotaId, List<Long> listProdutoEdicaoId, boolean isSepararPeriodosParcial) {
         
     	StringBuilder sql = new StringBuilder();
                                                                                                                                         
     	
     	sql.append(" select T.numeroCota as numeroCota, T.idCota as idCota, T.produtoEdicaoId produtoEdicaoId, ");
+    	
+    	if(isSepararPeriodosParcial){
+    		sql.append("T.isParcial as parcial, T.numPeriodo as periodo, ");
+    	}
+    	
     	sql.append(" sum(T.reparte) as reparte, sum(T.venda) as venda from ( ");
     	sql.append(" select ");
     	sql.append("         c.NUMERO_COTA as numeroCota, ");
     	sql.append("         c.id as idCota, ");
+    	sql.append("  		 plp.numero_periodo as numPeriodo, ");
+    	sql.append("  		 if(plp.numero_periodo is not null, true, false) isParcial, ");
     	sql.append("         mec.produto_edicao_id produtoEdicaoId, ");
     	sql.append("         cast(sum( case  ");
     	sql.append("             when tm.OPERACAO_ESTOQUE = 'ENTRADA' then mec.QTDE  ");
@@ -831,13 +858,23 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append("         mec.PRODUTO_EDICAO_ID, mec.cota_id, plp.NUMERO_PERIODO");
     	sql.append("         ) T group by T.numeroCota, T.produtoEdicaoId ");
     	
+    	if(isSepararPeriodosParcial){
+    		sql.append("        , T.numPeriodo ");
+    	}
     	
-        Query query = getSession().createSQLQuery(sql.toString())
-        		.addScalar("numeroCota", StandardBasicTypes.INTEGER)
-        		.addScalar("idCota", StandardBasicTypes.INTEGER)
-                .addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
-                .addScalar("reparte", StandardBasicTypes.BIG_DECIMAL)
-                .addScalar("venda", StandardBasicTypes.BIG_DECIMAL);
+    	
+        Query query = getSession().createSQLQuery(sql.toString());
+        
+        		((SQLQuery) query).addScalar("numeroCota", StandardBasicTypes.INTEGER);
+        		((SQLQuery) query).addScalar("idCota", StandardBasicTypes.INTEGER);
+                ((SQLQuery) query).addScalar("produtoEdicaoId", StandardBasicTypes.LONG);
+                ((SQLQuery) query).addScalar("reparte", StandardBasicTypes.BIG_DECIMAL);
+                ((SQLQuery) query).addScalar("venda", StandardBasicTypes.BIG_DECIMAL);
+                
+        if(isSepararPeriodosParcial){
+        	((SQLQuery) query).addScalar("parcial", StandardBasicTypes.BOOLEAN); 
+        	((SQLQuery) query).addScalar("periodo", StandardBasicTypes.STRING);
+        }
 
         
         //Tratamento Paliativo, não interfer no resultado final
@@ -898,7 +935,13 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append(" (SELECT ");
     	sql.append("   T.cotaID cotaId, ");
     	sql.append("   T.numCota, ");
-    	sql.append("   (sum(T.venda)*100)/SUM(T.REPARTE) as percVenda ");
+    	
+    	if(queryDTO.possuiOrdenacaoQtdDeVenda()){
+    		sql.append("  (sum( T.venda )/:qtdEdicoes) as QtdVenda ");
+    	}else{
+    		sql.append("   (sum(T.venda)*100)/SUM(T.REPARTE) as percVenda ");
+    	}
+    	
     	sql.append(" FROM  ");
     	sql.append(" (SELECT mec.produto_edicao_id produtoEdicaoId, ");
     	sql.append("         mec.cota_id cotaID, ");
@@ -943,12 +986,20 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append("       AND mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
 
     	sql.append(" GROUP BY mec.cota_id, mec.produto_edicao_id, mec.lancamento_id)T group by T.cotaID) tt  ");
-    	sql.append("     where tt.percVenda BETWEEN :de AND :ate ");
+    	
+    	if(queryDTO.possuiOrdenacaoQtdDeVenda()){
+    		sql.append("     where tt.QtdVenda BETWEEN :de AND :ate ");
+    	}else{
+    		sql.append("     where tt.percVenda BETWEEN :de AND :ate ");
+    	}
+    	
+    	
     	
     	SQLQuery query = getSession().createSQLQuery(sql.toString());
     	
     	query.setParameterList("listaCota", listCotaId);
     	query.setParameterList("listaPE", listProdutoEdicaoId);
+    	query.setParameter("qtdEdicoes", listProdutoEdicaoId.size());
     	query.setParameterList("statusLanc", statusLancamento);
     	query.setParameter("de", queryDTO.getFilterSortFrom());
     	query.setParameter("ate", queryDTO.getFilterSortTo());
@@ -1338,7 +1389,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		sql.append("   on epe.ESTUDO_ID = :estudoId ");
 		sql.append(" where lc.PRODUTO_EDICAO_ID = :produtoEdicaoId  ");
 		sql.append("     and plp.NUMERO_PERIODO = epe.PERIODO_PARCIAL  ");
-		sql.append(" order by plp.NUMERO_PERIODO desc limit 3; ");
+		sql.append(" group by plp.NUMERO_PERIODO order by plp.NUMERO_PERIODO desc ; ");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		

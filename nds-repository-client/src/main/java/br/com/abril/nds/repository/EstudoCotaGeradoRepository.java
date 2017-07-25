@@ -59,4 +59,8 @@ public interface EstudoCotaGeradoRepository extends Repository<EstudoCotaGerado,
 	EstudoCotaGerado obterEstudoCotaGerado(Long cotaId, Long estudoId);
 	
 	void removerEstudoCotaGerado(Long idEstudoCotaGerado);
+
+	void gravarCotasEstudoCotaGerado(final List<EstudoCotaGerado> cotas);
+
+	void inserirProdutoBase(Long idEstudo, Long idProdutoEdicao, Long pesoEdicao, boolean isParcial, boolean isEdicaoAberta, Long periodoParcial);
 }

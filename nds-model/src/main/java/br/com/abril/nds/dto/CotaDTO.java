@@ -92,6 +92,12 @@ public class CotaDTO implements Serializable {
     private Integer fxEdicoesAtendidas;
     private Integer fxQuantidadeEdicoes;
     private Integer fxQuantidadeExemplares;
+    
+    /*
+     * Detalhes Cota Analise estudo
+     */
+    private String nomeProduto;
+    private String codigoProduto;
 
     public String getNumeroRG() {
         return numeroRG;
@@ -796,4 +802,21 @@ public class CotaDTO implements Serializable {
 	public void setContribuinteICMS(boolean contribuinteICMS) {
 		this.contribuinteICMS = contribuinteICMS;
 	}
+
+	public String getNomeProduto() {
+		return nomeProduto;
+	}
+
+	public void setNomeProduto(String nomeProduto) {
+		this.nomeProduto = nomeProduto;
+	}
+
+	public String getCodigoProduto() {
+		return codigoProduto;
+	}
+
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
+	}
+	
 }

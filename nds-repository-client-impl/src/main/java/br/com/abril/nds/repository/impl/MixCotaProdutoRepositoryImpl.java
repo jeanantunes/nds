@@ -77,7 +77,7 @@ public class MixCotaProdutoRepositoryImpl extends AbstractRepositoryModel<MixCot
 		.append(" mix_cota_produto.REPARTE_MAX as reparteMaximo, ")
 		.append(" mix_cota_produto.REPARTE_MIN as reparteMinimo, ")  
 		.append(" mix_cota_produto.ID_COTA as idCota, ")
-		.append(" mix_cota_produto.ID_PRODUTO as idProduto, ")
+		.append(" produto.id as idProduto, ")
 		.append(" usuario.login as usuario, ")
 		.append(" tipo_classificacao_produto.descricao as classificacaoProduto, ")
 		.append(" tipo_classificacao_produto.id as tipoClassificacaoProdutoID ")
@@ -139,7 +139,9 @@ public class MixCotaProdutoRepositoryImpl extends AbstractRepositoryModel<MixCot
 			sql .append(" select ") 
 			.append(" coalesce(round(avg(epc.qtde_recebida), 0),0) as reparteMedio, ")
 			.append(" coalesce(round(avg(epc.qtde_recebida - epc.qtde_devolvida), 0),0) as vendaMedia, ")
-			.append(" coalesce((select round(lc.reparte,0) from lancamento lc where lc.produto_edicao_id=pe.id and lancamento.status in ('LANÇADA','CALCULADA') limit 1),0) as ultimoReparte ")
+			.append(" coalesce((select ec.reparte from estudo_cota ec  join estudo et on ec.estudo_id = et.id ")
+			.append("  join produto_edicao pe on et.produto_edicao_id = pe.id where ec.cota_id = :idCota ")
+			.append("  and pe.produto_id = :idProduto order by ec.id desc limit 1), 0) as ultimoReparte ")
 			.append(" from estoque_produto_cota epc ")
 			.append(" left join produto_edicao pe ON pe.ID = epc.PRODUTO_EDICAO_ID ")
 			.append(" left join lancamento on lancamento.PRODUTO_EDICAO_ID = pe.ID ")
@@ -203,6 +205,7 @@ public class MixCotaProdutoRepositoryImpl extends AbstractRepositoryModel<MixCot
 		.append(" mix_cota_produto.REPARTE_MAX as reparteMaximo, ")
 		.append(" mix_cota_produto.REPARTE_MIN as reparteMinimo, ")  
 		.append(" mix_cota_produto.ID_COTA as idCota, ")
+		.append(" produto.id as idProduto, ")
 //		.append(" mix_cota_produto.ID_PRODUTO as idProduto, ")
 		.append(" (select count(pdv.id) from pdv where cota.id = pdv.cota_id) as qtdPdv, ") 
 		.append(" usuario.login as usuario, ")
@@ -296,21 +299,23 @@ public class MixCotaProdutoRepositoryImpl extends AbstractRepositoryModel<MixCot
 			}
 			sql = new StringBuilder("");
 			
-			sql .append(" select ") 
+			sql.append(" select ") 
 			.append(" coalesce(round(avg(epc.qtde_recebida), 0),0) as reparteMedio, ")
 			.append(" coalesce(round(avg(epc.qtde_recebida - epc.qtde_devolvida), 0),0) as vendaMedia, ")
-			.append(" coalesce((select round(lc.reparte,0) from lancamento lc where lc.produto_edicao_id=pe.id and lancamento.status in ('LANÇADA','CALCULADA') limit 1),0) as ultimoReparte ")
+			.append(" coalesce((select ec.reparte from estudo_cota ec  join estudo et on ec.estudo_id = et.id ")
+			.append("  join produto_edicao pe on et.produto_edicao_id = pe.id where ec.cota_id = :idCota ")
+			.append("  and pe.produto_id = :idProduto order by ec.id desc limit 1), 0) as ultimoReparte ")
 			.append(" from estoque_produto_cota epc ")
 			.append(" left join produto_edicao pe ON pe.ID = epc.PRODUTO_EDICAO_ID ")
 			.append(" left join lancamento on lancamento.PRODUTO_EDICAO_ID = pe.ID ")
 			.append(" where epc.COTA_ID = :idCota  and pe.PRODUTO_ID = :idProduto ")
 			.append(" and pe.NUMERO_EDICAO in :numeroEdicaoList ");
 			
-			
 			query = getSession().createSQLQuery(sql.toString());
 			query.setParameter("idCota", mixCotaDTO.getIdCota().longValue());
 			query.setParameter("idProduto", mixCotaDTO.getIdProduto());
 			query.setParameterList("numeroEdicaoList", obterNumeroDas6UltimasEdicoesFechadas.toArray());
+			
 			List<Map> list2 = query.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE).list();
 			
 			for (Map object : list2) {
