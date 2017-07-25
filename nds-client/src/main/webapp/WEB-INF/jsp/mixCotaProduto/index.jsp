@@ -341,7 +341,7 @@
                 </td>
            		<td><input type="text"  style="width:80px;" maxlength="5"></td>
            		<td><input type="text"  style="width:80px;" maxlength="5"></td>
-           		<td><input type="checkbox" name="usarICDEstudo" checked/></td>
+           		<td align="center"><input type="checkbox" name="usarICDEstudo" checked/></td>
            		<td><input type="image" id="excluirLinha0" src="images/ico_excluir.gif" onclick="mixCotaProdutoController.excluirLinha($(this));" /></td>
    			</tr>
    			</tbody>

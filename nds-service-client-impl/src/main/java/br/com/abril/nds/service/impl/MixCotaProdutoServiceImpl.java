@@ -270,6 +270,11 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 					mixCotaProduto.setReparteMinimo(mixCotaProdutoDTO.getReparteMinimo());
 					mixCotaProduto.setReparteMaximo(mixCotaProdutoDTO.getReparteMaximo());
 					mixCotaProduto.setUsuario(usuario);
+					mixCotaProduto.setUsarICDEstudo(mixCotaProdutoDTO.isUsarICDEstudo());
+					
+					if(!mixCotaProdutoDTO.isUsarICDEstudo()){
+						mixCotaProduto.setCodigoProduto(mixCotaProdutoDTO.getCodigoProduto());
+					}
 
 					mixCotaProdutoRepository.adicionar(mixCotaProduto);
 

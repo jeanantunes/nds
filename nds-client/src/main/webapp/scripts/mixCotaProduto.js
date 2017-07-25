@@ -820,6 +820,10 @@ var mixCotaProdutoController = $.extend(true, {
 									  name : "listaNovosMixCota["+idx+"].classificacaoProduto" , 
 									  value : $("#classifMixModal"+idx).val()
 									  });
+								 listaNovosMixCota.push({
+									  name : "listaNovosMixCota["+idx+"].isUsarICDEstudo" , 
+									  value : $("#isUsarICDEstudo"+idx).is(":checked")
+									  });
 								 qntItens ++;
 							 });
 							 
@@ -1008,8 +1012,8 @@ var mixCotaProdutoController = $.extend(true, {
 			$(tr).find("input:text:eq(1)").attr("id","produtoModal"+idx);
 			$(tr).find("input:text:eq(2)").attr("id","repMinimo"+idx);
 			$(tr).find("input:text:eq(3)").attr("id","repMaximo"+idx);
-			$(tr).find("input:text:eq(4)").attr("id","isUsarICDEstudo"+idx);
 			$(tr).find("select:eq(0)").attr("id","classifMixModal"+idx);
+			$(tr).find("input:checkbox:eq(0)").attr("id","isUsarICDEstudo"+idx);
 			
 		});
 	},
