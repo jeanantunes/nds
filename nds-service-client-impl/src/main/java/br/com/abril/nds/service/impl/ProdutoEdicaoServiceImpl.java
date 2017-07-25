@@ -693,6 +693,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         } else {
             produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
             semRestricao = validarAtualizacaoCampoSemRestricao(dto, produtoEdicao);
+            
+            if(produtoEdicao != null && dto.getCodigoDeBarras() != null){
+            	if((produtoEdicao.getCodigoDeBarras() == null || produtoEdicao.getCodigoDeBarras().isEmpty())
+            			||(!produtoEdicao.getCodigoDeBarras().equalsIgnoreCase(dto.getCodigoDeBarras()))){
+            		produtoEdicao.setCodigoDeBarrasAtualizado(true);
+            	}
+            }
+            
         }
         
         boolean indDataLancamentoAlterada = true;
@@ -1847,6 +1855,8 @@ if ( dto.getRepartePrevisto() != null) {
             codigoProduto = Util.padLeft(codigoProduto, "0", 8);
         }
         
+        filtro.setIdsEdicoes(produtoEdicaoRepository.obterIdsEdicoesPorCodigoNumeroEdicoes(codigoProduto, edicoes));
+        
         final List<AnaliseHistogramaDTO> list = new ArrayList<AnaliseHistogramaDTO>();
         
         final String[] newFaixasVenda = new String[faixasVenda.length];
@@ -1860,6 +1870,7 @@ if ( dto.getRepartePrevisto() != null) {
             final ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
             dto.setCodigoProduto(codigoProduto);
             dto.setNumeroEdicao(Long.valueOf(strEd));
+            dto.setId(produtoEdicaoRepository.obterIdEdicaoPorCodigoNumeroEdicao(codigoProduto, strEd));
             lstPrDTO.add(dto);
         }
         
@@ -1875,27 +1886,31 @@ if ( dto.getRepartePrevisto() != null) {
         final StringBuilder strCotas = new StringBuilder();
         
         for (int i = 0; i < newFaixasVenda.length; i++) {
+        	
+        	final StringBuilder strCotasDaFaixa = new StringBuilder();
+        	
             final String[] faixa = newFaixasVenda[i].split("-");
             final AnaliseHistogramaDTO obj =
                     produtoEdicaoRepository.obterBaseEstudoHistogramaPorFaixaVenda(
                             filtro, codigoProduto, Integer.parseInt(faixa[0]), Integer.parseInt(faixa[1]), edicoes);
             
-            final List<Integer> cotas = new ArrayList<Integer>();
-            if (!obj.getIdCotaStr().isEmpty()){
-                
-                for (final String strCota : obj.getIdCotaStr().split(",")){
-                    cotas.add(Integer.valueOf(strCota));
-                }
-                
-                strCotas.append(strCotas.length() == 0 ? obj.getIdCotaStr() : "," + obj.getIdCotaStr());
-            }
+            final List<Integer> cotas = produtoEdicaoRepository.obterCotasBaseEstudoHistogramaPorFaixaVenda(filtro, codigoProduto, Integer.parseInt(faixa[0]), Integer.parseInt(faixa[1]), edicoes);
+            
+            obj.setQtdeCotas(BigInteger.valueOf(cotas.size()));
             
             if (!cotas.isEmpty()){
+            	
+            	for (Integer numCota : cotas) {
+            		strCotas.append(strCotas.length() == 0 ? numCota.toString() : "," + numCota.toString());
+            		strCotasDaFaixa.append(strCotasDaFaixa.length() == 0 ? numCota.toString() : "," + numCota.toString());
+				}
+            	
+            	obj.setIdCotaStr(strCotasDaFaixa.toString());
                 
             	Collections.sort(lstPrDTO);
             	
                 final List<AnaliseHistoricoDTO> historico =
-                        cotaService.buscarHistoricoCotas(lstPrDTO, cotas, null, null);
+                        cotaService.buscarHistoricoCotas(lstPrDTO, cotas, null, null, false);
                 
                 BigDecimal vendaMedia = BigDecimal.ZERO, reparteMedio = BigDecimal.ZERO;
                 
@@ -2064,7 +2079,7 @@ if ( dto.getRepartePrevisto() != null) {
 
     	for (ProdutoEdicaoDTO peDTO : listEdicoesProdutoDto) {
     		if((peDTO.getDescricaoSituacaoLancamento().equalsIgnoreCase("FECHADO")) 
-    				&& (peDTO.getQtdeVendas() == null || peDTO.getQtdeVendas().compareTo(BigInteger.ZERO) <= 0)){
+    				&& (peDTO.getQtdeVendas() == null || peDTO.getQtdeVendas().compareTo(BigInteger.ZERO) == 0)){
     			peDTO.setQtdeVendas(estoqueProdutoService.obterVendaBaseadoNoEstoque(peDTO.getId()).toBigInteger());
     		}
     		

@@ -1503,4 +1503,16 @@ public class CobrancaServiceImpl implements CobrancaService {
 	public Long qtdCobrancasConsolidadasBaixadas (Date dataOperacao){
 		return this.cobrancaRepository.qtdCobrancasConsolidadasBaixadas(dataOperacao);
 	}
+	
+	@Override
+	@Transactional
+	public void atualizarFlagCobrancaRegistradaGerada(List<Long> idCobrancas){
+		
+		List<Cobranca> cobrancas = cobrancaRepository.obterCobrancasPorIDS(idCobrancas);
+		
+		for (Cobranca cobranca : cobrancas){
+			cobranca.setCobrancaRegistradaGerada(true);
+			cobrancaRepository.merge(cobranca);
+		}
+	}
 }

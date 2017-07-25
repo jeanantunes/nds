@@ -2907,10 +2907,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
             
             break;
         case COTAS_A_VISTA:
-            hql.append(" LEFT JOIN cota.parametroCobranca as parametroCobranca ");
-            
-            whereParameter.append(" parametroCobranca.tipoCota = :tipoCota AND");
-            parameters.put("tipoCota", TipoCota.A_VISTA);
+            whereParameter.append(" cota.tipoCota = :tipoCota AND");
+            parameters.put("tipoCota", TipoCota.valueOf(elemento)); 
             
             break;
         case COTAS_NOVAS_RETIVADAS:
@@ -2968,7 +2966,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         
         hql.append(" GROUP BY cota.numeroCota ");
         
-        final Query query = super.getSession().createQuery(hql.toString());
+        final Query query = super.getSession().createQuery(hql.toString()); 
         
         this.setParameters(query, parameters);
         
@@ -3053,6 +3051,44 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseHistoricoDTO.class));
         
         return query.list();
+    }
+    
+    @Override
+	@SuppressWarnings("unchecked")
+	public List<AnaliseHistoricoDTO> buscarDadosCotasSemHistorico(List<Integer> listCota) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select  ");
+		sql.append(" 	cota.numero_Cota as numeroCota,  ");
+		sql.append(" 	cota.situacao_Cadastro as statusCotaFormatado,  ");
+		sql.append(" 	coalesce(pessoa.nome_Fantasia,pessoa.razao_Social,pessoa.nome,'') as nomePessoa,  ");
+		sql.append(" 	count(distinct pdvs.id) as qtdPdv  ");
+		sql.append(" from  ");
+		sql.append(" 	Cota cota  ");
+		sql.append(" 	left join Pessoa pessoa   ");
+		sql.append(" 		on cota.pessoa_id = pessoa.id  ");
+		sql.append(" 	left join pdv pdvs  ");
+		sql.append(" 		on pdvs.cota_id = cota.id  ");
+		sql.append(" where  ");
+		sql.append(" 	cota.numero_Cota in(:cotas)  ");
+		sql.append(" 	AND cota.situacao_cadastro = 'ATIVO' ");
+		sql.append(" group by  ");
+		sql.append(" 	cota.numero_Cota  ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+
+		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		query.addScalar("statusCotaFormatado", StandardBasicTypes.STRING);
+		query.addScalar("nomePessoa", StandardBasicTypes.STRING);
+		query.addScalar("qtdPdv", StandardBasicTypes.LONG);
+		
+		query.setParameterList("cotas", listCota);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseHistoricoDTO.class));
+        
+		return query.list();
+        
     }
     
     @Override
@@ -3574,6 +3610,29 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     }
     
     @Override
+	@SuppressWarnings("unchecked")
+    public List<CotaDTO> buscarCotasCom_e_SemRaparte() {
+        
+        final StringBuilder sql = new StringBuilder();
+        
+        sql.append(" select   ");
+        sql.append(" 	ct.numero_cota as numeroCota,  ");
+        sql.append(" 	coalesce(pessoa.nome_Fantasia,pessoa.razao_Social,pessoa.nome,'') as nomePessoa  ");
+        sql.append(" from cota ct  ");
+        sql.append(" 	left join Pessoa pessoa   ");
+        sql.append(" 		on ct.pessoa_id = pessoa.id  ");
+        sql.append(" where ct.situacao_cadastro in ('ATIVO', 'SUSPENSO')  ");
+        sql.append(" group by ct.id order by ct.numero_cota  ");
+        
+        
+        final Query query = super.getSession().createSQLQuery(sql.toString());
+        
+        query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
+        
+        return query.list();
+    }
+    
+    @Override
     public SituacaoCadastro obterSituacaoCadastroCota(final Integer numeroCota) {
         
         final Query query = this.getSession().createQuery(
@@ -3903,6 +3962,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append(" SELECT  ");
 		
 		sql.append("   c.NUMERO_COTA numeroCota, ");
+		sql.append("   c.tipo_distribuicao_cota tipoDistribuicaoCota, ");
+		sql.append("   tpPDV.descricao tipoPDVPrincipal, ");
 		sql.append("   endereco.TIPO_LOGRADOURO tipoLogradouro, ");
 		sql.append("   endereco.LOGRADOURO logradouro, ");
 		sql.append("   endereco.NUMERO numeroEndereco, ");
@@ -3922,12 +3983,16 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append("   on endPdv.PDV_ID = pdv.ID ");
 		sql.append(" join endereco  ");
 		sql.append("   ON endPdv.ENDERECO_ID = endereco.ID ");
+		sql.append(" left join tipo_ponto_pdv tpPDV  ");
+		sql.append("   on pdv.tipo_ponto_pdv_id = tpPDV.id ");
 
 		sql.append(" WHERE c.NUMERO_COTA in (:cotas)  ");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 
 		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		query.addScalar("tipoDistribuicaoCota", StandardBasicTypes.STRING);
+		query.addScalar("tipoPDVPrincipal", StandardBasicTypes.STRING);
 		query.addScalar("tipoLogradouro", StandardBasicTypes.STRING);
 		query.addScalar("logradouro", StandardBasicTypes.STRING);
 		query.addScalar("numeroEndereco", StandardBasicTypes.STRING);
@@ -4079,6 +4144,22 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("enderecoLED", enderecoLED);
+		
+		return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Long> buscarCotasQueNaoRecebeFornecedorDoProduto(Long idProdutoEdicao){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select id from cota where id not in (select cota_id from cota_fornecedor where fornecedor_id in "
+				+ "(select fornecedores_id from produto_fornecedor where produto_id = (select produto_id from produto_edicao pe where id = :idProdutoEdicao))); ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
 		return query.list();
 	}

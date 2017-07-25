@@ -1779,43 +1779,55 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				return;
 			} else {
 				
-				var modoAnalise =  selecionado.modoAnalise != undefined ? selecionado.modoAnalise : 'NORMAL'; 
+				//efetuarBloqueioAnaliseEstudo
 				
-				var reparteOrigemCopia = $("#copiarEstudo-copia-reparte", MatrizDistribuicao.workspace).text();
-				
-				if(reparteOrigemCopia != '' && reparteOrigemCopia != undefined){
-					var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + selecionado.estudo + '&modoAnalise='+ modoAnalise 
-								   +'&reparteCopiado=' +reparteOrigemCopia;
-				}else{
-					var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + selecionado.estudo + '&modoAnalise='+ modoAnalise;
-				}
-				
-				reparteOrigemCopia = '';
-				
-				var abaAberta = false;
-				
-				$('#workspace .ui-tabs-nav li a').each(function(k, v){ 
-					if($(v).text() == 'Análise de Estudos') {
-						console.log(k +' - '+ $(v).text());
-						$("#workspace").tabs('option', 'selected', k); 
-						$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));
-						// $("#workspace").tabs('load', k);
-						abaAberta = true;
-					} 
-				});
-				
-				if(abaAberta){
+				$.postJSON(pathTela + "/distribuicao/analise/parcial/efetuarBloqueioAnaliseEstudo", 
+			               [{name : "idProdutoEdicao" , value : selecionado.idProdutoEdicao}],
+				    function(result) { 
+						var modoAnalise =  selecionado.modoAnalise != undefined ? selecionado.modoAnalise : 'NORMAL'; 
+						
+						var reparteOrigemCopia = $("#copiarEstudo-copia-reparte", MatrizDistribuicao.workspace).text();
+						
+						if(reparteOrigemCopia != '' && reparteOrigemCopia != undefined){
+							var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + selecionado.estudo + '&modoAnalise='+ modoAnalise 
+										   +'&reparteCopiado=' +reparteOrigemCopia;
+						}else{
+							var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + selecionado.estudo + '&modoAnalise='+ modoAnalise;
+						}
+						
+						reparteOrigemCopia = '';
+						
+						var abaAberta = false;
+						
+						$('#workspace .ui-tabs-nav li a').each(function(k, v){ 
+							if($(v).text() == 'Análise de Estudos') {
+								console.log(k +' - '+ $(v).text());
+								$("#workspace").tabs('option', 'selected', k); 
+								$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));
+								// $("#workspace").tabs('load', k);
+								abaAberta = true;
+							} 
+						});
+						
+						if(abaAberta){
+							
+							$('#workspace').tabs({load : function(event, ui) {
+								$('#workspace').tabs({load : function(event, ui) {}});
+							}});
+	
+							
+							$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
+						} else {
+							
+							$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
+						}
+					},
 					
-					$('#workspace').tabs({load : function(event, ui) {
-						$('#workspace').tabs({load : function(event, ui) {}});
-					}});
-
-					
-					$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
-				} else {
-					
-					$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
-				}
+			        function(result){
+						exibirMensagem(result.mensagens);
+						return;
+			        }
+			    );
 			}
 			
 		}else{

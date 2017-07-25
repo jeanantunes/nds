@@ -698,8 +698,11 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			
 			FiltroConsultaMixPorProdutoDTO fMixProduto = new FiltroConsultaMixPorProdutoDTO();
 			
-			Produto produtoOrigem = produtoService.obterProdutoPorCodigo(copiaMix.getCodigoProdutoOrigem());
-			Produto produtoDestino = produtoService.obterProdutoPorCodigo(copiaMix.getCodigoProdutoDestino());
+//			Produto produtoOrigem = produtoService.obterProdutoPorCodigo(copiaMix.getCodigoProdutoOrigem());
+//			Produto produtoDestino = produtoService.obterProdutoPorCodigo(copiaMix.getCodigoProdutoDestino());
+			
+			Produto produtoOrigem = buscarProdutoOrigem(copiaMix);
+			Produto produtoDestino = buscarProdutoDestino(copiaMix);
 			
 			fMixProduto.setCodigoProduto(produtoOrigem.getCodigoICD());
 			
@@ -730,6 +733,30 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			break;
 		}
 		return true;
+	}
+
+	private Produto buscarProdutoOrigem(CopiaMixFixacaoDTO copiaMix) {
+		Produto produtoOrigem;
+		
+		if(copiaMix.getSegmentoOrigem() != null){
+			produtoOrigem = produtoService.obterProdutoPorCodigoAndSegmento(copiaMix.getCodigoProdutoOrigem(), copiaMix.getSegmentoOrigem());
+		}else{
+			produtoOrigem = produtoService.obterProdutoPorCodigo(copiaMix.getCodigoProdutoOrigem());
+		}
+		
+		return produtoOrigem;
+	}
+	
+	private Produto buscarProdutoDestino(CopiaMixFixacaoDTO copiaMix) {
+		Produto produtoDestino;
+		
+		if(copiaMix.getSegmentoDestino() != null){
+			produtoDestino = produtoService.obterProdutoPorCodigoAndSegmento(copiaMix.getCodigoProdutoDestino(), copiaMix.getSegmentoDestino());
+		}else{
+			produtoDestino = produtoService.obterProdutoPorCodigo(copiaMix.getCodigoProdutoDestino());
+		}
+		
+		return produtoDestino;
 	}
 	
 	@Transactional

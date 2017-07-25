@@ -2,8 +2,11 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Footer;
+import br.com.abril.nds.util.export.FooterType;
 import br.com.abril.nds.util.export.Export.Alignment;
 
 @Exportable

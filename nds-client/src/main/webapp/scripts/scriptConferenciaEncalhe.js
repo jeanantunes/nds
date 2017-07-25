@@ -999,6 +999,16 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#conferencia-valorAPagar", ConferenciaEncalhe.workspace).text("");
 		
+		$("#totalReparteCapa", ConferenciaEncalhe.workspace).text("");
+		
+		$("#totalEncalheCapa", ConferenciaEncalhe.workspace).text("");
+		
+		$("#conferencia-valorVendaDiaCapa", ConferenciaEncalhe.workspace).text("");
+		
+		$("#totalOutrosValoresCapa", ConferenciaEncalhe.workspace).text("");
+		
+		$("#conferencia-valorAPagarCapa", ConferenciaEncalhe.workspace).text("");
+		
 		$(".dadosFiltro", ConferenciaEncalhe.workspace).hide();
 		
 		$("#nomeCota", ConferenciaEncalhe.workspace).text("");
@@ -1167,6 +1177,12 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#totalOutrosValores", ConferenciaEncalhe.workspace).text(parseFloat(result.valorDebitoCredito).toFixed(2));
 		$("#conferencia-valorAPagar", ConferenciaEncalhe.workspace).text(parseFloat(result.valorPagar).toFixed(2));
 		$("#totalExemplaresFooter", ConferenciaEncalhe.workspace).text(result.qtdRecebida);
+		
+		$("#totalReparteCapa", ConferenciaEncalhe.workspace).text(parseFloat(result.reparteCapa).toFixed(4));
+		$("#totalEncalheCapa", ConferenciaEncalhe.workspace).text(parseFloat(result.valorEncalheCapa).toFixed(4));
+		$("#conferencia-valorVendaDiaCapa", ConferenciaEncalhe.workspace).text(parseFloat(result.valorVendaDiaCapa).toFixed(4));
+		$("#totalOutrosValoresCapa", ConferenciaEncalhe.workspace).text(parseFloat(result.valorDebitoCredito).toFixed(2));
+		$("#conferencia-valorAPagarCapa", ConferenciaEncalhe.workspace).text(parseFloat(result.valorPagarCapa).toFixed(2));
 		
 		$(".dadosFiltro", ConferenciaEncalhe.workspace).show();
 		$("#nomeCota", ConferenciaEncalhe.workspace).text(result.razaoSocial);

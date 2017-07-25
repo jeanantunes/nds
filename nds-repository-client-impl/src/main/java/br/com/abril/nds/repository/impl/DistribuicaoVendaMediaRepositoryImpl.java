@@ -88,13 +88,16 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         sql.append("     LEFT JOIN periodo_lancamento_parcial plp ON plp.id = l.periodo_lancamento_parcial_id ");
         
         sql.append("     JOIN (select p.* from produto p  ");
-        sql.append("           	where p.codigo_icd = (select codigo_icd from produto p where p.codigo = :codigo_produto)  ");
-        sql.append("            union  ");
-        sql.append("           select p.* from produto p  ");
-        sql.append("           	where p.codigo_icd = :codigo_produto ");
+        if (usarICD) {
+        	sql.append("           	where p.codigo_icd = (select codigo_icd from produto p where p.codigo = :codigo_produto)  ");
+        	sql.append("            union  ");
+        	sql.append("           select p.* from produto p  ");
+        	sql.append("           	where p.codigo_icd = :codigo_produto ");
+        }else{
+        	sql.append(" where p.codigo = :codigo_produto ");
+        }
+        
         sql.append("          ) p ON p.id = pe.produto_id   ");
-        
-        
         
         sql.append("     LEFT JOIN tipo_classificacao_produto tcp ON tcp.id = pe.tipo_classificacao_produto_id ");
         sql.append("     LEFT JOIN movimento_estoque_cota mecReparte on mecReparte.LANCAMENTO_ID = l.id ");

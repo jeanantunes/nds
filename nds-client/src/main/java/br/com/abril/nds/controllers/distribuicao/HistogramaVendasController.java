@@ -309,8 +309,7 @@ public class HistogramaVendasController extends BaseController {
 		List<EdicoesProdutosDTO> list = produtoEdicaoService.obterHistoricoEdicoes(filtro);
 		
 		if (list==null || list.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Nenhum registro encontrado.");
+			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
 		}
 		
 		TableModel<CellModelKeyValue<EdicoesProdutosDTO>> tableModel = new TableModel<CellModelKeyValue<EdicoesProdutosDTO>>();
@@ -396,8 +395,7 @@ public class HistogramaVendasController extends BaseController {
 	}
 
 	private FiltroHistogramaVendas getFiltroSessao(){
-		FiltroHistogramaVendas filtroSession = (FiltroHistogramaVendas) session
-				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroHistogramaVendas filtroSession = (FiltroHistogramaVendas) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		return filtroSession;
 	}
 	

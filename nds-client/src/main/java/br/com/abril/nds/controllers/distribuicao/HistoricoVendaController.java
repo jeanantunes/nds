@@ -1,13 +1,25 @@
 package br.com.abril.nds.controllers.distribuicao;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -22,25 +34,29 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
-import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.InformacoesProdutoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
+import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ComponentesPDV;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.UfEnum;
 import br.com.abril.nds.util.Util;
@@ -60,8 +76,6 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_DISTRIBUICAO_HISTORICO_VENDA)
 public class HistoricoVendaController extends BaseController {
 
-	private static final String FILTRO_SESSION_ATTRIBUTE = "FiltroHistoricoVendaDTO";
-	
 	private static final ValidacaoVO VALIDACAO_VO_LISTA_VAZIA = new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 	
 	@Autowired
@@ -93,6 +107,12 @@ public class HistoricoVendaController extends BaseController {
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
+	
+	@Autowired
+	private ParametroSistemaService parametroSistemaService;
+	
+	@Autowired
+	private ProdutoService produtoService;
 	
 	@Path("/")
 	public void historicoVenda(){
@@ -130,6 +150,8 @@ public class HistoricoVendaController extends BaseController {
 		// valida se o campo percentual venda está preenchido
 		filtroValidate(filtro.validarPorQtdReparte(), filtro);
 		
+		session.setAttribute("isFiltroTodasCotas", Boolean.FALSE);
+		
 		List<CotaDTO> cotas = cotaService.buscarCotasQueEnquadramNoRangeDeReparte(filtro.getQtdReparteInicial(), filtro.getQtdReparteFinal(), filtro.getListProdutoEdicaoDTO(), filtro.isCotasAtivas());
 		
 		validarLista(cotas);
@@ -153,6 +175,8 @@ public class HistoricoVendaController extends BaseController {
 		
 		validarLista(cotas);
 		
+		session.setAttribute("isFiltroTodasCotas", Boolean.FALSE);
+		
 		TableModel<CellModelKeyValue<CotaDTO>> tableModel = new TableModel<CellModelKeyValue<CotaDTO>>();
 		
 		this.configurarTableModelSemPaginacao(cotas, tableModel);
@@ -171,6 +195,8 @@ public class HistoricoVendaController extends BaseController {
 		List<CotaDTO> cotas = cotaService.buscarCotasQuePossuemPercentualVendaSuperior(filtro.getPercentualVenda(), filtro.getListProdutoEdicaoDTO(), filtro.isCotasAtivas());
 		
 		validarLista(cotas);
+		
+		session.setAttribute("isFiltroTodasCotas", Boolean.FALSE);
 		
 		TableModel<CellModelKeyValue<CotaDTO>> tableModel = new TableModel<CellModelKeyValue<CotaDTO>>();
 		
@@ -194,6 +220,8 @@ public class HistoricoVendaController extends BaseController {
 		
 		validarLista(cotas);
 		
+		session.setAttribute("isFiltroTodasCotas", Boolean.FALSE);
+		
 		TableModel<CellModelKeyValue<CotaDTO>> tableModel = new TableModel<CellModelKeyValue<CotaDTO>>();
 		
 		this.configurarTableModelSemPaginacao(cotas, tableModel);
@@ -207,14 +235,30 @@ public class HistoricoVendaController extends BaseController {
 		// valida se existem produtos selecionados
 		filtroValidate(filtro.validarListaProduto(), filtro);
 		
-		// valida se o código ou nome da cota foram informados
-		//filtroValidate(filtro.validarPorCota(), filtro);
+		List<CotaDTO> cotas = cotaService.buscarCotasComEsemReparte(filtro.getListProdutoEdicaoDTO());
 		
-//		filtro.getCotaDto().setNomePessoa(PessoaUtil.removerSufixoDeTipo(filtro.getCotaDto().getNomePessoa()));
+		session.setAttribute("isFiltroTodasCotas", Boolean.TRUE);
+		
+		validarLista(cotas);
+		
+		TableModel<CellModelKeyValue<CotaDTO>> tableModel = new TableModel<CellModelKeyValue<CotaDTO>>();
+		
+		this.configurarTableModelSemPaginacao(cotas, tableModel);
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	@Post
+	public void pesquisarCotasDoHistorico(FiltroHistoricoVendaDTO filtro){
+		
+		// valida se existem produtos selecionados
+		filtroValidate(filtro.validarListaProduto(), filtro);
 		
 		List<CotaDTO> cotas = cotaService.buscarCotasHistorico(filtro.getListProdutoEdicaoDTO(), filtro.isCotasAtivas());
 		
 		validarLista(cotas);
+		
+		session.setAttribute("isFiltroTodasCotas",  Boolean.FALSE);
 		
 		TableModel<CellModelKeyValue<CotaDTO>> tableModel = new TableModel<CellModelKeyValue<CotaDTO>>();
 		
@@ -234,6 +278,8 @@ public class HistoricoVendaController extends BaseController {
 		List<CotaDTO> cotas = this.cotaService.buscarCotasPorComponentes(filtro.getComponentesPdv(), filtro.getElemento(), filtro.getListProdutoEdicaoDTO(), filtro.isCotasAtivas());
 		
 		validarLista(cotas);
+		
+		session.setAttribute("isFiltroTodasCotas", Boolean.FALSE);
 		
 		TableModel<CellModelKeyValue<CotaDTO>> tableModel = new TableModel<CellModelKeyValue<CotaDTO>>();
 		
@@ -258,17 +304,25 @@ public class HistoricoVendaController extends BaseController {
 	@SuppressWarnings("unchecked")
 	@Post
 	public void carregarGridAnaliseHistorico(String sortorder, String sortname){
+		
 		List<ProdutoEdicaoDTO> listProdutoEdicaoDTO = (List<ProdutoEdicaoDTO>) session.getAttribute("listProdutoEdicao");
 		
 		List<Integer> listCota = (List<Integer>) session.getAttribute("listCotas");
 		
+		Boolean isFiltroTodasCotas = (Boolean) session.getAttribute("isFiltroTodasCotas"); 
+		
+		if(isFiltroTodasCotas == null){
+			isFiltroTodasCotas = false;
+		}
+		
 		List<AnaliseHistoricoDTO> listAnaliseHistorico = 
 			cotaService.buscarHistoricoCotas(
-				listProdutoEdicaoDTO, listCota, sortorder, sortname);
+				listProdutoEdicaoDTO, listCota, sortorder, sortname, isFiltroTodasCotas);
 		
 		AnaliseHistoricoDTO suma = new AnaliseHistoricoDTO();
 		suma.setReparteMedio(0d);
 		suma.setVendaMedia(0d);
+		
 		for (AnaliseHistoricoDTO dto : listAnaliseHistorico){
 			
 			suma.setNumeroCota(suma.getNumeroCota() + (dto.getNumeroCota() == null ? 0 : 1));
@@ -358,6 +412,7 @@ public class HistoricoVendaController extends BaseController {
 		}
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Post
 	public void carregarElementos(ComponentesPDV componente){
 		List<ItemDTO<Long, String>> resultList = new ArrayList<ItemDTO<Long, String>>();
@@ -416,37 +471,165 @@ public class HistoricoVendaController extends BaseController {
 		List<ProdutoEdicaoDTO> listProdutoEdicaoDTO = (List<ProdutoEdicaoDTO>) session.getAttribute("listProdutoEdicao");
 		List<Integer> listCota = (List<Integer>) session.getAttribute("listCotas");
 		
-		List<AnaliseHistoricoDTO> listDto = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota, null, null);
 		
-		if(fileType == FileType.XLS){
+		for (ProdutoEdicaoDTO produtoEdicaoDTO : listProdutoEdicaoDTO) {
+			String nomeProduto = produtoService.obterNomeProdutoPorCodigo(produtoEdicaoDTO.getCodigoProduto());
 			
+			String prodEdicao = produtoEdicaoDTO.getCodigoProduto() + " - " + nomeProduto + " - " + produtoEdicaoDTO.getNumeroEdicao();
+			
+			
+			produtoEdicaoDTO.setNomeProduto(prodEdicao);
+		}
+		
+		Boolean isFiltroTodasCotas = (Boolean) session.getAttribute("isFiltroTodasCotas");
+		
+		List<AnaliseHistoricoDTO> listDto = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota, null, null, isFiltroTodasCotas);
+		
+		if (fileType == FileType.XLS) {
+
 			Map<Integer, AnaliseHistoricoXLSDTO> cotaComdadosPdvDTO = cotaService.dadosPDVhistoricoXLS(listCota);
-			
+
 			List<AnaliseHistoricoXLSDTO> listCotasComPDV = new ArrayList<>();
-			
+
 			parseListaRetorno(listDto, cotaComdadosPdvDTO, listCotasComPDV);
-			
+
+			String pathSystem = getPathFileSystem();
+
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+
 			try {
-				FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, listCotasComPDV,
-						AnaliseHistoricoXLSDTO.class, this.httpResponse);
+
+				String fileName = "Analise Historico Venda - " + DateUtil.formatarDataPTBR(new Date());
+
+				String pathFileName = pathSystem + "histOutTemp.xls";
+
+				FileExporter.to(fileName, fileType).inOutputStream(this.getNDSFileHeader(), null, null, listCotasComPDV,
+						AnaliseHistoricoXLSDTO.class, os);
+
+				try {
+					OutputStream out = new FileOutputStream(pathFileName);
+					out.write(os.toByteArray());
+					out.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+
+				HSSFWorkbook workbook = null;
+
+				try {
+					FileInputStream file = new FileInputStream(new File(pathFileName));
+
+					workbook = new HSSFWorkbook(file);
+
+					HSSFSheet sheetHistorico = workbook.getSheetAt(0);
+
+					// Criando cabecalho para produtos/edicoes 
+					
+					createCell(listProdutoEdicaoDTO, sheetHistorico, "Q7", 0);
+					createCell(listProdutoEdicaoDTO, sheetHistorico, "S7", 1);
+					createCell(listProdutoEdicaoDTO, sheetHistorico, "U7", 2);
+					createCell(listProdutoEdicaoDTO, sheetHistorico, "W7", 3);
+					createCell(listProdutoEdicaoDTO, sheetHistorico, "Y7", 4);
+					createCell(listProdutoEdicaoDTO, sheetHistorico, "AA7", 5);
+
+					file.close();
+
+					FileOutputStream outFile = new FileOutputStream(new File(pathFileName));
+
+					workbook.write(outFile);
+					outFile.close();
+
+					System.out.println("Arquivo Excel editado com sucesso!");
+
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					System.out.println("Arquivo Excel não encontrado!");
+				} catch (IOException e) {
+					e.printStackTrace();
+					System.out.println("Erro na edição do arquivo!");
+				}
+
+				this.httpResponse.setHeader("Content-Disposition", "attachment; filename= " + fileName + ".xls");
+
+				OutputStream output;
+
+				output = this.httpResponse.getOutputStream();
+
+				ByteArrayOutputStream outBA = new ByteArrayOutputStream();
+
+				workbook.write(outBA);
+
+				output.write(outBA.toByteArray());
+
+				output.flush();
+				output.close();
+
+				httpResponse.getOutputStream().close();
+
 			} catch (Exception e) {
-				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Não foi possível gerar o arquivo ." + fileType.toString()));
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+						"Não foi possível gerar o arquivo ." + fileType.toString()));
 			}
 		}else{
 			try {
-				FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, listDto,
+				FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, listDto,
 						AnaliseHistoricoDTO.class, this.httpResponse);
 			} catch (Exception e) {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Não foi possível gerar o arquivo ." + fileType.toString()));
 			}
 		}
 		
-		result.nothing();
 	}
 
+	private void createCell(List<ProdutoEdicaoDTO> listProdutoEdicaoDTO, HSSFSheet sheetHistorico, String cellReferenceId, int idListProdutoEdicaoDTO) {
+		
+		CellReference cellReference = new CellReference(cellReferenceId);
+		
+		Row row = sheetHistorico.getRow(cellReference.getRow());
+
+		Cell cell = row.getCell(cellReference.getCol());
+
+		String nomeProduto = "";
+		
+		if(idListProdutoEdicaoDTO < listProdutoEdicaoDTO.size()){
+			nomeProduto = listProdutoEdicaoDTO.get(idListProdutoEdicaoDTO).getNomeProduto() != null ? listProdutoEdicaoDTO.get(idListProdutoEdicaoDTO).getNomeProduto() : ""; 
+		}
+		
+		if (cell == null) {
+			
+			cell = row.createCell(cellReference.getCol());
+			
+			cell.setCellValue(nomeProduto);
+		}else{
+			cell.setCellValue(nomeProduto);
+		}
+	}
+
+	private String getPathFileSystem() {
+		
+		ParametroSistema pathSistem = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TRANSFERENCIA_ARQUIVO);
+
+		String pathFile = pathSistem.getValor();
+
+		pathFile.replace('/',File.separatorChar);
+		pathFile.replace('\\',File.separatorChar);
+		
+		pathFile = pathFile+File.separator+"historicoVendaTemp";
+		
+		File diretorioRaiz = new File(pathFile);
+		diretorioRaiz.mkdirs();
+		
+		pathFile += File.pathSeparator;
+		
+		return pathFile;
+		
+	}
+	
 	private void parseListaRetorno(List<AnaliseHistoricoDTO> listDto,
 			Map<Integer, AnaliseHistoricoXLSDTO> cotaComdadosPdvDTO, List<AnaliseHistoricoXLSDTO> listCotasComPDV) {
+		
 		for (AnaliseHistoricoDTO dto : listDto) {
+			
 			AnaliseHistoricoXLSDTO pdvComDados = cotaComdadosPdvDTO.get(dto.getNumeroCota());
 			
 			pdvComDados.setStatusCota(dto.getStatusCota());
@@ -503,6 +686,30 @@ public class HistoricoVendaController extends BaseController {
 				pdvComDados.setEd6Venda(dto.getEd6Venda());
 			}
 			
+			if(dto.getProduto01() != null){
+				pdvComDados.setProduto01(dto.getProduto01());
+			}
+			
+			if(dto.getProduto02() != null){
+				pdvComDados.setProduto02(dto.getProduto02());
+			}
+			
+			if(dto.getProduto03() != null){
+				pdvComDados.setProduto03(dto.getProduto03());
+			}
+			
+			if(dto.getProduto04() != null){
+				pdvComDados.setProduto04(dto.getProduto04());
+			}
+			
+			if(dto.getProduto05() != null){
+				pdvComDados.setProduto05(dto.getProduto05());
+			}
+			
+			if(dto.getProduto06() != null){
+				pdvComDados.setProduto06(dto.getProduto06());
+			}
+			
 			listCotasComPDV.add(pdvComDados);
 		}
 	}
@@ -516,28 +723,6 @@ public class HistoricoVendaController extends BaseController {
 		tableModel.setTotal(listaDto.size());
 		
 		return tableModel;
-	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked"})
-	private TableModel configurarTableModelComPaginacao( List listaDto, TableModel tableModel, FiltroDTO filtro){
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDto));
-
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-
-		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
-		
-		return tableModel;
-	}
-	
-	private void guardarFiltroNaSession(FiltroHistoricoVendaDTO filtro) {
-		
-		FiltroHistoricoVendaDTO filtroSession = (FiltroHistoricoVendaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-		
-		if (filtroSession != null && !filtroSession.equals(filtro)){
-			filtro.getPaginacao().setPaginaAtual(1);
-		}
-		
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 	}
 	
 	private void filtroValidate(boolean isValid, FiltroHistoricoVendaDTO filtro){

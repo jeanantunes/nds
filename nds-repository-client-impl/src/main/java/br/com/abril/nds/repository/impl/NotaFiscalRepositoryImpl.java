@@ -366,7 +366,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') as nomeCota,");
 		hql.append(" SUM(mffc.qtde) as exemplares, ");
 		hql.append(" SUM(mffc.valoresAplicados.precoVenda * mffc.qtde) as total, "); 
-		hql.append(" SUM(mffc.valoresAplicados.precoComDesconto * mffc.qtde) as totalDesconto, "); 	
+		hql.append(" SUM( (mffc.valoresAplicados.precoComDesconto* (case when fornecedor.margemDistribuidor > 0 then (1 - fornecedor.margemDistribuidor/100) else 1 end)) * mffc.qtde ) as totalDesconto, "); 	
 		hql.append(" mffc.cota.situacaoCadastro as situacaoCadastro, ");
 		hql.append(" cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica as exigeNotaFiscalEletronica, ");
 		hql.append(" cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS as contribuinteICMS, ");

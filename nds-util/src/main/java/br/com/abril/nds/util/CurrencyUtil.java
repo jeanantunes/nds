@@ -251,6 +251,10 @@ public abstract class CurrencyUtil {
 	}
 
 	public static BigDecimal truncateDecimal(final BigDecimal valor, int numberofDecimals) {
+		if(valor == null){
+			return valor;
+		}
+		
 	    if (valor.doubleValue() > 0.0) {
 	        return new BigDecimal(String.valueOf(valor)).setScale(numberofDecimals, BigDecimal.ROUND_FLOOR);
 	    } else {
