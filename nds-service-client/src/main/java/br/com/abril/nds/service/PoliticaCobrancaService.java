@@ -83,4 +83,6 @@ public interface PoliticaCobrancaService {
 	List<PoliticaCobranca> obterDadosPoliticaCobranca(TipoCobranca tipoCobranca);
 
 	Fornecedor obterFornecedorPadrao();
+	
+	PoliticaCobranca obterPoliticaCobrancaBoleto();
 }

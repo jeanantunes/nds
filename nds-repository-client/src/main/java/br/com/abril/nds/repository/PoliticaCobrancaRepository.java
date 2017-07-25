@@ -2,6 +2,8 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import org.hibernate.Query;
+
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
@@ -52,4 +54,6 @@ public interface PoliticaCobrancaRepository extends Repository<PoliticaCobranca,
 	boolean verificarPorTipoCobrancaPor(TipoCobranca tipoCobranca);
 	
 	Fornecedor obterFornecedorPadrao();
+	
+	PoliticaCobranca buscarPoliticaCobrancaBoleto();
 }

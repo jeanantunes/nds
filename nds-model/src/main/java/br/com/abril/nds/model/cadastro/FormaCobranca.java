@@ -45,7 +45,13 @@ public class FormaCobranca implements Serializable {
 	
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "FORMA_COBRANCA_BOLETO", nullable = true)
-	private FormaCobrancaBoleto formaCobrancaBoleto;	
+	private FormaCobrancaBoleto formaCobrancaBoleto;
+	
+	@Column(name = "PROTESTAR_BOLETO_REGISTRADO", nullable = false)
+	private boolean protestarBoletoRegistrado;
+
+	@Column(name = "QTD_DIAS_PROTESTO", nullable = true)
+	private Long quantidadeDiasParaProtesto;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_FORMA_COBRANCA", nullable = false)
@@ -281,6 +287,22 @@ public class FormaCobranca implements Serializable {
 	 */
 	public void setPoliticaCobranca(PoliticaCobranca politicaCobranca) {
 		this.politicaCobranca = politicaCobranca;
+	}
+	
+	public boolean isProtestarBoletoRegistrado() {
+		return protestarBoletoRegistrado;
+	}
+
+	public void setProtestarBoletoRegistrado(boolean protestarBoletoRegistrado) {
+		this.protestarBoletoRegistrado = protestarBoletoRegistrado;
+	}
+
+	public Long getQuantidadeDiasParaProtesto() {
+		return quantidadeDiasParaProtesto;
+	}
+
+	public void setQuantidadeDiasParaProtesto(Long quantidadeDiasParaProtesto) {
+		this.quantidadeDiasParaProtesto = quantidadeDiasParaProtesto;
 	}
 	
 }
