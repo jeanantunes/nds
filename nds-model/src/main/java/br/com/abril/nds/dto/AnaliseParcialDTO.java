@@ -17,28 +17,28 @@ public class AnaliseParcialDTO implements Serializable {
     @Export(label = "Cota", alignment = Alignment.LEFT, exhibitionOrder = 1)
     private int cota;
 
-    @Export(label = "Classificacao", alignment = Alignment.LEFT, exhibitionOrder = 2)
+    @Export(label = "Classif.", alignment = Alignment.LEFT, exhibitionOrder = 2)
     private String classificacao;
 
-    @Export(label = "Nome", alignment = Alignment.LEFT, exhibitionOrder = 3)
+//    @Export(label = "Nome", alignment = Alignment.LEFT, exhibitionOrder = 3)
     private String nome;
 
-    @Export(label = "Quantidade PDVs", alignment = Alignment.LEFT, exhibitionOrder = 4)
+    @Export(label = "Qtd PDVs", alignment = Alignment.LEFT, exhibitionOrder = 4)
     private BigInteger npdv;
 
-    @Export(label = "Reparte Sugerido", alignment = Alignment.LEFT, exhibitionOrder = 5)
+    @Export(label = "Rep. Sug.", alignment = Alignment.LEFT, exhibitionOrder = 5)
     private BigInteger reparteSugerido;
 
     @Export(label = "Legenda", alignment = Alignment.LEFT, exhibitionOrder = 6)
     private String leg;
 
-    @Export(label = "Juramentado", alignment = Alignment.LEFT, exhibitionOrder = 7)
+    @Export(label = "Rp Juram", alignment = Alignment.LEFT, exhibitionOrder = 7)
     private BigInteger juramento;
 
-    @Export(label = "Media Venda", alignment = Alignment.LEFT, exhibitionOrder = 8)
+    @Export(label = "Md Venda", alignment = Alignment.LEFT, exhibitionOrder = 8)
     private BigDecimal mediaVenda;
 
-    @Export(label = "Último Reparte", alignment = Alignment.LEFT, exhibitionOrder = 9)
+    @Export(label = "Últ. Rep.", alignment = Alignment.LEFT, exhibitionOrder = 9)
     private BigInteger ultimoReparte;
     
     private Boolean cotaNova;
@@ -152,126 +152,126 @@ public class AnaliseParcialDTO implements Serializable {
     public void setUltimoReparte(BigInteger ultimoReparte) {
         this.ultimoReparte = ultimoReparte;
     }
-    @Export(label = "Reparte 1", alignment = Alignment.LEFT, exhibitionOrder = 16)
+    @Export(label = "Rep 1", alignment = Alignment.LEFT, exhibitionOrder = 16)
     public BigInteger getReparte1() {
 	if (edicoesBase.size() > 0) {
 	    return edicoesBase.get(0).getReparte();
 	}
 	return null;
     }
-    @Export(label = "Venda 1", alignment = Alignment.LEFT, exhibitionOrder = 17)
+    @Export(label = "Vd 1", alignment = Alignment.LEFT, exhibitionOrder = 17)
     public BigInteger getVenda1() {
 	if (edicoesBase.size() > 0) {
 	    return edicoesBase.get(0).getVenda();
 	}
 	return null;
     }
-    @Export(label = "Número Edição 1", alignment = Alignment.LEFT, exhibitionOrder = 10)
+    @Export(label = "Ed 1", alignment = Alignment.LEFT, exhibitionOrder = 10)
     public BigInteger getNumeroEdicao1() {
 	if (edicoesBase.size() > 0) {
 	    return edicoesBase.get(0).getEdicao();
 	}
 	return null;
     }
-    @Export(label = "Reparte 2", alignment = Alignment.LEFT, exhibitionOrder = 16)
+    @Export(label = "Rep 2", alignment = Alignment.LEFT, exhibitionOrder = 16)
     public BigInteger getReparte2() {
 	if (edicoesBase.size() > 1) {
 	    return edicoesBase.get(1).getReparte();
 	}
 	return null;
     }
-    @Export(label = "Venda 2", alignment = Alignment.LEFT, exhibitionOrder = 17)
+    @Export(label = "Vd 2", alignment = Alignment.LEFT, exhibitionOrder = 17)
     public BigInteger getVenda2() {
 	if (edicoesBase.size() > 1) {
 	    return edicoesBase.get(1).getVenda();
 	}
 	return null;
     }
-    @Export(label = "Número Edição 2", alignment = Alignment.LEFT, exhibitionOrder = 10)
+    @Export(label = "Ed 2", alignment = Alignment.LEFT, exhibitionOrder = 10)
     public BigInteger getNumeroEdicao2() {
 	if (edicoesBase.size() > 1) {
 	    return edicoesBase.get(1).getEdicao();
 	}
 	return null;
     }
-    @Export(label = "Reparte 3", alignment = Alignment.LEFT, exhibitionOrder = 16)
+    @Export(label = "Rp 3", alignment = Alignment.LEFT, exhibitionOrder = 16)
     public BigInteger getReparte3() {
 	if (edicoesBase.size() > 2) {
 	    return edicoesBase.get(2).getReparte();
 	}
 	return null;
     }
-    @Export(label = "Venda 3", alignment = Alignment.LEFT, exhibitionOrder = 17)
+    @Export(label = "Vd 3", alignment = Alignment.LEFT, exhibitionOrder = 17)
     public BigInteger getVenda3() {
 	if (edicoesBase.size() > 2) {
 	    return edicoesBase.get(2).getVenda();
 	}
 	return null;
     }
-    @Export(label = "Número Edição 3", alignment = Alignment.LEFT, exhibitionOrder = 10)
+    @Export(label = "Ed 3", alignment = Alignment.LEFT, exhibitionOrder = 10)
     public BigInteger getNumeroEdicao3() {
 	if (edicoesBase.size() > 2) {
 	    return edicoesBase.get(2).getEdicao();
 	}
 	return null;
     }
-    @Export(label = "Reparte 4", alignment = Alignment.LEFT, exhibitionOrder = 16)
+    @Export(label = "Rp 4", alignment = Alignment.LEFT, exhibitionOrder = 16)
     public BigInteger getReparte4() {
 	if (edicoesBase.size() > 3) {
 	    return edicoesBase.get(3).getReparte();
 	}
 	return null;
     }
-    @Export(label = "Venda 4", alignment = Alignment.LEFT, exhibitionOrder = 17)
+    @Export(label = "Vd 4", alignment = Alignment.LEFT, exhibitionOrder = 17)
     public BigInteger getVenda4() {
 	if (edicoesBase.size() > 3) {
 	    return edicoesBase.get(3).getVenda();
 	}
 	return null;
     }
-    @Export(label = "Número Edição 4", alignment = Alignment.LEFT, exhibitionOrder = 10)
+    @Export(label = "Ed 4", alignment = Alignment.LEFT, exhibitionOrder = 10)
     public BigInteger getNumeroEdicao4() {
 	if (edicoesBase.size() > 3) {
 	    return edicoesBase.get(3).getEdicao();
 	}
 	return null;
     }
-    @Export(label = "Reparte 5", alignment = Alignment.LEFT, exhibitionOrder = 16)
+    @Export(label = "Rp 5", alignment = Alignment.LEFT, exhibitionOrder = 16)
     public BigInteger getReparte5() {
 	if (edicoesBase.size() > 4) {
 	    return edicoesBase.get(4).getReparte();
 	}
 	return null;
     }
-    @Export(label = "Venda 5", alignment = Alignment.LEFT, exhibitionOrder = 17)
+    @Export(label = "Vd 5", alignment = Alignment.LEFT, exhibitionOrder = 17)
     public BigInteger getVenda5() {
 	if (edicoesBase.size() > 4) {
 	    return edicoesBase.get(4).getVenda();
 	}
 	return null;
     }
-    @Export(label = "Número Edição 5", alignment = Alignment.LEFT, exhibitionOrder = 10)
+    @Export(label = "Ed 5", alignment = Alignment.LEFT, exhibitionOrder = 10)
     public BigInteger getNumeroEdicao5() {
 	if (edicoesBase.size() > 4) {
 	    return edicoesBase.get(4).getEdicao();
 	}
 	return null;
     }
-    @Export(label = "Reparte 6", alignment = Alignment.LEFT, exhibitionOrder = 16)
+    @Export(label = "Rp 6", alignment = Alignment.LEFT, exhibitionOrder = 16)
     public BigInteger getReparte6() {
 	if (edicoesBase.size() > 5) {
 	    return edicoesBase.get(5).getReparte();
 	}
 	return null;
     }
-    @Export(label = "Venda 6", alignment = Alignment.LEFT, exhibitionOrder = 17)
+    @Export(label = "Vd 6", alignment = Alignment.LEFT, exhibitionOrder = 17)
     public BigInteger getVenda6() {
 	if (edicoesBase.size() > 5) {
 	    return edicoesBase.get(5).getVenda();
 	}
 	return null;
     }
-    @Export(label = "Número Edição 6", alignment = Alignment.LEFT, exhibitionOrder = 10)
+    @Export(label = "Ed 6", alignment = Alignment.LEFT, exhibitionOrder = 10)
     public BigInteger getNumeroEdicao6() {
 	if (edicoesBase.size() > 5) {
 	    return edicoesBase.get(5).getEdicao();

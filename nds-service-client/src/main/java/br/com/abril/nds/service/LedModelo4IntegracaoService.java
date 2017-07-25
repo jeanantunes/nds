@@ -8,4 +8,6 @@ import br.com.abril.nds.dto.PickingLEDFullDTO;
 public interface LedModelo4IntegracaoService {
 
 	void exportarPickingLED(List<PickingLEDFullDTO> registros, Date dataParametroParaExtracao);
+
+	void processarRetornoPicking(Date dataDistribuicaoDistribuidor);
 }

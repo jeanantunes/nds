@@ -96,7 +96,7 @@ var resumoExpedicaoController = $.extend(true, {
 			}, {
 				display : 'Produto',
 				name : 'descricaoProduto',
-				width : 330,
+				width : 230,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -129,6 +129,18 @@ var resumoExpedicaoController = $.extend(true, {
 				width : 90,
 				sortable : true,
 				align : 'right'
+			}, {
+				display : 'Data LED',
+				name : 'dataLed',
+				width : 55,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Hora LED',
+				name : 'horaLed',
+				width : 50,
+				sortable : true,
+				align : 'center'
 			}],
 			sortname : "codigoProduto",
 			sortorder : "asc",
@@ -260,6 +272,7 @@ var resumoExpedicaoController = $.extend(true, {
 			row.cell.acao = "<span style='text-align: center;'>" +
 				"<a href='javascript:;' onclick='resumoExpedicaoController.detalharResumoExpedicao("+ index +");'>" +
 				"<img border='0' alt='Detalhes' src=\'" + contextPath + "/images/ico_detalhes.png\'></a></span>";
+			
 		});
 		
 		return resultado.tableModel;

@@ -534,6 +534,48 @@ var painelProcessamentoController = $.extend(true, {
 		);
 	},
 	
+	processarRetornoPinking : function() {
+		
+		$("#dialog-processarRetornoPicking").dialog({
+			resizable : false,
+			height : 200,
+			width : 450,
+			modal : true,
+			open:function(){
+				$("#datepickerRetornoPicking").datepicker({
+					showOn: "button",
+					dateFormat: 'dd/mm/yy',
+					buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+					buttonImageOnly: true
+				});
+				$("#datepickerRetornoPicking").val("");
+			},
+			buttons : {
+				"Processar" : function() {
+					
+					var dataProcessamento = $("#datepickerRetornoPicking").val();
+					var data = [{name:'data', value:dataProcessamento}];
+					
+					$.postJSON(contextPath + "/administracao/painelProcessamento/processarRetornoPinking",
+							data,
+							function (resultado) {
+							
+								exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+								$(this).dialog("close");
+						   	},
+						   	function (resultado) {
+								
+								exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+						   	});
+				},
+				"Cancelar" : function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		
+	},
+	
 	exportarCobranca : function() {
 		
 		$.postJSON(contextPath + "/administracao/painelProcessamento/exportarCobranca",
@@ -596,6 +638,7 @@ var painelProcessamentoController = $.extend(true, {
 		});
 		
 	},
+	
 	
 	reprocessarInterfacesEmOrdem : function() {
 		

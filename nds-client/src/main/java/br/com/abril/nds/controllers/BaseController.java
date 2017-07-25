@@ -56,7 +56,7 @@ public abstract class BaseController {
 		
 		ndsFileHeader.setNomeUsuario(this.getUsuarioLogado().getNome());
 		
-		ndsFileHeader.setLogo(this.getLogoDistribuidor());
+//		ndsFileHeader.setLogo(this.getLogoDistribuidor());
 		
 		return ndsFileHeader;
 	}

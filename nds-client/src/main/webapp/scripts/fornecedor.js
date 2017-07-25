@@ -89,6 +89,26 @@ var fornecedorController = $.extend(true,{
 			$("#fornecedorController-filtroConsultaFornecedorRazaoSocial", fornecedorController.workspace).autocomplete({source: ""});
 			$("#fornecedorController-filtroConsultaFornecedorNomeFantasia", fornecedorController.workspace).autocomplete({source: ""});
 			
+			
+//			$( "#fornecedorController-margemDistribuidor", fornecedorController.workspace ).numeric();
+			
+			$("#fornecedorController-margemDistribuidor", fornecedorController.workspace ).priceFormat({
+				allowNegative: false,
+				centsSeparator: ',',
+			    thousandsSeparator: '.',
+			    centsLimit: 2 
+			});
+			
+			$("#fornecedorController-margemDistribuidor", fornecedorController.workspace).change(function (){
+				var margemDistribuidor = $("#fornecedorController-margemDistribuidor", fornecedorController.workspace).val();
+				
+				if(parseFloat(margemDistribuidor) >= 100){
+					$("#fornecedorController-margemDistribuidor", fornecedorController.workspace).val(00);
+					exibirMensagem("WARNING", ["A margem do distribuidor não pode ser acima de 100%."]);
+				}
+				
+			});
+			
 		},
 		
 		
@@ -257,6 +277,7 @@ var fornecedorController = $.extend(true,{
 				$("#fornecedorController-email", fornecedorController.workspace).val("");
 				$("#fornecedorController-tipoFornecedor", fornecedorController.workspace).val("");
 				$("#fornecedorController-banco", fornecedorController.workspace).val("");
+				$("#fornecedorController-margemDistribuidor", fornecedorController.workspace).val("");
 				$("#fornecedorController-validadeContrato", fornecedorController.workspace).val("");
 				$("#fornecedorController-emailNfe", fornecedorController.workspace).val("");
 				$("#fornecedorController-possuiContrato", fornecedorController.workspace).uncheck();
@@ -281,6 +302,13 @@ var fornecedorController = $.extend(true,{
 				} else {
 					$("#fornecedorController-codigoInterface").attr('disabled', false);
 					$("#fornecedorController-cnpj").attr('disabled', false);
+				}
+				
+				var margemDistribuidor = $("#fornecedorController-margemDistribuidor", fornecedorController.workspace).val();
+				
+				if(parseFloat(margemDistribuidor) >= 100 || parseFloat(margemDistribuidor) < 0){
+					exibirMensagem("WARNING", ["O campo margem do distribuidor tem que estar entre 0,01 e 99,99."]);
+					return
 				}
 				
 				$.postJSON(
@@ -417,6 +445,7 @@ var fornecedorController = $.extend(true,{
 						$("#fornecedorController-tipoFornecedor", fornecedorController.workspace).val(result.tipoFornecedor);
 						$("#fornecedorController-banco", fornecedorController.workspace).val(result.idBanco);
 						$("#fornecedorController-canalDistribuicao", fornecedorController.workspace).val(result.canalDistribuicao);
+						$("#fornecedorController-margemDistribuidor", fornecedorController.workspace).val(result.margemDistribuidor);						
 						
 						if (result.integraGFS) {
 							$("#fornecedorController-integraGFS", fornecedorController.workspace).check();

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -22,12 +23,17 @@ public class FiltroDistribuicaoDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 3636036624099127400L;
 
-	@Export(label="Fornecedor", exhibitionOrder=0)
+	@Export(label="Fornecedor")
 	private String nomesFornecedor;
 	
-	@Export(label="Data da Matriz", exhibitionOrder=1)
+	@Export(label="Data da Matriz")
 	private Date data;
 	
+	@Export(label = "|  Publicações Liberadas", alignment=Alignment.RIGHT, fontSize=14f)
+	private Integer totalEstudosLiberados = 0;
+	
+	@Export(label = "Publicações sem Estudo", alignment=Alignment.RIGHT)
+	private Integer totalSemEstudo = 0;
 	
 	private List<Long> idsFornecedores = new ArrayList<Long>();
 	private PaginacaoVO paginacao;
@@ -146,7 +152,18 @@ public class FiltroDistribuicaoDTO implements Serializable {
 	public void setEstudoId(Long estudoId) {
 		this.estudoId = estudoId;
 	}
+	public Integer getTotalEstudosLiberados() {
+		return totalEstudosLiberados;
+	}
+	public void setTotalEstudosLiberados(Integer totalEstudosLiberados) {
+		this.totalEstudosLiberados = totalEstudosLiberados;
+	}
+	public Integer getTotalSemEstudo() {
+		return totalSemEstudo;
+	}
+	public void setTotalSemEstudo(Integer totalSemEstudo) {
+		this.totalSemEstudo = totalSemEstudo;
+	}
 
-	
 	
 }

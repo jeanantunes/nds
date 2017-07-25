@@ -242,6 +242,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 			.addScalar("valorFaturado")
 			.addScalar("codigoProduto").addScalar("nomeProduto")
 			.addScalar("numeroEdicao", StandardBasicTypes.LONG)
+			.addScalar("dataLed", StandardBasicTypes.STRING)
+			.addScalar("horaLed", StandardBasicTypes.STRING)
 			.addScalar("qntProduto", StandardBasicTypes.LONG);
 		
 		return query;
@@ -399,12 +401,14 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		} else {
 
 			innerQuery.append(" lancamento.DATA_LCTO_DISTRIBUIDOR AS dataLancamento, ")
+					  .append(" lancamento.DATA_LED AS dataLed, ")
+					  .append(" lancamento.HORA_LED AS horaLed, ")
 					  .append(" COALESCE(box.ID, 0) AS idBox,  ")
 					  .append(" COALESCE(box.NOME, '') AS nomeBox  ");
 		}
 		
 		innerQuery.append(" FROM EXPEDICAO expedicao ")
-				  .append(" INNER JOIN LANCAMENTO lancamento ON expedicao.ID=lancamento.EXPEDICAO_ID ")
+				.append(" INNER JOIN LANCAMENTO lancamento ON expedicao.ID=lancamento.EXPEDICAO_ID ")
 				  .append(" INNER JOIN PRODUTO_EDICAO produtoEdicao ON lancamento.PRODUTO_EDICAO_ID=produtoEdicao.ID ")
 				  .append(" INNER JOIN PRODUTO produto ON produtoEdicao.PRODUTO_ID=produto.ID ");
 		
@@ -491,6 +495,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 			
 			sql.append(" COUNT(DISTINCT innerQuery.produtoEdicaoId) AS qntProduto, ")
 			   .append(" innerQuery.dataLancamento as dataLancamento, ")
+			   .append(" innerQuery.dataLed as dataLed, ")
+			   .append(" innerQuery.horaLed as horaLed, ")
 			   .append(" innerQuery.idBox as idBox, ")
 			   .append(" innerQuery.nomeBox as nomeBox ");
 		}

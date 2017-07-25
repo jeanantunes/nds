@@ -693,6 +693,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         } else {
             produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
             semRestricao = validarAtualizacaoCampoSemRestricao(dto, produtoEdicao);
+            
+            if(produtoEdicao != null && dto.getCodigoDeBarras() != null){
+            	if((produtoEdicao.getCodigoDeBarras() == null || produtoEdicao.getCodigoDeBarras().isEmpty())
+            			||(!produtoEdicao.getCodigoDeBarras().equalsIgnoreCase(dto.getCodigoDeBarras()))){
+            		produtoEdicao.setCodigoDeBarrasAtualizado(true);
+            	}
+            }
+            
         }
         
         boolean indDataLancamentoAlterada = true;
