@@ -533,7 +533,7 @@ var cotaAusenteController = $.extend(true, {
 
             cotaAusenteController.gerarGridRateios(cotaAusenteController.movAtual);
 
-            cotaAusenteController.atualizarTotal();
+//            cotaAusenteController.atualizarTotal();
 
         } else {
             $('#idFieldRateioMultiproduto').show();
@@ -574,13 +574,15 @@ var cotaAusenteController = $.extend(true, {
 
         var qtdeRateios = movimento.rateios.length;
         document.getElementById('idNum' + qtdeRateios).focus();
+        
+        cotaAusenteController.atualizarTotal();
     },
 
     gerarNovoRateio: function (indiceLinhaAlterada) {
 
         var numCota = $("#idNum" + indiceLinhaAlterada, cotaAusenteController.workspace).attr("value");
         var nomeCota = $("#idNom" + indiceLinhaAlterada, cotaAusenteController.workspace).attr("value");
-        var qtde = $("#idQtde" + indiceLinhaAlterada, cotaAusenteController.workspace).attr("value");
+        var qtde = $("#idQtdeReparte" + indiceLinhaAlterada, cotaAusenteController.workspace).attr("value");
 
         var totalRateado = 0;
         $.each(cotaAusenteController.movAtual.rateios, function (index, rateio) {
@@ -593,11 +595,11 @@ var cotaAusenteController = $.extend(true, {
             exibirMensagemDialog("WARNING", ["Não há reparte suficiente."]);
 
             alterarEvento(
-                "idQtde" + indiceLinhaAlterada,
-                'idQtde' + indiceLinhaAlterada,
+                "idQtdeReparte" + indiceLinhaAlterada,
+                'idQtdeReparte' + indiceLinhaAlterada,
                 "onblur");
 
-            $("#idQtde" + indiceLinhaAlterada).attr("value", "");
+            $("#idQtdeReparte" + indiceLinhaAlterada).attr("value", "");
             return;
         }
 
@@ -611,7 +613,7 @@ var cotaAusenteController = $.extend(true, {
             cotaAusenteController.gerarLinhaNova((qtdeRateios + 1), "", "", "");
 
             cotaAusenteController.alterarEvento(
-                "idQtde" + indiceLinhaAlterada,
+                "idQtdeReparte" + indiceLinhaAlterada,
                 'idNum' + (qtdeRateios + 1),
                 "onblur");
 
@@ -624,7 +626,7 @@ var cotaAusenteController = $.extend(true, {
             };
 
             cotaAusenteController.alterarEvento(
-                "idQtde" + indiceLinhaAlterada,
+                "idQtdeReparte" + indiceLinhaAlterada,
                 'idNum' + qtdeRateios,
                 "onblur");
 
@@ -670,7 +672,7 @@ var cotaAusenteController = $.extend(true, {
             "60px",
             null,
             null,
-            "pesquisaCotaCotaAusente.pesquisarPorNumeroCota('#idNum" + indice + "', '#idNom" + indice + "',true, function(){ $('#idQtde" + indice + "', cotaAusenteController.workspace).focus();} )"));
+            "pesquisaCotaCotaAusente.pesquisarPorNumeroCota('#idNum" + indice + "', '#idNom" + indice + "',true, function(){ $('#idQtdeReparte" + indice + "', cotaAusenteController.workspace).focus();} )"));
 
         nomeCota.append(cotaAusenteController.getInput(
             nome,
@@ -683,7 +685,7 @@ var cotaAusenteController = $.extend(true, {
 
         var inputQtde = cotaAusenteController.getInput(
             qtd,
-            "idQtde" + indice,
+            "idQtdeReparte" + indice,
             "60px",
             "center",
             "cotaAusenteController.gerarNovoRateio(" + indice + ");");
@@ -700,13 +702,22 @@ var cotaAusenteController = $.extend(true, {
         tabRateios.append(novaLinha);
 
         $("#idNum" + indice, cotaAusenteController.workspace).numeric();
-        $("#idQtde" + indice, cotaAusenteController.workspace).numeric();
+        $("#idQtdeReparte" + indice, cotaAusenteController.workspace).numeric();
+        $("#idQtdeReparte" + indice).numeric();
         $("#idNom" + indice, cotaAusenteController.workspace).autocomplete({source: ""});
     },
 
     atualizarTotal: function () {
 
-        var qtdeTotal = $(".numSoma").sum();
+    	var qtdeTotal = 0;
+    	
+    	if(cotaAusenteController.movAtual.rateios.length > 0){
+    		$.each(cotaAusenteController.movAtual.rateios, function (index, rateio) {
+    			qtdeTotal = qtdeTotal + (cotaAusenteController.movAtual.rateios[index].qtde*1); 
+            });
+    	}
+    	
+//        var qtdeTotal = $(".numSoma").sum();
 
         $('#qtdeTotal').text(qtdeTotal);
     },
