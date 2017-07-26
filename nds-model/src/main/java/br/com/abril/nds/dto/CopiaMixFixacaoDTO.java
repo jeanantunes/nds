@@ -19,9 +19,11 @@ public class CopiaMixFixacaoDTO implements Serializable {
 	
 	private String codigoProdutoOrigem;
 	private String nomeProdutoOrigem;
+	private String segmentoOrigem;
 	
 	private String codigoProdutoDestino;
 	private String nomeProdutoDestino;
+	private String segmentoDestino;
 
     private String classificacaoProduto;
 	
@@ -135,4 +137,22 @@ public class CopiaMixFixacaoDTO implements Serializable {
     public void setClassificacaoProduto(String classificacaoProduto) {
         this.classificacaoProduto = classificacaoProduto;
     }
+
+	public String getSegmentoOrigem() {
+		return segmentoOrigem;
+	}
+
+	public void setSegmentoOrigem(String segmentoOrigem) {
+		this.segmentoOrigem = segmentoOrigem;
+	}
+
+	public String getSegmentoDestino() {
+		return segmentoDestino;
+	}
+
+	public void setSegmentoDestino(String segmentoDestino) {
+		this.segmentoDestino = segmentoDestino;
+	}
+    
+    
 }

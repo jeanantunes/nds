@@ -47,7 +47,7 @@
     <table width="522" border="0" cellspacing="1" cellpadding="1">
     
 	    <tr>
-		    <td>Caracter&iacute;ticas:</td>
+		    <td>Caracter&iacute;sticas:</td>
 		    <td>
 		     <select name="selectCaracteristica" id="selectCaracteristica" style="width:232px;">
 			      <option selected="selected">Selecione...</option>     

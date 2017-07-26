@@ -44,6 +44,7 @@ import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RepartePdvService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.service.TipoProdutoService;
+import br.com.abril.nds.service.TipoSegmentoProdutoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ListUtils;
@@ -118,13 +119,16 @@ public class MixCotaProdutoController extends BaseController {
 	private CotaService cotaService;
 	
 	@Autowired
+	private TipoSegmentoProdutoService tipoSegmentoService;
+	
+	@Autowired
 	private InformacoesProdutoService infoProdService;
 	
 	@Rules(Permissao.ROLE_DISTRIBUICAO_MIX_COTA_PRODUTO)
 	@Path("/")
 	public void index() {
-		result.include("classificacao",
-				fixacaoReparteService.obterClassificacoesProduto());
+		result.include("classificacao", fixacaoReparteService.obterClassificacoesProduto());
+		result.include("segmento", tipoSegmentoService.obterTipoSegmentoProduto());
 	}
 
 	@Post
@@ -534,11 +538,20 @@ public class MixCotaProdutoController extends BaseController {
 		
 		List<MixCotaDTO> listCotaInconsistente = new ArrayList<MixCotaDTO>();
 		List<TipoClassificacaoProduto> classificacoes = infoProdService.buscarClassificacao();
+		
 		List<String> descricaoList = ListUtils.getValuePathList("descricao", classificacoes);
 		
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
 			
-			Produto prod = produtoService.obterProdutoPorCodigo(mixCotaDTO.getCodigoProduto());
+			Produto prod;
+			
+			if(mixCotaDTO.getSegmento() != null && !mixCotaDTO.getSegmento().isEmpty()){
+				prod = produtoService.obterProdutoPorCodigoAndSegmento(mixCotaDTO.getCodigoProduto(), mixCotaDTO.getSegmento());
+			}else{
+				prod = produtoService.obterProdutoPorCodigo(mixCotaDTO.getCodigoProduto());
+			}
+			
+//			Produto prod = produtoService.obterProdutoPorCodigo(mixCotaDTO.getCodigoProduto());
 			
 			if(prod == null) {
 				mixCotaDTO.setError(String.format("Código Prodin/ICD inválido: %s.", mixCotaDTO.getCodigoProduto()));

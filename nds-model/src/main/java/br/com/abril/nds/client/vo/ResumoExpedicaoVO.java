@@ -49,6 +49,12 @@ public class ResumoExpedicaoVO implements Serializable {
 	@Export(label = "Diferença", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	private BigInteger qntDiferenca;
 	
+	@Export(label = "Data LED", alignment = Alignment.CENTER, exhibitionOrder = 7)
+	private String dataLed;
+	
+	@Export(label = "Hora LED", alignment = Alignment.CENTER, exhibitionOrder = 8)
+	private String horaLed;
+	
 	/**
 	 * @return the id
 	 */
@@ -157,7 +163,18 @@ public class ResumoExpedicaoVO implements Serializable {
 	public void setQntDiferenca(BigInteger qntDiferenca) {
 		this.qntDiferenca = qntDiferenca;
 	}
-	
+	public String getDataLed() {
+		return dataLed;
+	}
+	public void setDataLed(String dataLed) {
+		this.dataLed = dataLed;
+	}
+	public String getHoraLed() {
+		return horaLed;
+	}
+	public void setHoraLed(String horaLed) {
+		this.horaLed = horaLed;
+	}
 	
 }
 

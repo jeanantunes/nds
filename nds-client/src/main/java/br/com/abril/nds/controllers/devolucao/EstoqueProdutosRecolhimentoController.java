@@ -102,7 +102,7 @@ public class EstoqueProdutosRecolhimentoController extends BaseController {
 			List<EstoqueProdutoRecolimentoDTO> lista = 
 					this.estoqueProdutoService.buscarEstoqueProdutoRecolhimento(filtro);
 			
-			FileExporter.to("estoqueProdutosRecolhimento", fileType).inHTTPResponse(this.getNDSFileHeader(), 
+			FileExporter.to("estoque_Produtos_Recolhimento", fileType).inHTTPResponse(this.getNDSFileHeader(), 
 					filtro, null, lista, EstoqueProdutoRecolimentoDTO.class, this.response);
 		}
 		

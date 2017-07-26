@@ -64,10 +64,14 @@ public class DefinicaoBases extends ProcessoAbstrato {
         			edicoesBase = estudoAlgoritmoService.limitarEdicoesApenasSeis(edicoesBase, estudo);
         			excluiEdicoesComMaisDeDoisAnos(edicoesBase);
         			excluiMaiorQueQuatroSeColecionavel(edicoesBase, estudo);
-        			atribuirPesoEdicaoFechadaMaisRecente(edicoesBase);
+        			
+        			if(!estudo.getProdutoEdicaoEstudo().isColecao() && estudo.getProdutoEdicaoEstudo().getPeriodo() == null){
+        				atribuirPesoEdicaoFechadaMaisRecente(edicoesBase);
+        			}
         			
         			if(parcialComMaisDeUmPeriodo) {
         				edicoesBase = filtarEdicoesParciais(edicoesBase, estudo);
+//        				atribuirPesoEdicaoFechadaMaisRecente(edicoesBase);
         			}
         			
         			estudo.setEdicoesBase(edicoesBase);        			
@@ -90,7 +94,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
 			}
 		}
 		
-		if(listaEdicoesFechadas.size() > 2) {
+		if(listaEdicoesFechadas.size() >= 2) {
 			Collections.sort(listaEdicoesFechadas, new Comparator<ProdutoEdicaoEstudo>() {
 
 				@Override

@@ -390,11 +390,13 @@ public class EstudoAlgoritmoService {
                 ed.setParcial(base.isParcial());
                 ed.setEdicaoAberta(definicaoBasesDAO.traduzStatus(base.getStatus()));
                 ed.setDataLancamento(base.getDataLancamento());
-                ed.setParcialConsolidada(base.isParcialConsolidado());
+//                ed.setParcialConsolidada(base.isParcialConsolidado());
                 
-                if(!base.isParcialConsolidado()){
-                	ed.setPeriodo(base.getPeriodo());
-                }
+                ed.setPeriodo(base.getPeriodo());
+                
+//                if(!base.isParcialConsolidado()){
+//                	ed.setPeriodo(base.getPeriodo());
+//                }
                 
                 edicoesBase.add(ed);
             }

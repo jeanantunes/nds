@@ -67,7 +67,7 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 		hql.append(" 		produto.codigo as codigoProduto, ");
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numEdicao, ");
-		hql.append(" 		juridica.razaoSocial as nomeFornecedor, ");
+		hql.append(" 		juridica.nomeFantasia as nomeFornecedor, ");
 		hql.append(" 		lancamentoParcial.status as statusParcial, ");
 		hql.append("        produtoEdicao.precoVenda as precoCapa, ");
 		hql.append("        produtoEdicao.origem as origem ");

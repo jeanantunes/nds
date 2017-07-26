@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
+import java.util.List;
 
 import br.com.abril.nds.util.export.Exportable;
 
@@ -21,6 +22,8 @@ public class FiltroHistogramaVendas extends FiltroDTO implements Serializable{
 	private String edicao;
 	private Long idTipoClassificacaoProduto;
 	private Long idProduto;
+	
+	private List<Long> idsEdicoes;
 	
 	private OrdemColuna ordemColuna;
 	
@@ -118,6 +121,13 @@ public class FiltroHistogramaVendas extends FiltroDTO implements Serializable{
 
 	public void setIdProduto(Long idProduto) {
 		this.idProduto = idProduto;
+	}
+	
+	public List<Long> getIdsEdicoes() {
+		return idsEdicoes;
+	}
+	public void setIdsEdicoes(List<Long> idsEdicoes) {
+		this.idsEdicoes = idsEdicoes;
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()

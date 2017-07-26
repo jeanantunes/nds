@@ -168,7 +168,7 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 			Date dataOperacao, Boolean conferido, Boolean postergado);
 
 	BigDecimal obterTotalDaChamaEncalheCotaSemDesconto(Integer numeroCota,
-			Date dataOperacao, Boolean conferido, Boolean postergado);
+			List<Date> datasOperacao, Boolean conferido, Boolean postergado);
 	
 	ChamadaEncalheCota obterChamadaEncalheCotaNaData(Cota cota,Long idProdutoEdicao,boolean postergado,Date dataOperacao);
 	

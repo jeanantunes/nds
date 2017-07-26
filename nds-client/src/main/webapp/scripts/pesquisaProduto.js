@@ -341,10 +341,21 @@ function PesquisaProduto(workspace) {
 	
 	
 	this.exibirAutoCompleteEdicao = function(result, idEdicao) {
-		
+
+		var idsEdicaoArray = [];
+		for(var x = 0,obj=result[0]; x < result.length;x++,obj = result[x]){
+            idsEdicaoArray.push(obj.value);
+		}
+
 		$(idEdicao, pesquisaProduto.workspace).autocomplete({
 			source : result
 		});
+
+		if(idsEdicaoArray.length > 0){
+            $(idEdicao).data('values',idsEdicaoArray.join(','));
+        }else {
+            $(idEdicao).data('values','');
+		}
 	};
 	
 	

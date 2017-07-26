@@ -154,8 +154,8 @@ var tipoDescontoController = $.extend(true, {
 			$("#produto", tipoDescontoController.workspace).autocomplete({source: ""});		
 			$("#descontoGeral", tipoDescontoController.workspace).mask("99.99");
 			$("#descontoEspecifico", tipoDescontoController.workspace).mask("99.99");
-			$("#descontoProduto", tipoDescontoController.workspace).mask("99.99");		
-
+			$("#descontoProduto", tipoDescontoController.workspace).mask("99.99");	
+			
 	},
 	
 	buscarNomeProduto : function(){
@@ -253,7 +253,7 @@ var tipoDescontoController = $.extend(true, {
 		$(".tiposDescGeralGrid", tipoDescontoController.workspace).flexReload();
 		
 	},
-
+	
 	novoDescontoEspecifico : function() {
 		
 		var cotaEspecifica = $("#cotaEspecifica", tipoDescontoController.workspace).val();
@@ -281,7 +281,7 @@ var tipoDescontoController = $.extend(true, {
 				   true);
 		
 	},
-
+	
 	fecharDialogs : function() {
 		$( "#dialog-geral", tipoDescontoController.workspace ).dialog( "close" );
 	}, 

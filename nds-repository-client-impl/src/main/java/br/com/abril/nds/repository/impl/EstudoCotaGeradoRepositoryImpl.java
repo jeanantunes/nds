@@ -1,10 +1,20 @@
 package br.com.abril.nds.repository.impl;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.jdbc.Work;
 import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +41,15 @@ public class EstudoCotaGeradoRepositoryImpl extends AbstractRepositoryModel<Estu
 	public EstudoCotaGeradoRepositoryImpl() {
 		super(EstudoCotaGerado.class);
 	}
+	
+//	@Autowired
+//    private NamedParameterJdbcTemplate jdbcTemplate;
+	
+//	@Value("#{query_estudo.insertCotasEstudoCotaGerado}")
+//    private String insertEstudoCotas;
+
+	@Autowired
+    private DataSource dataSource;
 
 	@Override
 	public EstudoCotaGerado obterEstudoCota(Integer numeroCota, Date dataReferencia) {
@@ -226,15 +245,37 @@ public class EstudoCotaGeradoRepositoryImpl extends AbstractRepositoryModel<Estu
     @Override
     @Transactional
     public void inserirProdutoBase(EstudoGerado estudo) {
-	StringBuilder sql = new StringBuilder();
-	sql.append("insert into estudo_produto_edicao_base ");
-	sql.append(" (estudo_id, produto_edicao_id, colecao, parcial, edicao_aberta, peso) ");
-	sql.append(" values (:estudo_id, :produto_edicao_id, 0, 0, 0, 1) ");
-	
-	Query query = getSession().createSQLQuery(sql.toString());
-	query.setParameter("estudo_id", estudo.getId());
-	query.setParameter("produto_edicao_id", estudo.getProdutoEdicao().getId());
-	query.executeUpdate();
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("insert into estudo_produto_edicao_base ");
+		sql.append(" (estudo_id, produto_edicao_id, colecao, parcial, edicao_aberta, peso) ");
+		sql.append(" values (:estudo_id, :produto_edicao_id, 0, 0, 0, 1) ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		query.setParameter("estudo_id", estudo.getId());
+		query.setParameter("produto_edicao_id", estudo.getProdutoEdicao().getId());
+		query.executeUpdate();
+    }
+    
+    @Override
+	@Transactional
+    public void inserirProdutoBase(Long idEstudo, Long idProdutoEdicao, Long pesoEdicao, boolean parcial, boolean edicao_aberta, Long periodoParcial) {
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("insert into estudo_produto_edicao_base ");
+		sql.append(" (estudo_id, produto_edicao_id, colecao, parcial, edicao_aberta, peso, periodo_parcial) ");
+		sql.append(" values (:estudo_id, :produto_edicao_id, 0, :parcial, :edicao_aberta, :peso, :periodoParcial) ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("estudo_id", idEstudo);
+		query.setParameter("produto_edicao_id", idProdutoEdicao);
+		query.setParameter("peso", pesoEdicao);
+		query.setParameter("parcial", parcial);
+		query.setParameter("edicao_aberta", edicao_aberta);
+		query.setParameter("periodoParcial", periodoParcial);
+		
+		query.executeUpdate();
     }
     
     @Override
@@ -279,5 +320,77 @@ public class EstudoCotaGeradoRepositoryImpl extends AbstractRepositoryModel<Estu
 		query.executeUpdate();
 		
 	}
-    
+	
+	@Override
+	public void gravarCotasEstudoCotaGerado(final List<EstudoCotaGerado> cotas){
+//		SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(cotas.toArray());
+//		jdbcTemplate.batchUpdate(insertEstudoCotas, batch);
+
+		if (cotas == null || cotas.isEmpty()) {
+			return;
+		}
+
+		final Session session = this.getSession();
+
+		session.doWork(new Work() {
+			@Override
+			public void execute(final Connection conn) throws SQLException {
+
+				final NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+
+				final StringBuilder sqlQry = new StringBuilder();
+
+				sqlQry.append(" insert into ");
+				sqlQry.append(" 	estudo_cota_gerado( ");
+				sqlQry.append(" 		qtde_prevista, ");
+				sqlQry.append(" 		qtde_efetiva, ");
+				sqlQry.append(" 		estudo_id, ");
+				sqlQry.append(" 		cota_id, ");
+				sqlQry.append(" 		reparte_minimo, ");
+				sqlQry.append(" 		reparte,			 ");
+				sqlQry.append(" 		classificacao, ");
+				sqlQry.append(" 		venda_media_nominal, ");
+				sqlQry.append(" 		reparte_juramentado_a_faturar, ");
+				sqlQry.append(" 		quantidade_pdvs,			 ");
+				sqlQry.append(" 		reparte_maximo, ");
+				sqlQry.append(" 		venda_media_mais_n,			 ");
+				sqlQry.append(" 		indice_correcao_tendencia, ");
+				sqlQry.append(" 		indice_venda_crescente, ");
+				sqlQry.append(" 		percentual_encalhe_maximo, ");
+				sqlQry.append(" 		mix, ");
+				sqlQry.append(" 		venda_media, ");
+				sqlQry.append(" 		cota_nova, ");
+				sqlQry.append(" 		reparte_inicial ");
+				sqlQry.append(" 	 ");
+				sqlQry.append(" 	) values ( ");
+				sqlQry.append(" 		:qtdePrevista, ");
+				sqlQry.append(" 		:qtdeEfetiva, ");
+				sqlQry.append(" 		:estudo.id, ");
+				sqlQry.append(" 		:cota.id, ");
+				sqlQry.append(" 		:reparteMinimo, ");
+				sqlQry.append(" 		:reparte, ");
+				sqlQry.append(" 		:classificacao, ");
+				sqlQry.append(" 		:vendaMediaNominal, ");
+				sqlQry.append(" 		:reparteJuramentadoAFaturar, ");
+				sqlQry.append(" 		:quantidadePDVS, ");
+				sqlQry.append(" 		:reparteMaximo, ");
+				sqlQry.append(" 		:vendaMediaMaisN, ");
+				sqlQry.append(" 		:indiceCorrecaoTendencia, ");
+				sqlQry.append(" 		:indiceVendaCrescente, ");
+				sqlQry.append(" 		:percentualEncalheMaximo, ");
+				sqlQry.append(" 		:mix, ");
+				sqlQry.append(" 		:vendaMedia, ");
+				sqlQry.append(" 		:cotaNova, ");
+				sqlQry.append(" 		:reparteInicial ");
+				sqlQry.append(" 	) ");
+
+				final SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(cotas.toArray());
+
+				namedParameterJdbcTemplate.batchUpdate(sqlQry.toString(), params);
+
+			}
+		});
+	        
+	}
+	
 }

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -53,4 +54,12 @@ public interface MovimentoEstoqueCotaService {
 	Date obterDataUltimaMovimentacaoReparteExpedida(Integer numeroCota, Long idProdutoEdicao);
 
 	void atualizarPrecoProdutoExpedido(final Long id,final BigDecimal precoProduto);
+
+	List<BigDecimal> obterDescontoPublicaoExpedida(Long produtoEdicaoId);
+
+	List<BigDecimal> obterDescontoPublicaoExpedidaPorCota(Long cotaId);
+
+	void atualizarDescontosDaPublicacao(String codigoProduto, Long numeroEdicao,Double descontoAtual,Double novoDesconto);
+
+	void atualizarDescontosDaCota(Cota cota, Double descontoAtual, Double novoDesconto);
 }

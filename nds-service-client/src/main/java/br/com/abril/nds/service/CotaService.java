@@ -4,11 +4,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.baixaboleto.TipoEmissaoDocumento;
 import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
@@ -383,7 +386,7 @@ public interface CotaService {
 	List<CotaDTO> buscarCotasPorComponentes(ComponentesPDV componente, String elemento, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 	
 	List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, 
-			List<Integer> numeroCotas, final String sortorder, final String sortname);
+			List<Integer> numeroCotas, final String sortorder, final String sortname, Boolean isFiltroTodasCotas);
 	
 	HistoricoVendaPopUpCotaDto buscarCota(Integer numero);
 	
@@ -468,4 +471,6 @@ public interface CotaService {
 	List<Integer> buscarNumeroCotasPorEnderecoLED(Integer enderecoLED);
 
 	DistribuicaoDTO buscarParametrosDistribEmissaoDoc();
+
+	List<CotaDTO> buscarCotasComEsemReparte(List<ProdutoEdicaoDTO> listProdutoEdicaoDTO);
 }

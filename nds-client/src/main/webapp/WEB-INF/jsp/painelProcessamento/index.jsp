@@ -114,9 +114,14 @@
            			<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_boletos.gif">&nbsp;Processar Cobran&ccedil;a Consolidada</a>
            	</span>
            	
-           	<span class="bt_confirmar_novo" title="Processar Interface Devolu&ccedil;ao Fornecedor">
+           	<span class="bt_confirmar_novo" title="Processar Interface Devolu&ccedil;&atilde;o Fornecedor">
            			<a onclick="painelProcessamentoController.processarInterfaceDevolucaoFornecedor();" href="javascript:;">
-           			<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_check.gif">&nbsp;Processar Interface Devolu&ccedil;ao Fornecedor</a>
+           			<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_check.gif">&nbsp;Processar Interface Devolu&ccedil;&atilde;o Fornecedor</a>
+           	</span>
+           	
+           	<span class="bt_confirmar_novo" title="Retorno de informa&ccedil;&otilde;es de picking">
+           			<a onclick="painelProcessamentoController.processarRetornoPinking();" href="javascript:;">
+           			<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_boletos.gif">&nbsp;Retorno de informa&ccedil;&otilde;es de picking </a>
            	</span>
 			
 		</div>
@@ -161,6 +166,21 @@
 						<td width="25"><b>Data:</b></td>
 		   	        	<td width="212">
 		   	        		<input type="text" name="datepickerDataCobanca" id="datepickerDataCobanca" style="width:70px;"/>&nbsp;
+	   	        		</td>
+						
+					</tr>
+				</table>
+			</fieldset>
+		</div>
+		
+		<div id="dialog-processarRetornoPicking" title="Processar retorno Picking" style="display:none;">
+			<fieldset style="width: 400px !important;">
+				<legend>Data para processar o picking</legend>
+				<table width="270" border="0" cellspacing="2" cellpadding="2">
+					<tr>
+						<td width="25"><b>Data:</b></td>
+		   	        	<td width="212">
+		   	        		<input type="text" name="datepickerRetornoPicking" id="datepickerRetornoPicking" style="width:70px;"/>&nbsp;
 	   	        		</td>
 						
 					</tr>

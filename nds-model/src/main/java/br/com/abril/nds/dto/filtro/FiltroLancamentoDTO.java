@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -27,6 +28,9 @@ public class FiltroLancamentoDTO implements Serializable {
 	
 	@Export(label="Data de Lançamento Matriz/Distribuidor", exhibitionOrder=1)
 	private Date data;
+	
+	@Export(label="|   Total R$", exhibitionOrder=2, alignment=Alignment.RIGHT)
+	private String valorTotal;
 	
 	private List<Long> idsFornecedores = new ArrayList<Long>() ;
 	
@@ -109,6 +113,13 @@ public class FiltroLancamentoDTO implements Serializable {
 		this.filtroFisico = filtroFisico;
 	}
 
+	public String getValorTotal() {
+		return valorTotal;
+	}
+
+	public void setValorTotal(String valorTotal) {
+		this.valorTotal = valorTotal;
+	}
 
 	public enum ColunaOrdenacao {
 		CODIGO_PRODUTO("codigoProduto"),
@@ -135,6 +146,7 @@ public class FiltroLancamentoDTO implements Serializable {
 		public String getNomeColuna() {
 			return nomeColuna;
 		}
+		
 		
 		public static ColunaOrdenacao getByNomeColuna(String nomeColuna) {
 			for (ColunaOrdenacao coluna : ColunaOrdenacao.values()) {
