@@ -28,6 +28,8 @@ public class DescontoDTO implements Serializable {
 	private boolean predominante;
 	
 	private boolean proximoLancamento;
+	
+	private BigDecimal margemDistribuidor;
 
 	public Long getId() {
 		return id;
@@ -116,5 +118,12 @@ public class DescontoDTO implements Serializable {
 	public void setIdEspecifico(Long idEspecifico) {
 		this.idEspecifico = idEspecifico;
 	}
-	
+
+	public BigDecimal getMargemDistribuidor() {
+		return margemDistribuidor;
+	}
+
+	public void setMargemDistribuidor(BigDecimal margemDistribuidor) {
+		this.margemDistribuidor = margemDistribuidor;
+	}
 }

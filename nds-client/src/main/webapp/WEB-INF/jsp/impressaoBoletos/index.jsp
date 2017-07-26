@@ -27,18 +27,26 @@
 		<fieldset>
 			<div id="impressao-dialog-lista">
 				<legend>Bancos Cadastrados</legend>
-				<table width="300" border="0" cellpadding="2" cellspacing="1" class="filtro">
+				<table width="400" border="0" cellpadding="2" cellspacing="1" class="filtro">
 					<tr>
 						<td>
 							Banco:
 						</td>
 						<td>
-							<select name="impressao-boleto-banco-dialog" id="impressao-boleto-banco-dialog" style="width:70px; float:left; margin-right:5px;" onchange="impressaoBoletosController.recarregarComboRoteiroRotas(this.value)">
+							<select name="impressao-boleto-banco-dialog" id="impressao-boleto-banco-dialog" style="width:250px; float:left; margin-right:5px;" onchange="impressaoBoletosController.recarregarComboRoteiroRotas(this.value)">
 						    	<option selected="selected" value="-1">Todos</option>
 						      		<c:forEach var="banco" items="${listaBancos}">
 										<option value="${banco.key}">${banco.value}</option>
 							  		</c:forEach>
 						    </select>						
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Reprocessar o arquivo:
+						</td>
+						<td>
+							<input name="impressao-boleto-banco-dialog-isReprocessar" type="checkbox" id="impressao-boleto-banco-dialog-isReprocessar" />						
 						</td>
 					</tr>
 				</table>

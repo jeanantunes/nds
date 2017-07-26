@@ -53,6 +53,20 @@ public class PoliticaCobrancaRepositoryImpl extends AbstractRepositoryModel<Poli
 		
 		return (PoliticaCobranca) query.uniqueResult();
 	}
+	
+	@Override
+	public PoliticaCobranca buscarPoliticaCobrancaBoleto() {
+		Query query = this.getSession().createQuery("select p from PoliticaCobranca p "
+				+ "join p.formaCobranca f " +
+				"where f.tipoCobranca = 'BOLETO' " +
+				"and f.ativa = true "+
+				"and p.ativo = true ");
+
+		query.setMaxResults(1);
+
+		return (PoliticaCobranca) query.uniqueResult();
+
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

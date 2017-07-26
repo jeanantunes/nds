@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -54,6 +53,10 @@ public class FiltroDividaGeradaDTO implements Serializable {
 	private String mensagemValidacaoImpressao;
 	
 	private boolean isDistribEnviaEmail;
+	
+	private boolean reprocessar;
+	
+	private boolean arquivoCobrancaRegistrada = false;
 	
 	public FiltroDividaGeradaDTO() {}
 	
@@ -302,6 +305,22 @@ public class FiltroDividaGeradaDTO implements Serializable {
 		this.isDistribEnviaEmail = isDistribEnviaEmail;
 	}
 	
+	public boolean isReprocessar() {
+		return reprocessar;
+	}
+
+	public void setReprocessar(boolean reprocessar) {
+		this.reprocessar = reprocessar;
+	}
+	
+	public boolean isArquivoCobrancaRegistrada() {
+		return arquivoCobrancaRegistrada;
+	}
+
+	public void setArquivoCobrancaRegistrada(boolean arquivoCobrancaRegistrada) {
+		this.arquivoCobrancaRegistrada = arquivoCobrancaRegistrada;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */

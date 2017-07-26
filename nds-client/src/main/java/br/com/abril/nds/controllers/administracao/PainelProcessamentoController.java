@@ -40,6 +40,7 @@ import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.FTFService;
 import br.com.abril.nds.service.GerarArquivosMicroDistribuicaoService;
 import br.com.abril.nds.service.InterfaceExecucaoService;
+import br.com.abril.nds.service.LedModelo4IntegracaoService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.PainelProcessamentoService;
 import br.com.abril.nds.service.RankingFaturamentoService;
@@ -120,6 +121,9 @@ public class PainelProcessamentoController extends BaseController {
 	
 	@Autowired
 	private GerarArquivosMicroDistribuicaoService gerarArquivoMatrizService;
+	
+	@Autowired
+	private LedModelo4IntegracaoService ledModelo4IntegracaoService;
     
     private static final int INTERFACE = 1;
     private static final int PROCESSO  = 2;
@@ -659,7 +663,7 @@ public class PainelProcessamentoController extends BaseController {
     // enviar notas de devolucao para fornecedor via web service quando nota ainda nao foi enviado
     @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
     public void processarInterfaceDevolucaoFornecedor() {
-    	int nn=0;
+//    	int nn=0;
     	//Date dataDistribuicaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
     	/*  
         try {
@@ -786,6 +790,18 @@ public class PainelProcessamentoController extends BaseController {
                 msg), "result").recursive().serialize();
     }
     
+    @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
+    public void processarRetornoPinking(String data) {
+    	
+    	Date dataDistribuicaoDistribuidor = DateUtil.parseDataPTBR(data);
+    	
+    	ledModelo4IntegracaoService.processarRetornoPicking(dataDistribuicaoDistribuidor);
+    	
+    	 result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
+    	                "Dados do LED atualizados com sucesso!"), "result").recursive().serialize();
+    	
+    }
+       
     @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
     public void gerarRankingFaturamento() {
         

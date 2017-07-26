@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import static org.apache.commons.lang.StringUtils.leftPad;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
@@ -129,6 +131,23 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 		query.setParameter("novaDataLancamentoPrevista",
 				novaDataLancamentoPrevista);
 		query.setParameter("id", idLancamento);
+
+		query.executeUpdate();
+	}
+	
+	@Override
+	public void atualizarLancamentoSetDadosLED(List<Long> idLancamentos, String dataLed, String horaLEd) {
+		
+		StringBuilder sql = new StringBuilder("update Lancamento set ");
+		
+		sql.append(" DATA_LED = :dataLed, ")
+		   .append(" HORA_LED = :horaLed ").append(" where id in (:ids)");
+
+		Query query = this.getSession().createSQLQuery(sql.toString());
+
+		query.setParameter("dataLed",dataLed);
+		query.setParameter("horaLed", horaLEd);
+		query.setParameterList("ids", idLancamentos);
 
 		query.executeUpdate();
 	}
@@ -583,7 +602,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 
 		sql.append(" select ");
 		sql.append(" fornecedor.ID as idFornecedor, ");
-		sql.append(" pessoaFornecedor.RAZAO_SOCIAL as nomeFornecedor, ");
+		sql.append(" pessoaFornecedor.NOME_FANTASIA as nomeFornecedor, ");
 		sql.append(" periodoLancamentoParcial.TIPO as parcial, ");
 		sql.append(" lancamento.STATUS as statusLancamento, ");
 		sql.append(" lancamento.ID as idLancamento, ");
@@ -593,7 +612,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 		sql.append(" lancamento.DATA_REC_DISTRIB as novaData, ");
 		sql.append(" produto.EDITOR_ID as idEditor, ");
 		sql.append(" produtoEdicao.PEB as peb, "); 
-		sql.append(" pessoaEditor.RAZAO_SOCIAL as nomeEditor, ");
+		sql.append(" pessoaEditor.NOME_FANTASIA as nomeEditor, ");
 	
 		sql.append(" coalesce(sum( ");
 		sql.append("	case when (tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO = :tipoParcial) ");
@@ -2667,6 +2686,31 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 
 		return (Lancamento) query.uniqueResult();
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Long> buscarIdLancamentoPorDataLancamentoCodProdutoNumEdicaoDataLancamento(String codProduto, Long numEdicao, Date dtLancamento) {
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" select ");
+		sql.append(" 	l.id ");
+		sql.append(" from ");
+		sql.append(" 	lancamento l join produto_edicao pe on ");
+		sql.append(" 	l.produto_edicao_id = pe.id join produto pd on ");
+		sql.append(" 	pe.produto_id = pd.id ");
+		sql.append(" where ");
+		sql.append(" 	pd.codigo = :codProduto ");
+		sql.append(" 	and pe.numero_edicao = :numEdicao "); 
+		sql.append(" 	and l.data_lcto_distribuidor = :dtLancamento ");
+
+		Query query = getSession().createSQLQuery(sql.toString());
+
+		query.setParameter("codProduto", leftPad(codProduto, 8, "0"));
+		query.setParameter("numEdicao", numEdicao);
+		query.setParameter("dtLancamento", dtLancamento);
+
+		return query.list();
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -3313,7 +3357,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Long> getIdUltimoLancamentoFechado(String codigoProduto){
+	public List<Long> getIdUltimoLancamentoFechado(String codigoProduto, long estudoId){
 		
 		List<String> statusLancamento = Arrays.asList(StatusLancamento.EXPEDIDO.name(), 
     			StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(),
@@ -3329,6 +3373,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
         sql.append("         join produto_edicao pe ON lct.PRODUTO_EDICAO_ID = pe.ID   ");
         sql.append("         join produto pd ON pe.PRODUTO_ID = pd.ID   ");
         sql.append("       where pd.codigo = :codProduto ");
+        sql.append("       and lct.data_lcto_distribuidor < (select eg.data_lancamento from estudo_gerado eg where eg.id = :estudoId ) ");
         sql.append("       and lct.STATUS in (:statusLancamento)  ");
         sql.append("       and pe.NUMERO_EDICAO =                        ");
         sql.append("          (select pe.NUMERO_EDICAO ");
@@ -3338,12 +3383,15 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
         sql.append("                where pd.codigo = :codProduto ");
         sql.append("                and lct.STATUS in (:statusLancamento)  ");
         sql.append("                and lct.TIPO_LANCAMENTO = 'LANCAMENTO' ");
+        sql.append("                and lct.data_lcto_distribuidor < (select eg.data_lancamento from estudo_gerado eg where eg.id = :estudoId ) ");
         sql.append("                order by lct.DATA_LCTO_DISTRIBUIDOR desc   ");
         sql.append("                limit 1)  ");
+        sql.append("			 	order by lct.data_lcto_distribuidor desc limit 1 ");
         
         SQLQuery query = getSession().createSQLQuery(sql.toString());
         
         query.setParameter("codProduto", codigoProduto);
+        query.setParameter("estudoId", estudoId);
         query.setParameterList("statusLancamento", statusLancamento);
         
         query.addScalar("lancamentoId", StandardBasicTypes.LONG);

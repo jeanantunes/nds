@@ -34,19 +34,19 @@ var confirmaExpedicaoController = $.extend(true, {
 			}, {
 				display : 'Edi&ccedil;&atilde;o',
 				name : 'edicao',
+				width : 40,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Classif.',
+				name : 'classificacao',
 				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Classifica&ccedil;&atilde;o',
-				name : 'classificacao',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Pre&ccedilo Capa',
+				display : 'Pre&ccedilo',
 				name : 'preco',
-				width : 70,
+				width : 40,
 				sortable : true,
 				align : 'right'
 			}, {
@@ -64,7 +64,7 @@ var confirmaExpedicaoController = $.extend(true, {
 			}, {
 				display : 'Data Chamada',
 				name : 'dataChamada',
-				width : 90,
+				width : 73,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -76,16 +76,28 @@ var confirmaExpedicaoController = $.extend(true, {
 			}, {
 				display : 'Físico',
 				name : 'fisico',
-				width : 50,
+				width : 45,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Estudo',
 				name : 'estudo',
-				width : 50,
+				width : 45,
 				sortable : true,
 				align : 'center'
 			}, {
+				display : 'Data LED',
+				name : 'dataLed',
+				width : 52,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Hora LED',
+				name : 'horaLed',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			},{
 				display : '',
 				name : 'selecionado',
 				width : 20,
@@ -98,7 +110,7 @@ var confirmaExpedicaoController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 960,
+			width : 1000,
 			height : 180
 		})); 	
 		
@@ -194,6 +206,7 @@ var confirmaExpedicaoController = $.extend(true, {
 				cell.estudo="";
 				cell.selecionado="";
 			}
+			
 		}
 		
 		return grid;

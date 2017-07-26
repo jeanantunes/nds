@@ -27,8 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.CalculaParcelasVO;
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
-import br.com.abril.nds.dto.CobrancaImpressaoDTO;
-import br.com.abril.nds.dto.ConsultaCotaDTO;
 import br.com.abril.nds.dto.ConsultaNegociacaoDividaDTO;
 import br.com.abril.nds.dto.DetalheConsultaNegociacaoDividaDTO;
 import br.com.abril.nds.dto.ImpressaoNegociacaoDTO;
@@ -37,7 +35,6 @@ import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCalculaParcelas;
-import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacoesDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -60,7 +57,6 @@ import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
 import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
-import br.com.abril.nds.model.financeiro.CobrancaOutros;
 import br.com.abril.nds.model.financeiro.CobrancaTransferenciaBancaria;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
@@ -86,7 +82,6 @@ import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.NegociacaoDividaRepository;
 import br.com.abril.nds.repository.ParcelaNegociacaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
-import br.com.abril.nds.repository.impl.CobrancaRepositoryImpl;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DescontoService;
@@ -226,6 +221,17 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 divida.setEncargos(BigDecimal.ZERO);
                 divida.setTotal(divida.getVlDivida());
             }
+            
+            divida.setNumeroCota(filtro.getNumeroCota());
+            
+            List<NegociacaoDividaDetalheVO> detalhesCobranca = cobrancaRepository.obterDetalhesCobranca(divida.getIdCobranca());
+            
+            for (NegociacaoDividaDetalheVO detalheVO : detalhesCobranca) {
+            	
+            	
+            	
+				divida.setDetalhes(DateUtil.formatarDataPTBR(detalheVO.getData()), CurrencyUtil.formatarValor(detalheVO.getValor()), detalheVO.getObservacao());
+			}
         }
         
         return dividas;

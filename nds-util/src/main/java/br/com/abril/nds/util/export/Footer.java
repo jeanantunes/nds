@@ -35,4 +35,6 @@ public @interface Footer {
 	boolean printVertical() default false;
 	
 	ColumnType columnType() default ColumnType.STRING;
+	
+	int colspan() default 1;
 }

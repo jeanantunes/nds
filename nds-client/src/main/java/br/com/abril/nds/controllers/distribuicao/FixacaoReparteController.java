@@ -375,7 +375,7 @@ public class FixacaoReparteController extends BaseController {
 			
 			for (FixacaoReparteDTO fixacaoReparteDTO : resultadoPesquisa) {
 				FixacaoReparteCotaDTO fixacaoReparteCotaDTO = new FixacaoReparteCotaDTO();
-				fixacaoReparteCotaDTO.setProdutoFixado(fixacaoReparteDTO.getProdutoFixado());
+				fixacaoReparteCotaDTO.setProdutoFixado(fixacaoReparteDTO.getCodigoProduto());
 				fixacaoReparteCotaDTO.setNomeProduto(fixacaoReparteDTO.getNomeProduto());
 				fixacaoReparteCotaDTO.setClassificacaoProduto(fixacaoReparteDTO.getClassificacaoProduto());
 				fixacaoReparteCotaDTO.setEdicaoInicial(fixacaoReparteDTO.getEdicaoInicial());

@@ -4923,6 +4923,85 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				sql.append(" AND pe.ID = :idProdutoEdicao ");
 			}
 	        return sql;
-	    } 
-	    
+	    }
+
+
+
+	    public List<BigDecimal> obterDescontoPublicaoExpedida(Long produtoEdicaoId){
+            final StringBuilder hql = new StringBuilder();
+
+            hql.append(" select valor_desconto ");
+            hql.append(" from movimento_estoque_cota ");
+            hql.append(" where PRODUTO_EDICAO_ID = :produtoEdicaoId and STATUS_ESTOQUE_FINANCEIRO = 'FINANCEIRO_NAO_PROCESSADO' ");
+            hql.append(" group by 1 ");
+
+            final SQLQuery query =  getSession().createSQLQuery(hql.toString());
+
+
+            query.setParameter("produtoEdicaoId", produtoEdicaoId);
+
+            List<BigDecimal> list = query.list();
+
+            return list;
+
+        }
+
+	    public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaFinanceiroNaoProcessadoDePublicaoExpedida(Long produtoEdicaoId){
+
+	        final StringBuilder hql = new StringBuilder();
+
+            hql.append(" select mec ");
+            hql.append(" from MovimentoEstoqueCota mec ");
+            hql.append(" left join mec.cota cota ");
+            hql.append(" left join mec.produtoEdicao produtoEdicao ");
+            hql.append(" where produtoEdicao.id = :produtoEdicaoId and mec.statusEstoqueFinanceiro = 'FINANCEIRO_NAO_PROCESSADO' ");
+
+            Query query = getSession().createQuery(hql.toString());
+            query.setParameter("produtoEdicaoId", produtoEdicaoId);
+
+            List<MovimentoEstoqueCota> list = query.list();
+            return list;
+
+        }
+
+	    public List<BigDecimal> obterDescontosDaCota(Long cotaId){
+            final StringBuilder hql = new StringBuilder();
+
+            hql.append(" select distinct valor_desconto ");
+            hql.append(" from movimento_estoque_cota ");
+            hql.append(" where cota_id = :cotaId and STATUS_ESTOQUE_FINANCEIRO = 'FINANCEIRO_NAO_PROCESSADO' ");
+            hql.append(" group by 1 ");
+
+            final SQLQuery query =  getSession().createSQLQuery(hql.toString());
+
+
+            query.setParameter("cotaId", cotaId);
+
+            List<BigDecimal> list = query.list();
+
+            return list;
+
+        }
+
+    public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaFinanceiroNaoProcessadoDaCota(Long cotaId){
+
+        final StringBuilder hql = new StringBuilder();
+
+        hql.append(" select mec ");
+        hql.append(" from MovimentoEstoqueCota mec ");
+        hql.append(" left join mec.cota cota ");
+        hql.append(" left join mec.produtoEdicao produtoEdicao ");
+        hql.append(" where cota.id = :cotaId and mec.statusEstoqueFinanceiro = 'FINANCEIRO_NAO_PROCESSADO' ");
+        hql.append(" group by 1 ");
+
+        Query query = getSession().createQuery(hql.toString());
+
+
+        query.setParameter("cotaId", cotaId);
+
+        List<MovimentoEstoqueCota> list = query.list();
+        return list;
+
+    }
+
 }

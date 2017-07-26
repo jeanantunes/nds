@@ -52,7 +52,7 @@
 				</p>
 			</div>
 
-			<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
+			<fieldset class="classFieldset fieldFiltroItensNaoBloqueados" style="width: 1000px!important;">
 				<legend>Pesquisar Expedi&ccedil;&atilde;o</legend>
 				<table width="950" border="0" cellpadding="2" cellspacing="1"
 					class="filtro">
@@ -101,7 +101,7 @@
 			</fieldset>
 			<div class="linha_separa_fields">&nbsp;</div>
 			<div class="grids" style="display: none;">
-				<fieldset class="classFieldset">
+				<fieldset class="classFieldset" style="width: 1000px!important;">
 					<legend>Expedi&ccedil;&otilde;es Cadastradas</legend>
 					
 						<table class="confirmaExpedicaoGrid"></table>

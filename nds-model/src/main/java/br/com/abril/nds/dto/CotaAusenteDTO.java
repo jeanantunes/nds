@@ -35,7 +35,18 @@ public class CotaAusenteDTO implements Serializable{
 	private String valorNe;
 	
 	private String cotaAvista;
-	
+
+	@Export(label = "Destino", alignment=Alignment.RIGHT)
+	private String destino;
+
+	public String getDestino() {
+		return destino;
+	}
+
+	public void setDestino(String destino) {
+		this.destino = destino;
+	}
+
 	public CotaAusenteDTO(){
 		
 	}

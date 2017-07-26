@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.dto.CotaAusenteDTO;
 import br.com.abril.nds.dto.OutraMovimentacaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSuplementarDTO;
@@ -31,4 +32,6 @@ public interface CotaAusenteRepository extends Repository<CotaAusente,Long> {
 	 BigDecimal obterSaldoDeSaidaDoConsignadoDasCotasAusenteNoDistribuidor(final Date dataMovimentacao);
 	 
 	 List<OutraMovimentacaoDTO> obterOutraMovimentacaoCotaAusente(final Date dataMovimentacao);
+
+	List<RateioCotaVO> obterRateioDeCotaAusente(Long idCotaAusente);
 }
