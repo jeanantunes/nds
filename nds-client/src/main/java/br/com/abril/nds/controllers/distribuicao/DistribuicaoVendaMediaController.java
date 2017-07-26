@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.distribuicao;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,7 +48,6 @@ import br.com.abril.nds.service.EstrategiaService;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
 import br.com.abril.nds.service.EstudoProdutoEdicaoBaseService;
 import br.com.abril.nds.service.EstudoService;
-import br.com.abril.nds.service.InformacoesReparteEstudoComplementarService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.ProdutoEdicaoAlgoritimoService;
@@ -128,8 +128,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
     @Autowired
     private DistribuidorService distribuidorService;
     
-    @Autowired
-    private InformacoesReparteEstudoComplementarService infoRepEstudoComplementarService;
+//    @Autowired
+//    private InformacoesReparteEstudoComplementarService infoRepEstudoComplementarService;
     
     private static final int QTD_MAX_PRODUTO_EDICAO = 6;
 
@@ -282,6 +282,37 @@ public class DistribuicaoVendaMediaController extends BaseController {
     	        		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO, false);
     	        	}
     	        }
+        	}else{
+        		if(estudoTemp.getProdutoEdicaoEstudo().getPeriodo() != null && estudoTemp.getProdutoEdicaoEstudo().getPeriodo() >= 3){
+        			
+        			if(!selecionados.isEmpty()){
+        				
+        				if(selecionados.size() <= 3){
+        					
+        					for (ProdutoEdicaoVendaMediaDTO produtoEdicaoVendaMediaDTO : selecionados) {
+        						produtoEdicaoVendaMediaDTO.setIndicePeso(BigDecimal.ONE);
+        					}
+        					
+        				}else{
+        					List<ProdutoEdicaoVendaMediaDTO> edicoesParaRemocao = new ArrayList<>();
+        					
+        					for (ProdutoEdicaoVendaMediaDTO produtoEdicaoVendaMediaDTO : selecionados) {
+        						if(produtoEdicaoVendaMediaDTO.getVenda() == null || produtoEdicaoVendaMediaDTO.getVenda().compareTo(BigInteger.ZERO) == 0){
+        							edicoesParaRemocao.add(produtoEdicaoVendaMediaDTO);
+        						}
+        						produtoEdicaoVendaMediaDTO.setIndicePeso(BigDecimal.ONE);
+        					}
+        					
+        					selecionados.removeAll(edicoesParaRemocao);
+        					
+        					while(selecionados.size() > 3){
+        						selecionados.remove(selecionados.size() - 1);
+        					}
+        				}
+        				// Ronaldo: Não utilizar peso 2 para edição mais recente de produto parcial. 22/03/2017
+        				//selecionados.get(0).setIndicePeso(new BigDecimal(2));
+        			}
+        		}
         	}
         }
 	}
@@ -607,10 +638,11 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    response.add(estudo.getId());
 	    response.add(estudo.isLiberado() == null ? false : true);
 	    
-	    String htmlEstudo = HTMLTableUtil.informacoesReparteComplementarEstudo(estudo);
-	    this.infoRepEstudoComplementarService.salvarInformacoes(estudo.getInformacoesRepComplementar());
 
 	    if(distGrid != null && distGrid.isExibirInformacoesReparteComplementar()){
+	    	//String htmlEstudo = HTMLTableUtil.informacoesReparteComplementarEstudo(estudo);
+	    	String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
+	    	//this.infoRepEstudoComplementarService.salvarInformacoes(estudo.getInformacoesRepComplementar());
 	    	response.add(htmlEstudo);
 	    }
 		

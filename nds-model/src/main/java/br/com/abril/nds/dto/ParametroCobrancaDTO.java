@@ -54,6 +54,10 @@ public class ParametroCobrancaDTO {
 	private Long idFornecedorPadrao;
 	
 	private TipoCota tipoCota;
+	
+	private boolean protestarBoletoRegistrado;
+
+	private Long quantidadeDiasParaProtesto;
 
 	public ParametroCobrancaDTO() {
 		
@@ -410,6 +414,22 @@ public class ParametroCobrancaDTO {
 
 	public void setTipoCota(TipoCota tipoCota) {
 		this.tipoCota = tipoCota;
+	}
+	
+	public boolean isProtestarBoletoRegistrado() {
+		return protestarBoletoRegistrado;
+	}
+
+	public void setProtestarBoletoRegistrado(boolean protestarBoletoRegistrado) {
+		this.protestarBoletoRegistrado = protestarBoletoRegistrado;
+	}
+
+	public Long getQuantidadeDiasParaProtesto() {
+		return quantidadeDiasParaProtesto;
+	}
+
+	public void setQuantidadeDiasParaProtesto(Long quantidadeDiasParaProtesto) {
+		this.quantidadeDiasParaProtesto = quantidadeDiasParaProtesto;
 	}
 
 }

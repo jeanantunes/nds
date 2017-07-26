@@ -251,4 +251,8 @@ public interface ProdutoEdicaoService {
     BigDecimal obterPrecoEdicaoParaAlteracao(final String codigoProduto,final Long numeroEdicao);
 
 	void executarAlteracaoPrecoCapa(final String codigo,final Long numeroEdicao,final BigDecimal precoProduto);
+
+	List<BigDecimal> obterDescontosParaAlteracao(final String codigoProduto, final Long numeroEdicao);
+
+	List<BigDecimal> obterDescontosParaAlteracaoPorCota(final Long cotaId);
 }

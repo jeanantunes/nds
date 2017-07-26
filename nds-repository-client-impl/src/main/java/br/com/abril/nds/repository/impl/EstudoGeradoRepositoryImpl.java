@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
+import br.com.abril.nds.dto.filtro.AnaliseEstudoFiltroExportPDFDTO;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.EstudoGeradoPreAnaliseDTO;
@@ -423,6 +424,34 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		query.setResultTransformer(new AliasToBeanResultTransformer(EstudoGerado.class));
 		EstudoGerado estudoGerado = (EstudoGerado) query.uniqueResult();
 		return estudoGerado;
+	}
+	
+	@Override
+	public AnaliseEstudoFiltroExportPDFDTO obterDadosDoProdutoParaFiltroExport(Long idEstudo){
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT   ");
+		sql.append(" 	pd.codigo as codigoProduto,   ");
+		sql.append(" 	pd.nome as nomeProduto,   ");
+		sql.append(" 	pe.numero_edicao as numeroEdicao    ");
+		sql.append(" FROM estudo_gerado eg  ");
+		sql.append(" JOIN produto_edicao pe   ");
+		sql.append(" 	ON pe.id = eg.PRODUTO_EDICAO_ID  ");
+		sql.append(" JOIN produto pd  ");
+		sql.append(" 	ON pe.PRODUTO_ID = pd.id  ");
+		sql.append(" WHERE eg.id = :idEstudo ");
+		
+		Query query = getSession().createSQLQuery(sql.toString())
+				.addScalar("codigoProduto", StandardBasicTypes.STRING)
+				.addScalar("nomeProduto", StandardBasicTypes.STRING)
+				.addScalar("numeroEdicao", StandardBasicTypes.LONG);
+		
+		query.setParameter("idEstudo", idEstudo);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseEstudoFiltroExportPDFDTO.class));
+		
+		return (AnaliseEstudoFiltroExportPDFDTO) query.uniqueResult();
+		
 	}
 	
 }

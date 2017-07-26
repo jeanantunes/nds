@@ -18,7 +18,7 @@
 </script>
 
 <style type="text/css">
-.filtroPracaSede, .filtroPracaAtendida, .filtroComponentes{display:none;}
+.filtroPracaSede, .filtroPracaAtendida, .filtroComponentesHistograma{display:none;}
 </style>
 <style>
 .gridScroll tr:hover{background:#FFC}
@@ -84,7 +84,7 @@
               </label>
             </td>
             <td width="20">
-              <input id="inserirComponentes" name="inserirComponentes" type="checkbox" value="checked" onclick="$('.filtroComponentes', histogramaVendasController.workspace).toggle();" />
+              <input id="inserirComponentes" name="inserirComponentes" type="checkbox" value="checked" onclick="$('.filtroComponentesHistograma', histogramaVendasController.workspace).toggle();" />
             </td>
             <td width="558">
               <table width="552" border="0" cellpadding="2" cellspacing="1">
@@ -95,7 +95,7 @@
                     </label>
                   </td>
                   <td width="459" colspan="10">
-                    <table border="0" cellpadding="2" cellspacing="1" class="filtro filtroComponentes">
+                    <table border="0" cellpadding="2" cellspacing="1" class="filtro filtroComponentesHistograma">
                       <tr>
                         <td width="171">
                           <select name="componente" id="componente" style="width:150px;">
@@ -109,7 +109,7 @@
                         </td>
                         <td width="70">Elementos:</td>
                         <td width="150">
-                          <select name="elemento" id="elemento" style="width:150px;">
+                          <select name="elemento" id="histograma_elemento" style="width:150px;">
                             <option selected="selected" value="-1">Selecione...</option>
                           </select>
                         </td>

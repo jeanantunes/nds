@@ -12,7 +12,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	    var numLanc = $('#numeroLancamentoDvm').val();
 	    var numPeriodo = $('#periodoDvm').text();
 	    
-	    if((numLanc != undefined) && (numLanc > 1) || (numPeriodo != undefined) && (numPeriodo > 1)){
+	    if((numLanc != undefined) && (numLanc > 1)){
 	    	$("#usarFixacao").prop('checked', false);
 	    	$("#usarMix").prop('checked', false);
 	    }else{
@@ -160,6 +160,11 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	this.processarLinhaBases = function(index, row){
 		row.pesoInput = '<select name="select'+index+'" id="select'+index+'" onchange="distribuicaoVendaMedia.selecionarPesoProduto('+index+', this)" ><option value="1" '+ (row.indicePeso && row.indicePeso == 1 ? "selected":"") +' >1</option><option value="2" '+ (row.indicePeso && row.indicePeso == 2 ? "selected":"") +' >2</option><option value="3" '+ (row.indicePeso && row.indicePeso == 3 ? "selected":"") +' >3</option></select>';
 		row.peso = 1;
+		
+		if(row.indicePeso){
+			row.peso = row.indicePeso;
+		}
+		
 		row.select = '<input onclick="distribuicaoVendaMedia.selecionarProdutoBase(' + index + ', this)" type="checkbox" value=""/>';
 		
 		if(row.periodo == undefined){
@@ -787,31 +792,38 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 			
 			$('#idStatusEstudo').text(isLiberado === true ? "Liberado" : "Gerado");
 			
-//			myWindow = window.open('', '_blank');
-//			
-//			if(myWindow && myWindow.document) {
-//				myWindow.document.write(result.list[0]);
-//				myWindow.focus();
-//			} else {
-//				exibirMensagem("WARNING", ["Ajuste as configurações de popup no browser."]);
-//			}
-//			$("#dialog-infsRepComplementar").attr(result.list[0]);
-            
-			if(result.list[2]){
-				$(result.list[2]).dialog({
-					escondeHeader: false,
-					resizable: true,
-					height: 300,
-					width: 420,
-					modal: true,
-					title: 'Informações reparte complementar',
-					buttons: {
-						"FECHAR": function() {
-							$(this).dialog( "close" );
-						}
-					}
-				});
+			//Popup Pós estudo venda media
+			
+			myWindow = window.open('', '_blank');
+			
+			if(myWindow && myWindow.document) {
+				myWindow.document.write(result.list[2]);
+				myWindow.focus();
+			} else {
+				exibirMensagem("WARNING", ["Ajuste as configurações de popup no browser."]);
 			}
+			// $("#dialog-infsRepComplementar").attr(result.list[0]);
+			
+			// Fim pop up pós estudo
+            
+			
+			// DESCOMENTAR APOS COMENTAR POP UP POS ESTUDO
+			
+//			if(result.list[2]){
+//				$(result.list[2]).dialog({
+//					escondeHeader: false,
+//					resizable: true,
+//					height: 300,
+//					width: 420,
+//					modal: true,
+//					title: 'Informações reparte complementar',
+//					buttons: {
+//						"FECHAR": function() {
+//							$(this).dialog( "close" );
+//						}
+//					}
+//				});
+//			}
 			
             if(typeof(matrizDistribuicao)=="object"){
         		matrizDistribuicao.carregarGrid();

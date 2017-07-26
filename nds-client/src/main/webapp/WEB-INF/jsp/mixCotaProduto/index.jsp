@@ -187,6 +187,15 @@
 		      <td>
 		      <input type="text" style="width:200px;" id="nomeProdutoOrigemInput" onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#'+this.id);"/>
    		  	</td>
+   		  	<td><label><strong>Segmento:</strong></label></td>
+	   		  <td width=80px;>
+	                <select name="select" id="segmentoMixPopupOrigem" style="width:160px;" class="classificacao">
+				            <option value="0">SELECIONE</option>
+				            <c:forEach items="${segmento}" var="tipoSegmento">
+								<option value="<c:out value="${tipoSegmento.descricao}"/>" ${tipoSegmento.descricao}><c:out value="${tipoSegmento.descricao}"/></option>
+							</c:forEach>
+	          		</select>
+                </td>
    		  	</tr>
    		  </table>
    		  
@@ -206,6 +215,15 @@
 		      <td>
 		      <input type="text" style="width:200px;" id="nomeProdutoDestinoInput" onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#codigoProdutoDestinoInput');"/>
    		  	</td>
+   		  	<td><label><strong>Segmento:</strong></label></td>
+	   		  <td width=80px;>
+	                <select name="select" id="segmentoMixPopupDestino" style="width:160px;" class="classificacao">
+	                		<option value="0">SELECIONE</option>
+				            <c:forEach items="${segmento}" var="tipoSegmento">
+								<option value="<c:out value="${tipoSegmento.descricao}"/>" ${tipoSegmento.descricao}><c:out value="${tipoSegmento.descricao}"/></option>
+							</c:forEach>
+	          		</select>
+                </td>
    		  	</tr>
    		  </table>
    	  </fieldset>
@@ -216,7 +234,7 @@
 	<div id="modalUploadArquivoMix" title="Adicionar em Lote" style="display:none;">
 	 <form action="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/uploadArquivoLote" id="formUploadLoteMix" method="post"  enctype="multipart/form-data">
 	 		<p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
-	      	<p ><span class="bt_novos" title="Download Modelo"><a href="${pageContext.request.contextPath}/modelos/modelo_mix.xls"><img align="center" src="images/ico_excel.png" hspace="5" border="0" />Modelo de exemplo</a></span></p>
+	      	<p ><span class="bt_novos" title="Download Modelo"><a href="${pageContext.request.contextPath}/modelos/modelo_mix.xlsx"><img align="center" src="images/ico_excel.png" hspace="5" border="0" />Modelo de exemplo</a></span></p>
 	      	<br><br><br>
 	      	<hr>
 	      	<p>Selecione um arquivo para upload:</p>

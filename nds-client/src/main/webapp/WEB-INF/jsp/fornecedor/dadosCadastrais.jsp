@@ -106,6 +106,13 @@
 	      	<input type="checkbox" name="fornecedorDTO.destinacaoEncalhe" id="fornecedorController-destinacaoEncalhe" />
 	    </td>
 	</tr>
+	<tr>
+    	<td>Margem distribuidor:</td>
+	    <td>
+	      	<input type="text" name="fornecedorDTO.margemDistribuidor" id="fornecedorController-margemDistribuidor" style="width: 40px;" value="0,00" />
+	      	%
+	    </td>
+	</tr>
     </table>
     <br/>
 </div>

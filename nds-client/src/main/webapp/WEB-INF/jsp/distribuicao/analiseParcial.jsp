@@ -148,7 +148,7 @@ table.dadosTab { margin-left: 370px;}
 			<input type="hidden" id="reparteCopiado" value="${reparteCopiado}" />
 			<input type="hidden" id="numeroEdicao" value="${estudo.produtoEdicao.numeroEdicao}" />
 			<input type="hidden" id="estudoId" value="${estudo.id}" />
-			<input type="hidden" id="codigoProduto" value="${estudo.produtoEdicao.produto.codigo}" />
+			<input type="hidden" id="codigoProduto_analiseParcial" value="${estudo.produtoEdicao.produto.codigo}" />
 			<input type="hidden" id="produtoId" value="${estudo.produtoEdicao.produto.id}" />
 			<input type="hidden" id="tipoSegmentoProduto" value="${estudo.produtoEdicao.produto.tipoSegmentoProduto.id}" />
 			<input type="hidden" id="estudoOrigem" value="${estudo.idEstudoOrigemCopia}" />
@@ -193,11 +193,17 @@ table.dadosTab { margin-left: 370px;}
 							<option value="ranking">Ranking</option>
 							<option value="n_maiores">N Maiores</option>
 							<option value="percentual_de_venda">% de Venda</option>
+							<option value="qtd_de_venda">Quantidade de Venda</option>
 							<option value="reducao_de_reparte">% Variação de Reparte</option>
 							<option value="numero_cota">Cota</option>
 					</select></td>
 					<%--<td>Reparte: <input type="text" name="textfield6" id="textfield6" style="width: 40px;" /></td>--%>
-					<td>Abrangência: <span id="abrangencia"></span></td>
+					<td>Abrang&ecirc;ncia: 
+					   <span id="abrangencia"></span>
+                       <a href="javascript:analiseParcialController.atualizaAbrangencia();" onclick="">
+                           <img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" title="Atualizar abrang&ecirc;ncia." width="15" height="15" border="0" style="margin-top: 15px;" />
+                       </a>
+					</td>
 				</tr>
             </table>
             <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -227,15 +233,19 @@ table.dadosTab { margin-left: 370px;}
 					<td>
                         	<span id="opcoesOrdenarPor" style="display: none;" class="label">
                             
-                            <span id="label_numero_cota" style="display: none;" class="label"> Cota: </span>
+                            <span id="label_numero_cota" style="display: none;" class="label"> Cotas: </span>
                             <span id="label_reparte" style="display: none;" class="label"> Reparte: </span>
                             <span id="label_reducao_de_reparte" style="display: none;" class="label"> % De: </span>
                             <span id="label_ranking" style="display: none;" class="label"> Reparte: </span>
                             <span id="label_n_maiores" style="display: none;" class="label"> Ranking: </span>
                             <span id="label_percentual_de_venda" style="display: none;" class="label"> % Venda: </span>
+                            <span id="label_qtd_de_venda" style="display: none;" class="label"> Venda: </span>
                             
-                            <input id="ordenarPorDe" type="text" style="width: 60px;" /> Até 
+                            <input id="ordenarPorDe" type="text" style="width: 60px;" />
+                            <span id="labelAte" class="label"> Até </span>
                             <input id="ordenarPorAte" type="text" style="width: 60px;" />
+                            
+                            <input id="ordenarPorCota" type="text" style="width: 135px;" style="display: none;" placeholder="Separe por virgula!">
                             
                             <span id="labelAte_numero_cota" style="display: none;" class="label"> </span>
                             <span id="labelAte_reparte" style="display: none;" class="label"> Exs. </span>
@@ -243,6 +253,7 @@ table.dadosTab { margin-left: 370px;}
                             <span id="labelAte_ranking" style="display: none;" class="label"> Exs. </span>
                             <span id="labelAte_n_maiores" style="display: none;" class="label"> Pos. </span>
                             <span id="labelAte_percentual_de_venda" style="display: none;" class="label"> % </span>
+                            <span id="labelAte_qtd_de_venda" style="display: none;" class="label"> Exs. </span>
                             
                             &nbsp;
                             
@@ -324,23 +335,31 @@ table.dadosTab { margin-left: 370px;}
 					</table>
 				</c:if>
 				<c:if test="${tipoExibicao == 'PARCIAL'}">
-					<table border="0" cellspacing="0" cellpadding="0" class="tableTotais">
-						<tr class="class_linha_1 paddingTotais">
-							<td id="lbl_qtd_cotas">Qtde Cotas:</td>
-							<td id="total_de_cotas">0</td>
-                            <td id="total_ultimo_reparte">0</td>
-                            <td id="total_reparte_sugerido">0</td>
-							<td id="lbl_legenda">&nbsp;</td>
-							<td id="total_juramento">0</td>
+					<table border="0" cellspacing="0" cellpadding="0" class="tableTotais" style="width: 1040px !important;">
+						<tr class="class_linha_1 paddingTotais" style="width: 1040px !important;">
+							<td id="lbl_qtd_cotas" style="width: 95px !important;">Qtde Cotas:</td>
+							<td id="total_de_cotas" style="width: 155px !important;">0</td>
+							<td id="lbl_NPDV" style="width: 70px !important;">&nbsp;</td>
+                            <td id="total_ultimo_reparte" style="width: 60px !important; text-align: center;">0</td>
+                            <td id="total_reparte_sugerido" style="width: 60px !important; text-align: center;">0</td>
+							<td id="lbl_legenda" style="width: 150px !important;">&nbsp;</td>
+							<td id="total_juramento" style="width: 47px !important;">0</td>
 							<%--<td align="right" id="total_media_venda">0</td>--%>
-							<td id="total_reparte1">0</td>
-							<td id="total_venda1" class="vermelho">0</td>
-							<td id="total_reparte2">0</td>
-							<td id="total_venda2" class="vermelho">0</td>
-							<td id="total_reparte3">0</td>
-							<td id="total_venda3" class="vermelho">0</td>
-							<td id="total_reparte4">0</td>
-							<td id="total_venda4" class="vermelho">0</td>
+							<td id="total_reparte1" style="width: 36px !important;">0</td>
+							<td id="total_venda1" class="vermelho" style="width: 36px !important;">0</td>
+							<td id="total_reparte2" style="width: 36px !important;">0</td>
+							<td id="total_venda2" class="vermelho" style="width: 36px !important;">0</td>
+							<td id="total_reparte3" style="width: 36px !important;">0</td>
+							<td id="total_venda3" class="vermelho" style="width: 36px !important;">0</td>
+							<td id="total_reparte4" style="width: 36px !important;">0</td>
+							<td id="total_venda4" class="vermelho" style="width: 36px !important;">0</td>
+							<td id="total_reparte5" style="width: 36px !important;">0</td>
+							<td id="total_venda5" class="vermelho" style="width: 36px !important;">0</td>
+							<td id="total_reparte6" style="width: 36px !important;">0</td>
+							<td id="total_venda6" class="vermelho" style="width: 36px !important;">0</td>
+							<td id="total_reparte7" style="width: 36px !important;">0</td>
+							<td id="total_venda7" class="vermelho" style="width: 36px !important;">0</td>
+							<td id="lbl_paddingRight" style="width: 25px !important;">&nbsp;</td>
 						</tr>
 					</table>
 				</c:if>
@@ -389,14 +408,13 @@ table.dadosTab { margin-left: 370px;}
 						<img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" alt="Cotas que não entraram no Estudo" hspace="5" border="0" /> Cotas que não entraram no Estudo
 				    </a>
                 </span>
-            <c:if test="${tipoExibicao == 'NORMAL'}">
                 <span class="bt_novos">
                     <a href="javascript:;" onclick="analiseParcialController.mudarBaseVisualizacao();">
                         <img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" alt="Mudar Base de Visualização" hspace="5" border="0" />
                         <span>Mudar Bases</span>
 					</a>
-				</span>
-            </c:if>
+				</span> 
+            	<%-- <c:if test="${tipoExibicao == 'NORMAL'}"> </c:if> --%>  
                 <%--<br/>--%>
 				<span style="font-weight: bold; font-size: 10px;" onclick="dataTableInit()">Saldo a distribuir:</span>
 				<span id="saldo_reparte" style="font-weight: bold; font-size: 10px;">${estudo.sobra == null ? 0 : estudo.sobra}</span>
@@ -482,7 +500,7 @@ table.dadosTab { margin-left: 370px;}
 
 	<div id="dialog-mudar-base" title="Mudar Base de Visualização" style="display: none;">
 
-		<fieldset style="width: 600px !important;">
+		<fieldset style="width: 750px !important;">
 			<legend>Base Produto</legend>
 
 			<table width="600" border="0" cellpadding="2" cellspacing="1">
@@ -509,7 +527,7 @@ table.dadosTab { margin-left: 370px;}
 
 		</fieldset>
 
-		<fieldset style="width: 600px !important; margin-top: 10px;">
+		<fieldset style="width: 750px !important; margin-top: 10px;">
 			<legend>Produtos Cadastrados</legend>
 			<table class="prodCadastradosGrid" id="prodCadastradosGrid"></table>
 		</fieldset>
@@ -550,8 +568,8 @@ table.dadosTab { margin-left: 370px;}
 
 			<table width="686" border="0" cellpadding="2" cellspacing="1">
 				<tr>
-					<td style="width: 130px;"><strong>Código: </strong> ${estudo.produtoEdicao.produto.codigo}</td>
-					<td><strong>Produto: </strong> ${estudo.produtoEdicao.nomeComercial}</td>
+					<td style="width: 130px;"><strong>Código: </strong><span id="detalheCotaCodigoProduto"></span></td>
+					<td><strong>Produto: </strong><span id="detalheCotaNomeProduto"></span></td>
 				</tr>
 			</table>
 			<table width="686" border="0" cellpadding="2" cellspacing="1">
@@ -568,8 +586,8 @@ table.dadosTab { margin-left: 370px;}
 
             <table width="686" border="0" cellpadding="2" cellspacing="1">
                 <tr>
-                    <td style="width: 130px;"><strong>Código: </strong> ${estudo.produtoEdicao.produto.codigo}</td>
-                    <td><strong>Produto: </strong> ${estudo.produtoEdicao.nomeComercial}</td>
+                    <td style="width: 130px;"><strong>Código: </strong><span id="detalheCotaCodigoProduto"></span></td>
+					<td><strong>Produto: </strong><span id="detalheCotaNomeProduto"></span></td>
                 </tr>
             </table>
             <table width="686" border="0" cellpadding="2" cellspacing="1">

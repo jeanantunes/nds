@@ -19,52 +19,52 @@ public class ProdutoRecolhimentoVO {
 	
 	private Long idProdutoEdicao;
 	
-	@Export(label="Status")
+	@Export(label="Status", widthPercent=7)
 	private String statusLancamento;
 	
-	@Export(label="Código")
+	@Export(label="Código", widthPercent=6)
 	private String codigoProduto;
 	
-	@Export(label="Produto", widthPercent=13f)
+	@Export(label="Produto", widthPercent=12)
 	private String nomeProduto;
 	
-	@Export(label="Ed.", widthPercent=4f)
+	@Export(label="Ed.", widthPercent=3)
 	private Long numeroEdicao;
 	
-	@Export(label="Capa R$", columnType=ColumnType.MOEDA)
+	@Export(label="Capa R$", columnType=ColumnType.MOEDA, widthPercent=5)
 	private BigDecimal precoVenda;
 	
-	@Export(label="Desc R$", columnType=ColumnType.MOEDA)
+	@Export(label="Desc R$", columnType=ColumnType.MOEDA, widthPercent=5)
 	private BigDecimal precoDesconto;
 	
 	private Long idFornecedor;
 	
-	@Export(label="Fornecedor", widthPercent=8f)
+	@Export(label="Fornecedor", widthPercent=8)
 	private String nomeFornecedor;
 	
-	@Export(label="Editor")
+	@Export(label="Editor", widthPercent=6)
 	private String nomeEditor;
 	
-	@Export(label="Parcial")
+	@Export(label="Parcial", widthPercent=6)
 	private String parcial;
 	
-	@Export(label="Brinde")
+	@Export(label="Brinde", widthPercent=6)
 	private String brinde;
 	
-	@Export(label="Lçto")
+	@Export(label="Lçto", widthPercent=7)
 	private Date dataLancamento;
 	
-	@Export(label="PEB")
+	@Export(label="PEB", widthPercent=4)
 	private Long peb;
 	
-	@Export(label="Rcto")
+	@Export(label="Rcto", widthPercent=6)
 	private Date dataRecolhimento;
 	
 	private String encalheSedeFormatado;
 	
 	private String encalheAtendidaFormatado;
 	
-	@Export(label="Exemplar")
+	@Export(label="Exemplar", widthPercent=6)
 	private String encalheFormatado;
 	
 	private BigDecimal encalheSede;
@@ -82,10 +82,10 @@ public class ProdutoRecolhimentoVO {
 		this.peb = peb;
 	}
 
-	@Export(label="Total R$", columnType=ColumnType.MOEDA)
+	@Export(label="Total R$", columnType=ColumnType.MOEDA, widthPercent=6)
 	private BigDecimal valorTotal;
 	
-	@Export(label="Nova Data")
+	@Export(label="Nova Data", widthPercent=6)
 	private Date novaData;
 	
 	private boolean bloqueioAlteracaoBalanceamento;

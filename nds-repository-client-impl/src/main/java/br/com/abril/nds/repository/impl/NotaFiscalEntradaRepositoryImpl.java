@@ -54,7 +54,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		hql.append(" select	")
 		
 		.append(" notaFiscal.id as key, ")
-		.append(" f.juridica.razaoSocial as value ")
+		.append(" f.juridica.nomeFantasia as value ")
 		
 		.append(" from NotaFiscalEntradaFornecedor notaFiscal ")
 		//.append(" join notaFiscal.tipoNotaFiscal 	")

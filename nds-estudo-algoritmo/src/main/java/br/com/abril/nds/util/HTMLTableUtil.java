@@ -31,6 +31,7 @@ public class HTMLTableUtil {
     public static String estudoToHTML(EstudoTransient estudo) {
 	
 	StringBuilder h = new StringBuilder();
+	
 	h.append("<html>");
 	h.append("<body>");
 	h.append("<table border='1'>");
@@ -41,15 +42,16 @@ public class HTMLTableUtil {
 	h.append("<td>Soma Rep Base</td>");
 	h.append("<td>Soma Venda Base</td>");
 	h.append("<td>Qtde Ed. Base</td>");
+	
 	for (int i = 0; i < 6; i++) {
 	    if (i < estudo.getEdicoesBase().size()) {
-		h.append(String.format("<td>Rep%s %s</td>", i, estudo.getEdicoesBase().get(i).getNumeroEdicao()));
-		h.append(String.format("<td>Venda%s %s</td>", i, estudo.getEdicoesBase().get(i).getNumeroEdicao()));
-		h.append(String.format("<td>Peso%s %s</td>", i, estudo.getEdicoesBase().get(i).getNumeroEdicao()));
+			h.append(String.format("<td>Rep%s %s</td>", i, estudo.getEdicoesBase().get(i).getNumeroEdicao()));
+			h.append(String.format("<td>Venda%s %s</td>", i, estudo.getEdicoesBase().get(i).getNumeroEdicao()));
+			h.append(String.format("<td>Peso%s %s</td>", i, estudo.getEdicoesBase().get(i).getNumeroEdicao()));
 	    } else {
-		h.append(String.format("<td>Rep%s</td>", i));
-		h.append(String.format("<td>Venda%s</td>", i));
-		h.append(String.format("<td>Peso%s</td>", i));
+			h.append(String.format("<td>Rep%s</td>", i));
+			h.append(String.format("<td>Venda%s</td>", i));
+			h.append(String.format("<td>Peso%s</td>", i));
 	    }
 	}
 	for (int i = 0; i < 6; i++) {
@@ -77,71 +79,158 @@ public class HTMLTableUtil {
 
 	for (CotaEstudo ce : estudo.getCotas()) {
 	    if (ce.getReparteCalculado() != null && ce.getReparteCalculado().compareTo(BigInteger.ZERO) > 0) {
-		h.append("	<tr>");
-		h.append(String.format(" <td>%s</td>", ce.getNumeroCota()));
-		h.append(String.format(" <td>%s</td>", ce.isNova()));
-		h.append(String.format(" <td>%s</td>", ce.getQuantidadePDVs()));
-		BigInteger reparte = BigInteger.ZERO;
-		BigInteger venda = BigInteger.ZERO;
-		if (ce.getEdicoesRecebidas() != null) {
-		    for (ProdutoEdicaoEstudo pr : ce.getEdicoesRecebidas()) {
-			reparte = reparte.add(pr.getReparte().setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
-			venda = venda.add(pr.getVenda().setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
-		    }
-		}
-		h.append(String.format(" <td>%s</td>", reparte));
-		h.append(String.format(" <td>%s</td>", venda));
-		h.append(String.format(" <td>%s</td>", ce.getEdicoesRecebidas().size()));
-		for (int i = 0; i < 6; i++) {
-		    if (i < ce.getEdicoesRecebidas().size()) {
-			h.append(String.format(" <td>%s</td>", ce.getEdicoesRecebidas().get(i).getReparte()));
-			h.append(String.format(" <td>%s</td>", ce.getEdicoesRecebidas().get(i).getVenda()));
-			h.append(String.format(" <td>%s</td>", ce.getEdicoesRecebidas().get(i).getIndicePeso()));
-		    } else {
-			h.append(" <td></td>");
-			h.append(" <td></td>");
-			h.append(" <td></td>");    
-		    }
-		}
-		for (int i = 0; i < 6; i++) {
-		    if (i < ce.getEdicoesRecebidas().size()) {
-			h.append(String.format(" <td>%s</td>", ce.getEdicoesRecebidas().get(i).getVendaCorrigida()));
-		    } else {
-			h.append(" <td></td>");
-		    }
-		}
-		h.append(String.format(" <td>%s</td>", ce.getMenorVenda()));
-		h.append(String.format(" <td>%s</td>", ce.getPesoMenorVenda()));
-		h.append(String.format(" <td>%s</td>", ce.getVendaMediaNominal()));
-		h.append(String.format(" <td>%s</td>", ce.getVendaMediaCorrigida()));
 
-		for (int i = 0; i < 5; i++) {
-		    if (i < ce.getEdicoesRecebidas().size()) {
-			if (ce.getEdicoesRecebidas().get(i).getDivisaoVendaCrescente() == null) {
-			    h.append(" <td></td>");
-			} else {
-			    h.append(String.format(" <td>%s</td>", ce.getEdicoesRecebidas().get(i).getDivisaoVendaCrescente()));
+	    	Map<Long, ProdutoEdicaoEstudo> mapEdicoesRecebidas = new HashMap<>();
+			
+	    	h.append("	<tr>");
+			h.append(String.format(" <td>%s</td>", ce.getNumeroCota()));
+			h.append(String.format(" <td>%s</td>", ce.isNova()));
+			h.append(String.format(" <td>%s</td>", ce.getQuantidadePDVs()));
+			
+			BigInteger reparte = BigInteger.ZERO;
+			BigInteger venda = BigInteger.ZERO;
+			
+			if (ce.getEdicoesRecebidas() != null) {
+			    for (ProdutoEdicaoEstudo pr : ce.getEdicoesRecebidas()) {
+					reparte = reparte.add(pr.getReparte().setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
+					venda = venda.add(pr.getVenda().setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
+			    }
+			    
+//			    for (ProdutoEdicaoEstudo peEstudo : estudo.getEdicoesBase()) {
+//			    	
+//			    	ProdutoEdicaoEstudo peEstudoBase = new ProdutoEdicaoEstudo();
+//			    	
+//			    	peEstudoBase.setReparte(BigDecimal.ZERO);
+//			    	peEstudoBase.setVenda(BigDecimal.ZERO);
+//			    	peEstudoBase.setIndicePeso(BigDecimal.ZERO);
+//			    	peEstudoBase.setVendaCorrigida(BigDecimal.ZERO);
+//			    	peEstudoBase.setDivisaoVendaCrescente(BigDecimal.ZERO);
+//			    	
+//			    	mapEdicoesRecebidas.put(peEstudo.getNumeroEdicao(), peEstudoBase);
+//				}
+			    
+			    for (ProdutoEdicaoEstudo peEstudoCota : ce.getEdicoesRecebidas()) {
+			    	
+			    	if(peEstudoCota.isParcial()){
+			    		
+			    		
+			    		String chave = getChaveMap(peEstudoCota);
+			    		
+			    		mapEdicoesRecebidas.put(Long.parseLong(chave), peEstudoCota);
+			    	}else{
+			    		mapEdicoesRecebidas.put(peEstudoCota.getNumeroEdicao(), peEstudoCota);
+			    	}
+			    	
+				}
+			    
 			}
-		    } else {
-			h.append(" <td></td>");
-		    }
-		}
-		h.append(String.format(" <td>%s</td>", ce.getIndiceCorrecaoTendencia()));
-		if (ce.getVendaMediaMaisN() != null) {
-		    h.append(String.format(" <td>%s</td>", ce.getVendaMediaMaisN()));
-		} else if (ce.getPercentualEncalheMaximo() != null) {
-		    h.append(String.format(" <td>%s</td>", ce.getPercentualEncalheMaximo()));
-		} else {
-		    h.append(String.format(" <td>%s</td>", ce.getIndiceAjusteCota()));
-		}
-		h.append(String.format(" <td>%s</td>", ce.getIndiceTratamentoRegional()));
-		h.append(String.format(" <td>%s</td>", ce.getIndiceVendaCrescente()));
-		h.append(String.format(" <td>%s</td>", ce.getVendaMedia()));
-		h.append(String.format(" <td>%s</td>", ce.getReparteMinimo()));
-		h.append(String.format(" <td>%s</td>", ce.getReparteMinimoFinal()));
-		h.append(String.format(" <td>%s</td>", ce.getReparteCalculado()));
-		h.append(String.format(" <td>%s</td>", ce.getClassificacao()));
-		h.append("	</tr>");
+			
+			h.append(String.format(" <td>%s</td>", reparte));
+			h.append(String.format(" <td>%s</td>", venda));
+			h.append(String.format(" <td>%s</td>", ce.getEdicoesRecebidas().size()));
+			
+			for (ProdutoEdicaoEstudo peBaseEstudo : estudo.getEdicoesBase()) {
+				
+				ProdutoEdicaoEstudo peCota = null;
+				
+				if(peBaseEstudo.isParcial()){
+		    		String chave = getChaveMap(peBaseEstudo);
+		    		
+		    		peCota = mapEdicoesRecebidas.get(Long.parseLong(chave));
+		    	}else{
+		    		peCota = mapEdicoesRecebidas.get(peBaseEstudo.getNumeroEdicao());
+		    	}
+				
+				if(peCota != null){
+					h.append(String.format(" <td>%s</td>", peCota.getReparte()));
+					h.append(String.format(" <td>%s</td>", peCota.getVenda()));
+					h.append(String.format(" <td>%s</td>", peCota.getIndicePeso()));
+				}else{
+					h.append(" <td></td>");
+					h.append(" <td></td>");
+					h.append(" <td></td>"); 
+				}
+			}
+			
+			addEspacosEmBranco(estudo, h, 3);
+			
+			for (ProdutoEdicaoEstudo peBaseEstudo : estudo.getEdicoesBase()) {
+				
+				ProdutoEdicaoEstudo peCota = null;
+				
+				if(peBaseEstudo.isParcial()){
+					String chave = getChaveMap(peBaseEstudo);
+					peCota = mapEdicoesRecebidas.get(Long.parseLong(chave));
+				}else{
+					peCota = mapEdicoesRecebidas.get(peBaseEstudo.getNumeroEdicao());
+				}
+				
+				if(peCota != null){
+					h.append(String.format(" <td>%s</td>", peCota.getVendaCorrigida()));
+				}else{
+					h.append(" <td></td>");
+				}
+			}
+			
+			addEspacosEmBranco(estudo, h, 1);
+			
+			
+//			for (int i = 0; i < 6; i++) {
+//			    
+//				if (i < ce.getEdicoesRecebidas().size()) {
+//					h.append(String.format(" <td>%s</td>", ce.getEdicoesRecebidas().get(i).getReparte()));
+//					h.append(String.format(" <td>%s</td>", ce.getEdicoesRecebidas().get(i).getVenda()));
+//					h.append(String.format(" <td>%s</td>", ce.getEdicoesRecebidas().get(i).getIndicePeso()));
+//			    } else {
+//					h.append(" <td></td>");
+//					h.append(" <td></td>");
+//					h.append(" <td></td>");    
+//			    }
+//			}
+			
+//			for (int i = 0; i < 6; i++) {
+//			    if (i < ce.getEdicoesRecebidas().size()) {
+//			    	h.append(String.format(" <td>%s</td>", ce.getEdicoesRecebidas().get(i).getVendaCorrigida()));
+//			    } else {
+//			    	h.append(" <td></td>");
+//			    }
+//			}
+			
+			h.append(String.format(" <td>%s</td>", ce.getMenorVenda()));
+			h.append(String.format(" <td>%s</td>", ce.getPesoMenorVenda()));
+			h.append(String.format(" <td>%s</td>", ce.getVendaMediaNominal()));
+			h.append(String.format(" <td>%s</td>", ce.getVendaMediaCorrigida()));
+	
+			for (int i = 0; i < 5; i++) {
+			    if (i < ce.getEdicoesRecebidas().size()) {
+					if (ce.getEdicoesRecebidas().get(i).getDivisaoVendaCrescente() == null) {
+					    h.append(" <td></td>");
+					} else {
+					    h.append(String.format(" <td>%s</td>", ce.getEdicoesRecebidas().get(i).getDivisaoVendaCrescente()));
+					}
+			    } else {
+			    	h.append(" <td></td>");
+			    }
+			}
+			
+			h.append(String.format(" <td>%s</td>", ce.getIndiceCorrecaoTendencia()));
+			
+			if (ce.getVendaMediaMaisN() != null) {
+			    h.append(String.format(" <td>%s</td>", ce.getVendaMediaMaisN()));
+			} else if (ce.getPercentualEncalheMaximo() != null) {
+			    h.append(String.format(" <td>%s</td>", ce.getPercentualEncalheMaximo()));
+			} else {
+			    h.append(String.format(" <td>%s</td>", ce.getIndiceAjusteCota()));
+			}
+			
+			h.append(String.format(" <td>%s</td>", ce.getIndiceTratamentoRegional()));
+			h.append(String.format(" <td>%s</td>", ce.getIndiceVendaCrescente()));
+			h.append(String.format(" <td>%s</td>", ce.getVendaMedia()));
+			h.append(String.format(" <td>%s</td>", ce.getReparteMinimo()));
+			h.append(String.format(" <td>%s</td>", ce.getReparteMinimoFinal()));
+			h.append(String.format(" <td>%s</td>", ce.getReparteCalculado()));
+			h.append(String.format(" <td>%s</td>", ce.getClassificacao()));
+			h.append("	</tr>");
 	    }
 	}
 	h.append("</table> <br/> <br/> <br/>");
@@ -281,6 +370,33 @@ public class HTMLTableUtil {
 //	sb.append(HTMLTableUtil.buildHTMLTable(estudoAutomatico.getCotas()));
 //	return sb.toString();
     }
+
+	private static String getChaveMap(ProdutoEdicaoEstudo peEstudoCota) {
+		
+		String chave = "";
+		
+		if(peEstudoCota.getPeriodo() != null){
+			chave = peEstudoCota.getNumeroEdicao()+""+peEstudoCota.getPeriodo();
+		}else{
+			if(peEstudoCota.getIdEstudo() != null){
+				chave = peEstudoCota.getNumeroEdicao()+""+peEstudoCota.getIdEstudo();
+			}else{
+				chave = peEstudoCota.getNumeroEdicao()+""+peEstudoCota.getProduto().getCodigo();
+			}
+		}
+		
+		return chave;
+	}
+
+	private static void addEspacosEmBranco(EstudoTransient estudo, StringBuilder h, int multiplo) {
+		int qtdEdicoesBases = estudo.getEdicoesBase().size();
+		
+		for (int i = qtdEdicoesBases; i < 6; i++) {
+			for (int j = 0; j < multiplo; j++) {
+				h.append(" <td></td>");
+			}
+		}
+	}
     
     public static String informacoesReparteComplementarEstudo(EstudoTransient estudo){
     	

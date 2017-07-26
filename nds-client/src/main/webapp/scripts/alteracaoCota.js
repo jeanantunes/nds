@@ -134,6 +134,7 @@ var alteracaoCotaController = $.extend(true, {
 			 decimal:',', 
 			 precision:2
 		});
+		
 		$("input[id$=valorPercentualFaturamento", this.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 

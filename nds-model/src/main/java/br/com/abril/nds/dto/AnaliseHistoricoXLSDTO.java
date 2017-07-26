@@ -17,91 +17,109 @@ public class AnaliseHistoricoXLSDTO {
 	
 	private String statusCotaFormatado = "";
 	
-	@Export(label = "Nome", alignment=Alignment.LEFT, exhibitionOrder = 3)
+	@Export(label = "Tipo Distrib.", alignment=Alignment.LEFT, exhibitionOrder = 3)
+	private String tipoDistribuicaoCota = "";
+	
+	@Export(label = "Tipo", alignment=Alignment.LEFT, exhibitionOrder = 4)
+	private String tipoPDVPrincipal = "";
+	
+	@Export(label = "Nome", alignment=Alignment.LEFT, exhibitionOrder = 5)
 	private String nomePessoa = "";
 	
-	@Export(label = "Tipo Logradouro", alignment = Alignment.LEFT, exhibitionOrder = 4)
+	@Export(label = "Tipo Logradouro", alignment = Alignment.LEFT, exhibitionOrder = 6)
     private String tipoLogradouro;
     
-    @Export(label = "Logradouro", alignment = Alignment.LEFT, exhibitionOrder = 5)
+    @Export(label = "Logradouro", alignment = Alignment.LEFT, exhibitionOrder = 7)
     private String logradouro;
     
-    @Export(label = "Número", alignment = Alignment.LEFT, exhibitionOrder = 6)
+    @Export(label = "Número", alignment = Alignment.LEFT, exhibitionOrder = 8)
     private String numeroEndereco;
     
-    @Export(label = "Complemento", alignment = Alignment.LEFT, exhibitionOrder = 7)
+    @Export(label = "Complemento", alignment = Alignment.LEFT, exhibitionOrder = 9)
     private String complemento;
     
-    @Export(label = "Bairro", alignment = Alignment.LEFT, exhibitionOrder = 8)
+    @Export(label = "Bairro", alignment = Alignment.LEFT, exhibitionOrder = 10)
     private String bairro;
     
-    @Export(label = "Cidade", alignment = Alignment.LEFT, exhibitionOrder = 9)
+    @Export(label = "Cidade", alignment = Alignment.LEFT, exhibitionOrder = 11)
     private String cidade;
     
-    @Export(label = "CEP", alignment = Alignment.LEFT, exhibitionOrder = 10)
+    @Export(label = "CEP", alignment = Alignment.LEFT, exhibitionOrder = 12)
     private String cep;
     
-    @Export(label = "Telefone", alignment = Alignment.LEFT, exhibitionOrder = 11)
+    @Export(label = "Telefone", alignment = Alignment.LEFT, exhibitionOrder = 13)
     private String telefone;
 	
-	@Export(label = "NPDV", alignment=Alignment.LEFT, exhibitionOrder = 12)
+	@Export(label = "NPDV", alignment=Alignment.LEFT, exhibitionOrder = 14)
 	private Long qtdPdv = 0l;
 	
 	private Double reparteMedio;
 	
-	@Export(label = "REP Cota", alignment=Alignment.LEFT, exhibitionOrder = 13)
+	@Export(label = "REP Cota", alignment=Alignment.LEFT, exhibitionOrder = 15)
 	private String reparteMedioFormat;
 	
 	private Double vendaMedia;
 	
-	@Export(label = "VDA Cota", alignment=Alignment.LEFT, exhibitionOrder = 14)
+	@Export(label = "VDA Cota", alignment=Alignment.LEFT, exhibitionOrder = 16)
 	private String vendaMediaFormat;
 
 	// Edição 1
-	@Export(label = "REP 1", alignment=Alignment.LEFT, exhibitionOrder = 15)
+	@Export(label = "REP 1", alignment=Alignment.LEFT, exhibitionOrder = 17)
 	private Integer ed1Reparte;
 	
-	@Export(label = "VDA 1", alignment=Alignment.LEFT, exhibitionOrder = 16)
+	@Export(label = "VDA 1", alignment=Alignment.LEFT, exhibitionOrder = 18)
 	private Integer ed1Venda;
 
 	// Edição 2
-	@Export(label = "REP 2", alignment=Alignment.LEFT, exhibitionOrder = 17)
+	@Export(label = "REP 2", alignment=Alignment.LEFT, exhibitionOrder = 19)
 	private Integer ed2Reparte;
 	
-	@Export(label = "VDA 2", alignment=Alignment.LEFT, exhibitionOrder = 18)
+	@Export(label = "VDA 2", alignment=Alignment.LEFT, exhibitionOrder = 20)
 	private Integer ed2Venda;
 
 	// Edição 3
-	@Export(label = "REP 3", alignment=Alignment.LEFT, exhibitionOrder = 19)
+	@Export(label = "REP 3", alignment=Alignment.LEFT, exhibitionOrder = 21)
 	private Integer ed3Reparte;
 	
-	@Export(label = "VDA 3", alignment=Alignment.LEFT, exhibitionOrder = 20)
+	@Export(label = "VDA 3", alignment=Alignment.LEFT, exhibitionOrder = 22)
 	private Integer ed3Venda;
 
 	// Edição 4
-	@Export(label = "REP 4", alignment=Alignment.LEFT, exhibitionOrder = 21)
+	@Export(label = "REP 4", alignment=Alignment.LEFT, exhibitionOrder = 23)
 	private Integer ed4Reparte;
 	
-	@Export(label = "VDA 4", alignment=Alignment.LEFT, exhibitionOrder = 22)
+	@Export(label = "VDA 4", alignment=Alignment.LEFT, exhibitionOrder = 24)
 	private Integer ed4Venda;
 
 	// Edição 5
-	@Export(label = "REP 5", alignment=Alignment.LEFT, exhibitionOrder = 23)
+	@Export(label = "REP 5", alignment=Alignment.LEFT, exhibitionOrder = 25)
 	private Integer ed5Reparte;
 	
-	@Export(label = "VDA 5", alignment=Alignment.LEFT, exhibitionOrder = 24)
+	@Export(label = "VDA 5", alignment=Alignment.LEFT, exhibitionOrder = 26)
 	private Integer ed5Venda;
 
 	// Edição 6
-	@Export(label = "REP 6", alignment=Alignment.LEFT, exhibitionOrder = 25)
+	@Export(label = "REP 6", alignment=Alignment.LEFT, exhibitionOrder = 27)
 	private Integer ed6Reparte;
 	
-	@Export(label = "VDA 6", alignment=Alignment.LEFT, exhibitionOrder = 26)
+	@Export(label = "VDA 6", alignment=Alignment.LEFT, exhibitionOrder = 28)
 	private Integer ed6Venda;
 	
 	private String codigoProduto;
 	
 	private Long numeroEdicao;
+	
+	private String produto01;
+	
+	private String produto02;
+	
+	private String produto03;
+	
+	private String produto04;
+	
+	private String produto05;
+	
+	private String produto06;
 
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -292,4 +310,68 @@ public class AnaliseHistoricoXLSDTO {
 		return ed6Venda;
 	}
 
+	public String getTipoDistribuicaoCota() {
+		return tipoDistribuicaoCota;
+	}
+
+	public void setTipoDistribuicaoCota(String tipoDistribuicaoCota) {
+		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
+	}
+
+	public String getTipoPDVPrincipal() {
+		return tipoPDVPrincipal;
+	}
+
+	public void setTipoPDVPrincipal(String tipoPDVPrincipal) {
+		this.tipoPDVPrincipal = tipoPDVPrincipal;
+	}
+
+	public String getProduto01() {
+		return produto01;
+	}
+
+	public void setProduto01(String produto01) {
+		this.produto01 = produto01;
+	}
+
+	public String getProduto02() {
+		return produto02;
+	}
+
+	public void setProduto02(String produto02) {
+		this.produto02 = produto02;
+	}
+
+	public String getProduto03() {
+		return produto03;
+	}
+
+	public void setProduto03(String produto03) {
+		this.produto03 = produto03;
+	}
+
+	public String getProduto04() {
+		return produto04;
+	}
+
+	public void setProduto04(String produto04) {
+		this.produto04 = produto04;
+	}
+
+	public String getProduto05() {
+		return produto05;
+	}
+
+	public void setProduto05(String produto05) {
+		this.produto05 = produto05;
+	}
+
+	public String getProduto06() {
+		return produto06;
+	}
+
+	public void setProduto06(String produto06) {
+		this.produto06 = produto06;
+	}
+	
 }

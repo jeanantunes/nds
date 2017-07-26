@@ -214,13 +214,28 @@ public class ClassificacaoNaoRecebidaController extends BaseController {
 		FiltroClassificacaoNaoRecebidaDTO filtro = (FiltroClassificacaoNaoRecebidaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		if (porCota) {
+			// add numeroCota e nomeCota no filtro
 			listaDto = this.classificacaoNaoRecebidaService.obterClassificacoesNaoRecebidasPelaCota(filtro);
 			classDto = ClassificacaoNaoRecebidaDTO.class;
             fileName = "Classificações_não_recebidas";
+            
+            if(filtro != null){
+            	filtro.setNomeCota(filtro.getCotaDto().getNomePessoa());
+            	filtro.setNumeroCota(filtro.getCotaDto().getNumeroCota());
+            }
+            
 		}else {
+			// add classificacao no filtro
 			listaDto = this.classificacaoNaoRecebidaService.obterCotasQueNaoRecebemClassificacao(filtro);
 			classDto = CotaQueNaoRecebeClassificacaoDTO.class;
             fileName = "Cotas_que_não_recebem_classificação";
+            
+            if(filtro != null){
+            	TipoClassificacaoProduto tipoClassificacaoProduto = this.tipoClassificacaoProdutoService.buscarPorId(filtro.getIdTipoClassificacaoProduto());
+            	filtro.setClassificacao(tipoClassificacaoProduto.getDescricao() != null ? tipoClassificacaoProduto.getDescricao() : "");
+            }
+            
+            
 		}
         FileExporter.to(fileName, fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, listaDto,
 				classDto, this.httpResponse);

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
@@ -32,7 +33,10 @@ public class EstudoProdutoEdicaoBaseRepositoryImpl extends AbstractRepositoryMod
 		hql.append("     nome as nomeProduto, ");
 		hql.append("     numero_Edicao as numeroEdicao, ");
 		hql.append("     produto_edicao.parcial as isParcial, ");
+		hql.append("     produto_edicao.id as idProdutoEdicao, ");
 		hql.append("     estudo_produto_edicao_base.isConsolidado as isParcialConsolidado, ");
+		hql.append("     estudo_produto_edicao_base.periodo_parcial as periodoParcial, ");
+		hql.append("     estudo_produto_edicao_base.edicao_aberta as isEdicaoAberta, ");
 		hql.append("     estudo_produto_edicao_base.peso as peso    ");
 		hql.append(" FROM estudo_produto_edicao_base     ");
 		hql.append(" INNER JOIN produto_edicao ON produto_edicao.id = estudo_produto_edicao_base.PRODUTO_EDICAO_ID  ");
@@ -42,6 +46,17 @@ public class EstudoProdutoEdicaoBaseRepositoryImpl extends AbstractRepositoryMod
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
 		
 		query.setParameter("estudoId", estudoId);
+		
+		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
+		query.addScalar("numeroEdicao", StandardBasicTypes.BIG_INTEGER); 
+		query.addScalar("isParcial", StandardBasicTypes.BOOLEAN);
+		query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
+		query.addScalar("isParcialConsolidado", StandardBasicTypes.BOOLEAN);
+		query.addScalar("isEdicaoAberta", StandardBasicTypes.BOOLEAN);
+		query.addScalar("periodoParcial", StandardBasicTypes.LONG);
+		query.addScalar("peso", StandardBasicTypes.BIG_INTEGER);
+		
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(EdicaoBaseEstudoDTO.class));
 		 

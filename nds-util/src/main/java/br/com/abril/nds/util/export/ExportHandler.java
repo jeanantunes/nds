@@ -484,6 +484,8 @@ public class ExportHandler {
 		
 		exportFooterColumn.setLabel(footerAnnotation.label());
 		
+		exportFooterColumn.setColspan(footerAnnotation.colspan());
+		
 		return exportFooterColumn;
 	}
 

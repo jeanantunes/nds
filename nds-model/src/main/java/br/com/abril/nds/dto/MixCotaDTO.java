@@ -46,6 +46,9 @@ public class MixCotaDTO implements Serializable{
 	@XlsMapper(value="reparteMaximo")
 	private BigInteger reparteMaximo;
 	
+	@XlsMapper(value="segmento")
+	private String segmento;
+	
 	@Export(label="Usuário",exhibitionOrder = 9)
 	private String usuario;
 	
@@ -235,8 +238,12 @@ public class MixCotaDTO implements Serializable{
 	public void setError(String error) {
 		this.error = error;
 	}
+	public String getSegmento() {
+		return segmento;
+	}
+	public void setSegmento(String segmento) {
+		this.segmento = segmento;
+	}
 
-	
-	
 }
 
