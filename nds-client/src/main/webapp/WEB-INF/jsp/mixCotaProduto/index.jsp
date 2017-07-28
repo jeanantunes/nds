@@ -400,6 +400,10 @@
    			</tr>
    			</tbody>
         </table>
+        <div align="right" style="padding-top: 30px; padding-bottom: 15px;" >
+        	<label style="padding-left: 15px;"> Usar ICD no Mix? </label>
+        	<input type="checkbox" name="usarICDMIX" id="usarICDMIX" checked>
+        </div>
 	</div>
 	
 	

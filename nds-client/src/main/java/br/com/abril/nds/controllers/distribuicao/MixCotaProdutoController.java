@@ -377,16 +377,17 @@ public class MixCotaProdutoController extends BaseController {
 	
 	@Post
 	@Path("/adicionarMixProduto")
-	public void adicionarMixProduto(List<MixCotaProdutoDTO>listaNovosMixProduto,String produtoId) {
+	public void adicionarMixProduto(List<MixCotaProdutoDTO>listaNovosMixProduto, String produtoId) {
 		
 		for (MixCotaProdutoDTO mixCotaProdutoDTO: listaNovosMixProduto) {
 			
-			String codigoICD = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto()).getCodigoICD();
-			mixCotaProdutoDTO.setCodigoICD(codigoICD);
-			mixCotaProdutoDTO.setCodigoProduto(produtoId);
+			Produto produto = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
+			
+			mixCotaProdutoDTO.setCodigoICD(produto.getCodigoICD());
+			mixCotaProdutoDTO.setCodigoProduto(produto.getCodigo());
 		}
 		
-		List<String> mensagens = mixCotaProdutoService.adicionarListaMixPorProduto(listaNovosMixProduto,produtoId);
+		List<String> mensagens = mixCotaProdutoService.adicionarListaMixPorProduto(listaNovosMixProduto, produtoId);
 		
 		if (!mensagens.isEmpty()) {
 			
@@ -401,11 +402,8 @@ public class MixCotaProdutoController extends BaseController {
 	public void adicionarMixCota(List<MixCotaProdutoDTO>listaNovosMixCota, Integer cotaId){
 		
 		for (MixCotaProdutoDTO mixCotaProdutoDTO: listaNovosMixCota) {
-			
-			if(mixCotaProdutoDTO.isUsarICDEstudo()){
-				String codigoICD = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto()).getCodigoICD();
-				mixCotaProdutoDTO.setCodigoICD(codigoICD);
-			}
+			String codigoICD = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto()).getCodigoICD();
+			mixCotaProdutoDTO.setCodigoICD(codigoICD);
 		}
 		
 		List<String> mensagens = mixCotaProdutoService.adicionarListaMixPorCota(listaNovosMixCota,cotaId);

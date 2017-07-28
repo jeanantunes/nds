@@ -26,7 +26,7 @@ public class MixCotaProdutoDTO implements Serializable{
 	private Long reparteMaximo;
 	private String codigoICD;
 	
-	private boolean isUsarICDEstudo;
+	private boolean usarICDEstudo;
 	
 	private boolean itemValido; 
 	
@@ -140,10 +140,10 @@ public class MixCotaProdutoDTO implements Serializable{
 		this.codigoICD = codigoICD;
 	}
 	public boolean isUsarICDEstudo() {
-		return isUsarICDEstudo;
+		return usarICDEstudo;
 	}
-	public void setUsarICDEstudo(boolean isUsarICDEstudo) {
-		this.isUsarICDEstudo = isUsarICDEstudo;
+	public void setUsarICDEstudo(boolean usarICDEstudo) {
+		this.usarICDEstudo = usarICDEstudo;
 	}
 	
 }

@@ -54,6 +54,9 @@ public class CotaDAO {
 
     @Value("#{query_estudo.queryCotas}")
     private String queryCotas;
+    
+    @Value("#{query_estudo.queryCotasMixSemICD}")
+    private String queryCotasMixSemICD;
 
     @Value("#{query_estudo.queryHistoricoCotaParcial}")
     private String queryHistoricoCotaParcial;
@@ -179,6 +182,19 @@ public class CotaDAO {
     }
 
     public List<CotaEstudo> getCotas(final EstudoTransient estudo) {
+    	
+    	Boolean isUsarICDMIX = true;
+    	
+    	if(estudo.isUsarMix()){
+    		
+    		Map<String, Object> paramMap = new HashMap<>();
+    		paramMap.put("tipo_classificacao_id", estudo.getProdutoEdicaoEstudo().getTipoClassificacaoProduto().getId());
+    		paramMap.put("codigo_icd", estudo.getProdutoEdicaoEstudo().getProduto().getCodigoICD());
+    		
+    		isUsarICDMIX = (Boolean)jdbcTemplate.queryForObject(
+    				"select usar_icd_estudo from mix_cota_produto where codigo_icd = :codigo_icd "
+    				+ "and tipo_classificacao_produto_id = :tipo_classificacao_id order by usar_icd_estudo asc limit 1", paramMap, Boolean.class);
+    	}
 	
     	Map<String, Object> params = new HashMap<>();
 		params.put("tipo_segmento_produto_id", estudo.getProdutoEdicaoEstudo().getProduto().getTipoSegmentoProduto().getId());
@@ -190,9 +206,15 @@ public class CotaDAO {
 				"SELECT  DATE_FORMAT(max(data_geracao_rank),'%d/%m/%Y') FROM ranking_segmento", new HashMap(), String.class);
 		
 		
-		 params.put("maxDataRanking", maxDataRanking);
+		params.put("maxDataRanking", maxDataRanking);
+		 
+		String queryCota = queryCotas;
+		
+		if(!isUsarICDMIX){
+			queryCota = queryCotasMixSemICD;
+		}
 	
-		 List<CotaEstudo> retorno = jdbcTemplate.query(queryCotas, params, new RowMapper<CotaEstudo>() {
+		List<CotaEstudo> retorno = jdbcTemplate.query(queryCota, params, new RowMapper<CotaEstudo>() {
 
 	    @Override
 	    public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {

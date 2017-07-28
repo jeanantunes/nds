@@ -1,6 +1,6 @@
 var mixCotaProdutoController = $.extend(true, {
 //Grid de cota 	
-	
+	usarICDEstudo : true,
 	init : function() {
 		
 		
@@ -10,37 +10,37 @@ var mixCotaProdutoController = $.extend(true, {
 			colModel : [ {
 				display : 'Código',
 				name : 'codigoICD',
-				width : 50,
+				width : 45,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
-				width : 115,
+				width : 105,
 				sortable : true,
 				align : 'left'
 			},  {
 				display : 'Classificação',
 				name : 'classificacaoProduto',
-				width : 80,
+				width : 75,
 				sortable : true,
 				align : 'left'
 			},  {
 				display : 'Rep. Médio',
 				name : 'reparteMedio',
-				width : 60,
+				width : 55,
 				sortable : false,
 				align : 'center'
 			},  {
 				display : 'Vda. Média',
 				name : 'vendaMedia',
-				width : 60,
+				width : 55,
 				sortable : false,
 				align : 'center'
 			},  {
 				display : 'Ult. Rep.',
 				name : 'ultimoReparte',
-				width : 60,
+				width : 50,
 				sortable : false,
 				align : 'center'
 			},  {
@@ -68,15 +68,21 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			},  {
+				display : 'ICD Estudo',
+				name : 'usarICDEstudo',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			},  {
 				display : 'Hora',
 				name : 'hora',
-				width : 40,
+				width : 35,
 				sortable : true,
 				align : 'center'
 			},  {
 				display : 'Ação',
 				name : 'acao',
-				width : 50,
+				width : 35,
 				sortable : false,
 				align : 'center'
 			}],
@@ -121,7 +127,7 @@ var mixCotaProdutoController = $.extend(true, {
 			},  {
 				display : 'Ult. Rep.',
 				name : 'ultimoReparte',
-				width : 70,
+				width : 55,
 				sortable : false,
 				align : 'center'
 			},  {
@@ -129,14 +135,20 @@ var mixCotaProdutoController = $.extend(true, {
 				name : 'reparteMinimoInput',
 				width : 80,
 				sortable : false,
-				align : 'right'
+				align : 'center'
 			},  {
 				display : 'Rep. Inf. Max.',
 				name : 'reparteMaximoInput',
 				width : 80,
 				sortable : false,
-				align : 'right'
+				align : 'center'
 			},  {
+				display : 'ICD Estudo',
+				name : 'usarICDEstudo',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			},{
 				display : 'Usuário',
 				name : 'usuario',
 				width : 80,
@@ -145,19 +157,19 @@ var mixCotaProdutoController = $.extend(true, {
 			},  {
 				display : 'Dt. Manut.',
 				name : 'data',
-				width : 80,
+				width : 70,
 				sortable : true,
 				align : 'center'
 			},  {
 				display : 'Hora',
 				name : 'hora',
-				width : 60,
+				width : 40,
 				sortable : true,
 				align : 'center'
 			},  {
 				display : 'Ação',
 				name : 'acao',
-				width : 50,
+				width : 35,
 				sortable : false,
 				align : 'center'
 			}],
@@ -270,6 +282,18 @@ var mixCotaProdutoController = $.extend(true, {
 			for ( var int = 0; int < ar.length; int++) {
 				var valorarrumado = parseFloat(data.rows[i].cell[ar[int]]).toFixed(0);
 				data.rows[i].cell[ar[int]]=valorarrumado;
+			}
+			
+			if(data.rows[i].cell.usarICDEstudo){
+				data.rows[i].cell.usarICDEstudo =  '<a' +
+				' style="border:0px;margin:5px">' +
+				'<img src="'+contextPath+'/images/bt_check.gif" border="0px" style="width: 18px;"/>' +
+				'</a>' ;
+			}else{
+				data.rows[i].cell.usarICDEstudo =  '<a' +
+				' style="border:0px;margin:5px">' +
+				'<img src="'+contextPath+'/images/ico_bloquear.gif" border="0px"/>' +
+				'</a>' ;
 			}
 		}
 		
@@ -512,6 +536,21 @@ var mixCotaProdutoController = $.extend(true, {
 				var valorarrumado = parseFloat(data.rows[i].cell[ar[int]]).toFixed(0);
 				data.rows[i].cell[ar[int]]=valorarrumado;
 			}
+			
+			if(data.rows[i].cell.usarICDEstudo){
+				mixCotaProdutoController.usarICDEstudo = true;
+				data.rows[i].cell.usarICDEstudo =  '<a ' +
+				' style="border:0px;margin:5px">' +
+				'<img src="'+contextPath+'/images/bt_check.gif" border="0px" style="width: 18px;"/>' +
+				'</a>' ;
+			}else{
+				mixCotaProdutoController.usarICDEstudo = false;
+				data.rows[i].cell.usarICDEstudo =  '<a ' +
+				' style="border:0px;margin:5px">' +
+				'<img src="'+contextPath+'/images/ico_bloquear.gif" border="0px"/>' +
+				'</a>' ;
+			}
+			
 		}
 		
 		$('.mixProdutosGrid').show();
@@ -821,7 +860,7 @@ var mixCotaProdutoController = $.extend(true, {
 									  value : $("#classifMixModal"+idx).val()
 									  });
 								 listaNovosMixCota.push({
-									  name : "listaNovosMixCota["+idx+"].isUsarICDEstudo" , 
+									  name : "listaNovosMixCota["+idx+"].usarICDEstudo" , 
 									  value : $("#isUsarICDEstudo"+idx).is(":checked")
 									  });
 								 qntItens ++;
@@ -905,6 +944,7 @@ var mixCotaProdutoController = $.extend(true, {
 
 				$("#tableNovoProduto tbody tr:gt(0)").remove();
 				$("#tableNovoProduto tbody tr:eq(0) input[type='text']").val('');
+				$("#usarICDMIX").attr('checked', mixCotaProdutoController.usarICDEstudo);
 				mixCotaProdutoController.definirIdInputProduto();
 			},
 			buttons: {
@@ -914,10 +954,10 @@ var mixCotaProdutoController = $.extend(true, {
 //						if($("#tableNovoCota tbody tr td input:text[value='']").length>0){
 							//tudo preenchido
 					
-					list.push({
+							list.push({
 								  name : "produtoId" , 
 								  value : $("#codigoProdutoMix").val()
-								  });
+							  });
 							 
 							 $("#tableNovoProduto tbody tr").each(function(idx, linha){
 								 
@@ -946,6 +986,10 @@ var mixCotaProdutoController = $.extend(true, {
 								 list.push({
 									  name : "listaNovosMixProduto["+idx+"].classificacaoProduto" , 
 									  value : $("#filtroClassificacaoMix").val()
+									  });
+								 list.push({
+									  name : "listaNovosMixProduto["+idx+"].usarICDEstudo" , 
+									  value : $("#usarICDMIX").is(":checked")
 									  });
 //								 });
 							 });

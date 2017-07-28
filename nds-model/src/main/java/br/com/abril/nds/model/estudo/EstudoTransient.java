@@ -38,6 +38,7 @@ public class EstudoTransient extends EstudoGerado {
     private Usuario usuario;
     private boolean usarFixacao;
     private boolean usarMix;
+    private boolean mixNaoUsaICD;
 
     private boolean complementarAutomatico;
     private boolean pracaVeraneio;
@@ -337,6 +338,14 @@ public class EstudoTransient extends EstudoGerado {
 
 	public void setInformacoesRepComplementar(InformacoesReparteComplementarEstudo informacoesRepComplementar) {
 		this.informacoesRepComplementar = informacoesRepComplementar;
+	}
+	
+	public boolean isMixNaoUsaICD() {
+		return mixNaoUsaICD;
+	}
+
+	public void setMixNaoUsaICD(boolean mixNaoUsaICD) {
+		this.mixNaoUsaICD = mixNaoUsaICD;
 	}
 
 	@Override
