@@ -40,6 +40,7 @@ import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.FiadorRepository;
 import br.com.abril.nds.repository.PessoaRepository;
 import br.com.abril.nds.repository.TelefoneFiadorRepository;
+import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.service.GarantiaService;
@@ -71,6 +72,9 @@ public class FiadorServiceImpl implements FiadorService {
 	
 	@Autowired
 	private GarantiaService garantiaService;
+	
+	@Autowired
+	private CotaGarantiaService cotaGarantiaService;
 	
 	@Autowired
 	private PessoaRepository pessoaRepository;
@@ -1044,5 +1048,4 @@ public class FiadorServiceImpl implements FiadorService {
 		
 		return fiadorRepository.obterFiadorPorNome(nomeFiador, qtdMaxResul);
 	}
-	
 }

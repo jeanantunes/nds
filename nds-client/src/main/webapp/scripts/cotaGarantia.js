@@ -1235,9 +1235,6 @@ function Fiador(idCota, cotaGarantia) {
 Fiador.prototype.path = contextPath + "/cadastro/garantia/";
 Fiador.prototype.toggle = function() {
     $('#cotaGarantiaFiadorPanel', _workspace).toggle();
-//    if  (!$('#cotaGarantiaFiadorPanel').is(':visible')) {
-//        this.limparForm();
-//    }
 };
 
 Fiador.prototype.bindEvents = function() {
@@ -1339,12 +1336,9 @@ Fiador.prototype.obterFiador = function(idCota){
 
     $.postJSON(this.path + 'getFiadorByCota.json',
     	[{name:'idCota', value:idCota}],
-    	function(data){
-//    	    _this.getFiador(result.id,null);
-	    	_this.fiador = data.fiador;
-	        _this.enderecoFiador =data.endereco;
-	        _this.bindData();
-	        _this.toggleDados(true);
+        function(result){
+    	
+    	    _this.getFiador(result.id,null);
         },
         null,
         true);

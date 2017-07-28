@@ -59,7 +59,7 @@
 			</table>
 		</fieldset>
         
-        <fieldset style="width: 420px !important; margin-bottom: 5px; float: left; margin-left:10px;">
+        <fieldset style="width: 420px !important; margin-bottom: 5px; float: left; margin-left:10px; display: none;">
           <legend>Garantia</legend>
           <table width="335" border="0" cellspacing="0" cellpadding="0">
           	<tr>
