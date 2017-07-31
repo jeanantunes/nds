@@ -7,6 +7,8 @@ import org.oasis_open.docs.wss._2004._01.oasis_200401_wss_wssecurity_secext_1_0_
 import org.oasis_open.docs.wss._2004._01.oasis_200401_wss_wssecurity_secext_1_0_xsd.SecurityDocument;
 import org.oasis_open.docs.wss._2004._01.oasis_200401_wss_wssecurity_secext_1_0_xsd.SecurityHeaderType;
 import org.oasis_open.docs.wss._2004._01.oasis_200401_wss_wssecurity_secext_1_0_xsd.UsernameTokenType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,8 @@ import br.com.abril.nds.service.PessoaCRPWSService;
 @Service
 public class PessoaCRPWSServiceImpl implements PessoaCRPWSService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(PessoaCRPWSServiceImpl.class);
+	
 	@Autowired
 	private PessoaCRPService_2Stub pessoaCRPService2Stub;
 	
@@ -49,11 +53,11 @@ public class PessoaCRPWSServiceImpl implements PessoaCRPWSService {
 		
 		ObterDadosFiscaisResponseElementDocument obterDadosFiscais = null;
 		try {
-			
+			int i =0/0;
 			obterDadosFiscais = pessoaCRPService2Stub.obterDadosFiscais(odfEl, this.createSecurityDocElement(), this.createCabecalhoAbrilDocument());
-			
+		
 		} catch (RemoteException e) {
-			
+			LOGGER.error("Não foi possivel acessar o cadastro corporativo.", e);
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possivel acessar o cadastro corporativo.");
 			
 		}

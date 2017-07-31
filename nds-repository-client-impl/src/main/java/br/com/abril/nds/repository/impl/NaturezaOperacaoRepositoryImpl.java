@@ -6,6 +6,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroNaturezaOperacaoDTO;
@@ -435,4 +436,20 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		
 		return (NaturezaOperacao) query.uniqueResult();
 	}
+	
+	@Transactional
+	public void atualizarSerieENumeroNotaFiscal(Long serieNotaFiscal, Long numeroNotaFiscal, Long id) {
+		StringBuilder SQL = new StringBuilder();
+		SQL.append("UPDATE natureza_operacao no ");
+		SQL.append("set no.nota_fiscal_serie =:serieNotaFiscal , ");
+		SQL.append("no.nota_fiscal_numero_nf =:numeroNotaFiscal ");
+		SQL.append("where id =:id");
+		SQLQuery query = getSession()
+				.createSQLQuery(SQL.toString());
+		query.setParameter("serieNotaFiscal", serieNotaFiscal);
+		query.setParameter("numeroNotaFiscal", numeroNotaFiscal);
+		query.setParameter("id", id);
+		query.executeUpdate();
+	}
+	
 }	

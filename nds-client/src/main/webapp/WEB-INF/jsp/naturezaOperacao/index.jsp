@@ -47,6 +47,16 @@ $(function(){
 	  		<table class="tiposNotasGrid"></table>
 		</fieldset>
 	</div>
+	
+	
+	<div id="dialog-gravarNota" title="Deseja salvar os dados da nota" style="display:none;">
+    <fieldset style="width:350px!important;">
+    <legend>Gravar dados da nota:</legend>
+    <p>Voc&ecirc; deseja que os dados sejam salvos?</p><br />
+    </fieldset>
+</div>
+	
+	
    </form>
 </body>
 </html>
