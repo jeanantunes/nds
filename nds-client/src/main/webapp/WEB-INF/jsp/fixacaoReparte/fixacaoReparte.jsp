@@ -343,7 +343,7 @@ function mostraIntervalo(){
 		        <td width="113">&nbsp;</td>
 		        </tr>
 		      </table>
-		      <table width="587" border="0" cellspacing="1" cellpadding="1">
+		      <table width="700" border="0" cellspacing="1" cellpadding="1">
 		          <tr>
 		          	<td width="20"><input type="radio" name="radio" id="radioQtdeEdicoes" value="radio" checked onclick="mostraQtd();" /></td>
 		            <td width="74">Qtde Edições:</td>
@@ -356,6 +356,8 @@ function mostraIntervalo(){
 		            <td width="52" class="intervalo"><input type="text" name="edFinalModal" id="edFinalModal" style="width:50px;"/></td>
 		            <td width="67">Qtde Fixada:</td>
 		            <td width="50"><input type="text" name="textfield2" id="qtdeFixadaModal" style="width:50px;"/></td>
+		            <td width="90">Usar ICD na Fixacao?</td>
+		            <td width="50"><input type="checkbox" name="usarICDFixacao" id="usarICDFixacao" checked></td>
 		          </tr>
 		  </table>
 		  </fieldset>

@@ -89,7 +89,7 @@ var fixacaoReparteController = $.extend(true, {
 			},{
 				display : 'Nome',
 				name : 'nomeCota',
-				width : 160,
+				width : 150 ,
 				sortable : true,
 				align : 'left'
 			},{
@@ -99,15 +99,15 @@ var fixacaoReparteController = $.extend(true, {
                 sortable : true,
                 align : 'left'
             },{
-				display : 'Edição Inicial',
+				display : 'Ed. Inicial',
 				name : 'edicaoInicial',
-				width : 70,
+				width : 55,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Edição Final',
+				display : 'Ed. Final',
 				name : 'edicaoFinal',
-				width : 70,
+				width : 55,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -123,9 +123,9 @@ var fixacaoReparteController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Exemplares',
+				display : 'Exemp.',
 				name : 'qtdeExemplares',
-				width : 70,
+				width : 55,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -146,10 +146,16 @@ var fixacaoReparteController = $.extend(true, {
 				width : 45,
 				sortable : true,
 				align : 'center'
-			},  {
+			}, {
+				display : 'Usar ICD',
+				name : 'usarICDFixacao',
+				width : 50,
+				sortable : false,
+				align : 'center'
+			}, {
 				display : 'Ação',
 				name : 'acao',
-				width : 50,
+				width : 45,
 				sortable : true,
 				align : 'center'
 			}],
@@ -209,13 +215,13 @@ var fixacaoReparteController = $.extend(true, {
 			colModel : [ {
 				display : 'Código',
 				name : 'codigoProduto',
-				width : 60,
+				width : 40,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
-				width : 80,
+				width : 115,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -225,17 +231,17 @@ var fixacaoReparteController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Edição Inicial',
+				display : 'Ed. Inicial',
 				name : 'edicaoInicial',
-				width : 70,
+				width : 55,
 				sortable : true,
-				align : 'left'
+				align : 'center'
 			}, {
-				display : 'Edição Final',
+				display : 'Ed. Final',
 				name : 'edicaoFinal',
-				width : 70,
+				width : 55,
 				sortable : true,
-				align : 'left'
+				align : 'center'
 			}, {
 				display : 'Ed. Atendidas',
 				name : 'edicoesAtendidas',
@@ -257,7 +263,7 @@ var fixacaoReparteController = $.extend(true, {
 			}, {
 				display : 'Usuário',
 				name : 'usuario',
-				width : 80,
+				width : 75,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -272,10 +278,16 @@ var fixacaoReparteController = $.extend(true, {
 				width : 60,
 				sortable : true,
 				align : 'center'
-			},  {
+			},{
+				display : 'Usar ICD',
+				name : 'usarICDFixacao',
+				width : 50,
+				sortable : false,
+				align : 'center'
+			}, {
 				display : 'Ação',
 				name : 'acao',
-				width : 50,
+				width : 45,
 				sortable : true,
 				align : 'center'
 			}],
@@ -285,7 +297,7 @@ var fixacaoReparteController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 960,
+			width : 980,
 			height : 250
 		});
 	
@@ -351,6 +363,19 @@ var fixacaoReparteController = $.extend(true, {
 		for (i = 0 ; i < resultado.rows.length; i++) {
 
 			resultado.rows[i].cell["acao"]=fixacaoReparteController.getActionsConsultaFixacaoProduto(resultado.rows[i].cell);
+		
+			if(resultado.rows[i].cell.usarICDFixacao){
+				resultado.rows[i].cell.usarICDFixacao =  '<a' +
+				' style="border:0px;margin:5px">' +
+				'<img src="'+contextPath+'/images/bt_check.gif" border="0px" style="width: 18px;"/>' +
+				'</a>' ;
+			}else{
+				resultado.rows[i].cell.usarICDFixacao =  '<a' +
+				' style="border:0px;margin:5px">' +
+				'<img src="'+contextPath+'/images/ico_bloquear.gif" border="0px"/>' +
+				'</a>' ;
+			}
+			
 		}
 		$('.fixacaoProdutoGrid').show();
 		if (resultado.result){
@@ -391,6 +416,18 @@ var fixacaoReparteController = $.extend(true, {
 		for (i = 0 ; i < data.rows.length; i++) {
 
 			data.rows[i].cell["acao"]=fixacaoReparteController.getActionsConsultaFixacaoCota(data.rows[i].cell);
+			
+			if(data.rows[i].cell.usarICDFixacao){
+				data.rows[i].cell.usarICDFixacao =  '<a' +
+				' style="border:0px;margin:5px">' +
+				'<img src="'+contextPath+'/images/bt_check.gif" border="0px" style="width: 18px;"/>' +
+				'</a>' ;
+			}else{
+				data.rows[i].cell.usarICDFixacao =  '<a' +
+				' style="border:0px;margin:5px">' +
+				'<img src="'+contextPath+'/images/ico_bloquear.gif" border="0px"/>' +
+				'</a>' ;
+			}
 		}
 		
 		
@@ -886,12 +923,13 @@ var fixacaoReparteController = $.extend(true, {
                 data.push({name:'fixacaoReparteDTO.classificacaoProduto',	value: $("#selectModal option:selected", fixacaoReparteController.wsp).html()});
 			}
 
-			data.push({name:'fixacaoReparteDTO.edicao', 		value: $('#edicaoDestaque').text()});
-			data.push({name:'fixacaoReparteDTO.qtdeEdicoes',	value: $("#qtdeEdicoesModal").val()});
-			data.push({name:'fixacaoReparteDTO.qtdeExemplares',	value: $("#qtdeFixadaModal").val()});
-			data.push({name:'fixacaoReparteDTO.edicaoInicial',	value: $("#edInicialModal").val()});
-			data.push({name:'fixacaoReparteDTO.edicaoFinal',	value: $("#edFinalModal").val()});
+			data.push({name:'fixacaoReparteDTO.edicao', 			value: $('#edicaoDestaque').text()});
+			data.push({name:'fixacaoReparteDTO.qtdeEdicoes',		value: $("#qtdeEdicoesModal").val()});
+			data.push({name:'fixacaoReparteDTO.qtdeExemplares',		value: $("#qtdeFixadaModal").val()});
+			data.push({name:'fixacaoReparteDTO.edicaoInicial',		value: $("#edInicialModal").val()});
+			data.push({name:'fixacaoReparteDTO.edicaoFinal',		value: $("#edFinalModal").val()});
 			data.push({name:'fixacaoReparteDTO.qtdeEdicoesMarcado',	value: $("#radioQtdeEdicoes").is(":checked")});
+			data.push({name:'fixacaoReparteDTO.usarICDFixacao',	 	value: $("#usarICDFixacao").is(":checked")});
 
 			return data;
 		},

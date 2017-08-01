@@ -72,6 +72,12 @@ public class FixacaoReparte {
 	@Column(name="DATA_FIXA_CADASTRO_FIXACAO")
 	private Date dataFixa;
 	
+	@Column(name = "CODIGO_PRODUTO")
+	private String codigoProduto;
+	
+	@Column(name = "USAR_ICD_ESTUDO")
+	private boolean usarICDEstudo = true;
+	
 	public Long getId() {
 		return id;
 	}
@@ -200,5 +206,21 @@ public class FixacaoReparte {
 	public void setDataFixa(Date dataFixa) {
 		this.dataFixa = dataFixa;
 	}
-    
+
+	public String getCodigoProduto() {
+		return codigoProduto;
+	}
+
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
+	}
+
+	public boolean isUsarICDEstudo() {
+		return usarICDEstudo;
+	}
+
+	public void setUsarICDEstudo(boolean usarICDEstudo) {
+		this.usarICDEstudo = usarICDEstudo;
+	}
+	
 }
