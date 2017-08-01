@@ -794,14 +794,17 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 			
 			//Popup Pós estudo venda media
 			
-			myWindow = window.open('', '_blank');
-			
-			if(myWindow && myWindow.document) {
-				myWindow.document.write(result.list[2]);
-				myWindow.focus();
-			} else {
-				exibirMensagem("WARNING", ["Ajuste as configurações de popup no browser."]);
+			if(result.list[2] != undefined){
+				myWindow = window.open('', '_blank');
+				
+				if(myWindow && myWindow.document) {
+					myWindow.document.write(result.list[2]);
+					myWindow.focus();
+				} else {
+					exibirMensagem("WARNING", ["Ajuste as configurações de popup no browser."]);
+				}
 			}
+			
 			// $("#dialog-infsRepComplementar").attr(result.list[0]);
 			
 			// Fim pop up pós estudo
