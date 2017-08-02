@@ -53,7 +53,6 @@ public class PessoaCRPWSServiceImpl implements PessoaCRPWSService {
 		
 		ObterDadosFiscaisResponseElementDocument obterDadosFiscais = null;
 		try {
-			int i =0/0;
 			obterDadosFiscais = pessoaCRPService2Stub.obterDadosFiscais(odfEl, this.createSecurityDocElement(), this.createCabecalhoAbrilDocument());
 		
 		} catch (RemoteException e) {
