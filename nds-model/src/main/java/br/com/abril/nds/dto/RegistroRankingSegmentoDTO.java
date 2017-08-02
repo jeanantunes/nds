@@ -17,15 +17,18 @@ public class RegistroRankingSegmentoDTO extends RegistroCurvaABCDTO implements S
 	@Export(label="Cota",exhibitionOrder=2, widthPercent=10)
 	private Integer numeroCota;
 	
-	@Export(label="Nome",exhibitionOrder=3, widthPercent=40)
+	@Export(label="Nome",exhibitionOrder=4, widthPercent=40)
 	private String nomeCota;
 
 	private BigDecimal faturamentoCapa;
 	
-	@Export(label="Faturamento Capa R$",exhibitionOrder=4)
+	@Export(label="Faturamento Capa R$",exhibitionOrder=5, widthPercent=10)
 	private String faturamentoCapaFormatado;
 	
 	private BigDecimal totalFaturamento;
+	
+	@Export(label="Segmento",exhibitionOrder=4, widthPercent=20)
+	private String segmentoDescricao;
 
 	public Long getRanking() {
 		return ranking;
@@ -87,5 +90,13 @@ public class RegistroRankingSegmentoDTO extends RegistroCurvaABCDTO implements S
 	public void setTotalFaturamento(BigDecimal totalFaturamento) {
 		this.totalFaturamento = totalFaturamento;
 	}
-	
+
+	public String getSegmentoDescricao() {
+		return segmentoDescricao;
+	}
+
+	public void setSegmentoDescricao(String segmentoDescricao) {
+		this.segmentoDescricao = segmentoDescricao;
+	}
+
 }

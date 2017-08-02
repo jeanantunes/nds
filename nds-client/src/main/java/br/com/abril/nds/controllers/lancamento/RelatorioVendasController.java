@@ -487,7 +487,7 @@ public class RelatorioVendasController extends BaseController {
 
 	@Post
 	@Path("/pesquisarRankingSegmentacao")
-	public void pesquisarRankingSegmentacao(Long idSegmentacao, String descricaoSegmento, Date dataDe, Date dataAte, 
+	public void pesquisarRankingSegmentacao(Long idSegmentacao, String descricaoSegmento, Date dataDe, Date dataAte, Long cota,  
 			String sortorder, String sortname, int page, int rp) {
 		
 		FiltroRankingSegmentoDTO filtro = new FiltroRankingSegmentoDTO(dataDe, dataAte, idSegmentacao, page, rp, sortorder, sortname);
