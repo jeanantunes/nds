@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Query;
+
 import br.com.abril.nds.dto.MixCotaDTO;
 import br.com.abril.nds.dto.MixProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorCotaDTO;
@@ -42,4 +44,6 @@ public interface MixCotaProdutoRepository extends Repository<MixCotaProduto, Lon
     void atualizarReparte(boolean isPDVUnico, Long mixID, Long reparte, Usuario usuario, Date data);
 
 	boolean verificarMixDefinidoPorPDV(Long idMix);
+
+	void atualizarFlagUsarICDEstudo(Long idClassificacaoPraAtualizar, String icdProdutoPraAtualizar, String codProdutoPraAtualizar, boolean isUsarICDEstudo);
 }

@@ -67,6 +67,7 @@ public class MixCotaProdutoRepositoryImpl extends AbstractRepositoryModel<MixCot
 		sql.append("select * from ( ")
         .append(" select ")
 		.append(" mix_cota_produto.ID id,  ")
+		.append(" mix_cota_produto.usar_icd_estudo usarICDEstudo,  ")
 		.append(" produto.codigo as codigoProduto, ")
 		.append(" produto.CODIGO_ICD as codigoICD, ")
 //		.append(" produto.nome as nomeProduto, ")
@@ -195,6 +196,7 @@ public class MixCotaProdutoRepositoryImpl extends AbstractRepositoryModel<MixCot
 
 	sql.append(" select ") 
 		.append(" mix_cota_produto.ID id,  ")
+		.append(" mix_cota_produto.usar_icd_estudo usarICDEstudo,  ")
 		.append(" produto.codigo_icd as codigoProduto, ")
 		.append(" cota.numero_cota as numeroCota, ")
 		.append(" produto.nome as nomeProduto, ")
@@ -600,5 +602,35 @@ public class MixCotaProdutoRepositoryImpl extends AbstractRepositoryModel<MixCot
 	    
 	    return qtde > 0 ? true : false;
 	}
+	
+	@Override
+	public void atualizarFlagUsarICDEstudo(Long idClassificacaoPraAtualizar, String icdProdutoPraAtualizar, String codProdutoPraAtualizar, boolean isUsarICDEstudo){
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" update mix_cota_produto set   ");
+		
+		if(isUsarICDEstudo){
+			sql.append(" codigo_icd =  :icdProdutoPraAtualizar, ");
+	    }else{
+	    	sql.append(" codigo_produto =  :codProdutoPraAtualizar, ");
+	    }
+		
+		sql.append(" usar_icd_estudo = :isUsarICDEstudo ");
+		sql.append(" where codigo_icd = :icdProdutoPraAtualizar and tipo_classificacao_produto_id = :idClassificacao ");
+		
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
+	    query.setParameter("idClassificacao", idClassificacaoPraAtualizar);
+	    query.setParameter("isUsarICDEstudo", isUsarICDEstudo);
+    	query.setParameter("icdProdutoPraAtualizar", icdProdutoPraAtualizar);
+
+	    if(!isUsarICDEstudo){
+	    	query.setParameter("codProdutoPraAtualizar", codProdutoPraAtualizar);
+	    }
+	    
+	    query.executeUpdate();
+		
+	}
+	
 	
 }

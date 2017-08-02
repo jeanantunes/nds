@@ -270,6 +270,11 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 					mixCotaProduto.setReparteMinimo(mixCotaProdutoDTO.getReparteMinimo());
 					mixCotaProduto.setReparteMaximo(mixCotaProdutoDTO.getReparteMaximo());
 					mixCotaProduto.setUsuario(usuario);
+					mixCotaProduto.setUsarICDEstudo(mixCotaProdutoDTO.isUsarICDEstudo());
+					
+					if(!mixCotaProdutoDTO.isUsarICDEstudo()){
+						mixCotaProduto.setCodigoProduto(mixCotaProdutoDTO.getCodigoProduto());
+					}
 
 					mixCotaProdutoRepository.adicionar(mixCotaProduto);
 
@@ -491,6 +496,13 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	@Transactional
 	public List<String> adicionarListaMixPorProduto(List<MixCotaProdutoDTO> listaMixCota , String produtoId) {
 		
+		// atualizar todos dos MIX (ICD + CLASSIFICACAO)
+		
+		Long idClassificacaoPraAtualizar = 0L;
+		String icdProdutoPraAtualizar = "";
+		String codProdutoPraAtualizar = "";
+		boolean isUsarICDEstudo = true;
+		
 		List<String> mensagens = obterValidacaoLista(listaMixCota);
 		
 		Usuario usuario = usuarioService.getUsuarioLogado();
@@ -509,6 +521,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			for (TipoClassificacaoProduto tcp : obterTodos) {
 				if(tcp.getDescricao().equalsIgnoreCase(mixCotaProdutoDTO.getClassificacaoProduto())){
 					mixCotaProduto.setTipoClassificacaoProduto(tcp);
+					idClassificacaoPraAtualizar = tcp.getId();
 					break;
 				}
 			}
@@ -519,9 +532,20 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			mixCotaProduto.setDataHora(new Date());
 			mixCotaProduto.setReparteMinimo(mixCotaProdutoDTO.getReparteMinimo());
 			mixCotaProduto.setReparteMaximo(mixCotaProdutoDTO.getReparteMaximo());
+			mixCotaProduto.setUsarICDEstudo(mixCotaProdutoDTO.isUsarICDEstudo());
+			
+			if(!mixCotaProdutoDTO.isUsarICDEstudo()){
+				mixCotaProduto.setCodigoProduto(mixCotaProdutoDTO.getCodigoProduto());
+			}
+			
+			codProdutoPraAtualizar = mixCotaProdutoDTO.getCodigoProduto();
+			icdProdutoPraAtualizar = mixCotaProdutoDTO.getCodigoICD();
+			isUsarICDEstudo = mixCotaProdutoDTO.isUsarICDEstudo();
 			
 			mixCotaProdutoRepository.adicionar(mixCotaProduto);
 		}
+		
+		mixCotaProdutoRepository.atualizarFlagUsarICDEstudo(idClassificacaoPraAtualizar, icdProdutoPraAtualizar, codProdutoPraAtualizar, isUsarICDEstudo);
 		
 		return mensagens;
 	}
@@ -533,7 +557,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			return obterStringMensagemValidacaoProduto(mixCotaProdutoDTO) + " dados da cota devem ser preenchidos";
 		}
 		
-		if (!produtoService.isIcdValido(mixCotaProdutoDTO.getCodigoICD())) {
+		if (!produtoService.isIcdValido(mixCotaProdutoDTO.getCodigoICD()) && mixCotaProdutoDTO.isUsarICDEstudo()) {
 			
 			return obterStringMensagemValidacaoProduto(mixCotaProdutoDTO) + " Produto com Código ICD inválido, ajuste-o no Cadastro de Produto.";
 		}

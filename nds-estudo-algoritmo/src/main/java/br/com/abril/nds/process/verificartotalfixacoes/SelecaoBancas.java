@@ -54,6 +54,12 @@ public class SelecaoBancas extends ProcessoAbstrato {
     @Override
     public void executar(EstudoTransient estudo) throws Exception {
 
+    	if(estudo.isUsarMix()){
+    		estudo.setMixNaoUsaICD(true);
+    	}
+    	
+    	
+    	
 	List<CotaEstudo> cotas = cotaDAO.getCotas(estudo);
 	List<Map<Long, CotaEstudo>> historico = new ArrayList<>();
 	
