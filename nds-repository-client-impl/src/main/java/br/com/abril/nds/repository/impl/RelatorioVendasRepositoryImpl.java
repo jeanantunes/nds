@@ -690,7 +690,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("         consolidado.valor as participacao, ");
 		sql.append("         consolidado.vendaExemplares as vendaExemplares, ");
 		sql.append("         consolidado.faturamentoCapa as faturamento, ");
-		sql.append("         consolidado.reparte as reparte   ");
+		sql.append("         consolidado.reparte as reparte,   ");
+		sql.append("         consolidado.NUMERO_COTA as numeroCota   ");
 		sql.append("          ");
 		sql.append("     FROM ");
 		sql.append("         (           ");
@@ -702,7 +703,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("             sum(temp.vendaSum * temp.PRECO_VENDA) as faturamentoCapa, ");
 		sql.append("             sum(temp.vendaSum * (temp.PRECO_VENDA - ((temp.PRECO_VENDA * coalesce(temp.valorDesconto,0)) / 100))) AS valor, ");
 		sql.append("             sum(temp.vendaSum) as vendaExemplares, ");
-		sql.append("             sum(temp.reparteSum) as reparte ");
+		sql.append("             sum(temp.reparteSum) as reparte, ");
+		sql.append("             temp.NUMERO_COTA as NUMERO_COTA ");
 		sql.append("         FROM ");
 		sql.append("             (                       ");
 		sql.append("             SELECT ");
@@ -842,6 +844,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		query.addScalar("faturamento", StandardBasicTypes.BIG_DECIMAL);
 		
 		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("numeroCota", StandardBasicTypes.STRING);
 		
 		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCCotaDTO.class));
 		

@@ -310,13 +310,5 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 	public void setPreco(String preco) {
 		this.preco = preco;
 	}
-
-	public String getReparte() {
-		return reparte;
-	}
-
-	public void setReparte(String reparte) {
-		this.reparte = reparte;
-	}
 	
 }

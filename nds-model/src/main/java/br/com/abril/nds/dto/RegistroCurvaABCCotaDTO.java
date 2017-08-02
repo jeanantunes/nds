@@ -51,6 +51,9 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 	@Export(label = "Faturamento R$", exhibitionOrder = 8, columnType = ColumnType.DECIMAL)
 	private String faturamentoFormatado;
 	
+	@Export(label = "numeroCota", exhibitionOrder = 9, columnType = ColumnType.STRING)
+	private String numeroCota;
+	
 	@Export(label = "Ranking", exhibitionOrder = 1, columnType = ColumnType.NUMBER)
 	private Long rkProduto;
 	
@@ -197,6 +200,14 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 	 */
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
+	public String getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(String numeroCota) {
+		this.numeroCota = numeroCota;
 	}
 	
 }
