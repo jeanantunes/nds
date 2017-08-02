@@ -4,6 +4,7 @@ var codigos =  [],
 
 var pesquisaCota = new PesquisaCota();
 var autoComplete;
+var isUsarICDFixacao = true;
 var idLancamentoEdicaoDestaque;
 
 
@@ -363,7 +364,9 @@ var fixacaoReparteController = $.extend(true, {
 		for (i = 0 ; i < resultado.rows.length; i++) {
 
 			resultado.rows[i].cell["acao"]=fixacaoReparteController.getActionsConsultaFixacaoProduto(resultado.rows[i].cell);
-		
+			
+			isUsarICDFixacao = resultado.rows[0].cell.usarICDFixacao == true ? true : false;
+			
 			if(resultado.rows[i].cell.usarICDFixacao){
 				resultado.rows[i].cell.usarICDFixacao =  '<a' +
 				' style="border:0px;margin:5px">' +
@@ -914,6 +917,7 @@ var fixacaoReparteController = $.extend(true, {
 				data.push({name:'fixacaoReparteDTO.produtoFixado',value: $("#spanCodigoProduto").text()});
 				data.push({name:'fixacaoReparteDTO.classificacaoProduto',	value: $("#filtroClassificacaoFixacao option:selected", fixacaoReparteController.wsp).text()});
                 data.push({name:'fixacaoReparteDTO.classificacaoProdutoId',	value: $("#filtroClassificacaoFixacao option:selected", fixacaoReparteController.wsp).val()});
+                data.push({name:'fixacaoReparteDTO.fixacaoPorProduto',	value: true});
 			}
 
 			if($("#subtitulo1").text() == 'Cota'){
@@ -921,6 +925,7 @@ var fixacaoReparteController = $.extend(true, {
 				data.push({name:'fixacaoReparteDTO.produtoFixado',value: $("#codigoModalFixacao").val()});
                 data.push({name:'fixacaoReparteDTO.classificacaoProdutoId',	value: $("#selectModal option:selected", fixacaoReparteController.wsp).val()});
                 data.push({name:'fixacaoReparteDTO.classificacaoProduto',	value: $("#selectModal option:selected", fixacaoReparteController.wsp).html()});
+                data.push({name:'fixacaoReparteDTO.fixacaoPorProduto',	value: false});
 			}
 
 			data.push({name:'fixacaoReparteDTO.edicao', 			value: $('#edicaoDestaque').text()});
@@ -1071,6 +1076,7 @@ var fixacaoReparteController = $.extend(true, {
 			$('#pesquisaModal').attr('onClick','fixacaoReparteController.pesquisaHistoricoPorCota();');
 			$('#spanCodigoProduto', this.wsp).text($('#codigoProdutoFixacao').val());
 			$('#spanNomeProduto',  this.wsp).text($('#nomeProdutoFixacao').val());
+			$("#usarICDFixacao").attr('checked', isUsarICDFixacao);
 
 		},
 		//Ao abrir o modal novo carrega e exibe dados da cota selecionada para fixação

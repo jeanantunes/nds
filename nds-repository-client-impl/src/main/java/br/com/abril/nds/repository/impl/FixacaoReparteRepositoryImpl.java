@@ -591,4 +591,33 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		
 		query.executeUpdate();
 	}
+	
+	@Override
+	public void atualizarFlagUsarICDEstudo(Long idClassificacaoPraAtualizar, String icdProdutoPraAtualizar, String codProdutoPraAtualizar, boolean isUsarICDEstudo){
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" update fixacao_reparte set   ");
+		
+		if(isUsarICDEstudo){
+			sql.append(" codigo_icd =  :icdProdutoPraAtualizar, ");
+	    }else{
+	    	sql.append(" codigo_produto =  :codProdutoPraAtualizar, ");
+	    }
+		
+		sql.append(" usar_icd_estudo = :isUsarICDEstudo ");
+		sql.append(" where codigo_icd = :icdProdutoPraAtualizar and id_classificacao_edicao = :idClassificacao ");
+		
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
+	    query.setParameter("idClassificacao", idClassificacaoPraAtualizar);
+	    query.setParameter("isUsarICDEstudo", isUsarICDEstudo);
+    	query.setParameter("icdProdutoPraAtualizar", icdProdutoPraAtualizar);
+
+	    if(!isUsarICDEstudo){
+	    	query.setParameter("codProdutoPraAtualizar", codProdutoPraAtualizar);
+	    }
+	    
+	    query.executeUpdate();
+		
+	}
 }

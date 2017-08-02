@@ -152,6 +152,11 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
         }
 
         fixacaoReparteRepository.adicionar(fixacaoReparte);
+        
+        if(fixacaoReparteDTO.isFixacaoPorProduto()){
+        	fixacaoReparteRepository.atualizarFlagUsarICDEstudo(fixacaoReparteDTO.getClassificacaoProdutoId(), 
+        			fixacaoReparteDTO.getProdutoFixado(), fixacaoReparteDTO.getCodigoProduto(), fixacaoReparteDTO.isUsarICDFixacao());
+        }
 		
 		return fixacaoReparte;
 	}
@@ -233,8 +238,13 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 			fixacaoReparte.setCodigoProduto(null);
 		}
         
-        if (classificacaoProduto != null) 
-            fixacaoReparte.setClassificacaoProdutoEdicao(classificacaoProduto);        
+        if (classificacaoProduto != null) {
+        	fixacaoReparte.setClassificacaoProdutoEdicao(classificacaoProduto);
+        	fixacaoReparteDTO.setClassificacaoProdutoId(classificacaoProduto.getId());
+        }
+        
+        fixacaoReparteDTO.setCodigoProduto(produto.getCodigo());
+        fixacaoReparteDTO.setProdutoFixado(produto.getCodigoICD());
 
 		return fixacaoReparte;
 	}

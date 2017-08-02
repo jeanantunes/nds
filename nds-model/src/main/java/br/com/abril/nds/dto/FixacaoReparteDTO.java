@@ -91,6 +91,7 @@ public class FixacaoReparteDTO implements Serializable {
 	private Long idLancamento;
 	private Date dataFixaCadastroDaFixacao;
 	private boolean usarICDFixacao;
+	private boolean fixacaoPorProduto;
 	
 	public String getDataLancamentoString() {
 		return dataLancamentoString;
@@ -406,6 +407,13 @@ public class FixacaoReparteDTO implements Serializable {
 	public void setUsarICDFixacao(boolean usarICDFixacao) {
 		this.usarICDFixacao = usarICDFixacao;
 	}
-	
+
+	public boolean isFixacaoPorProduto() {
+		return fixacaoPorProduto;
+	}
+
+	public void setFixacaoPorProduto(boolean fixacaoPorProduto) {
+		this.fixacaoPorProduto = fixacaoPorProduto;
+	}
 	
 }
