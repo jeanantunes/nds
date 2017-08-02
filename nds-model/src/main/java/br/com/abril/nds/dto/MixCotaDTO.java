@@ -65,10 +65,12 @@ public class MixCotaDTO implements Serializable{
 	private BigInteger idCota;
 	private BigInteger idProduto;
 	
+	
 //	necessario para modal adicionar mix 
 	@XlsMapper(value="numeroCota")
 	private Integer numeroCota;
 	
+	private boolean usarICDEstudo;
 	private PaginacaoVO paginacaoVO;
 	
 	private String codigoICD;
@@ -244,6 +246,13 @@ public class MixCotaDTO implements Serializable{
 	public void setSegmento(String segmento) {
 		this.segmento = segmento;
 	}
+	public boolean isUsarICDEstudo() {
+		return usarICDEstudo;
+	}
+	public void setUsarICDEstudo(boolean usarICDEstudo) {
+		this.usarICDEstudo = usarICDEstudo;
+	}
+	
 
 }
 

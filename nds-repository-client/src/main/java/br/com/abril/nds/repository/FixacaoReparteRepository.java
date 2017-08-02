@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Query;
+
 import br.com.abril.nds.dto.FixacaoReparteDTO;
 import br.com.abril.nds.dto.verificadorFixacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
@@ -52,5 +54,7 @@ public interface FixacaoReparteRepository  extends Repository<FixacaoReparte, Lo
 	BigInteger obterQtdDeEdicoesNoRanger (String codigoICD, Integer edInicial, Integer edFinal);
 	
 	void atualizarQtdeExemplares(Long fixacaoID, Integer qtdeExemplares, Date data, Usuario usuario);
+
+	void atualizarFlagUsarICDEstudo(Long idClassificacaoPraAtualizar, String icdProdutoPraAtualizar, String codProdutoPraAtualizar, boolean isUsarICDEstudo);
 	
 }
