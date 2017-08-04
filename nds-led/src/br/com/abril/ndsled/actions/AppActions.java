@@ -187,10 +187,15 @@ public class AppActions {
 
 	private static JsonObject obterDocCouch(CouchDbClient couchDbClient, JsonObject jsonDoc, String dataFormatada)
 			throws CarregarLancamentoException {
-		String docName = "pickingLed_" + dataFormatada;
+		// String docName = "pickingLed_" + dataFormatada;
+		
+		StringBuilder docName = new StringBuilder();
+		
+		docName.append("pickingLed_");
+		docName.append(dataFormatada);
 		
 		try {
-			jsonDoc = couchDbClient.find(JsonObject.class, docName);
+			jsonDoc = couchDbClient.find(JsonObject.class, docName.toString());
 		} catch (NoDocumentException e) {
 			throw new CarregarLancamentoException("Lançamento não encontrado para essa Data.");
 		}
