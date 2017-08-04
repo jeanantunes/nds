@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -12,6 +13,7 @@ import javax.imageio.ImageIO;
 import org.apache.commons.lang.StringUtils;
 
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.export.Export.Alignment;
 
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
@@ -42,6 +44,10 @@ public class PDFExporter implements Exporter {
 	private static Font headerBoldFont = new Font(Font.FontFamily.TIMES_ROMAN, 11, Font.BOLD);
 	
 	private static Font headerFont = new Font(Font.FontFamily.TIMES_ROMAN, 11);
+	
+	private static Font filterBoldFont = new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.BOLD);
+	
+	private static Font filterFont = new Font(Font.FontFamily.TIMES_ROMAN, 10);
 	
 	private static Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 14, Font.BOLD);
 	
@@ -86,9 +92,13 @@ public class PDFExporter implements Exporter {
 	        
 	        document.open();
 
+	        ndsFileHeader.setNomeRelatorio(name);
+	        
 	        this.processReportHeader(document, ndsFileHeader);
 	        
-	        this.processFilters(exportModel, document);
+	        if(exportModel.getFilters() != null){
+	        	this.processFilters(exportModel, document);
+	        }
 	        
 	        this.processRows(exportModel, document);
 
@@ -117,22 +127,22 @@ public class PDFExporter implements Exporter {
 		
 		PdfPCell headerPdfCell = new PdfPCell();
 		
-		headerPdfCell.setFixedHeight(68);
+		headerPdfCell.setFixedHeight(45);
 		headerPdfCell.setBorder(0);
 		
-		headerPdfCell.addElement(new Chunk(this.createBackgroundImage(), -3F, -48F));
+//		headerPdfCell.addElement(new Chunk(this.createBackgroundImage(), -3F, -48F));
 		
-		Image logo  = this.createLogotipoImage(ndsFileHeader.getLogo());
-		
-		if(logo!= null){
-			headerPdfCell.addElement(new Chunk(logo, -3F, -30F));
-		}
+//		Image logo  = this.createLogotipoImage(ndsFileHeader.getLogo());
+//		
+//		if(logo!= null){
+//			headerPdfCell.addElement(new Chunk(logo, -3F, -30F));
+//		}
 		
 		headerPdfTable.addCell(headerPdfCell);
 		
 		PdfPCell dadosDistribuidorPdfCell = new PdfPCell();
 		
-		dadosDistribuidorPdfCell.setFixedHeight(68);
+		dadosDistribuidorPdfCell.setFixedHeight(55);
 		dadosDistribuidorPdfCell.setBorder(0);
 		
 		Paragraph dadosDistribuidorParagraph = new Paragraph();
@@ -142,47 +152,95 @@ public class PDFExporter implements Exporter {
 		
 		dadosDistribuidorParagraph.add(new Paragraph(nomeDistribuidor, headerBoldFont));
 		
-		if (!cnpjDistribuidor.isEmpty()) {
-			
-			dadosDistribuidorParagraph.add(new Paragraph("CNPJ: " + cnpjDistribuidor, headerFont));
-		}
+//		if (!cnpjDistribuidor.isEmpty()) {
+//			
+//			dadosDistribuidorParagraph.add(new Paragraph("CNPJ: " + cnpjDistribuidor, headerFont));
+//		}
+		
+		String nomeRelatorio = ndsFileHeader.getNomeRelatorio();
+		
+		nomeRelatorio = tratarNomeRelatorio(nomeRelatorio);
+		
+		dadosDistribuidorParagraph.add(new Paragraph("\n"+ nomeRelatorio.toUpperCase(), titleFont));
 		
 		dadosDistribuidorPdfCell.addElement(dadosDistribuidorParagraph);
 		
 		headerPdfTable.addCell(dadosDistribuidorPdfCell);
 		
-		PdfPCell outrosDadosPdfCell = new PdfPCell();
+		PdfPCell outrosDadosPdfCell = new PdfPCell(); 
 		
-		outrosDadosPdfCell.setFixedHeight(68);
+		outrosDadosPdfCell.setFixedHeight(45);
 		outrosDadosPdfCell.setBorder(0);
 		
 		Paragraph outrosDadosParagraph = new Paragraph();
 		
-		String dia = ndsFileHeader.getData() == null ? "" : DateUtil.formatarDataPTBR(ndsFileHeader.getData());
-		String nomeUsuario = "\n"  + StringUtils.defaultString(ndsFileHeader.getNomeUsuario());
-		
-		Phrase diaPhrase = null;
-		
-		if (!dia.isEmpty()) {
+		if (!cnpjDistribuidor.isEmpty()) {
 			
-			diaPhrase = new Phrase("Dia: ", headerBoldFont);
+//			outrosDadosParagraph.add(new Phrase("CNPJ: " + cnpjDistribuidor, headerFont));
+			outrosDadosParagraph.add(new Phrase("CNPJ: ", headerBoldFont));
+			outrosDadosParagraph.add(new Phrase(cnpjDistribuidor, headerFont));
 		}
 		
-		Phrase dataPhrase = new Phrase(new Chunk(dia, headerFont));
+//		String dia = ndsFileHeader.getData() == null ? "" : DateUtil.formatarDataPTBR(ndsFileHeader.getData());
+		String nomeUsuario = StringUtils.defaultString(ndsFileHeader.getNomeUsuario());
 		
-		if (diaPhrase != null) {
-			
-			outrosDadosParagraph.add(diaPhrase);
-		}
+//		Phrase diaPhrase = null;
 		
-		outrosDadosParagraph.add(dataPhrase);
-		outrosDadosParagraph.add(new Paragraph(nomeUsuario, headerFont));
+//		if (!dia.isEmpty()) {
+//			
+//			diaPhrase = new Phrase("Dia: ", headerBoldFont);
+//		}
+		
+//		Phrase dataPhrase = new Phrase(new Chunk(dia, headerFont));
+		
+//		if (diaPhrase != null) {
+//			outrosDadosParagraph.add("       ");
+//			
+//			outrosDadosParagraph.add(diaPhrase);
+//		}
+		
+		String data = DateUtil.formatarDataPTBR(new Date());
+		String hora = DateUtil.formatarHoraMinuto(new Date());
+		
+		Paragraph dadosParagraph = new Paragraph();
+		
+		dadosParagraph.add(new Phrase("\nUsuário: ", headerBoldFont));
+		dadosParagraph.add(new Phrase(nomeUsuario, headerFont));
+		dadosParagraph.add("            ");
+		dadosParagraph.add(new Phrase("Data Geração: ", headerBoldFont));
+		dadosParagraph.add(new Phrase(data+" às "+hora, headerFont));
+		
+		
+		
+//		outrosDadosParagraph.add(dataPhrase);
+//		outrosDadosParagraph.add(new Paragraph(nomeUsuario, headerFont));
+//		outrosDadosParagraph.add(new Paragraph("Data Geração: "+data, headerFont));
+		outrosDadosParagraph.add(dadosParagraph);
+		
 		
 		outrosDadosPdfCell.addElement(outrosDadosParagraph);
 		
 		headerPdfTable.addCell(outrosDadosPdfCell);
 		
 		document.add(headerPdfTable);
+	}
+
+	private String tratarNomeRelatorio(String nomeRelatorio) {
+		nomeRelatorio = nomeRelatorio.replace("_", " ");
+		nomeRelatorio = nomeRelatorio.replace("-", " ");
+		nomeRelatorio = nomeRelatorio.replace("/", " ");
+		nomeRelatorio = nomeRelatorio.replace("0", " ");
+		nomeRelatorio = nomeRelatorio.replace("1", " ");
+		nomeRelatorio = nomeRelatorio.replace("2", " ");
+		nomeRelatorio = nomeRelatorio.replace("3", " ");
+		nomeRelatorio = nomeRelatorio.replace("4", " ");
+		nomeRelatorio = nomeRelatorio.replace("5", " ");
+		nomeRelatorio = nomeRelatorio.replace("6", " ");
+		nomeRelatorio = nomeRelatorio.replace("7", " ");
+		nomeRelatorio = nomeRelatorio.replace("8", " ");
+		nomeRelatorio = nomeRelatorio.replace("9", " ");
+		nomeRelatorio = "Relatório "+nomeRelatorio;
+		return nomeRelatorio;
 	}
 	
 	private Image createBackgroundImage() throws IOException, BadElementException {
@@ -219,18 +277,40 @@ public class PDFExporter implements Exporter {
 	private void processFilters(ExportModel exportModel, Document document) throws DocumentException {
 		
 		List<ExportFilter> exportFilters = exportModel.getFilters();
+		
+		boolean isFiltroValido = false;
+		
+		for (ExportFilter exportFilter : exportFilters) {
+			if(exportFilter.getValue() != null && !exportFilter.getValue().isEmpty()){
+				isFiltroValido = true;
+				break;
+			}
+		}
+		
         
-        if (exportFilters != null && !exportFilters.isEmpty()) {
+        if (exportFilters != null && !exportFilters.isEmpty() && isFiltroValido == true) {
         	
         	document.add(Chunk.NEWLINE);
         	
     		document.add(new Paragraph("Filtro de Pesquisa", titleFont));
     		
-    		PdfPTable filterPdfTable = new PdfPTable(exportModel.getFilters().size());
+    		int qtdCampos = 0;
     		
-    		filterPdfTable.setSpacingBefore(10F);
+    		for (ExportFilter exportFilter : exportFilters) {
+				if(exportFilter.getValue() != null && !exportFilter.getValue().isEmpty()){
+					if(exportFilter.getValue().equalsIgnoreCase("0") && exportFilter.getLabel().equalsIgnoreCase("Segmento")){
+						continue;
+					}
+					
+					++qtdCampos;
+				}
+			}
     		
-    		filterPdfTable.setSpacingAfter(10F);
+    		PdfPTable filterPdfTable = new PdfPTable(qtdCampos);
+    		
+    		filterPdfTable.setSpacingBefore(3F);
+    		
+    		filterPdfTable.setSpacingAfter(3F);
     		
     		filterPdfTable.setWidthPercentage(100F);
     		
@@ -240,29 +320,47 @@ public class PDFExporter implements Exporter {
 
         	for (ExportFilter exportFilter : exportFilters) {
         		
-        		PdfPCell filterLabelPdfCell = new PdfPCell();
+        		if(exportFilter.getValue() == null || exportFilter.getValue().isEmpty()){
+        			continue;
+        		}
         		
-        		filterLabelPdfCell.setBorder(0);
+        		if(exportFilter.getValue().equalsIgnoreCase("0") && exportFilter.getLabel().equalsIgnoreCase("Segmento")){
+					continue;
+				}
         		
-        		Paragraph filterLabelParagraph = 
-        			new Paragraph(StringUtils.defaultString(exportFilter.getLabel()) + ": ", valuesFont);
+        		PdfPCell filterPdfCell = new PdfPCell();
         		
-        		filterLabelPdfCell.addElement(filterLabelParagraph);
+        		filterPdfCell.setBorder(0);
         		
-        		filterPdfTable.addCell(filterLabelPdfCell);
+        		Paragraph dadosFiltroParagraph = new Paragraph();
         		
-        		PdfPCell filterValuePdfCell = new PdfPCell();
+        		dadosFiltroParagraph.add(new Phrase(StringUtils.defaultString(exportFilter.getLabel()) + ": ", filterBoldFont));
+        		dadosFiltroParagraph.add(new Phrase(StringUtils.defaultString(exportFilter.getValue()), filterFont));
+        		dadosFiltroParagraph.setAlignment(exportFilter.getAlignment().getValue());
         		
-        		filterValuePdfCell.setBorder(0);
+        		filterPdfCell.addElement(dadosFiltroParagraph);
         		
-        		Paragraph filterValueParagraph = 
-        			new Paragraph(StringUtils.defaultString(exportFilter.getValue()), valuesFont);
+//        		Paragraph filterLabelParagraph = 
+//        			new Paragraph(StringUtils.defaultString(exportFilter.getLabel()) + ": ", valuesFont);
         		
-        		filterValueParagraph.setAlignment(exportFilter.getAlignment().getValue());
+//        		filterLabelPdfCell.addElement(filterLabelParagraph);
         		
-        		filterValuePdfCell.addElement(filterValueParagraph);
+//        		filterPdfTable.addCell(filterLabelPdfCell);
         		
-        		filterPdfTable.addCell(filterValuePdfCell);
+//        		PdfPCell filterValuePdfCell = new PdfPCell();
+        		
+//        		filterValuePdfCell.setBorder(0);
+        		
+//        		Paragraph filterValueParagraph = 
+//        			new Paragraph(StringUtils.defaultString(exportFilter.getValue()), valuesFont);
+//        		
+//        		filterValueParagraph.setAlignment(exportFilter.getAlignment().getValue());
+//        		
+//        		filterValuePdfCell.addElement(filterValueParagraph);
+//        		
+//        		filterPdfTable.addCell(filterValuePdfCell);
+        		
+        		filterPdfTable.addCell(filterPdfCell);
         		
         		exportWidths[headerSize] = exportFilter.getWidthPercent();
 
@@ -442,13 +540,17 @@ public class PDFExporter implements Exporter {
     				}
         		}
         		
+        		if(exportFooter.getColspan() > 1){
+        			cellNum = (cellNum - (exportFooter.getColspan() - 1));
+        		}
+        		
         		if (cellNum > 0) {
 
     				while (footerCellCount <= (cellNum - 1)) {
     				
     					PdfPCell emptyCell = new PdfPCell();
 
-    					emptyCell.setBackgroundColor(rowBaseColor);        			
+//    					emptyCell.setBackgroundColor(rowBaseColor);        			
 
     					pdfTable.addCell(emptyCell);
     					
@@ -464,11 +566,23 @@ public class PDFExporter implements Exporter {
         			   
         			String label = StringUtils.defaultString(exportFooter.getLabel());
         			
-            		Paragraph footerLabelParagraph = new Paragraph(label, footerLabelFont);
+//            		Paragraph footerLabelParagraph = new Paragraph(label, footerLabelFont);
+            		
+//            		footerLabelParagraph.setAlignment(Alignment.CENTER.getValue());
+        			
+        			Paragraph footerLabelParagraph = new Paragraph(label, tableHeaderFont);
+        	    		
+        			footerLabelPdfCell.setColspan(exportFooter.getColspan());
+
+        			footerLabelParagraph.setAlignment(Alignment.CENTER.getValue());
+        			
+        			footerLabelPdfCell.setUseAscender(true);
+            		
+            		footerLabelPdfCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             		
             		footerLabelPdfCell.addElement(footerLabelParagraph);
 
-            		footerLabelPdfCell.setBackgroundColor(rowBaseColor);        			
+            		footerLabelPdfCell.setBackgroundColor(headerBaseColor);   
             		
             		pdfTable.addCell(footerLabelPdfCell);
             		
@@ -533,8 +647,7 @@ public class PDFExporter implements Exporter {
         }
 	}
 	
-	private void createFooterSeparationLine(PdfPTable pdfTable, 
-											List<ExportHeader> exportHeaders) {
+	private void createFooterSeparationLine(PdfPTable pdfTable, List<ExportHeader> exportHeaders) {
 		
 		if (exportHeaders == null || exportHeaders.isEmpty()) {
 			
@@ -545,7 +658,7 @@ public class PDFExporter implements Exporter {
 			
 			PdfPCell emptyCell = new PdfPCell();
 			
-			emptyCell.setFixedHeight(10);
+			emptyCell.setFixedHeight(100);
 			
 			pdfTable.addCell(emptyCell);
 		}

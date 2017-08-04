@@ -45,6 +45,7 @@ import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
@@ -61,6 +62,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.ItemAutoComplete;
+import br.com.abril.nds.util.QueryUtil;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -352,8 +354,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		final StringBuilder hql = new StringBuilder()
 		
 		.append(" SELECT pe.id as id, p.codigo as codigoProduto, p.NOME_COMERCIAL as nomeComercial, ")
-		.append("        pe.NUMERO_EDICAO as numeroEdicao, coalesce(if(pessoa.tipo = 'F',pessoa.nome, pessoa.RAZAO_SOCIAL),pessoa.nome_fantasia,'') as nomeFornecedor, ")
-		.append("        l.TIPO_LANCAMENTO as statusLancamento, ") 
+		.append("        pe.NUMERO_EDICAO as numeroEdicao, coalesce(if(pessoa.tipo = 'F',pessoa.nome, pessoa.NOME_FANTASIA),pessoa.nome_fantasia,'') as nomeFornecedor, ")
+		.append("        case when l.tipo_lancamento = 'LANCAMENTO' then 'LAN' when l.tipo_lancamento = 'REDISTRIBUICAO' then 'REL' else l.tipo_lancamento end as statusLancamento, ") 
   		.append("        l.status as statusSituacao , ")
 		
 		.append("        if(pe.PARCIAL = false, ")
@@ -1896,7 +1898,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
 
 		this.setParameters(query, parameters);
-
+		
 		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
 		query.addScalar("id", StandardBasicTypes.LONG);
 		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
@@ -1908,6 +1910,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.addScalar("descricaoSituacaoLancamento", StandardBasicTypes.STRING);
 		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
 		query.addScalar("descricaoClassificacao", StandardBasicTypes.STRING);
+		
+		query.setMaxResults(filtro.getLimiteBuscaPorEdicao());
 		
 		return query.list();
 	}
@@ -2964,7 +2968,54 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		return query.list();
 	}
-    
+
+	public void atualizarDesconto(String codigoProduto, Long numeroEdicao,Double descontoAtual,Double novoDesconto){
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("update movimento_estoque_cota mec ");
+		sql.append("INNER JOIN produto_edicao pe ON mec.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append("INNER JOIN produto produto ON pe.PRODUTO_ID = produto.ID ");
+		sql.append("set mec.valor_desconto = :novoValorDesconto, ");
+		sql.append("mec.preco_com_desconto = mec.preco_venda - (mec.preco_venda * (:novoValorDesconto /100)) ");
+		sql.append("where ");
+		sql.append(" mec.status_estoque_financeiro = 'FINANCEIRO_NAO_PROCESSADO'  and ");
+		sql.append("produto.codigo = :codigoProduto and ");
+		sql.append("pe.numero_edicao = :numeroEdicao and ");
+		sql.append("mec.valor_desconto = :descontoAtual ");
+
+		SQLQuery q = getSession().createSQLQuery(sql.toString());
+
+		q.setParameter("codigoProduto", codigoProduto);
+		q.setParameter("numeroEdicao", numeroEdicao);
+		q.setParameter("novoValorDesconto", novoDesconto);
+		q.setParameter("descontoAtual", descontoAtual);
+
+		q.executeUpdate();
+	}
+
+	public void atualizarDescontoCota(Long cotaId,Double descontoAtual,Double novoDesconto){
+
+		StringBuilder sql = new StringBuilder();
+
+
+		sql.append("update movimento_estoque_cota mec ");
+		sql.append("set mec.valor_desconto = :novoValorDesconto, ");
+		sql.append("mec.preco_com_desconto = mec.preco_venda - (mec.preco_venda * (:novoValorDesconto /100)) ");
+		sql.append("where ");
+		sql.append(" mec.status_estoque_financeiro = 'FINANCEIRO_NAO_PROCESSADO'  and ");
+		sql.append(" mec.cota_id = :cotaId and ");
+		sql.append(" mec.valor_desconto = :descontoAtual ");
+
+		SQLQuery q = getSession().createSQLQuery(sql.toString());
+
+		q.setParameter("cotaId", cotaId);
+		q.setParameter("novoValorDesconto", novoDesconto);
+		q.setParameter("descontoAtual", descontoAtual);
+
+		q.executeUpdate();
+	}
+
     @Override
 	@SuppressWarnings("unchecked")
 	public List<Long> obterIdsEdicoesPorCodigoNumeroEdicoes(String codigoProduto, String[] numeroEdicoes){
@@ -3003,5 +3054,5 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	    
 	    return resultBI != null ? resultBI.longValue() : null;
 	}
-    
+
 }

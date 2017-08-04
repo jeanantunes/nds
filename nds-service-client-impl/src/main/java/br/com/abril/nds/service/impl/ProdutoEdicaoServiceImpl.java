@@ -50,6 +50,7 @@ import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SegmentacaoProduto;
@@ -692,6 +693,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         } else {
             produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
             semRestricao = validarAtualizacaoCampoSemRestricao(dto, produtoEdicao);
+            
+            if(produtoEdicao != null && dto.getCodigoDeBarras() != null){
+            	if((produtoEdicao.getCodigoDeBarras() == null || produtoEdicao.getCodigoDeBarras().isEmpty())
+            			||(!produtoEdicao.getCodigoDeBarras().equalsIgnoreCase(dto.getCodigoDeBarras()))){
+            		produtoEdicao.setCodigoDeBarrasAtualizado(true);
+            	}
+            }
+            
         }
         
         boolean indDataLancamentoAlterada = true;
@@ -2062,6 +2071,10 @@ if ( dto.getRepartePrevisto() != null) {
     		}
     	}
     	
+    	Produto produto = produtoRepository.obterProdutoPorCodigoProdin(filtro.getProdutoDto().getCodigoProduto());
+    	
+    	filtro.setLimiteBuscaPorEdicao( produto.getPeriodicidade().equals(PeriodicidadeProduto.SEMANAL) ? 24 : 12 );
+    	
     	List<ProdutoEdicaoDTO> listEdicoesProdutoDto = produtoEdicaoRepository.obterEdicoesProduto(filtro);
 
     	for (ProdutoEdicaoDTO peDTO : listEdicoesProdutoDto) {
@@ -2198,7 +2211,31 @@ if ( dto.getRepartePrevisto() != null) {
     	
     	return produtoEdicao.getPrecoVenda();
     }
-    
+
+    @Override
+    @Transactional(readOnly=true)
+    public List<BigDecimal> obterDescontosParaAlteracao(final String codigoProduto, final Long numeroEdicao){
+
+    	ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto,numeroEdicao);
+
+    	if(produtoEdicao == null){
+    		return null;
+    	}
+
+        List<BigDecimal> bigDecimals = this.movimentoEstoqueCotaService.obterDescontoPublicaoExpedida(produtoEdicao.getId());
+
+    	return bigDecimals;
+    }
+
+    @Override
+    @Transactional(readOnly=true)
+    public List<BigDecimal> obterDescontosParaAlteracaoPorCota(final Long cotaId){
+
+        List<BigDecimal> bigDecimals = this.movimentoEstoqueCotaService.obterDescontoPublicaoExpedidaPorCota(cotaId);
+
+        return bigDecimals;
+    }
+
     @Override
     @Transactional
     public void executarAlteracaoPrecoCapa(final String codigo, final Long numeroEdicao, final BigDecimal precoProduto) {
@@ -2231,6 +2268,8 @@ if ( dto.getRepartePrevisto() != null) {
 		hapc.setProdutoEdicao(produtoEdicao);
 		hapc.setValorAntigo(valorAntigo);
 		hapc.setValorAtual(precoProduto);
+        hapc.setTipoAlteracao("PREÇO");
+
 		historicoAlteracaoPrecoVendaRepository.adicionar(hapc);
     }
 

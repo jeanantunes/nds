@@ -110,6 +110,12 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
     }
     
     @Override
+    @Transactional
+    public PoliticaCobranca obterPoliticaCobrancaBoleto(){
+    	return politicaCobrancaRepository.buscarPoliticaCobrancaBoleto();
+    }
+    
+    @Override
     @Transactional(readOnly=true)
     public List<ParametroCobrancaVO> obterDadosPoliticasCobranca(
             final FiltroParametrosCobrancaDTO filtro) {
@@ -278,6 +284,10 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
                 parametroCobrancaDTO.setTaxaMulta(formaCobranca.getTaxaMulta());
                 parametroCobrancaDTO.setValorMulta(formaCobranca.getValorMulta());
                 parametroCobrancaDTO.setTaxaJuros(formaCobranca.getTaxaJurosMensal());
+                parametroCobrancaDTO.setProtestarBoletoRegistrado(formaCobranca.isProtestarBoletoRegistrado());
+                parametroCobrancaDTO.setQuantidadeDiasParaProtesto(formaCobranca.getQuantidadeDiasParaProtesto());
+
+                                 
                 
                 if ((concentracoesCobranca != null) && (!concentracoesCobranca.isEmpty())) {
                     for (final ConcentracaoCobrancaCota itemConcentracaoCobranca:concentracoesCobranca) {
@@ -431,6 +441,9 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
         
         formaCobranca.setRecebeCobrancaEmail(parametroCobrancaDTO.isEnvioEmail());
         formaCobranca.setAtiva(true);
+        
+        formaCobranca.setProtestarBoletoRegistrado(parametroCobrancaDTO.isProtestarBoletoRegistrado());
+        formaCobranca.setQuantidadeDiasParaProtesto(parametroCobrancaDTO.getQuantidadeDiasParaProtesto());
         
         if (parametroCobrancaDTO.getIdBanco() == null) {
             

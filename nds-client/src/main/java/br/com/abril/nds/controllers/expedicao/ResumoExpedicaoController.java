@@ -482,6 +482,8 @@ public class ResumoExpedicaoController extends BaseController {
 			resumoExpedicaoVO.setPrecoCapa(expd.getPrecoCapa() != null ? CurrencyUtil.formatarValor(expd.getPrecoCapa()) : "0");
 			resumoExpedicaoVO.setReparte(expd.getQntReparte() == null ? BigInteger.ZERO: expd.getQntReparte());
 			resumoExpedicaoVO.setQntDiferenca(expd.getQntDiferenca());
+			resumoExpedicaoVO.setDataLed(expd.getDataLed() != null ? expd.getDataLed() : " - ");
+			resumoExpedicaoVO.setHoraLed(expd.getHoraLed() != null ? expd.getHoraLed() : " - ");
 			
 			BigDecimal valorDiferenca = expd.getPrecoCapa().multiply(new BigDecimal(expd.getQntDiferenca()));
 			

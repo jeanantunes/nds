@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.dto.CotaAusenteDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSuplementarDTO;
@@ -62,4 +63,6 @@ public interface CotaAusenteService {
 	void verificarExistenciaReparteCota(Date data, Integer numeroCota);
 
 	List<ProdutoEdicaoSuplementarDTO> obterDadosExclusaoCotaAusente(Long idCotaAusente);
+
+	List<RateioCotaVO> obterCotaRateioDeCotaAusente(Long cotaAusenteId);
 }

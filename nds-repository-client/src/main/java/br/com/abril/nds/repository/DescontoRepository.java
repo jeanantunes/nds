@@ -3,6 +3,11 @@ package br.com.abril.nds.repository;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
+
 import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Editor;
@@ -41,5 +46,7 @@ public interface DescontoRepository extends Repository<Desconto, Long> {
 	Editor buscarEditorUsaDescontoEditor(Desconto desconto);
 
 	List<DescontoDTO> buscarDescontosAssociadosACota(Integer numeroCota);
+
+	List<DescontoDTO> obterDescontosPorFornecedor(Long idFornecedor);
 	
 }

@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.ControleConferenciaEncalheCotaDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
@@ -293,5 +291,5 @@ public interface ConferenciaEncalheService {
 	boolean isCobrancaNegociada(Long numeroCota);
 
 	public void criarHistoricoConfEncalheCota(Usuario usuarioLogado, List<ConferenciaEncalheDTO> listaConferenciaEncalhe, ControleConferenciaEncalheCota controleConfEncalheCota);
-	
+
 }

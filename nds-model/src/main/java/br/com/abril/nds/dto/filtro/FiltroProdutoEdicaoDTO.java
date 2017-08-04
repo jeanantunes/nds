@@ -39,9 +39,10 @@ public class FiltroProdutoEdicaoDTO implements Serializable {
 	@Export(label="Segmento")
 	private int segmento;
 	
-
+	@Export(label = "Lcmto inicial")
 	private Date dataLancamentoDe;
 	
+	@Export(label = "Lcmto final")
 	private Date dataLancamentoAte;
 	
 	private Double precoDe;

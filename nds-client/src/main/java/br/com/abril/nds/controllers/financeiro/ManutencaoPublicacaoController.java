@@ -4,6 +4,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.MovimentoEstoqueCotaService;
+import br.com.caelum.vraptor.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -14,9 +18,6 @@ import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
-import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
-import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -29,7 +30,13 @@ public class ManutencaoPublicacaoController {
 	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
-	
+
+	@Autowired
+	private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
+
+	@Autowired
+	private CotaService cotaService;
+
 	@Path("/")
 	public void index() {}
 	
@@ -72,5 +79,49 @@ public class ManutencaoPublicacaoController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,mensagens));
 		}
 	}
-	
+
+
+	@Get
+	public void valorDescontosPorProduto(Long produtoEdicaoId){
+
+		movimentoEstoqueCotaService.obterDescontoPublicaoExpedida(produtoEdicaoId);
+
+	}
+
+
+	@Path("/pesquisarDescontosProduto")
+	@Post
+	public void pesquisarDescontosProduto(String codigo, Long numeroEdicao) {
+
+		this.validarProdutoEdicao(codigo, numeroEdicao);
+
+		List<BigDecimal> bigDecimals = produtoEdicaoService.obterDescontosParaAlteracao(codigo, numeroEdicao);
+
+		result.use(Results.json()).from(bigDecimals).serialize();
+	}
+
+	@Path("/pesquisarDescontosPorCota")
+	@Post
+	public void pesquisarDescontosPorCota(Integer cotaNumero) {
+
+		Cota cota = cotaService.obterCotaPDVPorNumeroDaCota(cotaNumero);
+		List<BigDecimal> bigDecimals = produtoEdicaoService.obterDescontosParaAlteracaoPorCota(cota.getId());
+
+		result.use(Results.json()).from(bigDecimals).serialize();
+	}
+
+
+	@Path("/atualizarDescontos")
+	@Post
+	public void atualizarDescontos(String codigoProduto, Long numeroEdicao,Integer cotaNumero,Double descontoAtual,Double novoDesconto) {
+
+		if (cotaNumero!=null){
+			Cota cota = cotaService.obterCotaPDVPorNumeroDaCota(cotaNumero);
+			this.movimentoEstoqueCotaService.atualizarDescontosDaCota(cota,descontoAtual,novoDesconto);
+		}else{
+			this.movimentoEstoqueCotaService.atualizarDescontosDaPublicacao(codigoProduto,numeroEdicao,descontoAtual,novoDesconto);
+		}
+
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Alteração efetuada com Sucesso."), "result").recursive().serialize();
+	}
 }

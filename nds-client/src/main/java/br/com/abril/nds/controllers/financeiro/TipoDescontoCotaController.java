@@ -544,7 +544,7 @@ public class TipoDescontoCotaController extends BaseController {
 
 		for(Fornecedor fornecedor : fornecedores) {
 
-			itensFornecedor.add(new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
+			itensFornecedor.add(new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getNomeFantasia()));
 		}
 
 		return itensFornecedor;
@@ -597,6 +597,15 @@ public class TipoDescontoCotaController extends BaseController {
 		PaginacaoUtil.ordenarEmMemoria(lista, ordenacao, sortname);
 
 		result.use(FlexiGridJson.class).from(lista).total(cotas.size()).page(1).serialize();
+	}
+	
+	@Post
+	@Path("/obterDescontoProdutoPorFornecedor")
+	public void obterDescontoProdutoPorFornecedor(Long idFornecedor) {
+		List<DescontoDTO> descontosPorFornecedor = this.descontoService.obterDescontosPorFornecedor(idFornecedor);
+		
+		result.include("descontosPorFornecedor", descontosPorFornecedor);
+		
 	}
 
 }
