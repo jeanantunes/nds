@@ -691,7 +691,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("         consolidado.vendaExemplares as vendaExemplares, ");
 		sql.append("         consolidado.faturamentoCapa as faturamento, ");
 		sql.append("         consolidado.reparte as reparte,   ");
-		sql.append("         consolidado.NUMERO_COTA as numeroCota   ");
+		sql.append("         consolidado.NUMERO_COTA as numeroCota,   ");
+		sql.append("         consolidado.nomeCota as nomeCota");
 		sql.append("          ");
 		sql.append("     FROM ");
 		sql.append("         (           ");
@@ -704,7 +705,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("             sum(temp.vendaSum * (temp.PRECO_VENDA - ((temp.PRECO_VENDA * coalesce(temp.valorDesconto,0)) / 100))) AS valor, ");
 		sql.append("             sum(temp.vendaSum) as vendaExemplares, ");
 		sql.append("             sum(temp.reparteSum) as reparte, ");
-		sql.append("             temp.NUMERO_COTA as NUMERO_COTA ");
+		sql.append("             temp.NUMERO_COTA as NUMERO_COTA, ");
+		sql.append("             temp.nomeCota as nomeCota ");
 		sql.append("         FROM ");
 		sql.append("             (                       ");
 		sql.append("             SELECT ");
@@ -716,7 +718,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                 T.NUMERO_COTA as NUMERO_COTA, ");
 		sql.append("                 T.PRECO_VENDA as PRECO_VENDA, ");
 		sql.append("                 SUM(T.reparte) as reparteSum, ");
-		sql.append("                 SUM(T.venda) as vendaSum ");
+		sql.append("                 SUM(T.venda) as vendaSum, ");
+		sql.append("                 T.nomeCota as nomeCota ");
 		sql.append("                  ");
 		sql.append("             FROM ");
 		sql.append("                 (SELECT ");
@@ -756,11 +759,18 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                         LEFT JOIN ");
 		sql.append("                             movimento_estoque_cota mecEncalhe                                                          ");
 		sql.append("                                 on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID                                         ");
+		sql.append("                         LEFT JOIN ");
+		sql.append("                             pessoa as p");
+		sql.append("                                 on p.id = cota.pessoa_ID                                         ");
 		sql.append("                         WHERE ");
 		sql.append("                             lanc.id = l.id                                                  ");
 		sql.append("                             and cota.id = c.id) AS SIGNED INT)                                               ");
 		sql.append("                         else      null                                       ");
-		sql.append("                     end),0) as venda                                       ");
+		sql.append("                     end),0) as venda,                                       ");
+		sql.append("                 nomeCota, ");
+		sql.append("                     case when p.tipo = 'J' then p.razao_social ");
+		sql.append("                     when  p.tipo = 'F' then p.nome ");
+		sql.append("                     end as nomeCota ");
 		sql.append("                 FROM ");
 		sql.append("                     lancamento l                               ");
 		sql.append("                 JOIN ");
@@ -845,6 +855,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("numeroCota", StandardBasicTypes.STRING);
+		query.addScalar("nomeCota", StandardBasicTypes.STRING);
 		
 		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCCotaDTO.class));
 		
