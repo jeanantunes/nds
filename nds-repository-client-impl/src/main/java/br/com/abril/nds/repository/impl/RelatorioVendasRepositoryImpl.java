@@ -692,7 +692,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("         consolidado.faturamentoCapa as faturamento, ");
 		sql.append("         consolidado.reparte as reparte,   ");
 		sql.append("         consolidado.NUMERO_COTA as numeroCota,   ");
-		sql.append("         consolidado.nomeCota as nomeCota");
+		sql.append("         consolidado.nomeCota as nomeCota, ");
+		sql.append("         consolidado.tipoPDV as tipoPDV ");
 		sql.append("          ");
 		sql.append("     FROM ");
 		sql.append("         (           ");
@@ -706,7 +707,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("             sum(temp.vendaSum) as vendaExemplares, ");
 		sql.append("             sum(temp.reparteSum) as reparte, ");
 		sql.append("             temp.NUMERO_COTA as NUMERO_COTA, ");
-		sql.append("             temp.nomeCota as nomeCota ");
+		sql.append("             temp.nomeCota as nomeCota, ");
+		sql.append("             temp.tipoPDV as tipoPDV ");
 		sql.append("         FROM ");
 		sql.append("             (                       ");
 		sql.append("             SELECT ");
@@ -719,7 +721,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                 T.PRECO_VENDA as PRECO_VENDA, ");
 		sql.append("                 SUM(T.reparte) as reparteSum, ");
 		sql.append("                 SUM(T.venda) as vendaSum, ");
-		sql.append("                 T.nomeCota as nomeCota ");
+		sql.append("                 T.nomeCota as nomeCota, ");
+		sql.append("                 T.tipoPDV as tipoPDV ");
 		sql.append("                  ");
 		sql.append("             FROM ");
 		sql.append("                 (SELECT ");
@@ -730,6 +733,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                     mecReparte.VALOR_DESCONTO AS valorDesconto, ");
 		sql.append("                     c.NUMERO_COTA AS NUMERO_COTA, ");
 		sql.append("                     pe.PRECO_VENDA AS PRECO_VENDA, ");
+		sql.append("                     tpp.descricao AS tipoPDV, ");
 		sql.append("                     cast(sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' THEN                                ");
 		sql.append("                                   if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null,mecReparte.QTDE,0) ");
 		sql.append("                                   ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null,-mecReparte.QTDE,0)                                          ");
@@ -767,9 +771,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                             and cota.id = c.id) AS SIGNED INT)                                               ");
 		sql.append("                         else      null                                       ");
 		sql.append("                     end),0) as venda,                                       ");
-		sql.append("                 nomeCota, ");
-		sql.append("                     case when p.tipo = 'J' then p.razao_social ");
-		sql.append("                     when  p.tipo = 'F' then p.nome ");
+		sql.append("                     case when pess.tipo = 'J' then pess.razao_social ");
+		sql.append("                     when  pess.tipo = 'F' then pess.nome ");
 		sql.append("                     end as nomeCota ");
 		sql.append("                 FROM ");
 		sql.append("                     lancamento l                               ");
@@ -813,6 +816,12 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                 JOIN ");
 		sql.append("                     pessoa pessoaeditor                        ");
 		sql.append("                         on editor.juridica_id = pessoaeditor.id               ");
+		sql.append("                 LEFT JOIN ");
+		sql.append("                     PDV as pdv                        ");
+		sql.append("                         on  pdv.cota_id = c.id");
+		sql.append("                 LEFT JOIN ");
+		sql.append("                     TIPO_PONTO_PDV tpp                        ");
+		sql.append("                         on tpp.id = pdv.TIPO_PONTO_PDV_id               ");
 		sql.append("                 WHERE ");
 		sql.append("                     l.status in ('EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO')                   ");
 		sql.append("                     and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE'   ");
@@ -856,6 +865,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("numeroCota", StandardBasicTypes.STRING);
 		query.addScalar("nomeCota", StandardBasicTypes.STRING);
+		
+		query.addScalar("tipoPDV", StandardBasicTypes.STRING);
 		
 		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCCotaDTO.class));
 		
