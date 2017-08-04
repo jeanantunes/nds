@@ -91,7 +91,6 @@ public class Banco implements Serializable {
 	@Column(name = "VR_MULTA")
 	private BigDecimal vrMulta;
 
-	@Transient
 	@Column(name = "CONVENIO")
 	private String convenio;
 
