@@ -87,7 +87,7 @@ label {
 				<tr>
 					<td>Conv&ecirc;nio</td>
 					<td>
-						<input maxlength="6" type="text" name="newConvenio" id="newConvenio" style="width: 100px;" /> 
+						<input maxlength="10" type="text" name="newConvenio" id="newConvenio" style="width: 100px;" /> 
 					</td>
 					
 					</td>
@@ -210,7 +210,7 @@ label {
 				<tr>
 					<td>Conv&ecirc;nio</td>
 					<td>
-						<input maxlength="6" type="text" name="alterConvenio" id="alterConvenio" style="width: 100px;" /> 
+						<input maxlength="10" type="text" name="alterConvenio" id="alterConvenio" style="width: 100px;" /> 
 					</td>
 					<td>Juros %:</td>
 					<td><input onchange="bancoController.verificarInstrucoes1ChangeJuros()" maxlength="8" type="text" name="alterJuros" id="alterJuros"
