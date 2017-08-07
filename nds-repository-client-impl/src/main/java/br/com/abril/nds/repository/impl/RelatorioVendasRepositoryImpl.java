@@ -500,12 +500,16 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("       consolidado.vendaExemplares as vendaExemplares, ");
 		sql.append("       consolidado.reparte as reparte, ");
 		sql.append("       consolidado.valorMargemDistribuidor as valorMargemDistribuidor, ");
-		sql.append("       (consolidado.valorMargemDistribuidor/consolidado.faturamentoCapa*100) as porcentagemMargemDistribuidor  ");
+		sql.append("       (consolidado.valorMargemDistribuidor/consolidado.faturamentoCapa*100) as porcentagemMargemDistribuidor,  ");
+		sql.append("       consolidado.numeroCota as numeroCota, ");
+		sql.append("       consolidado.nomeCota as nomeCota ");
 		sql.append("        ");
 		sql.append("       FROM  ");
 		sql.append("       ( ");
 		sql.append("         SELECT ");
 		sql.append("          ");
+		sql.append("         temp.nomeCota as nomeCota, ");
+		sql.append("         temp.numeroCota as numeroCota, ");
 		sql.append("         temp.codEditor as codigoEditor, ");
 		sql.append("         temp.nomeEditor as nomeEditor, ");
 		sql.append("         sum(temp.vendaSum * temp.PRECO_VENDA) as faturamentoCapa, ");
@@ -531,7 +535,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("             T.percentualDescLog as percentualDescLog, ");
 		sql.append("             T.percentualDescProd as percentualDescProd, ");
 		sql.append("             T.NUMERO_COTA as numeroCota, ");
-		sql.append("             T.lancID ");
+		sql.append("             T.lancID, ");
+		sql.append("             T.nomeCota as nomeCota ");
 		sql.append("           FROM ");
 		sql.append("             (SELECT ");
 		sql.append("                 editor.ID as codigoEditor, ");
@@ -577,7 +582,10 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                         and cota.id = c.id) AS SIGNED INT)                         ");
 		sql.append("                     else      null                     ");
 		sql.append("                 end) as venda, ");
-		sql.append("                 l.id as lancID");
+		sql.append("                 l.id as lancID, ");
+		sql.append("                     case when pess.tipo = 'J' then pess.razao_social ");
+		sql.append("                     when  pess.tipo = 'F' then pess.nome ");
+		sql.append("                     end as nomeCota ");
 		sql.append("             FROM ");
 		sql.append("                 lancamento l                 ");
 		sql.append("             JOIN ");
@@ -668,6 +676,9 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("valorMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("porcentagemMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
+		
+		query.addScalar("numeroCota", StandardBasicTypes.STRING);
+		query.addScalar("nomeCota", StandardBasicTypes.STRING);
 		
 		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCEditorVO.class));
 		
@@ -886,7 +897,10 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("         consolidado.nomeCota AS nomeCota, ");
 		sql.append("         consolidado.faturamentoCapa as faturamentoCapa, ");
 		sql.append("         consolidado.participacao as participacao, ");
-		sql.append("         consolidado.segmentoDescricao as segmentoDescricao ");
+		sql.append("         consolidado.segmentoDescricao as segmentoDescricao, ");
+		sql.append("         consolidado.reparteSum as reparteSum, ");
+		sql.append("         consolidado.reparte as reparte, ");
+		sql.append("         consolidado.venda as venda ");
 		sql.append("     FROM ");
 		sql.append("         (SELECT ");
 		sql.append("             temp.cotaId as idCota, ");
@@ -896,7 +910,10 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("             sum(temp.vendaSum * (temp.PRECO_VENDA - ((temp.PRECO_VENDA * coalesce(temp.valorDesconto,0)) / 100))) as participacao, ");
 		sql.append("             sum(temp.vendaSum) as vendaExemplares, ");
 		sql.append("             sum(temp.vendaSum * temp.PRECO_VENDA) as faturamentoCapa,             ");
-		sql.append("             temp.segmentoDescricao as segmentoDescricao             ");
+		sql.append("             temp.segmentoDescricao as segmentoDescricao,             ");
+		sql.append("             temp.reparteSum as reparteSum,             ");
+		sql.append("             temp.reparte as reparte, ");
+		sql.append("             temp.vendaSum as venda ");
 		sql.append("         FROM ");
 		sql.append("             (Select ");
 		sql.append("                 T.NUMERO_COTA as numeroCota, ");
@@ -909,7 +926,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                 T.PRECO_VENDA, ");
 		sql.append("                 T.valorDesconto, ");
 		sql.append("                 T.lancId as lancId,                      ");
-		sql.append("                 T.segmentoDescricao as segmentoDescricao                      ");
+		sql.append("                 T.segmentoDescricao as segmentoDescricao,                      ");
+		sql.append("                 T.reparte as reparte                      ");
 		sql.append("             from ");
 		sql.append("                 ( SELECT ");
 		sql.append("                     mecReparte.COTA_ID AS COTA_ID, ");
@@ -1041,7 +1059,9 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		query.addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("participacao", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("segmentoDescricao", StandardBasicTypes.STRING);
-		
+		query.addScalar("reparteSum", StandardBasicTypes.STRING);
+		query.addScalar("reparte", StandardBasicTypes.STRING);
+		query.addScalar("venda", StandardBasicTypes.STRING);
 		
 
 		query.setResultTransformer(Transformers.aliasToBean(RegistroRankingSegmentoDTO.class));

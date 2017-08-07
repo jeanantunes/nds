@@ -11,19 +11,28 @@ public class RegistroRankingSegmentoDTO extends RegistroCurvaABCDTO implements S
 
 	private static final long serialVersionUID = 4187363929072315365L;
 
-	@Export(label="Ranking",exhibitionOrder=1, widthPercent=10)
+	@Export(label="Ranking",exhibitionOrder=1)
 	private Long ranking;
 	
-	@Export(label="Cota",exhibitionOrder=2, widthPercent=10)
+	@Export(label="Cota",exhibitionOrder=2)
 	private Integer numeroCota;
 	
-	@Export(label="Nome",exhibitionOrder=4, widthPercent=40)
+	@Export(label="Nome",exhibitionOrder=4)
 	private String nomeCota;
 
 	private BigDecimal faturamentoCapa;
 	
-	@Export(label="Faturamento Capa R$",exhibitionOrder=5, widthPercent=10)
+	@Export(label="Faturamento Capa R$",exhibitionOrder=5)
 	private String faturamentoCapaFormatado;
+	
+	@Export(label="N produtos",exhibitionOrder=6)
+	private String reparte;
+	
+	@Export(label="reparte",exhibitionOrder=7)
+	private String reparteSum;
+	
+	@Export(label="venda",exhibitionOrder=8)
+	private String venda;
 	
 	private BigDecimal totalFaturamento;
 	
@@ -97,6 +106,30 @@ public class RegistroRankingSegmentoDTO extends RegistroCurvaABCDTO implements S
 
 	public void setSegmentoDescricao(String segmentoDescricao) {
 		this.segmentoDescricao = segmentoDescricao;
+	}
+
+	public String getReparte() {
+		return reparte;
+	}
+
+	public void setReparte(String reparte) {
+		this.reparte = reparte;
+	}
+
+	public String getReparteSum() {
+		return reparteSum;
+	}
+
+	public void setReparteSum(String reparteSum) {
+		this.reparteSum = reparteSum;
+	}
+
+	public String getVenda() {
+		return venda;
+	}
+
+	public void setVenda(String venda) {
+		this.venda = venda;
 	}
 
 }

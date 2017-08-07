@@ -49,6 +49,14 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 	
 	@Export(label = "Mg Distrib %", exhibitionOrder = 11, columnType = ColumnType.DECIMAL)
 	private String porcentagemMargemDistribuidorFormatado;
+	
+	@Export(label = "nomeCota", exhibitionOrder = 12, columnType = ColumnType.STRING)
+	private String nomeCota;
+	
+	@Export(label = "numeroCota", exhibitionOrder = 13, columnType = ColumnType.STRING)
+	private String numeroCota;
+	
+	
 
 	private BigInteger reparte;
 
@@ -232,4 +240,23 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 			String valorMargemDistribuidorFormatado) {
 		this.valorMargemDistribuidorFormatado = valorMargemDistribuidorFormatado;
 	}
+
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
+
+	public String getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(String numeroCota) {
+		this.numeroCota = numeroCota;
+	}
+	
+	
+	
 }
