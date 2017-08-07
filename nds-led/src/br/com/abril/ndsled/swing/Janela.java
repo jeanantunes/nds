@@ -105,7 +105,7 @@ public class Janela {
 	private JTextField txtCodigoDeBarras;
 	private JLabel lblCodigoDeBarras;
 	
-	private Map<String, Lancamento> mapLancamentosParaUpdate;
+//	private Map<String, Lancamento> mapLancamentosParaUpdate;
 
 	// ================================================================================
 	// Constructors
@@ -336,7 +336,7 @@ public class Janela {
 		lblCodigoDeBarras.setBounds(233, 10, 277, 23);
 		frmProjetoLedV.getContentPane().add(lblCodigoDeBarras);
 
-		mapLancamentosParaUpdate = new HashMap<String, Lancamento>();
+//		mapLancamentosParaUpdate = new HashMap<String, Lancamento>();
 		
 		// ================================================================================
 		// Events
@@ -355,7 +355,7 @@ public class Janela {
 				lblStatusBarMessage.setText("Aguarde... aplicação sendo encerrada.");
 				desabilitarObjetosView();
 				
-				AppActions.atualizarLancamentos(mapLancamentosParaUpdate, (Date) pckDataLancamento.getModel().getValue());
+//				AppActions.atualizarLancamentos(mapLancamentosParaUpdate, (Date) pckDataLancamento.getModel().getValue());
 
 				LimparLed limparLed = new LimparLed(txtCatactereReparteZero,
 						cbxPortaSerial, lstCotas, lblStatusBarMessage);
@@ -484,7 +484,7 @@ public class Janela {
 						btnEnviar, txtCodigoDeBarras, lstProdutosAgrupados);
 				enviarLed.start();
 				
-				addLancamentoParaUpdate(cbxListaProdutos, false);
+				updateProdutoSelecionado(cbxListaProdutos, false);
 				
 				txtCodigoDeBarras.requestFocus();
 			}
@@ -501,7 +501,7 @@ public class Janela {
 					produtoSelecionado.setNomeProduto(produtoSelecionado.getNomeProduto().substring(2));	
 				}
 				
-				addLancamentoParaUpdate(cbxListaProdutos, true);
+				updateProdutoSelecionado(cbxListaProdutos, true);
 				
 				cbxListaProdutos.requestFocus();
 			}
@@ -513,7 +513,7 @@ public class Janela {
 				lblStatusBarMessage.setText("Aguarde... aplicação sendo encerrada.");
 				desabilitarObjetosView();
 				
-				AppActions.atualizarLancamentos(mapLancamentosParaUpdate, (Date) pckDataLancamento.getModel().getValue());
+//				AppActions.atualizarLancamentos(mapLancamentosParaUpdate, (Date) pckDataLancamento.getModel().getValue());
 
 				LimparLed limparLed = new LimparLed(txtCatactereReparteZero,
 						cbxPortaSerial, lstCotas, lblStatusBarMessage);
@@ -547,7 +547,7 @@ public class Janela {
 		desabilitarObjetosView();
 	}
 	
-	private void addLancamentoParaUpdate(JComboBox cbxListaProdutos, boolean isLimpar){
+	private void updateProdutoSelecionado(JComboBox cbxListaProdutos, boolean isLimpar){
 		Lancamento lancamentoParaAtualizar = new Lancamento();
 		
 		Produto produtoSelecionado = (Produto) cbxListaProdutos.getSelectedItem();
@@ -568,11 +568,15 @@ public class Janela {
 			lancamentoParaAtualizar.setDataLed("");
 		}
 		
-		if(mapLancamentosParaUpdate.containsKey(obterKeyMap(lancamentoParaAtualizar))){
-			mapLancamentosParaUpdate.remove(obterKeyMap(lancamentoParaAtualizar));
-		}
+//		if(mapLancamentosParaUpdate.containsKey(obterKeyMap(lancamentoParaAtualizar))){
+//			mapLancamentosParaUpdate.remove(obterKeyMap(lancamentoParaAtualizar));
+//		}
+		
+		Map<String, Lancamento> mapLancamentosParaUpdate = new HashMap<String, Lancamento>();
 		
 		mapLancamentosParaUpdate.put(obterKeyMap(lancamentoParaAtualizar), lancamentoParaAtualizar);
+		
+		AppActions.atualizarLancamentos(mapLancamentosParaUpdate, (Date) pckDataLancamento.getModel().getValue());
 		
 		//AppActions.atualizarLancamentos(lancamentoParaAtualizar, false);
 	}
