@@ -16,20 +16,12 @@
 
 	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
 
-	<!--	<bean id="dataSource"
-            class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-            <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-            <property name="url" value="jdbc:mysql://10.130.3.27:3306/db_cacapava_hom" />
-            <property name="username" value="cesar" />
-            <property name="password" value="mandic@2015" />
-        </bean> -->
-
 	<bean id="dataSource"
 		  class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="jdbc:mysql://10.130.5.140:3306/db_agenciasp_prd" />
-		<property name="username" value="jean" />
-		<property name="password" value="abril@123" />
+		<property name="username" value="cesar" />
+		<property name="password" value="mandic@2015" />
 	</bean>
 
 	<bean id="sessionFactory"
@@ -39,7 +31,7 @@
 		<property name="hibernateProperties">
 			<props>
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
-				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.show_sql">false</prop>
 				<prop key="hibernate.format_sql">true</prop>
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
 			</props>
