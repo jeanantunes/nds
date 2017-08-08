@@ -36,6 +36,7 @@ import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.dto.ReparteFixacaoMixWrapper;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
+import br.com.abril.nds.dto.filtro.AnaliseEstudoFiltroExportPDFDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -560,9 +561,11 @@ public class AnaliseParcialController extends BaseController {
         
         AnaliseEstudoNormal_E_ParcialDTO analise = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
         
+        AnaliseEstudoFiltroExportPDFDTO filtroAux = estudoService.obterDadosDoProdutoParaFiltroExport(id);
         
         if(fileType != null && fileType == FileType.XLS){
         	List<AnaliseParcialExportXLSDTO> listaXls = new ArrayList<>();
+        	
 
         	listaXls = analise.getAnaliseParcialXLSDTO();
         	
@@ -572,7 +575,7 @@ public class AnaliseParcialController extends BaseController {
 
              FileExporter.to(
                      "Analise do Estudo", fileType).inHTTPResponse(
-                             this.getNDSFileHeader(), null, listaXls, AnaliseParcialExportXLSDTO.class, this.httpResponse);
+                             this.getNDSFileHeader(), filtroAux, listaXls, AnaliseParcialExportXLSDTO.class, this.httpResponse);
         	
         }else{
         	List<AnaliseParcialDTO> lista = new ArrayList<>();
@@ -585,7 +588,7 @@ public class AnaliseParcialController extends BaseController {
 
              FileExporter.to(
                      "Analise do Estudo", fileType).inHTTPResponse(
-                             this.getNDSFileHeader(), null, lista, AnaliseParcialDTO.class, this.httpResponse);
+                             this.getNDSFileHeader(), filtroAux, lista, AnaliseParcialDTO.class, this.httpResponse);
         }
 
         result.nothing();

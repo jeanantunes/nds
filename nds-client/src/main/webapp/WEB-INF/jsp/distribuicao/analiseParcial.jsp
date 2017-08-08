@@ -49,7 +49,7 @@ function escondeDados_analiseParcial() {
 .class_media{width:35px; color:#F00; font-weight:bold;}
 .class_vlrs{width:35px;}
 .class_vda{width:35px; color:#F00; font-weight:bold;}
-.detalhesDados-analiseParcial{position:absolute; display:none; background:#fff; margin-left: 265px; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); width: 978px;}
+.detalhesDados-analiseParcial{position:absolute; z-index: 999; display:none; background:#fff; margin-left: 265px; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); width: 978px;}
 
 <c:if test="${estudo.idEstudoOrigemCopia != null}">
 </c:if>
@@ -339,11 +339,11 @@ table.dadosTab { margin-left: 370px;}
 						<tr class="class_linha_1 paddingTotais" style="width: 1040px !important;">
 							<td id="lbl_qtd_cotas" style="width: 95px !important;">Qtde Cotas:</td>
 							<td id="total_de_cotas" style="width: 155px !important;">0</td>
-							<td id="lbl_NPDV" style="width: 70px !important;">&nbsp;</td>
-                            <td id="total_ultimo_reparte" style="width: 60px !important; text-align: center;">0</td>
-                            <td id="total_reparte_sugerido" style="width: 60px !important; text-align: center;">0</td>
-							<td id="lbl_legenda" style="width: 150px !important;">&nbsp;</td>
-							<td id="total_juramento" style="width: 47px !important;">0</td>
+							<td id="lbl_NPDV" style="width: 70px !important; padding-left: 32px;">&nbsp;</td>
+                            <td id="total_ultimo_reparte" style="width: 66px !important; text-align: center;">0</td>
+                            <td id="total_reparte_sugerido" style="width: 70px !important; text-align: center;">0</td>
+							<td id="lbl_legenda" style="width: 30px !important;">&nbsp;</td>
+							<td id="total_juramento" style="width: 54px !important;">0</td>
 							<%--<td align="right" id="total_media_venda">0</td>--%>
 							<td id="total_reparte1" style="width: 36px !important;">0</td>
 							<td id="total_venda1" class="vermelho" style="width: 36px !important;">0</td>

@@ -17,19 +17,19 @@ public class VendaProdutoDTO implements Serializable {
 
 	private static final long serialVersionUID = 2903790306949832310L;
 	
-	@Export(label = "Edição", alignment=Alignment.LEFT, exhibitionOrder = 1)
+	@Export(label = "Edição", alignment=Alignment.LEFT, exhibitionOrder = 1,  widthPercent = 8)
 	private Long numEdicao;
 	
-	@Export(label = "Data Lançamento", alignment=Alignment.CENTER, exhibitionOrder = 2)
+	@Export(label = "Data Lançamento", alignment=Alignment.CENTER, exhibitionOrder = 2, widthPercent = 11)
 	private String dataLancamento;
 	
-	@Export(label = "Data Recolhimento", alignment=Alignment.CENTER, exhibitionOrder = 3)
+	@Export(label = "Data Recolhimento", alignment=Alignment.CENTER, exhibitionOrder = 3, widthPercent = 11)
 	private String dataRecolhimento;
 	
-	@Export(label = "Reparte", alignment=Alignment.CENTER, exhibitionOrder = 4)
+	@Export(label = "Reparte", alignment=Alignment.CENTER, exhibitionOrder = 4, widthPercent = 8)
 	private BigInteger reparte;
 	
-	@Export(label = "Venda", alignment=Alignment.CENTER, exhibitionOrder = 5)
+	@Export(label = "Venda", alignment=Alignment.CENTER, exhibitionOrder = 5, widthPercent = 8)
 	private BigInteger venda;
 
 	private BigDecimal percentualVenda;
@@ -40,16 +40,16 @@ public class VendaProdutoDTO implements Serializable {
 	
 	private BigDecimal encalhe;
 	
-	@Export(label = "% Venda", alignment=Alignment.RIGHT, exhibitionOrder = 6)
+	@Export(label = "% Venda", alignment=Alignment.RIGHT, exhibitionOrder = 6, widthPercent = 8)
 	private String percentualVendaFormatado;
 	
-	@Export(label = "Preço Capa R$", alignment=Alignment.RIGHT, exhibitionOrder = 7)
+	@Export(label = "Preço Capa R$", alignment=Alignment.RIGHT, exhibitionOrder = 7, widthPercent = 11)
 	private String valorPrecoCapaFormatado;
 	
-	@Export(label = "Total R$", alignment=Alignment.RIGHT, exhibitionOrder = 8)
+	@Export(label = "Total R$", alignment=Alignment.RIGHT, exhibitionOrder = 8, widthPercent = 11)
 	private String valorTotalFormatado;
 	
-	@Export(label = "Chamada Capa", alignment=Alignment.LEFT, exhibitionOrder = 9)
+	@Export(label = "Chamada Capa", alignment=Alignment.LEFT, exhibitionOrder = 9, widthPercent = 24)
 	private String chamadaCapa;
 	
 	private Long numeroEstudo = Long.valueOf(0);

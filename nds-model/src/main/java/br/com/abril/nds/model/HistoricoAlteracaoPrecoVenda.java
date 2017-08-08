@@ -3,16 +3,9 @@ package br.com.abril.nds.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -46,6 +39,33 @@ public class HistoricoAlteracaoPrecoVenda {
 	@OneToOne(optional = false)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
+
+	@ManyToOne
+	@JoinColumn(name = "COTA_ID")
+	private Cota cota;
+
+	@Column(name = "TIPO_ALTERACAO")
+	private String tipoAlteracao;
+
+	public String getTipoAlteracao() {
+		return tipoAlteracao;
+	}
+
+	public void setDataCriacao(Date dataCriacao) {
+		this.dataCriacao = dataCriacao;
+	}
+
+	public void setTipoAlteracao(String tipoAlteracao) {
+		this.tipoAlteracao = tipoAlteracao;
+	}
+
+	public Cota getCota() {
+		return cota;
+	}
+
+	public void setCota(Cota cota) {
+		this.cota = cota;
+	}
 
 	public Long getId() {
 		return id;

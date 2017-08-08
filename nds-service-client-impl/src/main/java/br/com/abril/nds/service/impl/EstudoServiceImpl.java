@@ -19,9 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
+import br.com.abril.nds.dto.filtro.AnaliseEstudoFiltroExportPDFDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -38,7 +41,6 @@ import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.EstudoGeradoPreAnaliseDTO;
 import br.com.abril.nds.model.planejamento.EstudoPDV;
 import br.com.abril.nds.model.planejamento.Lancamento;
-import br.com.abril.nds.model.planejamento.StatusEstudo;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
@@ -54,8 +56,6 @@ import br.com.abril.nds.service.HistogramaPosEstudoFaixaReparteService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.DateUtil;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -607,6 +607,12 @@ public class EstudoServiceImpl implements EstudoService {
 		
 		return estudoGeradoRepository.countEstudoGeradoParaLancamento(idlancamento, dtLancamento);
 		
+	}
+	
+	@Override
+	@Transactional
+	public AnaliseEstudoFiltroExportPDFDTO obterDadosDoProdutoParaFiltroExport (Long idEstudo){
+		return estudoGeradoRepository.obterDadosDoProdutoParaFiltroExport(idEstudo);
 	}
 
 }

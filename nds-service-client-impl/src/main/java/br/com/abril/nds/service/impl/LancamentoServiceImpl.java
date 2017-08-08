@@ -183,7 +183,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 				fornecedor, 
 				(lancamento.getEstudo()==null) ? null : lancamento.getEstudo().getQtdeReparte().intValue(),
 				false,
-				lancamento.getProdutoEdicao().getEstoqueProduto()!=null?lancamento.getProdutoEdicao().getEstoqueProduto().getQtde():BigInteger.ZERO);
+				lancamento.getProdutoEdicao().getEstoqueProduto()!=null?lancamento.getProdutoEdicao().getEstoqueProduto().getQtde():BigInteger.ZERO,
+				lancamento.getDataLed() != null ? lancamento.getDataLed() : " - ",
+				lancamento.getHoraLed() != null ? lancamento.getHoraLed() : " - ");
 		
 		return dto;
 	}

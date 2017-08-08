@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -227,7 +228,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 
                 List<EdicoesProdutosDTO> edicoesComVenda = new LinkedList<>();
                 Map<String, EdicoesProdutosDTO> edicoesProdutosDTOMap = new HashMap<>();
-                Integer ordemExibicaoHelper = 0;
+//                Integer ordemExibicaoHelper = 0;
 
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>());
                 
@@ -293,7 +294,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                     					
                     					if(edicao.getPeriodo() != null && !edicao.getPeriodo().isEmpty()){
                     						
-                    						String mapKey = ""+edicao.getProdutoEdicaoId()+""+edicao.getPeriodo();
+                    						String mapKey = obterMapKey(edicao);
                     						
                     						List<EdicoesProdutosDTO> listCotasVendas = mapHistoricoCotasEdicoesParciais.get(mapKey);
                     						
@@ -358,7 +359,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                     				
                     				edicoesProdutosDTOMap.put(mapKey, ed);
                     				
-                    				putMapSomatorioTotaisEdicao(mapTotaisEd, ed);
+//                    				putMapSomatorioTotaisEdicao(mapTotaisEd, ed);
                     			}
                     			
                     		}
@@ -395,6 +396,15 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 
 //                item.setEdicoesBase(edicoesCota);
                 
+                
+                Set<String> chaveMaps = edicoesProdutosDTOMap.keySet();
+                
+                for (String key : chaveMaps) {
+					EdicoesProdutosDTO edicaoBaseCota = edicoesProdutosDTOMap.get(key);
+					putMapSomatorioTotaisEdicao(mapTotaisEd, edicaoBaseCota);
+					
+				}
+                
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>(edicoesProdutosDTOMap.values()));
                 
                 total_somatorioUltimoReparte = somatorioUltimoReparte(total_somatorioUltimoReparte, item);
@@ -406,6 +416,9 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 total_qtdCotas = BigIntegerUtil.soma(total_qtdCotas, BigInteger.ONE);
                 
             }
+            
+            
+            
     		
         } else {
         	final boolean parcialPossuiRedistribuicao = 
@@ -579,7 +592,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	dto.setTotal_somatorioReparteSugerido(total_somatorioReparteSugerido);
     	dto.setTotal_somatorioReparteEstudoOrigem(total_somatorioReparteOrigem);
     	
-    	formatarTotaisReparteVendaEdicao(mapTotaisEd, dto);
+    	formatarTotaisReparteVendaEdicao(mapTotaisEd, dto, queryDTO.getEdicoesBase());
     	
         return dto;
     }
@@ -622,22 +635,39 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 	}
 
 	private void putMapSomatorioTotaisEdicao(Map<String, BigInteger> mapTotaisEd, EdicoesProdutosDTO ed) {
-		if(mapTotaisEd.get("reparte_"+ed.getOrdemExibicao()) == null){
-			mapTotaisEd.put("reparte_"+ed.getOrdemExibicao(), ed.getReparte());
-			mapTotaisEd.put("venda_"+ed.getOrdemExibicao(), ed.getVenda());
+		String keyMap = obterMapKey(ed);
+		
+		if(mapTotaisEd.get("reparte_"+keyMap) == null){
+			mapTotaisEd.put("reparte_"+keyMap, ed.getReparte());
+			mapTotaisEd.put("venda_"+keyMap, ed.getVenda());
 		}else{
-			mapTotaisEd.put("reparte_"+ed.getOrdemExibicao(), BigIntegerUtil.soma(mapTotaisEd.get("reparte_"+ed.getOrdemExibicao()) , ed.getReparte()));
-			mapTotaisEd.put("venda_"+ed.getOrdemExibicao(), BigIntegerUtil.soma(mapTotaisEd.get("venda_"+ed.getOrdemExibicao()), ed.getVenda()));
+			mapTotaisEd.put("reparte_"+keyMap, BigIntegerUtil.soma(mapTotaisEd.get("reparte_"+keyMap) , ed.getReparte()));
+			mapTotaisEd.put("venda_"+keyMap, BigIntegerUtil.soma(mapTotaisEd.get("venda_"+keyMap), ed.getVenda()));
 		}
 	}
 
-	private void formatarTotaisReparteVendaEdicao(Map<String, BigInteger> mapTotaisEd, AnaliseEstudoNormal_E_ParcialDTO dto) {
+	private void formatarTotaisReparteVendaEdicao(Map<String, BigInteger> mapTotaisEd, AnaliseEstudoNormal_E_ParcialDTO dto, List<EdicoesProdutosDTO> listEdicoesBase) {
 		List<BigInteger> totalReparte = new ArrayList<>();
     	List<BigInteger> totalVenda = new ArrayList<>();
     	
-    	for (int i = 0; i < (mapTotaisEd.size()/2); i++) {
-			totalReparte.add(mapTotaisEd.get("reparte_"+i));
-			totalVenda.add(mapTotaisEd.get("venda_"+i));
+    	Map<String, BigInteger> mapTotaisEdOrdenado = new HashMap();
+    	
+    	int index = 0;
+    	for (EdicoesProdutosDTO edicaoBaseDTO : listEdicoesBase) {
+    		
+    		String keyMapBase = obterMapKey(edicaoBaseDTO);
+			
+			BigInteger reparteEdicao = mapTotaisEd.get("reparte_"+keyMapBase);
+			BigInteger vendaEdicao = mapTotaisEd.get("venda_"+keyMapBase);
+			
+			mapTotaisEdOrdenado.put("reparte_"+index, reparteEdicao);
+			mapTotaisEdOrdenado.put("venda_"+index, vendaEdicao);
+			++index;
+		}
+    	
+    	for (int i = 0; i < (mapTotaisEdOrdenado.size()/2); i++) {
+			totalReparte.add(mapTotaisEdOrdenado.get("reparte_"+i));
+			totalVenda.add(mapTotaisEdOrdenado.get("venda_"+i));
 		}
     	
     	dto.setReparteTotalEdicao(totalReparte);

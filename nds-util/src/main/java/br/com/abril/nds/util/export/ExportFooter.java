@@ -15,6 +15,8 @@ public class ExportFooter {
 	private Float fontSize;
 	
 	private boolean verticalPrinting;
+	
+	private int colspan;
 
 	/**
 	 * Construtor padrão.
@@ -109,4 +111,12 @@ public class ExportFooter {
 		this.fontSize = fontSize;
 	}
 
+	public int getColspan() {
+		return colspan;
+	}
+
+	public void setColspan(int colspan) {
+		this.colspan = colspan;
+	}
+	
 }

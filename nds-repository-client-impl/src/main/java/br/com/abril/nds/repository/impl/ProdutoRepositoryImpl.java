@@ -167,7 +167,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		
 		hql.append(" ( select "); 
 		hql.append(" case when count(f.id)>1 then 'Diversos' 				");
-		hql.append(" else f.juridica.razaoSocial end 						");
+		hql.append(" else f.juridica.nomeFantasia end 						");
 		hql.append(" from Produto p join p.fornecedores f 					");
 		hql.append(" where p.id = produto.id ) as tipoContratoFornecedor, 	");
 		

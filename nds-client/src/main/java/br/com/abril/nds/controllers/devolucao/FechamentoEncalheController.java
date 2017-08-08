@@ -1271,9 +1271,26 @@ public class FechamentoEncalheController extends BaseController {
 		
 	}
 	
+	@Get
+    @Path("/obterPathDiretorioArquivo")
+    public void obterPathDiretorioArquivo() {
+		
+		ParametroSistema pathSistem = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TRANSFERENCIA_ARQUIVO);
+		
+		if(pathSistem.getValor() == null){
+			result.use(Results.json()).from(false, "isPathDiretorioValido").recursive().serialize();
+		}else{
+			result.use(Results.json()).from(true, "isPathDiretorioValido").recursive().serialize();
+		}
+    }
+	 
 	private String getPathFileSystem() {
 		
 		ParametroSistema pathSistem = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TRANSFERENCIA_ARQUIVO);
+		
+		if(pathSistem.getValor() == null){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Configure o diretório de Transferência de arquivos."));
+		}
 		
 		String pathFile = pathSistem.getValor();
 		
@@ -1542,7 +1559,9 @@ public class FechamentoEncalheController extends BaseController {
 	
 	private CellStyle getHeaderColumnCellStyle(HSSFSheet sheet) {
 
-		sheet.addMergedRegion(CellRangeAddress.valueOf("A1:L2"));
+		if(sheet.getMergedRegion(CellRangeAddress.valueOf("A1:L2").getFirstColumn()) == null){
+			sheet.addMergedRegion(CellRangeAddress.valueOf("A1:L2"));
+		}
 		
 		final CellStyle style = sheet.getWorkbook().createCellStyle();
 

@@ -548,5 +548,12 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	List<ConsultaEncalheDTO> obterListaConsultaReparte(final FiltroConsultaEncalheDTO filtro);
 	
 	List<ConsultaEncalheDTO> obterListaConsultaBaseReparte(final FiltroConsultaEncalheDTO filtro);
-	
+
+	List<BigDecimal>  obterDescontoPublicaoExpedida(Long produtoEdicaoId);
+
+	List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaFinanceiroNaoProcessadoDePublicaoExpedida(Long produtoEdicaoId);
+
+	List<BigDecimal> obterDescontosDaCota(Long cotaId);
+
+	List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaFinanceiroNaoProcessadoDaCota(Long cotaId);
 }

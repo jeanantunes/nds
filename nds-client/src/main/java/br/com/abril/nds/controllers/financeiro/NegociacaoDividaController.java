@@ -333,7 +333,7 @@ public class NegociacaoDividaController extends BaseController {
 		
 		List<NegociacaoDividaDTO> listDividas = negociacaoDividaService.obterDividasPorCota(filtro);
 		
-		FileExporter.to("consulta-box", fileType).inHTTPResponse(
+		FileExporter.to("Negociação-de-dívida", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), null, 
 				listDividas, NegociacaoDividaDTO.class,
 				this.httpServletResponse);

@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.CanalDistribuicao;
@@ -54,6 +55,8 @@ public class FornecedorDTO implements Serializable {
 	private boolean integraGFS;
 	
 	private boolean destinacaoEncalhe;
+	
+	private String margemDistribuidor;
 	
 	/**
 	 * @return the idFornecedor
@@ -309,6 +312,15 @@ public class FornecedorDTO implements Serializable {
 
 	public void setDestinacaoEncalhe(boolean destinacaoEncalhe) {
 		this.destinacaoEncalhe = destinacaoEncalhe;
+	}
+
+	public String getMargemDistribuidor() {
+		return margemDistribuidor;
+	}
+
+	public void setMargemDistribuidor(String margemDistribuidor) {
+		this.margemDistribuidor = margemDistribuidor;
+		
 	}
 	
 }

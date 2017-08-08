@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,8 +41,10 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.TipoFornecedorService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TableModel;
@@ -199,6 +202,10 @@ public class FornecedorController extends BaseController {
 		}
 		
 		fornecedor.setCanalDistribuicao(fornecedorDTO.getCanalDistribuicao());
+		
+		if(fornecedorDTO.getMargemDistribuidor() != null && !fornecedorDTO.getMargemDistribuidor().isEmpty()){
+			fornecedor.setMargemDistribuidor(CurrencyUtil.arredondarValorParaDuasCasas(new BigDecimal(fornecedorDTO.getMargemDistribuidor().replace(",", "."))));
+		}
 		
 		String mensagemSucesso;
 		
@@ -767,6 +774,8 @@ public class FornecedorController extends BaseController {
 		fornecedorDTO.setIntegraGFS(fornecedor.isIntegraGFS());
 		
 		fornecedorDTO.setDestinacaoEncalhe(fornecedor.isDestinacaoEncalhe());
+		
+		fornecedorDTO.setMargemDistribuidor(fornecedor.getMargemDistribuidor() != null ? CurrencyUtil.arredondarValorParaDuasCasas(fornecedor.getMargemDistribuidor()).toString().replace(".", ",") : "0,00");
 		
 		return fornecedorDTO;
 	}

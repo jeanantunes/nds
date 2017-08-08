@@ -34,6 +34,8 @@ public class InfoConferenciaEncalheCota implements Serializable {
 	
 	private BigDecimal reparte;
 	
+	private BigDecimal reparteCapa;
+	
 	private BigDecimal encalhe;
 	
 	private BigDecimal valorVendaDia;
@@ -161,6 +163,14 @@ public class InfoConferenciaEncalheCota implements Serializable {
 
 	public void setIndCotaOperacaoDiferenciada(boolean indCotaOperacaoDiferenciada) {
 		this.indCotaOperacaoDiferenciada = indCotaOperacaoDiferenciada;
+	}
+
+	public BigDecimal getReparteCapa() {
+		return reparteCapa;
+	}
+
+	public void setReparteCapa(BigDecimal reparteCapa) {
+		this.reparteCapa = reparteCapa;
 	}
 	
 }

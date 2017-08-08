@@ -6,41 +6,111 @@ var manutencaoPublicacaoController = $.extend(true, {
 	nomeProduto:null,
 	
 	init : function() {
-		
+
+
+
 		$("#manut-publicacao-edicaoProduto", manutencaoPublicacaoController.workspace).numeric();
 		
 		$('#manut-publicacao-novoPrecoProduto', manutencaoPublicacaoController.workspace).maskMoney({
 			 thousands:'.', 
-			 decimal:',', 
-			 precision:2
+			 decimal:',',
+             precision:2
 		});
-		
+
+		$('#novoDescontoInput').mask('9?9,99');
 		focusSelectRefField($("#codigoProduto"));
 	},
 	
 	pesquisar: function (){
-		
-		manutencaoPublicacaoController.codigoProduto =  $("#manut-publicacao-codigoProduto", manutencaoPublicacaoController.workspace).val() ;
-		manutencaoPublicacaoController.numeroEdicao = $("#manut-publicacao-edicaoProduto", manutencaoPublicacaoController.workspace).val();
-		manutencaoPublicacaoController.nomeProduto = $("#manut-publicacao-nomeProduto", manutencaoPublicacaoController.workspace).val();
-		
-		var data = {codigo:manutencaoPublicacaoController.codigoProduto,
-					numeroEdicao:manutencaoPublicacaoController.numeroEdicao};
-		
-		$.postJSON(manutencaoPublicacaoController.url + "/pesquisarProduto", 
-				   data,
-				   manutencaoPublicacaoController.renderizarDaodosProduto,
-				   manutencaoPublicacaoController.tratraErroProduto);
+
+        manutencaoPublicacaoController.codigoProduto =  $("#manut-publicacao-codigoProduto", manutencaoPublicacaoController.workspace).val() ;
+        manutencaoPublicacaoController.numeroEdicao = $("#manut-publicacao-edicaoProduto", manutencaoPublicacaoController.workspace).val();
+        manutencaoPublicacaoController.nomeProduto = $("#manut-publicacao-nomeProduto", manutencaoPublicacaoController.workspace).val();
+
+
+        if(manutencaoPublicacaoController.numeroEdicao){
+
+		}
+        var data = {
+            codigo: $("#manut-publicacao-codigoProduto", manutencaoPublicacaoController.workspace).val(),
+            numeroEdicao: $("#manut-publicacao-edicaoProduto", manutencaoPublicacaoController.workspace).val()
+        };
+
+        if($('#opcoesVisualizacao2').is(':checked')){
+
+        	var target = null;
+        	if($('#descontoOpcoesProduto').is(':checked')){
+
+
+        		if( $("#manut-publicacao-edicaoProduto").data('values').split(',').indexOf(data.numeroEdicao) == -1){
+
+                    manutencaoPublicacaoController.mensagemErro('Número de edição inválido');
+        			return;
+				}
+                target = "/pesquisarDescontosProduto";
+			}else if($('#descontoOpcoesCota').is(':checked')){
+                target = "/pesquisarDescontosPorCota";
+                data={cotaNumero:cota.value}
+			}
+
+        	$.postJSON(manutencaoPublicacaoController.url + target,data,function(result){
+
+        		var descontos = result.list;
+                $('#descontoAtualSel').empty();
+        		for(var x=0;x < descontos.length;x++){
+                    descontos[x] = parseFloat(descontos[x]).toFixed(2).toString().replace('.',',');
+
+                    $('#descontoAtualSel').append('<option value="'+descontos[x]+'">'+descontos[x]+'</option>')
+				}
+
+
+                var nomePublicacao = "" ;
+                if($('#descontoOpcoesProduto').is(':checked')){
+                    nomePublicacao = "Publicação " ;
+                    nomePublicacao = nomePublicacao.concat(manutencaoPublicacaoController.codigoProduto,
+                        " - ",manutencaoPublicacaoController.nomeProduto,
+                        " - ",manutencaoPublicacaoController.numeroEdicao);
+                }else  if($('#descontoOpcoesCota').is(':checked')){
+                    nomePublicacao = "Cota " +(cota.value) + " - "+ ($('#nomeCota').val());
+				}
+
+                $('#novoDesconto-txtLegenda').text(nomePublicacao);
+                $('#novoDescontoFields').show();
+
+			},manutencaoPublicacaoController.tratraErroProduto);
+        }else{
+
+
+
+            $.postJSON(manutencaoPublicacaoController.url + "/pesquisarProduto",
+                data,
+                manutencaoPublicacaoController.renderizarDaodosProduto,
+                manutencaoPublicacaoController.tratraErroProduto);
+        }
+
 	},
 	
 	renderizarDaodosProduto:function(precoProduto){
-	
-		$("#manut-publicacao-resultado",manutencaoPublicacaoController.workspace).show();
-		$("#manut-publicacao-txtPrecoProduto",manutencaoPublicacaoController.workspace).text(precoProduto); 
-		$("#manut-publicacao-txtLegenda",manutencaoPublicacaoController.workspace).text(manutencaoPublicacaoController.montarTituloFieldPublicacao());
-		$("#manut-publicacao-novoPrecoProduto",manutencaoPublicacaoController.workspace).val("");
-		$("#manut-publicacao-novoPrecoProduto",manutencaoPublicacaoController.workspace).focus();
+
+        $('#novoDescontoFields').hide();
+
+        if($('#opcoesVisualizacao2').is(':checked')){
+            $('#novoDescontoFields').show()
+
+        }else{
+            $("#manut-publicacao-resultado",manutencaoPublicacaoController.workspace).show();
+            $("#manut-publicacao-txtPrecoProduto",manutencaoPublicacaoController.workspace).text(precoProduto);
+            $("#manut-publicacao-txtLegenda",manutencaoPublicacaoController.workspace).text(manutencaoPublicacaoController.montarTituloFieldPublicacao());
+            $("#manut-publicacao-novoPrecoProduto",manutencaoPublicacaoController.workspace).val("");
+            $("#manut-publicacao-novoPrecoProduto",manutencaoPublicacaoController.workspace).focus();
+
+		}
+
+
+
+
 	},
+
 	
 	montarTituloFieldPublicacao:function(){
 		
@@ -70,7 +140,7 @@ var manutencaoPublicacaoController = $.extend(true, {
 	},
 	
 	precoAlteradoComSucesso:function(result){
-		
+
 		if(result.listaMensagens){
 			exibirMensagem(result.tipoMensagem,result.listaMensagens);
 		}
@@ -80,8 +150,10 @@ var manutencaoPublicacaoController = $.extend(true, {
 		$("#manut-publicacao-edicaoProduto", manutencaoPublicacaoController.workspace).val("");
 		$("#manut-publicacao-nomeProduto", manutencaoPublicacaoController.workspace).val("");
 		$("#manut-publicacao-novoPrecoProduto",manutencaoPublicacaoController.workspace).val("");
+        $('#novoDescontoInput').val('');
 		manutencaoPublicacaoController.codigoProduto = null;
 		manutencaoPublicacaoController.numeroEdicao = null;
+        $('#novoDescontoFields').hide()
 	},
 	
 	isPublicacaoInformada:function(){
@@ -91,11 +163,28 @@ var manutencaoPublicacaoController = $.extend(true, {
 	},
 	
 	popupConfirmacao:function(){
-		
-		if(!manutencaoPublicacaoController.isPublicacaoInformada()){
+
+		if( ($('#opcoesVisualizacao1').is(':checked') && !manutencaoPublicacaoController.isPublicacaoInformada()) ||
+            ($('#opcoesVisualizacao2').not(':checked') && !manutencaoPublicacaoController.isPublicacaoInformada() )  ||
+			($('#opcoesVisualizacao2').is(':checked') && $('#descontoOpcoesProduto').is(':checked') && !manutencaoPublicacaoController.isPublicacaoInformada() )
+			){
 			exibirMensagem("WARNING",["Informe uma publicação para alteração."]);
 			return;
 		}
+
+        if(
+            ($('#opcoesVisualizacao2').is(':checked') && ($('#descontoOpcoesProduto').is(':checked') || $('#descontoOpcoesCota').is(':checked')) )
+        ){
+
+			var valor = parseFloat($('#novoDescontoInput').val());
+			if(valor > 100.0){
+                exibirMensagem("WARNING",["Valor de desconto inválido."]);
+                return;
+			}
+
+        }
+
+
 		
 		$("#dialog-confirmacao-alteracao-preco", manutencaoPublicacaoController.workspace).dialog({
 			resizable: false,
@@ -105,7 +194,18 @@ var manutencaoPublicacaoController = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 					$(this).dialog("close");
-					manutencaoPublicacaoController.confirmarAlteracaoPreco();
+
+                    if($('#opcoesVisualizacao1').is(':checked')){
+                        manutencaoPublicacaoController.confirmarAlteracaoPreco();
+                    }else if($('#opcoesVisualizacao2').is(':checked')){
+
+                        if($('#descontoOpcoesProduto').is(':checked')){
+                            manutencaoPublicacaoController.atualizarDesconto();
+						}else  if($('#descontoOpcoesCota').is(':checked')){
+                            manutencaoPublicacaoController.atualizarDesconto();
+                        }
+
+					}
 				},
 				"Cancelar": function() {
 					$(this).dialog("close");
@@ -113,7 +213,29 @@ var manutencaoPublicacaoController = $.extend(true, {
 			},
 			form: $("#dialog-confirmacao-alteracao-preco", this.workspace).parents("form")
 		});
-	}
+	},
+
+	atualizarDesconto:function(){
+
+        var data = {
+            codigoProduto: manutencaoPublicacaoController.codigoProduto,
+            numeroEdicao: manutencaoPublicacaoController.numeroEdicao,
+            cotaNumero:cota.value,
+			descontoAtual:$("#descontoAtualSel", manutencaoPublicacaoController.workspace).val(),
+            novoDesconto: $("#novoDescontoInput", manutencaoPublicacaoController.workspace).val()
+        };
+
+        $.postJSON(manutencaoPublicacaoController.url + "/atualizarDescontos",
+            data,
+            manutencaoPublicacaoController.precoAlteradoComSucesso);
+
+	},
+    mensagemErro : function (mensagem){
+        var erros = new Array();
+        erros[0] = ""+mensagem;
+        exibirMensagemDialog('WARNING',   erros,"");
+        return;
+    }
 
 }, BaseController);
 //@ sourceURL=manutencaoPublicacao.js

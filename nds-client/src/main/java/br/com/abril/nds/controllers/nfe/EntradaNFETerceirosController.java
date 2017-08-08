@@ -330,7 +330,7 @@ public class EntradaNFETerceirosController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}*/
 			
-			FileExporter.to("notasPendentes", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, listaNotasPendentes, ConsultaEntradaNFETerceirosPendentesDTO.class, this.httpResponse);
+			FileExporter.to("notas_Pendentes", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, listaNotasPendentes, ConsultaEntradaNFETerceirosPendentesDTO.class, this.httpResponse);
 			
 		}
 			

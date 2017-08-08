@@ -74,9 +74,9 @@ public class EMS0126MessageProcessor extends AbstractRepository implements
 		ProdutoEdicao produtoEdicao = (ProdutoEdicao) query.uniqueResult();
 
 		if (null != produtoEdicao) {
-
 			
-			 if(input.getCodigoBarras()!=null && !input.getCodigoBarras().trim().equals("") ){
+			 if((input.getCodigoBarras()!=null && !input.getCodigoBarras().trim().equals("")) 
+					 && !produtoEdicao.isCodigoDeBarrasAtualizado()){
 				
 				
 				if(produtoEdicao.getCodigoDeBarras() ==null || produtoEdicao.getCodigoDeBarras().trim().equals("")){

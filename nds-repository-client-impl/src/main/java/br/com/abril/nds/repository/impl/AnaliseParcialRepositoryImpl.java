@@ -999,11 +999,13 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	
     	query.setParameterList("listaCota", listCotaId);
     	query.setParameterList("listaPE", listProdutoEdicaoId);
-    	query.setParameter("qtdEdicoes", listProdutoEdicaoId.size());
     	query.setParameterList("statusLanc", statusLancamento);
     	query.setParameter("de", queryDTO.getFilterSortFrom());
     	query.setParameter("ate", queryDTO.getFilterSortTo());
-    	
+
+    	if(queryDTO.possuiOrdenacaoQtdDeVenda()){
+    		query.setParameter("qtdEdicoes", listProdutoEdicaoId.size());
+    	}
     	
     	query.addScalar("cotaId", StandardBasicTypes.LONG);
     	

@@ -220,6 +220,9 @@ public class ProdutoEdicao implements Serializable {
     @Column(name = "CODIGO_NBM", length = 10)
 	private String codigoNBM;
     
+    @Column(name = "CODIGO_BARRAS_ATUALIZADO", nullable = false)
+	private boolean codigoDeBarrasAtualizado = false;
+    
 	public ProdutoEdicao() {
 	}
 	
@@ -649,6 +652,14 @@ public class ProdutoEdicao implements Serializable {
 
 	public void setCodigoNBM(String codigoNBM) {
 		this.codigoNBM = codigoNBM;
+	}
+
+	public boolean isCodigoDeBarrasAtualizado() {
+		return codigoDeBarrasAtualizado;
+	}
+
+	public void setCodigoDeBarrasAtualizado(boolean codigoDeBarrasAtualizado) {
+		this.codigoDeBarrasAtualizado = codigoDeBarrasAtualizado;
 	}
 
 	@Override
