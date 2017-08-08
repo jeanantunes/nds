@@ -45,8 +45,8 @@ public class ConsultaProdutoEdicaoDTO implements Serializable {
 	@Export(label="Parcial", alignment=Alignment.LEFT, widthPercent=4)
 	private Boolean parcial;
 	
-	@Export(label="Tipo Lançamento", alignment=Alignment.CENTER, widthPercent=5)
-	private String lancamento;
+//	@Export(label="Tipo Lançamento", alignment=Alignment.CENTER, widthPercent=5)
+//	private String lancamento;
 	
 	@Export(label="Lançamento", alignment=Alignment.CENTER, widthPercent=6)
 	private String statusLancamento;
@@ -141,14 +141,14 @@ public class ConsultaProdutoEdicaoDTO implements Serializable {
 	}
 
 
-	public String getLancamento() {
-		return lancamento;
-	}
-
-
-	public void setLancamento(String lancamento) {
-		this.lancamento = lancamento;
-	}
+//	public String getLancamento() {
+//		return lancamento;
+//	}
+//
+//
+//	public void setLancamento(String lancamento) {
+//		this.lancamento = lancamento;
+//	}
 
 
 	public String getStatusLancamento() {

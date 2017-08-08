@@ -108,6 +108,13 @@ var historicoVendaController = $.extend(true, {
 			historicoVendaController.pesquisarCotasHistoricoCotaOuComponentes(url);
 		});
 		
+		$('#pesquisarCotasDoHistorico', historicoVendaController.workspace).click(function (){
+
+			url = contextPath + "/distribuicao/historicoVenda/pesquisarCotasDoHistorico";
+			
+			historicoVendaController.pesquisarCotasHistoricoCotaOuComponentes(url);
+		});
+		
 		
 		// Botão Cancelar
 		$('#botaoCancelar', historicoVendaController.workspace).click(historicoVendaController.botaoCancelar);
@@ -689,7 +696,7 @@ var historicoVendaController = $.extend(true, {
 	         + produto.numeroEdicao);
 	},
 	
-	allFilters: ".filtroQtdeReparte, .filtroQtdeVenda, .filtroComponentes, .filtroCotas, .filtroPercVenda, .filtroTodasAsCotas",
+	allFilters: ".filtroQtdeReparte, .filtroQtdeVenda, .filtroComponentes, .filtroCotasDoHistorico, .filtroCotas, .filtroPercVenda, .filtroTodasAsCotas",
 
 	filtroTodasAsCotas : function(){
 		$(historicoVendaController.allFilters).hide();
@@ -738,6 +745,11 @@ var historicoVendaController = $.extend(true, {
 		historicoVendaController.limparInputsFiltro('#qtdReparteInicial', '#qtdReparteFinal', 
 				'#qtdVendaInicial', '#qtdVendaFinal', false, '#componente', 
 				'#elemento', '#hist-venda-numeroCota', '#hist-venda-nomePessoa');
+	},
+	
+	filtroCotasDoHistorico : function(){
+		$(historicoVendaController.allFilters).hide();
+		$(".filtroCotasDoHistorico", historicoVendaController.workspace).show();
 	},
 	
 	limparInputsFiltro : function(input1, input2, input3, input4, input5, input6, input7, input8, input9){

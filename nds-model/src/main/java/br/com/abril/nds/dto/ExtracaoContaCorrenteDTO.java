@@ -20,10 +20,10 @@ public class ExtracaoContaCorrenteDTO implements Serializable {
 	@Export(label = "SM", alignment = Alignment.CENTER, widthPercent = 3f, exhibitionOrder = 1)
 	private Integer sequenciaMatriz;
 	
-	@Export(label = "CÓDIGO", alignment = Alignment.CENTER, widthPercent = 4f, exhibitionOrder = 2)
+	@Export(label = "CÓDIGO", alignment = Alignment.CENTER, widthPercent = 5f, exhibitionOrder = 2)
 	private String codigoProduto;
 	
-	@Export(label = "PRODUTO", alignment=Alignment.LEFT, widthPercent = 10f, exhibitionOrder = 3)
+	@Export(label = "PRODUTO", alignment=Alignment.LEFT, widthPercent = 9f, exhibitionOrder = 3)
 	private String nomeProduto;
 	
 	@Export(label = "EDIÇÃO", alignment = Alignment.CENTER, widthPercent = 4f, exhibitionOrder = 4)
@@ -38,7 +38,7 @@ public class ExtracaoContaCorrenteDTO implements Serializable {
 	@Export(label = "DESCONTO", alignment = Alignment.CENTER, widthPercent = 4f, exhibitionOrder = 7)
 	private BigDecimal desconto;
 	
-	@Export(label = "REPARTE", alignment = Alignment.CENTER, widthPercent = 4f, exhibitionOrder = 8)
+	@Export(label = "REPARTE", alignment = Alignment.CENTER, widthPercent = 5f, exhibitionOrder = 8)
 	@Footer(label = "Total", type = FooterType.SUM,columnType = ColumnType.NUMBER)
 	private BigInteger reparte;
 	

@@ -21,8 +21,11 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 	private Integer estudo;
 	private Boolean selecionado; 
 	private BigInteger fisico;
+	private String dataLed;
+	private String horaLed;
 	
-	public LancamentoNaoExpedidoDTO(Long idLancamento, String codigo, String produto, Long edicao, String classificacao, String preco, Integer pctPadrao, Integer reparte, String dataChamada, String fornecedor, Integer estudo, Boolean selecionado, BigInteger fisico) {
+	public LancamentoNaoExpedidoDTO(Long idLancamento, String codigo, String produto, Long edicao, String classificacao, String preco, Integer pctPadrao, Integer reparte, String dataChamada, String fornecedor, 
+									Integer estudo, Boolean selecionado, BigInteger fisico, String dataLed, String horaLed) {
 		super();
 		this.idLancamento = idLancamento;
 		this.codigo = codigo;
@@ -37,6 +40,8 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 		this.estudo = estudo;
 		this.selecionado = selecionado;
 		this.fisico = fisico;
+		this.dataLed = dataLed;
+		this.horaLed = horaLed;
 	}
 
 	public Long getIdLancamento() {
@@ -216,9 +221,21 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 		this.fisico = fisico;
 	}
 
+	public String getDataLed() {
+		return dataLed;
+	}
 
+	public void setDataLed(String dataLed) {
+		this.dataLed = dataLed;
+	}
 
+	public String getHoraLed() {
+		return horaLed;
+	}
 
+	public void setHoraLed(String horaLed) {
+		this.horaLed = horaLed;
+	}
 
 	public static enum SortColumn {
 		

@@ -47,6 +47,9 @@ public class ExpedicaoDTO implements Serializable {
 	private Date dataVencimentoDebito;
 	private Long idFornecedorPadraoDistribuidor;
 	
+	private String dataLed;
+	private String horaLed;
+	
 	public ExpedicaoDTO() {}
 	
 	public ExpedicaoDTO( final Long idLancamento,
@@ -325,6 +328,21 @@ public class ExpedicaoDTO implements Serializable {
 	public void setTipoMovimentoDebito(TipoMovimentoFinanceiro tipoMovimentoDebito) {
 		this.tipoMovimentoDebito = tipoMovimentoDebito;
 	}
-	
+
+	public String getDataLed() {
+		return dataLed;
+	}
+
+	public void setDataLed(String dataLed) {
+		this.dataLed = dataLed;
+	}
+
+	public String getHoraLed() {
+		return horaLed;
+	}
+
+	public void setHoraLed(String horaLed) {
+		this.horaLed = horaLed;
+	}
 	
 }

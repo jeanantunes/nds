@@ -83,7 +83,7 @@ var bancoController = $.extend(true, {
 			$("#newConta", this.workspace).numeric();	
 			//$("#newDigito", this.workspace).numeric();
 			$("#newCarteira", this.workspace).numeric();
-			$("#newConvenio", this.workspace).numeric();
+			$("#newCodigoEmpresa", this.workspace).numeric();
 			
 			$("#alterNumero", this.workspace).numeric();	
 			$("#alterAgencia", this.workspace).numeric();	
@@ -92,7 +92,7 @@ var bancoController = $.extend(true, {
 			$("#alterJuros", this.workspace).numeric();	
 			$("#alterMulta", this.workspace).numeric();
 			$("#alterVrMulta", this.workspace).numeric();
-			$("#alterConvenio", this.workspace).numeric();
+			$("#alterCodigoEmpresa", this.workspace).numeric();
 			
 			$("#nome", this.workspace).autocomplete({source: []});
 			
@@ -354,7 +354,7 @@ var bancoController = $.extend(true, {
 					 instrucoes2 	: $("#newInstrucoes2", this.workspace).val(),
 					 instrucoes3 	: $("#newInstrucoes3", this.workspace).val(),
 					 instrucoes4 	: $("#newInstrucoes4", this.workspace).val(),
-					 convenio   	: $("#newConvenio", this.workspace).val()
+					 codigoEmpresa   	: $("#newCodigoEmpresa", this.workspace).val()
 			};
 
 			$.postJSON(contextPath + "/banco/novoBanco",param,
@@ -396,7 +396,8 @@ var bancoController = $.extend(true, {
 					 instrucoes2 : $("#alterInstrucoes2", this.workspace).val(),
 					 instrucoes3 : $("#alterInstrucoes3", this.workspace).val(),
 					 instrucoes4 : $("#alterInstrucoes4", this.workspace).val(),
-					 convenio    : $("#alterConvenio", this.workspace).val()};
+					 codigoEmpresa    : $("#alterCodigoEmpresa", this.workspace).val(),
+					 isExibirValorMonetario : $("#tipoExibicaoValorMoeda", this.workspace).is(':checked')};
 
 			$.postJSON(contextPath + "/banco/alteraBanco", param,
 					   function(result) {
@@ -443,11 +444,22 @@ var bancoController = $.extend(true, {
 			
 			$("#alterMulta", this.workspace).val(resultado.multa);
 			$("#alterVrMulta", this.workspace).val(resultado.vrMulta);
+			
+			if(resultado.exibirValorMonetario){
+				$("#tipoExibicaoValorMoeda", this.workspace).attr('checked', 'checked');
+				$("#alterVrMulta", this.workspace).prop("disabled", false);
+				$("#alterMulta", this.workspace).prop("disabled", false);
+			}else{
+				$("#tipoExibicaoValorPorcentagem", this.workspace).attr('checked', 'checked');
+				$("#alterVrMulta", this.workspace).prop("disabled", true);
+				$("#alterMulta", this.workspace).prop("disabled", false);
+			}
+			
 			$("#alterInstrucoes1", this.workspace).val(resultado.instrucoes1);
 			$("#alterInstrucoes2", this.workspace).val(resultado.instrucoes2);
 			$("#alterInstrucoes3", this.workspace).val(resultado.instrucoes3);
 			$("#alterInstrucoes4", this.workspace).val(resultado.instrucoes4);
-			$("#alterConvenio", this.workspace).val(resultado.convenio);
+			$("#alterCodigoEmpresa", this.workspace).val(resultado.codigoEmpresa);
 			
 			$('#alterPessoasCedente', this.workspace).empty().append('<option value="-1" selected>Selecione...</option>');
 			$.postJSON(contextPath + "/banco/obterPessoasDisponiveisParaCedente",
@@ -505,34 +517,111 @@ var bancoController = $.extend(true, {
 			$("#newInstrucoes2", this.workspace).val("");
 			$("#newInstrucoes3", this.workspace).val("");
 			$("#newInstrucoes4", this.workspace).val("");
-			$("#newConvenio", this.workspace).val("");
+			$("#newCodigoEmpresa", this.workspace).val("");
+			
+			$("#newInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de R$XXX. Após vencimento, cobrar juros diários de R$YYY.");
 		}, 
 	    
 	    limparMulta : function(){
 	    	
-	    	if(priceToFloat($("#newVrMulta", this.workspace).val()) < 0.0)
-	    		$("#newVrMulta", this.workspace).val("");
-	    	else 	    	
-	    		$("#newMulta", this.workspace).val("");
+	    	var multa = $("#alterVrMulta", this.workspace).val();
 	    	
-	    	if(priceToFloat($("#alterVrMulta", this.workspace).val()) < 0.0)
+	    	if(multa == ""){
+	    		$("#alterVrMulta", this.workspace).val("0,0000");
+	    	}
+	    	
+	    	if(priceToFloat($("#alterVrMulta", this.workspace).val()) < 0.0){
 	    		$("#alterVrMulta", this.workspace).val("");
-	    	else 	    	
+	    	}else{ 	    	
 	    		$("#alterMulta", this.workspace).val("");
+	    		
+	    		if(multa == ""){
+					multa = "XXX";
+				}else{
+					multa = bancoController.obterMultaFormatada(multa);
+				}
+	    		
+	    		var jurosVar = $("#alterJuros", this.workspace).val();
+	    		
+	    		$("#alterInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de R$"+ multa+". Após vencimento, cobrar juros diários de "+bancoController.obterJurosFormatado(jurosVar)+"%.");
+	    	}
+	    	
+	    	if($("#alterVrMulta", this.workspace).val() != ""){
+	    		$("#tipoExibicaoValorMoeda").attr('checked', 'checked');
+	    	}
+	    	
+	    },
+	    
+	    limparMultaNew : function(){
+	    	
+	    	var multa = $("#newVrMulta", this.workspace).val();
+	    	
+	    	if(multa == ""){
+	    		$("#newVrMulta", this.workspace).val("0,0000");
+	    	}
+	    	
+	    	if(priceToFloat($("#newVrMulta", this.workspace).val()) < 0.0){
+	    		$("#newVrMulta", this.workspace).val("");
+	    	}else{ 	    	
+	    		$("#newMulta", this.workspace).val("");
+	    		
+	    		if(multa == ""){
+					multa = "XXX";
+				}else{
+					multa = bancoController.obterMultaFormatada(multa);
+				}
+	    		
+	    		var jurosVar = $("#newJuros", this.workspace).val();
+	    		
+	    		$("#newInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de R$"+ multa+". Após vencimento, cobrar juros diários de R$YYY.");
+
+	    	}
+	    	
+	    	if($("#newVrMulta", this.workspace).val() != ""){
+	    		$("#newTipoExibicaoValorMoeda").attr('checked', 'checked');
+	    	}
 	    	
 	    },
 	    
 	    limparVrMulta : function(){
+	    	
+	    	if($("#alterMulta", this.workspace).val() == ""){
+	    		$("#alterMulta", this.workspace).val("0,0000");
+	    	}
 	    	
 	    	if(priceToFloat($("#newMulta", this.workspace).val()) < 0.0)
 	    		$("#newMulta", this.workspace).val("");
 	    	else 	    	
 	    		$("#newVrMulta", this.workspace).val("");
 	    	
-	    	if(priceToFloat($("#alterMulta", this.workspace).val()) < 0.0)
+	    	if(priceToFloat($("#alterMulta", this.workspace).val()) < 0.0){
 	    		$("#alterMulta", this.workspace).val("");
-	    	else 	    	
+	    	}else{
 	    		$("#alterVrMulta", this.workspace).val("");
+	    		
+	    		bancoController.verificarInstrucoes1PorcentagemMulta();
+	    	}
+	    	
+//	    	if($("#alterMulta", this.workspace).val() != ""){
+//	    		$("#tipoExibicaoValorPorcentagem").attr('checked', 'checked');
+//	    	}
+	    	
+	    },
+	    
+	    limparVrMultaNew : function(){
+	    	
+	    	if($("#newMulta", this.workspace).val() == ""){
+	    		$("#newMulta", this.workspace).val("0,0000");
+	    	}
+	    	
+	    	if(priceToFloat($("#newMulta", this.workspace).val()) < 0.0){
+	    		$("#newMulta", this.workspace).val("");
+	    	}else{
+	    		$("#newVrMulta", this.workspace).val("");
+	    		
+	    		bancoController.verificarInstrucoes1PorcentagemMultaNew();
+	    	}
+	    	
 	    },
 	    
 		autoCompletarPorNomeBanco : function(idCampoNome) {
@@ -560,6 +649,212 @@ var bancoController = $.extend(true, {
 					null
 				);
 			}
+		},
+		
+		exibirValorPorcentagem: function(){
+			
+			$("#alterVrMulta", this.workspace).val("");
+			
+			$("#alterVrMulta", this.workspace).prop("disabled", true);
+			$("#alterMulta", this.workspace).prop("disabled", false);
+
+			if($("#alterMulta", this.workspace).val() == "" && $("#alterVrMulta", this.workspace).val() == ""){
+				$("#alterMulta", this.workspace).val("0,0000");
+			}
+			
+			var jurosVar = $("#alterJuros", this.workspace).val();
+			
+			$("#alterInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de "+bancoController.obterMultaFormatada($("#alterVrMulta", this.workspace).val())+"%. Após vencimento, cobrar juros diários de "+bancoController.obterJurosFormatado(jurosVar)+"%.");
+
+			$("#alterMulta", this.workspace).focus();
+		},
+		
+		exibirValorPorcentagemNew: function(){
+			
+			$("#newVrMulta", this.workspace).val("");
+			
+			$("#newVrMulta", this.workspace).prop("disabled", true);
+			$("#newMulta", this.workspace).prop("disabled", false);
+
+			if($("#newMulta", this.workspace).val() == "" && $("#newVrMulta", this.workspace).val() == ""){
+				$("#newMulta", this.workspace).val("0,0000");
+			}
+			
+			var jurosVar = $("#newJuros", this.workspace).val();
+			
+			$("#newInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de "+bancoController.obterMultaFormatada($("#newVrMulta", this.workspace).val())+"%. Após vencimento, cobrar juros diários de "+bancoController.obterJurosFormatado(jurosVar)+"%.");
+			
+			$("#newMulta", this.workspace).focus();
+			
+		},
+		
+		exibirValorMoeda: function(){
+			
+//			$("#alterMulta", this.workspace).val("");
+			
+			$("#alterVrMulta", this.workspace).prop("disabled", false);
+			$("#alterMulta", this.workspace).prop("disabled", false);
+			
+			if($("#alterVrMulta", this.workspace).val() == ""){
+				$("#alterInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de R$XXX. Após vencimento, cobrar juros diários de R$YYY.");
+
+				if($("#alterMulta", this.workspace).val() == ""){
+					$("#alterVrMulta", this.workspace).val("0,0000");
+				}
+			}
+			
+//			$("#alterVrMulta", this.workspace).focus();
+			
+		},
+		
+		exibirValorMoedaNew: function(){
+			
+			$("#newVrMulta", this.workspace).prop("disabled", false);
+			$("#newMulta", this.workspace).prop("disabled", false);
+						
+//			$("#newMulta", this.workspace).val("");
+			
+			if($("#newVrMulta", this.workspace).val() == ""){
+				$("#newInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de R$XXX. Após vencimento, cobrar juros diários de R$YYY.");
+
+				if($("#newMulta", this.workspace).val() == ""){
+					$("#newVrMulta", this.workspace).val("0,0000");
+				}
+			}
+			
+//			$("#newVrMulta", this.workspace).focus();
+			
+		},
+		
+		verificarInstrucoes1PorcentagemMulta: function(){
+			
+			if(!$("#tipoExibicaoValorPorcentagem", this.workspace).is(':checked')){
+				
+				$("#alterInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de R$XXX. Após vencimento, cobrar juros diários de R$YYY.");
+				
+				return;
+			}
+			
+			var multa = $("#alterMulta", this.workspace).val();
+			
+			var texto1 = $("#alterInstrucoes1", this.workspace).val();
+			
+			if(texto1.match(multa) == null){
+				if(multa == ""){
+					multa = "XXX";
+				}else{
+					multa = bancoController.obterMultaFormatada(multa);
+				}
+				
+				var jurosVar = $("#alterJuros", this.workspace).val();
+				
+				$("#alterInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de "+multa+"%. Após vencimento, cobrar juros diários de "+bancoController.obterJurosFormatado(jurosVar)+"%.");
+			}
+			
+		},
+		
+		verificarInstrucoes1PorcentagemMultaNew: function(){
+			
+			if(!$("#newTipoExibicaoValorPorcentagem", this.workspace).is(':checked')){
+				
+				$("#newInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de R$XXX. Após vencimento, cobrar juros diários de R$YYY.");
+				
+				return;
+			}
+			
+			var multa = $("#newMulta", this.workspace).val();
+			
+			var texto1 = $("#newInstrucoes1", this.workspace).val();
+			
+			if(texto1.match(multa) == null){
+				if(multa == ""){
+					multa = "XXX";
+				}else{
+					multa = bancoController.obterMultaFormatada(multa);
+				}
+				
+				var jurosVar = $("#newJuros", this.workspace).val();
+				
+				$("#newInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de "+multa+"%. Após vencimento, cobrar juros diários de "+bancoController.obterJurosFormatado(jurosVar)+"%.");
+			}
+			
+		},
+		
+		verificarInstrucoes1ChangeJuros: function(){
+			
+			if($("#tipoExibicaoValorPorcentagem", this.workspace).is(':checked')){
+				var jurosVar = $("#alterJuros", this.workspace).val();
+				var juros = bancoController.obterJurosFormatado(jurosVar);
+				
+				var multa = $("#alterMulta", this.workspace).val();
+				
+				var texto1 = $("#alterInstrucoes1", this.workspace).val();
+				
+				if(multa == ""){
+					multa = "XXX";
+				}else{
+					multa = bancoController.obterMultaFormatada(multa);
+				}
+				
+				$("#alterInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de "+multa+"%. Após vencimento, cobrar juros diários de "+juros+"%.");
+			
+			
+			}
+			
+			
+		},
+		
+		verificarInstrucoes1ChangeJurosNew: function(){
+			
+			if($("#newTipoExibicaoValorPorcentagem", this.workspace).is(':checked')){
+				var jurosVar = $("#newJuros", this.workspace).val();
+				var juros = bancoController.obterJurosFormatado(jurosVar);
+				
+				var multa = $("#newMulta", this.workspace).val();
+				
+				var texto1 = $("#newInstrucoes1", this.workspace).val();
+				
+				if(multa == ""){
+					multa = "XXX";
+				}else{
+					multa = bancoController.obterMultaFormatada(multa);
+				}
+				
+				$("#newInstrucoes1", this.workspace).val("Após vencimento, cobrar multa de "+multa+"%. Após vencimento, cobrar juros diários de "+juros+"%.");
+			
+			
+			}
+			
+			
+		},
+		
+		obterJurosFormatado : function(juros){
+			
+			if(juros == undefined || juros == ""){
+				return "YYY";
+			}
+			
+			var jurosFormatado = priceToFloat(juros)/30; 
+			
+			jurosFormatado = String(jurosFormatado);
+			
+			jurosFormatado = jurosFormatado.substr(0, jurosFormatado.indexOf('.')+3);
+			
+			jurosFormatado = jurosFormatado.replace('.', ',');
+			
+			return jurosFormatado;
+			
+		},
+		
+		obterMultaFormatada : function(multa){
+			
+			if(multa == ""){
+				multa = "XXX";
+			}else{
+				multa = multa.substr(0, multa.indexOf(',')+3);
+			}
+			
+			return multa;
 		}
 	    
 }, BaseController);

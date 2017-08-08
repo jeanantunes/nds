@@ -4,9 +4,12 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
+import br.com.abril.nds.dto.filtro.AnaliseEstudoFiltroExportPDFDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -60,4 +63,6 @@ public interface EstudoService {
 	Long countEstudosPorLancamento(Long idlancamento, Date dataLancamento);
 	
 	 EstudoGerado obterEstudoSql(Long id);
+
+	AnaliseEstudoFiltroExportPDFDTO obterDadosDoProdutoParaFiltroExport(Long idEstudo);
 }

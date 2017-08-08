@@ -13,41 +13,40 @@ public class CaracteristicaDistribuicaoDTO implements Serializable{
 
 	private static final long serialVersionUID = -7289100234414430049L;
 
-	@Export(label="Codigo",exhibitionOrder=1)
+	@Export(label="Codigo", widthPercent = 7, exhibitionOrder=1)
 	private String codigoProduto;
 	
-	@Export(label="Classificação",exhibitionOrder=2)
+	@Export(label="Classificação", widthPercent = 10, exhibitionOrder=2)
 	private String classificacao;
 	
-	@Export(label="Segmento",exhibitionOrder=3)
+	@Export(label="Segmento", widthPercent = 8, exhibitionOrder=3, fontSize = 7)
 	private String segmento;
 	
-	@Export(label="Produto",exhibitionOrder=4)
+	@Export(label="Produto", widthPercent = 7, exhibitionOrder=4)
 	private String nomeProduto;
 	
-	@Export(label="Editor",exhibitionOrder=5)
+	@Export(label="Editor", widthPercent = 17, exhibitionOrder=5)
 	private String nomeEditor;
 	
-	@Export(label="Edição",exhibitionOrder=6)
+	@Export(label="Edição", widthPercent = 6, exhibitionOrder=6)
 	private BigInteger numeroEdicao;
 	
-	@Export(label="Chamada de Capa",exhibitionOrder=7)
+	@Export(label="Chamada de Capa", widthPercent = 10, exhibitionOrder=7)
 	private String chamadaCapa;
 	
-	@Export(label="Preço de Capa",exhibitionOrder=8)
+	@Export(label="Preço de Capa", widthPercent = 6, exhibitionOrder=8)
 	private BigDecimal precoCapa;
 	
-	
-	@Export(label="Lançamento",exhibitionOrder=9)
+	@Export(label="Lançamento", widthPercent = 8, exhibitionOrder=9)
 	private String dataLancamentoString;
 	
-	@Export(label="Recolhimento",exhibitionOrder=10)
+	@Export(label="Recolhimento", widthPercent = 8, exhibitionOrder=10)
 	private String dataRecolhimentoString;
 	
-	@Export(label="Reparte",exhibitionOrder=11)
+	@Export(label="Reparte", widthPercent = 6, exhibitionOrder=11)
 	private String reparteString;
 	
-	@Export(label="Venda",exhibitionOrder=12)
+	@Export(label="Venda", widthPercent = 6, exhibitionOrder=12)
 	private String vendaString;
 	
 	private BigInteger reparte;

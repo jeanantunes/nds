@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -225,6 +226,12 @@ public class NaturezaOperacaoServiceImpl implements NaturezaOperacaoService {
 	public NaturezaOperacao obterNaturezaOperacaoPor(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario
 			, TipoEmitente tipoEmitente, TipoOperacao tipoOperacao, TipoMovimento tipoMovimento) {
 		return naturezaOperacaoRepository.obterNaturezaOperacaoPor(tipoAtividade, tipoDestinatario, tipoEmitente, tipoOperacao, tipoMovimento);
+	}
+
+	@Override
+	public void atualizarSerieENumeroNotaFiscal(Long serieNotaFiscal, Long numeroNotaFiscal, Long id) {
+		naturezaOperacaoRepository.atualizarSerieENumeroNotaFiscal(serieNotaFiscal, numeroNotaFiscal,id);
+		
 	}
 
 }

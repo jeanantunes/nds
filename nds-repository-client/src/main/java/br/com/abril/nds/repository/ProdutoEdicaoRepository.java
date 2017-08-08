@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.Query;
+
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.ConsultaProdutoEdicaoDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
+import br.com.abril.nds.dto.HistoricoVendaCotaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
@@ -391,4 +394,26 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 
 
 	public abstract List<ProdutoEdicao> obterProdutosEdicaoComVendaEntreDatas(FiltroCurvaABCDistribuidorDTO filtro);
+
+	public void atualizarDesconto(String codigoProduto, Long numeroEdicao,Double descontoAtual,Double novoDesconto);
+
+	public void atualizarDescontoCota(Long cotaId,Double descontoAtual,Double novoDesconto);
+
+	List<Integer> obterCotasBaseEstudoHistogramaPorFaixaVenda(final FiltroHistogramaVendas filtro, final String codigoProduto, final Integer de, final Integer ate,
+			final String[] edicoes);
+
+
+	List<Long> obterIdsEdicoesPorCodigoNumeroEdicoes(String codigoProduto, String[] numeroEdicoes);
+
+
+	Map<Long, HistoricoVendaCotaDTO> obterCotasHistoricoProdutoEdicaoParcial(Long idProdutoEdicao, Integer numeroPeriodo, Long numeroEdicao);
+
+
+	Map<Long, HistoricoVendaCotaDTO> obterCotasHistoricoProdutoEdicao(Long idProdutoEdicao, Long numeroEdicao);
+
+
+	Long obterIdEdicaoPorCodigoNumeroEdicao(String codigoProduto, String numeroEdicoes);
+
+
+	boolean isEdicaoAbertaPeriodoParcial(Long produtoEdicaoId, String periodo);
 }

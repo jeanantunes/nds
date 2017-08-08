@@ -270,7 +270,7 @@ public class CobRegEnvTipoRegistroItau01 extends CobRegBaseDTO {
 	}
 
 	public void setCodigoInstrucao(String codigoInstrucao) {
-		this.codigoInstrucao = StringUtils.leftPad(codigoInstrucao, 4, '0');
+		this.codigoInstrucao = StringUtils.leftPad(codigoInstrucao, 2, '0');
 	}
 
 	public String getJurosDia() {

@@ -4,6 +4,7 @@ var fechamentoEncalheController = $.extend(true, {
 	vFornecedorId : '',
 	vBoxId : '',
 	isFechamento : false,
+	isPathDiretorioValido : true,
 	arrayCotasAusentesSession: [],
 	checkMarcarTodosCotasAusentes : false,
 	checkAllGrid: false,
@@ -630,6 +631,8 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 	
 	popup_extracaoCC : function() {
+		
+		
 
 		$("#dialog-extracaoCC").dialog({
 			resizable: false,
@@ -678,6 +681,11 @@ var fechamentoEncalheController = $.extend(true, {
 				},
 				
 				"Exportar PDF": function() {
+					
+					if(!fechamentoEncalheController.isPathDiretorioValido){
+						exibirMensagem("WARNING", ["Configure o diretório de Transferência de arquivos.!"]);
+						return;
+					}
 					
 					var semana = $("#extracaocc-semana").val();
 					
@@ -737,6 +745,13 @@ var fechamentoEncalheController = $.extend(true, {
 									}
 								}
 							);
+							
+							$.getJSON(contextPath + '/devolucao/fechamentoEncalhe/obterPathDiretorioArquivo', null,
+								function(result) {	
+									fechamentoEncalheController.isPathDiretorioValido = result.boolean;
+								}
+							);
+							
 				/*
 				$("#extracaocc-datepickerDe").datepicker({
 					showOn: "button",

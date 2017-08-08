@@ -30,7 +30,7 @@ public class ExportColumn implements Comparable<ExportColumn> {
 		this.columnType = columnType;
 		this.fontSize = fontSize;
 	}
-
+	
 	/**
 	 * @return the value
 	 */
@@ -94,5 +94,5 @@ public class ExportColumn implements Comparable<ExportColumn> {
 	public void setFontSize(Float fontSize) {
 		this.fontSize = fontSize;
 	}
-	
+
 }

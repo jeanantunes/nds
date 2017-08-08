@@ -175,10 +175,13 @@ public class NaturezaOperacaoController extends BaseController {
 		for (NaturezaOperacao tipoNotaFiscal : listaTipoNotaFiscal) {
 			
 			resultado = new RegistroTipoNotaFiscalVO();
+			resultado.setId(tipoNotaFiscal.getId());
 			resultado.setNopDescricao(tipoNotaFiscal.getDescricao());
 			resultado.setCfopEstado( (tipoNotaFiscal.getCfopEstado()!= null) ? tipoNotaFiscal.getCfopEstado() : "");
 			resultado.setCfopOutrosEstados((tipoNotaFiscal.getCfopOutrosEstados()!=null) ? tipoNotaFiscal.getCfopOutrosEstados() : "");
 			resultado.setTipoAtividade(tipoNotaFiscal.getTipoAtividade().getDescricao());
+			resultado.setNumeroNotaFiscal(tipoNotaFiscal.getNotaFiscalNumeroNF());
+			resultado.setSerieNotaFiscal(tipoNotaFiscal.getNotaFiscalSerie());
 			
 			String processo = "";
 			
@@ -207,6 +210,25 @@ public class NaturezaOperacaoController extends BaseController {
 	    }
 	
 		result.use(FlexiGridJson.class).from(naturezasOperacoes).serialize();
+	}
+	
+	@Post
+	public void gravarNota(Long serieNotaFiscal, Long numeroNotaFiscal, Long id, int page, int rp, String sortname, String sortorder, TipoAtividade operacao, String tipoNota){
+		naturezaOperacaoService.atualizarSerieENumeroNotaFiscal(serieNotaFiscal, numeroNotaFiscal, id);
+		try {
+			FiltroNaturezaOperacaoDTO filtro =  tratarFiltroSessao(operacao, tipoNota, sortname, sortorder, rp, page);
+			
+			List<NaturezaOperacao> lista = naturezaOperacaoService.consultarNaturezasOperacoes(filtro);
+			
+			if (lista == null || lista.isEmpty())
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+			
+			Integer quantidade = naturezaOperacaoService.obterQuantidadeNaturezasOperacoes(filtro);
+			
+			result.use(FlexiGridJson.class).from(getResultadoVO(lista,"<br></br>")).total(quantidade).page(page).serialize();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

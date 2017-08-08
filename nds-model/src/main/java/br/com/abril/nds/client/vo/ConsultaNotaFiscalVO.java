@@ -24,7 +24,7 @@ public class ConsultaNotaFiscalVO implements Serializable {
 	@Export(label = "Número da Nota")
 	private Long numeroNota;
 	
-	@Export(label = "Série")
+	@Export(label = "Série", widthPercent=7)
 	private String serie;
 	
 	@Export(label = "Nota Envio")
@@ -42,7 +42,7 @@ public class ConsultaNotaFiscalVO implements Serializable {
 //	@Export(label = "Tipo", widthPercent=30)
 //	private String tipoNotaFiscal;
 	
-	@Export(label = "Fornecedor")
+	@Export(label = "Fornecedor", widthPercent=14)
 	private String nomeFornecedor;
 	
 	@Export(label = "Valor R$")

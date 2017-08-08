@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import br.com.abril.nds.client.vo.CobrancaDividaVO;
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.DetalhesDividaVO;
@@ -160,5 +162,7 @@ public interface CobrancaService {
 	public abstract Cobranca obterCobrancaPorNossoNumeroConsolidado(String nossoNumeroConsolidado);
 
 	public abstract Long qtdCobrancasConsolidadasBaixadas(Date dataOperacao);
+
+	void atualizarFlagCobrancaRegistradaGerada(List<Long> idCobrancas);
 	
 }

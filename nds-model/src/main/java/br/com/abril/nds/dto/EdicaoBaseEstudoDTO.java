@@ -10,6 +10,9 @@ public class EdicaoBaseEstudoDTO {
 	private BigInteger peso;
 	private boolean isParcial;
 	private boolean isParcialConsolidado;
+	private Long idProdutoEdicao;
+	private Long periodoParcial;
+	private boolean isEdicaoAberta;
 
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -59,4 +62,28 @@ public class EdicaoBaseEstudoDTO {
 		this.isParcialConsolidado = false;
 	}
 
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
+	public Long getPeriodoParcial() {
+		return periodoParcial;
+	}
+
+	public void setPeriodoParcial(Long periodoParcial) {
+		this.periodoParcial = periodoParcial;
+	}
+
+	public boolean isEdicaoAberta() {
+		return isEdicaoAberta;
+	}
+
+	public void setEdicaoAberta(boolean isEdicaoAberta) {
+		this.isEdicaoAberta = isEdicaoAberta;
+	}
+	
 }

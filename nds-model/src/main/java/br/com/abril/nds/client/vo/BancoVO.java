@@ -4,57 +4,58 @@ import java.math.BigDecimal;
 
 public class BancoVO {
 
-	long idBanco;
-	
-	String numero;
-    
-	String nome;
-    
-	long idPessoaCedente;
-	
-    String codigoCedente;
-    
-    String digitoCodigoCedente;
-    
-    Long agencia;
-    
-    String digitoAgencia;
-    
-    Long conta;
-    
-    String digito;
-    
-    String apelido;
-    
-    Integer carteira;
-    
-    BigDecimal juros;
-    
-    boolean ativo;
-    
-    BigDecimal multa;
-    
-    BigDecimal vrMulta;
-    
-    String instrucoes1;
-    
-    String instrucoes2;
-    
-    String instrucoes3;
-    
-    String instrucoes4;
-    
-    String convenio;
-    
-    public BancoVO() {
-    	
-    }
+	private long idBanco;
 
-	public BancoVO(long idBanco, String numero, String nome,
-			String codigoCedente, Long agencia, String digitoAgencia,
-			Long conta, String digito, String apelido, Integer carteira,
-			BigDecimal juros, boolean ativo, BigDecimal multa,
-			BigDecimal vrMulta, String instrucoes1, String instrucoes2, String instrucoes3, String instrucoes4, String convenio) {
+	private String numero;
+
+	private String nome;
+
+	private long idPessoaCedente;
+
+	private String codigoCedente;
+
+	private String digitoCodigoCedente;
+
+	private Long agencia;
+
+	private String digitoAgencia;
+
+	private Long conta;
+
+	private String digito;
+
+	private String apelido;
+
+	private Integer carteira;
+
+	private BigDecimal juros;
+
+	private boolean ativo;
+
+	private BigDecimal multa;
+
+	private BigDecimal vrMulta;
+
+	private boolean exibirValorMonetario;
+
+	private String instrucoes1;
+
+	private String instrucoes2;
+
+	private String instrucoes3;
+
+	private String instrucoes4;
+
+	private String codigoEmpresa;
+
+	public BancoVO() {
+
+	}
+
+	public BancoVO(long idBanco, String numero, String nome, String codigoCedente, Long agencia, String digitoAgencia,
+			Long conta, String digito, String apelido, Integer carteira, BigDecimal juros, boolean ativo,
+			BigDecimal multa, BigDecimal vrMulta, String instrucoes1, String instrucoes2, String instrucoes3,
+			String instrucoes4, String codigoEmpresa) {
 		super();
 		this.idBanco = idBanco;
 		this.numero = numero;
@@ -74,9 +75,8 @@ public class BancoVO {
 		this.instrucoes2 = instrucoes2;
 		this.instrucoes3 = instrucoes3;
 		this.instrucoes4 = instrucoes4;
-		this.convenio = convenio;
+		this.codigoEmpresa = codigoEmpresa;
 	}
-
 
 	public long getIdBanco() {
 		return idBanco;
@@ -141,14 +141,13 @@ public class BancoVO {
 		return digitoAgencia;
 	}
 
-
 	/**
-	 * @param digitoAgencia the digitoAgencia to set
+	 * @param digitoAgencia
+	 *            the digitoAgencia to set
 	 */
 	public void setDigitoAgencia(String digitoAgencia) {
 		this.digitoAgencia = digitoAgencia;
 	}
-
 
 	public Long getConta() {
 		return conta;
@@ -173,7 +172,7 @@ public class BancoVO {
 	public void setApelido(String apelido) {
 		this.apelido = apelido;
 	}
-	
+
 	public Integer getCarteira() {
 		return carteira;
 	}
@@ -205,7 +204,7 @@ public class BancoVO {
 	public void setMulta(BigDecimal multa) {
 		this.multa = multa;
 	}
-	
+
 	public BigDecimal getVrMulta() {
 		return vrMulta;
 	}
@@ -245,13 +244,21 @@ public class BancoVO {
 	public void setInstrucoes4(String instrucoes4) {
 		this.instrucoes4 = instrucoes4;
 	}
-	
-	public String getConvenio() {
-		return convenio;
+
+	public String getCodigoEmpresa() {
+		return codigoEmpresa;
 	}
 
-	public void setConvenio(String convenio) {
-		this.convenio = convenio;
+	public void setCodigoEmpresa(String codigoEmpresa) {
+		this.codigoEmpresa = codigoEmpresa;
+	}
+
+	public boolean isExibirValorMonetario() {
+		return exibirValorMonetario;
+	}
+
+	public void setExibirValorMonetario(boolean exibirValorMonetario) {
+		this.exibirValorMonetario = exibirValorMonetario;
 	}
 
 	@Override
@@ -263,7 +270,6 @@ public class BancoVO {
 		result = prime * result + ((numero == null) ? 0 : numero.hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
