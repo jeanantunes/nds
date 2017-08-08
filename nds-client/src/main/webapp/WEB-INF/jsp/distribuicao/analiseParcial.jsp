@@ -49,7 +49,7 @@ function escondeDados_analiseParcial() {
 .class_media{width:35px; color:#F00; font-weight:bold;}
 .class_vlrs{width:35px;}
 .class_vda{width:35px; color:#F00; font-weight:bold;}
-.detalhesDados-analiseParcial{position:absolute; display:none; background:#fff; margin-left: 265px; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); width: 978px;}
+.detalhesDados-analiseParcial{position:absolute; z-index: 999; display:none; background:#fff; margin-left: 265px; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); width: 978px;}
 
 <c:if test="${estudo.idEstudoOrigemCopia != null}">
 </c:if>
