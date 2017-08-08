@@ -7,10 +7,12 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.BancoRepository;
@@ -280,5 +282,25 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
         query.setParameterList("tipoCobranca", Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_AVULSO));
         
 		return query.list();
+	}
+
+	@Override
+	public void atualizarSequencialArquivoCobranca(Long bancoID) {
+		StringBuilder SQL = new StringBuilder();
+
+		SQL.append("UPDATE BANCO as B, ");
+		
+		SQL.append("(SELECT SEQUENCIAL_ARQUIVO_COBRANCA FROM BANCO WHERE id=:bancoID)  as b1 ");
+		
+		SQL.append("SET B.SEQUENCIAL_ARQUIVO_COBRANCA=1+B1.SEQUENCIAL_ARQUIVO_COBRANCA ");
+		
+		SQL.append("WHERE B.ID=:bancoID");
+		
+		Query query = this.getSession().createSQLQuery(SQL.toString());
+		
+		query.setParameter("bancoID", bancoID);
+		
+		query.executeUpdate();
+		
 	}
 }

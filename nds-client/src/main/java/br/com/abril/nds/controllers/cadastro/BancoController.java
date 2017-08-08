@@ -193,7 +193,7 @@ public class BancoController extends BaseController {
             final String digitoAgencia, final String conta, final String digito, final String apelido, final Long idPessoaCedente,
             final Integer carteira, final BigDecimal juros, final boolean ativo, final BigDecimal multa,
             final BigDecimal vrMulta, final String instrucoes1, final String instrucoes2, final String instrucoes3, final String instrucoes4,
-            String convenio) {
+            String codigoEmpresa) {
 
         if (bancoService.obterBancoPorApelido(apelido) != null) {
             throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um banco com este apelido.");
@@ -224,7 +224,7 @@ public class BancoController extends BaseController {
         banco.setInstrucoes2(instrucoes2);
         banco.setInstrucoes3(instrucoes3);
         banco.setInstrucoes4(instrucoes4);
-        banco.setConvenio(convenio);
+        banco.setCodigoEmpresa(codigoEmpresa);
 
         try {
             bancoService.incluirBanco(banco);
@@ -286,7 +286,7 @@ public class BancoController extends BaseController {
             final String agencia, final String digitoAgencia, final String conta, final String digito,
             final String apelido, final Integer carteira, final BigDecimal juros, final boolean ativo,
             final BigDecimal multa, final BigDecimal vrMulta, final long idPessoaCedente, final String instrucoes1,
-            final String instrucoes2, final String instrucoes3, final String instrucoes4, String convenio, boolean isExibirValorMonetario) {
+            final String instrucoes2, final String instrucoes3, final String instrucoes4, String codigoEmpresa, boolean isExibirValorMonetario) {
 
         if (!httpSession.getAttribute(APELIDO_ANTIGO_SESSION_ATTRIBUTE).equals(apelido)
                 && bancoService.obterBancoPorApelido(apelido) != null) {
@@ -326,7 +326,7 @@ public class BancoController extends BaseController {
         banco.setInstrucoes2(instrucoes2);
         banco.setInstrucoes3(instrucoes3);
         banco.setInstrucoes4(instrucoes4);
-        banco.setConvenio(convenio);
+        banco.setCodigoEmpresa(codigoEmpresa);
 
         try {
             bancoService.alterarBanco(banco);

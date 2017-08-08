@@ -91,8 +91,11 @@ public class Banco implements Serializable {
 	@Column(name = "VR_MULTA")
 	private BigDecimal vrMulta;
 
-	@Column(name = "CONVENIO")
-	private String convenio;
+	@Column(name = "CODIGO_EMPRESA")
+	private String codigoEmpresa;
+	
+	@Column(name = "SEQUENCIAL_ARQUIVO_COBRANCA")
+	private String sequencialArquivoCobranca;
 
 	public Long getId() {
 		return id;
@@ -254,12 +257,12 @@ public class Banco implements Serializable {
 		this.vrMulta = vrMulta;
 	}
 
-	public String getConvenio() {
-		return convenio;
+	public String getCodigoEmpresa() {
+		return codigoEmpresa;
 	}
 
-	public void setConvenio(String convenio) {
-		this.convenio = convenio;
+	public void setCodigoEmpresa(String codigoEmpresa) {
+		this.codigoEmpresa = codigoEmpresa;
 	}
 
 	public boolean isExibirValorMonetario() {
@@ -274,4 +277,13 @@ public class Banco implements Serializable {
 	public boolean equals(Object obj) {
 		return this.id.equals(((Banco) obj).id);
 	}
+
+	public String getSequencialArquivoCobranca() {
+		return sequencialArquivoCobranca;
+	}
+
+	public void setSequencialArquivoCobranca(String sequencialArquivoCobranca) {
+		this.sequencialArquivoCobranca = sequencialArquivoCobranca;
+	}
+	
 }

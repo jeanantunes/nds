@@ -88,4 +88,6 @@ public interface BancoRepository extends Repository<Banco,Long>{
 	Banco buscarBancoPorIdCobranca(Long idCobranca);
 	
 	List<Banco> obterBancoBoletoAvulso();
+	
+	void atualizarSequencialArquivoCobranca(Long bancoID);
 }
