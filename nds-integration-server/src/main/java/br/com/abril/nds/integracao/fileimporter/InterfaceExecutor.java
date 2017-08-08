@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import br.com.abril.nds.model.integracao.*;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.StringUtils;
@@ -37,7 +38,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.integracao.model.InterfaceEnum;
 import br.com.abril.nds.integracao.model.canonic.EMS0110FilialInput;
@@ -58,19 +58,12 @@ import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
 import br.com.abril.nds.model.dne.UnidadeFederacao;
-import br.com.abril.nds.model.integracao.InterfaceExecucao;
-import br.com.abril.nds.model.integracao.LogExecucao;
-import br.com.abril.nds.model.integracao.LogExecucaoArquivo;
-import br.com.abril.nds.model.integracao.ParametroDistribuidor;
-import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
-import br.com.abril.nds.model.integracao.TipoDistribuidor;
 import br.com.abril.nds.model.integracao.icd.DetalheFaltaSobra;
 import br.com.abril.nds.model.integracao.icd.MotivoSituacaoFaltaSobra;
 import br.com.abril.nds.model.integracao.icd.SolicitacaoFaltaSobra;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
-import com.google.gson.JsonObject;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.Table;
 
@@ -150,8 +143,6 @@ public class InterfaceExecutor {
 		return dbInstance.createConnector(dataBaseName, true);
 		
 	}
-	
-	
 	                    /**
      * Executa a interface selecionada para todos os distribuidores.
      * 
@@ -170,7 +161,12 @@ public class InterfaceExecutor {
      * @param codigoDistribuidor código do distribuidor
      */
 	public void executarInterface(String nomeUsuario, InterfaceEnum interfaceEnum, Long codigoDistribuidor) {
-		
+
+		if (interfaceEnum.getTipoInterfaceEnum().equals(TipoInterfaceEnum.DB)) {
+			this.executarInterfaceDB(nomeUsuario, interfaceEnum, codigoDistribuidor);
+			return;
+		}
+
 		// Busca dados de configuracao
 		InterfaceExecucao interfaceExecucao = interfaceExecucaoRepository.findById(interfaceEnum.getCodigoInterface());
 		
@@ -188,16 +184,13 @@ public class InterfaceExecutor {
 				this.executarInterfaceImagem(logExecucao);
 			} else if (interfaceEnum.equals(InterfaceEnum.EMS0185)) {
 				this.executarInterfaceCorreios();
-			} else if (interfaceEnum.getTipoInterfaceEnum().equals(TipoInterfaceEnum.DB)) {
-				this.executarInterfaceDB(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
-			} else {	
+			} else {
 				this.executarInterfaceArquivo(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
 			}
         } catch (Exception e) {
 			this.processadoComSucesso = false;
             LOGGER.error(e.getMessage(), e);
 		} finally {
-			// Loga fim
 			this.logarFim(logExecucao);
 		}
 	}
@@ -279,11 +272,9 @@ public class InterfaceExecutor {
 		this.pastaInterna = parametroSistemaRepository.getParametroInterface("INTERNAL_DIR");
 	}
 	
-	private void executarInterfaceDB(InterfaceEnum interfaceEnum,
-			InterfaceExecucao interfaceExecucao, LogExecucao logExecucao,
-			Long codigoDistribuidor, String nomeUsuario) {
+	private void executarInterfaceDB(String nomeUsuario, InterfaceEnum interfaceEnum, Long codigoDistribuidor) {
 		
-		getRouteTemplate(interfaceExecucao.getNome()).execute("user");
+		getRouteTemplate(interfaceEnum.name()).execute(nomeUsuario, codigoDistribuidor);
 		
 	}
 	
@@ -771,7 +762,7 @@ public class InterfaceExecutor {
 	/**
 	 * Retorna o client para o CouchDB na database correspondente ao distribuidor.
 	 * 
-	 * @param codigoDistribuidor codigo do distribuidor
+	 * @param databaseName codigo do distribuidor
 	 * @return client
 	 */
 	private CouchDbClient getCouchDbClientInstance(String databaseName) {
@@ -799,8 +790,7 @@ public class InterfaceExecutor {
 		logExecucao.setInterfaceExecucao(interfaceExecucao);
 		logExecucao.setNomeLoginUsuario(nomeLoginUsuario);
 		logExecucao.setDataFim(dataInicio);
-		logExecucao.setStatus(StatusExecucaoEnum.SUCESSO);
-		
+
 		return logExecucaoRepository.inserir(logExecucao);
 	}
 	
@@ -818,8 +808,7 @@ public class InterfaceExecutor {
 		if (status.equals(StatusExecucaoEnum.FALHA)) {
 			this.processadoComSucesso = false;
 		}
-		
-		
+
 		LogExecucaoArquivo logExecucaoArquivo = new LogExecucaoArquivo();
 		logExecucaoArquivo.setLogExecucao(logExecucao);
 		logExecucaoArquivo.setCaminhoArquivo(caminhoArquivo);

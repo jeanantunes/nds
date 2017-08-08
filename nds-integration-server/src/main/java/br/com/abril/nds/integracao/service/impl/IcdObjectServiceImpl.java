@@ -1,7 +1,11 @@
 package br.com.abril.nds.integracao.service.impl;
 
+import java.math.BigInteger;
+import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.integracao.repository.EstrategiaRepository;
+import br.com.abril.nds.model.integracao.icd.*;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,9 +14,6 @@ import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
 import br.com.abril.nds.integracao.repository.SolicitacaoFaltasSobrasRepository;
 import br.com.abril.nds.integracao.service.IcdObjectService;
-import br.com.abril.nds.model.integracao.icd.DetalheFaltaSobra;
-import br.com.abril.nds.model.integracao.icd.MotivoSituacaoFaltaSobra;
-import br.com.abril.nds.model.integracao.icd.SolicitacaoFaltaSobra;
 import br.com.abril.nds.model.integracao.icd.pks.DfsPK;
 import br.com.abril.nds.model.integracao.icd.pks.MfsPK;
 import br.com.abril.nds.model.integracao.icd.pks.SfsPK;
@@ -24,6 +25,9 @@ public class IcdObjectServiceImpl implements IcdObjectService {
 	
 	@Autowired
 	private SolicitacaoFaltasSobrasRepository solicitacaoFaltasSobrasRepository;
+
+	@Autowired
+	private EstrategiaRepository estrategiaRepository;
 
 	public IcdObjectServiceImpl() {
 		
@@ -117,6 +121,15 @@ public class IcdObjectServiceImpl implements IcdObjectService {
 			DfsPK pkItem) {
 		return solicitacaoFaltasSobrasRepository.recuperaMotivoPorDetalhe(pkItem);
 	}
-	
+
+	@Override
+	public List<IcdEstrategia> obterEstrategias(Long codigoDistribuidor) {
+		return estrategiaRepository.obterEstrategias(codigoDistribuidor);
+	}
+
+	@Override
+	public List<IcdEdicaoBaseEstrategia> obterEdicaoBaseEstrategia(Integer codigoPraca, BigInteger codigoLancamentoEdicao) {
+		return estrategiaRepository.obterEdicaoBaseEstrategia(codigoPraca, codigoLancamentoEdicao);
+	}
 
 }

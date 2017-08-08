@@ -51,7 +51,18 @@ public class StartBatch {
 			System.out.println("ERRO: codigo de interface invalido");
 			return;
 		}
-		
+
+		try {
+			if(args.length == 4) {
+				codigoDistribuidor = Long.valueOf(args[3]);
+			} else if(args.length == 3){
+				codigoDistribuidor = Long.valueOf(args[2]);
+			}
+		} catch (NumberFormatException e)  {
+			System.out.println("ERRO: codigo de distribuidor invalido");
+			return;
+		}
+
 		InterfaceEnum interfaceEnum = InterfaceEnum.getByCodigo(codigoInterface);
 		if (interfaceEnum == null) {
 			System.out.println("ERRO: interface invalida");
@@ -59,23 +70,13 @@ public class StartBatch {
 		}
 
 		InterfaceExecutor executor = applicationContext.getBean(InterfaceExecutor.class);
-		if (args.length == 4) {
-			try {
-				codigoDistribuidor = Long.valueOf(args[3]);
-			} catch (NumberFormatException e)  {
-				System.out.println("ERRO: codigo de distribuidor invalido");
-				return;
-			}
-		}
-
 		if (args.length == 3 && args[2].toString().equals("-icdRetorno")) {
-			
+
 			List<String> distribuidores = executor.recuperaDistribuidores(codigoDistribuidor);
-			
+
 			executor.carregarDiretorios(interfaceEnum);
-			
 			executor.executarRetornosIcd(distribuidores);
-			
+
 		} else {
 			executor.executarInterface(usuario, interfaceEnum, codigoDistribuidor);
 		}

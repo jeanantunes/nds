@@ -33,14 +33,13 @@ public class DBImportDataRouter extends AbstractRepository implements BaseRouter
 		final MessageProcessor messageProcessor = inputModel.getMessageProcessor();
 	
 		final AtomicReference<Object> tempVar = new AtomicReference<Object>();
-		// Processamento a ser executado ANTES do processamento principal:
-		
-		TransactionTemplate template = new TransactionTemplate(transactionManager);		
+
+		TransactionTemplate template = new TransactionTemplate(transactionManager);
 		template.execute(new TransactionCallback<Void>() {
 			
 			@Override
 			public Void doInTransaction(TransactionStatus status) {
-				
+				// Processamento a ser executado ANTES do processamento principal:
 				messageProcessor.preProcess(tempVar);
 		
 				for (Object o : (List<Object>)tempVar.get() ) {
@@ -48,6 +47,7 @@ public class DBImportDataRouter extends AbstractRepository implements BaseRouter
 					final Message message = new Message();
 					message.getHeader().put(MessageHeaderProperties.URI.getValue(), inputModel.getRouteInterface().getName());
 					message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), inputModel.getUserName());
+					message.getHeader().put(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue(), inputModel.getCodigoDistribuidor());
 					message.setTempVar(tempVar);
 									
 					message.setBody(o);
@@ -57,10 +57,10 @@ public class DBImportDataRouter extends AbstractRepository implements BaseRouter
 						messageProcessor.processMessage(message);
 						
 					} catch(Exception e) {
+						e.printStackTrace();
 						ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
 					}
-					
-										
+
 				}		
                 // Processamento a ser executado APÓS o processamento principal:
 				messageProcessor.posProcess(tempVar);

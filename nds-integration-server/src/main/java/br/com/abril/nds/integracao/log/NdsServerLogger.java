@@ -61,6 +61,7 @@ public class NdsServerLogger extends AbstractRepository {
 		logExecucao.setInterfaceExecucao(interfaceExecucao);
 		logExecucao.setNomeLoginUsuario(route.getUserName());
 		logExecucao.setStatus(StatusExecucaoEnum.SUCESSO);
+		logExecucao.setCodigoDistribuidor(route.getCodigoDistribuidor() != null ? String.valueOf(route.getCodigoDistribuidor()) : null);
 		
 		try {
 			TransactionTemplate template = new TransactionTemplate(transactionManager, new DefaultTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRES_NEW));

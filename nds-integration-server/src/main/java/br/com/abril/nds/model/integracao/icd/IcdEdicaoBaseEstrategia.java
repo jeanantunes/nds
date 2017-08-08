@@ -3,51 +3,64 @@ package br.com.abril.nds.model.integracao.icd;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
-@Entity
 public class IcdEdicaoBaseEstrategia implements Serializable {
 
 	private static final long serialVersionUID = -2752476981818369215L;
-	
-	@Id
-    private String codigoProduto;
-	@Id
-    private BigDecimal numeroEdicao;
-    private BigDecimal periodo;
-    private BigDecimal peso;
-    @Id
+
     private BigDecimal estrategia;
-    
-    public String getCodigoProduto() {
-        return codigoProduto;
+    private String codigoPublicacao;
+    private Long numeroEdicao;
+    private Integer periodo;
+    private Long peso;
+
+    public String getCodigoPublicacao() {
+        return codigoPublicacao;
     }
-    public void setCodigoProduto(String codigoProduto) {
-        this.codigoProduto = codigoProduto;
+
+    public void setCodigoPublicacao(String codigoPublicacao) {
+        this.codigoPublicacao = codigoPublicacao;
     }
-    public BigDecimal getNumeroEdicao() {
+
+    public Long getNumeroEdicao() {
         return numeroEdicao;
     }
-    public void setNumeroEdicao(BigDecimal numeroEdicao) {
+
+    public void setNumeroEdicao(Long numeroEdicao) {
         this.numeroEdicao = numeroEdicao;
     }
-    public BigDecimal getPeriodo() {
+
+    public Integer getPeriodo() {
         return periodo;
     }
-    public void setPeriodo(BigDecimal periodo) {
+
+    public void setPeriodo(Integer periodo) {
         this.periodo = periodo;
     }
-    public BigDecimal getPeso() {
+
+    public Long getPeso() {
         return peso;
     }
-    public void setPeso(BigDecimal peso) {
+
+    public void setPeso(Long peso) {
         this.peso = peso;
     }
-	public BigDecimal getEstrategia() {
-		return estrategia;
-	}
-	public void setEstrategia(BigDecimal estrategia) {
-		this.estrategia = estrategia;
-	}
+
+    public BigDecimal getEstrategia() {
+        return estrategia;
+    }
+
+    public void setEstrategia(BigDecimal estrategia) {
+        this.estrategia = estrategia;
+    }
+
+    @Override
+    public String toString() {
+        return "IcdEdicaoBaseEstrategia{" +
+                "codigoPublicacao='" + codigoPublicacao + '\'' +
+                ", numeroEdicao=" + numeroEdicao +
+                ", periodo=" + periodo +
+                ", peso=" + peso +
+                ", estrategia=" + estrategia +
+                '}';
+    }
 }

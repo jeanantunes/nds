@@ -1,9 +1,12 @@
 package br.com.abril.nds.integracao.model.canonic;
 
+import com.ancientprogramming.fixedformat4j.annotation.Record;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Record
 public class EMS2021Input extends IntegracaoDocumentMaster<EMS2021InputItem> implements Serializable {
 
     private static final long serialVersionUID = -3176527752303474423L;
