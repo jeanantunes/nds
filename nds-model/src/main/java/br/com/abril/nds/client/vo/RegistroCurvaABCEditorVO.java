@@ -56,7 +56,11 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 	@Export(label = "numeroCota", exhibitionOrder = 13, columnType = ColumnType.STRING)
 	private String numeroCota;
 	
+	@Export(label = "endereco", exhibitionOrder = 14, columnType = ColumnType.STRING)
+	private String endereco;
 	
+	@Export(label = "tipoPDV", exhibitionOrder = 15, columnType = ColumnType.STRING)
+	private String tipoPDV;
 
 	private BigInteger reparte;
 
