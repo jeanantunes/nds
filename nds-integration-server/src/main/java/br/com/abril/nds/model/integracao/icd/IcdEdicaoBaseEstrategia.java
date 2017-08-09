@@ -7,7 +7,6 @@ public class IcdEdicaoBaseEstrategia implements Serializable {
 
 	private static final long serialVersionUID = -2752476981818369215L;
 
-    private BigDecimal estrategia;
     private String codigoPublicacao;
     private Long numeroEdicao;
     private Integer periodo;
@@ -45,14 +44,6 @@ public class IcdEdicaoBaseEstrategia implements Serializable {
         this.peso = peso;
     }
 
-    public BigDecimal getEstrategia() {
-        return estrategia;
-    }
-
-    public void setEstrategia(BigDecimal estrategia) {
-        this.estrategia = estrategia;
-    }
-
     @Override
     public String toString() {
         return "IcdEdicaoBaseEstrategia{" +
@@ -60,7 +51,6 @@ public class IcdEdicaoBaseEstrategia implements Serializable {
                 ", numeroEdicao=" + numeroEdicao +
                 ", periodo=" + periodo +
                 ", peso=" + peso +
-                ", estrategia=" + estrategia +
                 '}';
     }
 }

@@ -45,4 +45,14 @@ public class EMS2021InputItem extends IntegracaoDocumentDetail implements Serial
     public void setPeso(Integer peso) {
 	this.peso = peso;
     }
+
+    @Override
+    public String toString() {
+        return "EMS2021InputItem{" +
+                "codigoProduto='" + codigoProduto + '\'' +
+                ", numeroEdicao=" + numeroEdicao +
+                ", periodo=" + periodo +
+                ", peso=" + peso +
+                '}';
+    }
 }

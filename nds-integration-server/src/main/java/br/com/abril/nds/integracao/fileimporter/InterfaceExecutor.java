@@ -229,7 +229,7 @@ public class InterfaceExecutor {
 							
 							for (DetalheFaltaSobra item : listaDetalhes)
 							{
-								for ( EMS0128InputItem eitem : doc.getItems()) {
+								for ( EMS0128InputItem eitem : doc.getItens()) {
 									if (item.getDfsPK().getNumeroSequencia().equals(eitem.getNumSequenciaDetalhe())) {
 										eitem.setSituacaoAcerto(item.getCodigoAcerto());
 										eitem.setNumeroDocumentoAcerto(item.getNumeroDocumentoAcerto());

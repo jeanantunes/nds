@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.integracao.model.canonic.EMS2021Input;
+import br.com.abril.nds.integracao.model.canonic.EMS2021InputItem;
 import br.com.abril.nds.integracao.repository.EstrategiaRepository;
 import br.com.abril.nds.model.integracao.icd.*;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -66,7 +68,7 @@ public class IcdObjectServiceImpl implements IcdObjectService {
 		sfs.setCodigoForma(doc.getFormaSolicitacao());
 		sfs.setCodigoSituacao(doc.getSituacaoSolicitacao());
 				
-		for (EMS0128InputItem item : doc.getItems()) {
+		for (EMS0128InputItem item : doc.getItens()) {
 			
 			DetalheFaltaSobra dfs = new DetalheFaltaSobra();
 			
@@ -123,12 +125,12 @@ public class IcdObjectServiceImpl implements IcdObjectService {
 	}
 
 	@Override
-	public List<IcdEstrategia> obterEstrategias(Long codigoDistribuidor) {
+	public List<EMS2021Input> obterEstrategias(Long codigoDistribuidor) {
 		return estrategiaRepository.obterEstrategias(codigoDistribuidor);
 	}
 
 	@Override
-	public List<IcdEdicaoBaseEstrategia> obterEdicaoBaseEstrategia(Integer codigoPraca, BigInteger codigoLancamentoEdicao) {
+	public List<EMS2021InputItem> obterEdicaoBaseEstrategia(Integer codigoPraca, BigInteger codigoLancamentoEdicao) {
 		return estrategiaRepository.obterEdicaoBaseEstrategia(codigoPraca, codigoLancamentoEdicao);
 	}
 

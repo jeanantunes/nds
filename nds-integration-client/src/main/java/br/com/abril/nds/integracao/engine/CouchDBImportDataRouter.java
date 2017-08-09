@@ -63,6 +63,10 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		} else if (((CouchDBImportRouteTemplate) inputModel).getInterfaceEnum().getTipoInterfaceEnum() == TipoInterfaceEnum.DETALHE_INLINE ) {
 			
 			classByTipoInterfaceEnum = ((CouchDBImportRouteTemplate) inputModel).getInterfaceEnum().getClasseMaster();
+		} else if(((CouchDBImportRouteTemplate) inputModel).getInterfaceEnum().getTipoInterfaceEnum() == TipoInterfaceEnum.DB ) {
+
+			InterfaceEnum interfaceEnum  = ((CouchDBImportRouteTemplate) inputModel).getInterfaceEnum();
+			classByTipoInterfaceEnum = interfaceEnum.getClasseLinha();
 		}
 		
 		String codigoDistribuidor = ((CouchDBImportRouteTemplate) inputModel).getCodigoDistribuidor();
@@ -83,6 +87,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 			
 		} catch(org.lightcouch.NoDocumentException e){
 			//Nao ha informacoes a serem processadas
+			e.printStackTrace();
             ndsiLoggerFactory.getLogger().setStatusProcesso(StatusExecucaoEnum.VAZIO);
             couchDbClient.shutdown();
 			return;
@@ -92,7 +97,6 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		// Processamento a ser executado ANTES do processamento principal:
 		messageProcessor.preProcess(tempVar);
 
-		//
 		final Message messageAux = new Message();
 		
 		if(result!=null && result.getRows()!=null && result.getRows().size()>0){
