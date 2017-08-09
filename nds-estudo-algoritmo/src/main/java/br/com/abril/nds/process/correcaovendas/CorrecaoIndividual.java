@@ -32,6 +32,10 @@ public class CorrecaoIndividual {
     public void executar(ProdutoEdicaoEstudo produtoEdicao) throws Exception {
 
 	BigDecimal indiceCorrecao = BigDecimal.ONE;
+	
+	if(produtoEdicao.getVenda() == null){
+		produtoEdicao.setVenda(BigDecimal.ZERO);
+	}
 
 	if (produtoEdicao.getVenda().compareTo(BigDecimal.ZERO) == 1) {
 	    BigDecimal percentualVenda = produtoEdicao.getVenda().divide(produtoEdicao.getReparte(), 3, BigDecimal.ROUND_HALF_UP);
