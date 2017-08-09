@@ -1700,7 +1700,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		queryStringProdutoEdicao.append(" 		 WHERE ");
 		
-		queryStringProdutoEdicao.append(" 		 round(T2.vendaMedia - 0.01) >= :de and round(T2.vendaMedia - 0.01) <= :ate ");
+		queryStringProdutoEdicao.append(" 		 T2.reparte > 0 and  ");
+		
+		queryStringProdutoEdicao.append(" 		 round(T2.vendaMedia) >= :de and round(T2.vendaMedia) <= :ate ");
 		
 //		queryStringProdutoEdicao.append(" 		 T2.vendaMedia >= :de and T2.vendaMedia < :ate ");
 		
