@@ -558,40 +558,6 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     			}
     		}
     		
-//    		for (EdicoesProdutosDTO edicaoBase : ordenacaoCota) {
-//    			if(edicaoBase.getProdutoEdicaoId() == null){
-//    				continue;
-//    			}
-//    			
-//				if(edicaoBase.isParcial()){
-//					for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
-//						
-//						if(edicaoBase.getProdutoEdicaoId() == null || edicoesProdutosDTO.getProdutoEdicaoId() == null
-//								|| edicaoBase.getPeriodo() == null || edicoesProdutosDTO.getPeriodo() == null){
-//							continue;
-//						}
-//						
-//						if((edicaoBase.getProdutoEdicaoId().equals(edicoesProdutosDTO.getProdutoEdicaoId()))
-//								&& (edicaoBase.getPeriodo().equals(edicoesProdutosDTO.getPeriodo()))){
-//							novaOrdenacaoEdicoesBase.add(edicoesProdutosDTO);
-//						}
-//					}
-//					
-//				}else{
-//					
-//					for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
-//						
-//						if(edicaoBase.getProdutoEdicaoId() == null || edicoesProdutosDTO.getProdutoEdicaoId() == null){
-//							continue;
-//						}
-//						
-//						if(edicaoBase.getProdutoEdicaoId().equals(edicoesProdutosDTO.getProdutoEdicaoId())){
-//							novaOrdenacaoEdicoesBase.add(edicoesProdutosDTO);
-//						}
-//					}
-//				}
-//			}
-    		 
     		if(novaOrdenacaoEdicoesBase.size() == queryDTO.getEdicoesBase().size()){
     			queryDTO.setEdicoesBase(novaOrdenacaoEdicoesBase);
     		}
