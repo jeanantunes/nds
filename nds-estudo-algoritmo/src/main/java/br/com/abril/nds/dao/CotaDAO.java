@@ -323,7 +323,7 @@ public class CotaDAO {
 				cota.setId(rs.getLong("cota_id"));
 				cota.setEdicoesRecebidas(new ArrayList<ProdutoEdicaoEstudo>());
 				ProdutoEdicaoEstudo pe = new ProdutoEdicaoEstudo();
-				pe.setVenda(rs.getBigDecimal("venda"));
+				pe.setVenda(rs.getBigDecimal("venda") != null ? rs.getBigDecimal("venda") : BigDecimal.ZERO);
 				pe.setReparte(rs.getBigDecimal("reparte"));
 				// copia dos atributos da edicao base
 				pe.setId(edicao.getId());
