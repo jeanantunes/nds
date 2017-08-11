@@ -504,12 +504,17 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("       consolidado.numeroCota as numeroCota, ");
 		sql.append("       consolidado.nomeCota as nomeCota, ");
 		sql.append("       consolidado.endereco as endereco, ");
-		sql.append("       consolidado.tipoPDV as tipoPDV ");
+		sql.append("       consolidado.tipoPDV as tipoPDV, ");
+		sql.append("       consolidado.documentoPessoa as documentoPessoa, ");
+		sql.append("       consolidado.situacaoAtivo as  situacaoAtivo,");
+		sql.append("       consolidado.tipoGeradorFluxo as  tipoGeradorFluxo, ");
+		sql.append("       consolidado.areaInfluenciaPDV as  areaInfluenciaPDV");
 		sql.append("        ");
 		sql.append("       FROM  ");
 		sql.append("       ( ");
 		sql.append("         SELECT ");
 		sql.append("          ");
+		sql.append("         temp.documentoPessoa as documentoPessoa, ");
 		sql.append("         temp.tipoPDV as tipoPDV, ");
 		sql.append("         temp.endereco as endereco, ");
 		sql.append("         temp.nomeCota as nomeCota, ");
@@ -524,7 +529,10 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("         sum((temp.vendaSum * (temp.PRECO_VENDA - ((temp.PRECO_VENDA * coalesce(temp.valorDesconto,0)) / 100))) - ");
 		sql.append("              (temp.vendaSum * (temp.PRECO_VENDA - ((temp.PRECO_VENDA * coalesce(temp.percentualDescLog, ");
 		sql.append("                 temp.percentualDescProd,0))/100)) ");
-		sql.append("               )) as valorMargemDistribuidor ");
+		sql.append("               )) as valorMargemDistribuidor, ");
+		sql.append("       temp.situacaoAtivo as  situacaoAtivo, ");
+		sql.append("       temp.tipoGeradorFluxo as  tipoGeradorFluxo, ");
+		sql.append("       temp.areaInfluenciaPDV as  areaInfluenciaPDV ");
 		sql.append("  ");
 		sql.append("     FROM ");
 		sql.append("         (           ");
@@ -542,9 +550,16 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("             T.lancID, ");
 		sql.append("             T.nomeCota as nomeCota, ");
 		sql.append("             T.endereco as endereco, ");
-		sql.append("             T.tipoPDV as tipoPDV ");
+		sql.append("             T.tipoPDV as tipoPDV, ");
+		sql.append("             T.documentoPessoa as documentoPessoa, ");
+		sql.append("             T.tipoGeradorFluxo as tipoGeradorFluxo, ");
+		sql.append("             T.areaInfluenciaPDV as areaInfluenciaPDV, ");
+		sql.append("       T.situacaoAtivo as  situacaoAtivo ");
 		sql.append("           FROM ");
 		sql.append("             (SELECT ");
+		sql.append("                 tgf.descricao as  tipoGeradorFluxo, ");
+		sql.append("                 aip.descricao as  areaInfluenciaPDV, ");
+		sql.append("                 editor.ativo as  situacaoAtivo, ");
 		sql.append("                 tpp.descricao as tipoPDV, ");
 		sql.append("                 endereco.logradouro as endereco, ");
 		sql.append("                 editor.ID as codigoEditor, ");
@@ -593,7 +608,10 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                 l.id as lancID, ");
 		sql.append("                     case when pess.tipo = 'J' then pess.razao_social ");
 		sql.append("                     when  pess.tipo = 'F' then pess.nome ");
-		sql.append("                     end as nomeCota ");
+		sql.append("                     end as nomeCota, ");
+		sql.append("                     case when pess.tipo = 'J' then pess.cnpj ");
+		sql.append("                     when  pess.tipo = 'F' then pess.cpf ");
+		sql.append("                     end as documentoPessoa ");
 		sql.append("             FROM ");
 		sql.append("                 lancamento l                 ");
 		sql.append("             JOIN ");
@@ -646,6 +664,15 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                     PDV as pdv                        ");
 		sql.append("                         on  pdv.cota_id = c.id");
 		sql.append("                 LEFT JOIN ");
+		sql.append("                     GERADOR_FLUXO_PDV as gfp                        ");
+		sql.append("                         on gfp.pdv_id =pdv.id");
+		sql.append("                 LEFT JOIN ");
+		sql.append("                     TIPO_GERADOR_FLUXO_PDV as tgf                        ");
+		sql.append("                         on tgf.id = gfp.TIPO_GERADOR_FLUXO_ID");
+		sql.append("                 LEFT JOIN ");
+		sql.append("                     AREA_INFLUENCIA_PDV as aip                        ");
+		sql.append("                         on aip.id= pdv.AREA_INFLUENCIA_PDV_ID");
+		sql.append("                 LEFT JOIN ");
 		sql.append("                     TIPO_PONTO_PDV tpp                        ");
 		sql.append("                         on tpp.id = pdv.TIPO_PONTO_PDV_id               ");
 		sql.append("             WHERE ");
@@ -693,6 +720,10 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		query.addScalar("numeroCota", StandardBasicTypes.STRING);
 		query.addScalar("nomeCota", StandardBasicTypes.STRING);
+		query.addScalar("documentoPessoa", StandardBasicTypes.STRING);
+		query.addScalar("situacaoAtivo", StandardBasicTypes.STRING);
+		query.addScalar("tipoGeradorFluxo", StandardBasicTypes.STRING);
+		query.addScalar("areaInfluenciaPDV", StandardBasicTypes.STRING);
 		
 		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCEditorVO.class));
 		
