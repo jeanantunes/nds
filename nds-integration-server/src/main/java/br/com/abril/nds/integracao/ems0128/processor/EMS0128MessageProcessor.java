@@ -158,34 +158,4 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 	public void posProcess(Object tempVar) {
 	}
 	
-	/* =============================================
-	 
-	============================================= */
-		
-	/**
-	 * Recupera distribuidores a serem processados.
-	 */
-	private List<String> getDistribuidores(String diretorio, Long codigoDistribuidor) {
-		
-		List<String> distribuidores = new ArrayList<String>();
-		
-		if (codigoDistribuidor == null) {
-			
-			FilenameFilter numericFilter = new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					 return name.matches("\\d+");  
-				}
-			};
-			
-			File dirDistribs = new File(diretorio);
-			distribuidores.addAll(Arrays.asList(dirDistribs.list( numericFilter )));
-			
-		} else {
-			
-			distribuidores.add(codigoDistribuidor.toString());
-		}
-		
-		return distribuidores;
-	}
-	
 }

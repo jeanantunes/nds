@@ -4,6 +4,8 @@ package br.com.abril.nds.integracao.route;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -20,6 +22,8 @@ import br.com.abril.nds.repository.AbstractRepository;
 
 @Component
 public class DBImportDataRouter extends AbstractRepository implements BaseRouter {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(DBImportDataRouter.class);
 
 	@Autowired
 	private PlatformTransactionManager transactionManager;
@@ -57,7 +61,7 @@ public class DBImportDataRouter extends AbstractRepository implements BaseRouter
 						messageProcessor.processMessage(message);
 						
 					} catch(Exception e) {
-						e.printStackTrace();
+						LOGGER.error(e.getMessage(), e);
 						ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
 					}
 
@@ -67,8 +71,7 @@ public class DBImportDataRouter extends AbstractRepository implements BaseRouter
 				return null;
 			}
 		});
-	
-				
+
 	}
 		
 }

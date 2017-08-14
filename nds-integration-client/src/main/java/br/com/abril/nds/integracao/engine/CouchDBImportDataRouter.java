@@ -87,7 +87,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 			
 		} catch(org.lightcouch.NoDocumentException e){
 			//Nao ha informacoes a serem processadas
-			e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             ndsiLoggerFactory.getLogger().setStatusProcesso(StatusExecucaoEnum.VAZIO);
             couchDbClient.shutdown();
 			return;
@@ -156,9 +156,10 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 					});
 				} catch(Exception e) {
 					
-					if(e.getMessage() != null)
+					if(e.getMessage() != null) {
+						LOGGER.error(e.getMessage(),e);
 						ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
-                    LOGGER.error("",e);
+					}
 				}
 				
 				String erro = (String) message.getHeader().get(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue()); 

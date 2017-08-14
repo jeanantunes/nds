@@ -30,7 +30,6 @@ import br.com.abril.nds.repository.AbstractRepository;
  */
 @Component
 @Scope("prototype")
-
 public class NdsServerLogger extends AbstractRepository {
 
 	@Autowired
@@ -46,7 +45,6 @@ public class NdsServerLogger extends AbstractRepository {
 	 * Insere o log de início do processamento da interface
 	 * @param route rota sendo processada
 	 */
-	
 	public void logBeginning(RouteTemplate route) {
 		
 		if (logExecucao != null) {
@@ -78,12 +76,10 @@ public class NdsServerLogger extends AbstractRepository {
 		}
 	}
 	
-	
 	/**
 	 * Insere o log de fim do processamento da interface
 	 * @param route rota sendo processada
 	 */
-	
 	public void logEnd(RouteTemplate route) {
 		
 		if (hasError) {
@@ -110,41 +106,34 @@ public class NdsServerLogger extends AbstractRepository {
 		}
 	}
 	
-	
 	public void logError(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
-		
 		hasError = true;
 		message.getHeader().put(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue(), descricaoErro);
 		this.logMessage(message, eventoExecucaoEnum, descricaoErro, null);
 	}
-	
-	
+
 	public void logWarning(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
 		
 		hasWarning = true;
 		this.logMessage(message, eventoExecucaoEnum, descricaoErro, null);
 	}
-	
-	
+
 	public void logInfo(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
 		
 		this.logMessage(message, eventoExecucaoEnum, descricaoErro, null);
 	}
 	
-	
 	public void logInfo(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro, String mensagemInfo) {
 		
 		this.logMessage(message, eventoExecucaoEnum, descricaoErro, mensagemInfo);
 	}
-	
-	
+
 	/**
 	 * Faz a inserção da mensagem de log
 	 * @param message
 	 * @param eventoExecucaoEnum
 	 * @param descricaoErro
 	 */
-	
 	private void logMessage(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro, String mensagemInfo) {
 		
 		// TODO: criar enum
@@ -177,8 +166,4 @@ public class NdsServerLogger extends AbstractRepository {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}
-	
-	/*public void setEntityManager(EntityManager entityManager) {
-		this.entityManager = entityManager;
-	}*/
 }

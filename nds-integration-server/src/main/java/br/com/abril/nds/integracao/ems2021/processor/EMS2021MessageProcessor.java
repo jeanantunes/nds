@@ -1,18 +1,22 @@
 package br.com.abril.nds.integracao.ems2021.processor;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
+import br.com.abril.nds.integracao.log.NdsServerLoggerFactory;
 import br.com.abril.nds.integracao.model.InterfaceEnum;
 import br.com.abril.nds.integracao.model.canonic.EMS2021Input;
 import br.com.abril.nds.integracao.model.canonic.EMS2021InputItem;
 import br.com.abril.nds.integracao.service.IcdObjectService;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.integracao.icd.IcdEdicaoBaseEstrategia;
 import br.com.abril.nds.model.integracao.icd.IcdEstrategia;
+import br.com.abril.nds.repository.ParametroSistemaRepository;
 import org.hibernate.Session;
 import org.lightcouch.CouchDbClient;
 import org.slf4j.Logger;
@@ -32,7 +36,11 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
     @Autowired
     private IcdObjectService icdObjectService;
 
-    private Session session = null;
+    @Autowired
+    private NdsServerLoggerFactory ndsServerLoggerFactory;
+
+    @Autowired
+    private ParametroSistemaRepository parametroSistemaRepository;
 
     @Override
     public void preProcess(AtomicReference<Object> tempVar) {
@@ -46,36 +54,51 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
     @Override
     public void processMessage(Message message) {
 
-        message.getHeader().get(MessageHeaderProperties.URI.getValue());
-        message.getHeader().get(MessageHeaderProperties.USER_NAME.getValue());
-        Long codigoDistribuidor = (Long) message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue());
-
-        // TODO - Adequar o fluxo para caso seja necessario executar a carga para todos os distribuidores
-
-        LOGGER.info("# Iniciando carga das estratégias para distribuidor {} . ", codigoDistribuidor);
         CouchDbClient couchDbClient = null;
         try {
-            couchDbClient = this.getCouchDBClient(String.valueOf(codigoDistribuidor), true);
-            List<EMS2021Input> estrategias = icdObjectService.obterEstrategias(codigoDistribuidor);
 
-            for (EMS2021Input estrategia : estrategias) {
+            Long p_codigoDistribuidor = (Long) message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue());
 
-                estrategia.setTipoDocumento(InterfaceEnum.EMS2021.name());
-                List<EMS2021InputItem> edicoesBase  = icdObjectService.obterEdicaoBaseEstrategia(estrategia.getCodigoPraca(), estrategia.getCodigoLancamentoEdicao());
-                estrategia.setItens(edicoesBase);
+            String diretorio    = parametroSistemaRepository.getParametro("INBOUND_DIR");
+            String pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
 
-                couchDbClient.save(estrategia);
-                LOGGER.info(":: Estrategia do produto {}  edição {} salva! - Total de {}  edições base", estrategia.getCodigoProduto(), estrategia.getNumeroEdicao(), edicoesBase.size());
+            List<String> distribuidores = super.getDistribuidores(diretorio, p_codigoDistribuidor);
 
+            for (String distribuidor : distribuidores) {
+
+                if (new File(diretorio + distribuidor + File.separator + pastaInterna + File.separator).exists()) {
+
+                    LOGGER.info("# Iniciando carga das estratégias para o distribuidor {} . ", distribuidor);
+
+                    couchDbClient = super.getCouchDBClient(distribuidor, true);
+                    List<EMS2021Input> estrategias = icdObjectService.obterEstrategias(Long.valueOf(distribuidor));
+
+                    for (EMS2021Input estrategia : estrategias) {
+
+                        estrategia.setTipoDocumento(InterfaceEnum.EMS2021.name());
+                        List<EMS2021InputItem> edicoesBase = icdObjectService.obterEdicaoBaseEstrategia(estrategia.getCodigoPraca(), estrategia.getCodigoLancamentoEdicao());
+                        estrategia.setItens(edicoesBase);
+
+                        couchDbClient.save(estrategia);
+                        LOGGER.info(":: Estrategia do produto {} edição {} salva! - Total de {} edições base.", estrategia.getCodigoProduto(), estrategia.getNumeroEdicao(), edicoesBase.size());
+
+                    }
+
+                }
             }
 
+
         } catch (Exception e) {
-            LOGGER.error("Erro executando importação de Estratégias ICD.", e);
+            LOGGER.error("Erro executando carga de Estratégias ICD.", e);
+            ndsServerLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
+
         } finally {
             if (couchDbClient != null) {
                 couchDbClient.shutdown();
             }
+
         }
+
     }
 
     @Override

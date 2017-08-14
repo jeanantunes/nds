@@ -22,8 +22,6 @@ public abstract class RouteTemplate extends AbstractRepository {
 	private DynamicRouterServer dynamicRouter;
 	
 	private String userName;
-
-
 	private Long codigoDistribuidor;
 
 	private Map<String, Object> parameters = new HashMap<String, Object>();

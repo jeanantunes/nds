@@ -18,6 +18,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import org.hibernate.mapping.Collection;
 
 @Entity
 @Table(name = "ESTRATEGIA")
@@ -50,107 +51,120 @@ public class Estrategia implements Serializable {
     @javax.persistence.Transient
     private String cesta;
 
-    @OneToMany(mappedBy = "estrategia", fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
+    @OneToMany(mappedBy = "estrategia", fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     private List<EdicaoBaseEstrategia> basesEstrategia;
 
+    public Estrategia() {
+    }
+
+    //Expected arguments are: long, br.com.abril.nds.model.cadastro.ProdutoEdicao, java.math.BigInteger, java.math.BigDecimal, int, java.lang.String, java.util.Collection
+    public Estrategia(Long id, ProdutoEdicao produtoEdicao, BigInteger reparteMinimo, BigDecimal abrangencia, Integer periodo, String oportunidadeVenda) {
+        this.id = id;
+        this.produtoEdicao = produtoEdicao;
+        this.reparteMinimo = reparteMinimo;
+        this.abrangencia = abrangencia;
+        this.periodo = periodo;
+        this.oportunidadeVenda = oportunidadeVenda;
+    }
+
     public Long getId() {
-	return id;
+        return id;
     }
 
     public void setId(Long id) {
-	this.id = id;
+        this.id = id;
     }
 
     public ProdutoEdicao getProdutoEdicao() {
-	return produtoEdicao;
+        return produtoEdicao;
     }
 
     public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
-	this.produtoEdicao = produtoEdicao;
+        this.produtoEdicao = produtoEdicao;
     }
 
     public BigInteger getReparteMinimo() {
-	return reparteMinimo;
+        return reparteMinimo;
     }
 
     public void setReparteMinimo(BigInteger reparteMinimo) {
-	this.reparteMinimo = reparteMinimo;
+        this.reparteMinimo = reparteMinimo;
     }
 
     public BigDecimal getAbrangencia() {
-	return abrangencia;
+        return abrangencia;
     }
 
     public void setAbrangencia(BigDecimal abrangencia) {
-	this.abrangencia = abrangencia;
+        this.abrangencia = abrangencia;
     }
 
     public Integer getPeriodo() {
-	return periodo;
+        return periodo;
     }
 
     public void setPeriodo(Integer periodo) {
-	this.periodo = periodo;
+        this.periodo = periodo;
     }
 
     public String getOportunidadeVenda() {
-	return oportunidadeVenda;
+        return oportunidadeVenda;
     }
 
     public void setOportunidadeVenda(String oportunidadeVenda) {
-	this.oportunidadeVenda = oportunidadeVenda;
+        this.oportunidadeVenda = oportunidadeVenda;
     }
 
     public String getCesta() {
-	return cesta;
+        return cesta;
     }
 
     public void setCesta(String cesta) {
-	this.cesta = cesta;
+        this.cesta = cesta;
     }
 
     public List<EdicaoBaseEstrategia> getBasesEstrategia() {
-	return basesEstrategia;
+        return basesEstrategia;
     }
 
     public void setBasesEstrategia(List<EdicaoBaseEstrategia> basesEstrategia) {
-	this.basesEstrategia = basesEstrategia;
+        this.basesEstrategia = basesEstrategia;
     }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
-		result = prime * result + ((this.getBasesEstrategia() == null) ? 0 : this.getBasesEstrategia().hashCode());
-		result = prime * result + ((this.getProdutoEdicao() == null) ? 0 : this.getProdutoEdicao().hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+        result = prime * result + ((this.getBasesEstrategia() == null) ? 0 : this.getBasesEstrategia().hashCode());
+        result = prime * result + ((this.getProdutoEdicao() == null) ? 0 : this.getProdutoEdicao().hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Estrategia other = (Estrategia) obj;
-		if (this.getId() == null) {
-			if (other.getId() != null)
-				return false;
-		} else if (!this.getId().equals(other.getId()))
-			return false;
-		if (this.getBasesEstrategia() == null) {
-			if (other.getBasesEstrategia() != null)
-				return false;
-		} else if (!this.getBasesEstrategia().equals(other.getBasesEstrategia()))
-			return false;
-		if (this.getProdutoEdicao() == null) {
-			if (other.getProdutoEdicao() != null)
-				return false;
-		} else if (!this.getProdutoEdicao().equals(other.getProdutoEdicao()))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Estrategia other = (Estrategia) obj;
+        if (this.getId() == null) {
+            if (other.getId() != null)
+                return false;
+        } else if (!this.getId().equals(other.getId()))
+            return false;
+        if (this.getBasesEstrategia() == null) {
+            if (other.getBasesEstrategia() != null)
+                return false;
+        } else if (!this.getBasesEstrategia().equals(other.getBasesEstrategia()))
+            return false;
+        if (this.getProdutoEdicao() == null) {
+            if (other.getProdutoEdicao() != null)
+                return false;
+        } else if (!this.getProdutoEdicao().equals(other.getProdutoEdicao()))
+            return false;
+        return true;
+    }
 }

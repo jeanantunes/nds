@@ -162,12 +162,16 @@ public class NdsiLogger extends AbstractRepository {
 		logExecucaoMensagem.setMensagemInfo(mensagemInfo);
 
 		if (message != null && message.getHeader() != null) {
-			if (message.getHeader().containsKey(MessageHeaderProperties.FILE_NAME.getValue()))
-				logExecucaoMensagem.setNomeArquivo((String) message.getHeader().get(MessageHeaderProperties.FILE_NAME.getValue()));
-			
-			
-			if (message.getHeader().containsKey(MessageHeaderProperties.LINE_NUMBER.getValue()))
-			    logExecucaoMensagem.setNumeroLinha((Integer) message.getHeader().get(MessageHeaderProperties.LINE_NUMBER.getValue()));
+			if (message.getHeader().containsKey(MessageHeaderProperties.FILE_NAME.getValue())){
+				String nomeArquivo = (String) message.getHeader().get(MessageHeaderProperties.FILE_NAME.getValue());
+				logExecucaoMensagem.setNomeArquivo(nomeArquivo != null ? nomeArquivo : "");
+			}
+
+
+			if (message.getHeader().containsKey(MessageHeaderProperties.LINE_NUMBER.getValue())) {
+				Integer numeroLinha = (Integer) message.getHeader().get(MessageHeaderProperties.LINE_NUMBER.getValue());
+				logExecucaoMensagem.setNumeroLinha(numeroLinha != null ? numeroLinha : 0);
+			}
 			
 		} else {
 		   logExecucaoMensagem.setNomeArquivo("");
@@ -184,7 +188,7 @@ public class NdsiLogger extends AbstractRepository {
 				}
 			});
 		} catch(Exception e) {
-            LOGGER.warn("ATENÇÃO: Erro inserindo mensagem de log na base; continuando sem log.", e);
+            LOGGER.error("ATENÇÃO: Erro inserindo mensagem de log na base; continuando sem log.", e);
 		}
 	}
 	
@@ -192,9 +196,4 @@ public class NdsiLogger extends AbstractRepository {
 		this.statusProcesso = status;
 	}
 	
-	
-	
-    
-
-
 }

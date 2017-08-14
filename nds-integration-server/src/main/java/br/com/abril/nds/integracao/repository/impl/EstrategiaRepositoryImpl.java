@@ -42,7 +42,7 @@ public class EstrategiaRepositoryImpl extends AbstractRepositoryModel<IcdEstrate
         sql.append("    inner join LANCTO_EDICAO_PUBLICACAO LEPU on ESMD.COD_LANCTO_EDICAO = LEPU.COD_LANCTO_EDICAO ");
         sql.append("    where  PRAC.IND_PRACA_ATIVA = 'S' ");
         sql.append("    and    DSTR.COD_DISTRIBUIDOR = :P_CODIGO_DISTRIBUIDOR ");
-        sql.append("    and    (ESMD.DAT_ALT > (SYSDATE - 450) OR ESMD.DAT_INC > (SYSDATE - 450)) ");
+        sql.append("    and    (ESMD.DAT_ALT > (SYSDATE - 450) OR ESMD.DAT_INC > (SYSDATE - 450)) AND ROWNUM <= 20 ");
 
         Query query = getSessionIcd().createSQLQuery(sql.toString());
         query.setResultTransformer(new AliasToBeanResultTransformer(EMS2021Input.class));
