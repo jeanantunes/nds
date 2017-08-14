@@ -530,15 +530,13 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     		
     		List<EdicoesProdutosDTO> novaOrdenacaoEdicoesBase = new ArrayList<>();
     		
-    		for (EdicoesProdutosDTO edicaoBase : ordenacaoCota) {
-    			if(edicaoBase.getProdutoEdicaoId() == null){
-    				continue;
-    			}
-    			
-				if(edicaoBase.isParcial()){
-					for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
-						
-						if(edicaoBase.getProdutoEdicaoId() == null || edicoesProdutosDTO.getProdutoEdicaoId() == null
+    		for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
+    			for (EdicoesProdutosDTO edicaoBase : ordenacaoCota) {
+    				if(edicaoBase.getProdutoEdicaoId() == null){
+    					continue;
+    				}
+    				if(edicaoBase.isParcial()){
+    					if(edicaoBase.getProdutoEdicaoId() == null || edicoesProdutosDTO.getProdutoEdicaoId() == null
 								|| edicaoBase.getPeriodo() == null || edicoesProdutosDTO.getPeriodo() == null){
 							continue;
 						}
@@ -547,23 +545,19 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 								&& (edicaoBase.getPeriodo().equals(edicoesProdutosDTO.getPeriodo()))){
 							novaOrdenacaoEdicoesBase.add(edicoesProdutosDTO);
 						}
-					}
-					
-				}else{
-					
-					for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
-						
-						if(edicaoBase.getProdutoEdicaoId() == null || edicoesProdutosDTO.getProdutoEdicaoId() == null){
+    				}else{
+    					if(edicaoBase.getProdutoEdicaoId() == null || edicoesProdutosDTO.getProdutoEdicaoId() == null){
 							continue;
 						}
 						
 						if(edicaoBase.getProdutoEdicaoId().equals(edicoesProdutosDTO.getProdutoEdicaoId())){
 							novaOrdenacaoEdicoesBase.add(edicoesProdutosDTO);
 						}
-					}
-				}
-			}
-    		 
+    				}
+    				
+    			}
+    		}
+    		
     		if(novaOrdenacaoEdicoesBase.size() == queryDTO.getEdicoesBase().size()){
     			queryDTO.setEdicoesBase(novaOrdenacaoEdicoesBase);
     		}
