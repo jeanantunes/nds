@@ -1711,7 +1711,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		}
 		
-		queryStringProdutoEdicao.append(" 		 group by pe.numero_edicao, pe.id, mecReparte.cota_id, plp.numero_periodo ORDER BY l.ID desc) as T  ");
+		queryStringProdutoEdicao.append(" 		 group by pe.numero_edicao, pe.id, mecReparte.cota_id, plp.numero_periodo ORDER BY l.ID desc) as T where T.reparte > 0  ");
 		
 //		queryStringProdutoEdicao.append(" 		 where qtdeVendas/qtdEdicoesRecebida between :de and :ate  ");
 //		
