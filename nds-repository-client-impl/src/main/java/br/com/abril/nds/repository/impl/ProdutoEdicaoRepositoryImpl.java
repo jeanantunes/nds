@@ -1560,8 +1560,30 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		queryStringProdutoEdicao.append("             null     ");
 		queryStringProdutoEdicao.append("             end) as qtdeVendas,  ");
 		queryStringProdutoEdicao.append("               ");
-		queryStringProdutoEdicao.append("         	(select count( distinct _epc.produto_edicao_id ) from ESTOQUE_PRODUTO_COTA _epc where _epc.produto_edicao_id in (:idsEdicoes) and _epc.cota_id = c.id ) as qtdEdicoesRecebida,  ");
-		queryStringProdutoEdicao.append("           ");
+//		queryStringProdutoEdicao.append("         	(select count( distinct _epc.produto_edicao_id ) from ESTOQUE_PRODUTO_COTA _epc where _epc.produto_edicao_id in (:idsEdicoes) and _epc.cota_id = c.id ) as qtdEdicoesRecebida,  ");
+		
+		queryStringProdutoEdicao.append("         	(   ");
+		queryStringProdutoEdicao.append("         	   		select");
+		queryStringProdutoEdicao.append("         	   			sum(if((select cast(");
+		queryStringProdutoEdicao.append("         	   						sum( case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mec.QTDE else - mec.QTDE end ) as unsigned int");
+		queryStringProdutoEdicao.append("         	   							   ) as reparte");
+		queryStringProdutoEdicao.append("         	   			from");
+		queryStringProdutoEdicao.append("         	   				movimento_estoque_cota mec");
+		queryStringProdutoEdicao.append("         	   				join tipo_movimento tipo");
+		queryStringProdutoEdicao.append("         	   					on mec.tipo_movimento_id = tipo.id");
+		queryStringProdutoEdicao.append("         	   			where");
+		queryStringProdutoEdicao.append("         	   				mec.produto_edicao_id = _epc.produto_edicao_id");
+		queryStringProdutoEdicao.append("         	   				and tipo.GRUPO_MOVIMENTO_ESTOQUE <> 'ENVIO_ENCALHE' ");
+		queryStringProdutoEdicao.append("         	   				and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
+		queryStringProdutoEdicao.append("         	   				and mec.cota_id = c.id) > 0, 1, 0))");
+		queryStringProdutoEdicao.append("         	   		from");
+		queryStringProdutoEdicao.append("         	   			ESTOQUE_PRODUTO_COTA _epc");
+		queryStringProdutoEdicao.append("         	   		where");
+		queryStringProdutoEdicao.append("         	   			_epc.produto_edicao_id in(:idsEdicoes)");
+		queryStringProdutoEdicao.append("         	   			and _epc.cota_id = c.id");
+		queryStringProdutoEdicao.append("         	   			");
+		queryStringProdutoEdicao.append("         	 ) as qtdEdicoesRecebida,  ");
+		
 		queryStringProdutoEdicao.append("             l.status as statusLancamento,  ");
 		queryStringProdutoEdicao.append("             c.numero_cota as numCota,  ");
 		queryStringProdutoEdicao.append("             c.id as cotaID,  ");
