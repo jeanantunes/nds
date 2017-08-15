@@ -499,8 +499,6 @@ public class HistoricoVendaController extends BaseController {
 
 			String pathSystem = getPathFileSystem();
 			
-			pathSystem = "/Users/romulohpa/opt/ambiente1/parametros_nds/historicoVendaTemp/";
-
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 
 			try {
