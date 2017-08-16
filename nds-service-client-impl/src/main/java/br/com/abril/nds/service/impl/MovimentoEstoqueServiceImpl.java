@@ -382,7 +382,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				if(o1.getIdCota() == null) return -1;
 				if(o2.getIdCota() == null) return 1;
 				
-				return o1.getIdCota().compareTo(o2.getIdCota());
+                if ( o1.getIdCota() != o2.getIdCota()) return o1.getIdCota() > o2.getIdCota() ? 1 : -1;
+                return 0;
 			}
 		});
 	}
