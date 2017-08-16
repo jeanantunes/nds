@@ -542,9 +542,6 @@ public class PainelProcessamentoController extends BaseController {
      * @param sortname
      * @param page
      * @param rp
-     * @param codigoFornecedor
-     * @param dataAte
-     * @param dataDe
      * @return
      */
     private FiltroInterfacesDTO carregarFiltroInterfaces(final String codigoDistribuidor, final String sortorder, final String sortname, final int page, final int rp) {
@@ -588,26 +585,26 @@ public class PainelProcessamentoController extends BaseController {
     
     /**
      * Executa uma interface
-     * @param classeInterface
+     * @param idInterface
      */
     @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
     public void executarInterface(final String idInterface) throws Exception {
-        
-        interfaceExecucaoService.executarInterface(
-                idInterface, getUsuarioLogado(), distribuidorService.codigoDistribuidorFC());
-        
-        interfaceExecucaoService.executarInterface(
-                idInterface, getUsuarioLogado(), distribuidorService.codigoDistribuidorDinap());
+
+
+        // FIXME - Ou chamamos com o distribuidor FC, ou com o DINAP ! Os dois é realmente necessário ?????
+        String codigoDistribuidorFC = distribuidorService.codigoDistribuidorFC();
+        if(!codigoDistribuidorFC.equals("0"))
+            interfaceExecucaoService.executarInterface(idInterface, getUsuarioLogado(), codigoDistribuidorFC);
+
+        String codigoDistribuidorDinap = distribuidorService.codigoDistribuidorDinap();
+        if(!codigoDistribuidorDinap.equals("0"))
+            interfaceExecucaoService.executarInterface(idInterface, getUsuarioLogado(), codigoDistribuidorDinap);
             
         result.use(Results.json()).from(
                 new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),
                 "result").recursive().serialize();
     }
     
-    /**
-     * Executa uma interface
-     * @param classeInterface
-     */
     @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
     public void executarTodasInterfacesEmOrdem() throws Exception {
         

@@ -66,7 +66,7 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
 
             for (String distribuidor : distribuidores) {
 
-                if (new File(diretorio + distribuidor + File.separator + pastaInterna + File.separator).exists()) {
+                //if (new File(diretorio + distribuidor + File.separator + pastaInterna + File.separator).exists()) {
 
                     LOGGER.info("# Iniciando carga das estratégias para o distribuidor {} . ", distribuidor);
 
@@ -84,7 +84,7 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
 
                     }
 
-                }
+                //}
             }
 
 

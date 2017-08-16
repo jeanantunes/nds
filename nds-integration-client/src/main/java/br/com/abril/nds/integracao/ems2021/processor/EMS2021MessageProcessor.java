@@ -79,7 +79,7 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
                     input.getCodigoProduto(), input.getNumeroEdicao());
 
             if (produtoEdicao == null) {
-                this.ndsiLoggerFactory.getLogger().logError(
+                this.ndsiLoggerFactory.getLogger().logWarning(
                         message, EventoExecucaoEnum.RELACIONAMENTO,
                         "Não foi possível incluir registro - Produto " + input.getCodigoProduto() + " Edição "
                                 + input.getNumeroEdicao() + " não encontrado.");
@@ -122,7 +122,7 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
                         item.getCodigoProduto(), item.getNumeroEdicao());
 
                 if (produtoEdicao == null) {
-                    this.ndsiLoggerFactory.getLogger().logError(
+                    this.ndsiLoggerFactory.getLogger().logWarning(
                             message,
                             EventoExecucaoEnum.RELACIONAMENTO,
                             "Não foi possível incluir registro - Produto " + item.getCodigoProduto()
