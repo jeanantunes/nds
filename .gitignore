@@ -43,3 +43,7 @@ nfe/nfe/
 Servers/
 .idea
 **/*.iml
+/nds-client/src/main/resources/db.migration/
+!/nds-client/src/main/resources/application.properties
+/nds-client/src/main/resources/application-dev.properties
+/nds-client/src/main/resources/application.properties
