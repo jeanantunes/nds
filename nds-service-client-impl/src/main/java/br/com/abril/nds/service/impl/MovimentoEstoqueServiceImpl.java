@@ -936,7 +936,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
         }
 
-        movimentoEstoqueRepository.updateById(idProdutoEdicao, movimentoEstoque.getQtde());
+        movimentoEstoque = movimentoEstoqueRepository.merge(movimentoEstoque);
 
         return movimentoEstoque;
     }
