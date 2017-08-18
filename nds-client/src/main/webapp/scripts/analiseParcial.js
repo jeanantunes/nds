@@ -1469,6 +1469,13 @@ var analiseParcialController = $.extend(true, {
         	analiseParcialController.exibirMsg('WARNING', ['Já existe um estudo liberado para este lançamento.']);
             event.preventDefault();
         });
+        
+        $('#botaoVoltarTelaAnalise').click(function(){
+        	//onclick="$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected')); selectTabTitle('Analise de Estudos');"
+        	$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));
+        	selectTabTitle('Analise de Estudos');
+        	analiseParcialController.desbloquearEstudo();
+    	});
 
         $('#cotasNaoSelec', analiseParcialController.workspace).flexigrid({
             preProcess : analiseParcialController.preProcessGridNaoSelec,
@@ -2389,6 +2396,15 @@ var analiseParcialController = $.extend(true, {
 			return parametro;
 		}
 		
+	},
+	
+	desbloquearEstudo : function(){
+		$.postJSON(
+				contextPath + "/distribuicao/analiseEstudo/desbloquear",
+				null,
+				function() {
+				}
+		);
 	},
 	
 	analiseHistogramaEstudo : function(){

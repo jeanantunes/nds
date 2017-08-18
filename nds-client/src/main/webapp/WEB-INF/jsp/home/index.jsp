@@ -182,9 +182,9 @@
 										$span = $($span).addClass("matriz_lancamento");
 									}else if (url.indexOf("/devolucao/balanceamentoMatriz") >= 0) {
 										$span = $($span).addClass("matriz_recolhimento");
-									}else if ((url.indexOf("/matrizDistribuicao/histogramaPosEstudo") >= 0)
-										|| (url.indexOf("/distribuicao/analiseEstudo") >= 0)) {
-										
+									}else if (url.indexOf("/distribuicao/analiseEstudo") >= 0) {
+										$span = $($span).addClass("analise_estudo");
+									}else if (url.indexOf("/distribuicao/analise/parcial") >= 0) {
 										$span = $($span).addClass("analise_estudo");
 									}else if (url.indexOf("/devolucao/semaforo") >= 0) {
 										$span = $($span).addClass("status_processamento_encalhe");
@@ -259,7 +259,9 @@
 													
 												} else if (indAbaAnaliseEstudo) {
 													
-													histogramaPosEstudoController.desbloquearAnaliseEstudo(index, true);
+													$("#workspace").tabs("remove", index);
+													//histogramaPosEstudoController.desbloquearAnaliseEstudo(index, true);
+													analiseParcialController.desbloquearEstudo();
 													
 												} else {
 													
