@@ -140,6 +140,9 @@ public class AnaliseParcialController extends BaseController {
 
         EstudoCotaGerado estudoCota = analiseParcialService.buscarPorId(id);
         Lancamento lancamento = lancamentoService.obterPorId(estudoCota.getEstudo().getLancamentoID());
+        
+//        this.efetuarBloqueioAnaliseEstudo(lancamento.getProdutoEdicao().getId());
+        this.bloquearEstudoPorIdProdEdicao(lancamento.getProdutoEdicao().getId());
 
         this.clearEdicoesBaseSession();
         
@@ -677,13 +680,17 @@ public class AnaliseParcialController extends BaseController {
 	@Post
 	public void efetuarBloqueioAnaliseEstudo(Long idProdutoEdicao){
 		
-		String loginUsuario = super.getUsuarioLogado().getLogin();
-		
-		this.bloquearAnaliseEstudo(idProdutoEdicao, this.session, loginUsuario);
+		bloquearEstudoPorIdProdEdicao(idProdutoEdicao);
 		
 		this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Estudo bloqueado com sucesso."), 
 				"result").recursive().serialize();
+	}
+
+	private void bloquearEstudoPorIdProdEdicao(Long idProdutoEdicao) {
+		String loginUsuario = super.getUsuarioLogado().getLogin();
+		
+		this.bloquearAnaliseEstudo(idProdutoEdicao, this.session, loginUsuario);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -702,8 +709,6 @@ public class AnaliseParcialController extends BaseController {
     	if ( windowname_estudo != null && windowname != null && !windowname_estudo.equals(windowname)){
     		 throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Ja existe um Estudo sendo analisado em outra aba/janela"));
     	}
-    	
-    	
 		
 		Map<Long, String> mapaAnaliseEstudo = (Map<Long, String>) session.getServletContext().getAttribute(MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
 		
