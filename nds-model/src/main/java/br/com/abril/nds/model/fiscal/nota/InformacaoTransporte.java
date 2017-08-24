@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import br.com.abril.nds.enums.ModalidadeFreteEnum;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 
@@ -29,7 +30,7 @@ public class InformacaoTransporte implements Serializable {
 	@Column(name="MODALIDADE_FRETE", length=1, nullable=true)
 	@NFEExport(secao = TipoSecao.X, posicao = 0)
 	@XmlElement(name="modFrete")
-	private Integer modalidadeFrete;
+	private ModalidadeFreteEnum modalidadeFrete;
 	
 	@XmlElement(name="transporta")
 	private TransportadorWrapper transportadorWrapper;
@@ -37,14 +38,14 @@ public class InformacaoTransporte implements Serializable {
 	/**
 	 * @return the modalidadeFrete
 	 */
-	public Integer getModalidadeFrete() {
+	public ModalidadeFreteEnum getModalidadeFrete() {
 		return modalidadeFrete;
 	}
 	
 	/**
 	 * @param modalidadeFrete the modalidadeFrete to set
 	 */
-	public void setModalidadeFrete(Integer modalidadeFrete) {
+	public void setModalidadeFrete(ModalidadeFreteEnum modalidadeFrete) {
 		this.modalidadeFrete = modalidadeFrete;
 	}
 	
