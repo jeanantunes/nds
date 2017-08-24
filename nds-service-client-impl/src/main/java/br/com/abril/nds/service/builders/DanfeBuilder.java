@@ -60,7 +60,6 @@ public class DanfeBuilder  implements Serializable {
 	 * Carrega os dados principais da DANFE
 	 * 
 	 * @param danfe
-	 * @param nfe
 	 * @param notaFiscal
 	 * @return 
 	 */
@@ -222,7 +221,6 @@ public class DanfeBuilder  implements Serializable {
 	 * Carrega os dados de destinatario na DANFE.
 	 * 
 	 * @param danfe
-	 * @param nfe
 	 * @param notaFiscal
 	 */
 	public static void carregarDanfeDadosDestinatario(DanfeDTO danfe, NotaFiscal notaFiscal) {
@@ -348,7 +346,7 @@ public class DanfeBuilder  implements Serializable {
 		
 		Veiculo veiculo = informacaoTransporte.getTransportadorWrapper().getVeiculo();
 		
-		Integer frete = informacaoTransporte.getModalidadeFrete();
+		Integer frete = informacaoTransporte.getModalidadeFrete().getDescricao();
 		
 		String transportadoraDocumento = informacaoTransporte.getTransportadorWrapper().getDocumento();
 		String transportadoraNome = informacaoTransporte.getTransportadorWrapper().getNome();
