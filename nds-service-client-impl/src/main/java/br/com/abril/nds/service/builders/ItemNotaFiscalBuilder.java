@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -326,10 +325,10 @@ public class ItemNotaFiscalBuilder {
         String ipiAux = "IPI";
 
         if (tributoAliquota.containsKey(cofinsAux)) {
-            // SAIDA("Saída", "S", 1)
-            if (notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getTipoOperacao().getTipoOperacaoNumerico() == 1) {
-                LOGGER.info("NFe - SAIDA");
-
+            // SAIDA("Saída", "S", 1) | ENTRADA("Entrada", "E", 0) | ENTRADA_SAIDA("Endrada / Saída", "ES", 2)
+            if (notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getTipoOperacao().getTipoOperacaoNumerico() == 1 ||
+                    notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getTipoOperacao().getTipoOperacaoNumerico() == 0 ||
+                    notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getTipoOperacao().getTipoOperacaoNumerico() == 2) {
                 if (tributacao != null) {
 
                     if (!tributoAliquota.containsKey(icmsAux)) {
@@ -345,23 +344,15 @@ public class ItemNotaFiscalBuilder {
 
                     if (tributoAliquota.containsKey(cofinsAux)) {
                         CofinsWrapper cofins = new CofinsWrapper();
-                        cofins.setCst("06");
-                        cofins.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
-                        cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
-                        cofins.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
-                        cofins.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+                        cofins.getCofins().setCst("06");
+                        cofins.getCofins().setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+                        cofins.getCofins().setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+                        cofins.getCofins().setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+                        cofins.getCofins().setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
                         detalheNotaFiscal.getImpostos().setCofins(cofins);
                     }
                 }
 
-            }
-            //ENTRADA("Entrada", "E", 0)
-            else if (notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getTipoOperacao().getTipoOperacaoNumerico() == 0) {
-                System.out.printf("ENTRADA");
-            }
-            //ENTRADA_SAIDA("Endrada / Saída", "ES", 2)
-            else if (notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getTipoOperacao().getTipoOperacaoNumerico() == 2) {
-                System.out.printf("ENTRADA / SAIDA");
             }
         } else {
             ICMS icms = null;
