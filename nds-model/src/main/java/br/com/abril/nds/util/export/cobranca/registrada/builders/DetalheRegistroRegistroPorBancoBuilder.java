@@ -241,7 +241,7 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable {
             registro01.setIdentificacaoTipoIncricaoPagador(CODIGO_INSCRICAO_FISICA);
         }
 
-        registro01.setNumeroDocumento(documentoCedente.replace(".", "").replace("/", "").replace("-", ""));
+        registro01.setNumeroDocumento(pessoaSacado.replace(".", "").replace("/", "").replace("-", ""));
 
         try {
             registro01.setDataVencimento(Util.formataData(boleto.getDataVencimento()));
