@@ -285,6 +285,7 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
 	}
 
 	@Override
+	@Transactional
 	public void atualizarSequencialArquivoCobranca(Long bancoID) {
 		StringBuilder SQL = new StringBuilder();
 

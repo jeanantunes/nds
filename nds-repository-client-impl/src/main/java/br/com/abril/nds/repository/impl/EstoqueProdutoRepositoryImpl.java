@@ -201,7 +201,7 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		   .append(" produto.nome as produto, ")
 		   .append(" produtoEdicao.numeroEdicao as numeroEdicao, ")
 		   .append(" produtoEdicao.precoVenda as precoCapa, ")
-		   .append(" coalesce( produtoEdicao.descontoLogistica.percentualDesconto,produtoEdicao.produto.descontoLogistica.percentualDesconto,0) as descontoLogistica, ")
+		   .append(" coalesce( descontoLogistica2.percentualDesconto,descontoLogistica3.percentualDesconto,0) as descontoLogistica, ")
 		   .append(" coalesce(estoqueProduto.qtde, 0) as lancamento, ")
 		   .append(" coalesce(estoqueProduto.qtdeSuplementar, 0) as suplementar, ")
 		   .append(" coalesce(estoqueProduto.qtdeDanificado, 0) as danificado, ")
@@ -252,6 +252,8 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		   .append(" join estoqueProduto.produtoEdicao produtoEdicao ")
 		   .append(" join produtoEdicao.produto produto ")
 		   .append(" join produtoEdicao.chamadaEncalhes chamadaEncalhe ")
+				.append(" left join produto.descontoLogistica descontoLogistica2")
+				.append(" left join produtoEdicao.descontoLogistica descontoLogistica3 ")
 		 // alteracoes abaixo por questao de performance
 		 //.append(" join chamadaEncalhe.chamadaEncalheCotas cec ")
 		   .append(" where chamadaEncalhe.dataRecolhimento = :dataRecolhimento ")

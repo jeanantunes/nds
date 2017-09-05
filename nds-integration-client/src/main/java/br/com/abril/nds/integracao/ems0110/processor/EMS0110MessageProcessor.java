@@ -38,6 +38,7 @@ import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
+import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -46,6 +47,8 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
+import br.com.abril.nds.repository.NCMRepository;
+import br.com.abril.nds.repository.TipoProdutoRepository;
 import br.com.abril.nds.service.DescontoLogisticaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.LancamentoService;
@@ -80,6 +83,12 @@ public class EMS0110MessageProcessor extends AbstractRepository implements Messa
 	
 	@Autowired
 	private DescontoLogisticaService descontoLogisticaService;
+	
+	@Autowired
+	private NCMRepository ncmRepository;
+	
+	@Autowired
+	private TipoProdutoRepository tipoProdutoRepository;
 	
 	private static final String ZEROS_NBM = "000000000";
 	
@@ -416,13 +425,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements Messa
 		TipoProduto tipoProduto = this.findTipoProduto(input.getCodNCM(), input.getCodCategoria());
 
 		if (null == tipoProduto) {
-			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.SEM_DOMINIO, "Tipo Produto "
-					+ input.getCodCategoria()+" não encontrado. Produto "
-					+input.getCodProd() 
-					+" Edição "+input.getEdicaoProd());
-
-			// throw new RuntimeException("Tipo Produto nao encontrado.");
+			tipoProduto = criarTipoProduto(input);
 		}
 	
 		this.ndsiLoggerFactory.getLogger().logError(message,
@@ -484,6 +487,37 @@ public class EMS0110MessageProcessor extends AbstractRepository implements Messa
 				+" Edição "+input.getEdicaoProd());
 	
 		return produto;
+	}
+	
+	private TipoProduto criarTipoProduto(EMS0110Input input){
+		TipoProduto tipoProduto = new TipoProduto();
+		
+		NCM ncm = ncmRepository.obterPorCodigo(input.getCodNCM());
+		if(ncm==null){
+			ncm = criarNCM(input);
+		}
+		tipoProduto.setNcm(ncm);
+		tipoProduto.setCodigo(tipoProdutoRepository.getMaxCodigo());
+		tipoProduto.setCodigoNBM(input.getCodNBM());
+		tipoProduto.setDescricao(input.getTipoProd());
+		tipoProduto.setGrupoProduto(GrupoProduto.OUTROS);
+		
+		tipoProdutoRepository.adicionar(tipoProduto);
+		
+		return tipoProduto;
+	}
+	
+	private NCM criarNCM(EMS0110Input input){
+		NCM ncm = new NCM();
+		
+		ncm.setCodigo(input.getCodNCM());
+		ncm.setDescricao(input.getTipoProd());
+		ncm.setGrupo(1l);
+		ncm.setImposto(false);
+		ncm.setUnidadeMedida("UN");
+		
+		ncmRepository.adicionar(ncm);
+		return ncm;
 	}
 
     private Fornecedor obterFornecedor(Message message) {
