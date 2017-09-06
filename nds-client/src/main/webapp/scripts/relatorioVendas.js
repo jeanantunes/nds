@@ -412,10 +412,10 @@ var relatorioVendasController = $.extend(true, {
 			}, {
 				display : 'Nome',
 				name : 'nomeCota',
-				width : 500,
+				width : 400,
 				sortable : false,
 				align : 'left'
-			}, {
+			},{
 				display : 'Faturamento Capa R$',
 				name : 'faturamentoCapaFormatado',
 				width : 130,
@@ -846,7 +846,6 @@ var relatorioVendasController = $.extend(true, {
 
 		var pathExportacaoRelatorioPDF = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=PDF&tipoRelatorio=3';
 		var pathExportacaoRelatorioXLS = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=XLS&tipoRelatorio=3';
-			
 		$(".impressaoPDFRelatorioVendas").attr("href", pathExportacaoRelatorioPDF);
 		$(".impressaoXLSRelatorioVendas").attr("href", pathExportacaoRelatorioXLS);
 		
