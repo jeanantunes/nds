@@ -51,6 +51,15 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 	@Export(label = "Faturamento R$", exhibitionOrder = 8, columnType = ColumnType.DECIMAL)
 	private String faturamentoFormatado;
 	
+	@Export(label = "numeroCota", exhibitionOrder = 9, columnType = ColumnType.STRING)
+	private String numeroCota;
+	
+	@Export(label = "nomeCota", exhibitionOrder = 10, columnType = ColumnType.STRING)
+	private String nomeCota;
+	
+	@Export(label = "tipoPDV", exhibitionOrder = 11, columnType = ColumnType.STRING)
+	private String tipoPDV;
+	
 	@Export(label = "Ranking", exhibitionOrder = 1, columnType = ColumnType.NUMBER)
 	private Long rkProduto;
 	
@@ -197,6 +206,30 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 	 */
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
+	public String getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(String numeroCota) {
+		this.numeroCota = numeroCota;
+	}
+
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
+
+	public String getTipoPDV() {
+		return tipoPDV;
+	}
+
+	public void setTipoPDV(String tipoPDV) {
+		this.tipoPDV = tipoPDV;
 	}
 	
 }

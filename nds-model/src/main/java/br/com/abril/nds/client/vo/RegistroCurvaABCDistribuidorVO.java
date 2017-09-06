@@ -43,21 +43,58 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 	@Export(label = "Faturamento da Capa", exhibitionOrder = 8, columnType = ColumnType.DECIMAL)
 	private String faturamentoCapaFormatado;
 	
-	@Export(label = "RK.Produto", exhibitionOrder = 1, widthPercent = 5, columnType = ColumnType.NUMBER)
+	@Export(label = "RK.Produto", exhibitionOrder = 1, columnType = ColumnType.NUMBER)
 	private Long rkProduto;
 	
-	@Export(label = "RK. Cota", exhibitionOrder = 2, widthPercent = 5,  columnType = ColumnType.NUMBER)
+	@Export(label = "RK. Cota", exhibitionOrder = 2,  columnType = ColumnType.NUMBER)
 	private Long rkCota;
 	
 	private Long idProduto;
 	
 	private Long idCota;
 	
+
 	@Export(label = "Número", exhibitionOrder = 3, columnType = ColumnType.NUMBER)
 	public String getNumeroCotaString() {
 		return this.getNumeroCota().toString();
 	}
-
+	
+	@Export(label = "segmento", exhibitionOrder = 11,   columnType = ColumnType.STRING)
+	private String segmento;
+	
+	@Export(label = "produtoCodigo", exhibitionOrder = 12,  columnType = ColumnType.STRING)
+	private String produtoCodigo;
+	
+	@Export(label = "produtoNome", exhibitionOrder = 13,  columnType = ColumnType.STRING)
+	private String produtoNome;
+	
+	@Export(label = "editorCodigo", exhibitionOrder = 14,  columnType = ColumnType.STRING)
+	private String editorCodigo;
+	
+	@Export(label = "codigoBarra", exhibitionOrder = 15, columnType = ColumnType.STRING)
+	private String codigoBarra;
+	
+	@Export(label = "peb", exhibitionOrder = 16,  columnType = ColumnType.STRING)
+	private String peb;
+	
+	@Export(label = "numeroEdicao", exhibitionOrder = 17,  columnType = ColumnType.STRING)
+	private String numeroEdicao;
+	
+	@Export(label = "dataLancamento", exhibitionOrder = 18, columnType = ColumnType.STRING)
+	private String dataLancamento;
+	
+	@Export(label = "dataRecolhimento", exhibitionOrder = 19,  columnType = ColumnType.STRING)
+	private String dataRecolhimento;
+	
+	@Export(label = "classificacao", exhibitionOrder = 20,  columnType = ColumnType.STRING)
+	private String classificacao;
+	
+	@Export(label = "venda", exhibitionOrder = 21,  columnType = ColumnType.STRING)
+	private String venda;
+	
+	@Export(label = "preco", exhibitionOrder = 22,   columnType = ColumnType.STRING)
+	private String preco;
+	
 	@Export(label = "Quantidade de Pdvs", exhibitionOrder = 6, columnType = ColumnType.NUMBER)
 	public String getQuantidadePdvsString() {
 		return this.getQuantidadePdvs().toString();
@@ -178,4 +215,100 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 		this.faturamentoCapaFormatado = faturamentoCapaFormatado;
 	}
 
+	public String getSegmento() {
+		return segmento;
+	}
+
+	public void setSegmento(String segmento) {
+		this.segmento = segmento;
+	}
+
+	public String getProdutoCodigo() {
+		return produtoCodigo;
+	}
+
+	public void setProdutoCodigo(String produtoCodigo) {
+		this.produtoCodigo = produtoCodigo;
+	}
+
+	public String getProdutoNome() {
+		return produtoNome;
+	}
+
+	public void setProdutoNome(String produtoNome) {
+		this.produtoNome = produtoNome;
+	}
+
+	public String getEditorCodigo() {
+		return editorCodigo;
+	}
+
+	public void setEditorCodigo(String editorCodigo) {
+		this.editorCodigo = editorCodigo;
+	}
+
+	public String getCodigoBarra() {
+		return codigoBarra;
+	}
+
+	public void setCodigoBarra(String codigoBarra) {
+		this.codigoBarra = codigoBarra;
+	}
+
+	public String getPeb() {
+		return peb;
+	}
+
+	public void setPeb(String peb) {
+		this.peb = peb;
+	}
+
+	public String getNumeroEdicao() {
+		return numeroEdicao;
+	}
+
+	public void setNumeroEdicao(String numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
+	}
+
+	public String getDataLancamento() {
+		return dataLancamento;
+	}
+
+	public void setDataLancamento(String dataLancamento) {
+		this.dataLancamento = dataLancamento;
+	}
+
+	public String getDataRecolhimento() {
+		return dataRecolhimento;
+	}
+
+	public void setDataRecolhimento(String dataRecolhimento) {
+		this.dataRecolhimento = dataRecolhimento;
+	}
+
+	public String getClassificacao() {
+		return classificacao;
+	}
+
+	public void setClassificacao(String classificacao) {
+		this.classificacao = classificacao;
+	}
+
+	public String getVenda() {
+		return venda;
+	}
+
+	public void setVenda(String venda) {
+		this.venda = venda;
+	}
+
+	public String getPreco() {
+		return preco;
+	}
+
+	public void setPreco(String preco) {
+		this.preco = preco;
+	}
+	
 }

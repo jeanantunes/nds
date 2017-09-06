@@ -49,7 +49,32 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 	
 	@Export(label = "Mg Distrib %", exhibitionOrder = 11, columnType = ColumnType.DECIMAL)
 	private String porcentagemMargemDistribuidorFormatado;
+	
+	@Export(label = "nomeCota", exhibitionOrder = 12, columnType = ColumnType.STRING)
+	private String nomeCota;
+	
+	@Export(label = "numeroCota", exhibitionOrder = 13, columnType = ColumnType.STRING)
+	private String numeroCota;
+	
+	@Export(label = "endereco", exhibitionOrder = 14, columnType = ColumnType.STRING)
+	private String endereco;
+	
+	@Export(label = "tipoPDV", exhibitionOrder = 15, columnType = ColumnType.STRING)
+	private String tipoPDV;
+	
+	@Export(label = "documentoPessoa", exhibitionOrder = 16, columnType = ColumnType.STRING)
+	private String documentoPessoa;
+	
+	@Export(label = "situacaoAtivo", exhibitionOrder = 17, columnType = ColumnType.STRING)
+	private String situacaoAtivo;
 
+	@Export(label = "tipoGeradorFluxo", exhibitionOrder = 18, columnType = ColumnType.STRING)
+	private String tipoGeradorFluxo;
+	
+	@Export(label = "areaInfluenciaPDV", exhibitionOrder = 19, columnType = ColumnType.STRING)
+	private String areaInfluenciaPDV;
+	
+	
 	private BigInteger reparte;
 
 	private BigInteger vendaExemplares;
@@ -232,4 +257,53 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 			String valorMargemDistribuidorFormatado) {
 		this.valorMargemDistribuidorFormatado = valorMargemDistribuidorFormatado;
 	}
+
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
+
+	public String getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(String numeroCota) {
+		this.numeroCota = numeroCota;
+	}
+
+	public String getEndereco() {
+		return endereco;
+	}
+
+	public void setEndereco(String endereco) {
+		this.endereco = endereco;
+	}
+
+	public String getTipoPDV() {
+		return tipoPDV;
+	}
+
+	public void setTipoPDV(String tipoPDV) {
+		this.tipoPDV = tipoPDV;
+	}
+
+	public String getDocumentoPessoa() {
+		return documentoPessoa;
+	}
+
+	public void setDocumentoPessoa(String documentoPessoa) {
+		this.documentoPessoa = documentoPessoa;
+	}
+
+	public String getSituacaoAtivo() {
+		return situacaoAtivo;
+	}
+
+	public void setSituacaoAtivo(String situacaoAtivo) {
+		this.situacaoAtivo = situacaoAtivo;
+	}
+	
 }
