@@ -343,13 +343,13 @@ public class ItemNotaFiscalBuilder {
                     }
 
                     if (tributoAliquota.containsKey(cofinsAux)) {
-                        CofinsWrapper cofins = new CofinsWrapper();
-                        cofins.getCofins().setCst("06");
-                        cofins.getCofins().setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
-                        cofins.getCofins().setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
-                        cofins.getCofins().setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
-                        cofins.getCofins().setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
-                        detalheNotaFiscal.getImpostos().setCofins(cofins);
+                        COFINS cofins = new COFINS();
+                        cofins.setCst("06");
+                        cofins.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+                        cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+                        cofins.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+                        cofins.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+                        detalheNotaFiscal.getImpostos().setCofins(new CofinsWrapper());
                     }
                 }
 
@@ -360,6 +360,7 @@ public class ItemNotaFiscalBuilder {
             //FIXME: Ajustar o produto para trazer a origem (nacional / estrangeira)
             icms.setOrigem(OrigemProduto.NACIONAL);
             icms.setCst(produtoServico.getCst().toString());
+            LOGGER.info(produtoServico.getNcm().toString());
             icms.setAliquota(CurrencyUtil.arredondarValorParaDuasCasas(produtoServico.getValorAliquotaICMS()));
             icms.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(produtoServico.getValorAliquotaIPI()));
 
@@ -438,7 +439,8 @@ public class ItemNotaFiscalBuilder {
 
             PISNTWrapper pisWrapperNT = null;
 
-            if (produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L) {
+            //if (produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L) {
+            if (produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L || produtoServico.getNcm() == 49029000L || produtoServico.getNcm() == 48205000L || produtoServico.getNcm() == 49030000L || produtoServico.getNcm() == 49021000L || produtoServico.getNcm() == 49111090L || produtoServico.getNcm() == 22029000L) {
                 if (ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
                     pisWrapperNT = new PISNTWrapper();
                 } else {
@@ -477,7 +479,8 @@ public class ItemNotaFiscalBuilder {
                                 pis.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
                                 pis.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
                             } else {
-                                if (produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L) {
+                                //if (produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L) {
+                                if (produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L || produtoServico.getNcm() == 49029000L || produtoServico.getNcm() == 48205000L || produtoServico.getNcm() == 49030000L || produtoServico.getNcm() == 49021000L || produtoServico.getNcm() == 49111090L || produtoServico.getNcm() == 22029000L) {
                                     if (ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
                                         pis.setCst("06");
                                         pis.setValorBaseCalculo(null);
@@ -507,8 +510,8 @@ public class ItemNotaFiscalBuilder {
                 }
 
             }
-
-            if (produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L) {
+            //49029000, 49019100, 49011000, 48205000, 49030000, 49021000, 49111090, 22029000
+            if (produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L || produtoServico.getNcm() == 49029000L || produtoServico.getNcm() == 48205000L || produtoServico.getNcm() == 49030000L || produtoServico.getNcm() == 49021000L || produtoServico.getNcm() == 49111090L || produtoServico.getNcm() == 22029000L) {
                 if (ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
                     pisWrapperNT.setPis(pis);
                     detalheNotaFiscal.getImpostos().setPisNT(pisWrapperNT);
@@ -570,7 +573,8 @@ public class ItemNotaFiscalBuilder {
 
             CofinsNTWrapper cofinsNTWrapper = null;
 
-            if (produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L) {
+            //if (produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L) {
+            if (produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L || produtoServico.getNcm() == 49029000L || produtoServico.getNcm() == 48205000L || produtoServico.getNcm() == 49030000L || produtoServico.getNcm() == 49021000L || produtoServico.getNcm() == 49111090L || produtoServico.getNcm() == 22029000L) {
                 if (ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
                     cofinsNTWrapper = new CofinsNTWrapper();
                 } else {
@@ -611,7 +615,8 @@ public class ItemNotaFiscalBuilder {
                                 cofins.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
                             } else {
 
-                                if (produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L) {
+                                //if (produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L) {
+                                if (produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L || produtoServico.getNcm() == 49029000L || produtoServico.getNcm() == 48205000L || produtoServico.getNcm() == 49030000L || produtoServico.getNcm() == 49021000L || produtoServico.getNcm() == 49111090L || produtoServico.getNcm() == 22029000L) {
                                     if (ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
                                         cofins.setCst("06");
                                         cofins.setValorBaseCalculo(null);
@@ -643,8 +648,8 @@ public class ItemNotaFiscalBuilder {
 
             }
 
-            if (produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L) {
-
+            //if (produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L) {
+            if (produtoServico.getNcm() == 49019100L || produtoServico.getNcm() == 49019900L || produtoServico.getNcm() == 49011000L || produtoServico.getNcm() == 49029000L || produtoServico.getNcm() == 48205000L || produtoServico.getNcm() == 49030000L || produtoServico.getNcm() == 49021000L || produtoServico.getNcm() == 49111090L || produtoServico.getNcm() == 22029000L) {
                 if (ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
                     cofinsNTWrapper.setCofins(cofins);
                     detalheNotaFiscal.getImpostos().setCofinsNT(cofinsNTWrapper);
@@ -697,6 +702,13 @@ public class ItemNotaFiscalBuilder {
 //			LOGGER.warn(sb.toString() );
             // throw new ValidacaoException(TipoMensagem.ERROR, sb.toString());
         }
+
+        //TODO: Valores para nota_fiscal_produto_servico
+        detalheNotaFiscal.getProdutoServico().setCst("041");
+        detalheNotaFiscal.getProdutoServico().setValorAliquotaICMS(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+        detalheNotaFiscal.getProdutoServico().setValorAliquotaIPI(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+
+
 
         //FIXME: Ajustar o codigo Excessao do ipi
         //produtoServico.setExtipi(0L);
