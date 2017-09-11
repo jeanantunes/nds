@@ -187,7 +187,8 @@ public class CotaDAO {
 		params.put("numero_edicao", estudo.getProdutoEdicaoEstudo().getNumeroEdicao());
 		
 		String maxDataRanking = (String)jdbcTemplate.queryForObject(
-				"SELECT  DATE_FORMAT(max(data_geracao_rank),'%d/%m/%Y') FROM ranking_segmento", new HashMap(), String.class);
+					"SELECT  DATE_FORMAT(max(data_geracao_rank),'%d/%m/%Y') FROM ranking_segmento", 
+				new HashMap(), String.class);
 		
 		
 		 params.put("maxDataRanking", maxDataRanking);
