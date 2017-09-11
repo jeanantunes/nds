@@ -83,6 +83,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
 
 	private void atribuirPesoEdicaoFechadaMaisRecente(LinkedList<ProdutoEdicaoEstudo> edicoesBase) {
 		List<ProdutoEdicaoEstudo> listaEdicoesFechadas = new ArrayList<>();
+		
 		for(ProdutoEdicaoEstudo pe : edicoesBase) {
 			if(!pe.isEdicaoAberta() && pe.getStatus() != null 
 					&& Arrays.asList(
@@ -122,19 +123,6 @@ public class DefinicaoBases extends ProcessoAbstrato {
 		}
 	}
 	
-    /*
-    private LinkedList<ProdutoEdicaoEstudo> filtrarClassificacao(final LinkedList<ProdutoEdicaoEstudo> edicoesBase, final EstudoTransient estudo) {
-        final LinkedList<ProdutoEdicaoEstudo> listaFiltrada = new LinkedList<>();
-        final TipoClassificacaoProduto tipoClassificacaoProdutoEstudo = estudo.getProdutoEdicaoEstudo().getTipoClassificacaoProduto();
-        for (final ProdutoEdicaoEstudo edicaoBaseEstudo : edicoesBase) {
-            if (tipoClassificacaoProdutoEstudo.equals(edicaoBaseEstudo.getTipoClassificacaoProduto())) {
-                listaFiltrada.add(edicaoBaseEstudo);
-            }
-        }
-        return listaFiltrada;
-    }
-    */
-    
     private LinkedList<ProdutoEdicaoEstudo> filtarEdicoesParciais(LinkedList<ProdutoEdicaoEstudo> edicoesBase,  EstudoTransient estudo){
     	
     	LinkedList<ProdutoEdicaoEstudo> edicoesBasesMesmaEdicao = new LinkedList<>();

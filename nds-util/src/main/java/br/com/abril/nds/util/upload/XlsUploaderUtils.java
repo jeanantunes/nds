@@ -90,6 +90,10 @@ public class XlsUploaderUtils {
                 Iterator<Cell> cellIterator = row.cellIterator();
                 while (cellIterator.hasNext()) {
                     Cell cell = cellIterator.next();
+                    
+                    if(cell.toString().isEmpty()){
+                    	continue;
+                    }
 
                     Cell headerCell = headerRow.getCell(cell.getColumnIndex());
                     if (headerCell != null) {
