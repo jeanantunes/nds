@@ -173,7 +173,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		ce.setTotalVendaInformada(input.getValorTotalVendaInformada());
 		ce.setControle(input.getNumeroControle());
 		
-		if(input.getItems() != null && !input.getItems().isEmpty() ) {
+		if(input.getItens() != null && !input.getItens().isEmpty() ) {
 			
 			if (  ce.getItens() == null || ce.getItens().isEmpty() )  {   
 			  ce.setItens(new ArrayList<ItemChamadaEncalheFornecedor>());
@@ -188,7 +188,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			}
 			//orientação de Cesar - item 5, planilha sprint 5, as informações faltantes dizem respeito a fornecedor
 			//que nunca foi inserido
-			String codigoProduto = input.getItems().get(0).getLancamentoEdicaoPublicacao().getCodigoPublicacao();
+			String codigoProduto = input.getItens().get(0).getLancamentoEdicaoPublicacao().getCodigoPublicacao();
 			
 			List<Fornecedor> fornecedores = this.fornecedorRepository.obterFornecedoresDeProduto(codigoProduto, null);
 			
@@ -205,7 +205,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 
 	private void montarItensChamadaEncalheFornecedor(Message message, EMS0127Input input, ChamadaEncalheFornecedor ce) {
 		
-		for (EMS0127InputItem item : input.getItems()) {
+		for (EMS0127InputItem item : input.getItens()) {
 			
 			if(item.getLancamentoEdicaoPublicacao() == null || (item.getLancamentoEdicaoPublicacao() != null && item.getLancamentoEdicaoPublicacao().getCodigoPublicacao() == null)) {
 				

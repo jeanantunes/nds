@@ -15,19 +15,15 @@ import br.com.abril.nds.integracao.route.AbstractRoute;
 @Component
 public class DynamicRouter {
 	
-	//@Autowired FixedLenghtContentBasedDataRouter
 	@Resource(name="fixedLenghtContentBasedDataRouter")
 	protected ContentBasedRouter FIXED_LENGHT_DATA_ROUTER;
 	
-	//@Autowired CouchDBImportDataRouter
 	@Resource(name="couchDBImportDataRouter")
 	protected ContentBasedRouter COUCH_DB_IMPORT_DATA_ROUTER;
 
-	//@Autowired FileOutputRouter
 	@Resource(name="fileOutputRouter")
 	protected ContentBasedRouter fileOutputRouter;
 	
-	//@Autowired DBImportDataRouter
 	@Resource(name="dbImportDataRouter")
 	protected ContentBasedRouter dbImportDataRouter;
 

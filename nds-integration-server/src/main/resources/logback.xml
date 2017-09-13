@@ -10,7 +10,6 @@
 		</encoder>
 	</appender>
 
- 
  <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
       <smtpHost>smtp3.treelog.com.br</smtpHost>
        <smtpPort>25</smtpPort>
@@ -18,7 +17,7 @@
       <to>odemir.olivatti_INFO@abril.com.br</to>
       <username>teste</username>
     <password>rTZ0PAtThz</password>
-      <subject>ERRO NDS SERVIDOR=%property{HOSTNAME} INTEGRACAO CLIENT </subject>
+      <subject>ERRO NDS SERVIDOR=%property{HOSTNAME} INTEGRACAO SERVER </subject>
       <layout class="ch.qos.logback.classic.PatternLayout">
       <pattern>%date %-5level %logger - %message%n</pattern>
     </layout> 
@@ -28,13 +27,10 @@
       </filter>
   </appender>
  
- 
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="EMAIL" />
 	</root>
-	
-	
-	
+
 	<logger name="br.com.abril.nds" level="DEBUG"/>
 </configuration>

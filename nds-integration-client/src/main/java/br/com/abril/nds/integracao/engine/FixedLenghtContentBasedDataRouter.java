@@ -37,7 +37,7 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 	
     private final static Logger LOGGER = LoggerFactory.getLogger(FixedLenghtContentBasedDataRouter.class);
 	
-	
+
 	@Autowired
 	private FixedFormatManager fixedFormatManager;
 	
@@ -93,8 +93,8 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
             LOGGER.error(e.getMessage(), e);
 		}
 	}
-	
-	
+
+
 	public void processFile(FileRouteTemplate fileRouteTemplate, File file) {
 		try {
 			
@@ -224,7 +224,7 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 	}
 
 
-	
+
 
 	private static Class<?> findType(String line,
 			FixedLengthRouteTemplate fixedLengthInputModel) {
