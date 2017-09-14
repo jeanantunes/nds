@@ -1,21 +1,45 @@
 package br.com.abril.nds.integracao.model.canonic;
 
+import com.ancientprogramming.fixedformat4j.annotation.Record;
+
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+@Record
 public class EMS2021Input extends IntegracaoDocumentMaster<EMS2021InputItem> implements Serializable {
 
     private static final long serialVersionUID = -3176527752303474423L;
-    private String codigoDistribuidor;
+    private Long codigoDistribuidor;
+    private Integer codigoPraca;
     private String codigoProduto;
     private Long numeroEdicao;
-    private Double abrangencia;
-    private Long reparteMinimo;
     private Integer periodo;
+    private BigInteger codigoLancamentoEdicao;
+    private Long abrangenciaDistribuicao;
     private String oportunidadeVenda;
+    private BigInteger reparteMinimo;
+
     private String cesta;
     private List<EMS2021InputItem> itens = new ArrayList<EMS2021InputItem>();
+
+    public Long getCodigoDistribuidor() {
+        return codigoDistribuidor;
+    }
+
+    public void setCodigoDistribuidor(Long codigoDistribuidor) {
+        this.codigoDistribuidor = codigoDistribuidor;
+    }
+
+    public Integer getCodigoPraca() {
+        return codigoPraca;
+    }
+
+    public void setCodigoPraca(Integer codigoPraca) {
+        this.codigoPraca = codigoPraca;
+    }
 
     public String getCodigoProduto() {
         return codigoProduto;
@@ -33,20 +57,28 @@ public class EMS2021Input extends IntegracaoDocumentMaster<EMS2021InputItem> imp
         this.numeroEdicao = numeroEdicao;
     }
 
-    public Double getAbrangencia() {
-        return abrangencia;
-    }
-
-    public void setAbrangencia(Double abrangencia) {
-        this.abrangencia = abrangencia;
-    }
-
     public Integer getPeriodo() {
         return periodo;
     }
 
     public void setPeriodo(Integer periodo) {
         this.periodo = periodo;
+    }
+
+    public BigInteger getCodigoLancamentoEdicao() {
+        return codigoLancamentoEdicao;
+    }
+
+    public void setCodigoLancamentoEdicao(BigInteger codigoLancamentoEdicao) {
+        this.codigoLancamentoEdicao = codigoLancamentoEdicao;
+    }
+
+    public Long getAbrangenciaDistribuicao() {
+        return abrangenciaDistribuicao;
+    }
+
+    public void setAbrangenciaDistribuicao(Long abrangenciaDistribuicao) {
+        this.abrangenciaDistribuicao = abrangenciaDistribuicao;
     }
 
     public String getOportunidadeVenda() {
@@ -57,27 +89,12 @@ public class EMS2021Input extends IntegracaoDocumentMaster<EMS2021InputItem> imp
         this.oportunidadeVenda = oportunidadeVenda;
     }
 
-    @Override
-    public void addItem(IntegracaoDocumentDetail docD) {
-	itens.add((EMS2021InputItem) docD);
+    public BigInteger getReparteMinimo() {
+        return reparteMinimo;
     }
 
-    @Override
-    public List<EMS2021InputItem> getItems() {
-	return itens;
-    }
-
-    @Override
-    public boolean sameObject(IntegracaoDocumentMaster<?> docM) {
-	return false;
-    }
-
-    public String getCodigoDistribuidor() {
-        return codigoDistribuidor;
-    }
-
-    public void setCodigoDistribuidor(String codigoDistribuidor) {
-        this.codigoDistribuidor = codigoDistribuidor;
+    public void setReparteMinimo(BigInteger reparteMinimo) {
+        this.reparteMinimo = reparteMinimo;
     }
 
     public String getCesta() {
@@ -88,11 +105,38 @@ public class EMS2021Input extends IntegracaoDocumentMaster<EMS2021InputItem> imp
         this.cesta = cesta;
     }
 
-    public Long getReparteMinimo() {
-        return reparteMinimo;
+    @Override
+    public void addItem(IntegracaoDocumentDetail docD) {
+        itens.add((EMS2021InputItem) docD);
     }
 
-    public void setReparteMinimo(Long reparteMinimo) {
-        this.reparteMinimo = reparteMinimo;
+    @Override
+    public boolean sameObject(IntegracaoDocumentMaster<?> docM) {
+        return false;
     }
-}
+
+    @Override
+    public List<EMS2021InputItem> getItens() {
+        return itens;
+    }
+
+    public void setItens(List<EMS2021InputItem> itens) {
+        this.itens = itens;
+    }
+
+    @Override
+    public String toString() {
+        return "EMS2021Input{" +
+                "codigoDistribuidor=" + codigoDistribuidor +
+                ", codigoPraca=" + codigoPraca +
+                ", codigoProduto='" + codigoProduto + '\'' +
+                ", numeroEdicao=" + numeroEdicao +
+                ", periodo=" + periodo +
+                ", codigoLancamentoEdicao=" + codigoLancamentoEdicao +
+                ", abrangenciaDistribuicao=" + abrangenciaDistribuicao +
+                ", oportunidadeVenda='" + oportunidadeVenda + '\'' +
+                ", reparteMinimo=" + reparteMinimo +
+                ", cesta='" + cesta + '\'' +
+                ", itens=" + itens +
+                '}';
+    }}

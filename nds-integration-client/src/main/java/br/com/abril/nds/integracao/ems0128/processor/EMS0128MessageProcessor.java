@@ -83,7 +83,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
                 if (doc != null && doc.getSituacaoSolicitacao() != null && !doc.getSituacaoSolicitacao().equals("SOLICITADO")) {
 				
 					List<EMS0128InputItem> itemsRemove = new ArrayList<EMS0128InputItem>();
-					for (EMS0128InputItem eitem : doc.getItems()) {
+					for (EMS0128InputItem eitem : doc.getItens()) {
 						
 						MovimentoEstoque movimento = this.recuperaMovimento(eitem.getIdMovimento());
 							
@@ -137,9 +137,9 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 										
 					if(!itemsRemove.isEmpty()) {
 						
-						doc.getItems().removeAll(itemsRemove);
+						doc.getItens().removeAll(itemsRemove);
 						
-						if (doc != null && (doc.getItems() == null || doc.getItems().isEmpty())) {
+						if (doc != null && (doc.getItens() == null || doc.getItens().isEmpty())) {
 							couchDbClient.remove(doc);
 							doc = null;
 						} else {
@@ -148,7 +148,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 
 					}
 					
-					if (doc != null && (doc.getItems() == null || doc.getItems().isEmpty())) {
+					if (doc != null && (doc.getItens() == null || doc.getItens().isEmpty())) {
 						couchDbClient.remove(doc);
 					}
 
@@ -251,7 +251,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 		item.setSituacaoAcerto("SOLICITADO");
 		
-		input.getItems().add(item);
+		input.getItens().add(item);
 		
 		
 	}

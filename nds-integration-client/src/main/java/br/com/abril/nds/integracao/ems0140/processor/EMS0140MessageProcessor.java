@@ -248,7 +248,7 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
     private NotaFiscalEntradaFornecedor populaItemNotaFiscalEntrada(NotaFiscalEntradaFornecedor nfEntrada,
             EMS0140Input input, Message message) {
         
-        List<EMS0140InputItem> items = input.getItems();
+        List<EMS0140InputItem> items = input.getItens();
         
         for (EMS0140InputItem inputItem : items) {
             

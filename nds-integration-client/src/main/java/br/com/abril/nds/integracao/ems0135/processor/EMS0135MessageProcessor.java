@@ -254,7 +254,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
     private NotaFiscalEntradaFornecedor populaItemNotaFiscalEntrada(NotaFiscalEntradaFornecedor nfEntrada,
             EMS0135Input input, Message message) {
         
-        List<EMS0135InputItem> items = input.getItems();
+        List<EMS0135InputItem> items = input.getItens();
         
         for (EMS0135InputItem inputItem : items) {
             
@@ -697,7 +697,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
     
     private void atualizarValoresProdutoEdicao(final EMS0135Input input) {
     	
-    	for (final EMS0135InputItem item : input.getItems()) {
+    	for (final EMS0135InputItem item : input.getItens()) {
     		
     		final ProdutoEdicao pe = this.obterProdutoEdicao(item.getCodigoProduto(), item.getEdicao());
     		

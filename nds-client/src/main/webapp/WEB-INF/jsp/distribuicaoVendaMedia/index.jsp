@@ -734,7 +734,7 @@ function limparLstExcecao1(){
         				${ estrategiaEdicao.periodoEdicao}
         			</td>
         			<td>
-        				${ estrategiaEdicao.produtoEdicao.peso }
+        				${ estrategiaEdicao.peso }
         			</td>
         		</tr>
         	</c:forEach>
