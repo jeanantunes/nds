@@ -752,7 +752,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		if ( cotasChamadao != null &&  cotasChamadao.contains(cota.getId())) {
 		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
 		 
-		BigInteger count = chamadaEncalheCotaRepository.obterListaChamadaEncalheCotaChamadao(cota.getId(),chamadaEncalhe.getProdutoEdicao().getId(),dataOperacao);
+		//BigInteger count = chamadaEncalheCotaRepository.obterListaChamadaEncalheCotaChamadao(cota.getId(),chamadaEncalhe.getProdutoEdicao().getId(),dataOperacao);
+		BigInteger count = BigInteger.valueOf(0);
 		
 		if ( count != null && count.intValue() > 0 ) { 
 			// tem chamadao . nao incluir cec para esta cota
