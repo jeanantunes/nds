@@ -5,6 +5,8 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -147,9 +149,6 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             	
             	if(queryDTO.getEstudoOrigem()!=null && queryDTO.getEstudoOrigem().compareTo(0l) ==1) {
             		edicaoDoEstudoOrigem = analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoOrigem());
-//            		if(edicaoDoEstudoOrigem.size()==6){
-//            			edicaoDoEstudoOrigem.remove(edicaoDoEstudoOrigem.size()-1);
-//            		}
             	}
             	if(edicaoDoEstudoOrigem!=null && edicaoDoEstudoOrigem.size()>0){
             		List<EdicoesProdutosDTO> listConcat = new ArrayList<EdicoesProdutosDTO>();
@@ -249,7 +248,6 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
                 if(idsProdutoEdicao.size() > 0) {
                 	Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas = buscaHistoricoDeVendas(item.getCotaId(), idsProdutoEdicao, cotasComVenda);
-//                	Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas = buscaHistoricoDeVendas(item.getCotaId(), idsProdutoEdicao);
                 	
                 	if((buscaHistoricoDeVendas != null && queryDTO.getEdicoesBase() != null) 
                 			&& buscaHistoricoDeVendas.size() > queryDTO.getEdicoesBase().size()){
@@ -341,17 +339,9 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                                 	
                                 	}
                     				
-//                    				if (ed.getOrdemExibicao() == null) {
-//                    					ed.setOrdemExibicao(ordemExibicaoHelper++);
-//                    				}else{
-//                    					ordemExibicaoHelper++;
-//	                    			}
-                    				
                     				String mapKey = obterMapKey(ed);
                     				
                     				EdicoesProdutosDTO mapElement = edicoesProdutosDTOMap.get(mapKey);
-                    				
-//                    				edicoesProdutosDTOMap.put(ed.getOrdemExibicao(), ed);
                     				
                     				if(mapElement != null){
                     					ed.setOrdemExibicao(mapElement.getOrdemExibicao());
@@ -366,46 +356,25 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                     	
                     }
                 }
-//                
-//                LinkedList<EdicoesProdutosDTO> edicoesCota = new LinkedList<>();
-//                
-//                if(edicoesComVenda.size() < queryDTO.getEdicoesBase().size()){
-//                	if(edicoesComVenda.size() > 0){
-//                		for (EdicoesProdutosDTO edicoeDTO : queryDTO.getEdicoesBase()) {
-//							EdicoesProdutosDTO edicaoBaseCota = null;
-//							
-//							for (EdicoesProdutosDTO edicoesDTO2 : edicoesComVenda) {
-//								if(edicoeDTO.getOrdemExibicao().equals(edicoesDTO2.getOrdemExibicao())){
-//									edicaoBaseCota = edicoesDTO2;
-//								}
-//							}
-//							
-//							if(edicaoBaseCota != null){
-//								edicoesCota.add(edicaoBaseCota);
-//							}else{
-//								edicoeDTO.setReparte(null);
-//								edicoeDTO.setVenda(null);
-//								
-//								edicoesCota.add(edicoeDTO);
-//							}
-//						}
-//                	}
-//                }else{
-//                	edicoesCota.addAll(edicoesProdutosDTOMap.values());
-//                }
-                
-//                item.setEdicoesBase(edicoesCota);
-                
                 
                 Set<String> chaveMaps = edicoesProdutosDTOMap.keySet();
+                List<EdicoesProdutosDTO> edicoesBasesList = new ArrayList<>();
                 
                 for (String key : chaveMaps) {
 					EdicoesProdutosDTO edicaoBaseCota = edicoesProdutosDTOMap.get(key);
 					putMapSomatorioTotaisEdicao(mapTotaisEd, edicaoBaseCota);
 					
+					edicoesBasesList.add(edicaoBaseCota);
 				}
                 
-                item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>(edicoesProdutosDTOMap.values()));
+                Collections.sort(edicoesBasesList, new Comparator<EdicoesProdutosDTO>() {
+                    @Override
+                    public int compare(EdicoesProdutosDTO edicao2, EdicoesProdutosDTO edicao1){
+                        return  edicao2.getOrdemExibicao().compareTo(edicao1.getOrdemExibicao());
+                    }
+                });
+                
+                item.setEdicoesBase(edicoesBasesList);
                 
                 total_somatorioUltimoReparte = somatorioUltimoReparte(total_somatorioUltimoReparte, item);
                 
@@ -416,9 +385,6 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 total_qtdCotas = BigIntegerUtil.soma(total_qtdCotas, BigInteger.ONE);
                 
             }
-            
-            
-            
     		
         } else {
         	final boolean parcialPossuiRedistribuicao = 
@@ -543,14 +509,15 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     		
     		List<EdicoesProdutosDTO> novaOrdenacaoEdicoesBase = new ArrayList<>();
     		
-    		for (EdicoesProdutosDTO edicaoBase : ordenacaoCota) {
-    			if(edicaoBase.getProdutoEdicaoId() == null){
-    				continue;
-    			}
+    		for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
     			
-				if(edicaoBase.isParcial()){
-					for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
-						
+    			for (EdicoesProdutosDTO edicaoBase : ordenacaoCota) {
+    				
+    				if(edicaoBase.getProdutoEdicaoId() == null){
+        				continue;
+        			}
+        			
+    				if(edicaoBase.isParcial()){
 						if(edicaoBase.getProdutoEdicaoId() == null || edicoesProdutosDTO.getProdutoEdicaoId() == null
 								|| edicaoBase.getPeriodo() == null || edicoesProdutosDTO.getPeriodo() == null){
 							continue;
@@ -560,12 +527,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 								&& (edicaoBase.getPeriodo().equals(edicoesProdutosDTO.getPeriodo()))){
 							novaOrdenacaoEdicoesBase.add(edicoesProdutosDTO);
 						}
-					}
-					
-				}else{
-					
-					for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
-						
+    				}else{
+    					
 						if(edicaoBase.getProdutoEdicaoId() == null || edicoesProdutosDTO.getProdutoEdicaoId() == null){
 							continue;
 						}
@@ -573,9 +536,45 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 						if(edicaoBase.getProdutoEdicaoId().equals(edicoesProdutosDTO.getProdutoEdicaoId())){
 							novaOrdenacaoEdicoesBase.add(edicoesProdutosDTO);
 						}
-					}
-				}
-			}
+    				}
+    			}
+    			
+    		}
+    		
+//    		for (EdicoesProdutosDTO edicaoBase : ordenacaoCota) {
+//    			
+//    			if(edicaoBase.getProdutoEdicaoId() == null){
+//    				continue;
+//    			}
+//    			
+//				if(edicaoBase.isParcial()){
+//					for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
+//						
+//						if(edicaoBase.getProdutoEdicaoId() == null || edicoesProdutosDTO.getProdutoEdicaoId() == null
+//								|| edicaoBase.getPeriodo() == null || edicoesProdutosDTO.getPeriodo() == null){
+//							continue;
+//						}
+//						
+//						if((edicaoBase.getProdutoEdicaoId().equals(edicoesProdutosDTO.getProdutoEdicaoId()))
+//								&& (edicaoBase.getPeriodo().equals(edicoesProdutosDTO.getPeriodo()))){
+//							novaOrdenacaoEdicoesBase.add(edicoesProdutosDTO);
+//						}
+//					}
+//					
+//				}else{
+//					
+//					for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
+//						
+//						if(edicaoBase.getProdutoEdicaoId() == null || edicoesProdutosDTO.getProdutoEdicaoId() == null){
+//							continue;
+//						}
+//						
+//						if(edicaoBase.getProdutoEdicaoId().equals(edicoesProdutosDTO.getProdutoEdicaoId())){
+//							novaOrdenacaoEdicoesBase.add(edicoesProdutosDTO);
+//						}
+//					}
+//				}
+//			}
     		 
     		if(novaOrdenacaoEdicoesBase.size() == queryDTO.getEdicoesBase().size()){
     			queryDTO.setEdicoesBase(novaOrdenacaoEdicoesBase);
