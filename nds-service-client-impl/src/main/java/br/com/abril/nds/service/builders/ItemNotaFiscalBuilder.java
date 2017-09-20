@@ -343,7 +343,7 @@ public class ItemNotaFiscalBuilder {
                     }
 
                     if (tributoAliquota.containsKey(cofinsAux)) {
-                        COFINS cofins = new COFINS();
+                        COFINSST cofins = new COFINSST();
                         cofins.setCst("06");
                         cofins.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
                         cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
