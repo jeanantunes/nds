@@ -99,9 +99,9 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 	@Override
 	public Produto obterProdutoPorCodigoAndSegmento(String codigoProduto, String segmentoDescricao) {
 		
-		String hql = "from Produto produto "
+		String hql = "select produto from Produto produto "
 				   + " join produto.tipoSegmentoProduto segmento "
-				   + " where produto.codigo = :codigo or produto.codigo_icd = :codigo "
+				   + " where produto.codigo = :codigo or produto.codigoICD = :codigo "
 				   + " 		 AND segmento.descricao = :segmento ";
 		
 		Query query = super.getSession().createQuery(hql);
