@@ -601,15 +601,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				continue;
 			}
 
-			Integer sequencia = this.chamadaEncalheRepository.obterMaiorSequenciaPorDia(dataRecolhimento);
+			Integer sequencia = this.chamadaEncalheRepository.obterMaiorSequenciaPorDiaSQLNativo(dataRecolhimento);
 
 			List<CotaReparteDTO> cotasReparte = this.movimentoEstoqueCotaRepository.obterReparte(idsLancamento, null);
 
 			List<ChamadaEncalhe> listaChamadaEncalhe = this.chamadaEncalheRepository
 					.obterChamadasEncalheLancamentos(idsLancamento, false);
-			
-
-			
 			
 			for (Long idLancamento : idsLancamento) {
 

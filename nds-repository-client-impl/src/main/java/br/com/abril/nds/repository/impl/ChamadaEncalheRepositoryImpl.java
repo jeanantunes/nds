@@ -1402,4 +1402,25 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		return query.list();
 	}
+	
+	@Override
+	public Integer obterMaiorSequenciaPorDiaSQLNativo(Date dataRecolhimento) {
+		
+		String SQL = " select max(ce.sequencia) from Chamada_Encalhe as ce "
+			+ " where ce.data_Recolhimento = :dataRecolhimento ";
+				
+		Query query = super.getSession().createSQLQuery(SQL);
+		
+		query.setParameter("dataRecolhimento", dataRecolhimento);
+		
+		Integer maiorSequencia = (Integer) query.uniqueResult();
+		
+		if (maiorSequencia == null) {
+			
+			maiorSequencia = 0;
+		}
+		
+		return maiorSequencia;
+	}
+	
 }

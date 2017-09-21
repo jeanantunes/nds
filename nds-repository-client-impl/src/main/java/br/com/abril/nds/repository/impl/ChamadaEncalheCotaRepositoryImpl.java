@@ -1028,5 +1028,5 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 		return (List<ProdutoEdicaoECota>) query.list();
 
 	}
-
+	
 }
