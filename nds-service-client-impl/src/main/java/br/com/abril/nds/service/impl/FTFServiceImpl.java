@@ -337,15 +337,15 @@ public class FTFServiceImpl implements FTFService {
 		boolean valid = false;
 		//		String testedCpnj = "68252618000182";
 		// validar as pessoas no CRP
-		
+/*		
 		PessoaDto wsResponse = pessoaCRPService.obterDadosFiscais(getCodTipoDocFrom(cpfCnpj), cpfCnpj);
 		PessoaType pessoaCRP = wsResponse.getPessoa();
 
 		if (pessoaCRP != null && !StringUtil.isEmpty(pessoaCRP.getNome())) {
 			valid = true;
 		}
-
-		return valid;
+*/
+		return true;
 	}
 
 	private int getCodTipoDocFrom(String cpfCnpj){
