@@ -342,6 +342,7 @@ public class ItemNotaFiscalBuilder {
                         detalheNotaFiscal.getImpostos().setIcms(icms);
                     }
 
+                    /*
                     if (tributoAliquota.containsKey(cofinsAux)) {
                         COFINSST cofins = new COFINSST();
                         cofins.setCst("06");
@@ -351,6 +352,7 @@ public class ItemNotaFiscalBuilder {
                         cofins.setValor(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
                         detalheNotaFiscal.getImpostos().setCofins(new CofinsWrapper());
                     }
+                    */
                 }
 
             }
