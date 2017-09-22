@@ -698,13 +698,20 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					if (!chamadasEncalheProdutoEdicao.contains(chamadaEncalhe)) {
 
 					}
+					
+					if(listaChamadao==null || listaChamadao.isEmpty()){
+						this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe,
+								lancamento.getDataLancamentoDistribuidor(), cotaReparte.isCotaContribuinteExigeNF(),
+								usuario, cotaReparte.isParcialFinal());
+					}else{
 
-					for (ProdutoEdicaoECota chamadao : listaChamadao) {
-						if (!chamadao.getCotaID().equals(cota.getId())
-								&& !chamadao.getProdutoEdicaoID().equals(lancamento.getProdutoEdicao().getId())) {
-							this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe,
-									lancamento.getDataLancamentoDistribuidor(), cotaReparte.isCotaContribuinteExigeNF(),
-									usuario, cotaReparte.isParcialFinal());
+						for (ProdutoEdicaoECota chamadao : listaChamadao) {
+							if (!chamadao.getCotaID().equals(cota.getId())
+									&& !chamadao.getProdutoEdicaoID().equals(lancamento.getProdutoEdicao().getId())) {
+								this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe,
+										lancamento.getDataLancamentoDistribuidor(), cotaReparte.isCotaContribuinteExigeNF(),
+										usuario, cotaReparte.isParcialFinal());
+							}
 						}
 					}
 
