@@ -351,10 +351,6 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                     					ed.setOrdemExibicao(mapElement.getOrdemExibicao());
                     				}
                     				
-                    				if(ed.getOrdemExibicao() == null){
-                    					System.out.println(" ordem nulll");
-                    				}
-                    				
                     				edicoesProdutosDTOMap.put(mapKey, ed);
                     				
 //                    				putMapSomatorioTotaisEdicao(mapTotaisEd, ed);
