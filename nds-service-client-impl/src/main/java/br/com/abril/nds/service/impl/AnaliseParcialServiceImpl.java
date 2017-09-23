@@ -285,9 +285,13 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                     		
                     	for (EdicoesProdutosDTO ed : edicoesComVenda) {
                     			if (ed.getProdutoEdicaoId().equals(edicao.getProdutoEdicaoId())) {
+                    				
+                    				if(edicao.getOrdemExibicao() != null){
+                    					ed.setOrdemExibicao(edicao.getOrdemExibicao());
+                    				}
+                    				
                     				if(!edicao.isParcial()){
 	                    				BeanUtils.copyProperties(edicao, ed, new String[] {"reparte", "venda"});
-	                    				ed.setOrdemExibicao(edicao.getOrdemExibicao());
                     				}else{
                     					
                     					if(edicao.getPeriodo() != null && !edicao.getPeriodo().isEmpty()){
@@ -345,6 +349,10 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                     				
                     				if(mapElement != null){
                     					ed.setOrdemExibicao(mapElement.getOrdemExibicao());
+                    				}
+                    				
+                    				if(ed.getOrdemExibicao() == null){
+                    					System.out.println(" ordem nulll");
                     				}
                     				
                     				edicoesProdutosDTOMap.put(mapKey, ed);
