@@ -4,10 +4,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.chamadaencalhe.ChamadaEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
+import br.com.abril.nds.model.ProdutoEdicaoECota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -197,5 +199,8 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	BigInteger obterListaChamadaEncalheCotaChamadao(Long idCota, Long idProdutoEdicao,Date dataOperacao) ;
 	 
 	 public List<Long> obterListaCotaChamadao( Date dataOperacao) ;
+
+
+	List<ProdutoEdicaoECota> obterListaChamadaoByListLancamento(Set<Long> idsLancamento, Date dataOperacao);
 	
 }

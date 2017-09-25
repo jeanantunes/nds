@@ -13,7 +13,7 @@
 	<context:component-scan base-package="br.com.abril.nds" />
 
 	<util:properties id="queries" location="classpath:/couchdb.properties" />
-	
+
 	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
 
 	<bean id="dataSource"
@@ -22,7 +22,7 @@
 		<property name="url" value="jdbc:mysql://localhost:3306/nds-client" />
 		<property name="username" value="root" />
 		<property name="password" value="root" />
-    </bean> 
+    </bean>
 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -42,7 +42,7 @@
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-	
+
 	<bean id="couchDbProperties" class="br.com.abril.nds.integracao.couchdb.CouchDbProperties">
 		<property name="protocol" value="http"/>
 		<property name="host" value="localhost"/>
@@ -52,7 +52,7 @@
 		<property name="bachSize" value="500"/>
 	</bean>
 
-		
+
 	<!-- 
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.SingleConnectionDataSource">

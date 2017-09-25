@@ -543,15 +543,15 @@ public class MixCotaProdutoController extends BaseController {
 		
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
 			
-			Produto prod;
+//			Produto prod;
+//			
+//			if(mixCotaDTO.getSegmento() != null && !mixCotaDTO.getSegmento().isEmpty()){
+//				prod = produtoService.obterProdutoPorCodigoAndSegmento(mixCotaDTO.getCodigoProduto(), mixCotaDTO.getSegmento());
+//			}else{
+//				prod = produtoService.obterProdutoPorCodigo(mixCotaDTO.getCodigoProduto());
+//			}
 			
-			if(mixCotaDTO.getSegmento() != null && !mixCotaDTO.getSegmento().isEmpty()){
-				prod = produtoService.obterProdutoPorCodigoAndSegmento(mixCotaDTO.getCodigoProduto(), mixCotaDTO.getSegmento());
-			}else{
-				prod = produtoService.obterProdutoPorCodigo(mixCotaDTO.getCodigoProduto());
-			}
-			
-//			Produto prod = produtoService.obterProdutoPorCodigo(mixCotaDTO.getCodigoProduto());
+			Produto prod = produtoService.obterProdutoPorCodigo(mixCotaDTO.getCodigoProduto());
 			
 			if(prod == null) {
 				mixCotaDTO.setError(String.format("Código Prodin/ICD inválido: %s.", mixCotaDTO.getCodigoProduto()));

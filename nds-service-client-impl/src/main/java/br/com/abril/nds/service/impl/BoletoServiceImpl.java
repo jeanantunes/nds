@@ -3038,7 +3038,7 @@ public class BoletoServiceImpl implements BoletoService {
 		buffer.append("Rota : ").append(roteirizacao.getDescricaoRota());
 		return buffer.toString();
     }
-
+    
 	@Override
 	@Transactional
 	public byte[] gerarArquivo(final FiltroDividaGeradaDTO filtro) throws Exception {

@@ -227,7 +227,8 @@ public class CotaDAO {
 		params.put("numero_edicao", estudo.getProdutoEdicaoEstudo().getNumeroEdicao());
 		
 		String maxDataRanking = (String)jdbcTemplate.queryForObject(
-				"SELECT  DATE_FORMAT(max(data_geracao_rank),'%d/%m/%Y') FROM ranking_segmento", new HashMap(), String.class);
+					"SELECT  DATE_FORMAT(max(data_geracao_rank),'%d/%m/%Y') FROM ranking_segmento", 
+				new HashMap(), String.class);
 		
 		
 		params.put("maxDataRanking", maxDataRanking);
@@ -388,7 +389,7 @@ public class CotaDAO {
 				cota.setId(rs.getLong("cota_id"));
 				cota.setEdicoesRecebidas(new ArrayList<ProdutoEdicaoEstudo>());
 				ProdutoEdicaoEstudo pe = new ProdutoEdicaoEstudo();
-				pe.setVenda(rs.getBigDecimal("venda"));
+				pe.setVenda(rs.getBigDecimal("venda") != null ? rs.getBigDecimal("venda") : BigDecimal.ZERO);
 				pe.setReparte(rs.getBigDecimal("reparte"));
 				// copia dos atributos da edicao base
 				pe.setId(edicao.getId());

@@ -15,16 +15,7 @@ var cadastroTipoNotaController = $.extend(true, {
 	},
 	initGrid: function() {
 		$(".tiposNotasGrid", this.workspace).flexigrid({
-			preProcess: function(resultado) {
-				if (resultado.mensagens) {
-					exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
-					$(".grids", this.worspace).hide();
-					return resultado;
-				}
-				$(".grids", this.worspace).show();
-				return resultado;
-			  },
-		
+			preProcess: cadastroTipoNotaController.executarPreProcessamentoTiposNotasGridGrid, 
 			dataType : 'json',
 			colModel : [ {
 				display : 'Operacao',
@@ -41,7 +32,7 @@ var cadastroTipoNotaController = $.extend(true, {
 			},{
 				display : 'CFOP Dentro UF',
 				name : 'cfopEstado',
-				width : 80,
+				width : 85,
 				sortable : true,
 				align : 'center'
 			},{
@@ -49,6 +40,26 @@ var cadastroTipoNotaController = $.extend(true, {
 				name : 'cfopOutrosEstados',
 				width : 80,
 				sortable : true,
+				align : 'center'
+			},{
+				display : 'Nota',
+				name : 'numeroNotaFiscal',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Serie',
+				name : 'serieNotaFiscal',
+				width : 50,
+				sortable : true,
+				align : 'center',
+				edittype: 'text',
+				editable: true
+			},{
+				display : 'Gravar',
+				name : 'gravar',
+				width : 40,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "tipoAtividade",
@@ -67,10 +78,49 @@ var cadastroTipoNotaController = $.extend(true, {
 			$(".grids", this.worspace).show();
 		});
 	},
-	init : function() {
+	init : function(path) {
+		this.contextPath = path;
 		this.initGrid();
 		this.bindButtons();
 		definirAcaoPesquisaTeclaEnter(this.worspace);
-	}		
+	},
+	executarPreProcessamentoTiposNotasGridGrid : function(resultado) {
+		var operacao = $("#operacaoID", this.worspace).val();
+		var tipoNota = $("#tipoNota", this.workspace).val();
+		$.each(resultado.rows, function(index, row) {
+			row.cell.numeroNotaFiscal="<input type=\"text\" name=\"numeroNotaFiscal\" id=\"numeroNotaFiscal"+row.cell.id+"\" class=\"campoDePesquisa\"  value=\""+row.cell.numeroNotaFiscal+"\"/></td>";
+			row.cell.serieNotaFiscal="<input type=\"text\" name=\"serieNotaFiscal\" id=\"serieNotaFiscal"+row.cell.id+"\" class=\"campoDePesquisa\"  value=\""+row.cell.serieNotaFiscal+"\"/></td>";
+			row.cell.gravar = "<a href='javascript:;' onclick='cadastroTipoNotaController.gravarNota(\"" + row.cell.id + "\", \"" + operacao + "\", \"" + tipoNota + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/ico_salvar.gif /></href>";
+		});
+		return resultado
+	},
+	
+	gravarNota : function(id, operacao, tipoNota) {
+			$( "#dialog-gravarNota" ).dialog({
+				resizable: false,
+				height:'auto',
+				width:400,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$( this ).dialog( "close" );
+						
+						var data = [{name: 'serieNotaFiscal', value: $("#serieNotaFiscal"+id).val()},{name: 'numeroNotaFiscal', value: $("#numeroNotaFiscal"+id).val()}, {name:'id', value: id},
+							{name:'rp', value:15},{name:'page', value:1},
+							{name:'sortname', value:'tipoAtividade'},{name:'sortorder', value:'asc'},
+							{name:'operacao', value:operacao},{name:'tipNota', value:tipoNota}];
+						
+						$.postJSON(contextPath + "/administracao/naturezaOperacao/gravarNota",
+								   data);
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+			
+		}
+	
+	
 }, BaseController);
 //@sourceURL=naturezaOperacao.js

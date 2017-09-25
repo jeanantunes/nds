@@ -86,4 +86,5 @@ public interface NaturezaOperacaoService {
 
 	NaturezaOperacao obterNaturezaOperacaoPor(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario, TipoEmitente tipoEmitente, TipoOperacao tipoOperacao, TipoMovimento tipoMovimento);
 	
+	void atualizarSerieENumeroNotaFiscal(Long serieNotaFiscal, Long numeroNotaFiscal, Long id);
 }

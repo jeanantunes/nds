@@ -85,15 +85,20 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
     }
     
     @Override
-    public void processMessage(Message message) {
+    public void processMessage(Message message) 
+    {
+    	
+        Integer difChave = 1;
         
         EMS0135Input input = (EMS0135Input) message.getBody();
         
         NotaFiscalEntradaFornecedor notafiscalEntrada = null;
         
-        if (input.getChaveAcessoNF() != null && !input.getChaveAcessoNF().isEmpty()) {
+        if (input.getChaveAcessoNF() != null && !input.getChaveAcessoNF().isEmpty()) 
+        {
             
-            if (input.getNumeroNotaEnvio() == null || input.getNumeroNotaEnvio().isEmpty()) {
+            if (input.getNumeroNotaEnvio() == null || input.getNumeroNotaEnvio().isEmpty()) 
+            {
                 this.ndsiLoggerFactory.getLogger().logInfo(
                         message,
                         EventoExecucaoEnum.RELACIONAMENTO,
@@ -105,9 +110,21 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
             notafiscalEntrada = obterNotaFiscalPorNumeroNotaEnvio(input.getNumeroNotaEnvio());
             
             // Caso encontre a nota fiscal de entrada, atualiza com a nova chave
-            // de acesso
-            if (notafiscalEntrada != null) {
-                
+            // de acesso SE FOR NOTA COM CHAVE DE ACESSO NULA OU TIVER MESMO NUMERO CHAVE DE ACESSO
+            if (notafiscalEntrada != null) 
+            {
+            	String chaveAcessoAnt = notafiscalEntrada.getChaveAcesso();
+            	// nao pode mais atualizar caso já existe e seja difente a chave de acesso - chamado 5131045
+            	if(chaveAcessoAnt!=null && !chaveAcessoAnt.trim().equals(input.getChaveAcessoNF().trim()))
+            	{
+            	difChave = 0;	// chave de acesso diferente
+            	}
+            }
+            
+            
+            if (notafiscalEntrada != null && difChave == 1) 
+            {
+               
                 String chaveAcessoAntiga = notafiscalEntrada.getChaveAcesso();
                 
                 notafiscalEntrada.setChaveAcesso(input.getChaveAcessoNF());
@@ -118,7 +135,8 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 
                 this.atualizarValoresProdutoEdicao(input);
                 
-                if(chaveAcessoAntiga==null){
+                if(chaveAcessoAntiga==null)
+                {
             
                 	this.ndsiLoggerFactory.getLogger().logInfo(
                             message,
@@ -127,22 +145,24 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                                     + " Atualizada com chave de acesso NFE de " + " Nula " + " para "
                                     + input.getChaveAcessoNF() + " com sucesso!"));
                 	
-                }else if(chaveAcessoAntiga!=null && !chaveAcessoAntiga.trim().equals(input.getChaveAcessoNF().trim())){
-                
+                }/*else if(chaveAcessoAntiga!=null && !chaveAcessoAntiga.trim().equals(input.getChaveAcessoNF().trim()))
+                {
+                // nao pode mais atualizar caso já existe e nao seja nula a Chace de acesso - chamado 5131045
                 	this.ndsiLoggerFactory.getLogger().logInfo(
                         message,
                         EventoExecucaoEnum.INF_DADO_ALTERADO,
                         String.format("Nota Fiscal de Entrada " + input.getNumeroNotaEnvio()+"/"+input.getNotaFiscal()+"/"+input.getSerieNotaFiscal()
                                 + " Atualizada com chave de acesso NFE de " + chaveAcessoAntiga.trim() + " para "
                                 + input.getChaveAcessoNF() + " com sucesso!"));
-                } else {
+                } */ else 
+                {
+                	// pode alterar, mesma chave de acesso
                 	this.ndsiLoggerFactory.getLogger().logInfo(
                         message,
                         EventoExecucaoEnum.INF_DADO_ALTERADO,
                         String.format("Nota Fiscal de Entrada " + input.getNumeroNotaEnvio()
                                 + " Atualizada com Nota Fiscal " + input.getNotaFiscal() + " Série "+input.getSerieNotaFiscal()));
-                }
-                
+                }     
                 return;
             }
         }
@@ -150,15 +170,16 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         notafiscalEntrada = obterNotaFiscal(input.getNotaFiscal(), input.getSerieNotaFiscal(), input.getCnpjEmissor(),
                 input.getNumeroNotaEnvio());
         
-        if (notafiscalEntrada == null) {
-            
+        if (notafiscalEntrada == null) 
+        {
             notafiscalEntrada = new NotaFiscalEntradaFornecedor();
             
             notafiscalEntrada = populaNotaFiscalEntrada(notafiscalEntrada, input, message);
             
             notafiscalEntrada = populaItemNotaFiscalEntrada(notafiscalEntrada, input, message);
             
-            if (null != notafiscalEntrada) {
+            if (null != notafiscalEntrada) 
+            {
                 
                 notafiscalEntrada = calcularValores(notafiscalEntrada);
                 
@@ -170,7 +191,9 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                         String.format("Nota Fiscal de Entrada %1$s"
                         		    + " Inserida com chave de acesso NFE de " + input.getChaveAcessoNF().trim(), input.getNotaFiscal()));
                 
-            } else {
+            }
+            else 
+            {
                 
                 String msg = "Nota fiscal com produtos não encontrados no sistema";
                 
@@ -183,8 +206,9 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 return;
             }
             
-        } else {
-            
+        } 
+        else 
+        {            
             this.ndsiLoggerFactory.getLogger().logWarning(
                     message,
                     EventoExecucaoEnum.REGISTRO_JA_EXISTENTE,
@@ -586,10 +610,10 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         PessoaJuridica emitente = this.obterPessoaJuridica(cnpjEmissor);
         
         hql.append("from NotaFiscalEntradaFornecedor nf ");
-        hql.append("where nf.emitente = :emitente ");
+        hql.append("where nf.emitente = :emitente and data_emissao > subdate(curdate(),400) ");
         
         if (existeNotaFiscal) {
-            hql.append("and nf.numero = :numero and nf.serie = :serie");
+            hql.append("and nf.numero = :numero and nf.serie = :serie ");
         } else {
             hql.append("and nf.numeroNotaEnvio = :numeroNotaEnvio ");
         }
@@ -624,10 +648,12 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
     private NotaFiscalEntradaFornecedor obterNotaFiscalPorNumeroNotaEnvio(String numeroNotaEnvio) {
         StringBuilder hql = new StringBuilder();
         
-        hql.append("from NotaFiscalEntradaFornecedor nf ").append("where nf.numeroNotaEnvio = :numeroNotaEnvio ");
+        //hql.append("from NotaFiscalEntradaFornecedor nf ").append("where nf.numeroNotaEnvio = :numeroNotaEnvio ");
+        hql.append("from NotaFiscalEntradaFornecedor nf ").append("where nf.numeroNotaEnvio = :numeroNotaEnvio and data_emissao > subdate(curdate(),400) ");
         
         Query query = super.getSession().createQuery(hql.toString());
         query.setParameter("numeroNotaEnvio", Long.parseLong(numeroNotaEnvio));
+        // isso tem que ser alterado, pode retornar mais de uma nota - chamado 5131045
         return (NotaFiscalEntradaFornecedor) query.uniqueResult();
         
     }
