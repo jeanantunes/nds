@@ -683,13 +683,13 @@ public class ImpressaoBoletosController extends BaseController {
 				return;
 			} else {
 				
+				bancoService.atualizarSequencialArquivoCobranca(filtro.getIdBanco());
+				
 				this.httpResponse.setContentType("application/txt");
 				
 				this.httpResponse.setHeader("Content-Disposition", "attachment; filename=CR"+DateUtil.formatarData(new Date(),"ddMMyy") + fileType.getExtension());
 				
-				OutputStream output = this.httpResponse.getOutputStream();
-				
-				output.write(arquivo);
+				this.httpResponse.getOutputStream().write(arquivo);
 				
 				httpResponse.getOutputStream().close();
 				

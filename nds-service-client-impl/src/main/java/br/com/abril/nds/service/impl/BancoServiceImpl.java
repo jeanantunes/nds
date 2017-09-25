@@ -128,7 +128,7 @@ public class BancoServiceImpl implements BancoService {
 			bancoVO.setInstrucoes2(banco.getInstrucoes2());
 			bancoVO.setInstrucoes3(banco.getInstrucoes3());
 			bancoVO.setInstrucoes4(banco.getInstrucoes4());
-			bancoVO.setConvenio(banco.getConvenio());
+			bancoVO.setCodigoEmpresa(banco.getCodigoEmpresa());
 			bancoVO.setExibirValorMonetario(banco.isExibirValorMonetario());
 		}
 
@@ -291,6 +291,12 @@ public class BancoServiceImpl implements BancoService {
 			comboBancos.add(new ItemDTO<Integer,String>(itemBanco.getId().intValue(), descricaoBanco));
 		}
 		return comboBancos;
+	}
+
+	@Override
+	public void atualizarSequencialArquivoCobranca(Long bancoID) {
+		bancoRepository.atualizarSequencialArquivoCobranca(bancoID);
+		
 	}
 
 }

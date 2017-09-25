@@ -72,14 +72,27 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         
         sql.append("     cast(sum( case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0) else if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, - mecReparte.QTDE, 0) end ) - ( ");
         sql.append("        select sum(mecEncalhe.qtde) ");
-        sql.append("        from lancamento lanc ");
-        sql.append("        LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID ");
-        sql.append("        LEFT JOIN chamada_encalhe ce on ce.id = cel.CHAMADA_ENCALHE_ID ");
-        sql.append("        LEFT JOIN chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID ");
-        sql.append("        LEFT JOIN conferencia_encalhe confEnc on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID ");
-        sql.append("        LEFT JOIN movimento_estoque_cota mecEncalhe on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
-        sql.append("        WHERE lanc.id = l.id ");
-        sql.append("     ) as unsigned int) ");
+        sql.append("        from ");
+        sql.append("        	lancamento lanc  ");
+        sql.append("        	left join movimento_estoque_cota mecEncalhe ");
+        sql.append("        		on mecEncalhe.lancamento_id = lanc.id ");
+        sql.append("        	left join cota cota ");
+        sql.append("        		on cota.id = mecEncalhe.cota_id ");
+        sql.append("        	join tipo_movimento tm ");
+        sql.append("        		on mecEncalhe.tipo_movimento_id = tm.id ");
+        sql.append("        where ");
+        sql.append("        	lanc.id = l.id ");
+        sql.append("        	and tm.tipo_movimento_encalhe is true ");
+//        sql.append("        select sum(mecEncalhe.qtde) ");
+//        sql.append("        from lancamento lanc ");
+//        sql.append("        LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID ");
+//        sql.append("        LEFT JOIN chamada_encalhe ce on ce.id = cel.CHAMADA_ENCALHE_ID ");
+//        sql.append("        LEFT JOIN chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID ");
+//        sql.append("        LEFT JOIN conferencia_encalhe confEnc on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID ");
+//        sql.append("        LEFT JOIN movimento_estoque_cota mecEncalhe on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
+//        sql.append("        WHERE lanc.id = l.id ");
+        sql.append("     ) ");
+        sql.append("     as unsigned int) ");
         
         sql.append(" else null end as venda ");
 		
@@ -215,15 +228,30 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("     case when l.STATUS IN (:statusLancFechadoRecolhido) then ");
 		
 		sql.append("     cast(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0)) - COALESCE(( ");
+		
 		sql.append("        select sum(mecEncalhe.qtde) ");
-		sql.append("        from lancamento lanc ");
-		sql.append("        LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID ");
-		sql.append("        LEFT JOIN chamada_encalhe ce on ce.id = cel.CHAMADA_ENCALHE_ID ");
-		sql.append("        LEFT JOIN chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID ");
-		sql.append("        LEFT JOIN conferencia_encalhe confEnc on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID ");
-		sql.append("        straight_join movimento_estoque_cota mecEncalhe on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
-		sql.append("        WHERE lanc.id = l.id ");
-		sql.append("     ),0) as unsigned int) ");
+        sql.append("        from ");
+        sql.append("        	lancamento lanc  ");
+        sql.append("        	left join movimento_estoque_cota mecEncalhe ");
+        sql.append("        		on mecEncalhe.lancamento_id = lanc.id ");
+        sql.append("        	left join cota cota ");
+        sql.append("        		on cota.id = mecEncalhe.cota_id ");
+        sql.append("        	join tipo_movimento tm ");
+        sql.append("        		on mecEncalhe.tipo_movimento_id = tm.id ");
+        sql.append("        where ");
+        sql.append("        	lanc.id = l.id ");
+        sql.append("        	and tm.tipo_movimento_encalhe is true ");
+		
+//		sql.append("        select sum(mecEncalhe.qtde) ");
+//		sql.append("        from lancamento lanc ");
+//		sql.append("        LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID ");
+//		sql.append("        LEFT JOIN chamada_encalhe ce on ce.id = cel.CHAMADA_ENCALHE_ID ");
+//		sql.append("        LEFT JOIN chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID ");
+//		sql.append("        LEFT JOIN conferencia_encalhe confEnc on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID ");
+//		sql.append("        straight_join movimento_estoque_cota mecEncalhe on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
+//		sql.append("        WHERE lanc.id = l.id ");
+		sql.append("     ) ");
+		sql.append("     ,0) as unsigned int) ");
 		
 		sql.append(" else CAST(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA',mecReparte.QTDE,0)) AS UNSIGNED INT) ");
 		sql.append(" end as venda ");

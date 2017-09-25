@@ -56,5 +56,8 @@ public interface NaturezaOperacaoRepository extends Repository<NaturezaOperacao,
 	List<NaturezaOperacao> obterNaturezaOperacaoAtividadeDestinatarioEmitente(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario, TipoEmitente tipoEmitente, TipoOperacao tipoOperacao);
 
 	NaturezaOperacao obterNaturezaOperacaoPor(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario, TipoEmitente tipoEmitente, TipoOperacao tipoOperacao, TipoMovimento tipoMovimento);
+	
+	void atualizarSerieENumeroNotaFiscal(Long serieNotaFiscal, Long numeroNotaFiscal, Long id);	
+	
 
 }

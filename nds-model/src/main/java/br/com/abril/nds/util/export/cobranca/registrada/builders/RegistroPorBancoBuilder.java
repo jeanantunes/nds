@@ -110,7 +110,7 @@ public class RegistroPorBancoBuilder implements Serializable {
 		registro00.setIdentificacaoExtenso("REMESSA");
 		registro00.setCodigoServico("01");
 		registro00.setLiteralServicos("COBRANCA");
-		registro00.setCodigoEmpresa("4865858");
+		registro00.setCodigoEmpresa(banco.getCodigoEmpresa());
 		String nomeCliente = obterNomeCliente(pessoaCedente);
 		registro00.setNomeEmpresa((TirarAcento.removerAcentuacao(nomeCliente)));
 		registro00.setNumeroBanco(banco.getNumeroBanco());
@@ -118,7 +118,7 @@ public class RegistroPorBancoBuilder implements Serializable {
 		registro00.setDataGravacaoArquivo(setarDataFomatada());
 		registro00.setFiller(" ");
 		registro00.setIdentificacaoSistema("MX");
-		registro00.setSequencialHeader("01");
+		registro00.setSequencialHeader(banco.getSequencialArquivoCobranca()+1);
 		registro00.setFiller2(" ");
 		registro00.setSequencial("01");
 		

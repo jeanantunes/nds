@@ -10,6 +10,8 @@ public class RegistroTipoNotaFiscalVO implements Serializable {
 
 	private static final long serialVersionUID = -2039605389828028947L;
 	
+	private Long id;
+	
 	@Export(label="Operação", exhibitionOrder= 1)
 	private String tipoAtividade;
 	
@@ -24,6 +26,12 @@ public class RegistroTipoNotaFiscalVO implements Serializable {
 	
 	@Export(label = "CFOP Fora UF", exhibitionOrder = 5)
 	private String cfopOutrosEstados;
+	
+	@Export(label = "Nota", exhibitionOrder = 6)
+	private Long numeroNotaFiscal;
+	
+	@Export(label = "Serie", exhibitionOrder = 7)
+	private Long serieNotaFiscal;
 
 	public String getNopDescricao() {
 		return nopDescricao;
@@ -76,7 +84,29 @@ public class RegistroTipoNotaFiscalVO implements Serializable {
 	public void setProcesso(String processo) {
 		this.processo = processo;
 	}
-	
-	
+
+	public Long getNumeroNotaFiscal() {
+		return numeroNotaFiscal;
+	}
+
+	public void setNumeroNotaFiscal(Long numeroNotaFiscal) {
+		this.numeroNotaFiscal = numeroNotaFiscal;
+	}
+
+	public Long getSerieNotaFiscal() {
+		return serieNotaFiscal;
+	}
+
+	public void setSerieNotaFiscal(Long serieNotaFiscal) {
+		this.serieNotaFiscal = serieNotaFiscal;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 }
