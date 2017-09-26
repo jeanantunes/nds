@@ -99,7 +99,9 @@ public class NotaFiscalValoresCalculadosBuilder {
         for (DetalheNotaFiscal dnf : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
             if (dnf.getImpostos().getCofins() != null) {
                 valorCofins = BigDecimal.ZERO;
-            } else {
+            } else if (dnf.getImpostos().getCofins() == null){
+                valorCofins = BigDecimal.ZERO;
+            }else {
                 valorCofins = valorCofins.add(NFeCalculatorImpl.calculate(dnf.getImpostos().getCofins().getCofins()));
             }
             if (dnf.getImpostos().getCofinsOutr() != null) {
