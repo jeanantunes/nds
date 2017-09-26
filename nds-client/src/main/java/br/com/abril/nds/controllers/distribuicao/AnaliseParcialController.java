@@ -422,6 +422,8 @@ public class AnaliseParcialController extends BaseController {
 			if(edicaoBaseEstudoDTOs.size() > 0){
 				List<EdicoesProdutosDTO> bases = new ArrayList<>();
 				
+				int i = 0;
+				
 				for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicaoBaseEstudoDTOs) {
 					EdicoesProdutosDTO base = new EdicoesProdutosDTO();
 					
@@ -431,8 +433,10 @@ public class AnaliseParcialController extends BaseController {
 					base.setParcial(edicaoBaseEstudoDTO.isParcial());
 					base.setPeriodo(edicaoBaseEstudoDTO.getPeriodoParcial() != null ? edicaoBaseEstudoDTO.getPeriodoParcial().toString() : null);
 					base.setProdutoEdicaoId(edicaoBaseEstudoDTO.getIdProdutoEdicao());
+					base.setOrdemExibicao(i);
 					
 					bases.add(base);
+					i++;
 				}
 				
 				return bases;

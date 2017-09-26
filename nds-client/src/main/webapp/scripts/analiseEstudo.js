@@ -148,9 +148,13 @@ var analiseEstudoController = $.extend(true, {
     },
 
     redirectToTelaAnalise : function(numeroEstudo, event){
-
-    	var modoAnalise =  $(event.target).val().toUpperCase() != undefined ? $(event.target).val().toUpperCase() : 'NORMAL'; 
-		
+    	
+    	var modoAnalise =  $(event.target).val().toUpperCase() != undefined ? $(event.target).val().toUpperCase() : 'NORMAL';
+    	
+    	if(modoAnalise == "SELECIONE..."){
+    		return;
+    	}
+    	
 		var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + numeroEstudo + '&modoAnalise='+ modoAnalise;
 		
 		var abaAberta = false;

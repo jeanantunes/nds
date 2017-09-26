@@ -142,6 +142,18 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     			|| queryDTO.isParcialComEdicaoBaseNormal()) {
 	    	
 	    	Map<String, List<EdicoesProdutosDTO>> mapHistoricoCotasEdicoesParciais = new HashMap<>();
+	    	
+	    	// Map Order AUX
+	    	Map<String, Integer> mapOrdemAux = new HashMap<>();
+	    	
+	    	List<EdicoesProdutosDTO> edicoesBase = queryDTO.getEdicoesBase();
+	    	
+	    	for (EdicoesProdutosDTO edicoesProdutosDTO : edicoesBase) {
+	    		String mapKey = obterMapKey(edicoesProdutosDTO);
+	    		
+	    		mapOrdemAux.put(mapKey, edicoesProdutosDTO.getOrdemExibicao());
+	    	}
+	    	// DONE!
         	
             if (queryDTO.getEdicoesBase() == null) {
             	List<EdicoesProdutosDTO> edicoesBaseList = analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoId());
@@ -296,6 +308,11 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                     					
                     					if(edicao.getPeriodo() != null && !edicao.getPeriodo().isEmpty()){
                     						
+                    						if(ed.getPeriodo() != null && edicao.getPeriodo() != null
+            										&& !ed.getPeriodo().equalsIgnoreCase(edicao.getPeriodo())){
+                    							continue;
+                    						}
+                    						
                     						String mapKey = obterMapKey(edicao);
                     						
                     						List<EdicoesProdutosDTO> listCotasVendas = mapHistoricoCotasEdicoesParciais.get(mapKey);
@@ -325,6 +342,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                     									ed.setReparte(reparte);
                     									ed.setVenda(venda);
                     									ed.setEdicaoAberta(edicoesProdutosDTO.isEdicaoAberta());
+                    									ed.setParcial(true);
                     									
                     									if(edicoesProdutosDTO.getDataLancamento() != null){ 
                 	                    					ed.setDataLancamento(edicoesProdutosDTO.getDataLancamento());
@@ -343,17 +361,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                                 	
                                 	}
                     				
-                    				String mapKey = obterMapKey(ed);
-                    				
-                    				EdicoesProdutosDTO mapElement = edicoesProdutosDTOMap.get(mapKey);
-                    				
-                    				if(mapElement != null){
-                    					ed.setOrdemExibicao(mapElement.getOrdemExibicao());
-                    				}
-                    				
-                    				if(ed.getOrdemExibicao() == null){
-                    					System.out.println(" ordem nulll");
-                    				}
+                    				String mapKey = obterMapKey(ed); 
                     				
                     				edicoesProdutosDTOMap.put(mapKey, ed);
                     				
@@ -371,6 +379,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 for (String key : chaveMaps) {
 					EdicoesProdutosDTO edicaoBaseCota = edicoesProdutosDTOMap.get(key);
 					putMapSomatorioTotaisEdicao(mapTotaisEd, edicaoBaseCota);
+					
+					edicaoBaseCota.setOrdemExibicao(mapOrdemAux.get(key) != null ? mapOrdemAux.get(key) : 9); 
 					
 					edicoesBasesList.add(edicaoBaseCota);
 				}
