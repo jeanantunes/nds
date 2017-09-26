@@ -101,7 +101,7 @@ public class EMS3100MessageProcessor extends AbstractRepository implements Messa
 	/**
 	 * Recupera distribuidores a serem processados.
 	 */
-	private List<String> getDistribuidores(String diretorio, Long codigoDistribuidor) {
+	protected List<String> getDistribuidores(String diretorio, Long codigoDistribuidor) {
 		
 		List<String> distribuidores = new ArrayList<String>();
 		
