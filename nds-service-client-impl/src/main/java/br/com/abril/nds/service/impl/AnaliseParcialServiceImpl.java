@@ -380,7 +380,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 					EdicoesProdutosDTO edicaoBaseCota = edicoesProdutosDTOMap.get(key);
 					putMapSomatorioTotaisEdicao(mapTotaisEd, edicaoBaseCota);
 					
-					edicaoBaseCota.setOrdemExibicao(mapOrdemAux.get(key));
+					edicaoBaseCota.setOrdemExibicao(mapOrdemAux.get(key) != null ? mapOrdemAux.get(key) : 9); 
 					
 					edicoesBasesList.add(edicaoBaseCota);
 				}
