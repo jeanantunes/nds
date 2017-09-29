@@ -821,7 +821,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		InformacaoTransporte transporte = new InformacaoTransporte();
 		
-		transporte.setModalidadeFrete(ModalidadeFreteEnum.POR_CONTA_EMITENTE);
+		transporte.setModalidadeFrete(ModalidadeFreteEnum.POR_CONTA_EMITENTE.getDescricao());
 		
 		InformacaoAdicional informacaoAdicional = new InformacaoAdicional();
 		

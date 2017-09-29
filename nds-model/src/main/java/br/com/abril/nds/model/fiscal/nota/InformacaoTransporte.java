@@ -30,7 +30,7 @@ public class InformacaoTransporte implements Serializable {
 	@Column(name="MODALIDADE_FRETE", length=1, nullable=true)
 	@NFEExport(secao = TipoSecao.X, posicao = 0)
 	@XmlElement(name="modFrete")
-	private ModalidadeFreteEnum modalidadeFrete;
+	private Integer modalidadeFrete;
 	
 	@XmlElement(name="transporta")
 	private TransportadorWrapper transportadorWrapper;
@@ -38,14 +38,14 @@ public class InformacaoTransporte implements Serializable {
 	/**
 	 * @return the modalidadeFrete
 	 */
-	public ModalidadeFreteEnum getModalidadeFrete() {
+	public Integer getModalidadeFrete() {
 		return modalidadeFrete;
 	}
 	
 	/**
 	 * @param modalidadeFrete the modalidadeFrete to set
 	 */
-	public void setModalidadeFrete(ModalidadeFreteEnum modalidadeFrete) {
+	public void setModalidadeFrete(Integer modalidadeFrete) {
 		this.modalidadeFrete = modalidadeFrete;
 	}
 	

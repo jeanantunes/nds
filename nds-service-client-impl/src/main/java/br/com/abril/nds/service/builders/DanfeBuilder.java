@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.com.abril.nds.enums.ModalidadeFreteEnum;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
@@ -346,7 +347,7 @@ public class DanfeBuilder  implements Serializable {
 		
 		Veiculo veiculo = informacaoTransporte.getTransportadorWrapper().getVeiculo();
 		
-		Integer frete = informacaoTransporte.getModalidadeFrete().getDescricao();
+		Integer frete = informacaoTransporte.getModalidadeFrete();
 		
 		String transportadoraDocumento = informacaoTransporte.getTransportadorWrapper().getDocumento();
 		String transportadoraNome = informacaoTransporte.getTransportadorWrapper().getNome();

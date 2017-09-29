@@ -48,7 +48,6 @@ import org.w3c.dom.*;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.crypto.dom.DOMStructure;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -1590,7 +1589,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
                 .buscarRoteirizacaoDeCota(cota.getNumeroCota());
 
         if (pdv != null && roteirizacao != null) {
-            transporte.setModalidadeFrete(ModalidadeFreteEnum.POR_CONTA_EMITENTE); // Por conta emitente
+            transporte.setModalidadeFrete(ModalidadeFreteEnum.POR_CONTA_EMITENTE.getDescricao()); // Por conta emitente
 
             // *****Comentado porque não é obrigatório*****//
 
@@ -1617,7 +1616,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			 * transporte.setVeiculo(veiculo);
 			 */
         } else {
-            transporte.setModalidadeFrete(ModalidadeFreteEnum.POR_CONTA_DESTINATARIO_REMETENTE); // Por conta destinatário
+            transporte.setModalidadeFrete(ModalidadeFreteEnum.POR_CONTA_DESTINATARIO_REMETENTE.getDescricao()); // Por conta destinatário
         }
 
         return transporte;

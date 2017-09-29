@@ -376,6 +376,6 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setPais("Brasil");
 		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setTipoLogradouro("Rua");
 		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setUf("SP");
-		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(ModalidadeFreteEnum.POR_CONTA_DESTINATARIO_REMETENTE);
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(ModalidadeFreteEnum.POR_CONTA_DESTINATARIO_REMETENTE.getDescricao());
 	}
 }

@@ -2870,7 +2870,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 })
 public class TNFe {
 
-    @XmlElement(name = "infNFe", namespace = "http://www.portalfiscal.inf.br/nfe", required = true)
+    @XmlElement(name = "NFe", namespace = "http://www.portalfiscal.inf.br/nfe", required = true)
     protected TNFe.InfNFe infNFe;
     @XmlElement(name = "Signature", namespace = "http://www.w3.org/2000/09/xmldsig#", required = true)
     protected SignatureType signature;

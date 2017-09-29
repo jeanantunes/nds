@@ -1,7 +1,6 @@
 package br.com.abril.nds.service.builders;
 
 import java.util.List;
-import java.util.Map;
 
 import br.com.abril.nds.enums.ModalidadeFreteEnum;
 import br.com.abril.nds.model.cadastro.EnderecoTransportador;
@@ -51,12 +50,12 @@ public class NotaFiscalTransportadorBuilder {
 			
 			if(ps != null ){
 				if(ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
-					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(ModalidadeFreteEnum.SEM_FRETE_v2_0);
+					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(ModalidadeFreteEnum.SEM_FRETE_v2_0.getDescricao());
 				} else {
-					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(ModalidadeFreteEnum.POR_CONTA_EMITENTE);
+					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(ModalidadeFreteEnum.POR_CONTA_EMITENTE.getDescricao());
 				}
 			} else {
-				notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(ModalidadeFreteEnum.POR_CONTA_EMITENTE);
+				notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(ModalidadeFreteEnum.POR_CONTA_EMITENTE.getDescricao());
 			}
 			
 			
@@ -81,7 +80,7 @@ public class NotaFiscalTransportadorBuilder {
 	private static void montarEnderecoTransporte(NotaFiscal notaFiscal, List<EnderecoTransportador> enderecoTransportadores){
 
 		if(enderecoTransportadores == null || enderecoTransportadores.isEmpty()){
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(POR_CONTA_DESTINATARIO_REMETENTE);
+			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(POR_CONTA_DESTINATARIO_REMETENTE.getDescricao());
 			/*
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setBairro("Osasco");
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setLogradouro("Kenkiti Shinomoto");
@@ -119,7 +118,7 @@ public class NotaFiscalTransportadorBuilder {
 					endereco.setTipoLogradouro(enderecoTransportador.getEndereco().getTipoLogradouro());
 					endereco.setUf(enderecoTransportador.getEndereco().getUf());
 					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setEndereco(endereco);
-					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(ModalidadeFreteEnum.POR_CONTA_DESTINATARIO_REMETENTE);
+					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(ModalidadeFreteEnum.POR_CONTA_DESTINATARIO_REMETENTE.getDescricao());
 					break;
 				}
 			}
