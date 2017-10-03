@@ -151,6 +151,10 @@ var analiseEstudoController = $.extend(true, {
 
     	var modoAnalise =  $(event.target).val().toUpperCase() != undefined ? $(event.target).val().toUpperCase() : 'NORMAL'; 
 		
+    	if(modoAnalise == "SELECIONE..."){
+    		return;
+    	}
+    	
 		var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + numeroEstudo + '&modoAnalise='+ modoAnalise;
 		
 		var abaAberta = false;

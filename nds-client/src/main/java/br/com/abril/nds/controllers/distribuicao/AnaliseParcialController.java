@@ -313,7 +313,7 @@ public class AnaliseParcialController extends BaseController {
         filtroQueryDTO.setNumeroCotasFiltro(cotasFiltro);
         filtroQueryDTO.setMudarBaseVisualizacao(isMudarBaseVisualizacao);
         
-        if(filtroQueryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL")){
+        if(filtroQueryDTO.getModoAnalise() != null && filtroQueryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL")){
 //        	boolean isParcialComEdicaoNormal = false;
 //        	
 //        	if(filtroQueryDTO.getEdicoesBase() != null){
@@ -371,7 +371,7 @@ public class AnaliseParcialController extends BaseController {
     	}else{
     		listBaseEstudo = getEdicoesBase(edicoesBase != null ? edicoesBase : filtroQueryDTO.getEdicoesBase(), id, numeroParcial); 
     	}
-    	
+    	 
     	vo.setEdicoesBase(listBaseEstudo);
     	
     	if (resumo.getSaldo() != null) {
@@ -419,6 +419,8 @@ public class AnaliseParcialController extends BaseController {
 			if(edicaoBaseEstudoDTOs.size() > 0){
 				List<EdicoesProdutosDTO> bases = new ArrayList<>();
 				
+				int i = 0;
+				
 				for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicaoBaseEstudoDTOs) {
 					EdicoesProdutosDTO base = new EdicoesProdutosDTO();
 					
@@ -428,8 +430,10 @@ public class AnaliseParcialController extends BaseController {
 					base.setParcial(edicaoBaseEstudoDTO.isParcial());
 					base.setPeriodo(edicaoBaseEstudoDTO.getPeriodoParcial() != null ? edicaoBaseEstudoDTO.getPeriodoParcial().toString() : null);
 					base.setProdutoEdicaoId(edicaoBaseEstudoDTO.getIdProdutoEdicao());
+					base.setOrdemExibicao(i);
 					
 					bases.add(base);
+					i++;
 				}
 				
 				return bases;
