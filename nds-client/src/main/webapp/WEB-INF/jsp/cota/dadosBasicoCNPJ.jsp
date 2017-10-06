@@ -67,6 +67,19 @@
       </td>
     </tr>
     
+       <tr>
+     <td>Sistema:</td>
+      <td><input type="text" style="width:230px " maxlength="200" name="cotaDTO.sistema" id="cotaLabelSistema" /></td>
+      
+     <td>Tipo De Transmissao:</td>
+     <td ><select name="cotaDTO.tipoTransmissaoSelecionado" id="tipoTransmissaoSelecionado" style="width:100px">
+       <option selected="selected">Selecione... </option>
+       <option value="TXT">TXT</option>
+       <option value="SERVICO">SERVICO</option>
+     </select></td>
+      
+   </tr>
+    
 </table>
 
 <table width="870" border="0" cellspacing="1" cellpadding="1">

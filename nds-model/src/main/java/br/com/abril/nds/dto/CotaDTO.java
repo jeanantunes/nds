@@ -93,6 +93,9 @@ public class CotaDTO implements Serializable {
     private Integer fxQuantidadeEdicoes;
     private Integer fxQuantidadeExemplares;
     
+    private String sistema;
+    private String tipoTransmissao;
+    
     /*
      * Detalhes Cota Analise estudo
      */
@@ -817,6 +820,22 @@ public class CotaDTO implements Serializable {
 
 	public void setCodigoProduto(String codigoProduto) {
 		this.codigoProduto = codigoProduto;
+	}
+
+	public String getSistema() {
+		return sistema;
+	}
+
+	public void setSistema(String sistema) {
+		this.sistema = sistema;
+	}
+
+	public String getTipoTransmissao() {
+		return tipoTransmissao;
+	}
+
+	public void setTipoTransmissao(String tipoTransmissao) {
+		this.tipoTransmissao = tipoTransmissao;
 	}
 	
 }

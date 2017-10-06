@@ -220,6 +220,13 @@ public class Cota implements Serializable {
 	@Column(name = "GERAR_BOLETO_NFE")
 	private boolean boletoNFE;
 	
+	@Column(name = "SISTEMA")
+	private String sistema;
+	
+	@Column(name = "TIPO_TRANSMISSAO")
+	private String tipoTransmissao;
+	
+	
 	public Cota() {
         this.inicioAtividade = new Date();
         this.inicioTitularidade = new Date();
@@ -722,6 +729,28 @@ public class Cota implements Serializable {
 
 	public void setBoletoNFE(boolean boletoNFE) {
 		this.boletoNFE = boletoNFE;
+	}
+	
+	
+
+
+	public String getSistema() {
+		return sistema;
+	}
+
+
+	public void setSistema(String sistema) {
+		this.sistema = sistema;
+	}
+
+
+	public String getTipoTransmissao() {
+		return tipoTransmissao;
+	}
+
+
+	public void setTipoTransmissao(String tipoTransmissao) {
+		this.tipoTransmissao = tipoTransmissao;
 	}
 
 
