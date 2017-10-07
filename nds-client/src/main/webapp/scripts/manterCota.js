@@ -1274,9 +1274,13 @@ var COTA_CNPJ = $.extend(true, {
         $("#contribuinteICMS", this.workspace).attr("checked", (result.contribuinteICMS == true) ? "checked" : null);
         $("#utilizaIPV", this.workspace).attr("checked", (result.utilizaIPV == true) ? "checked" : null);
         $("#classificacaoSelecionada", this.workspace).val(result.classificacaoSelecionada);
+        $("#cotaInputSistema", this.workspace).val(result.sistema);
+        $("#tipoTransmissao", this.workspace).val(result.tipoTransmissao);
         $('[name="cotaDTO.tipoDistribuicaoCota"]', this.workspace).val(result.tipoDistribuicaoCota);
         
         $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
+        
+      
         
         if ( result.cotasBases != undefined )
         try {
@@ -1511,6 +1515,8 @@ var COTA_CPF = $.extend(true, {
         $("#contribuinteICMS", this.workspace).attr("checked", (result.contribuinteICMS == true) ? "checked" : null);
         $("#utilizaIPV", this.workspace).attr("checked", (result.utilizaIPV == true) ? "checked" : null);
         $("#classificacaoSelecionadaCPF", this.workspace).val(result.classificacaoSelecionada);
+        $("#cotaInputSistema", this.workspace).val(result.sistema);
+        $("#tipoTransmissao", this.workspace).val(result.tipoTransmissao);
         $('[name="cotaDTO.tipoDistribuicaoCota"]', this.workspace).val(result.tipoDistribuicaoCota);
         
 //        //Ajuste 0153
@@ -1660,7 +1666,10 @@ var COTA_CPF = $.extend(true, {
         $("#historicoTerceiraPorcentagemCPF", this.workspace).val("").disable();
         $("#periodoCotaDeCPF", this.workspace).val("").disable();
         $("#periodoCotaAteCPF", this.workspace).val("").disable();
-
+        $("#cotaInputSistema", this.workspace).val("");
+        $("#tipoTransmissao", this.workspace).val("");
+        
+        
         clearMessageDialogTimeout(null);
     }
 

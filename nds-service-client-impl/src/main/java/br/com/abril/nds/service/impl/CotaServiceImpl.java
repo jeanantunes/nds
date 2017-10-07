@@ -1397,6 +1397,8 @@ public class CotaServiceImpl implements CotaService {
 		
 		cotaDTO.setCotasBases(atribuirCotaBase(cota.getNumeroCota()));
 		cotaDTO.setRecebeComplementar(cota.getParametroDistribuicao() == null ? false : cota.getParametroDistribuicao().getRecebeComplementar());
+		cotaDTO.setSistema(cota.getSistema());
+		cotaDTO.setTipoTransmissao(cota.getTipoTransmissao());
 		
         return cotaDTO;
     }
@@ -1638,6 +1640,10 @@ public class CotaServiceImpl implements CotaService {
         cota.setTipoDistribuicaoCota(cotaDto.getTipoDistribuicaoCota());
         
         this.atibuirDadosDistribuicaoDaCota(cota);
+        		
+        cota.setTipoTransmissao(cotaDto.getTipoTransmissao());
+        
+        cota.setSistema(cotaDto.getSistema());
         
         cota  = cotaRepository.merge(cota);
         
@@ -1891,6 +1897,13 @@ public class CotaServiceImpl implements CotaService {
         if(cotaDto.getNumeroCota() == null){
             mensagensValidacao.add("O preenchimento do campo [Cota] é obrigatório!");
         }
+        
+        if(cotaDto.getTipoTransmissao()==null || cotaDto.getTipoTransmissao().isEmpty() || cotaDto.getTipoTransmissao().equalsIgnoreCase("Selecione...")){
+        	mensagensValidacao.add(" Por favor, selecione um tipo de transmissão");
+		}else if(cotaDto.getTipoTransmissao().equalsIgnoreCase("servico") &&
+				(cotaDto.getSistema()== null	|| cotaDto.getSistema().isEmpty())){
+			mensagensValidacao.add("As cotas cujo tipo de transmissão é via serviço devem informar o sistema");
+		}
         
         if(TipoPessoa.JURIDICA.equals(cotaDto.getTipoPessoa())){
             

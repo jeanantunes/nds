@@ -657,7 +657,7 @@ public class CotaController extends BaseController {
 	@Path("/salvarCotaCNPJ")
 	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void salvarCotaPessoaJuridica(CotaDTO cotaDTO){
-
+		
 		cotaDTO.setTipoPessoa(TipoPessoa.JURIDICA);
 
 		cotaDTO = salvarDadosCota(cotaDTO);
@@ -1791,5 +1791,5 @@ public class CotaController extends BaseController {
 		
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
-
+	
 }
