@@ -1397,6 +1397,9 @@ public class CotaServiceImpl implements CotaService {
 		
 		cotaDTO.setCotasBases(atribuirCotaBase(cota.getNumeroCota()));
 		cotaDTO.setRecebeComplementar(cota.getParametroDistribuicao() == null ? false : cota.getParametroDistribuicao().getRecebeComplementar());
+		if(cota.getSistema()==null || cota.getSistema().equalsIgnoreCase("")){
+			cotaDTO.setSistema("Selecione...");
+		}
 		cotaDTO.setSistema(cota.getSistema());
 		cotaDTO.setTipoTransmissao(cota.getTipoTransmissao());
 		
@@ -1642,6 +1645,10 @@ public class CotaServiceImpl implements CotaService {
         this.atibuirDadosDistribuicaoDaCota(cota);
         		
         cota.setTipoTransmissao(cotaDto.getTipoTransmissao());
+        
+        if(cotaDto.getSistema().equalsIgnoreCase("Selecione...")){
+        	cotaDto.setSistema("");
+        }
         
         cota.setSistema(cotaDto.getSistema());
         
@@ -1901,7 +1908,8 @@ public class CotaServiceImpl implements CotaService {
         if(cotaDto.getTipoTransmissao()==null || cotaDto.getTipoTransmissao().isEmpty() || cotaDto.getTipoTransmissao().equalsIgnoreCase("Selecione...")){
         	mensagensValidacao.add(" Por favor, selecione um tipo de transmissão");
 		}else if(cotaDto.getTipoTransmissao().equalsIgnoreCase("servico") &&
-				(cotaDto.getSistema()== null	|| cotaDto.getSistema().isEmpty())){
+				(cotaDto.getSistema()== null	|| cotaDto.getSistema().isEmpty() 
+				|| cotaDto.getSistema().equalsIgnoreCase("Selecione..."))){
 			mensagensValidacao.add("As cotas cujo tipo de transmissão é via serviço devem informar o sistema");
 		}
         

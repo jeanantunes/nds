@@ -432,6 +432,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("           AND pdv.PONTO_PRINCIPAL = :true ");
 		sql.append("           AND ecg.QTDE_EFETIVA > 0 ");
 		sql.append("           AND c.UTILIZA_IPV = :true ");
+		sql.append("           AND c.tipo_transmissao='TXT' ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		

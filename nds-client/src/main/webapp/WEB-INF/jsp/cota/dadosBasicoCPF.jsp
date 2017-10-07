@@ -129,11 +129,15 @@
    
    <tr>
      <td>Sistema:</td>
-      <td><input type="text" style="width:230px " maxlength="200" name="cotaDTO.sistema" id="cotaInputSistema" /></td>
+     <td ><select name="cotaDTO.sistema" id="sistema" style="width:100px">
+       <option selected="selected">Selecione...</option>
+       <option value="NEEXERA">NEEXERA</option>
+       <option value="QUESTO">QUESTO</option>
+     </select></td>
       
      <td>Tipo De Transmissao:</td>
      <td ><select name="cotaDTO.tipoTransmissao" id="tipoTransmissao" style="width:100px">
-       <option selected="selected">Selecione... </option>
+       <option selected="selected">Selecione...</option>
        <option value="TXT">TXT</option>
        <option value="SERVICO">SERVICO</option>
      </select></td>
