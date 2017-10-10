@@ -2269,7 +2269,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		sql.append("  						mec.tipo_movimento_id = tm.id  ");
 		sql.append("  					where  ");
 		sql.append("  						mec.produto_edicao_id = T.id  ");
-		sql.append("  						and mec.cota_id = t.idCota  ");
+		sql.append("  						and mec.cota_id = t.cotaID  ");
 		sql.append("  						and tm.tipo_movimento_encalhe is true  ");
 		sql.append("  						and mec.`DATA` >= DATE_ADD(T.dataLancamento,interval 8 day)  ");
 		sql.append("  						and mec.`DATA` <= DATE_ADD(T.dataRec,interval 7 day) )  ");
@@ -2279,6 +2279,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		sql.append("  from   ");
 		sql.append("  	(select  ");
 		sql.append("  		c.numero_cota as idCota,  ");
+		sql.append("  		c.id as cotaID,  ");
 		sql.append("  		l.STATUS as statusLancamento,  ");
 		sql.append("  		l.data_lcto_distribuidor dataLancamento,  ");
 		sql.append("  		l.data_rec_distrib dataRec,  ");
