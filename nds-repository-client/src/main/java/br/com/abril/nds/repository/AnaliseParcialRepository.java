@@ -39,5 +39,6 @@ public interface AnaliseParcialRepository {
 	Map<Integer, List<EdicoesProdutosDTO>> buscaHistoricoDeVendaTodasCotas(List<Long> listCotaId, List<Long> listProdutoEdicaoId, boolean isSepararPeriodosParcial);
 	Map<Integer, AnaliseParcialExportXLSDTO> buscarDadosPdvParaXLS(AnaliseParcialQueryDTO queryDTO);
 	List<Long> obterCotasDentroDoPercentualReparteFiltro(List<Long> listCotaId, List<Long> listProdutoEdicaoId, AnaliseParcialQueryDTO queryDTO);
+	Map<Integer, EdicoesProdutosDTO> buscaHistoricoCotasPorBase(List<Long> listCotaId, Long idProdutoEdicao, Long numeroParcial);
     
 }

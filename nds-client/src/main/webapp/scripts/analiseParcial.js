@@ -1942,6 +1942,7 @@ var analiseParcialController = $.extend(true, {
 
     apresentarOpcoesOrdenarPor : function(opcao) {
         analiseParcialController.limparCamposDeAte();
+        
         if (opcao === "") {
             $("#opcoesOrdenarPor").hide();
         } else {
@@ -1973,6 +1974,7 @@ var analiseParcialController = $.extend(true, {
         .add("#faixaAte")
         .add("#ordenarPorDe")
         .add("#ordenarPorAte")
+        .add("#ordenarPorCota")
         .val('');
     },
     

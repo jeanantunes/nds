@@ -132,7 +132,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append("   eg.QTDE_REPARTE as qtdReparteADistribuir, ");
 		sql.append("   eg.ABRANGENCIA as abrangencia, ");
 		sql.append("   coalesce(eg.REPARTE_MINIMO, 0) as qtdReparteMinimoEstudo, ");
-		sql.append("   sum(ecg.REPARTE) * count(distinct ecg.ID)/count(ecg.ID)  as qtdReparteDistribuidoEstudo, ");
+		sql.append("   round(sum(ecg.REPARTE) * count(distinct ecg.ID)/count(ecg.ID))  as qtdReparteDistribuidoEstudo, ");
 		sql.append("   sum(case when ecg.CLASSIFICACAO='CP' then 1 else 0 end)*count(distinct ecg.ID) / count(ecg.ID) as qtdCotasAdicionadasPelaComplementarAutomatica, ");
 		sql.append("   sum(case when c.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end)*count(distinct c.ID) / count(c.ID) as qtdCotasAtivasParaCalculo, ");
 		sql.append("   (select count(*) from COTA where SITUACAO_CADASTRO='ATIVO') as qtdCotasAtivas, ");
