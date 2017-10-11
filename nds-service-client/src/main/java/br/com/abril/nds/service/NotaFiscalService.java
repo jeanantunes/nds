@@ -38,7 +38,7 @@ public interface NotaFiscalService {
 	/**
 	 * Obtém um mapa do total de itens (produtos/serviços) de notas fiscais a serem geradas por cota.
 	 * 
-	 * @param consultaLoteNotaFiscal - dados da consulta em lote de notas fiscais
+	 * @param dadosConsultaLoteNotaFiscal - dados da consulta em lote de notas fiscais
 	 * 
 	 * @return {@link Map} de Total de Itens (produtos/serviços) por Cota
 	 */
@@ -47,7 +47,7 @@ public interface NotaFiscalService {
 	/**
 	 * Gera os dados de notas fiscais em lote.
 	 * 
-	 * @param consultaLoteNotaFiscal - dados da consulta em lote de notas fiscais
+	 * @param dadosConsultaLoteNotaFiscal - dados da consulta em lote de notas fiscais
 	 * 
 	 * @return {@link List} de {@link NotaFiscal}
 	 */
@@ -94,16 +94,17 @@ public interface NotaFiscalService {
 	 * @throws FileNotFoundException caso o diretório parametrizado de exportação das seja inválido. 
 	 * @throws IOException caso ocarra erros durante a gravação do arquivo no diretório
 	 */
-	void exportarNotasFiscais(List<NotaFiscal> notasFiscaisParaExportacao) throws FileNotFoundException, IOException; 
-	
-	/**
+	void exportarNotasFiscais(List<NotaFiscal> notasFiscaisParaExportacao) throws FileNotFoundException, IOException;
+
+    String gerarArquivoNota(List<NotaFiscal> notasFiscaisParaExportacao) throws Exception;
+
+    /**
 	 * Obtém itens para nota fiscal respeitando os parametros.
 	 * 
 	 * @param periodo periodo de lançamento de um movimento
 	 * @param listaIdFornecedores id dos fornecedores que serão pesquisados(se for null, busca todos)
 	 * @param listaIdProdutos id dos produtos que serão pesquisados(se for null, busca todoso)
 	 * @param tipoNotaFiscal TODO
-	 * @param Cota cota
 	 * @return lista de itens para nota fiscal
 	 */
 	List<ItemNotaFiscalSaida> obterItensNotaFiscalPor(ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, 
