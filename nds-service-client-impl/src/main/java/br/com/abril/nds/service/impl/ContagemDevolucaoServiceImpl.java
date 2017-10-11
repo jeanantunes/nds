@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
+import br.com.abril.nds.enums.ModalidadeFreteEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -295,8 +296,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
      * 
      * @param listaContagemDevolucao
      * @param usuario
-     * @param mockPerfilUsuario
-     */
+			 */
 	@Transactional
 	public void inserirListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario, boolean indPerfilUsuarioEncarregado) {
 		
@@ -730,7 +730,6 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
      * gerando assim uma NF para cada grupo de produtos de um fornecedor.
      * 
      * @param listaContagemDevolucaoAprovada
-     * @param usuarioopa
      * @param indConfirmarContagemDevolucao
      * 
      * @throws IOException
@@ -822,7 +821,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		InformacaoTransporte transporte = new InformacaoTransporte();
 		
-		transporte.setModalidadeFrete(0);
+		transporte.setModalidadeFrete(ModalidadeFreteEnum.POR_CONTA_EMITENTE.getDescricao());
 		
 		InformacaoAdicional informacaoAdicional = new InformacaoAdicional();
 		

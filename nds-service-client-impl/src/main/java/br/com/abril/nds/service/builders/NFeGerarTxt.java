@@ -831,11 +831,12 @@ public class NFeGerarTxt {
 	                        || (transp.getTransportadorWrapper().getEndereco() != null && !transp.getTransportadorWrapper().getEndereco().getCidade().equals(""))
 	                        || (transp.getTransportadorWrapper().getEndereco() != null && transp.getTransportadorWrapper().getEndereco().getUf() != null)) {
 	                    x.append("X03|")
-	                            .append(transp.getTransportadorWrapper().getNome()).append("|")
-	                            .append(transp.getTransportadorWrapper().getInscricaoEstadual()).append("|")
-	                            .append(transp.getTransportadorWrapper().getEndereco().getLogradouro()).append("|")
-	                            .append(transp.getTransportadorWrapper().getEndereco().getUf()).append("|")
-	                            .append(transp.getTransportadorWrapper().getEndereco().getCidade()).append(System.getProperty("line.separator"));
+								.append(transp.getTransportadorWrapper().getDocumento()).append("|")
+								.append(transp.getTransportadorWrapper().getNome()).append("|")
+	                            .append(transp.getTransportadorWrapper().getInscricaoEstadual()).append(System.getProperty("line.separator"));
+	                            //.append(transp.getTransportadorWrapper().getEndereco().getLogradouro()).append("|")
+	                            //.append(transp.getTransportadorWrapper().getEndereco().getUf()).append("|")
+	                            //.append(transp.getTransportadorWrapper().getEndereco().getCidade()).append(System.getProperty("line.separator"));
 
 	                    if (transp.getTransportadorWrapper().getDocumento() != null && !transp.getTransportadorWrapper().getDocumento().equals("")) {
 	                        x.append("X04|").append(transp.getTransportadorWrapper().getDocumento()).append(System.getProperty("line.separator"));

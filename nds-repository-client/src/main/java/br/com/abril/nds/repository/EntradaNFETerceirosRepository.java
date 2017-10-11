@@ -1,11 +1,11 @@
 package br.com.abril.nds.repository;
 
-import java.util.List;
-
 import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosPendentesDTO;
 import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosRecebidasDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
+
+import java.util.List;
 
 public interface EntradaNFETerceirosRepository extends Repository<NotaFiscalEntrada, Long> {
 	

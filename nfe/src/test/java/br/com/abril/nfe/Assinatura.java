@@ -36,6 +36,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 //import org.jcp.xml.dsig.internal.dom.XMLDSigRI;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class Assinatura {
@@ -75,7 +76,7 @@ public class Assinatura {
             KeyStore ks = KeyStore.getInstance("JKS");
             // KeyStore ks = KeyStore.getInstance("PKCS11");
 
-            FileInputStream fis = new FileInputStream("C://Users/wrpaiva/Desktop/receita/certificado/certificado.jks");
+            FileInputStream fis = new FileInputStream("/opt/certificado/certificado.jks");
             char[] senha = "changeit".toCharArray();
             ks.load(fis, senha);
             fis.close();
@@ -101,7 +102,7 @@ public class Assinatura {
             X509Data xd = kif.newX509Data(x509Content);
             KeyInfo ki = kif.newKeyInfo(Collections.singletonList(xd));
             
-            /*
+
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
             Document doc = null;
@@ -112,9 +113,9 @@ public class Assinatura {
 
             Node node = doc.getElementsByTagName("NFe").item(0);
             DOMSignContext dsc = new DOMSignContext(keyEntry.getPrivateKey(), node);
-            
-            */
-            DOMSignContext dsc = new DOMSignContext(keyEntry.getPrivateKey(), el.getParentNode());
+
+
+            dsc = new DOMSignContext(keyEntry.getPrivateKey(), el.getParentNode());
             XMLSignature signature = fac.newXMLSignature(si, ki);
             signature.sign(dsc);
 
