@@ -33,6 +33,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+import br.com.abril.nds.model.StatusTransmissaoEnum;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -41,6 +42,7 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 
 @Entity
@@ -220,11 +222,28 @@ public class Cota implements Serializable {
 	@Column(name = "GERAR_BOLETO_NFE")
 	private boolean boletoNFE;
 	
-	@Column(name = "SISTEMA")
-	private String sistema;
+//	@Column(name = "SISTEMA")
+//	private String sistema;
 	
-	@Column(name = "TIPO_TRANSMISSAO")
-	private String tipoTransmissao;
+//	@Column(name = "TIPO_TRANSMISSAO")
+//	private String tipoTransmissao;
+	
+//	@Column(name = "STATUS_TRANSMISSAO", nullable = false)
+//	private StatusTransmissaoEnum statusTransmissaoEnum;
+	
+//	@Temporal(TemporalType.TIMESTAMP)
+//    @Column(name = "DATA_INCLUSAO", nullable = false)
+//	private Date dataInclusao;
+	
+///	@Temporal(TemporalType.TIMESTAMP)
+ //   @Column(name = "DATA_ALTERACAO")
+//	private Date dataAlteracao;
+	
+//	@Column(name = "USUARIO_INCLUSAO", nullable = false)
+//	private String usuarioInclusao;
+	
+//	@Column(name = "USUARIO_ALTERACAO", nullable = false)
+//	private String usuarioAlteracao;
 	
 	
 	public Cota() {
@@ -732,7 +751,7 @@ public class Cota implements Serializable {
 	}
 	
 	
-
+/*
 
 	public String getSistema() {
 		return sistema;
@@ -752,8 +771,55 @@ public class Cota implements Serializable {
 	public void setTipoTransmissao(String tipoTransmissao) {
 		this.tipoTransmissao = tipoTransmissao;
 	}
+	
 
 
+	public Date getDataInclusao() {
+		return dataInclusao;
+	}
+
+
+	public void setDataInclusao(Date dataInclusao) {
+		this.dataInclusao = dataInclusao;
+	}
+
+
+	public Date getDataAlteracao() {
+		return dataAlteracao;
+	}
+
+
+	public void setDataAlteracao(Date dataAlteracao) {
+		this.dataAlteracao = dataAlteracao;
+	}
+	
+	public StatusTransmissaoEnum getStatusTransmissaoEnum() {
+		return statusTransmissaoEnum;
+	}
+
+	public void setStatusTransmissaoEnum(StatusTransmissaoEnum statusTransmissaoEnum) {
+		this.statusTransmissaoEnum = statusTransmissaoEnum;
+	}
+
+	public String getUsuarioInclusao() {
+		return usuarioInclusao;
+	}
+
+
+	public void setUsuarioInclusao(String usuarioInclusao) {
+		this.usuarioInclusao = usuarioInclusao;
+	}
+
+
+	public String getUsuarioAlteracao() {
+		return usuarioAlteracao;
+	}
+
+
+	public void setUsuarioAlteracao(String usuarioAlteracao) {
+		this.usuarioAlteracao = usuarioAlteracao;
+	}
+*/
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -762,7 +828,6 @@ public class Cota implements Serializable {
 		result = prime * result + ((this.getNumeroCota() == null) ? 0 : getNumeroCota().hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {

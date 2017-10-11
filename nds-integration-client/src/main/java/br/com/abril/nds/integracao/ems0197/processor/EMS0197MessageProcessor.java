@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
@@ -90,76 +91,82 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 	/** Quantidade de arquivos processados. */
 	private int quantidadeArquivosGerados = 0;
-
+	
 	@Override
 	public void processMessage(Message message) {
 
 		this.quantidadeArquivosGerados = 0;
 
-		List<EMS0197Header> listHeaders = this.criarHeader(dataLctoDistrib);
-        if ( listHeaders == null || listHeaders.isEmpty() ) {
-        	LOGGER.warn("Nenhum registro encontrado para esta data"+dataLctoDistrib);
-        	return;
-        }
-		final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(dataLctoDistrib);
+		List<Integer> cotas = new ArrayList<Integer>(Arrays.asList(920,2520,3971,2884,1358,5844,5744,9307,563,2439,1896));
+		//List<Integer> cotas = new ArrayList<Integer>(Arrays.asList(2008));
 
-		for (EMS0197Header outheader : listHeaders) {
+		for(Integer numCota : cotas){
 
+			List<EMS0197Header> listHeaders = this.criarHeader(dataLctoDistrib, numCota);
+			if ( listHeaders == null || listHeaders.isEmpty() ) {
+				LOGGER.warn("Nenhum registro encontrado para esta data"+dataLctoDistrib);
+				//return;
+				continue;
+			}
+			final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(dataLctoDistrib);
+			
+			String nomeArquivo = "6389563" +"."+StringUtils.leftPad(numCota.toString(), 5, '0') +"."+ sdf.format(new Date());
+
+			PrintWriter print = null;
 			try {
-
-				String nomeArquivo = ""+ outheader.getCodDistribuidor() +"."+StringUtils.leftPad(outheader.getNumeroCota(), 5, '0') +"."+ sdf.format(outheader.getDataLctoDistrib());
-
-				PrintWriter print = new PrintWriter(new FileWriter(
+				print = new PrintWriter(new FileWriter(
 						message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
-						+ File.separator + REPARTE_FOLDER +File.separator + nomeArquivo + REPARTE_EXT));
+								+ File.separator + REPARTE_FOLDER +File.separator + nomeArquivo + REPARTE_EXT));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			for (EMS0197Header outheader : listHeaders) {
 
 				List<IpvLancamentoDTO> listDetalhes = getDetalhesPickingLancamento(outheader.getIdCota(), this.dataLctoDistrib);
 
 				addDescontoProduto(descontos, outheader, print, listDetalhes);
 
 				print.flush();
-				print.close();
-				
+
 				this.quantidadeArquivosGerados++;
-				
-			} catch(IOException e) {
-				
-				LOGGER.error("Falha ao gerar arquivo.", e);
 			}
-			
-		}
+
+			print.close();
+
 			try {
 				
 				Iterator it= FileUtils.iterateFiles(new File(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
 						+ File.separator + REPARTE_FOLDER) , new String[] {"LCT"},false);
-				
-				
+
+
 				while (it.hasNext()) {
 					File file = (File) it.next();
 					String name = file.getName(); // nome neste formato 0757350.00023.20151005.RCL
 					Integer cota = Integer.parseInt(name.split("\\.")[1]);
-				    Integer cotaMaster = controleCotaService.buscarCotaMaster(cota);
-				    if ( cotaMaster != null && !cotaMaster.equals(cota) ) { // tem cota master, appendar no arquivo
-				    	String nomeArquivoMaster = ""+ name.split("\\.")[0] +"."+StringUtils.leftPad(cotaMaster.toString(), 5, '0') +"."+ (name.split("\\.")[2]);
+					Integer cotaMaster = controleCotaService.buscarCotaMaster(cota);
+					if ( cotaMaster != null && !cotaMaster.equals(cota) ) { // tem cota master, appendar no arquivo
+						String nomeArquivoMaster = ""+ name.split("\\.")[0] +"."+StringUtils.leftPad(cotaMaster.toString(), 5, '0') +"."+ (name.split("\\.")[2]);
 
-				    	File fileMaster = new File(
+						File fileMaster = new File(
 								message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
-								+ File.separator + REPARTE_FOLDER +File.separator + nomeArquivoMaster + REPARTE_EXT);
-                        if ( !fileMaster.exists())
-                        	this.quantidadeArquivosGerados++;
-				    	cat(file, fileMaster);
-				    	file.delete();
-				       }
-				   
-					
+										+ File.separator + REPARTE_FOLDER +File.separator + nomeArquivoMaster + REPARTE_EXT);
+
+						if ( !fileMaster.exists())
+							this.quantidadeArquivosGerados++;
+						cat(file, fileMaster);
+						file.delete();
+					}
+
+
 				}
 			}
-				catch(Exception ee) {
-				
+			catch(Exception ee) {
+
 				LOGGER.error("Falha ao gerar arquivo caruso.", ee);
 			}
-		
-
+		}
+	
 		compactarArquivos(message);
 		
 		//		## Conforme alinhado com César Marracho, há a necessidade de manter a impletação antiga, para uma possível retorno ao layout antigo
@@ -411,7 +418,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 	
 	@SuppressWarnings("unchecked")
-	public List<EMS0197Header> criarHeader(Date data) {
+	public List<EMS0197Header> criarHeader(Date data, Integer numCota) {
 
 		StringBuilder sql = new StringBuilder();
 		
@@ -428,15 +435,17 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("        JOIN estudo_gerado eg  ");
 		sql.append("           ON ecg.ESTUDO_ID = eg.ID ");
 		sql.append("       JOIN lancamento lan ON lan.ESTUDO_ID = eg.id       ");
-		sql.append("  WHERE  lan.DATA_LCTO_DISTRIBUIDOR = :data and lan.STATUS in ('BALANCEADO', 'EXPEDIDO') ");
+		//sql.append("  WHERE  lan.DATA_LCTO_DISTRIBUIDOR = :data "
+		sql.append(" 		where lan.STATUS in ('BALANCEADO', 'EXPEDIDO') ");
 		sql.append("           AND pdv.PONTO_PRINCIPAL = :true ");
 		sql.append("           AND ecg.QTDE_EFETIVA > 0 ");
 		sql.append("           AND c.UTILIZA_IPV = :true ");
-		sql.append("           AND c.tipo_transmissao='TXT' ");
+		sql.append("           AND c.numero_cota = :numCota ");
+		//sql.append("           AND c.tipo_transmissao='TXT' ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
-		query.setParameter("data", data);
+		query.setParameter("numCota", numCota);
 		query.setParameter("true", true);
 		
 		query.addScalar("idCota", StandardBasicTypes.LONG);

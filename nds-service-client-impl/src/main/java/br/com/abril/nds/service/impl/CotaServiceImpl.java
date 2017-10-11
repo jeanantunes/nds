@@ -63,6 +63,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.StatusTransmissaoEnum;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -1613,8 +1614,14 @@ public class CotaServiceImpl implements CotaService {
             cota = new Cota();
             cota.setInicioAtividade(dataOperacao);
             cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
+            cota.setDataInclusao(new Date());
+            cota.setUsuarioInclusao(usuarioService.getUsuarioLogado().getLogin());
+            cota.setStatusTransmissaoEnum(StatusTransmissaoEnum.PENDENTE);
             incluirPDV = true;
             newCota = true;
+        }else{
+        	cota.setDataAlteracao(new Date());
+        	cota.setUsuarioAlteracao(usuarioService.getUsuarioLogado().getLogin());
         }
         
         // Flag indica a mudança de número da cota
