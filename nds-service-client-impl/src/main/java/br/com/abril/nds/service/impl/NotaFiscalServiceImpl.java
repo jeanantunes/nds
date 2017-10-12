@@ -689,9 +689,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
                     NamedNodeMap nnm =
                             document.getFirstChild().getAttributes();
                     Node nodeXmlsNS = nnm.getNamedItem("xmlns:ns2");
-                    Attr xmlns = document.createAttribute("xmlns");
-                    xmlns.setNodeValue(nodeXmlsNS.getNodeValue());
-                    nnm.setNamedItem(xmlns);
+                    //Attr xmlns = document.createAttribute("xmlns");
+                    //xmlns.setNodeValue(nodeXmlsNS.getNodeValue());
+                    //nnm.setNamedItem(xmlns);
                     nnm.removeNamedItem("xmlns:ns2");
                     document.getDocumentElement().removeAttribute("xmlns:ns2");
 
