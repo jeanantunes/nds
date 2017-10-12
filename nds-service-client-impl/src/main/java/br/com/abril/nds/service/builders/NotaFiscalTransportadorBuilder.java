@@ -81,7 +81,7 @@ public class NotaFiscalTransportadorBuilder {
 
 		if(enderecoTransportadores == null || enderecoTransportadores.isEmpty()){
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(POR_CONTA_DESTINATARIO_REMETENTE.getDescricao());
-			/*
+
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setBairro("Osasco");
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setLogradouro("Kenkiti Shinomoto");
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCep("08250000");
@@ -95,7 +95,7 @@ public class NotaFiscalTransportadorBuilder {
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setTipoLogradouro("Rua");
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setUf("SP");
 			//notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(1);
-			*/
+
 		} else {
 
 			for (EnderecoTransportador enderecoTransportador : enderecoTransportadores){
