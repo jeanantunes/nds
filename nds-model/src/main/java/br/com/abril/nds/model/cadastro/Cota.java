@@ -222,28 +222,29 @@ public class Cota implements Serializable {
 	@Column(name = "GERAR_BOLETO_NFE")
 	private boolean boletoNFE;
 	
-//	@Column(name = "SISTEMA")
-//	private String sistema;
+	@Column(name = "SISTEMA")
+	private String sistema;
 	
-//	@Column(name = "TIPO_TRANSMISSAO")
-//	private String tipoTransmissao;
+	@Column(name = "TIPO_TRANSMISSAO")
+	private String tipoTransmissao;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "STATUS_TRANSMISSAO")
+	private StatusTransmissaoEnum statusTransmissaoEnum;
 	
-//	@Column(name = "STATUS_TRANSMISSAO", nullable = false)
-//	private StatusTransmissaoEnum statusTransmissaoEnum;
+	@Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "DATA_INCLUSAO", nullable = false)
+	private Date dataInclusao;
 	
-//	@Temporal(TemporalType.TIMESTAMP)
-//    @Column(name = "DATA_INCLUSAO", nullable = false)
-//	private Date dataInclusao;
+	@Temporal(TemporalType.TIMESTAMP)
+   @Column(name = "DATA_ALTERACAO")
+	private Date dataAlteracao;
 	
-///	@Temporal(TemporalType.TIMESTAMP)
- //   @Column(name = "DATA_ALTERACAO")
-//	private Date dataAlteracao;
+	@Column(name = "USUARIO_INCLUSAO", nullable = false)
+	private String usuarioInclusao;
 	
-//	@Column(name = "USUARIO_INCLUSAO", nullable = false)
-//	private String usuarioInclusao;
-	
-//	@Column(name = "USUARIO_ALTERACAO", nullable = false)
-//	private String usuarioAlteracao;
+	@Column(name = "USUARIO_ALTERACAO", nullable = false)
+	private String usuarioAlteracao;
 	
 	
 	public Cota() {
@@ -749,9 +750,6 @@ public class Cota implements Serializable {
 	public void setBoletoNFE(boolean boletoNFE) {
 		this.boletoNFE = boletoNFE;
 	}
-	
-	
-/*
 
 	public String getSistema() {
 		return sistema;
@@ -774,6 +772,21 @@ public class Cota implements Serializable {
 	
 
 
+	public Date getDataAlteracao() {
+		return dataAlteracao;
+	}
+
+
+	public void setDataAlteracao(Date dataAlteracao) {
+		this.dataAlteracao = dataAlteracao;
+	}
+
+
+	public Boolean getDevolveEncalhe() {
+		return devolveEncalhe;
+	}
+
+
 	public Date getDataInclusao() {
 		return dataInclusao;
 	}
@@ -783,16 +796,6 @@ public class Cota implements Serializable {
 		this.dataInclusao = dataInclusao;
 	}
 
-
-	public Date getDataAlteracao() {
-		return dataAlteracao;
-	}
-
-
-	public void setDataAlteracao(Date dataAlteracao) {
-		this.dataAlteracao = dataAlteracao;
-	}
-	
 	public StatusTransmissaoEnum getStatusTransmissaoEnum() {
 		return statusTransmissaoEnum;
 	}
@@ -819,7 +822,7 @@ public class Cota implements Serializable {
 	public void setUsuarioAlteracao(String usuarioAlteracao) {
 		this.usuarioAlteracao = usuarioAlteracao;
 	}
-*/
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
