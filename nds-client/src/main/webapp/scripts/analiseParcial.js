@@ -863,7 +863,13 @@ var analiseParcialController = $.extend(true, {
                     	
                     	var venda;
                     	
-                    	if(cell.edicoesBase[j].edicaoAberta && (cell.edicoesBase[j].venda == 0 || cell.edicoesBase[j].venda == undefined)){
+//                    	if(cell.edicoesBase[j].edicaoAberta && (cell.edicoesBase[j].venda == 0 || cell.edicoesBase[j].venda == undefined)){
+//                    		venda = '';
+//                    	}else{
+//                    		venda = cell.edicoesBase[j].venda
+//                    	}
+                    	
+                    	if(cell.edicoesBase[j].venda == undefined){
                     		venda = '';
                     	}else{
                     		venda = cell.edicoesBase[j].venda
