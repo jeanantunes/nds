@@ -1002,7 +1002,13 @@ public Map<Integer, EdicoesProdutosDTO> buscaHistoricoCotasPorBase(List<Long> li
     	sql.append("             on tm.id = mec.tipo_movimento_id   ");
     	sql.append("     inner join ");
     	sql.append("         cota c  ");
-    	sql.append("             on c.id in (:listIdsCota)   ");
+    	
+    	if(listCotaId == null || listCotaId.isEmpty()){
+    		sql.append("             on mec.cota_id = c.id   ");
+    	}else{
+    		sql.append("             on c.id in (:listIdsCota)   ");
+    	}
+    	
     	sql.append("     inner join ");
     	sql.append("         lancamento l  ");
     	sql.append("             on mec.lancamento_id = l.id   ");
@@ -1019,12 +1025,15 @@ public Map<Integer, EdicoesProdutosDTO> buscaHistoricoCotasPorBase(List<Long> li
     	}
     	
     	sql.append("     where ");
-    	sql.append("         c.id in (:listIdsCota)  ");
+    	sql.append("         mec.PRODUTO_EDICAO_ID = :produtoEdicaoId  ");
 
-    	sql.append("         and mec.PRODUTO_EDICAO_ID = :produtoEdicaoId  ");
+    	if(listCotaId != null && !listCotaId.isEmpty()){
+    		sql.append("         and  c.id in (:listIdsCota)  ");
+    		sql.append("         and mec.cota_id in (:listIdsCota)  ");
+    	}
     	
     	sql.append("         and mec.cota_id = c.id   ");
-    	sql.append("         and mec.cota_id in (:listIdsCota)  ");
+    	
     	sql.append("         and l.STATUS IN (:lancamentosPosExpedicao)  ");
     	sql.append("         and tm.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
     	sql.append("         and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null   ");
@@ -1052,7 +1061,9 @@ public Map<Integer, EdicoesProdutosDTO> buscaHistoricoCotasPorBase(List<Long> li
         }
         //FIM!
         
-        query.setParameterList("listIdsCota", listCotaId);
+        if(listCotaId != null && !listCotaId.isEmpty()){
+        	query.setParameterList("listIdsCota", listCotaId);
+        }
         
     	query.setParameter("produtoEdicaoId", idProdutoEdicao);
     	
