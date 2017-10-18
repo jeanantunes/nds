@@ -1,7 +1,9 @@
 package br.com.abril.nds.integracao.ems2021.processor;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -62,7 +64,7 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
             String diretorio    = parametroSistemaRepository.getParametro("INBOUND_DIR");
             String pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
 
-            List<String> distribuidores = super.getDistribuidores(diretorio, p_codigoDistribuidor);
+            List<String> distribuidores = this.getDistribuidores(diretorio, p_codigoDistribuidor);
 
             for (String distribuidor : distribuidores) {
 
@@ -104,5 +106,31 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
     @Override
     public void posProcess(Object tempVar) {
         LOGGER.info("EMS2021 - posProcess " + tempVar);
+    }
+
+    /**
+     * Recupera distribuidores a serem processados.
+     */
+    protected List<String> getDistribuidores(String diretorio, Long codigoDistribuidor) {
+
+        List<String> distribuidores = new ArrayList<String>();
+
+        if (codigoDistribuidor == null) {
+
+            FilenameFilter numericFilter = new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return name.matches("\\d+");
+                }
+            };
+
+            File dirDistribs = new File(diretorio);
+            distribuidores.addAll(Arrays.asList(dirDistribs.list( numericFilter )));
+
+        } else {
+
+            distribuidores.add(codigoDistribuidor.toString());
+        }
+
+        return distribuidores;
     }
 }
