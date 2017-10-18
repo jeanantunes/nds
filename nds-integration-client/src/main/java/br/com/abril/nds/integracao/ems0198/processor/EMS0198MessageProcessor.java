@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.dto.CotaCouchDTO;
 import br.com.abril.nds.dto.IpvRecolhimentoDTO;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
@@ -41,8 +42,10 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.service.ControleCotaService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.ExporteCouch;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
@@ -63,13 +66,13 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 	private NdsiLoggerFactory ndsiLoggerFactory;
 	
 	@Autowired
-	private DescontoService descontoService;
-	
-	@Autowired
-	private DistribuidorService distribuidorService;
+	private CotaRepository cotaRepository;
 	
 	@Autowired
 	private ControleCotaService controleCotaService;
+	
+	@Autowired
+	private ExporteCouch exporteCouch;
 
 	private Date dataLctoDistrib;
 
@@ -138,6 +141,20 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		}
 		
 		compactarArquivos(message);
+		
+		try {
+			List<CotaCouchDTO> lista = cotaRepository.getCotaRecolhimento(dataLctoDistrib);
+			for (CotaCouchDTO reparte : lista) {
+				reparte.setDataInclusao(new Date());
+				reparte.setProdutos(cotaRepository.getProdutoRecolhimento(reparte.getId(), reparte.getDataMovimento()));
+			}
+			exporteCouch.exportar(lista,"Recolhimento");
+		} catch (Exception e) {
+
+		}
+		
+		
+		
 	}
 	
 	
@@ -355,6 +372,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		sql.append("  where pdv.PONTO_PRINCIPAL = true  ");
 		sql.append(" 		and ce.DATA_RECOLHIMENTO = :dataRecolhimento ");
 		sql.append(" 		and cota.UTILIZA_IPV = :true ");
+		sql.append(" 		and cota.tipo_transmissao = 'TXT'");
 		sql.append(" 		group by cota.NUMERO_COTA ");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString()); 

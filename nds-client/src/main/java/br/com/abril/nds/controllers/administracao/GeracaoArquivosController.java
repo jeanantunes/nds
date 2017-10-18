@@ -110,7 +110,7 @@ public class GeracaoArquivosController extends BaseController {
 	private EMS0197Route route197;		
 	
 	@Autowired
-	private EMS0198Route route198;		
+	private EMS0198Route route198;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;

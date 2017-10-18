@@ -14,6 +14,7 @@ import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoXLSDTO;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
+import br.com.abril.nds.dto.CotaCouchDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
@@ -25,6 +26,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MunicipioDTO;
 import br.com.abril.nds.dto.ParametroDistribuicaoEntregaCotaDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
+import br.com.abril.nds.dto.ProdutoCouchDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
@@ -478,4 +480,14 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
 
 	List<Long> buscarCotasQueNaoRecebeFornecedorDoProduto(Long idProdutoEdicao);
+	
+	List<CotaCouchDTO> getCotaLancamento(Date data);
+	
+	List<ProdutoCouchDTO> getProdutoLancamento(Long idCota, Date data);
+
+
+	List<CotaCouchDTO> getCotaRecolhimento(Date dataLctoDistrib);
+	
+	 List<ProdutoCouchDTO> getProdutoRecolhimento(Long idCota, Date data); 
+	
 }

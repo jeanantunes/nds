@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -42,6 +43,7 @@ import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoXLSDTO;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
+import br.com.abril.nds.dto.CotaCouchDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
@@ -53,6 +55,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MunicipioDTO;
 import br.com.abril.nds.dto.ParametroDistribuicaoEntregaCotaDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
+import br.com.abril.nds.dto.ProdutoCouchDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
@@ -60,6 +63,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
+import br.com.abril.nds.helper.LancamentoHelper;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
@@ -4163,4 +4167,255 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		return query.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CotaCouchDTO> getCotaLancamento(Date data) {
+
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT DISTINCT ")
+		.append(" c.id AS id, ")
+		.append("  coalesce(c.numero_cota,null,' ') AS jornaleiro, ")
+		.append("  coalesce(pdv.id,null,' ') AS codigoPontoVenda, ")
+		.append("  coalesce(c.numero_jornaleiro_ipv,null,' ') AS codigoCota, ")
+		.append("  coalesce(lan.DATA_LCTO_DISTRIBUIDOR,null,' ') AS dataMovimento, ")
+		.append(" (SELECT if (d.COD_DISTRIBUIDOR_DINAP != 0,d.COD_DISTRIBUIDOR_DINAP,d.COD_DISTRIBUIDOR_FC) FROM distribuidor d LIMIT 1) AS codigoDistribuidor, ")
+		.append(" coalesce(c.SISTEMA,null,' ') as sistema, ")
+		.append(" case when pc.tipo = 'J' then pc.razao_social else  coalesce(pc.nome,null,' ') end as nome, ")    
+		.append(" coalesce(endereco.TIPO_LOGRADOURO,null,' ') as tipoLogradouro, ")
+		.append(" coalesce(endereco.LOGRADOURO,null,' ') as enderecoLogradouro, ")
+		.append(" coalesce(endereco.NUMERO,null,' ') as enderecoNumero,  ")
+		.append(" coalesce(endereco.COMPLEMENTO,null,' ') as enderecoComplemento, ")
+		.append(" coalesce(endereco.BAIRRO,null,' ') as enderecoBairro, ")
+		.append(" coalesce(endereco.CEP,null,' ') as enderecoCep, ")
+		.append(" coalesce(endereco.CIDADE,null,' ') as enderecoCidade, ")
+		.append(" coalesce(endereco.UF,null,' ') as enderecoUf ");
+		
+		sql.append("   FROM cota c ");
+		sql.append(" left outer join pessoa pc on pc.id = c.PESSOA_ID ");
+		sql.append(" JOIN pdv pdv ON pdv.cota_id = c.id ");
+		sql.append(" left outer join endereco_pdv endpdv on endpdv.id = pdv.id and endpdv.PRINCIPAL = true  ");
+		sql.append(" left outer join endereco on endereco.id = endpdv.endereco_id ");
+		sql.append("        JOIN estudo_cota_gerado ecg ");
+		sql.append("           ON ecg.COTA_ID = c.ID ");
+		sql.append("        JOIN estudo_gerado eg  ");
+		sql.append("           ON ecg.ESTUDO_ID = eg.ID ");
+		sql.append("       JOIN lancamento lan ON lan.ESTUDO_ID = eg.id       ");
+		sql.append("  WHERE  lan.DATA_LCTO_DISTRIBUIDOR = :data and lan.STATUS in ('BALANCEADO', 'EXPEDIDO') ");
+		sql.append("           AND pdv.PONTO_PRINCIPAL = :true ");
+		sql.append("           AND ecg.QTDE_EFETIVA > 0 ");
+		sql.append("           AND c.UTILIZA_IPV = :true ");
+		sql.append("           AND c.tipo_transmissao='SERVICO' ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("data", data);
+		query.setParameter("true", true);
+		
+		query.addScalar("codigoDistribuidor", StandardBasicTypes.STRING);
+		query.addScalar("id", StandardBasicTypes.LONG);
+		query.addScalar("dataMovimento", StandardBasicTypes.DATE );
+		query.addScalar("jornaleiro", StandardBasicTypes.STRING );
+		query.addScalar("codigoCota", StandardBasicTypes.STRING );
+		query.addScalar("codigoPontoVenda", StandardBasicTypes.STRING );
+		query.addScalar("sistema", StandardBasicTypes.STRING );
+		
+		query.addScalar("nome", StandardBasicTypes.STRING );
+		query.addScalar("tipoLogradouro", StandardBasicTypes.STRING );
+		query.addScalar("enderecoNumero", StandardBasicTypes.STRING );
+		query.addScalar("enderecoComplemento", StandardBasicTypes.STRING );
+		query.addScalar("enderecoBairro", StandardBasicTypes.STRING );
+		query.addScalar("enderecoCep", StandardBasicTypes.STRING );
+		query.addScalar("enderecoCidade", StandardBasicTypes.STRING );
+		query.addScalar("enderecoUf", StandardBasicTypes.STRING );
+		
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaCouchDTO.class));
+		
+		return (List<CotaCouchDTO>) query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CotaCouchDTO> getCotaRecolhimento(Date data) {
+
+		StringBuilder sql = new StringBuilder();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		
+		sql.append("  select  ");
+		sql.append("     CAST(cec.COTA_ID as CHAR) as id, ");
+		sql.append("     CAST(cota.NUMERO_COTA as CHAR) as jornaleiro, ")
+		.append("  coalesce(cota.numero_jornaleiro_ipv,null,' ') AS codigoCota, ")
+		.append("  coalesce(pdv.id,null,' ') AS codigoPontoVenda, ")
+		.append("     ce.DATA_RECOLHIMENTO as dataMovimento, ")
+		.append("     CAST((if (dtb.COD_DISTRIBUIDOR_DINAP != 0,dtb.COD_DISTRIBUIDOR_DINAP,dtb.COD_DISTRIBUIDOR_FC)) as CHAR) as codigoDistribuidor ")
+		.append("  from distribuidor dtb, chamada_encalhe ce ")
+		.append("   join chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID ")
+		.append("   join cota ON cec.COTA_ID = cota.ID ")
+		.append("   join pdv on pdv.COTA_ID = cota.ID ")
+		.append("  where pdv.PONTO_PRINCIPAL = true  ")
+		.append(" 		and ce.DATA_RECOLHIMENTO ='"+simpleDateFormat.format(data)+"'")
+		.append(" 		and cota.UTILIZA_IPV = true ")
+		.append(" 		and cota.tipo_transmissao = 'SERVICO'")
+		.append(" 		group by cota.NUMERO_COTA ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.addScalar("codigoDistribuidor", StandardBasicTypes.STRING);
+		query.addScalar("id", StandardBasicTypes.LONG);
+		query.addScalar("dataMovimento", StandardBasicTypes.DATE );
+		query.addScalar("jornaleiro", StandardBasicTypes.STRING );
+		query.addScalar("codigoCota", StandardBasicTypes.STRING );
+		query.addScalar("codigoPontoVenda", StandardBasicTypes.STRING );
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaCouchDTO.class));
+		
+		return (List<CotaCouchDTO>) query.list();
+	}
+	
+	
+
+	@SuppressWarnings("unchecked")
+	public List<ProdutoCouchDTO> getProdutoLancamento(Long idCota, Date data) {
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("   SELECT ");
+		sql.append("       CAST(SUBSTRING(p.CODIGO, -8) AS CHAR) AS codigoProduto, ");
+		sql.append("       CAST(pe.NUMERO_EDICAO AS CHAR) AS numeroEdicao, ");
+		sql.append("       CAST(pe.CODIGO_DE_BARRAS AS CHAR) AS codigoBarrasProduto, ");
+		sql.append("       coalesce(p.NOME,null,' ') AS nomeProduto, ");
+		sql.append("       CAST(ROUND(ecg.QTDE_EFETIVA, 0) AS CHAR) AS reparte, ");
+		sql.append("       pes.RAZAO_SOCIAL AS nomeEditora, ");
+		sql.append("       CAST(ROUND(pe.PRECO_VENDA, 2) AS CHAR) AS precoCapa, ");
+		sql.append("       CAST(ROUND(pe.PRECO_CUSTO, 2) AS CHAR) AS precoCusto, ");
+		sql.append("       coalesce(pe.CHAMADA_CAPA,null,' ') AS chamadaCapa, ");
+		sql.append("       coalesce(lct.DATA_LCTO_DISTRIBUIDOR,null, ' ') AS dataLancamento, ");
+		// trocado apos chamado 4666108 -- date_format (((eg.DATA_LANCAMENTO),
+		// '%Y%m%d') AS dataLancamento, ");
+		sql.append(
+				"       DATE_FORMAT(((select l.DATA_LCTO_DISTRIBUIDOR from lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1)), '%Y%m%d') AS dataPrimeiroLancamentoParcial, ");
+		// sql.append(" ' ' as dataPrimeiroLancamentoParcial,");
+		sql.append("       CAST(lct.ID AS CHAR) as idLancamento, ");
+		sql.append("       CAST(pe.ID AS CHAR) as idProdutoEdicao, ");
+		sql.append("       CAST(p.ID AS CHAR) as idProduto, ");
+		sql.append("       CAST(f.ID AS CHAR) as idFornecedor, ");
+		sql.append("       CAST(edt.ID AS CHAR) as idEditor ");
+
+		sql.append("   FROM estudo_cota_gerado ecg ");
+
+		sql.append("     JOIN estudo_gerado eg   ");
+		sql.append("       ON ecg.ESTUDO_ID = eg.ID ");
+		sql.append("     JOIN lancamento lct  ");
+		sql.append("       ON eg.LANCAMENTO_ID = lct.ID ");
+		sql.append("     JOIN produto_edicao pe  ");
+		sql.append("       ON lct.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append("     JOIN produto p ");
+		sql.append("       ON pe.PRODUTO_ID = p.ID ");
+		sql.append("     JOIN cota c  ");
+		sql.append("       ON ecg.COTA_ID = c.ID ");
+		sql.append("     JOIN pdv pdvs ");
+		sql.append("       ON pdvs.COTA_ID = c.ID ");
+		sql.append("     LEFT JOIN editor edt ");
+		sql.append("       ON p.EDITOR_ID = edt.ID ");
+		sql.append("     JOIN pessoa pes ");
+		sql.append("       ON edt.JURIDICA_ID = pes.ID ");
+		sql.append("     LEFT JOIN produto_fornecedor pf  ");
+		sql.append("       ON pf.PRODUTO_ID = p.ID ");
+		sql.append("     LEFT JOIN fornecedor f ");
+		sql.append("       ON pf.fornecedores_ID = f.ID ");
+
+		sql.append("       WHERE lct.DATA_LCTO_DISTRIBUIDOR = :data ");
+		sql.append("       		and lct.STATUS in (:statusLancamento) ");
+		sql.append("       		and ecg.REPARTE is not null ");
+		sql.append("       		and ecg.REPARTE > 0 ");
+		sql.append(" 	 		and c.id = :idCota");
+		sql.append(" 	 		and c.UTILIZA_IPV = :true and  pdvs.ponto_principal = true");
+		sql.append(" 	 		order by lct.SEQUENCIA_MATRIZ ");
+
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+
+		query.setParameter("data", data);
+		query.setParameter("idCota", idCota);
+		query.setParameter("true", true);
+		query.setParameterList("statusLancamento",
+				LancamentoHelper.getStatusLancamentosPosBalanceamentoLancamentoString());
+
+		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+		query.addScalar("numeroEdicao", StandardBasicTypes.STRING);
+		query.addScalar("codigoBarrasProduto", StandardBasicTypes.STRING);
+		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
+		query.addScalar("reparte", StandardBasicTypes.STRING);
+		query.addScalar("nomeEditora", StandardBasicTypes.STRING);
+		query.addScalar("precoCapa", StandardBasicTypes.STRING);
+		query.addScalar("precoCusto", StandardBasicTypes.STRING);
+		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
+		query.addScalar("dataLancamento", StandardBasicTypes.DATE);
+		query.addScalar("dataPrimeiroLancamentoParcial", StandardBasicTypes.DATE);
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoCouchDTO.class));
+
+		return (List<ProdutoCouchDTO>) query.list();
+	
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<ProdutoCouchDTO> getProdutoRecolhimento(Long idCota, Date data) {
+
+		StringBuilder sql = new StringBuilder();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+		sql.append("  select  ");
+
+		sql.append("      coalesce(ce.DATA_RECOLHIMENTO,null,' ') as dataRecolhimento ");
+		sql.append("      , CAST(SUBSTRING(p.CODIGO, -8) as CHAR) as codigoProduto ");
+		sql.append("      , CAST(pe.NUMERO_EDICAO as CHAR) as numeroEdicao ");
+		sql.append("      , CAST(pe.CODIGO_DE_BARRAS as CHAR) as codigoBarrasProduto ");
+		sql.append("      , p.NOME as nomeProduto");
+		sql.append("      , CAST(ROUND(cec.QTDE_PREVISTA, 0) as CHAR) as reparte ");
+		sql.append("      , pes.RAZAO_SOCIAL as nomeEditora ");
+		sql.append("      , CAST(ROUND(ROUND(mec.PRECO_VENDA, 2)*100, 0) as CHAR) as precoCapa ");
+		sql.append("      , CAST(ROUND(ROUND(mec.PRECO_COM_DESCONTO, 2)*100, 0) as CHAR) as precoCusto ");
+		sql.append("      , pe.CHAMADA_CAPA as chamadaCapa ");
+
+		sql.append("      from chamada_encalhe ce  ");
+		sql.append("      JOIN chamada_encalhe_cota cec ON cec.CHAMADA_ENCALHE_ID = ce.ID ");
+		sql.append(" 		 join produto_edicao pe on ce.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" 		 join cota c on cec.COTA_ID = c.ID  ");
+		sql.append(" 		 join lancamento l on l.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" 		 join produto p on p.id = pe.produto_id  ");
+		sql.append(" 		 LEFT join pdv on pdv.COTA_ID = c.ID ");
+		sql.append("      LEFT join editor edt ON p.EDITOR_ID = edt.ID ");
+		sql.append("      join pessoa pes ON edt.JURIDICA_ID = pes.ID  ");
+		sql.append("      join movimento_estoque_cota mec on mec.LANCAMENTO_ID = l.ID and mec.COTA_ID = c.ID ");
+
+		sql.append("      where  ");
+		
+		sql.append("      pdv.PONTO_PRINCIPAL = true ");
+		sql.append("      and ce.DATA_RECOLHIMENTO ='"+simpleDateFormat.format(data)+"'");
+		sql.append("      and c.id = :idCota ");
+		sql.append("      and c.UTILIZA_IPV = true ");
+		sql.append("      group by c.NUMERO_COTA,ce.PRODUTO_EDICAO_ID");
+		sql.append("      order by ce.SEQUENCIA, c.NUMERO_COTA, ce.PRODUTO_EDICAO_ID  ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+
+		query.setParameter("idCota", idCota);
+
+		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+		query.addScalar("numeroEdicao", StandardBasicTypes.STRING);
+		query.addScalar("codigoBarrasProduto", StandardBasicTypes.STRING);
+		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
+		query.addScalar("reparte", StandardBasicTypes.STRING);
+		query.addScalar("nomeEditora", StandardBasicTypes.STRING);
+		query.addScalar("precoCapa", StandardBasicTypes.STRING);
+		query.addScalar("precoCusto", StandardBasicTypes.STRING);
+		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
+		query.addScalar("dataRecolhimento", StandardBasicTypes.DATE);
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoCouchDTO.class));
+
+		return (List<ProdutoCouchDTO>) query.list();
+	
+	}
+	
 }
