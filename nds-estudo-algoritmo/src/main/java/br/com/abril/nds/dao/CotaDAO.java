@@ -241,15 +241,15 @@ public class CotaDAO {
 			
 			
 			if(isUsarICDMIX){
-				queryCota.append(" LEFT JOIN mix_cota_produto mcp ON mcp.id_cota = c.id AND mcp.codigo_icd = p.codigo_icd AND mcp.tipo_classificacao_produto_id = pe.tipo_classificacao_produto_id");
+				queryCota.append(" LEFT JOIN mix_cota_produto mcp ON mcp.id_cota = c.id AND mcp.codigo_icd = p.codigo_icd AND mcp.usar_icd_estudo = 1 AND mcp.tipo_classificacao_produto_id = pe.tipo_classificacao_produto_id");
 			}else{
-				queryCota.append(" LEFT JOIN mix_cota_produto mcp ON mcp.id_cota = c.id AND mcp.codigo_produto = p.codigo AND mcp.tipo_classificacao_produto_id = pe.tipo_classificacao_produto_id");
+				queryCota.append(" LEFT JOIN mix_cota_produto mcp ON mcp.id_cota = c.id AND mcp.codigo_produto = p.codigo AND mcp.usar_icd_estudo = 0 AND mcp.tipo_classificacao_produto_id = pe.tipo_classificacao_produto_id");
 			}
 			
 			if(isUsarICDFixacao){
-				queryCota.append(" LEFT JOIN fixacao_reparte fr ON fr.id_cota = c.id AND fr.codigo_icd = p.codigo_icd AND fr.id_classificacao_edicao = pe.tipo_classificacao_produto_id ");
+				queryCota.append(" LEFT JOIN fixacao_reparte fr ON fr.id_cota = c.id AND fr.codigo_icd = p.codigo_icd AND fr.usar_icd_estudo = 1 AND fr.id_classificacao_edicao = pe.tipo_classificacao_produto_id ");
 			}else{
-				queryCota.append(" LEFT JOIN fixacao_reparte fr ON fr.id_cota = c.id AND fr.codigo_produto = p.codigo AND fr.id_classificacao_edicao = pe.tipo_classificacao_produto_id ");
+				queryCota.append(" LEFT JOIN fixacao_reparte fr ON fr.id_cota = c.id AND fr.codigo_produto = p.codigo AND fr.usar_icd_estudo = 0 AND fr.id_classificacao_edicao = pe.tipo_classificacao_produto_id ");
 			}
 			
 			queryCota.append(queryCotasNaoUsarICD_Part2);
