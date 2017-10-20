@@ -1,5 +1,7 @@
 package br.com.abril.nds.dto;
 
+import br.com.abril.nds.enums.ModalidadeFreteEnum;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;

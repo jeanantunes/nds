@@ -1,8 +1,8 @@
 package br.com.abril.nds.service.builders;
 
 import java.util.List;
-import java.util.Map;
 
+import br.com.abril.nds.enums.ModalidadeFreteEnum;
 import br.com.abril.nds.model.cadastro.EnderecoTransportador;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.model.cadastro.Veiculo;
@@ -13,7 +13,10 @@ import br.com.abril.nds.model.fiscal.nota.TransportadorWrapper;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.integracao.ParametroSistema;
+import org.springframework.stereotype.Component;
 
+import static br.com.abril.nds.enums.ModalidadeFreteEnum.POR_CONTA_DESTINATARIO_REMETENTE;
+@Component
 public class NotaFiscalTransportadorBuilder {
 	
 	public static NotaFiscal montarTransportador(NotaFiscal notaFiscal, NaturezaOperacao naturezaOperacao, List<Transportador> transportadores, ParametroSistema ps){
@@ -47,22 +50,23 @@ public class NotaFiscalTransportadorBuilder {
 			
 			if(ps != null ){
 				if(ProcessoEmissao.EMISSAO_NFE_INFO_FISCO.equals(ProcessoEmissao.valueOf(ps.getValor()))) {
-					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(9);
+					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(ModalidadeFreteEnum.SEM_FRETE_v2_0.getDescricao());
 				} else {
-					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(0);
+					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(ModalidadeFreteEnum.POR_CONTA_EMITENTE.getDescricao());
 				}
 			} else {
-				notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(0);
+				notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(ModalidadeFreteEnum.POR_CONTA_EMITENTE.getDescricao());
 			}
 			
 			
 		} else {
 			
 			for (Transportador transportador : transportadores) {
-				
-				notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setDocumento(transportador.getPessoaJuridica().getCnpj());	
-				notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setNome(transportador.getPessoaJuridica().getNome());	
-				
+
+				notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setDocumento(transportador.getPessoaJuridica().getDocumento());
+				notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setNome(transportador.getPessoaJuridica().getNome());
+				notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setInscricaoEstadual(transportador.getPessoaJuridica().getInscricaoEstadual());
+
 				montarEnderecoTransporte(notaFiscal, transportador.getEnderecosTransportador());
 				// montarVeiculo(notaFiscal, transportador.getVeiculos());
 				break;
@@ -74,8 +78,10 @@ public class NotaFiscalTransportadorBuilder {
 	}
 	
 	private static void montarEnderecoTransporte(NotaFiscal notaFiscal, List<EnderecoTransportador> enderecoTransportadores){
-		
+
 		if(enderecoTransportadores == null || enderecoTransportadores.isEmpty()){
+			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(POR_CONTA_DESTINATARIO_REMETENTE.getDescricao());
+			/*
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setBairro("Osasco");
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setLogradouro("Kenkiti Shinomoto");
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCep("08250000");
@@ -88,8 +94,8 @@ public class NotaFiscalTransportadorBuilder {
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setPais("Brasil");
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setTipoLogradouro("Rua");
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setUf("SP");
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(1);
-			
+			//notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(1);
+			*/
 		} else {
 
 			for (EnderecoTransportador enderecoTransportador : enderecoTransportadores){
@@ -112,7 +118,7 @@ public class NotaFiscalTransportadorBuilder {
 					endereco.setTipoLogradouro(enderecoTransportador.getEndereco().getTipoLogradouro());
 					endereco.setUf(enderecoTransportador.getEndereco().getUf());
 					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setEndereco(endereco);
-					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(1);
+					notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(ModalidadeFreteEnum.POR_CONTA_DESTINATARIO_REMETENTE.getDescricao());
 					break;
 				}
 			}
