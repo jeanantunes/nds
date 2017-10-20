@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.com.abril.nds.enums.ModalidadeFreteEnum;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
@@ -60,7 +61,6 @@ public class DanfeBuilder  implements Serializable {
 	 * Carrega os dados principais da DANFE
 	 * 
 	 * @param danfe
-	 * @param nfe
 	 * @param notaFiscal
 	 * @return 
 	 */
@@ -222,7 +222,6 @@ public class DanfeBuilder  implements Serializable {
 	 * Carrega os dados de destinatario na DANFE.
 	 * 
 	 * @param danfe
-	 * @param nfe
 	 * @param notaFiscal
 	 */
 	public static void carregarDanfeDadosDestinatario(DanfeDTO danfe, NotaFiscal notaFiscal) {

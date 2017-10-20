@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.util.DateUtil;
 
@@ -41,6 +44,8 @@ public class EdicoesProdutosDTO implements Serializable {
     private Integer idCota;
     
     private BigInteger idProdutoEdicao;
+    
+    Map<Integer, EdicoesProdutosDTO> historicoReparteVendaEdicaoBase = new HashMap<>();
 
     public EdicoesProdutosDTO() {}
 
@@ -211,5 +216,14 @@ public class EdicoesProdutosDTO implements Serializable {
 	public void setIdcota(Integer idcota) {
 		this.idCota = idcota;
 	}
+
+	public Map<Integer, EdicoesProdutosDTO> getHistoricoReparteVendaEdicaoBase() {
+		return historicoReparteVendaEdicaoBase;
+	}
+
+	public void setHistoricoReparteVendaEdicaoBase(Map<Integer, EdicoesProdutosDTO> historicoReparteVendaEdicaoBase) {
+		this.historicoReparteVendaEdicaoBase = historicoReparteVendaEdicaoBase;
+	}
+	
 	
 }

@@ -162,6 +162,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             	if(queryDTO.getEstudoOrigem()!=null && queryDTO.getEstudoOrigem().compareTo(0l) ==1) {
             		edicaoDoEstudoOrigem = analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoOrigem());
             	}
+            	
             	if(edicaoDoEstudoOrigem!=null && edicaoDoEstudoOrigem.size()>0){
             		List<EdicoesProdutosDTO> listConcat = new ArrayList<EdicoesProdutosDTO>();
             		listConcat.addAll(edicaoDoEstudoOrigem);
@@ -169,6 +170,13 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             		queryDTO.setEdicoesBase(listConcat);
             	}else{ 
             		queryDTO.setEdicoesBase(edicoesBaseList);
+            	}
+            	
+            	int i = 0;
+            	
+            	for	(EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
+            		edicoesProdutosDTO.setOrdemExibicao(i);
+            		i++;
             	}
             	
             } else {
@@ -195,6 +203,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             			String chaveMap = ""+edicoesProdutosDTO.getProdutoEdicaoId()+""+numeroParcial;
             			
             			mapHistoricoCotasEdicoesParciais.put(chaveMap, listCotasVendas);
+            			
             		}
             	}
             }
@@ -226,149 +235,199 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             }
             // ---- 
             
-            Map<Integer, List<EdicoesProdutosDTO>> cotasComVenda;
+//            Map<Integer, List<EdicoesProdutosDTO>> cotasComVenda;
+//            
+//            if(listaCotasId.isEmpty() || idsProdutoEdicao.isEmpty()){
+//            	cotasComVenda = new HashMap<>(); 	
+//            }else{
+//            	cotasComVenda = analiseParcialRepository.buscaHistoricoDeVendaTodasCotas(listaCotasId, idsProdutoEdicao, queryDTO.isParcialComEdicaoBaseNormal());
+//            }
             
-            if(listaCotasId.isEmpty() || idsProdutoEdicao.isEmpty()){
-            	cotasComVenda = new HashMap<>(); 	
-            }else{
-            	cotasComVenda = analiseParcialRepository.buscaHistoricoDeVendaTodasCotas(listaCotasId, idsProdutoEdicao, queryDTO.isParcialComEdicaoBaseNormal());
-            }
+            for (EdicoesProdutosDTO edicaoBase : queryDTO.getEdicoesBase()) {
+				if(edicaoBase.isParcial()){
+					if(edicaoBase.getPeriodo() != null && !edicaoBase.getPeriodo().isEmpty()){
+            			Long numeroParcial = Long.parseLong(edicaoBase.getPeriodo());
+            			Map<Integer, EdicoesProdutosDTO> historicoCotasBase = analiseParcialRepository.buscaHistoricoCotasPorBase(listaCotasId, edicaoBase.getProdutoEdicaoId(), numeroParcial);
+            			edicaoBase.setHistoricoReparteVendaEdicaoBase(historicoCotasBase);
+					}
+				}else{
+					Map<Integer, EdicoesProdutosDTO> historicoCotasBase = analiseParcialRepository.buscaHistoricoCotasPorBase(listaCotasId, edicaoBase.getProdutoEdicaoId(), null);
+					edicaoBase.setHistoricoReparteVendaEdicaoBase(historicoCotasBase);
+				}
+			}
             
             for (AnaliseParcialDTO item : lista) {
                 item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));
                 
-                List<EdicoesProdutosDTO> edicoesComVenda = new LinkedList<>();
+//                List<EdicoesProdutosDTO> edicoesComVenda = new LinkedList<>();
+                
                 Map<String, EdicoesProdutosDTO> edicoesProdutosDTOMap = new HashMap<>();
 //                Integer ordemExibicaoHelper = 0;
 
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>());
                 
-                if(queryDTO.getEdicoesBase() != null && queryDTO.getEdicoesBase().size() > 0){
-        			for (int i = 0; i < queryDTO.getEdicoesBase().size(); i++) {
-							
-						String mapKey = obterMapKey(queryDTO.getEdicoesBase().get(i));
-						queryDTO.getEdicoesBase().get(i).setReparte(null);
-						queryDTO.getEdicoesBase().get(i).setVenda(null);
-						
-						if(queryDTO.getEdicoesBase().get(i).getOrdemExibicao() == null){
-							queryDTO.getEdicoesBase().get(i).setOrdemExibicao(i);
-						}
-						
-						edicoesProdutosDTOMap.put(mapKey, queryDTO.getEdicoesBase().get(i));
-					}
-        		}
+//                if(queryDTO.getEdicoesBase() != null && queryDTO.getEdicoesBase().size() > 0){
+//        			for (int i = 0; i < queryDTO.getEdicoesBase().size(); i++) {
+//							
+//						String mapKey = obterMapKey(queryDTO.getEdicoesBase().get(i));
+//						queryDTO.getEdicoesBase().get(i).setReparte(null);
+//						queryDTO.getEdicoesBase().get(i).setVenda(null);
+//						
+//						if(queryDTO.getEdicoesBase().get(i).getOrdemExibicao() == null){
+//							queryDTO.getEdicoesBase().get(i).setOrdemExibicao(i);
+//						}
+//						
+//						edicoesProdutosDTOMap.put(mapKey, queryDTO.getEdicoesBase().get(i));
+//					}
+//        		}
 
                 if(idsProdutoEdicao.size() > 0) {
-                	Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas = buscaHistoricoDeVendas(item.getCotaId(), idsProdutoEdicao, cotasComVenda);
                 	
-                	if((buscaHistoricoDeVendas != null && queryDTO.getEdicoesBase() != null) 
-                			&& buscaHistoricoDeVendas.size() > queryDTO.getEdicoesBase().size()){
-                		
-                		List<EdicoesProdutosDTO> buscaHistoricoDeVendasCorreto = new ArrayList<>();
-                		
-                		for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
-                			for (EdicoesProdutosDTO edicoesProdutosBseDTO : buscaHistoricoDeVendas) {
-								if(edicoesProdutosDTO.isParcial()){
-									if(edicoesProdutosDTO.getPeriodo() == null || edicoesProdutosBseDTO.getPeriodo() == null){
-										continue;
-									}
-									
-									if(edicoesProdutosBseDTO.getProdutoEdicaoId().equals(edicoesProdutosDTO.getProdutoEdicaoId())
-											&& edicoesProdutosBseDTO.getPeriodo().equals(edicoesProdutosDTO.getPeriodo())){
-										buscaHistoricoDeVendasCorreto.add(edicoesProdutosBseDTO);
-									}
-								}else{
-									if(edicoesProdutosBseDTO.getProdutoEdicaoId().equals(edicoesProdutosDTO.getProdutoEdicaoId())){
-										buscaHistoricoDeVendasCorreto.add(edicoesProdutosBseDTO);
-									}
-								}
-							}
-							
-						}
-                		
-                		buscaHistoricoDeVendas = buscaHistoricoDeVendasCorreto;
-                		
-                	}
-
-            		edicoesComVenda.addAll(buscaHistoricoDeVendas);
+//                	Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas = buscaHistoricoDeVendas(item.getCotaId(), idsProdutoEdicao, cotasComVenda);
+//                	
+//                	if((buscaHistoricoDeVendas != null && queryDTO.getEdicoesBase() != null) 
+//                			&& buscaHistoricoDeVendas.size() > queryDTO.getEdicoesBase().size()){
+//                		
+//                		List<EdicoesProdutosDTO> buscaHistoricoDeVendasCorreto = new ArrayList<>();
+//                		
+//                		for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
+//                			for (EdicoesProdutosDTO edicoesProdutosBseDTO : buscaHistoricoDeVendas) {
+//								if(edicoesProdutosDTO.isParcial()){
+//									if(edicoesProdutosDTO.getPeriodo() == null || edicoesProdutosBseDTO.getPeriodo() == null){
+//										continue;
+//									}
+//									
+//									if(edicoesProdutosBseDTO.getProdutoEdicaoId().equals(edicoesProdutosDTO.getProdutoEdicaoId())
+//											&& edicoesProdutosBseDTO.getPeriodo().equals(edicoesProdutosDTO.getPeriodo())){
+//										buscaHistoricoDeVendasCorreto.add(edicoesProdutosBseDTO);
+//									}
+//								}else{
+//									if(edicoesProdutosBseDTO.getProdutoEdicaoId().equals(edicoesProdutosDTO.getProdutoEdicaoId())){
+//										buscaHistoricoDeVendasCorreto.add(edicoesProdutosBseDTO);
+//									}
+//								}
+//							}
+//							
+//						}
+//                		
+//                		buscaHistoricoDeVendas = buscaHistoricoDeVendasCorreto;
+//                		
+//                	}
+//
+//            		edicoesComVenda.addAll(buscaHistoricoDeVendas);
             		
                     // reparte, venda e dataLancamento
                     for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
                     		
-                    	for (EdicoesProdutosDTO ed : edicoesComVenda) {
-                    			if (ed.getProdutoEdicaoId().equals(edicao.getProdutoEdicaoId())) {
-                    				
-                    				if(edicao.getOrdemExibicao() != null){
-                    					ed.setOrdemExibicao(edicao.getOrdemExibicao());
-                    				}
-                    				
-                    				if(!edicao.isParcial()){
-	                    				BeanUtils.copyProperties(edicao, ed, new String[] {"reparte", "venda"});
-                    				}else{
-                    					
-                    					if(edicao.getPeriodo() != null && !edicao.getPeriodo().isEmpty()){
-                    						
-                    						if(ed.getPeriodo() != null && edicao.getPeriodo() != null
-            										&& !ed.getPeriodo().equalsIgnoreCase(edicao.getPeriodo())){
-                    							continue;
-                    						}
-                    						
-                    						String mapKey = obterMapKey(edicao);
-                    						
-                    						List<EdicoesProdutosDTO> listCotasVendas = mapHistoricoCotasEdicoesParciais.get(mapKey);
-                    						
-                    						for (EdicoesProdutosDTO edicoesProdutosDTO : listCotasVendas) {
-                    							
-                    							if(ed.getNumeroCota() == null || edicoesProdutosDTO.getNumeroCota() == null){
-                    								continue;
-                    							}
-                    							
-                    							if(ed.getNumeroCota().equals(edicoesProdutosDTO.getNumeroCota())){
-                    								
-                    								if(ed.getPeriodo() != null && edicoesProdutosDTO.getPeriodo() != null
-                    										&& ed.getPeriodo().equalsIgnoreCase(edicoesProdutosDTO.getPeriodo())){
+                    	EdicoesProdutosDTO historicoEdicaoBase = edicao.getHistoricoReparteVendaEdicaoBase().get(item.getCotaId());
+                    	
+                    	EdicoesProdutosDTO ed = new EdicoesProdutosDTO();
+                    	
+                    	if(edicao.getOrdemExibicao() != null){
+        					ed.setOrdemExibicao(edicao.getOrdemExibicao());
+        				}
+                    	
+                    	BigDecimal reparte = historicoEdicaoBase != null && historicoEdicaoBase.getReparte() != null ? 
+                    						 new BigDecimal(historicoEdicaoBase.getReparte()) : BigDecimal.ZERO;
+            			BigDecimal venda = historicoEdicaoBase != null && historicoEdicaoBase.getVenda() != null ? 
+                    						 new BigDecimal(historicoEdicaoBase.getVenda()) : BigDecimal.ZERO;
 
-                    									BigDecimal reparte = BigDecimal.ZERO;
-                    									BigDecimal venda = BigDecimal.ZERO;
-                    									 
-                    									if(edicoesProdutosDTO.getReparte() != null){
-                    										reparte = new BigDecimal(edicoesProdutosDTO.getReparte());
-                    									}
-                    									
-                    									if(edicoesProdutosDTO.getVenda() != null){
-                    										venda = new BigDecimal(edicoesProdutosDTO.getVenda());
-                    									}
-                    									
-                    									ed.setReparte(reparte);
-                    									ed.setVenda(venda);
-                    									ed.setEdicaoAberta(edicoesProdutosDTO.isEdicaoAberta());
-                    									ed.setParcial(true);
-                    									
-                    									if(edicoesProdutosDTO.getDataLancamento() != null){ 
-                	                    					ed.setDataLancamento(edicoesProdutosDTO.getDataLancamento());
-                	                    				}
-                    									
-                    									break;
-                    								}
-                    								
-                    							}
-                    						}
-                    					}else{
-                    						ed.setReparte(BigDecimal.ZERO);
-                    						ed.setVenda(BigDecimal.ZERO);
-                    					}
-                    					
-                                	
-                                	}
-                    				
-                    				String mapKey = obterMapKey(ed); 
-                    				
-                    				edicoesProdutosDTOMap.put(mapKey, ed);
-                    				
-//                    				putMapSomatorioTotaisEdicao(mapTotaisEd, ed);
-                    			}
-                    			
-                    		}
+                    	if(edicao.isParcial()){
+							ed.setEdicaoAberta(edicao.isEdicaoAberta());
+        					ed.setDataLancamento(edicao.getDataLancamento());
+        					ed.setPeriodo(edicao.getPeriodo());
+        				}
+                    	 
+                    	ed.setReparte(reparte);
+                    	ed.setVenda(venda);
+                    	
+                    	ed.setParcial(edicao.isParcial());
+                    	ed.setProdutoEdicaoId(edicao.getProdutoEdicaoId());
+                    	
+                    	String mapKey = obterMapKey(ed);
+        				
+//        				EdicoesProdutosDTO mapElement = edicoesProdutosDTOMap.get(mapKey);
+        				
+//        				if(mapElement != null){
+//        					ed.setOrdemExibicao(mapElement.getOrdemExibicao());
+//        				}
+        				
+        				edicoesProdutosDTOMap.put(mapKey, ed);
+                    	
+//                    	for (EdicoesProdutosDTO ed : edicoesComVenda) {
+//                    			if (ed.getProdutoEdicaoId().equals(edicao.getProdutoEdicaoId())) {
+//                    				
+//                    				if(edicao.getOrdemExibicao() != null){
+//                    					ed.setOrdemExibicao(edicao.getOrdemExibicao());
+//                    				}
+//                    				
+//                    				if(!edicao.isParcial()){
+//	                    				BeanUtils.copyProperties(edicao, ed, new String[] {"reparte", "venda"});
+//                    				}else{
+//                    					
+//                    					if(edicao.getPeriodo() != null && !edicao.getPeriodo().isEmpty()){
+//                    						
+//                    						String mapKey = obterMapKey(edicao);
+//                    						
+//                    						List<EdicoesProdutosDTO> listCotasVendas = mapHistoricoCotasEdicoesParciais.get(mapKey);
+//                    						
+//                    						for (EdicoesProdutosDTO edicoesProdutosDTO : listCotasVendas) {
+//                    							
+//                    							if(ed.getNumeroCota() == null || edicoesProdutosDTO.getNumeroCota() == null){
+//                    								continue;
+//                    							}
+//                    							
+//                    							if(ed.getNumeroCota().equals(edicoesProdutosDTO.getNumeroCota())){
+//                    								
+//                    								if(ed.getPeriodo() != null && edicoesProdutosDTO.getPeriodo() != null
+//                    										&& ed.getPeriodo().equalsIgnoreCase(edicoesProdutosDTO.getPeriodo())){
+//
+//                    									BigDecimal reparte = BigDecimal.ZERO;
+//                    									BigDecimal venda = BigDecimal.ZERO;
+//                    									 
+//                    									if(edicoesProdutosDTO.getReparte() != null){
+//                    										reparte = new BigDecimal(edicoesProdutosDTO.getReparte());
+//                    									}
+//                    									
+//                    									if(edicoesProdutosDTO.getVenda() != null){
+//                    										venda = new BigDecimal(edicoesProdutosDTO.getVenda());
+//                    									}
+//                    									
+//                    									ed.setReparte(reparte);
+//                    									ed.setVenda(venda);
+//                    									ed.setEdicaoAberta(edicoesProdutosDTO.isEdicaoAberta());
+//                    									
+//                    									if(edicoesProdutosDTO.getDataLancamento() != null){ 
+//                	                    					ed.setDataLancamento(edicoesProdutosDTO.getDataLancamento());
+//                	                    				}
+//                    									
+//                    									break;
+//                    								}
+//                    								
+//                    							}
+//                    						}
+//                    					}else{
+//                    						ed.setReparte(BigDecimal.ZERO);
+//                    						ed.setVenda(BigDecimal.ZERO);
+//                    					}
+//                    					
+//                                	
+//                                	}
+//                    				
+//                    				String mapKey = obterMapKey(ed);
+//                    				
+//                    				EdicoesProdutosDTO mapElement = edicoesProdutosDTOMap.get(mapKey);
+//                    				
+//                    				if(mapElement != null){
+//                    					ed.setOrdemExibicao(mapElement.getOrdemExibicao());
+//                    				}
+//                    				
+//                    				edicoesProdutosDTOMap.put(mapKey, ed);
+//                    				
+////                    				putMapSomatorioTotaisEdicao(mapTotaisEd, ed);
+//                    			}
+//                    			
+//                    		}
                     	
                     }
                 }

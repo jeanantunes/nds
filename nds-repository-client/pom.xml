@@ -44,9 +44,14 @@
 		<dependency>
 			<groupId>br.com.caelum</groupId>
 			<artifactId>vraptor</artifactId>
-		</dependency>		
-		
-	</dependencies>
+		</dependency>
+        <dependency>
+            <groupId>br.com.abril</groupId>
+            <artifactId>nds-model</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+    </dependencies>
 	
 	<build>
 		<plugins>

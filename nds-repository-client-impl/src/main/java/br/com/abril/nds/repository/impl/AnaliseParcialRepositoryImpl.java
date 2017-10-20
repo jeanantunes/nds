@@ -555,77 +555,71 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
         StringBuilder sql = new StringBuilder();
         
-        sql.append(" select    pe.id produtoEdicaoId, ");
-        sql.append("        p.codigo codigoProduto, ");
-        sql.append("        p.nome nomeProduto, ");
-        sql.append("        pe.numero_edicao edicao, ");
-        sql.append("        plp.numero_periodo periodo, ");
-        sql.append("        l.data_lcto_distribuidor dtLancamento, ");
-        sql.append("        tcp.id idTipoClassificacao, ");
-        sql.append("        (case when plp.id is not null then 1 else 0 end) parcial, ");
-        
-        
-        sql.append("        (case when l.status IN ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')");
-        sql.append("            then ");
-        
-        sql.append("              		cast(sum( ");
-		sql.append("                       CASE ");
-		sql.append("                           WHEN tipo.OPERACAO_ESTOQUE = 'ENTRADA' ");
-		sql.append("                           THEN ");
-		sql.append("                             if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0)  ");
-		sql.append("                           ELSE ");
-		sql.append("                             if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, - mecReparte.QTDE, 0) ");
-		sql.append("                       END) ");
-        
-        sql.append("                    - IF(mecReparte.TIPO_MOVIMENTO_ID = 9, 0, ");
-        
-        sql.append("                    	  (select 	   "); 
-        sql.append("                    	  	sum( mecEncalhe.qtde )   "); 
-        sql.append("                    	  from   "); 
-        sql.append("                    	  	lancamento lanc    "); 
-        sql.append("                    	  	left join movimento_estoque_cota mecEncalhe   "); 
-        sql.append("                    	  		on mecEncalhe.lancamento_id = lanc.id   "); 
-        sql.append("                    	  	left join cota cota   "); 
-        sql.append("                    	  		on cota.id = mecEncalhe.cota_id   "); 
-        sql.append("                    	  	join tipo_movimento tm   "); 
-        sql.append("                    	  		on mecEncalhe.tipo_movimento_id = tm.id   "); 
-        sql.append("                    	  where   "); 
-        sql.append("                    	  	lanc.id = l.id   "); 
-        sql.append("                    	  	and cota.id = c.id   "); 
-        sql.append("                           	and tm.tipo_movimento_encalhe is true) ");
+        sql.append(" select   ");
+        sql.append(" 	T.produtoEdicaoId, ");
+        sql.append(" 	T.codigoProduto, ");
+        sql.append(" 	T.nomeProduto, ");
+        sql.append(" 	T.edicao, ");
+        sql.append(" 	T.periodo, ");
+        sql.append(" 	T.dataLancamento dtLancamento, ");
+        sql.append(" 	T.idTipoClassificacao, ");
+        sql.append(" 	T.parcial, ");
+        sql.append(" 	sum( T.REPARTE2 + T.REPARTE1 ) as reparte, ");
+        sql.append(" 	case when T.STATUS in('FECHADO','RECOLHIDO','EM_RECOLHIMENTO') then  ");
+        sql.append(" 		sum(( T.REPARTE2 + T.REPARTE1 ) -  ");
+        sql.append(" 				coalesce( ");
+        sql.append(" 					(select ");
+        sql.append(" 						sum( mec.qtde ) ");
+        sql.append(" 					from ");
+        sql.append(" 						movimento_estoque_cota mec join tipo_movimento tm on ");
+        sql.append(" 						mec.tipo_movimento_id = tm.id ");
+        sql.append(" 					where ");
+        sql.append(" 						mec.produto_edicao_id = T.produtoEdicaoId ");
+        sql.append(" 						and tm.tipo_movimento_encalhe is true ");
+        sql.append(" 						and mec.`DATA` >= DATE_ADD(T.dataLancamento,interval 8 day) ");
+        sql.append(" 						and mec.`DATA` <= DATE_ADD(T.dataRec,interval 7 day)  ");
+        sql.append(" 						and mec.cota_id = T.cotaID) ");
+        sql.append(" 				, 0 ) ) ");
+        sql.append(" 		else 0 ");
+        sql.append(" 	end as venda, ");
+        sql.append(" 	T.edicaoAberta, ");
+        sql.append(" 	T.numeroCota ");
+        sql.append(" from ");
+        sql.append("  ");
+        sql.append(" 	(select ");
+        sql.append(" 		pe.id produtoEdicaoId, ");
+        sql.append(" 		p.codigo codigoProduto, ");
+        sql.append(" 		p.nome nomeProduto, ");
+        sql.append(" 		pe.numero_edicao edicao, ");
+        sql.append(" 		plp.numero_periodo periodo, ");
+        sql.append(" 		l.data_lcto_distribuidor dataLancamento, ");
+        sql.append(" 		l.data_rec_distrib dataRec, ");
+        sql.append(" 		l.status status, ");
+        sql.append(" 		tcp.id idTipoClassificacao, ");
+        sql.append(" 		(case when plp.id is not null then 1 else 0 end) parcial, ");
+        sql.append(" 		 ");
+        sql.append(" 		cast(sum(if(mecReparte.tipo_movimento_id in(131, 10, 7, 14, 44, 121, 199),( mecReparte.QTDE * - 1 ), 0 ) ) as signed int) as reparte1,  ");
+        sql.append(" 		cast(sum( if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0 ) ) as signed int) as reparte2, ");
+        sql.append(" 		(case ");
+        sql.append(" 			when l.status = 'FECHADO' ");
+        sql.append(" 			or l.status = 'RECOLHIDO' then 0 ");
+        sql.append(" 			else 1 ");
+        sql.append(" 		 end) edicaoAberta, ");
+        sql.append(" 		c.id cotaID, ");
+        sql.append(" 		c.numero_cota numeroCota ");
+        sql.append(" 	from ");
+        sql.append(" 		estudo_gerado eg join estudo_cota_gerado ecg on ");
+        sql.append(" 		ecg.estudo_id = eg.id join cota c on ");
+        sql.append(" 		c.id = ecg.cota_id join produto_edicao pe on ");
+        sql.append(" 		pe.id = eg.produto_edicao_id join produto p on ");
+        sql.append(" 		p.id = pe.produto_id join lancamento l on ");
+        sql.append(" 		l.PRODUTO_EDICAO_ID = pe.ID join periodo_lancamento_parcial plp on ");
+        sql.append(" 		plp.ID = l.PERIODO_LANCAMENTO_PARCIAL_ID left join tipo_classificacao_produto tcp on ");
+        sql.append(" 		tcp.id = pe.tipo_classificacao_produto_id left join movimento_estoque_cota mecReparte on ");
+        sql.append(" 		mecReparte.lancamento_id = l.id ");
+        sql.append(" 		and mecReparte.COTA_ID = c.ID left join tipo_movimento tipo on ");
+        sql.append(" 		tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
 
-//        sql.append("                    	(select sum(mecEncalhe.qtde) ");
-//        sql.append("                        from lancamento lanc ");
-//        sql.append("                        LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID ");
-//        sql.append("                        LEFT JOIN chamada_encalhe ce on ce.id = cel.CHAMADA_ENCALHE_ID ");
-//        sql.append("                        LEFT JOIN chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID ");
-//        sql.append("                        LEFT JOIN cota cota on cota.id = cec.COTA_ID ");
-//        sql.append("                        LEFT JOIN conferencia_encalhe confEnc on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID ");
-//        sql.append("                        LEFT JOIN movimento_estoque_cota mecEncalhe on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
-//        sql.append("                        WHERE lanc.id = l.id and cota.id = c.id) ");
-        sql.append("                        ) AS UNSIGNED INT) ");
-        sql.append("            else ");
-        sql.append("                null ");
-        sql.append("        end) as venda, ");
-        
-        sql.append(" cast(sum(                                                                   ");
-        sql.append("         CASE                                                                ");
-        sql.append("             WHEN tipo.OPERACAO_ESTOQUE = 'ENTRADA' THEN if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0)    ");
-        sql.append("             ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, - mecReparte.QTDE, 0) ");
-        sql.append("         END) AS UNSIGNED INT)  as reparte,                                  ");
-        
-        sql.append("        (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then 0 else 1 end) edicaoAberta, ");
-        sql.append("        c.numero_cota numeroCota ");
-        sql.append(" from estudo_gerado eg ");
-        sql.append("   join estudo_cota_gerado ecg on ecg.estudo_id = eg.id ");
-        sql.append("   join cota c on c.id = ecg.cota_id ");
-        sql.append("   join produto_edicao pe on pe.id = eg.produto_edicao_id ");
-        sql.append("   join produto p on p.id = pe.produto_id ");
-        sql.append("   join lancamento l on l.PRODUTO_EDICAO_ID = pe.ID ");
-        sql.append("   join periodo_lancamento_parcial plp on plp.ID = l.PERIODO_LANCAMENTO_PARCIAL_ID ");
-        sql.append("   left join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
-        sql.append("   left join movimento_estoque_cota mecReparte on mecReparte.lancamento_id = l.id and mecReparte.COTA_ID = c.ID");
-        sql.append("   LEFT JOIN tipo_movimento tipo ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID");
         sql.append(" where eg.id = :estudoId ");
         sql.append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
         
@@ -639,11 +633,15 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         	sql.append(" and plp.NUMERO_PERIODO = :numeroPeriodoBase ");
         }
         
-//        sql.append( (parcialComRedistribuicao) ? " and plp.NUMERO_PERIODO <= :numeroPeriodoBase " : " and plp.NUMERO_PERIODO < :numeroPeriodoBase ");
-        sql.append(" group by plp.NUMERO_PERIODO, ecg.cota_id ");
-        sql.append(" order by l.data_lcto_distribuidor desc, ");
-        sql.append("   pe.numero_edicao desc, ");
-        sql.append("   plp.numero_periodo desc ");
+        sql.append(" 	group by ");
+        sql.append(" 		plp.NUMERO_PERIODO, ");
+        sql.append(" 		ecg.cota_id ");
+        sql.append(" 	order by ");
+        sql.append(" 		l.data_lcto_distribuidor desc, ");
+        sql.append(" 		pe.numero_edicao desc, ");
+        sql.append(" 		plp.numero_periodo desc) T ");
+        sql.append(" 	group by ");
+        sql.append(" 		T.periodo, T.cotaID ");
 
          Query query = getSession().createSQLQuery(sql.toString())
                 .addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
@@ -901,11 +899,11 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	
         Query query = getSession().createSQLQuery(sql.toString());
         
-        		((SQLQuery) query).addScalar("numeroCota", StandardBasicTypes.INTEGER);
-        		((SQLQuery) query).addScalar("idCota", StandardBasicTypes.INTEGER);
-                ((SQLQuery) query).addScalar("produtoEdicaoId", StandardBasicTypes.LONG);
-                ((SQLQuery) query).addScalar("reparte", StandardBasicTypes.BIG_DECIMAL);
-                ((SQLQuery) query).addScalar("venda", StandardBasicTypes.BIG_DECIMAL);
+		((SQLQuery) query).addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		((SQLQuery) query).addScalar("idCota", StandardBasicTypes.INTEGER);
+        ((SQLQuery) query).addScalar("produtoEdicaoId", StandardBasicTypes.LONG);
+        ((SQLQuery) query).addScalar("reparte", StandardBasicTypes.BIG_DECIMAL);
+        ((SQLQuery) query).addScalar("venda", StandardBasicTypes.BIG_DECIMAL);
                 
         if(isSepararPeriodosParcial){
         	((SQLQuery) query).addScalar("parcial", StandardBasicTypes.BOOLEAN); 
@@ -950,6 +948,145 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		return mapCotasComVenda;
     }
     
+@Override
+public Map<Integer, EdicoesProdutosDTO> buscaHistoricoCotasPorBase(List<Long> listCotaId, Long idProdutoEdicao, Long numeroParcial){
+        
+    	StringBuilder sql = new StringBuilder();
+    	
+    	sql.append(" select T.numeroCota as numeroCota, T.idCota as idCota, T.produtoEdicaoId produtoEdicaoId, ");
+    	
+		sql.append("T.isParcial as parcial, ");
+		
+		if(numeroParcial != null){
+			sql.append(" T.numPeriodo as periodo, ");
+		}
+//    	sql.append(" sum(T.reparte) as reparte, sum(T.venda) as venda from ( ");
+		
+		sql.append(" sum( T.REPARTE2 + T.REPARTE1 ) as reparte,  ");
+		sql.append(" case when T.STATUS in(:statusLancFechadoRecolhido) then   ");
+		sql.append(" 			sum(( T.REPARTE2 + T.REPARTE1 ) -   ");
+		sql.append(" 					coalesce(  ");
+		sql.append(" 						(select  ");
+		sql.append(" 							sum( mec.qtde )  ");
+		sql.append(" 						from  ");
+		sql.append(" 							movimento_estoque_cota mec join tipo_movimento tm on  ");
+		sql.append(" 							mec.tipo_movimento_id = tm.id  ");
+		sql.append(" 						where  ");
+		sql.append(" 							mec.produto_edicao_id = T.produtoEdicaoId  ");
+		sql.append(" 							and tm.tipo_movimento_encalhe is true  ");
+		sql.append(" 							and mec.cota_id = T.idCota  ");
+		sql.append(" 							and mec.`DATA` >= DATE_ADD(T.dataLancamento,interval 8 day)  ");
+		sql.append(" 							and mec.`DATA` <= DATE_ADD(T.dataRec,interval 7 day) )  ");
+		sql.append(" 					, 0 ) )  ");
+		sql.append(" 			else 0  ");
+		sql.append(" 		end as venda  ");
+		
+		sql.append("  from ( ");
+    	sql.append(" select ");
+    	sql.append("         c.NUMERO_COTA as numeroCota, ");
+    	sql.append("         c.id as idCota, ");
+    	sql.append("  		 plp.numero_periodo as numPeriodo, ");
+    	sql.append("  		 if(plp.numero_periodo is not null, true, false) isParcial, ");
+    	sql.append("         mec.produto_edicao_id produtoEdicaoId, ");
+    	
+    	sql.append("         l.data_lcto_distribuidor dataLancamento,   ");
+    	sql.append("         l.data_rec_distrib dataRec,   ");
+    	sql.append("         l.status status,   ");
+    	sql.append("         cast(sum(if( mec.tipo_movimento_id in(131, 10, 7, 14, 44, 121, 199),( mec.QTDE * - 1 ), 0 ) ) as signed int) as reparte1,    ");
+    	sql.append("         cast(sum( if( tm.OPERACAO_ESTOQUE = 'ENTRADA', mec.QTDE, 0 ) ) as signed int) as reparte2   ");
+    	
+    	sql.append("     from ");
+    	sql.append("         movimento_estoque_cota mec force index (NDX_PRODUTO_EDICAO) ");
+    	sql.append("     inner join ");
+    	sql.append("         tipo_movimento tm  ");
+    	sql.append("             on tm.id = mec.tipo_movimento_id   ");
+    	sql.append("     inner join ");
+    	sql.append("         cota c  ");
+    	
+    	if(listCotaId == null || listCotaId.isEmpty()){
+    		sql.append("             on mec.cota_id = c.id   ");
+    	}else{
+    		sql.append("             on c.id in (:listIdsCota)   ");
+    	}
+    	
+    	sql.append("     inner join ");
+    	sql.append("         lancamento l  ");
+    	sql.append("             on mec.lancamento_id = l.id   ");
+    	
+    	if(numeroParcial != null){
+    		sql.append("     join ");
+    		sql.append("         periodo_lancamento_parcial plp  ");
+    		sql.append("             on plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID   ");
+    		sql.append("			 and plp.numero_periodo = :periodoParcial  ");
+    	}else{
+    		sql.append("     left join "); 
+    		sql.append("         periodo_lancamento_parcial plp  ");
+    		sql.append("             on plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID   ");
+    	}
+    	
+    	sql.append("     where ");
+    	sql.append("         mec.PRODUTO_EDICAO_ID = :produtoEdicaoId  ");
+
+    	if(listCotaId != null && !listCotaId.isEmpty()){
+    		sql.append("         and  c.id in (:listIdsCota)  ");
+    		sql.append("         and mec.cota_id in (:listIdsCota)  ");
+    	}
+    	
+    	sql.append("         and mec.cota_id = c.id   ");
+    	
+    	sql.append("         and l.STATUS IN (:lancamentosPosExpedicao)  ");
+    	sql.append("         and tm.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
+    	sql.append("         and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null   ");
+    	sql.append("     group by ");
+    	sql.append("         mec.PRODUTO_EDICAO_ID, mec.cota_id, plp.NUMERO_PERIODO");
+    	sql.append("         ) T group by T.numeroCota, T.produtoEdicaoId ");
+    	
+        Query query = getSession().createSQLQuery(sql.toString());
+        
+		((SQLQuery) query).addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		((SQLQuery) query).addScalar("idCota", StandardBasicTypes.INTEGER);
+        ((SQLQuery) query).addScalar("produtoEdicaoId", StandardBasicTypes.LONG);
+        ((SQLQuery) query).addScalar("reparte", StandardBasicTypes.BIG_DECIMAL);
+        ((SQLQuery) query).addScalar("venda", StandardBasicTypes.BIG_DECIMAL);
+        ((SQLQuery) query).addScalar("parcial", StandardBasicTypes.BOOLEAN); 
+
+        if(numeroParcial != null){
+        	((SQLQuery) query).addScalar("periodo", StandardBasicTypes.STRING);
+        }
+
+        
+        //Tratamento Paliativo, não interfere no resultado final
+        if(listCotaId.size() == 1){
+        	listCotaId.add(000L);
+        }
+        //FIM!
+        
+        if(listCotaId != null && !listCotaId.isEmpty()){
+        	query.setParameterList("listIdsCota", listCotaId);
+        }
+        
+    	query.setParameter("produtoEdicaoId", idProdutoEdicao);
+    	
+    	if(numeroParcial != null){
+    		query.setParameter("periodoParcial", numeroParcial);
+    	}
+        
+        query.setParameterList("lancamentosPosExpedicao", LancamentoHelper.getStatusLancamentosPosExpedicaoString());
+        query.setParameterList("statusLancFechadoRecolhido", Arrays.asList(StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name(), StatusLancamento.EM_RECOLHIMENTO.name()));
+        
+        query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
+        
+        List<EdicoesProdutosDTO> listaCotasComVenda = query.list();
+        
+		Map<Integer, EdicoesProdutosDTO> mapCotasComVenda = new HashMap<>(); 
+		
+		for (EdicoesProdutosDTO vendaCota : listaCotasComVenda) {
+			mapCotasComVenda.put(vendaCota.getIdcota(), vendaCota);
+		}
+		
+		return mapCotasComVenda;
+    }
+    
     @Override
 	@SuppressWarnings("unchecked")
 	public List<Long> obterCotasDentroDoPercentualReparteFiltro(List<Long> listCotaId, List<Long> listProdutoEdicaoId, AnaliseParcialQueryDTO queryDTO) {
@@ -987,23 +1124,40 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append("       (CASE WHEN l.status IN ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO') ");
     	sql.append("           THEN cast(sum(CASE WHEN tm.OPERACAO_ESTOQUE = 'ENTRADA' THEN mec.QTDE ");
     	sql.append("                       ELSE -mec.QTDE END) ");
-    	sql.append("                 - (SELECT sum(mecEncalhe.qtde) ");
-    	sql.append("                       FROM lancamento lanc ");
-    	sql.append("                           LEFT JOIN chamada_encalhe_lancamento cel ");
-    	sql.append("                               ON cel.LANCAMENTO_ID = lanc.ID ");
-    	sql.append("                           LEFT JOIN chamada_encalhe ce ");
-    	sql.append("                               ON ce.id = cel.CHAMADA_ENCALHE_ID ");
-    	sql.append("                           LEFT JOIN chamada_encalhe_cota cec ");
-    	sql.append("                               ON cec.CHAMADA_ENCALHE_ID = ce.ID ");
-    	sql.append("                           LEFT JOIN cota cota ");
-    	sql.append("                               ON cota.id = cec.COTA_ID ");
-    	sql.append("                           LEFT JOIN conferencia_encalhe confEnc ");
-    	sql.append("                               ON confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID ");
-    	sql.append("                           LEFT JOIN movimento_estoque_cota mecEncalhe ");
-    	sql.append("                               ON mecEncalhe.id = ");
-    	sql.append("                                     confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
-    	sql.append("                     WHERE lanc.id = l.id AND cota.id = ct.id) AS UNSIGNED INT) ");
-    	sql.append("           ELSE NULL END) AS venda ");
+    	
+    	sql.append("                   - (select 	   "); 
+        sql.append("                    	  	sum( mecEncalhe.qtde )   "); 
+        sql.append("                    	  from   "); 
+        sql.append("                    	  	lancamento lanc    "); 
+        sql.append("                    	  	left join movimento_estoque_cota mecEncalhe   "); 
+        sql.append("                    	  		on mecEncalhe.lancamento_id = lanc.id   "); 
+        sql.append("                    	  	left join cota cota   "); 
+        sql.append("                    	  		on cota.id = mecEncalhe.cota_id   "); 
+        sql.append("                    	  	join tipo_movimento tm   "); 
+        sql.append("                    	  		on mecEncalhe.tipo_movimento_id = tm.id   "); 
+        sql.append("                    	  where   "); 
+        sql.append("                    	  	lanc.id = l.id   "); 
+        sql.append("                    	  	and cota.id = ct.id   "); 
+        sql.append("                           	and tm.tipo_movimento_encalhe is true) AS UNSIGNED INT)");
+    	
+//    	sql.append("                 - (SELECT sum(mecEncalhe.qtde) ");
+//    	sql.append("                       FROM lancamento lanc ");
+//    	sql.append("                           LEFT JOIN chamada_encalhe_lancamento cel ");
+//    	sql.append("                               ON cel.LANCAMENTO_ID = lanc.ID ");
+//    	sql.append("                           LEFT JOIN chamada_encalhe ce ");
+//    	sql.append("                               ON ce.id = cel.CHAMADA_ENCALHE_ID ");
+//    	sql.append("                           LEFT JOIN chamada_encalhe_cota cec ");
+//    	sql.append("                               ON cec.CHAMADA_ENCALHE_ID = ce.ID ");
+//    	sql.append("                           LEFT JOIN cota cota ");
+//    	sql.append("                               ON cota.id = cec.COTA_ID ");
+//    	sql.append("                           LEFT JOIN conferencia_encalhe confEnc ");
+//    	sql.append("                               ON confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID ");
+//    	sql.append("                           LEFT JOIN movimento_estoque_cota mecEncalhe ");
+//    	sql.append("                               ON mecEncalhe.id = ");
+//    	sql.append("                                     confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
+//    	sql.append("                     WHERE lanc.id = l.id AND cota.id = ct.id) AS UNSIGNED INT) ");
+    	
+        sql.append("           ELSE NULL END) AS venda ");
     	sql.append("   FROM movimento_estoque_cota mec FORCE INDEX ( NDX_PRODUTO_EDICAO ) ");
     	sql.append("       INNER JOIN tipo_movimento tm ");
     	sql.append("           ON tm.id = mec.tipo_movimento_id ");
@@ -1312,81 +1466,68 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" SELECT  straight_join ");
-		sql.append("	   p.CODIGO as codigoProduto, ");
-		sql.append("       p.NOME_COMERCIAL as nomeProduto, ");
-		sql.append("       pe.NUMERO_EDICAO as edicao, ");
-		sql.append("       l.DATA_LCTO_DISTRIBUIDOR as dataLancamento, ");
-		sql.append("        cast(sum( ");
-		sql.append("                 CASE ");
-		sql.append("                     WHEN tipo.OPERACAO_ESTOQUE = 'ENTRADA' ");
-		sql.append("                         THEN if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0) ");
-		sql.append("                		 ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, - mecReparte.QTDE, 0) ");
-		sql.append("                 END) AS UNSIGNED INT) AS reparte, ");
-		sql.append("        CASE ");
-		sql.append("           WHEN l.STATUS IN ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO') ");
-		sql.append("           THEN ");
-		sql.append("              cast(sum( ");
-		sql.append("                       CASE ");
-		sql.append("                           WHEN tipo.OPERACAO_ESTOQUE = 'ENTRADA' ");
-		sql.append("                         THEN if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0) ");
-		sql.append("                		 ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, - mecReparte.QTDE, 0) ");
-		sql.append("                       END) ");
-		sql.append("                 - (SELECT sum(mecEncalhe.qtde) ");
-		sql.append("                      FROM lancamento lanc ");
-		sql.append("                           LEFT JOIN chamada_encalhe_lancamento cel ");
-		sql.append("                              ON cel.LANCAMENTO_ID = lanc.ID ");
-		sql.append("                           LEFT JOIN chamada_encalhe ce ");
-		sql.append("                              ON ce.id = cel.CHAMADA_ENCALHE_ID ");
-		sql.append("                           LEFT JOIN chamada_encalhe_cota cec ");
-		sql.append("                              ON cec.CHAMADA_ENCALHE_ID = ce.ID ");
-		sql.append("                           LEFT JOIN conferencia_encalhe confEnc ");
-		sql.append("                              ON confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID ");
-		sql.append("                           LEFT JOIN movimento_estoque_cota mecEncalhe ");
-		sql.append("                              ON mecEncalhe.id = ");
-		sql.append("                                    confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
-		sql.append("                     WHERE lanc.id = l.id) AS UNSIGNED INT) ");
-		sql.append("           ELSE ");
-		sql.append("              NULL ");
-		sql.append("        END ");
-		sql.append("           AS venda ");
-		sql.append("   FROM lancamento l ");
-		sql.append("        JOIN produto_edicao pe ");
-		sql.append("           ON pe.id = l.produto_edicao_id ");
-		sql.append("        LEFT JOIN periodo_lancamento_parcial plp ");
-		sql.append("           ON plp.id = l.periodo_lancamento_parcial_id ");
-		sql.append("        JOIN (SELECT p.* ");
-		sql.append("                FROM produto p ");
-		sql.append("               WHERE p.codigo_icd = (SELECT codigo_icd ");
-		sql.append("                                       FROM produto p ");
-		sql.append("                                      WHERE p.codigo = :codProduto) ");
-		sql.append("              UNION ");
-		sql.append("              SELECT p.* ");
-		sql.append("                FROM produto p ");
-		sql.append("               WHERE p.codigo_icd = :codProduto) p ");
-		sql.append("           ON p.id = pe.produto_id ");
-		sql.append("        LEFT JOIN tipo_classificacao_produto tcp ");
-		sql.append("           ON tcp.id = pe.tipo_classificacao_produto_id ");
-		sql.append("        LEFT JOIN movimento_estoque_cota mecReparte ");
-		sql.append("           ON mecReparte.LANCAMENTO_ID = l.id ");
-		sql.append("        LEFT JOIN tipo_movimento tipo ");
-		sql.append("           ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
-		sql.append("  WHERE l.status IN ");
-		sql.append("                   ('EXPEDIDO', ");
-		sql.append("                   'EM_BALANCEAMENTO_RECOLHIMENTO', ");
-		sql.append("                   'BALANCEADO_RECOLHIMENTO', ");
-		sql.append("                   'EM_RECOLHIMENTO', ");
-		sql.append("                   'RECOLHIDO', ");
-		sql.append("                   'FECHADO') ");
-		sql.append("        AND tipo.GRUPO_MOVIMENTO_ESTOQUE <> 'ENVIO_ENCALHE' ");
+		sql.append(" 	select  ");
+		sql.append(" 		T.codigoProduto, ");
+		sql.append(" 		T.nomeProduto, ");
+		sql.append(" 		T.edicao, ");
+		sql.append(" 		T.dataLancamento, ");
+		sql.append(" 		sum( T.REPARTE2 + T.REPARTE1 ) as reparte, ");
+		sql.append(" 		case ");
+		sql.append(" 			when T.descricaoSituacaoLancamento in( ");
+		sql.append(" 				'FECHADO', ");
+		sql.append(" 				'RECOLHIDO', ");
+		sql.append(" 				'EM_RECOLHIMENTO' ");
+		sql.append(" 			) then sum(( T.REPARTE2 + T.REPARTE1 ) - coalesce(( select sum( mec.qtde ) from movimento_estoque_cota mec join tipo_movimento tm on mec.tipo_movimento_id = tm.id where mec.produto_edicao_id = T.id and tm.tipo_movimento_encalhe is true and mec.`DATA` >= DATE_ADD( T.dataLancamento, interval 8 day ) and mec.`DATA` <= DATE_ADD( T.dataRec, interval 7 day ) ), 0 ) ) ");
+		sql.append(" 			else 0 ");
+		sql.append(" 		end as venda ");
+		sql.append(" 	 ");
+		sql.append(" 	from ( ");
+		sql.append(" 		select ");
+		sql.append(" 			straight_join  ");
+		sql.append(" 			p.CODIGO as codigoProduto, ");
+		sql.append(" 			p.NOME_COMERCIAL as nomeProduto, ");
+		sql.append(" 			pe.NUMERO_EDICAO as edicao, ");
+		sql.append(" 			l.DATA_LCTO_DISTRIBUIDOR as dataLancamento, ");
+		sql.append(" 			l.STATUS as descricaoSituacaoLancamento, ");
+		sql.append(" 			l.data_rec_distrib dataRec, ");
+		sql.append(" 			pe.id as id, ");
+		sql.append(" 			 ");
+		sql.append(" 			cast( ");
+		sql.append(" 					sum( if( mecReparte.tipo_movimento_id in( 131, 10, 7, 14, 44, 121, 199 ),( mecReparte.QTDE * - 1 ), 0 ) ) as signed int ");
+		sql.append(" 				) as reparte1, ");
+		sql.append(" 			cast( ");
+		sql.append(" 				sum( if( tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0 ) ) as signed int ");
+		sql.append(" 			) as reparte2 ");
+		sql.append(" 			 ");
+		sql.append(" 		from ");
+		sql.append(" 			lancamento l  ");
+		sql.append(" 			join produto_edicao pe  ");
+		sql.append(" 				on pe.id = l.produto_edicao_id  ");
+		sql.append(" 			left join periodo_lancamento_parcial plp  ");
+		sql.append(" 				on plp.id = l.periodo_lancamento_parcial_id  ");
+		sql.append(" 			join(select p.* from produto p where p.codigo_icd =(select codigo_icd from produto p where p.codigo = :codProduto ) ");
+		sql.append(" 					union select p.* from produto p where p.codigo_icd = :codProduto ) p  ");
+		sql.append(" 				on p.id = pe.produto_id  ");
+		sql.append(" 			left join tipo_classificacao_produto tcp  ");
+		sql.append(" 				on tcp.id = pe.tipo_classificacao_produto_id  ");
+		sql.append(" 			left join movimento_estoque_cota mecReparte  ");
+		sql.append(" 				on mecReparte.LANCAMENTO_ID = l.id  ");
+		sql.append(" 			left join tipo_movimento tipo  ");
+		sql.append(" 				on tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
+		sql.append(" 		where ");
+		sql.append(" 			l.status in('EXPEDIDO','EM_BALANCEAMENTO_RECOLHIMENTO','BALANCEADO_RECOLHIMENTO', ");
+		sql.append(" 				'EM_RECOLHIMENTO','RECOLHIDO','FECHADO') ");
+		sql.append(" 			and tipo.GRUPO_MOVIMENTO_ESTOQUE <> 'ENVIO_ENCALHE' ");
 		sql.append("        AND pe.NUMERO_EDICAO = :edicao");
 		sql.append("        AND tcp.ID = :tipClassif ");
 		
 		if(numPeriodoParcial != null){
 			sql.append("    AND plp.NUMERO_PERIODO = :numPeriodo ");
 		}
-		
-		sql.append(" GROUP BY pe.numero_edicao, pe.id ");
+
+		sql.append(" 		group by ");
+		sql.append(" 			pe.numero_edicao, ");
+		sql.append(" 			pe.id ) T ");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		

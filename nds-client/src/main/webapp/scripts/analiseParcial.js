@@ -863,7 +863,13 @@ var analiseParcialController = $.extend(true, {
                     	
                     	var venda;
                     	
-                    	if(cell.edicoesBase[j].edicaoAberta && (cell.edicoesBase[j].venda == 0 || cell.edicoesBase[j].venda == undefined)){
+//                    	if(cell.edicoesBase[j].edicaoAberta && (cell.edicoesBase[j].venda == 0 || cell.edicoesBase[j].venda == undefined)){
+//                    		venda = '';
+//                    	}else{
+//                    		venda = cell.edicoesBase[j].venda
+//                    	}
+                    	
+                    	if(cell.edicoesBase[j].venda == undefined){
                     		venda = '';
                     	}else{
                     		venda = cell.edicoesBase[j].venda
@@ -1949,6 +1955,7 @@ var analiseParcialController = $.extend(true, {
 
     apresentarOpcoesOrdenarPor : function(opcao) {
         analiseParcialController.limparCamposDeAte();
+        
         if (opcao === "") {
             $("#opcoesOrdenarPor").hide();
         } else {
@@ -1980,6 +1987,7 @@ var analiseParcialController = $.extend(true, {
         .add("#faixaAte")
         .add("#ordenarPorDe")
         .add("#ordenarPorAte")
+        .add("#ordenarPorCota")
         .val('');
     },
     
