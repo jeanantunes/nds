@@ -9,11 +9,7 @@ import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import br.com.abril.nds.dto.CotaCouchDTO;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
@@ -32,33 +28,24 @@ public class ExporteCouchImpl implements ExporteCouch {
 	private DistribuidorService distribuidorService;
 
 	public void exportar(List<CotaCouchDTO> listaReparte, String nomeEntidadeIntegrada) {
-		Gson gson = new Gson();
-		JsonArray jsonArray = new JsonArray();
-	
-
-			this.couchDbClient = getCouchDBClient();
-
-			for (CotaCouchDTO reparte : listaReparte) {
-				JsonElement jElement = new JsonParser().parse(gson.toJson(reparte));
-				jsonArray.add(jElement);
-			}
-
-			JsonObject json = new JsonObject();
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-			Date data = listaReparte.get(0).getDataMovimento();
-			String docName = nomeEntidadeIntegrada+"_" + simpleDateFormat.format(data);
-			
+		String data = listaReparte.get(0).getDataMovimento();
+		this.couchDbClient = getCouchDBClient();
+		String docName = nomeEntidadeIntegrada+"_" + data;
 		try {
 			JsonObject jsonDoc = couchDbClient.find(JsonObject.class, docName);
 			this.couchDbClient.remove(jsonDoc);
 		} catch (NoDocumentException e) {
 
 		}
-
-			json.addProperty("_id", docName);
-			json.add(simpleDateFormat.format(data), jsonArray);
-
-			this.couchDbClient.save(json);
+		
+		for (CotaCouchDTO reparte : listaReparte) {
+			reparte.set_id(docName);
+			this.couchDbClient.save(reparte);
+		}
+	
+		if (couchDbClient != null) {
+			couchDbClient.shutdown();
+		}	
 	}
 
 	private CouchDbClient getCouchDBClient() {

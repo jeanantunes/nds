@@ -143,14 +143,15 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		compactarArquivos(message);
 		
 		try {
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			List<CotaCouchDTO> lista = cotaRepository.getCotaRecolhimento(dataLctoDistrib);
 			for (CotaCouchDTO reparte : lista) {
 				reparte.setDataInclusao(new Date());
-				reparte.setProdutos(cotaRepository.getProdutoRecolhimento(reparte.getId(), reparte.getDataMovimento()));
+				reparte.setProdutos(cotaRepository.getProdutoRecolhimento(reparte.getIdCota(), simpleDateFormat.parse(reparte.getDataMovimento())));
 			}
 			exporteCouch.exportar(lista,"Recolhimento");
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 		
 		

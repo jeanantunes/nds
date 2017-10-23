@@ -168,15 +168,16 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		}
 
 		compactarArquivos(message);
-
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			List<CotaCouchDTO> lista = cotaRepository.getCotaLancamento(dataLctoDistrib);
 			for (CotaCouchDTO reparte : lista) {
-				reparte.setProdutos(cotaRepository.getProdutoLancamento(reparte.getId(), reparte.getDataMovimento()));
+				reparte.setProdutos(cotaRepository.getProdutoLancamento(reparte.getIdCota(), formatter.parse(reparte.getDataMovimento())));
 			}
 			exporteCouch.exportar(lista, "Lancamento");
+			
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 
 		// ## Conforme alinhado com César Marracho, há a necessidade de manter a

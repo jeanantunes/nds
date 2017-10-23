@@ -1,7 +1,5 @@
 package br.com.abril.nds.dto;
 
-import java.util.Date;
-
 public class ProdutoCouchDTO {
 	
 	private String codigoProduto;
@@ -13,9 +11,9 @@ public class ProdutoCouchDTO {
 	private String precoCapa;
 	private String precoCusto;
 	private String chamadaCapa;
-	private Date dataLancamento;
-	private Date dataPrimeiroLancamentoParcial;
-	private Date dataRecolhimento;
+	private String dataLancamento;
+	private String dataPrimeiroLancamentoParcial;
+	private String dataRecolhimento;
 	
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -71,25 +69,23 @@ public class ProdutoCouchDTO {
 	public void setChamadaCapa(String chamadaCapa) {
 		this.chamadaCapa = chamadaCapa;
 	}
-	public Date getDataLancamento() {
+	public String getDataLancamento() {
 		return dataLancamento;
 	}
-	public void setDataLancamento(Date dataLancamento) {
+	public void setDataLancamento(String dataLancamento) {
 		this.dataLancamento = dataLancamento;
 	}
-	public Date getDataPrimeiroLancamentoParcial() {
+	public String getDataPrimeiroLancamentoParcial() {
 		return dataPrimeiroLancamentoParcial;
 	}
-	public void setDataPrimeiroLancamentoParcial(Date dataPrimeiroLancamentoParcial) {
+	public void setDataPrimeiroLancamentoParcial(String dataPrimeiroLancamentoParcial) {
 		this.dataPrimeiroLancamentoParcial = dataPrimeiroLancamentoParcial;
 	}
-	public Date getDataRecolhimento() {
+	public String getDataRecolhimento() {
 		return dataRecolhimento;
 	}
-	public void setDataRecolhimento(Date dataRecolhimento) {
+	public void setDataRecolhimento(String dataRecolhimento) {
 		this.dataRecolhimento = dataRecolhimento;
 	}
-	
-	
 
 }
