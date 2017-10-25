@@ -30,7 +30,7 @@ public class ExporteCouchImpl implements ExporteCouch {
 	public void exportar(List<CotaCouchDTO> listaReparte, String nomeEntidadeIntegrada) {
 		String data = listaReparte.get(0).getDataMovimento();
 		this.couchDbClient = getCouchDBClient();
-		String docName = nomeEntidadeIntegrada+"_" + data;
+		String docName = nomeEntidadeIntegrada+"_" + data+"_"+listaReparte.get(0).getCodigoDistribuidor();
 		try {
 			JsonObject jsonDoc = couchDbClient.find(JsonObject.class, docName);
 			this.couchDbClient.remove(jsonDoc);
@@ -49,13 +49,13 @@ public class ExporteCouchImpl implements ExporteCouch {
 	}
 
 	private CouchDbClient getCouchDBClient() {
-		String db_name = "picking_led";
+		String db_name = "lancamentos_recolhimentos";
 
-		db_name += "_db_" + String.format("%08d",
+/*		db_name += "_db_" + String.format("%08d",
 				Integer.parseInt(distribuidorService.obter().getCodigoDistribuidorDinap()) <= 0
 						? Integer.parseInt(distribuidorService.obter().getCodigoDistribuidorFC())
 						: Integer.parseInt(distribuidorService.obter().getCodigoDistribuidorDinap()));
-
+*/
 		org.lightcouch.CouchDbProperties properties = new org.lightcouch.CouchDbProperties().setDbName(db_name)
 				.setCreateDbIfNotExist(true).setProtocol(couchDbProperties.getProtocol())
 				.setHost(couchDbProperties.getHost()).setPort(couchDbProperties.getPort())

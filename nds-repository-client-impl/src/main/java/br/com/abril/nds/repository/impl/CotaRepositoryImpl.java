@@ -4317,6 +4317,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	//	sql.append(
 	//			"       DATE_FORMAT(((select l.DATA_LCTO_DISTRIBUIDOR from lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1)), '%Y%m%d') AS dataPrimeiroLancamentoParcial, ");
 		// sql.append(" ' ' as dataPrimeiroLancamentoParcial,");
+		sql.append(" (select l.DATA_LCTO_DISTRIBUIDOR from  lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1) as dataPrimeiroLancamentoParcial, ");
+
+		
 		sql.append("       CAST(lct.ID AS CHAR) as idLancamento, ");
 		sql.append("       CAST(pe.ID AS CHAR) as idProdutoEdicao, ");
 		sql.append("       CAST(p.ID AS CHAR) as idProduto, ");
@@ -4372,7 +4375,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		query.addScalar("precoCusto", StandardBasicTypes.STRING);
 		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
 		query.addScalar("dataLancamento", StandardBasicTypes.STRING);
-//		query.addScalar("dataPrimeiroLancamentoParcial", StandardBasicTypes.STRING);
+		query.addScalar("dataPrimeiroLancamentoParcial", StandardBasicTypes.STRING);
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoCouchDTO.class));
 
