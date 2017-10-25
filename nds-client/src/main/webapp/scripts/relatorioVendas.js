@@ -444,6 +444,50 @@ var relatorioVendasController = $.extend(true, {
 			height : 255
 		});
 		
+		$(".segmentacaoGridPorCota",relatorioVendasController.workspace).flexigrid({
+			preProcess: relatorioVendasController.executarPreProcessamentoSegmentacaoPorCota,
+			dataType : 'json',
+			colModel : [ { 
+				display : 'Ranking',
+				name : 'ranking',
+				width : 50,
+				sortable : false,
+				align : 'left'
+			},{
+				display : 'Segmento',
+				name : 'segmentoDescricao',
+				width : 460,
+				sortable : false,
+				align : 'left'
+			},{
+				display : 'Faturamento Capa R$',
+				name : 'faturamentoCapaFormatado',
+				width : 130,
+				sortable : false,
+				align : 'right'
+			}, {
+				display : 'Part. %',
+				name : 'participacaoFormatado',
+				width : 50,
+				sortable : false,
+				align : 'right'
+			}, {
+				display : 'Part. Acum. %',
+				name : 'participacaoAcumuladaFormatado',
+				width : 70,
+				sortable : true,
+				align : 'right'
+			} ],
+			sortname : "ranking",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 960,
+			height : 255
+		});
+		
 		$(document).ready(function(){
 			
 			focusSelectRefField($("#filtro_distrib"));
@@ -575,20 +619,39 @@ var relatorioVendasController = $.extend(true, {
 		
 		} else if ($('#filtro_segmentacao', relatorioVendasController.workspace).attr("checked") == "checked") {
 			
-			var idSegmentacao = $('#selectSegmentacao', relatorioVendasController.workspace).val();
-			var descricaoSegmento = $('#selectSegmentacao option:selected', relatorioVendasController.workspace).text();
+			if($('#isSegmentoPorCota', relatorioVendasController.workspace).attr("checked") == "checked"){
+				
+				var numeroCota = $('#cotaSegmento', relatorioVendasController.workspace).val();
+				
+				$(".segmentacaoGridPorCota", relatorioVendasController.workspace).flexOptions({
+					url: contextPath + "/lancamento/relatorioVendas/pesquisarRankingSegmentacao",
+					params: [
+						{name:'dataDe', value: dataDe},
+						{name:'dataAte', value: dataAte},
+						{name:'numeroCota', value: numeroCota},
+						{name:'pesquisaPorCota', value: true}
+						],
+						newp: 1,
+				});
+				$(".segmentacaoGridPorCota", relatorioVendasController.workspace).flexReload();
+				
+			}else{
+				var idSegmentacao = $('#selectSegmentacao', relatorioVendasController.workspace).val();
+				var descricaoSegmento = $('#selectSegmentacao option:selected', relatorioVendasController.workspace).text();
+				
+				$(".segmentacaoGrid", relatorioVendasController.workspace).flexOptions({
+					url: contextPath + "/lancamento/relatorioVendas/pesquisarRankingSegmentacao",
+					params: [
+						{name:'dataDe', value: dataDe},
+						{name:'dataAte', value: dataAte},
+						{name:'idSegmentacao', value: idSegmentacao},
+						{name:'descricaoSegmento', value: descricaoSegmento}
+						],
+						newp: 1,
+				});
+				$(".segmentacaoGrid", relatorioVendasController.workspace).flexReload();
+			}
 			
-			$(".segmentacaoGrid", relatorioVendasController.workspace).flexOptions({
-				url: contextPath + "/lancamento/relatorioVendas/pesquisarRankingSegmentacao",
-				params: [
-			         {name:'dataDe', value: dataDe},
-			         {name:'dataAte', value: dataAte},
-			         {name:'idSegmentacao', value: idSegmentacao},
-			         {name:'descricaoSegmento', value: descricaoSegmento}
-			    ],
-			    newp: 1,
-			});
-			$(".segmentacaoGrid", relatorioVendasController.workspace).flexReload();
 			$(".areaBts", relatorioVendasController.workspace).show();
 		}
 	},
@@ -893,6 +956,22 @@ var relatorioVendasController = $.extend(true, {
 		$(".impressaoPDFRelatorioVendas").attr("href", pathExportacaoRelatorioPDF);
 		$(".impressaoXLSRelatorioVendas").attr("href", pathExportacaoRelatorioXLS);
 	},
+	
+	segmentoCota : function(elemento){
+		
+		$('#cotaSegmento', relatorioVendasController.workspace).val("");
+		$('#cotaSegmentoNome', relatorioVendasController.workspace).val("");
+		
+		if(elemento.checked){
+			$("#divSegmento").hide();
+			$("#divCotaSegmento2").show();
+			$("#divCotaSegmento").show();
+		}else{
+			$("#divSegmento").show();
+			$("#divCotaSegmento2").hide();
+			$("#divCotaSegmento").hide();
+		}
+	},
 
 	popup_editor : function() {
 		$("#dialog-editor", relatorioVendasController.workspace).dialog({
@@ -1015,6 +1094,41 @@ var relatorioVendasController = $.extend(true, {
 		
 		$("#totalFaturamentoCapaSegmento", relatorioVendasController.workspace).html(totalFaturamentoCapa);
 		$(".grids", relatorioVendasController.workspace).show();
+		
+		$("#relatorioSegmentacao", relatorioVendasController.workspace).show();
+		$("#relatorioSegmentacaoPorCota", relatorioVendasController.workspace).hide();
+		
+		return tableModel;
+	},
+	
+executarPreProcessamentoSegmentacaoPorCota: function(result) {
+		
+		if (result.mensagens) {
+			exibirMensagem(
+				result.mensagens.tipoMensagem, 
+				result.mensagens.listaMensagens
+			);
+			$(".grids", relatorioVendasController.workspace).hide();
+			return result;
+		}
+		
+		var tableModel = null;
+		var totalFaturamentoCapa = 0;
+		
+		$.each(result, function(index, item) {
+			
+			if (item[0] === 'tableModel') {
+				tableModel = item[1];
+			} else if (item[0] === 'totalFaturamentoCapa') {
+				totalFaturamentoCapa = item[1];
+			}
+		});
+		
+		$("#totalFaturamentoCapaSegmentoCota", relatorioVendasController.workspace).html(totalFaturamentoCapa);
+		$(".grids", relatorioVendasController.workspace).show();
+		$("#relatorioSegmentacaoPorCota", relatorioVendasController.workspace).show();
+		$("#relatorioSegmentacao", relatorioVendasController.workspace).hide();
+		
 		return tableModel;
 	},
 	

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -25,6 +26,12 @@ public class FiltroRankingSegmentoDTO extends FiltroCurvaABCDTO {
 	private String descricaoTipoSegmento;
 	
 	private BigDecimal totalFaturamento;
+	
+	private Integer numeroCota;
+	
+	private boolean pesquisaPorCota;
+	
+	private List<TipoSegmentoProduto> listSegmentos;
 	
 	public FiltroRankingSegmentoDTO() { }
 	
@@ -87,5 +94,28 @@ public class FiltroRankingSegmentoDTO extends FiltroCurvaABCDTO {
 	}
 	public void setTotalFaturamento(BigDecimal totalFaturamento) {
 		this.totalFaturamento = totalFaturamento;
+	}
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
+	}
+
+	public boolean isPesquisaPorCota() {
+		return pesquisaPorCota;
+	}
+
+	public void setPesquisaPorCota(boolean pesquisaPorCota) {
+		this.pesquisaPorCota = pesquisaPorCota;
+	}
+
+	public List<TipoSegmentoProduto> getListSegmentos() {
+		return listSegmentos;
+	}
+
+	public void setListSegmentos(List<TipoSegmentoProduto> listSegmentos) {
+		this.listSegmentos = listSegmentos;
 	}	
+	
 }
