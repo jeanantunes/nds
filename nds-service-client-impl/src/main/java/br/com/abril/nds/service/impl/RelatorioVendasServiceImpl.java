@@ -28,6 +28,7 @@ import br.com.abril.nds.dto.filtro.FiltroRankingSegmentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.RankingRepository;
@@ -230,7 +231,7 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 	@Transactional(readOnly=true)
 	public List<RegistroRankingSegmentoDTO> obterRankingSegmento(FiltroRankingSegmentoDTO filtro) {
 		
-		if (filtro.getIdTipoSegmento() == null) {
+		if (filtro.isPesquisaPorCota() == false && filtro.getIdTipoSegmento() == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um tipo de segmento.");
 		}
@@ -242,9 +243,21 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		
 		this.validarFiltroRegiao(filtro);
 
+		List<RegistroRankingSegmentoDTO> registros = new ArrayList<>();
 		
-		List<RegistroRankingSegmentoDTO> registros = this.relatorioVendasRepository.obterRankingSegmento(filtro);
-		
+		if(!filtro.isPesquisaPorCota()){
+			registros = this.relatorioVendasRepository.obterRankingSegmento(filtro);
+		}else{
+			
+			for (TipoSegmentoProduto segmento : filtro.getListSegmentos()) {
+				
+				filtro.setIdTipoSegmento(segmento.getId());
+				
+				registros.addAll(this.relatorioVendasRepository.obterRelatorioVendaSegmentoPorCota(filtro));
+				
+			}
+			
+		}
 		
 		if (registros == null || registros.size() <= 0) {			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");

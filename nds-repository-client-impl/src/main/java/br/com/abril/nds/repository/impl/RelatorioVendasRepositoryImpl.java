@@ -935,6 +935,32 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 
 		StringBuilder sql = new StringBuilder();
 		
+		getQueryRankingSegmento(filtro, sql);
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("tipoSegmentoID", filtro.getIdTipoSegmento());
+		
+		this.getWhereFiltroCurvaABC(filtro, query);
+
+		query.addScalar("ranking", StandardBasicTypes.LONG);
+		query.addScalar("participacaoAcumulada", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		query.addScalar("nomeCota");
+		query.addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("participacao", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("segmentoDescricao", StandardBasicTypes.STRING);
+		query.addScalar("reparteSum", StandardBasicTypes.STRING);
+		query.addScalar("reparte", StandardBasicTypes.STRING);
+		query.addScalar("venda", StandardBasicTypes.STRING);
+		
+
+		query.setResultTransformer(Transformers.aliasToBean(RegistroRankingSegmentoDTO.class));
+		
+		return query.list();
+	}
+
+	private void getQueryRankingSegmento(FiltroRankingSegmentoDTO filtro, StringBuilder sql) {
 		sql.append("      SELECT ");
 		sql.append("         @posicaoRanking\\:=@posicaoRanking + 1 as ranking, ");
 		sql.append("         @valorAcumulado\\:=@valorAcumulado + consolidado.faturamentoCapa as participacaoAcumulada, ");
@@ -1090,10 +1116,37 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                     @posicaoRanking\\:=0) as s                            ");
 		sql.append("             ORDER BY ");
 		sql.append("                 ranking ");
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<RegistroRankingSegmentoDTO> obterRelatorioVendaSegmentoPorCota(FiltroRankingSegmentoDTO filtro) {
 		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select  ");
+		sql.append("    T2.ranking, ");
+		sql.append("    T2.segmentoDescricao, ");
+		sql.append("    T2.faturamentoCapa, ");
+		sql.append("    T2.participacao, ");
+		sql.append("    T2.participacaoAcumulada, ");
+		sql.append("    T2.numeroCota, ");
+		sql.append("    T2.nomeCota, ");
+		sql.append("    T2.reparteSum, ");
+		sql.append("    T2.reparte, ");
+		sql.append("    T2.venda ");
+		
+		sql.append(" FROM  ");
+		sql.append(" 	(  ");
+
+		getQueryRankingSegmento(filtro, sql);
+		
+		sql.append(" ) T2 where T2.numeroCota = :numeroCota  ");
+
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("tipoSegmentoID", filtro.getIdTipoSegmento());
+		query.setParameter("numeroCota", filtro.getNumeroCota());
 		
 		this.getWhereFiltroCurvaABC(filtro, query);
 
