@@ -252,19 +252,19 @@ var relatorioVendasController = $.extend(true, {
 			colModel : [{ 
 				display : 'Rk.Prod.',
 				name : 'rkProduto',
-				width : 50,
+				width : 42,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Rk.Cota.',
 				name : 'rkCota',
-				width : 50,
+				width : 43,
 				sortable : true,
 				align : 'left'
 			},  {
 				display : 'Cota',
 				name : 'numeroCota',
-				width : 60,
+				width : 40,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -273,10 +273,16 @@ var relatorioVendasController = $.extend(true, {
 				width : 145,
 				sortable : true,
 				align : 'left'
+			},{
+				display : 'Tipo PDV',
+				name : 'tipoPDV',
+				width : 50,
+				sortable : true,
+				align : 'left'
 			}, {
 				display : 'Município',
 				name : 'municipio',
-				width : 160,
+				width : 120,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -286,17 +292,23 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Venda Exs.',
-				name : 'vendaExemplaresFormatado',
-				width : 90,
+				display : 'Reparte',
+				name : 'reparteFormatado',
+				width : 42,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Faturamento Capa R$',
-				name : 'faturamentoCapaFormatado',
-				width : 90,
+				display : 'Venda',
+				name : 'vendaExemplaresFormatado',
+				width : 40,
 				sortable : true,
-				align : 'right'
+				align : 'center'
+			}, {
+				display : 'Faturam. Capa R$',
+				name : 'faturamentoCapaFormatado',
+				width : 100,
+				sortable : true,
+				align : 'left'
 			}, {
 				display : 'Part. %',
 				name : 'participacaoFormatado',
@@ -326,9 +338,9 @@ var relatorioVendasController = $.extend(true, {
 			colModel : [ { 
 				display : 'Ranking',
 				name : 'rkProduto',
-				width : 50,
+				width : 40,
 				sortable : true,
-				align : 'left'
+				align : 'center'
 			},{
 				display : 'Código',
 				name : 'codigoProduto',
@@ -338,51 +350,69 @@ var relatorioVendasController = $.extend(true, {
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
-				width : 170,
+				width : 140,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Segmento',
+				name : 'descricaoSegmento',
+				width : 150,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Editor',
+				name : 'nomeEditor',
+				width : 150,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'edicaoProduto',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Reparte',
-				name : 'reparteFormatado',
-				width : 80,
+				width : 40,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Venda Exs.',
+				display : 'Reparte',
+				name : 'reparteFormatado',
+				width : 40,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Venda',
 				name : 'vendaExemplaresFormatado',
-				width : 90,
+				width : 40,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Venda %',
 				name : 'porcentagemVendaFormatado',
-				width : 90,
+				width : 40,
 				sortable : true,
-				align : 'right'
+				align : 'center'
 			}, {
-				display : 'Faturamento R$',
-				name : 'faturamentoFormatado',
-				width : 100,
+				display : 'Preço Capa',
+				name : 'precoCapaFormatado',
+				width : 60,
 				sortable : true,
-				align : 'right'
+				align : 'center'
+			}, {
+				display : 'Fatu. R$',
+				name : 'faturamentoFormatado',
+				width : 60,
+				sortable : true,
+				align : 'center'
 			}, {
 				display : 'Part. %',
 				name : 'participacaoFormatado',
-				width : 50,
+				width : 40,
 				sortable : true,
-				align : 'right'
+				align : 'center'
 			}, {
 				display : 'Part. Acum. %',
 				name : 'participacaoAcumuladaFormatado',
 				width : 70,
 				sortable : true,
-				align : 'right'
+				align : 'center'
 			} ],
 			sortname : "faturamento",
 			sortorder : "desc",
@@ -1101,7 +1131,7 @@ var relatorioVendasController = $.extend(true, {
 		return tableModel;
 	},
 	
-executarPreProcessamentoSegmentacaoPorCota: function(result) {
+	executarPreProcessamentoSegmentacaoPorCota: function(result) {
 		
 		if (result.mensagens) {
 			exibirMensagem(
