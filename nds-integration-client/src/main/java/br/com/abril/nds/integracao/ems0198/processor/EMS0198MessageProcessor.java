@@ -149,7 +149,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 				reparte.setDataInclusao(new Date());
 				reparte.setProdutos(cotaRepository.getProdutoRecolhimento(reparte.getIdCota(), simpleDateFormat.parse(reparte.getDataMovimento())));
 			}
-			exporteCouch.exportar(lista,"Recolhimento");
+			exporteCouch.exportarLancamentoRecolhimento(lista,"Recolhimento");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

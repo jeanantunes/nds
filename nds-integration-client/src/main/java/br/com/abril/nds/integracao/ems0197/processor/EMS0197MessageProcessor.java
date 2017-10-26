@@ -174,7 +174,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 			for (CotaCouchDTO reparte : lista) {
 				reparte.setProdutos(cotaRepository.getProdutoLancamento(reparte.getIdCota(), formatter.parse(reparte.getDataMovimento())));
 			}
-			exporteCouch.exportar(lista, "Lancamento");
+			exporteCouch.exportarLancamentoRecolhimento(lista, "Lancamento");
 			
 		} catch (Exception e) {
 			e.printStackTrace();

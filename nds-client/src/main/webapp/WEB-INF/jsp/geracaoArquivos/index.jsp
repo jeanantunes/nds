@@ -73,16 +73,23 @@ $(function(){
 					<option value="PICKING" selected="selected">Picking</option>
 					<option value="VENDA">Venda</option>
 					<option value="UNIFICAR">Unificar</option>
+					<option value="CONSIGNADO">Consignado</option>
 			</select></td>
 			<td width="205">
 				<div id="dtLancto" style="display: none;">Data Lançamento:</div>
 				<div id="dtRecolhimento">Data Recolhimento:</div>
 				<div id="dtVenda" style="display: none;">Data:</div>
 				<div id="arqDinap" style="display: none;">Arquivo Dinap:</div>
+				<div id="numeroCotaConsignadoLabel" style="display: none;">Numero Cota:</div>
+			</td>
+			<td>
+			<div id=divnumeroCotaConsignado width="286"><input type="text" name="numeroCotaConsignadoInput" id="numeroCotaConsignadoInput"
+						style="width: 70px;" /></div>
 			</td>
 			<td width="286"><div id="dtEscolha" >
 					<input type="text" name="datepickerDe" id="datepickerDe"
 						style="width: 70px;" />
+						
 					</div>	
 				<div id="arquivo" >
 				<select name="nomeArquivo" id="nomeArquivo" style="width:200px;" >

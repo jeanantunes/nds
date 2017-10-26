@@ -48,6 +48,7 @@ import br.com.abril.nds.dto.CaracteristicaDistribuicaoSimplesDTO;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ControleCotaDTO;
+import br.com.abril.nds.dto.CotaConsignadaCouchDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
@@ -74,7 +75,10 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DeparaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.EmailService;
+import br.com.abril.nds.service.ExporteCouch;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.MovimentoEstoqueCotaService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.SituacaoCotaService;
@@ -137,35 +141,11 @@ public class GeracaoArquivosController extends BaseController {
 	@Autowired
 	private ControleCotaService controleCotaService;
 	
-	
-	@Autowired
-	private VendaEncalheService vendaEncalheService;
-	
 	@Autowired
 	private CotaService cotaService;
 	
-	
-	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
-	
-	
-	@Autowired
-	private ProdutoService produtoService;
-	
-	@Autowired
-	private DescontoService descontoService;
-	
-	@Autowired 
-	private GerarCobrancaService cobrancaService;
-	
-	
-	
-	@Autowired
-	private SituacaoCotaService situacaoCotaService;
-	
-	@Autowired
-	private BoxService boxService;
 	
 	@Autowired
 	 private  CaracteristicaDistribuicaoService caracteristicaDistribuicaoService;
@@ -177,14 +157,16 @@ public class GeracaoArquivosController extends BaseController {
 	
 	@Autowired
 	private ConsultaEncalheService  consultaEncalheService;
-	 
-	
-	@Autowired
-	private EmailService emailService;
 	
     
     @Autowired
     private HttpServletResponse httpResponse;
+    
+    @Autowired
+    private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
+    
+    @Autowired
+    private ExporteCouch exporteCouch;
     
 	
 	@Path("/")
@@ -282,13 +264,16 @@ public class GeracaoArquivosController extends BaseController {
 	        httpResponse.getOutputStream().close();
 	        
 	        result.use(Results.nothing());
-		  
-		
-		
-		
 		
 	}
 	
+	
+	@Post
+	@Rules(Permissao.ROLE_ADMINISTRACAO_GERACAO_ARQUIVO_ALTERACAO)
+	public void gerarConsignado(String numeroCota) {
+		List<CotaConsignadaCouchDTO>  listaCotasConsignadas= movimentoEstoqueCotaService.getCotasConsignadaExportCouch(numeroCota);
+		exporteCouch.exportarcotaConsignada(listaCotasConsignadas);
+	}
 	
 	// gerar arquivo com vendas reparte agregado ( caso caruso )
 	@Post

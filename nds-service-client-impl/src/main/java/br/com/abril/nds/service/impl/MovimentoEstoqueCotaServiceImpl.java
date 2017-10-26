@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.CotaConsignadaCouchDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.TransferenciaReparteSuplementarDTO;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -60,9 +61,6 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
-	
-	@Autowired
-	private GerarCobrancaService gerarCobrancaService;
 
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
@@ -444,5 +442,10 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 			}
 
 		}
+	}
+
+	@Override
+	public List<CotaConsignadaCouchDTO> getCotasConsignadaExportCouch(String numeroCota) {
+		return movimentoEstoqueCotaRepository.getCotasConsignadaExportCouch(numeroCota);
 	}
 }

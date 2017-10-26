@@ -1,7 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.lightcouch.CouchDbClient;
@@ -11,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.JsonObject;
 
+import br.com.abril.nds.dto.CotaConsignadaCouchDTO;
 import br.com.abril.nds.dto.CotaCouchDTO;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.service.ExporteCouch;
@@ -23,13 +22,13 @@ public class ExporteCouchImpl implements ExporteCouch {
 	private CouchDbProperties couchDbProperties;
 
 	private CouchDbClient couchDbClient;
+	
+	private static String LANCAMENTO_RECOLHIMENTO_COUCH ="db_carga_tpj_lancamentos_recolhimentos";
+	private static String COTAS_CONSIGNADO_COUCH ="db_carga_tpj_cota_consignada";
 
-	@Autowired
-	private DistribuidorService distribuidorService;
-
-	public void exportar(List<CotaCouchDTO> listaReparte, String nomeEntidadeIntegrada) {
+	public void exportarLancamentoRecolhimento(List<CotaCouchDTO> listaReparte, String nomeEntidadeIntegrada) {
 		String data = listaReparte.get(0).getDataMovimento();
-		this.couchDbClient = getCouchDBClient();
+		this.couchDbClient = getCouchDBClient(LANCAMENTO_RECOLHIMENTO_COUCH);
 		String docName = nomeEntidadeIntegrada+"_" + data+"_"+listaReparte.get(0).getCodigoDistribuidor();
 		try {
 			JsonObject jsonDoc = couchDbClient.find(JsonObject.class, docName);
@@ -48,15 +47,8 @@ public class ExporteCouchImpl implements ExporteCouch {
 		}	
 	}
 
-	private CouchDbClient getCouchDBClient() {
-		String db_name = "lancamentos_recolhimentos";
-
-/*		db_name += "_db_" + String.format("%08d",
-				Integer.parseInt(distribuidorService.obter().getCodigoDistribuidorDinap()) <= 0
-						? Integer.parseInt(distribuidorService.obter().getCodigoDistribuidorFC())
-						: Integer.parseInt(distribuidorService.obter().getCodigoDistribuidorDinap()));
-*/
-		org.lightcouch.CouchDbProperties properties = new org.lightcouch.CouchDbProperties().setDbName(db_name)
+	private CouchDbClient getCouchDBClient(String dbBanco) {
+		org.lightcouch.CouchDbProperties properties = new org.lightcouch.CouchDbProperties().setDbName(dbBanco)
 				.setCreateDbIfNotExist(true).setProtocol(couchDbProperties.getProtocol())
 				.setHost(couchDbProperties.getHost()).setPort(couchDbProperties.getPort())
 				.setUsername(couchDbProperties.getUsername()).setPassword(couchDbProperties.getPassword())
@@ -64,6 +56,14 @@ public class ExporteCouchImpl implements ExporteCouch {
 
 		return new CouchDbClient(properties);
 
+	}
+
+	@Override
+	public void exportarcotaConsignada(List<CotaConsignadaCouchDTO> listaCotaConsignada) {
+		couchDbClient = getCouchDBClient(COTAS_CONSIGNADO_COUCH);
+		for(CotaConsignadaCouchDTO cota: listaCotaConsignada){
+			this.couchDbClient.save(cota);
+		}
 	}
 
 }

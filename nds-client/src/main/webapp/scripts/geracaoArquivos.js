@@ -110,7 +110,24 @@ GeracaoArquivos.prototype.btnGerarOnClick = function() {
 
 	var params = this.getParams();
 	
-if($("#tipoArquivo", this.workspace).val() == "VENDA") {
+	if($("#tipoArquivo", this.workspace).val() == "CONSIGNADO") {
+			params= {"numeroCota" : $("#numeroCotaConsignadoInput", this.workspace).val()};
+			$.postJSON(this.path + 'gerarConsignado',
+					params, 
+					function(data) {
+						$("#resultado_unificacao", this.workspace).show();
+						$("#qtdArquivosUnificados", this.workspace).html(data);
+						
+						window.open(contextPath+ "/administracao/geracaoArquivos/getFile", "_blank");
+					},
+					function(result) {
+						$("#resultado_unificacao", this.workspace).show();
+						$("#qtdArquivosUnificados", this.workspace).html(data);
+						
+					}
+			);
+			
+		}else if($("#tipoArquivo", this.workspace).val() == "VENDA") {
 		
 		$.postJSON(this.path + 'gerarVenda',
 				params, 
@@ -247,6 +264,8 @@ GeracaoArquivos.prototype.tipoArquivoGerarOnChange = function() {
 	var tipoArquivo = $("#tipoArquivo").val();
 	var arquivo = $("#arquivo");
 	var dtEscolha = $("#dtEscolha");
+	var numeroCotaConsignado = $("#numeroCotaConsignadoLabel");
+	var numeroCotaConsignadoInput = $("#numeroCotaConsignadoInput");
 
     switch (tipoArquivo) {  
             case 'REPARTE':    
@@ -257,6 +276,8 @@ GeracaoArquivos.prototype.tipoArquivoGerarOnChange = function() {
                 this.alterarDataCalendario(tipoArquivo);
                 arquivo.hide();
                 dtEscolha.show();
+                numeroCotaConsignado.hide();
+                numeroCotaConsignadoInput.hide();
             break;  
             case 'ENCALHE':
             	this.alterarDataCalendario(tipoArquivo);
@@ -266,6 +287,8 @@ GeracaoArquivos.prototype.tipoArquivoGerarOnChange = function() {
                 arqDinap.hide();
                 arquivo.hide();
                 dtEscolha.show();
+                numeroCotaConsignado.hide();
+                numeroCotaConsignadoInput.hide();
             break;
             case 'PICKING':
         		reparte.show();
@@ -274,6 +297,8 @@ GeracaoArquivos.prototype.tipoArquivoGerarOnChange = function() {
                 arqDinap.hide();
                 arquivo.hide();
                 dtEscolha.show();
+                numeroCotaConsignado.hide();
+                numeroCotaConsignadoInput.hide();
             break; 
             case 'VENDA':
             	reparte.hide();
@@ -282,6 +307,8 @@ GeracaoArquivos.prototype.tipoArquivoGerarOnChange = function() {
                 arqDinap.hide();
                 arquivo.hide();
                 dtEscolha.show();
+                numeroCotaConsignado.hide();
+                numeroCotaConsignadoInput.hide();
             	break;
             case 'UNIFICAR':
         		venda.hide();
@@ -291,14 +318,27 @@ GeracaoArquivos.prototype.tipoArquivoGerarOnChange = function() {
                 this.alterarDataCalendario('PICKING');
                 arquivo.show();
                 dtEscolha.hide();
-              
-            break;  
+                numeroCotaConsignado.hide();
+                numeroCotaConsignadoInput.hide();
+            break; 
+            case 'CONSIGNADO':
+        		venda.hide();
+                encalhe.hide();
+                reparte.hide();
+                arqDinap.hide();
+                arquivo.hide();
+                dtEscolha.hide();
+                numeroCotaConsignado.show();
+                numeroCotaConsignadoInput.show();
+            break;
             default:
                 reparte.hide();
             	encalhe.show();
             	venda.hide();
-            	 arqDinap.hide();
-            	 arquivo.hide();
+            	arqDinap.hide();
+            	arquivo.hide();
+            	numeroCotaConsignado.hide();
+            	numeroCotaConsignadoInput.hide();
             break;  
     }
 
@@ -542,7 +582,7 @@ GeracaoArquivos.prototype.adicionarLinhaCota = function(indexAnterior){
 	
 	$("#cotasCentralizadas", this.workspace).append(template);
 	
-	//$(".numCota", this.workspace).numeric();
+	// $(".numCota", this.workspace).numeric();
 	
 	$("#parametro-cobranca-numeroCota"+ indexAnterior, this.workspace).focus();
 };
@@ -554,11 +594,12 @@ GeracaoArquivos.prototype.onkeyupCampoNome = function(index){
 
 GeracaoArquivos.prototype.onblurCampoNome = function(index){
 	
-//	this.adicionarLinhaCota(index);
+// this.adicionarLinhaCota(index);
 	
-//	if ($("#parametro-cobranca-numeroCota" + index, this.workspace).val() == ""){
-//		pesquisaCota.pesquisarPorNomeCota("#parametro-cobranca-numeroCota" + index, "#parametro-cobranca-nomeCota" + index);
-//	}
+// if ($("#parametro-cobranca-numeroCota" + index, this.workspace).val() == ""){
+// pesquisaCota.pesquisarPorNomeCota("#parametro-cobranca-numeroCota" + index,
+// "#parametro-cobranca-nomeCota" + index);
+// }
 };
 
 GeracaoArquivos.prototype.limparCamposCentralizacaoCotas = function(){
@@ -615,4 +656,4 @@ GeracaoArquivos.prototype.editarUnificacao = function(id){
 	);
 
 };
-//@ sourceURL=geracaoArquivo.js
+// @ sourceURL=geracaoArquivo.js
