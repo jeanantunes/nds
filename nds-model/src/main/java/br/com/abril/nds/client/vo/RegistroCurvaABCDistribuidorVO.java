@@ -95,6 +95,12 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 	@Export(label = "preco", exhibitionOrder = 22,   columnType = ColumnType.STRING)
 	private String preco;
 	
+	private BigDecimal reparte;
+	
+	private String reparteFormatado;
+	
+	private String tipoPDV;
+	
 	@Export(label = "Quantidade de Pdvs", exhibitionOrder = 6, columnType = ColumnType.NUMBER)
 	public String getQuantidadePdvsString() {
 		return this.getQuantidadePdvs().toString();
@@ -309,6 +315,31 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 
 	public void setPreco(String preco) {
 		this.preco = preco;
+	}
+
+	public String getTipoPDV() {
+		return tipoPDV;
+	}
+
+	public void setTipoPDV(String tipoPDV) {
+		this.tipoPDV = tipoPDV;
+	}
+
+	public BigDecimal getReparte() {
+		return reparte;
+	}
+
+	public void setReparte(BigDecimal reparte) {
+		this.reparte = reparte == null ? BigDecimal.ZERO : reparte;
+		this.reparteFormatado = String.valueOf(this.reparte);
+	}
+
+	public String getReparteFormatado() {
+		return reparteFormatado;
+	}
+
+	public void setReparteFormatado(String reparteFormatado) {
+		this.reparteFormatado = reparteFormatado;
 	}
 	
 }

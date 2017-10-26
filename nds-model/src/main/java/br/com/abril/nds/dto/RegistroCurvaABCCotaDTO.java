@@ -22,52 +22,65 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 	 */
 	private static final long serialVersionUID = -5830163841520335115L;
 
-	@Export(label = "Código", exhibitionOrder = 2)
-	private String codigoProduto;
-
-	@Export(label = "Produto", exhibitionOrder = 3)
-	private String nomeProduto;
-
-	@Export(label = "Edição", exhibitionOrder = 4)
-	private Long edicaoProduto;
-
-	private BigInteger reparte;
-
-	private BigInteger vendaExemplares;
-
-	private BigDecimal porcentagemVenda;
-
-	private BigDecimal faturamento;
-
-	@Export(label = "Reparte", exhibitionOrder = 5, columnType = ColumnType.NUMBER)
-	private String reparteFormatado;
-	
-	@Export(label = "Venda de Exemplares", exhibitionOrder = 6, columnType = ColumnType.NUMBER)
-	private String vendaExemplaresFormatado;
-
-	@Export(label = "Venda %", exhibitionOrder = 7, columnType = ColumnType.DECIMAL)
-	private String porcentagemVendaFormatado;
-	
-	@Export(label = "Faturamento R$", exhibitionOrder = 8, columnType = ColumnType.DECIMAL)
-	private String faturamentoFormatado;
-	
-	@Export(label = "numeroCota", exhibitionOrder = 9, columnType = ColumnType.STRING)
-	private String numeroCota;
-	
-	@Export(label = "nomeCota", exhibitionOrder = 10, columnType = ColumnType.STRING)
-	private String nomeCota;
-	
-	@Export(label = "tipoPDV", exhibitionOrder = 11, columnType = ColumnType.STRING)
-	private String tipoPDV;
-	
 	@Export(label = "Ranking", exhibitionOrder = 1, columnType = ColumnType.NUMBER)
 	private Long rkProduto;
+	
+	@Export(label = "Código", exhibitionOrder = 2)
+	private String codigoProduto;
+	
+	@Export(label = "Produto", exhibitionOrder = 3, widthPercent=13)
+	private String nomeProduto;
+	
+	@Export(label = "Segmento", exhibitionOrder = 4, widthPercent=12)
+	private String descricaoSegmento;
+
+	@Export(label = "Editor", exhibitionOrder = 5, widthPercent=20)
+	private String nomeEditor;
+	
+	@Export(label = "Edição", exhibitionOrder = 6)
+	private Long edicaoProduto;
+
+	@Export(label = "Reparte", exhibitionOrder = 7, columnType = ColumnType.NUMBER)
+	private String reparteFormatado;
+	
+	@Export(label = "Venda Ex.", exhibitionOrder = 8, columnType = ColumnType.NUMBER)
+	private String vendaExemplaresFormatado;
+
+	@Export(label = "Venda %", exhibitionOrder = 9, columnType = ColumnType.DECIMAL)
+	private String porcentagemVendaFormatado;
+
+	@Export(label = "Preço Capa", exhibitionOrder = 10, columnType = ColumnType.DECIMAL)
+	private String precoCapaFormatado;
+	
+	@Export(label = "Faturam. R$", exhibitionOrder = 11, columnType = ColumnType.DECIMAL)
+	private String faturamentoFormatado;
+	
+//	@Export(label = "numeroCota", exhibitionOrder = 12, columnType = ColumnType.STRING)
+	private String numeroCota;
+	
+//	@Export(label = "nomeCota", exhibitionOrder = 13, columnType = ColumnType.STRING)
+	private String nomeCota;
+	
+//	@Export(label = "tipoPDV", exhibitionOrder = 14, columnType = ColumnType.STRING)
+	private String tipoPDV;
+	
+	private BigInteger reparte;
+	
+	private BigInteger vendaExemplares;
+	
+	private BigDecimal porcentagemVenda;
+	
+	private BigDecimal faturamento;
 	
 	private Long idCota;
 	
 	private Long idProduto;
 	
 	private Long idProdutoEdicao;
+	
+	
+	private BigDecimal precoCapa;
+	
 	
 	public RegistroCurvaABCCotaDTO	() {
 	}
@@ -160,12 +173,12 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 		this.codigoProduto = codigoProduto;
 	}
 	
-	@Export(label = "% Participação", exhibitionOrder = 9, columnType = ColumnType.DECIMAL)
+	@Export(label = "% Partic.", exhibitionOrder = 9, columnType = ColumnType.DECIMAL)
 	public String getParticipacaoString() {
 		return getParticipacaoFormatado();
 	}
 
-	@Export(label = "% Participação Acumulada", exhibitionOrder = 10, columnType = ColumnType.DECIMAL)
+	@Export(label = "% Part. Acum.", exhibitionOrder = 10, columnType = ColumnType.DECIMAL)
 	public String getParticipacaoAcumuladaString() {
 		return getParticipacaoAcumuladaFormatado();
 	}
@@ -230,6 +243,39 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 
 	public void setTipoPDV(String tipoPDV) {
 		this.tipoPDV = tipoPDV;
+	}
+
+	public String getNomeEditor() {
+		return nomeEditor;
+	}
+
+	public void setNomeEditor(String nomeEditor) {
+		this.nomeEditor = nomeEditor;
+	}
+
+	public String getDescricaoSegmento() {
+		return descricaoSegmento;
+	}
+
+	public void setDescricaoSegmento(String descricaoSegmento) {
+		this.descricaoSegmento = descricaoSegmento;
+	}
+
+	public BigDecimal getPrecoCapa() {
+		return precoCapa;
+	}
+
+	public void setPrecoCapa(BigDecimal precoCapa) {
+		this.precoCapa = precoCapa;
+		precoCapaFormatado = CurrencyUtil.formatarValor(precoCapa == null ? BigInteger.ZERO : precoCapa);
+	}
+
+	public String getPrecoCapaFormatado() {
+		return precoCapaFormatado;
+	}
+
+	public void setPrecoCapaFormatado(String precoCapaFormatado) {
+		this.precoCapaFormatado = precoCapaFormatado;
 	}
 	
 }

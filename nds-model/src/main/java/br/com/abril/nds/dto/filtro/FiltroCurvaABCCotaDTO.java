@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
 /**
@@ -80,5 +81,30 @@ public class FiltroCurvaABCCotaDTO extends FiltroCurvaABCDTO implements Serializ
 			ColunaOrdenacaoCurvaABCCota ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
+	
+	@Export(label = "Numero Cota")	
+	@Override
+	public Integer getCodigoCota() {
+		return super.getCodigoCota();
+	}
+	
+	@Export(label = "Nome Cota")
+	@Override
+	public String getNomeCota() {
+		return super.getNomeCota();
+	}
+	
+	@Export(label = "Tipo PDV")
+	private String tipoPDV;
+
+	public String getTipoPDV() {
+		return tipoPDV;
+	}
+
+	public void setTipoPDV(String tipoPDV) {
+		this.tipoPDV = tipoPDV;
+	}
+	
+	
 	
 }

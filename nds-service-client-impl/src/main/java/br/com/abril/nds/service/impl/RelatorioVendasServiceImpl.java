@@ -213,16 +213,25 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		BigDecimal participacaoTotal = BigDecimal.ZERO;
 		
 		if(!lista.isEmpty()) {
-			
 			for(RegistroCurvaABCDTO r : lista) {
 				if(r.getParticipacao()!=null) {
 					participacaoTotal = participacaoTotal.add(r.getParticipacao());
 				}
 			}
-			
 		}
 		
 		carregarParticipacaoCurvaABCCota(lista, participacaoTotal);
+		
+		for (RegistroCurvaABCCotaDTO registro : lista) {
+			if(registro.getTipoPDV() != null && (filtroCurvaABCCotaDTO.getTipoPDV() == null || filtroCurvaABCCotaDTO.getTipoPDV().isEmpty())){
+				filtroCurvaABCCotaDTO.setTipoPDV(registro.getTipoPDV());
+				break;
+			}else{
+				if(!filtroCurvaABCCotaDTO.getTipoPDV().isEmpty()){
+					break;
+				}
+			}
+		}
 		
 		return lista;
 	}
@@ -429,7 +438,6 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 					BigDecimal participacaoAcumulada = registro.getParticipacaoAcumulada();
 					registro.setParticipacaoAcumulada(participacaoAcumulada.multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN));
 				}
-				
 				
 			}
 		}
