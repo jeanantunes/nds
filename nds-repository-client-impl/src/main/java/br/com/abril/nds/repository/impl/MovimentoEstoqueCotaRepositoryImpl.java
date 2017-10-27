@@ -41,6 +41,7 @@ import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoAgregationValuesDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.CotaConsignadaCouchDTO;
+import br.com.abril.nds.dto.CotaConsignadaDetalheCouchDTO;
 import br.com.abril.nds.dto.CotaReparteDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
@@ -5070,7 +5071,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	}
 
 	@Override
-	public List<CotaConsignadaCouchDTO> getCotasConsignadaExportCouch(String numeroCota) {
+	public List<CotaConsignadaDetalheCouchDTO> getCotasConsignadaExportCouch(String numeroCota) {
 		final StringBuilder SQL = new StringBuilder();
 
 		SQL.append(" SELECT  '01' as versao, 'L' as tipo, lpad(dst.COD_DISTRIBUIDOR_DINAP,7,0) as distribuidor, ")
@@ -5123,7 +5124,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.addScalar("precoCusto", StandardBasicTypes.STRING);
 		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(CotaConsignadaCouchDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaConsignadaDetalheCouchDTO.class));
 
 		return query.list();
 	}

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.dto.CotaConsignadaCouchDTO;
+import br.com.abril.nds.dto.CotaConsignadaDetalheCouchDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
@@ -64,6 +64,6 @@ public interface MovimentoEstoqueCotaService {
 
 	void atualizarDescontosDaCota(Cota cota, Double descontoAtual, Double novoDesconto);
 	
-	List<CotaConsignadaCouchDTO> getCotasConsignadaExportCouch(String numeroCota);
+	List<CotaConsignadaDetalheCouchDTO> getCotasConsignadaExportCouch(String numeroCota);
 	
 }

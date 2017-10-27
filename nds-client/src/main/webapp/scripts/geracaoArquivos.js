@@ -114,16 +114,8 @@ GeracaoArquivos.prototype.btnGerarOnClick = function() {
 			params= {"numeroCota" : $("#numeroCotaConsignadoInput", this.workspace).val()};
 			$.postJSON(this.path + 'gerarConsignado',
 					params, 
-					function(data) {
-						$("#resultado_unificacao", this.workspace).show();
-						$("#qtdArquivosUnificados", this.workspace).html(data);
-						
-						window.open(contextPath+ "/administracao/geracaoArquivos/getFile", "_blank");
-					},
 					function(result) {
-						$("#resultado_unificacao", this.workspace).show();
-						$("#qtdArquivosUnificados", this.workspace).html(data);
-						
+						exibirMensagem(result.tipoMensagem, result.listaMensagens);
 					}
 			);
 			

@@ -36,7 +36,6 @@ public class ExporteCouchImpl implements ExporteCouch {
 		} catch (NoDocumentException e) {
 
 		}
-		
 		for (CotaCouchDTO reparte : listaReparte) {
 			reparte.set_id(docName);
 			this.couchDbClient.save(reparte);
@@ -59,11 +58,21 @@ public class ExporteCouchImpl implements ExporteCouch {
 	}
 
 	@Override
-	public void exportarcotaConsignada(List<CotaConsignadaCouchDTO> listaCotaConsignada) {
+	public void exportarCotaConsignada(CotaConsignadaCouchDTO cotaConsignada) {
 		couchDbClient = getCouchDBClient(COTAS_CONSIGNADO_COUCH);
-		for(CotaConsignadaCouchDTO cota: listaCotaConsignada){
-			this.couchDbClient.save(cota);
+		String docName = "consignado_"+cotaConsignada.getCotaConsignadaDetalhes().get(0).getNumeroCota()+"_"+cotaConsignada.getCotaConsignadaDetalhes().get(0).getDistribuidor();
+		try {
+			JsonObject jsonDoc = couchDbClient.find(JsonObject.class, docName);
+			this.couchDbClient.remove(jsonDoc);
+		} catch (NoDocumentException e) {
+
 		}
+		cotaConsignada.set_id(docName);
+		this.couchDbClient.save(cotaConsignada);
+			
+		if (couchDbClient != null) {
+			couchDbClient.shutdown();
+		}	
 	}
 
 }

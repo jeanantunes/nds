@@ -49,6 +49,7 @@ import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ControleCotaDTO;
 import br.com.abril.nds.dto.CotaConsignadaCouchDTO;
+import br.com.abril.nds.dto.CotaConsignadaDetalheCouchDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
@@ -271,8 +272,21 @@ public class GeracaoArquivosController extends BaseController {
 	@Post
 	@Rules(Permissao.ROLE_ADMINISTRACAO_GERACAO_ARQUIVO_ALTERACAO)
 	public void gerarConsignado(String numeroCota) {
-		List<CotaConsignadaCouchDTO>  listaCotasConsignadas= movimentoEstoqueCotaService.getCotasConsignadaExportCouch(numeroCota);
-		exporteCouch.exportarcotaConsignada(listaCotasConsignadas);
+		TipoMensagem tipoMensagem=TipoMensagem.SUCCESS;
+		String mensagem = "Cotas exportadas com sucesso";
+		try{
+			List<CotaConsignadaDetalheCouchDTO>  listaCotasConsignadas= movimentoEstoqueCotaService.getCotasConsignadaExportCouch(numeroCota);
+			CotaConsignadaCouchDTO cotaConsignadaCouchDTO = new CotaConsignadaCouchDTO();
+			cotaConsignadaCouchDTO.setCotaConsignadaDetalhes(listaCotasConsignadas);
+			
+			exporteCouch.exportarCotaConsignada(cotaConsignadaCouchDTO);
+		}catch(Exception e){
+			tipoMensagem=TipoMensagem.ERROR;
+			mensagem ="Ocorreu uma falha durante o processo de exportacao";
+		}
+		 result.use(Results.json()).from(
+		            new ValidacaoVO(tipoMensagem,
+		                mensagem), "result").recursive().serialize();
 	}
 	
 	// gerar arquivo com vendas reparte agregado ( caso caruso )

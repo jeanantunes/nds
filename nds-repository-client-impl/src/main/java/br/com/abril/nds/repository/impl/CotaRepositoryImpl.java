@@ -4175,9 +4175,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		sql.append(" SELECT DISTINCT ")
 		.append(" c.id AS idCota, ")
-		.append("  coalesce(c.numero_cota,null,' ') AS jornaleiro, ")
+		.append("  coalesce(c.numero_cota,null,' ') AS codigoCota, ")
 		.append("  coalesce(pdv.id,null,' ') AS codigoPontoVenda, ")
-		.append("  coalesce(c.numero_jornaleiro_ipv,null,' ') AS codigoCota, ")
+		.append("  coalesce(c.numero_jornaleiro_ipv,null,' ') AS jornaleiro, ")
 		.append("  coalesce(lan.DATA_LCTO_DISTRIBUIDOR,null,' ') AS dataMovimento, ")
 		.append(" (SELECT if (d.COD_DISTRIBUIDOR_DINAP != 0,d.COD_DISTRIBUIDOR_DINAP,d.COD_DISTRIBUIDOR_FC) FROM distribuidor d LIMIT 1) AS codigoDistribuidor, ")
 		.append(" coalesce(c.SISTEMA,null,' ') as sistema, ")
@@ -4243,8 +4243,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		sql.append("  select  ");
 		sql.append("     CAST(cec.COTA_ID as CHAR) as idCota, ");
-		sql.append("     CAST(cota.NUMERO_COTA as CHAR) as jornaleiro, ")
-		.append("  coalesce(cota.numero_jornaleiro_ipv,null,' ') AS codigoCota, ")
+		sql.append("     CAST(cota.NUMERO_COTA as CHAR) as codigoCota, ")
+		.append("  coalesce(cota.numero_jornaleiro_ipv,null,' ') AS jornaleiro, ")
 		.append("  coalesce(pdv.id,null,' ') AS codigoPontoVenda, ")
 		.append("     ce.DATA_RECOLHIMENTO as dataMovimento, ")
 		.append("     CAST((if (dtb.COD_DISTRIBUIDOR_DINAP != 0,dtb.COD_DISTRIBUIDOR_DINAP,dtb.COD_DISTRIBUIDOR_FC)) as CHAR) as codigoDistribuidor, ")

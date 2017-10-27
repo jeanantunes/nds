@@ -9,17 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import br.com.abril.nds.model.HistoricoAlteracaoPrecoVenda;
-import br.com.abril.nds.repository.*;
-import br.com.abril.nds.service.*;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.CotaConsignadaCouchDTO;
+import br.com.abril.nds.dto.CotaConsignadaDetalheCouchDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.TransferenciaReparteSuplementarDTO;
+import br.com.abril.nds.model.HistoricoAlteracaoPrecoVenda;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
@@ -35,6 +32,17 @@ import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.HistoricoAlteracaoPrecoVendaRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
+import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.service.MovimentoEstoqueCotaService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Intervalo;
 
 
@@ -445,7 +453,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	}
 
 	@Override
-	public List<CotaConsignadaCouchDTO> getCotasConsignadaExportCouch(String numeroCota) {
+	public List<CotaConsignadaDetalheCouchDTO> getCotasConsignadaExportCouch(String numeroCota) {
 		return movimentoEstoqueCotaRepository.getCotasConsignadaExportCouch(numeroCota);
 	}
 }
