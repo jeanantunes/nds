@@ -4175,21 +4175,21 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		sql.append(" SELECT DISTINCT ")
 		.append(" c.id AS idCota, ")
-		.append("  coalesce(c.numero_cota,null,' ') AS codigoCota, ")
-		.append("  coalesce(pdv.id,null,' ') AS codigoPontoVenda, ")
-		.append("  coalesce(c.numero_jornaleiro_ipv,null,' ') AS jornaleiro, ")
-		.append("  coalesce(lan.DATA_LCTO_DISTRIBUIDOR,null,' ') AS dataMovimento, ")
+		.append("  coalesce(c.numero_cota,' ') AS codigoCota, ")
+		.append("  coalesce(pdv.numero_pdv, pdv.ID) AS codigoPontoVenda, ")
+		.append("  coalesce(c.numero_jornaleiro_ipv,' ') AS jornaleiro, ")
+		.append("  coalesce(lan.DATA_LCTO_DISTRIBUIDOR,' ') AS dataMovimento, ")
 		.append(" (SELECT if (d.COD_DISTRIBUIDOR_DINAP != 0,d.COD_DISTRIBUIDOR_DINAP,d.COD_DISTRIBUIDOR_FC) FROM distribuidor d LIMIT 1) AS codigoDistribuidor, ")
-		.append(" coalesce(c.SISTEMA,null,' ') as sistema, ")
-		.append(" case when pc.tipo = 'J' then pc.razao_social else  coalesce(pc.nome,null,' ') end as nome, ")    
-		.append(" coalesce(endereco.TIPO_LOGRADOURO,null,' ') as tipoLogradouro, ")
-		.append(" coalesce(endereco.LOGRADOURO,null,' ') as enderecoLogradouro, ")
-		.append(" coalesce(endereco.NUMERO,null,' ') as enderecoNumero,  ")
-		.append(" coalesce(endereco.COMPLEMENTO,null,' ') as enderecoComplemento, ")
-		.append(" coalesce(endereco.BAIRRO,null,' ') as enderecoBairro, ")
-		.append(" coalesce(endereco.CEP,null,' ') as enderecoCep, ")
-		.append(" coalesce(endereco.CIDADE,null,' ') as enderecoCidade, ")
-		.append(" coalesce(endereco.UF,null,' ') as enderecoUf ");
+		.append(" coalesce(c.SISTEMA,' ') as sistema, ")
+		.append(" case when pc.tipo = 'J' then pc.razao_social else  coalesce(pc.nome,' ') end as nome, ")
+		.append(" coalesce(endereco.TIPO_LOGRADOURO,' ') as tipoLogradouro, ")
+		.append(" coalesce(endereco.LOGRADOURO,' ') as enderecoLogradouro, ")
+		.append(" coalesce(endereco.NUMERO,' ') as enderecoNumero,  ")
+		.append(" coalesce(endereco.COMPLEMENTO,' ') as enderecoComplemento, ")
+		.append(" coalesce(endereco.BAIRRO,' ') as enderecoBairro, ")
+		.append(" coalesce(endereco.CEP,' ') as enderecoCep, ")
+		.append(" coalesce(endereco.CIDADE,' ') as enderecoCidade, ")
+		.append(" coalesce(endereco.UF,' ') as enderecoUf ");
 		
 		sql.append("   FROM cota c ");
 		sql.append(" left outer join pessoa pc on pc.id = c.PESSOA_ID ");
@@ -4245,10 +4245,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append("     CAST(cec.COTA_ID as CHAR) as idCota, ");
 		sql.append("     CAST(cota.NUMERO_COTA as CHAR) as codigoCota, ")
 		.append("  coalesce(cota.numero_jornaleiro_ipv,null,' ') AS jornaleiro, ")
-		.append("  coalesce(pdv.id,null,' ') AS codigoPontoVenda, ")
+		.append("  coalesce(pdv.numero_pdv,pdv.ID) AS codigoPontoVenda, ")
 		.append("     ce.DATA_RECOLHIMENTO as dataMovimento, ")
 		.append("     CAST((if (dtb.COD_DISTRIBUIDOR_DINAP != 0,dtb.COD_DISTRIBUIDOR_DINAP,dtb.COD_DISTRIBUIDOR_FC)) as CHAR) as codigoDistribuidor, ")
-		.append(" coalesce(cota.SISTEMA,null,' ') as sistema, ")
+		.append(" coalesce(cota.SISTEMA,' ') as sistema, ")
 		.append(" case when pc.tipo = 'J' then pc.razao_social else  coalesce(pc.nome,null,' ') end as nome, ")    
 		.append(" coalesce(endereco.TIPO_LOGRADOURO,null,' ') as tipoLogradouro, ")
 		.append(" coalesce(endereco.LOGRADOURO,null,' ') as enderecoLogradouro, ")
@@ -4305,21 +4305,14 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append("       CAST(SUBSTRING(p.CODIGO, -8) AS CHAR) AS codigoProduto, ");
 		sql.append("       CAST(pe.NUMERO_EDICAO AS CHAR) AS numeroEdicao, ");
 		sql.append("       CAST(pe.CODIGO_DE_BARRAS AS CHAR) AS codigoBarrasProduto, ");
-		sql.append("       coalesce(p.NOME,null,' ') AS nomeProduto, ");
+		sql.append("       coalesce(p.NOME,' ') AS nomeProduto, ");
 		sql.append("       CAST(ROUND(ecg.QTDE_EFETIVA, 0) AS CHAR) AS reparte, ");
 		sql.append("       pes.RAZAO_SOCIAL AS nomeEditora, ");
 		sql.append("       CAST(ROUND(pe.PRECO_VENDA, 2) AS CHAR) AS precoCapa, ");
 		sql.append("       CAST(ROUND(pe.PRECO_CUSTO, 2) AS CHAR) AS precoCusto, ");
-		sql.append("       coalesce(pe.CHAMADA_CAPA,null,' ') AS chamadaCapa, ");
+		sql.append("       coalesce(pe.CHAMADA_CAPA,' ') AS chamadaCapa, ");
 		sql.append("       coalesce(lct.DATA_LCTO_DISTRIBUIDOR,null, ' ') AS dataLancamento, ");
-		// trocado apos chamado 4666108 -- date_format (((eg.DATA_LANCAMENTO),
-		// '%Y%m%d') AS dataLancamento, ");
-	//	sql.append(
-	//			"       DATE_FORMAT(((select l.DATA_LCTO_DISTRIBUIDOR from lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1)), '%Y%m%d') AS dataPrimeiroLancamentoParcial, ");
-		// sql.append(" ' ' as dataPrimeiroLancamentoParcial,");
 		sql.append(" (select l.DATA_LCTO_DISTRIBUIDOR from  lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1) as dataPrimeiroLancamentoParcial, ");
-
-		
 		sql.append("       CAST(lct.ID AS CHAR) as idLancamento, ");
 		sql.append("       CAST(pe.ID AS CHAR) as idProdutoEdicao, ");
 		sql.append("       CAST(p.ID AS CHAR) as idProduto, ");
