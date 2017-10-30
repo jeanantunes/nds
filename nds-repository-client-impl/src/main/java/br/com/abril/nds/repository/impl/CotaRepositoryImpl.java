@@ -4180,7 +4180,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		.append("  coalesce(c.numero_jornaleiro_ipv,' ') AS jornaleiro, ")
 		.append("  coalesce(lan.DATA_LCTO_DISTRIBUIDOR,' ') AS dataMovimento, ")
 		.append(" (SELECT if (d.COD_DISTRIBUIDOR_DINAP != 0,d.COD_DISTRIBUIDOR_DINAP,d.COD_DISTRIBUIDOR_FC) FROM distribuidor d LIMIT 1) AS codigoDistribuidor, ")
-		.append(" coalesce(c.SISTEMA,' ') as sistema, ")
+		.append(" coalesce(c.SISTEMA_ORIGEM,' ') as sistema, ")
 		.append(" case when pc.tipo = 'J' then pc.razao_social else  coalesce(pc.nome,' ') end as nome, ")
 		.append(" coalesce(endereco.TIPO_LOGRADOURO,' ') as tipoLogradouro, ")
 		.append(" coalesce(endereco.LOGRADOURO,' ') as enderecoLogradouro, ")
@@ -4202,16 +4202,15 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append("           ON ecg.ESTUDO_ID = eg.ID ");
 		sql.append("       JOIN lancamento lan ON lan.ESTUDO_ID = eg.id       ");
 		sql.append("  WHERE  lan.DATA_LCTO_DISTRIBUIDOR = :data and lan.STATUS in ('BALANCEADO', 'EXPEDIDO') ");
-		sql.append("           AND pdv.PONTO_PRINCIPAL = :true ");
+		sql.append("           AND pdv.PONTO_PRINCIPAL = true ");
 		sql.append("           AND ecg.QTDE_EFETIVA > 0 ");
-		sql.append("           AND c.UTILIZA_IPV = :true ");
+		sql.append("           AND c.UTILIZA_IPV = TRUE ");
 		sql.append("           AND c.tipo_transmissao='SERVICO' ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("data", data);
-		query.setParameter("true", true);
-		
+
 		query.addScalar("codigoDistribuidor", StandardBasicTypes.STRING);
 		query.addScalar("idCota", StandardBasicTypes.LONG);
 		query.addScalar("dataMovimento", StandardBasicTypes.STRING );
@@ -4244,20 +4243,20 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append("  select  ");
 		sql.append("     CAST(cec.COTA_ID as CHAR) as idCota, ");
 		sql.append("     CAST(cota.NUMERO_COTA as CHAR) as codigoCota, ")
-		.append("  coalesce(cota.numero_jornaleiro_ipv,null,' ') AS jornaleiro, ")
+		.append("  coalesce(cota.numero_jornaleiro_ipv,' ') AS jornaleiro, ")
 		.append("  coalesce(pdv.numero_pdv,pdv.ID) AS codigoPontoVenda, ")
 		.append("     ce.DATA_RECOLHIMENTO as dataMovimento, ")
 		.append("     CAST((if (dtb.COD_DISTRIBUIDOR_DINAP != 0,dtb.COD_DISTRIBUIDOR_DINAP,dtb.COD_DISTRIBUIDOR_FC)) as CHAR) as codigoDistribuidor, ")
-		.append(" coalesce(cota.SISTEMA,' ') as sistema, ")
+		.append(" coalesce(cota.SISTEMA_ORIGEM,' ') as sistema, ")
 		.append(" case when pc.tipo = 'J' then pc.razao_social else  coalesce(pc.nome,null,' ') end as nome, ")    
-		.append(" coalesce(endereco.TIPO_LOGRADOURO,null,' ') as tipoLogradouro, ")
-		.append(" coalesce(endereco.LOGRADOURO,null,' ') as enderecoLogradouro, ")
-		.append(" coalesce(endereco.NUMERO,null,' ') as enderecoNumero,  ")
-		.append(" coalesce(endereco.COMPLEMENTO,null,' ') as enderecoComplemento, ")
-		.append(" coalesce(endereco.BAIRRO,null,' ') as enderecoBairro, ")
-		.append(" coalesce(endereco.CEP,null,' ') as enderecoCep, ")
-		.append(" coalesce(endereco.CIDADE,null,' ') as enderecoCidade, ")
-		.append(" coalesce(endereco.UF,null,' ') as enderecoUf ")	
+		.append(" coalesce(endereco.TIPO_LOGRADOURO,' ') as tipoLogradouro, ")
+		.append(" coalesce(endereco.LOGRADOURO,' ') as enderecoLogradouro, ")
+		.append(" coalesce(endereco.NUMERO,' ') as enderecoNumero,  ")
+		.append(" coalesce(endereco.COMPLEMENTO,' ') as enderecoComplemento, ")
+		.append(" coalesce(endereco.BAIRRO,' ') as enderecoBairro, ")
+		.append(" coalesce(endereco.CEP,' ') as enderecoCep, ")
+		.append(" coalesce(endereco.CIDADE,' ') as enderecoCidade, ")
+		.append(" coalesce(endereco.UF,' ') as enderecoUf ")
 		.append("  from distribuidor dtb, chamada_encalhe ce ")
 		.append("   join chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID ")
 		.append("   join cota ON cec.COTA_ID = cota.ID ")
@@ -4347,14 +4346,13 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append("       		and ecg.REPARTE is not null ");
 		sql.append("       		and ecg.REPARTE > 0 ");
 		sql.append(" 	 		and c.id = :idCota");
-		sql.append(" 	 		and c.UTILIZA_IPV = :true and  pdvs.ponto_principal = true");
+		sql.append(" 	 		and c.UTILIZA_IPV = true and  pdvs.ponto_principal = true");
 		sql.append(" 	 		order by lct.SEQUENCIA_MATRIZ ");
 
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 
 		query.setParameter("data", data);
 		query.setParameter("idCota", idCota);
-		query.setParameter("true", true);
 		query.setParameterList("statusLancamento",
 				LancamentoHelper.getStatusLancamentosPosBalanceamentoLancamentoString());
 

@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -106,52 +107,56 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 			print.close();
 
 		}
-		
-		this.quantidadeArquivosGerados = cotasRecolhimento == null ? 0 : cotasRecolhimento.size();
-		
-		try {
-			
-			Iterator it= FileUtils.iterateFiles(new File(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
-					+ File.separator + ENCALHE_FOLDER) , new String[] {"RCL"},false);
-			
-			
-			while (it.hasNext()) {
-				File file = (File) it.next();
-				String name = file.getName(); // nome neste formato 0757350.00023.20151005.RCL
-				Integer cota = Integer.parseInt(name.split("\\.")[1]);
-			    Integer cotaMaster = controleCotaService.buscarCotaMaster(cota);
-			    if ( cotaMaster != null && !cotaMaster.equals(cota) ) { // tem cota master, appendar no arquivo
-			    	String nomeArquivoMaster = ""+ name.split("\\.")[0] +"."+StringUtils.leftPad(cotaMaster.toString(), 5, '0') +"."+ (name.split("\\.")[2]);
 
-			    	File fileMaster = new File(
-							message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
-							+ File.separator + ENCALHE_FOLDER +File.separator + nomeArquivoMaster + ENCALHE_EXT);
-                    if ( !fileMaster.exists())
-                    	this.quantidadeArquivosGerados++;
-			    	cat(file, fileMaster);
-			    	file.delete();
-			       }
-			   
-				
+		if(!cotasRecolhimento.isEmpty()) {
+
+			this.quantidadeArquivosGerados = cotasRecolhimento == null ? 0 : cotasRecolhimento.size();
+
+			try {
+
+				Iterator it = FileUtils.iterateFiles(new File(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
+						+ File.separator + ENCALHE_FOLDER), new String[]{"RCL"}, false);
+
+
+				while (it.hasNext()) {
+					File file = (File) it.next();
+					String name = file.getName(); // nome neste formato 0757350.00023.20151005.RCL
+					Integer cota = Integer.parseInt(name.split("\\.")[1]);
+					Integer cotaMaster = controleCotaService.buscarCotaMaster(cota);
+					if (cotaMaster != null && !cotaMaster.equals(cota)) { // tem cota master, appendar no arquivo
+						String nomeArquivoMaster = "" + name.split("\\.")[0] + "." + StringUtils.leftPad(cotaMaster.toString(), 5, '0') + "." + (name.split("\\.")[2]);
+
+						File fileMaster = new File(
+								message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
+										+ File.separator + ENCALHE_FOLDER + File.separator + nomeArquivoMaster + ENCALHE_EXT);
+						if (!fileMaster.exists())
+							this.quantidadeArquivosGerados++;
+						cat(file, fileMaster);
+						file.delete();
+					}
+
+
+				}
+			} catch (Exception ee) {
+
+				LOGGER.error("Falha ao gerar arquivo caruso.", ee);
 			}
+
+			compactarArquivos(message);
 		}
-			catch(Exception ee) {
-			
-			LOGGER.error("Falha ao gerar arquivo caruso.", ee);
-		}
-		
-		compactarArquivos(message);
 		
 		try {
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			List<CotaCouchDTO> lista = cotaRepository.getCotaRecolhimento(dataLctoDistrib);
-			for (CotaCouchDTO reparte : lista) {
-				reparte.setDataInclusao(new Date());
-				reparte.setProdutos(cotaRepository.getProdutoRecolhimento(reparte.getIdCota(), simpleDateFormat.parse(reparte.getDataMovimento())));
+			if(!lista.isEmpty()) {
+				for (CotaCouchDTO reparte : lista) {
+					reparte.setDataInclusao(new Date());
+					reparte.setProdutos(cotaRepository.getProdutoRecolhimento(reparte.getIdCota(), simpleDateFormat.parse(reparte.getDataMovimento())));
+				}
+				exporteCouch.exportarLancamentoRecolhimento(lista, "Recolhimento");
 			}
-			exporteCouch.exportarLancamentoRecolhimento(lista,"Recolhimento");
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 		
 		
@@ -372,15 +377,14 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		sql.append("   join pdv on pdv.COTA_ID = cota.ID ");
 		sql.append("  where pdv.PONTO_PRINCIPAL = true  ");
 		sql.append(" 		and ce.DATA_RECOLHIMENTO = :dataRecolhimento ");
-		sql.append(" 		and cota.UTILIZA_IPV = :true ");
+		sql.append(" 		and cota.UTILIZA_IPV = true ");
 		sql.append(" 		and cota.tipo_transmissao = 'TXT'");
 		sql.append(" 		group by cota.NUMERO_COTA ");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString()); 
 		
 		query.setParameter("dataRecolhimento", this.dataLctoDistrib);
-		query.setParameter("true", true);
-		
+
 		query.addScalar("cotaId", StandardBasicTypes.STRING);
 		query.addScalar("numCota", StandardBasicTypes.STRING);
 		query.addScalar("dataRecolhimento", StandardBasicTypes.STRING);
@@ -397,7 +401,8 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 
 			this.ndsiLoggerFactory.getLogger().logWarning(message,EventoExecucaoEnum.GERACAO_DE_ARQUIVO,"Nenhum registro encontrado!");
 
-			throw new RuntimeException("Nenhum registro encontrado!");
+			//throw new RuntimeException("Nenhum registro encontrado!");
+			return Collections.emptyList();
 		} else {
 			return CotasEncalhes;
 		}

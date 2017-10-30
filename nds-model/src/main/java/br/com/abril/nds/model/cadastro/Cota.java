@@ -50,9 +50,6 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 @SequenceGenerator(name="COTA_SEQ", initialValue = 1, allocationSize = 1)
 public class Cota implements Serializable {
 
-	/**
-	 * Serial Version UID
-	 */
 	private static final long serialVersionUID = 4962347006238498224L;
 
 	@Id
@@ -222,28 +219,28 @@ public class Cota implements Serializable {
 	@Column(name = "GERAR_BOLETO_NFE")
 	private boolean boletoNFE;
 	
-	@Column(name = "SISTEMA")
+	@Column(name = "SISTEMA_ORIGEM")
 	private String sistema;
 	
 	@Column(name = "TIPO_TRANSMISSAO")
 	private String tipoTransmissao;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS_TRANSMISSAO")
-	private StatusTransmissaoEnum statusTransmissaoEnum;
+//    @Enumerated(EnumType.STRING)
+//    @Column(name = "STATUS_TRANSMISSAO")
+//	private StatusTransmissaoEnum statusTransmissaoEnum;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "DATA_INCLUSAO", nullable = false)
+    @Column(name = "DATA_INCLUSAO")
 	private Date dataInclusao;
 	
 	@Temporal(TemporalType.TIMESTAMP)
    @Column(name = "DATA_ALTERACAO")
 	private Date dataAlteracao;
 	
-	@Column(name = "USUARIO_INCLUSAO", nullable = false)
+	@Column(name = "USUARIO_INCLUSAO")
 	private String usuarioInclusao;
 	
-	@Column(name = "USUARIO_ALTERACAO", nullable = false)
+	@Column(name = "USUARIO_ALTERACAO")
 	private String usuarioAlteracao;
 	
 	
@@ -796,13 +793,13 @@ public class Cota implements Serializable {
 		this.dataInclusao = dataInclusao;
 	}
 
-	public StatusTransmissaoEnum getStatusTransmissaoEnum() {
-		return statusTransmissaoEnum;
-	}
-
-	public void setStatusTransmissaoEnum(StatusTransmissaoEnum statusTransmissaoEnum) {
-		this.statusTransmissaoEnum = statusTransmissaoEnum;
-	}
+//	public StatusTransmissaoEnum getStatusTransmissaoEnum() {
+//		return statusTransmissaoEnum;
+//	}
+//
+//	public void setStatusTransmissaoEnum(StatusTransmissaoEnum statusTransmissaoEnum) {
+//		this.statusTransmissaoEnum = statusTransmissaoEnum;
+//	}
 
 	public String getUsuarioInclusao() {
 		return usuarioInclusao;

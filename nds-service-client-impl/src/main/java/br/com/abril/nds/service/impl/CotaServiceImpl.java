@@ -1616,7 +1616,7 @@ public class CotaServiceImpl implements CotaService {
             cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
             cota.setDataInclusao(new Date());
             cota.setUsuarioInclusao(usuarioService.getUsuarioLogado().getLogin());
-            cota.setStatusTransmissaoEnum(StatusTransmissaoEnum.PENDENTE);
+            //cota.setStatusTransmissaoEnum(StatusTransmissaoEnum.PENDENTE);
             incluirPDV = true;
             newCota = true;
         }else{

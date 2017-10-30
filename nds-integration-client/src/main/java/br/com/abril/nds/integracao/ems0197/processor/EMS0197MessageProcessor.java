@@ -94,82 +94,84 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		this.quantidadeArquivosGerados = 0;
 
 		List<EMS0197Header> listHeaders = this.criarHeader(dataLctoDistrib);
-		if (listHeaders == null || listHeaders.isEmpty()) {
-			LOGGER.warn("Nenhum registro encontrado para esta data" + dataLctoDistrib);
-			return;
-		}
-		final Map<String, DescontoDTO> descontos = descontoService
-				.obterDescontosMapPorLancamentoProdutoEdicao(dataLctoDistrib);
+		if (!listHeaders.isEmpty()) {
+			final Map<String, DescontoDTO> descontos = descontoService
+					.obterDescontosMapPorLancamentoProdutoEdicao(dataLctoDistrib);
 
-		for (EMS0197Header outheader : listHeaders) {
+			for (EMS0197Header outheader : listHeaders) {
 
-			try {
+				try {
 
-				String nomeArquivo = "" + outheader.getCodDistribuidor() + "."
-						+ StringUtils.leftPad(outheader.getNumeroCota(), 5, '0') + "."
-						+ sdf.format(outheader.getDataLctoDistrib());
+					String nomeArquivo = "" + outheader.getCodDistribuidor() + "."
+							+ StringUtils.leftPad(outheader.getNumeroCota(), 5, '0') + "."
+							+ sdf.format(outheader.getDataLctoDistrib());
 
-				PrintWriter print = new PrintWriter(new FileWriter(
-						message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
-								+ File.separator + REPARTE_FOLDER + File.separator + nomeArquivo + REPARTE_EXT));
-
-				List<IpvLancamentoDTO> listDetalhes = getDetalhesPickingLancamento(outheader.getIdCota(),
-						this.dataLctoDistrib);
-
-				addDescontoProduto(descontos, outheader, print, listDetalhes);
-
-				print.flush();
-				print.close();
-
-				this.quantidadeArquivosGerados++;
-
-			} catch (IOException e) {
-
-				LOGGER.error("Falha ao gerar arquivo.", e);
-			}
-
-		}
-		try {
-
-			Iterator it = FileUtils.iterateFiles(
-					new File(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
-							+ File.separator + REPARTE_FOLDER),
-					new String[] { "LCT" }, false);
-
-			while (it.hasNext()) {
-				File file = (File) it.next();
-				String name = file.getName(); // nome neste formato
-												// 0757350.00023.20151005.RCL
-				Integer cota = Integer.parseInt(name.split("\\.")[1]);
-				Integer cotaMaster = controleCotaService.buscarCotaMaster(cota);
-				if (cotaMaster != null && !cotaMaster.equals(cota)) { // tem
-																		// cota
-																		// master,
-																		// appendar
-																		// no
-																		// arquivo
-					String nomeArquivoMaster = "" + name.split("\\.")[0] + "."
-							+ StringUtils.leftPad(cotaMaster.toString(), 5, '0') + "." + (name.split("\\.")[2]);
-
-					File fileMaster = new File(
+					PrintWriter print = new PrintWriter(new FileWriter(
 							message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
-									+ File.separator + REPARTE_FOLDER + File.separator + nomeArquivoMaster
-									+ REPARTE_EXT);
-					if (!fileMaster.exists())
-						this.quantidadeArquivosGerados++;
-					cat(file, fileMaster);
-					file.delete();
+									+ File.separator + REPARTE_FOLDER + File.separator + nomeArquivo + REPARTE_EXT));
+
+					List<IpvLancamentoDTO> listDetalhes = getDetalhesPickingLancamento(outheader.getIdCota(),
+							this.dataLctoDistrib);
+
+					addDescontoProduto(descontos, outheader, print, listDetalhes);
+
+					print.flush();
+					print.close();
+
+					this.quantidadeArquivosGerados++;
+
+				} catch (IOException e) {
+
+					LOGGER.error("Falha ao gerar arquivo.", e);
 				}
 
 			}
-		} catch (Exception ee) {
+			try {
 
-			LOGGER.error("Falha ao gerar arquivo caruso.", ee);
+				Iterator it = FileUtils.iterateFiles(
+						new File(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
+								+ File.separator + REPARTE_FOLDER),
+						new String[] { "LCT" }, false);
+
+				while (it.hasNext()) {
+					File file = (File) it.next();
+					String name = file.getName(); // nome neste formato
+					// 0757350.00023.20151005.RCL
+					Integer cota = Integer.parseInt(name.split("\\.")[1]);
+					Integer cotaMaster = controleCotaService.buscarCotaMaster(cota);
+					if (cotaMaster != null && !cotaMaster.equals(cota)) { // tem
+						// cota
+						// master,
+						// appendar
+						// no
+						// arquivo
+						String nomeArquivoMaster = "" + name.split("\\.")[0] + "."
+								+ StringUtils.leftPad(cotaMaster.toString(), 5, '0') + "." + (name.split("\\.")[2]);
+
+						File fileMaster = new File(
+								message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
+										+ File.separator + REPARTE_FOLDER + File.separator + nomeArquivoMaster
+										+ REPARTE_EXT);
+						if (!fileMaster.exists())
+							this.quantidadeArquivosGerados++;
+						cat(file, fileMaster);
+						file.delete();
+					}
+
+				}
+			} catch (Exception ee) {
+
+				LOGGER.error("Falha ao gerar arquivo caruso.", ee);
+			}
+
+			compactarArquivos(message);
+
+		} else {
+			LOGGER.warn("Nenhum registro encontrado para esta data" + dataLctoDistrib);
 		}
 
-		compactarArquivos(message);
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		try {
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 			List<CotaCouchDTO> lista = cotaRepository.getCotaLancamento(dataLctoDistrib);
 			for (CotaCouchDTO reparte : lista) {
 				reparte.setProdutos(cotaRepository.getProdutoLancamento(reparte.getIdCota(), formatter.parse(reparte.getDataMovimento())));
@@ -457,13 +459,12 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("  WHERE  lan.DATA_LCTO_DISTRIBUIDOR = :data and lan.STATUS in ('BALANCEADO', 'EXPEDIDO') ");
 		sql.append("           AND pdv.PONTO_PRINCIPAL = :true ");
 		sql.append("           AND ecg.QTDE_EFETIVA > 0 ");
-		sql.append("           AND c.UTILIZA_IPV = :true ");
+		sql.append("           AND c.UTILIZA_IPV = true ");
 		sql.append("           AND c.tipo_transmissao='TXT' ");
 
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 
 		query.setParameter("data", data);
-		query.setParameter("true", true);
 
 		query.addScalar("idCota", StandardBasicTypes.LONG);
 		query.addScalar("dataLctoDistrib", StandardBasicTypes.DATE);
