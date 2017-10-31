@@ -29,7 +29,7 @@ public class ExporteCouchImpl implements ExporteCouch {
 	public void exportarLancamentoRecolhimento(List<CotaCouchDTO> listaReparte, String nomeEntidadeIntegrada) {
 		String data = listaReparte.get(0).getDataMovimento();
 		this.couchDbClient = getCouchDBClient(LANCAMENTO_RECOLHIMENTO_COUCH);
-		String docName = nomeEntidadeIntegrada+"_" + data+"_"+listaReparte.get(0).getCodigoDistribuidor();
+		String docName = nomeEntidadeIntegrada+"_" + data;
 		try {
 			JsonObject jsonDoc = couchDbClient.find(JsonObject.class, docName);
 			this.couchDbClient.remove(jsonDoc);
@@ -37,7 +37,7 @@ public class ExporteCouchImpl implements ExporteCouch {
 
 		}
 		for (CotaCouchDTO reparte : listaReparte) {
-			reparte.set_id(docName);
+			reparte.set_id(docName + "_" + reparte.getCodigoCota());
 			this.couchDbClient.save(reparte);
 		}
 	

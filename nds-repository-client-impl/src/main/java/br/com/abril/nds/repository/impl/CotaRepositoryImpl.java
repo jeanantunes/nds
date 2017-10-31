@@ -4194,7 +4194,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append("   FROM cota c ");
 		sql.append(" left outer join pessoa pc on pc.id = c.PESSOA_ID ");
 		sql.append(" JOIN pdv pdv ON pdv.cota_id = c.id ");
-		sql.append(" left outer join endereco_pdv endpdv on pdv.id = pdv.id and endpdv.PRINCIPAL = true  ");
+		sql.append(" left outer join endereco_pdv endpdv on endpdv.pdv_id = pdv.id and endpdv.PRINCIPAL = true  ");
 		sql.append(" left outer join endereco on endereco.id = endpdv.endereco_id ");
 		sql.append("        JOIN estudo_cota_gerado ecg ");
 		sql.append("           ON ecg.COTA_ID = c.ID ");
@@ -4262,7 +4262,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		.append("   join cota ON cec.COTA_ID = cota.ID ")
 		.append("   join pdv on pdv.COTA_ID = cota.ID ")
 		.append(" left outer join pessoa pc on pc.id = cota.PESSOA_ID ")
-		.append(" left outer join endereco_pdv endpdv on  pdv.id = pdv.id and endpdv.PRINCIPAL = true  ")
+		.append(" left outer join endereco_pdv endpdv on  endpdv.pdv_id = pdv.id and endpdv.PRINCIPAL = true  ")
 		.append(" left outer join endereco on endereco.id = endpdv.endereco_id ")
 		.append("  where pdv.PONTO_PRINCIPAL = true  ")
 		.append(" 		and ce.DATA_RECOLHIMENTO ='"+simpleDateFormat.format(data)+"'")
@@ -4389,8 +4389,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append("      , p.NOME as nomeProduto");
 		sql.append("      , CAST(ROUND(cec.QTDE_PREVISTA, 0) as CHAR) as reparte ");
 		sql.append("      , pes.RAZAO_SOCIAL as nomeEditora ");
-		sql.append("      , CAST(ROUND(ROUND(mec.PRECO_VENDA, 2)*100, 0) as CHAR) as precoCapa ");
-		sql.append("      , CAST(ROUND(ROUND(mec.PRECO_COM_DESCONTO, 2)*100, 0) as CHAR) as precoCusto ");
+		sql.append("      , CAST(ROUND(mec.PRECO_VENDA, 2) as CHAR) as precoCapa ");
+		sql.append("      , CAST(ROUND(mec.PRECO_COM_DESCONTO, 2) as CHAR) as precoCusto ");
 		sql.append("      , pe.CHAMADA_CAPA as chamadaCapa ");
 
 		sql.append("      from chamada_encalhe ce  ");

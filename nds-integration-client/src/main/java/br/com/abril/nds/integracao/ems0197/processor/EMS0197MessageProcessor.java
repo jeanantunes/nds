@@ -14,11 +14,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -121,7 +117,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 					this.quantidadeArquivosGerados++;
 
 				} catch (IOException e) {
-
 					LOGGER.error("Falha ao gerar arquivo.", e);
 				}
 
@@ -139,12 +134,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 					// 0757350.00023.20151005.RCL
 					Integer cota = Integer.parseInt(name.split("\\.")[1]);
 					Integer cotaMaster = controleCotaService.buscarCotaMaster(cota);
-					if (cotaMaster != null && !cotaMaster.equals(cota)) { // tem
-						// cota
-						// master,
-						// appendar
-						// no
-						// arquivo
+					if (cotaMaster != null && !cotaMaster.equals(cota)) { // tem cota master, appendar no arquivo
 						String nomeArquivoMaster = "" + name.split("\\.")[0] + "."
 								+ StringUtils.leftPad(cotaMaster.toString(), 5, '0') + "." + (name.split("\\.")[2]);
 
@@ -171,15 +161,17 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		}
 
 		try {
+		    // TODO - Gerar log no padrão das interfaces do NDS - p/ acompanhamento no Painel
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 			List<CotaCouchDTO> lista = cotaRepository.getCotaLancamento(dataLctoDistrib);
+
 			for (CotaCouchDTO reparte : lista) {
 				reparte.setProdutos(cotaRepository.getProdutoLancamento(reparte.getIdCota(), formatter.parse(reparte.getDataMovimento())));
 			}
 			exporteCouch.exportarLancamentoRecolhimento(lista, "Lancamento");
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
 		}
 
 		// ## Conforme alinhado com César Marracho, há a necessidade de manter a
@@ -394,9 +386,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 	/**
 	 * Cria os detalhes do arquivo
 	 * 
-	 * @param jornaleiro
-	 * @param movimentoEstoqueCota
-	 * @return
 	 */
 	private EMS0197Detalhe createDetalhes(IpvLancamentoDTO dto) {
 
@@ -457,7 +446,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("           ON ecg.ESTUDO_ID = eg.ID ");
 		sql.append("       JOIN lancamento lan ON lan.ESTUDO_ID = eg.id       ");
 		sql.append("  WHERE  lan.DATA_LCTO_DISTRIBUIDOR = :data and lan.STATUS in ('BALANCEADO', 'EXPEDIDO') ");
-		sql.append("           AND pdv.PONTO_PRINCIPAL = :true ");
+		sql.append("           AND pdv.PONTO_PRINCIPAL = true ");
 		sql.append("           AND ecg.QTDE_EFETIVA > 0 ");
 		sql.append("           AND c.UTILIZA_IPV = true ");
 		sql.append("           AND c.tipo_transmissao='TXT' ");
