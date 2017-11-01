@@ -343,7 +343,7 @@ public abstract class Util {
     		return String.valueOf(Util.calcularDigito(nossoNumero));
     	} else if(nomeBanco.equals(NomeBanco.CREDCOMIM)) {
     		return String.valueOf(Util.calcularDigito(nossoNumero));
-    	}
+    	} 
     	
         long primeiroDigito = 0;
         final long segundoDigito = 4;
@@ -962,4 +962,32 @@ public abstract class Util {
 	public static String getValorQtdeIntegerFormatado(int qtde) {
 		return (qtde > 0) ? String.valueOf(qtde) : "";
 	}
+	
+	public static String calcularDigitoBradesco(String carteira, String nossoNumero){
+		String carteiraNossoNumero = carteira + nossoNumero;
+		int multiplicador=2;
+		Integer somaParcial = 0;
+		for(int i=carteiraNossoNumero.length()-1;i>=0;i--){
+			if(multiplicador>7){
+				multiplicador=2;
+			}
+			somaParcial+= (new Integer(carteiraNossoNumero.substring(i,i+1)))*multiplicador;
+			multiplicador++;
+		}
+		
+		int resto = somaParcial % 11;
+		int valorDividido  = somaParcial/11;
+		int resultado = 11-resto;
+		
+		
+		if(resultado==11){
+			return "0";
+		}else if(resultado==10){
+			return "p";
+		}
+		System.out.println("resultado final: " +resultado);
+		return String.valueOf(resultado);
+	}	
+	
+	
 }
