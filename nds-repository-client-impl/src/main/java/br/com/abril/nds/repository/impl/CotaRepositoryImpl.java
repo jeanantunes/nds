@@ -4304,19 +4304,14 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append("       CAST(SUBSTRING(p.CODIGO, -8) AS CHAR) AS codigoProduto, ");
 		sql.append("       CAST(pe.NUMERO_EDICAO AS CHAR) AS numeroEdicao, ");
 		sql.append("       CAST(pe.CODIGO_DE_BARRAS AS CHAR) AS codigoBarrasProduto, ");
-		sql.append("       coalesce(p.NOME,' ') AS nomeProduto, ");
+		sql.append("       p.NOME AS nomeProduto, ");
 		sql.append("       CAST(ROUND(ecg.QTDE_EFETIVA, 0) AS CHAR) AS reparte, ");
 		sql.append("       pes.RAZAO_SOCIAL AS nomeEditora, ");
 		sql.append("       CAST(ROUND(pe.PRECO_VENDA, 2) AS CHAR) AS precoCapa, ");
 		sql.append("       CAST(ROUND(pe.PRECO_CUSTO, 2) AS CHAR) AS precoCusto, ");
-		sql.append("       coalesce(pe.CHAMADA_CAPA,' ') AS chamadaCapa, ");
-		sql.append("       coalesce(lct.DATA_LCTO_DISTRIBUIDOR,null, ' ') AS dataLancamento, ");
-		sql.append(" (select l.DATA_LCTO_DISTRIBUIDOR from  lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1) as dataPrimeiroLancamentoParcial, ");
-		sql.append("       CAST(lct.ID AS CHAR) as idLancamento, ");
-		sql.append("       CAST(pe.ID AS CHAR) as idProdutoEdicao, ");
-		sql.append("       CAST(p.ID AS CHAR) as idProduto, ");
-		sql.append("       CAST(f.ID AS CHAR) as idFornecedor, ");
-		sql.append("       CAST(edt.ID AS CHAR) as idEditor ");
+		sql.append("       pe.CHAMADA_CAPA AS chamadaCapa, ");
+		sql.append("       lct.DATA_LCTO_DISTRIBUIDOR AS dataLancamento, ");
+		sql.append(" (select l.DATA_LCTO_DISTRIBUIDOR from  lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1) as dataPrimeiroLancamentoParcial ");
 
 		sql.append("   FROM estudo_cota_gerado ecg ");
 

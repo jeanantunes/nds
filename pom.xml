@@ -570,7 +570,7 @@
 			<id>testProfile</id>
 			<modules>
 				<module>nds-estudo-algoritmo</module>
-				<module>nds-test</module>
+				<!--<module>nds-test</module>-->
 			</modules>
 		</profile>
 
