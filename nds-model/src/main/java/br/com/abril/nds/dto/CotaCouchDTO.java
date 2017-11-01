@@ -26,7 +26,6 @@ public class CotaCouchDTO implements Serializable{
 	private String enderecoUf;
 	private Date dataInclusao;
 	
-	
 	private List<ProdutoCouchDTO> produtos;
 	
 	public String getCodigoDistribuidor() {
@@ -89,7 +88,6 @@ public class CotaCouchDTO implements Serializable{
 	public void setTipoLogradouro(String tipoLogradouro) {
 		this.tipoLogradouro = tipoLogradouro;
 	}
-	
 	public String getEnderecoLogradouro() {
 		return enderecoLogradouro;
 	}
@@ -102,7 +100,6 @@ public class CotaCouchDTO implements Serializable{
 	public void setEnderecoNumero(String enderecoNumero) {
 		this.enderecoNumero = enderecoNumero;
 	}
-	
 	public String getEnderecoComplemento() {
 		return enderecoComplemento;
 	}

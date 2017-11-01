@@ -4218,16 +4218,15 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		query.addScalar("codigoCota", StandardBasicTypes.STRING );
 		query.addScalar("codigoPontoVenda", StandardBasicTypes.STRING );
 		query.addScalar("sistema", StandardBasicTypes.STRING );
-		
 		query.addScalar("nome", StandardBasicTypes.STRING );
 		query.addScalar("tipoLogradouro", StandardBasicTypes.STRING );
+		query.addScalar("enderecoLogradouro", StandardBasicTypes.STRING );
 		query.addScalar("enderecoNumero", StandardBasicTypes.STRING );
 		query.addScalar("enderecoComplemento", StandardBasicTypes.STRING );
 		query.addScalar("enderecoBairro", StandardBasicTypes.STRING );
 		query.addScalar("enderecoCep", StandardBasicTypes.STRING );
 		query.addScalar("enderecoCidade", StandardBasicTypes.STRING );
 		query.addScalar("enderecoUf", StandardBasicTypes.STRING );
-		
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaCouchDTO.class));
 		
@@ -4281,6 +4280,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		query.addScalar("sistema", StandardBasicTypes.STRING );
 		query.addScalar("nome", StandardBasicTypes.STRING );
 		query.addScalar("tipoLogradouro", StandardBasicTypes.STRING );
+		query.addScalar("enderecoLogradouro", StandardBasicTypes.STRING );
 		query.addScalar("enderecoNumero", StandardBasicTypes.STRING );
 		query.addScalar("enderecoComplemento", StandardBasicTypes.STRING );
 		query.addScalar("enderecoBairro", StandardBasicTypes.STRING );
@@ -4311,7 +4311,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append("       CAST(ROUND(pe.PRECO_CUSTO, 2) AS CHAR) AS precoCusto, ");
 		sql.append("       pe.CHAMADA_CAPA AS chamadaCapa, ");
 		sql.append("       lct.DATA_LCTO_DISTRIBUIDOR AS dataLancamento, ");
-		sql.append(" (select l.DATA_LCTO_DISTRIBUIDOR from  lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1) as dataPrimeiroLancamentoParcial ");
+		sql.append(" (select l.DATA_LCTO_DISTRIBUIDOR from lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1) as dataPrimeiroLancamentoParcial ");
 
 		sql.append("   FROM estudo_cota_gerado ecg ");
 
@@ -4377,7 +4377,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 
 		sql.append("  select  ");
 
-		sql.append("      coalesce(ce.DATA_RECOLHIMENTO,null,' ') as dataRecolhimento ");
+		sql.append("      coalesce(ce.DATA_RECOLHIMENTO,' ') as dataRecolhimento ");
 		sql.append("      , CAST(SUBSTRING(p.CODIGO, -8) as CHAR) as codigoProduto ");
 		sql.append("      , CAST(pe.NUMERO_EDICAO as CHAR) as numeroEdicao ");
 		sql.append("      , CAST(pe.CODIGO_DE_BARRAS as CHAR) as codigoBarrasProduto ");
@@ -4400,7 +4400,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append("      join movimento_estoque_cota mec on mec.LANCAMENTO_ID = l.ID and mec.COTA_ID = c.ID ");
 
 		sql.append("      where  ");
-		
 		sql.append("      pdv.PONTO_PRINCIPAL = true ");
 		sql.append("      and ce.DATA_RECOLHIMENTO ='"+simpleDateFormat.format(data)+"'");
 		sql.append("      and c.id = :idCota ");
@@ -4409,7 +4408,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append("      order by ce.SEQUENCIA, c.NUMERO_COTA, ce.PRODUTO_EDICAO_ID  ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
-
 		query.setParameter("idCota", idCota);
 
 		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
