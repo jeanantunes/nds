@@ -1934,7 +1934,7 @@ public class BoletoServiceImpl implements BoletoService {
         		}else{
         			instrucao1 = instrucao1.replace("R$XXX", "R$ 00,00");
         		}
-        	}
+        	} 
         }else{
                	
 			instrucao1 = banco.getInstrucoes1();
