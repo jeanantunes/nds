@@ -544,22 +544,26 @@ public class EstudoServiceImpl implements EstudoService {
 
 					FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorProdutoCotaClassificacao(estudoCota.getCota(), estudo.getProdutoEdicao().getProduto().getCodigoICD(), estudo.getProdutoEdicao().getTipoClassificacaoProduto());
 					
-					for (FixacaoRepartePdv fixacaoPDV : fixacaoReparte.getRepartesPDV()) {
-						if(fixacaoPDV.getRepartePdv() != null && fixacaoPDV.getRepartePdv() > 0){
-							++qtdRepartePDVDefinido;
+					if(fixacaoReparte != null){
+						for (FixacaoRepartePdv fixacaoPDV : fixacaoReparte.getRepartesPDV()) {
+							if(fixacaoPDV.getRepartePdv() != null && fixacaoPDV.getRepartePdv() > 0){
+								++qtdRepartePDVDefinido;
+							}
 						}
 					}
 					
 					if(qtdRepartePDVDefinido > 1){
-						
-						for (FixacaoRepartePdv fixPdv : fixacaoReparte.getRepartesPDV()) {
-							for (PDV pdv : estudoCota.getCota().getPdvs()) {
-								if(pdv.getId().equals(fixPdv.getPdv().getId())){
-									
-									BigInteger reparte = BigIntegerUtil.valueOfInteger(fixPdv.getRepartePdv());
-
-									this.gerarEstudoPDV(estudoCota.getEstudo(), estudoCota.getCota(), pdv, reparte);
-									
+						if(fixacaoReparte != null){
+							
+							for (FixacaoRepartePdv fixPdv : fixacaoReparte.getRepartesPDV()) {
+								for (PDV pdv : estudoCota.getCota().getPdvs()) {
+									if(pdv.getId().equals(fixPdv.getPdv().getId())){
+										
+										BigInteger reparte = BigIntegerUtil.valueOfInteger(fixPdv.getRepartePdv());
+										
+										this.gerarEstudoPDV(estudoCota.getEstudo(), estudoCota.getCota(), pdv, reparte);
+										
+									}
 								}
 							}
 						}
@@ -572,25 +576,32 @@ public class EstudoServiceImpl implements EstudoService {
 					
 					MixCotaProduto mixCotaProduto = mixCotaProdRepository.obterMixPorCotaProduto(estudoCota.getCota().getId(), estudo.getProdutoEdicao().getTipoClassificacaoProduto().getId(), estudo.getProdutoEdicao().getProduto().getCodigoICD());
 					
-					for (RepartePDV pdvMix : mixCotaProduto.getRepartesPDV()) {
-						if(pdvMix.getReparte() != null && pdvMix.getReparte() > 0){
-							++qtdRepartePDVDefinido;
+					if(mixCotaProduto != null){
+						for (RepartePDV pdvMix : mixCotaProduto.getRepartesPDV()) {
+							if(pdvMix.getReparte() != null && pdvMix.getReparte() > 0){
+								++qtdRepartePDVDefinido;
+							}
 						}
 					}
 					
 					if(qtdRepartePDVDefinido > 1){
 	
-						for (RepartePDV pdvMix : mixCotaProduto.getRepartesPDV()) {
-						
-							for (PDV pdv : estudoCota.getCota().getPdvs()) {
+						if(mixCotaProduto != null){
+							
+							for (RepartePDV pdvMix : mixCotaProduto.getRepartesPDV()) {
 								
-								if(pdv.getId().equals(pdvMix.getPdv().getId())){
-									BigInteger reparte = BigIntegerUtil.valueOfInteger(pdvMix.getReparte());
-									this.gerarEstudoPDV(estudoCota.getEstudo(), estudoCota.getCota(), pdv, reparte);
+								for (PDV pdv : estudoCota.getCota().getPdvs()) {
+									
+									if(pdv.getId().equals(pdvMix.getPdv().getId())){
+										BigInteger reparte = BigIntegerUtil.valueOfInteger(pdvMix.getReparte());
+										this.gerarEstudoPDV(estudoCota.getEstudo(), estudoCota.getCota(), pdv, reparte);
+									}
+									
 								}
-								
 							}
+							
 						}
+						
 					}
 					break;
 				}
