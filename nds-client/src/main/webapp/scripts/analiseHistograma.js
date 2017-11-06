@@ -21,8 +21,8 @@ var anaLiseHistogramaController = $.extend(true, {
 	formatarFaixasVenda : function formatarFaixasVenda(rowCell){
 		var cotasEsmagadasFormatado = '';
 		
-			rowCell.repTotal = formatarMilhar(rowCell.repTotal);
-			rowCell.vdaTotal = formatarMilhar(rowCell.vdaTotal);
+			rowCell.repTotal = floatToPrice(parseFloat(rowCell.repTotal).toFixed(2));
+			rowCell.vdaTotal = floatToPrice(parseFloat(rowCell.vdaTotal).toFixed(2));
 			
 			if (cotasEsmagadasFormatado == "0") {
 				rowCell.cotasEsmagadas = 0;
