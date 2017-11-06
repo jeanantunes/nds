@@ -32,6 +32,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AbastecimentoDTO;
@@ -5071,6 +5072,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	}
 
 	@Override
+	@Transactional
 	public List<CotaConsignadaDetalheCouchDTO> getCotasConsignadaExportCouch(String numeroCota) {
 		final StringBuilder SQL = new StringBuilder();
 
