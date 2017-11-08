@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
@@ -20,6 +22,19 @@ public class LogExecucaoMensagemRepositoryImpl extends AbstractRepositoryModel<L
 		return logExecucaoMensagem;
 	}
 	
+	@Override
+	public void inserir(List<LogExecucaoMensagem> logs) {
+		
+		for(int logN = 0; logN < logs.size(); logN++){
+			getSession().persist(logs.get(logN));
+			
+			if(logN % 50 == 0){
+				getSession().flush();
+				getSession().clear();
+			}
+		}
+		
+	}
 	
 
 }

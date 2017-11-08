@@ -83,7 +83,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 	/** Quantidade de arquivos processados. */
 	private int quantidadeArquivosGerados = 0;
-
+	
 	@Override
 	public void processMessage(Message message) {
 
