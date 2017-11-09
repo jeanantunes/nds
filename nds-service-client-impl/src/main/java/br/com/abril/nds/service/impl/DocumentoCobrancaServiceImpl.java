@@ -2,7 +2,6 @@ package br.com.abril.nds.service.impl;
 
 import java.awt.Image;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -19,8 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.bind.ValidationException;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
@@ -222,7 +219,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 
         try {
 
-            if(TipoCobranca.BOLETO.equals(tipoCobranca)){
+            if(TipoCobranca.BOLETO.equals(tipoCobranca) ){
 
                 arquivo =boletoService.gerarImpressaoBoletos(listNossoNumero);
             }
@@ -796,6 +793,12 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
                 }
 
                 break;
+                
+            case BOLETO_AVULSO:  
+            	
+            	 retorno = boletoService.gerarImpressaoBoleto(nossoNumero);
+
+                 break;
 
             default:
 
