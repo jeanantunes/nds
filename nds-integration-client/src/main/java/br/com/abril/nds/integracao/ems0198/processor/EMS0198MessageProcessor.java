@@ -147,7 +147,6 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 
 			if(!lista.isEmpty()) {
 				for (CotaCouchDTO reparte : lista) {
-					reparte.setDataInclusao(new Date());
 					reparte.setProdutos(cotaRepository.getProdutoRecolhimento(reparte.getIdCota(), simpleDateFormat.parse(reparte.getDataMovimento())));
 				}
 				exporteCouch.exportarLancamentoRecolhimento(lista, "Recolhimento");

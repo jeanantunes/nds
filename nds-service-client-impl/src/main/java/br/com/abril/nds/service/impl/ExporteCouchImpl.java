@@ -47,7 +47,7 @@ public class ExporteCouchImpl implements ExporteCouch {
 			this.couchDbClient = getCouchDBClient(LANCAMENTO_RECOLHIMENTO_COUCH);
 			String docName = nomeEntidadeIntegrada + "_" + data;
 			try {
-				JsonObject jsonDoc = couchDbClient.find(JsonObject.class, docName);
+				JsonObject jsonDoc = couchDbClient.find(JsonObject.class,docName + "_" + listaReparte.get(0).getCodigoCota());
 				this.couchDbClient.remove(jsonDoc);
 			} catch (NoDocumentException e) {
 
@@ -63,14 +63,14 @@ public class ExporteCouchImpl implements ExporteCouch {
 			String mensagem = String.format("A exportação dos %ss foi efetuada com sucesso", nomeEntidadeIntegrada);
 			logInterfaceExecucao.salvar(mensagem, usuarioService.getUsuarioLogado(), new Date(),
 					StatusExecucaoEnum.SUCESSO, "LCT",
-					logExecucaoRepository.findByNome(nomeEntidadeIntegrada.substring(0, 5).toUpperCase()));
+					logExecucaoRepository.findByNome(nomeEntidadeIntegrada.substring(0, 7).toUpperCase()));
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 			String mensagem = String.format("A exportação dos %ss não efetuada com sucesso, %s", nomeEntidadeIntegrada,
 					e.getMessage());
 			logInterfaceExecucao.salvar(mensagem, usuarioService.getUsuarioLogado(), new Date(),
 					StatusExecucaoEnum.FALHA, "LCT",
-					logExecucaoRepository.findByNome(nomeEntidadeIntegrada.substring(0, 5).toUpperCase()));
+					logExecucaoRepository.findByNome(nomeEntidadeIntegrada.substring(0, 7).toUpperCase()));
 		}
 	}
 

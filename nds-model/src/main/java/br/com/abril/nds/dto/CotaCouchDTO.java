@@ -7,6 +7,7 @@ import java.util.List;
 public class CotaCouchDTO implements Serializable{
 	
 	private static final long serialVersionUID = 1392799667450591672L;
+
 	private String _id;
 	private Long idCota;
 	private String codigoDistribuidor;
@@ -24,7 +25,7 @@ public class CotaCouchDTO implements Serializable{
 	private String enderecoCep;
 	private String enderecoCidade;
 	private String enderecoUf;
-	private Date dataInclusao;
+
 	
 	private List<ProdutoCouchDTO> produtos;
 	
@@ -63,12 +64,6 @@ public class CotaCouchDTO implements Serializable{
 	}
 	public void setDataMovimento(String dataMovimento) {
 		this.dataMovimento = dataMovimento;
-	}
-	public Date getDataInclusao() {
-		return dataInclusao;
-	}
-	public void setDataInclusao(Date dataInclusao) {
-		this.dataInclusao = dataInclusao;
 	}
 	public List<ProdutoCouchDTO> getProdutos() {
 		return produtos;
@@ -130,17 +125,20 @@ public class CotaCouchDTO implements Serializable{
 	public void setEnderecoUf(String enderecoUf) {
 		this.enderecoUf = enderecoUf;
 	}
-	public String get_id() {
-		return _id;
-	}
-	public void set_id(String _id) {
-		this._id = _id;
-	}
+
 	public Long getIdCota() {
 		return idCota;
 	}
+
 	public void setIdCota(Long idCota) {
 		this.idCota = idCota;
 	}
 
+	public String get_id() {
+		return _id;
+	}
+
+	public void set_id(String _id) {
+		this._id = _id;
+	}
 }
