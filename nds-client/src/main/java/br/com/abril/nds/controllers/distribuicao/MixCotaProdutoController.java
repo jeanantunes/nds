@@ -385,6 +385,7 @@ public class MixCotaProdutoController extends BaseController {
 			
 			mixCotaProdutoDTO.setCodigoICD(produto.getCodigoICD());
 			mixCotaProdutoDTO.setCodigoProduto(produto.getCodigo());
+			mixCotaProdutoDTO.setProdutoId(produto.getId());
 		}
 		
 		List<String> mensagens = mixCotaProdutoService.adicionarListaMixPorProduto(listaNovosMixProduto, produtoId);
@@ -402,8 +403,10 @@ public class MixCotaProdutoController extends BaseController {
 	public void adicionarMixCota(List<MixCotaProdutoDTO>listaNovosMixCota, Integer cotaId){
 		
 		for (MixCotaProdutoDTO mixCotaProdutoDTO: listaNovosMixCota) {
-			String codigoICD = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto()).getCodigoICD();
-			mixCotaProdutoDTO.setCodigoICD(codigoICD);
+			Produto produtoMix = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
+			
+			mixCotaProdutoDTO.setCodigoICD(produtoMix.getCodigoICD());
+			mixCotaProdutoDTO.setProdutoId(produtoMix.getId());
 		}
 		
 		List<String> mensagens = mixCotaProdutoService.adicionarListaMixPorCota(listaNovosMixCota,cotaId);

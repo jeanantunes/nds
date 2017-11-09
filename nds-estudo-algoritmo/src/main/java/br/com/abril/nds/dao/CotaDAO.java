@@ -194,11 +194,20 @@ public class CotaDAO {
     		Map<String, Object> paramMap = new HashMap<>();
     		paramMap.put("tipo_classificacao_id", estudo.getProdutoEdicaoEstudo().getTipoClassificacaoProduto().getId());
     		paramMap.put("codigo_icd", estudo.getProdutoEdicaoEstudo().getProduto().getCodigoICD());
+    		paramMap.put("idProduto", estudo.getProdutoEdicaoEstudo().getProduto().getId());
     		
     		try {
     			isUsarICDMIX = (Boolean)jdbcTemplate.queryForObject(
-    					"select usar_icd_estudo from mix_cota_produto where codigo_icd = :codigo_icd "
-    							+ "and tipo_classificacao_produto_id = :tipo_classificacao_id order by usar_icd_estudo asc ", paramMap, Boolean.class);
+    					" select case when (select count(id) from mix_cota_produto where id_produto = :idProduto) > 0 then   " 
+    				   +" 	(select usar_icd_estudo from mix_cota_produto where id_produto = :idProduto)  "
+    				   +" else   "
+    				   +" 	(select usar_icd_estudo from mix_cota_produto where codigo_icd = :codigo_icd and tipo_classificacao_produto_id = :tipo_classificacao_id order by usar_icd_estudo desc limit 1)  "
+    				   +" end as usarIcd  ",
+    					
+//    					"select usar_icd_estudo from mix_cota_produto where codigo_icd = :codigo_icd "
+//    					+ "and tipo_classificacao_produto_id = :tipo_classificacao_id order by usar_icd_estudo asc ", 
+    					
+    					paramMap, Boolean.class);
 			} catch (Exception e) {
 				isUsarICDMIX = true;
 			}

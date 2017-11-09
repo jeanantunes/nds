@@ -37,13 +37,8 @@ import br.com.abril.nds.model.distribuicao.MixCotaProduto;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.CotaRepository;
-import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
-import br.com.abril.nds.repository.FixacaoRepartePdvRepository;
-import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MixCotaProdutoRepository;
 import br.com.abril.nds.repository.PdvRepository;
-import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.RepartePDVRepository;
 import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.service.ClassificacaoNaoRecebidaService;
@@ -63,10 +58,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 
 	@Autowired
 	private MixCotaProdutoRepository mixCotaProdutoRepository;
-	@Autowired
-	private ProdutoRepository produtoRepository;
-	@Autowired
-	private CotaRepository cotaRepository;
+	
 	@Autowired
 	private UsuarioService usuarioService;
 	
@@ -83,19 +75,10 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
 	
 	@Autowired
-	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
-	
-	@Autowired
 	private PdvRepository pdvRepository;
 	
 	@Autowired
-	private FixacaoRepartePdvRepository fixacaoRepartePdvRepository;
-	
-	@Autowired
 	private RepartePDVRepository repartePDVRepository;
-	
-	@Autowired
-	private LancamentoRepository lancamentoRepository;
 	
 	@Autowired
 	private ClassificacaoNaoRecebidaService classificacaoNaoRecebidaService;
@@ -247,36 +230,38 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		
 		for (MixCotaProdutoDTO mixCotaProdutoDTO : listaMixCota) {
 				
-				if (!mixCotaProdutoDTO.isItemValido()) {
-					
-					continue;
-				}
-			
+			if (!mixCotaProdutoDTO.isItemValido()) {
+				
+				continue;
+			}
+		
 //				Produto produto = produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
-				MixCotaProduto mixCotaProduto = new MixCotaProduto();
+			MixCotaProduto mixCotaProduto = new MixCotaProduto();
 
-            // FIXME refazer... a classificação fica no ProdutoEdicao
+        // FIXME refazer... a classificação fica no ProdutoEdicao
 //				if(produto.getTipoClassificacaoProduto().getDescricao().equalsIgnoreCase(mixCotaProdutoDTO.getClassificacaoProduto())){
-					
-					for (TipoClassificacaoProduto tcp : obterTodos) {
-						if(tcp.getDescricao().equalsIgnoreCase(mixCotaProdutoDTO.getClassificacaoProduto())){
-							mixCotaProduto.setTipoClassificacaoProduto(tcp);
-							break;
-						}
-					}
-					mixCotaProduto.setCodigoICD(mixCotaProdutoDTO.getCodigoICD());
-					mixCotaProduto.setCota(cota);
-					mixCotaProduto.setDataHora(new Date());
-					mixCotaProduto.setReparteMinimo(mixCotaProdutoDTO.getReparteMinimo());
-					mixCotaProduto.setReparteMaximo(mixCotaProdutoDTO.getReparteMaximo());
-					mixCotaProduto.setUsuario(usuario);
-					mixCotaProduto.setUsarICDEstudo(mixCotaProdutoDTO.isUsarICDEstudo());
-					
-					if(!mixCotaProdutoDTO.isUsarICDEstudo()){
-						mixCotaProduto.setCodigoProduto(mixCotaProdutoDTO.getCodigoProduto());
-					}
+				
+			for (TipoClassificacaoProduto tcp : obterTodos) {
+				if(tcp.getDescricao().equalsIgnoreCase(mixCotaProdutoDTO.getClassificacaoProduto())){
+					mixCotaProduto.setTipoClassificacaoProduto(tcp);
+					break;
+				}
+			}
+			
+			mixCotaProduto.setCodigoICD(mixCotaProdutoDTO.getCodigoICD());
+			mixCotaProduto.setCota(cota);
+			mixCotaProduto.setDataHora(new Date());
+			mixCotaProduto.setReparteMinimo(mixCotaProdutoDTO.getReparteMinimo());
+			mixCotaProduto.setReparteMaximo(mixCotaProdutoDTO.getReparteMaximo());
+			mixCotaProduto.setUsuario(usuario);
+			mixCotaProduto.setUsarICDEstudo(mixCotaProdutoDTO.isUsarICDEstudo());
+			
+			if(!mixCotaProdutoDTO.isUsarICDEstudo()){
+				mixCotaProduto.setCodigoProduto(mixCotaProdutoDTO.getCodigoProduto());
+				mixCotaProduto.setIdProduto(mixCotaProdutoDTO.getProdutoId());
+			}
 
-					mixCotaProdutoRepository.adicionar(mixCotaProduto);
+			mixCotaProdutoRepository.adicionar(mixCotaProduto);
 
 //				}
 				
@@ -499,6 +484,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		// atualizar todos dos MIX (ICD + CLASSIFICACAO)
 		
 		Long idClassificacaoPraAtualizar = 0L;
+		Long idProdutoPraAtualizar = 0L;
 		String icdProdutoPraAtualizar = "";
 		String codProdutoPraAtualizar = "";
 		boolean isUsarICDEstudo = true;
@@ -536,6 +522,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			
 			if(!mixCotaProdutoDTO.isUsarICDEstudo()){
 				mixCotaProduto.setCodigoProduto(mixCotaProdutoDTO.getCodigoProduto());
+				mixCotaProduto.setIdProduto(mixCotaProdutoDTO.getProdutoId());
 			}
 			
 			codProdutoPraAtualizar = mixCotaProdutoDTO.getCodigoProduto();
@@ -545,7 +532,11 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			mixCotaProdutoRepository.adicionar(mixCotaProduto);
 		}
 		
-		mixCotaProdutoRepository.atualizarFlagUsarICDEstudo(idClassificacaoPraAtualizar, icdProdutoPraAtualizar, codProdutoPraAtualizar, isUsarICDEstudo);
+		if(produtoId != null && !produtoId.isEmpty()){
+			idProdutoPraAtualizar = Long.parseLong(produtoId);
+		}
+		
+		mixCotaProdutoRepository.atualizarFlagUsarICDEstudo(idClassificacaoPraAtualizar, icdProdutoPraAtualizar, codProdutoPraAtualizar, isUsarICDEstudo, idProdutoPraAtualizar);
 		
 		return mensagens;
 	}
