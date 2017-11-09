@@ -604,15 +604,18 @@ public class MixCotaProdutoRepositoryImpl extends AbstractRepositoryModel<MixCot
 	}
 	
 	@Override
-	public void atualizarFlagUsarICDEstudo(Long idClassificacaoPraAtualizar, String icdProdutoPraAtualizar, String codProdutoPraAtualizar, boolean isUsarICDEstudo){
+	public void atualizarFlagUsarICDEstudo(Long idClassificacaoPraAtualizar, String icdProdutoPraAtualizar, String codProdutoPraAtualizar, boolean isUsarICDEstudo, Long idProduto){
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" update mix_cota_produto set   ");
 		
 		if(isUsarICDEstudo){
 			sql.append(" codigo_icd =  :icdProdutoPraAtualizar, ");
+			sql.append(" codigo_produto =  '', ");
+			sql.append(" ID_PRODUTO =  '', ");
 	    }else{
 	    	sql.append(" codigo_produto =  :codProdutoPraAtualizar, ");
+	    	sql.append(" ID_PRODUTO =  :idProdutoPraAtualizar, ");
 	    }
 		
 		sql.append(" usar_icd_estudo = :isUsarICDEstudo ");
@@ -626,6 +629,7 @@ public class MixCotaProdutoRepositoryImpl extends AbstractRepositoryModel<MixCot
 
 	    if(!isUsarICDEstudo){
 	    	query.setParameter("codProdutoPraAtualizar", codProdutoPraAtualizar);
+	    	query.setParameter("idProdutoPraAtualizar", idProduto);
 	    }
 	    
 	    query.executeUpdate();

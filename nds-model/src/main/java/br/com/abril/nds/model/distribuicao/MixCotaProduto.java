@@ -73,6 +73,9 @@ public class MixCotaProduto {
 	@OneToMany(mappedBy="mixCotaProduto")
 	List<RepartePDV> repartesPDV;
 	
+	@Column(name = "ID_PRODUTO")
+	private Long idProduto;
+	
 	public Long getId() {
 		return id;
 	}
@@ -185,5 +188,14 @@ public class MixCotaProduto {
 	public void setUsarICDEstudo(boolean usarICDEstudo) {
 		this.usarICDEstudo = usarICDEstudo;
 	}
+
+	public Long getIdProduto() {
+		return idProduto;
+	}
+
+	public void setIdProduto(Long idProduto) {
+		this.idProduto = idProduto;
+	}
+	
 	
 }
