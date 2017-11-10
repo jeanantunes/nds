@@ -138,20 +138,22 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 	    Map<String, BigInteger> mapTotaisEd = new HashMap<>();
     	
 	    if ((queryDTO.getModoAnalise() != null && queryDTO.getModoAnalise().equalsIgnoreCase("NORMAL")) || 
-    			queryDTO.getModoAnalise() != null && queryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL") && queryDTO.isMudarBaseVisualizacao() 
-    			|| queryDTO.isParcialComEdicaoBaseNormal()) {
+    			queryDTO.getModoAnalise() != null && queryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL") 
+    			&& queryDTO.isMudarBaseVisualizacao() || queryDTO.isParcialComEdicaoBaseNormal()) {
 	    	
 	    	Map<String, List<EdicoesProdutosDTO>> mapHistoricoCotasEdicoesParciais = new HashMap<>();
 	    	
 	    	// Map Order AUX
 	    	Map<String, Integer> mapOrdemAux = new HashMap<>();
-	    	
-	    	List<EdicoesProdutosDTO> edicoesBase = queryDTO.getEdicoesBase();
-	    	
-	    	for (EdicoesProdutosDTO edicoesProdutosDTO : edicoesBase) {
-	    		String mapKey = obterMapKey(edicoesProdutosDTO);
+
+	    	if(queryDTO.getEdicoesBase() != null){
+	    		List<EdicoesProdutosDTO> edicoesBase = queryDTO.getEdicoesBase();
 	    		
-	    		mapOrdemAux.put(mapKey, edicoesProdutosDTO.getOrdemExibicao());
+	    		for (EdicoesProdutosDTO edicoesProdutosDTO : edicoesBase) {
+	    			String mapKey = obterMapKey(edicoesProdutosDTO);
+	    			
+	    			mapOrdemAux.put(mapKey, edicoesProdutosDTO.getOrdemExibicao());
+	    		}
 	    	}
 	    	// DONE!
         	
