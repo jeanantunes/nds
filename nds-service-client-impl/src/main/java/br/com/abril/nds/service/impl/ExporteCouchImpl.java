@@ -45,18 +45,19 @@ public class ExporteCouchImpl implements ExporteCouch {
 		try {
 			String data = listaReparte.get(0).getDataMovimento();
 			this.couchDbClient = getCouchDBClient(LANCAMENTO_RECOLHIMENTO_COUCH);
-			String docName = nomeEntidadeIntegrada + "_" + data;
-			try {
-				JsonObject jsonDoc = couchDbClient.find(JsonObject.class,docName + "_" + listaReparte.get(0).getCodigoCota());
-				this.couchDbClient.remove(jsonDoc);
-			} catch (NoDocumentException e) {
-
-			}
+			StringBuilder docName = new StringBuilder();
+			docName.append(nomeEntidadeIntegrada).append("_").append(data).append("_");
 			for (CotaCouchDTO reparte : listaReparte) {
-				reparte.set_id(docName + "_" + reparte.getCodigoCota());
+				String keyEntity =docName.toString()+reparte.getCodigoDistribuidor();
+				try {
+					JsonObject jsonDoc = couchDbClient.find(JsonObject.class,keyEntity);
+					this.couchDbClient.remove(jsonDoc);
+				} catch (NoDocumentException e) {
+
+				}
+				reparte.set_id(keyEntity);
 				this.couchDbClient.save(reparte);
 			}
-
 			if (couchDbClient != null) {
 				couchDbClient.shutdown();
 			}

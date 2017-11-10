@@ -161,7 +161,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		}
 
 		try {
-		    // TODO - Gerar log no padrão das interfaces do NDS - p/ acompanhamento no Painel
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 			List<CotaCouchDTO> lista = cotaRepository.getCotaLancamento(dataLctoDistrib);
 
@@ -174,49 +173,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
             LOGGER.error(e.getMessage(), e);
 		}
 
-		// ## Conforme alinhado com César Marracho, há a necessidade de manter a
-		// impletação antiga, para uma possível retorno ao layout antigo
-		// List<EMS0197Header> listHeaders = this.criarHeader(dataLctoDistrib);
-
-		// for (EMS0197Header outheader : listHeaders){
-		//
-		// try{
-		//
-		// String nomeArquivo = String.format("%1$05d%2$s",
-		// Integer.parseInt(outheader.getNumeroCota()),
-		// outheader.getFormatedDate());
-		//
-		// PrintWriter print = new PrintWriter(new FileWriter(
-		// message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
-		// + File.separator + REPARTE_FOLDER +File.separator + nomeArquivo +
-		// REPARTE_EXT));
-		//
-		// print.println(fixedFormatManager.export(outheader));
-		//
-		// List<DetalhesPickingDTO> listDetalhes =
-		// getDetalhesPicking(outheader.getIdCota(), this.dataLctoDistrib);
-		//
-		// for(DetalhesPickingDTO pickingDTO : listDetalhes){
-		//
-		// EMS0197Detalhe outDetalhe = createDetalhes(pickingDTO);
-		//
-		// print.println(fixedFormatManager.export(outDetalhe));
-		// }
-		//
-		// EMS0197Trailer outTrailer = createTrailer(outheader.getNumeroCota(),
-		// listDetalhes.size());
-		//
-		// print.println(fixedFormatManager.export(outTrailer));
-		//
-		// print.flush();
-		// print.close();
-		//
-		// this.quantidadeArquivosGerados++;
-		// }
-		// catch(IOException e){
-		//
-		// }
-		// }
 	}
 
 	public void cat(File origem, File destino) throws IOException {
