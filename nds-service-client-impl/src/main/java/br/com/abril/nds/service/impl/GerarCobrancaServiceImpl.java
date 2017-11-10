@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,6 +98,7 @@ import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.SemanaUtil;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -1963,8 +1965,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			cobranca.setFornecedor(fornecedor);
 			cobranca.setNossoNumero(nossoNumero);
 			
-			String digitoVerificador =
-				Util.calcularDigitoVerificador(nossoNumero, banco != null ? banco.getCodigoCedente() : "0", cobranca.getDataVencimento(), banco != null ? banco.getNumeroBanco() : null);
+			String digitoVerificador; 
+			
+			if(banco.getNumeroBanco().equals("237")){
+				digitoVerificador = Util.calcularDigitoBradesco(StringUtils.leftPad(banco.getCarteira().toString(),2,"0") , nossoNumero);
+			}else{
+				digitoVerificador =
+						Util.calcularDigitoVerificador(nossoNumero, banco != null ? banco.getCodigoCedente() : "0", cobranca.getDataVencimento(), banco != null ? banco.getNumeroBanco() : null);
+			}
+			
 			
 			cobranca.setDigitoNossoNumero(digitoVerificador);
 			

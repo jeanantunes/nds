@@ -11,7 +11,8 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscalEnum;
 public enum TipoOperacao implements NotaFiscalEnum {
 	
 	ENTRADA("Entrada", "E", 0),
-	SAIDA("Saída", "S", 1);
+	SAIDA("Saída", "S", 1),
+	ENTRADA_SAIDA("Endrada / Saída", "ES", 2);
 	
 	
 	TipoOperacao(String descricao, String simpleValue, int tipoOperacaoNumerico) {

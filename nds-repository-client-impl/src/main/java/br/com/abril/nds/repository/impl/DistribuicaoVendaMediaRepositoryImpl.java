@@ -198,14 +198,32 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
     	sql.append(" MAX(T.periodo) as periodo,										      ");
     	sql.append(" T.parcial,                                                           ");
     	sql.append(" MAX(T.dataLancamento) as dataLancamento,                             ");
+    	sql.append(" T.dataRec as dataRec,                            ");
     	sql.append(" T.STATUS as status,                                                  ");
     	sql.append(" T.idClassificacao,                                                   ");
     	sql.append(" T.classificacao,                                                     ");
 //    	sql.append(" if(T.periodo>1, true, false) as consolidado,                         ");
     	sql.append(" true as isParcialConsolidado,                  				       ");
-    	sql.append(" SUM(T.REPARTE) as reparte,                                           ");
-    	sql.append(" SUM(T.venda) as venda                                                ");
-		
+//    	sql.append(" SUM(T.REPARTE) as reparte,                                           ");
+    	sql.append(" SUM( T.REPARTE2 + T.REPARTE1 ) as reparte, ");
+//    	sql.append(" SUM(T.venda) as venda                                                ");
+    	
+    	sql.append("   case when T.STATUS in( :statusLancFechadoRecolhido ) then  ");
+    	sql.append("   		sum((T.REPARTE2 + T.REPARTE1) - ");
+    	sql.append("   			coalesce( ");
+    	sql.append("   				(select ");
+    	sql.append("   					sum(mec.qtde) ");
+    	sql.append("   				from movimento_estoque_cota mec ");
+    	sql.append("   					join tipo_movimento tm ");
+    	sql.append("   						on mec.tipo_movimento_id = tm.id ");
+    	sql.append("   				where mec.produto_edicao_id = T.id  ");
+    	sql.append("   					and tm.tipo_movimento_encalhe is true  ");
+    	sql.append("   					and mec.`DATA` >= DATE_ADD(T.dataLancamento,interval 8 day)  ");
+    	sql.append("   					and mec.`DATA` <= DATE_ADD(T.dataRec,interval 7 day))  ");
+    	sql.append("   			,0)  ");
+    	sql.append("   		) else 0 end  ");
+    	sql.append("    	as venda  ");
+    	
     	sql.append(" FROM (SELECT   ");
 		sql.append("     pe.id, ");
 		sql.append("     l.id lancId, ");
@@ -219,43 +237,36 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("         ELSE 1 ");
 		sql.append("     END parcial, ");
 		sql.append("     l.data_lcto_distribuidor dataLancamento, ");
+		sql.append("     l.data_rec_distrib dataRec, ");
 		sql.append("     l.status status, ");
 		sql.append("     tcp.id idClassificacao, ");
 		sql.append("     coalesce(tcp.descricao, '') classificacao, ");
 		
-	    sql.append("     cast(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0)) as unsigned int) AS reparte, ");
+//	    sql.append("     round( sum( case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else - mecReparte.QTDE end ), 0 ) AS reparte, ");
+	    sql.append("     cast(sum( if( mecReparte.tipo_movimento_id in (131, 10, 7, 14, 44, 121, 199), (mecReparte.QTDE * -1), 0 ) ) as signed int) as reparte1,   ");
+	    sql.append("     cast(sum( if( tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0 ) ) as signed int) as reparte2   ");
 		
-		sql.append("     case when l.STATUS IN (:statusLancFechadoRecolhido) then ");
 		
-		sql.append("     cast(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0)) - COALESCE(( ");
-		
-		sql.append("        select sum(mecEncalhe.qtde) ");
-        sql.append("        from ");
-        sql.append("        	lancamento lanc  ");
-        sql.append("        	left join movimento_estoque_cota mecEncalhe ");
-        sql.append("        		on mecEncalhe.lancamento_id = lanc.id ");
-        sql.append("        	left join cota cota ");
-        sql.append("        		on cota.id = mecEncalhe.cota_id ");
-        sql.append("        	join tipo_movimento tm ");
-        sql.append("        		on mecEncalhe.tipo_movimento_id = tm.id ");
-        sql.append("        where ");
-        sql.append("        	lanc.id = l.id ");
-        sql.append("        	and tm.tipo_movimento_encalhe is true ");
-		
-//		sql.append("        select sum(mecEncalhe.qtde) ");
-//		sql.append("        from lancamento lanc ");
-//		sql.append("        LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID ");
-//		sql.append("        LEFT JOIN chamada_encalhe ce on ce.id = cel.CHAMADA_ENCALHE_ID ");
-//		sql.append("        LEFT JOIN chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID ");
-//		sql.append("        LEFT JOIN conferencia_encalhe confEnc on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID ");
-//		sql.append("        straight_join movimento_estoque_cota mecEncalhe on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
-//		sql.append("        WHERE lanc.id = l.id ");
-		sql.append("     ) ");
-		sql.append("     ,0) as unsigned int) ");
-		
-		sql.append(" else CAST(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA',mecReparte.QTDE,0)) AS UNSIGNED INT) ");
-		sql.append(" end as venda ");
-		
+//	    sql.append("     coalesce(round( case when l.STATUS in( :statusLancFechadoRecolhido ) then   ");
+//	    sql.append("     						sum( case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else - mecReparte.QTDE end ) -  ");
+//	    sql.append("     				(select  ");
+//	    sql.append("     						sum(mecEncalhe.qtde)  ");
+//	    sql.append("     					from  ");
+//	    sql.append("     						lancamento lanc left join movimento_estoque_cota mecEncalhe on  ");
+//	    sql.append("     						mecEncalhe.produto_edicao_id = lanc.produto_edicao_id   ");
+//	    sql.append("     						left join cota cota on  ");
+//	    sql.append("     						cota.id = mecEncalhe.cota_id join tipo_movimento tm on  ");
+//	    sql.append("     						mecEncalhe.tipo_movimento_id = tm.id  ");
+//	    sql.append("     					where  ");
+//	    sql.append("     						lanc.id = l.id  ");
+//	    sql.append("     						and tm.tipo_movimento_encalhe is true)  ");
+//	    sql.append("     						and mecEncalhe.`DATA` >= DATE_ADD(T.dataLancamento, interval 8 day)  ");
+//	    sql.append("     						and mecEncalhe.`DATA` <= DATE_ADD(T.dataRec, interval 7 day)  ");
+//	    sql.append("     					else null  ");
+//	    sql.append("     				end,0 ),0  ");
+//	    sql.append("     			) as venda  ");
+
+	    
 		sql.append(" FROM lancamento l ");
 		sql.append("     JOIN produto_edicao pe ON pe.id = l.produto_edicao_id ");
 		sql.append("     LEFT JOIN periodo_lancamento_parcial plp ON plp.id = l.periodo_lancamento_parcial_id ");
