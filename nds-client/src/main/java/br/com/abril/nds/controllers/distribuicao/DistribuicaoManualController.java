@@ -37,7 +37,6 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.ProdutoService;
-import br.com.abril.nds.service.impl.CotaServiceImpl;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -196,8 +195,6 @@ public class DistribuicaoManualController extends BaseController {
     	
     	List<EstudoCotaDTO> cotasParaDistribuicao = XlsUploaderUtils.getBeanListFromXls(EstudoCotaDTO.class, excelFileDistbManual);
     	
-    	
-    	
     	if( cotasParaDistribuicao != null && !cotasParaDistribuicao.isEmpty()){
     		
     		parseNumCotaIdCotaParseDto(cotasParaDistribuicao, estudoDTO);
@@ -207,11 +204,11 @@ public class DistribuicaoManualController extends BaseController {
     		
     		try {
     			if(cotasParaDistribuicao != null && cotasParaDistribuicao.size() > 0){
-    			try {
-    				this.gravarEstudo(estudoDTO, cotasParaDistribuicao);
-    			} catch ( ValidacaoException ve ) {
-    				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, ve.getMessage()),"result").recursive().serialize();
-    			}
+	    			try {
+	    				this.gravarEstudo(estudoDTO, cotasParaDistribuicao);
+	    			} catch ( ValidacaoException ve ) {
+	    				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, ve.getMessage()),"result").recursive().serialize();
+	    			}
     			}else{
     				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Estudo não realizado, não há cotas aptas a receberem reparte."),"result").recursive().serialize();
     			}
@@ -271,6 +268,7 @@ public class DistribuicaoManualController extends BaseController {
 	private void parseNumCotaIdCotaParseDto(List<EstudoCotaDTO> cotasParaDistribuicao, EstudoDTO estudoDTO) {
 		
 		Long sumReparteDistribuido = 0L;
+		
 		List<EstudoCotaDTO> cotasInaptas = new ArrayList<>();
 		
 		Map<Integer, EstudoCotaDTO> cotas;
@@ -278,7 +276,11 @@ public class DistribuicaoManualController extends BaseController {
 		List<Integer> listNumeroCotasEstudo = new ArrayList<>();
 		
 		for (EstudoCotaDTO estudoCotaDTO : cotasParaDistribuicao) {
-			listNumeroCotasEstudo.add(estudoCotaDTO.getNumeroCota());
+			if(!listNumeroCotasEstudo.contains(estudoCotaDTO.getNumeroCota())){
+				listNumeroCotasEstudo.add(estudoCotaDTO.getNumeroCota());
+			}else{
+				cotasInaptas.add(estudoCotaDTO);
+			}
 		}
 		
 		cotas = cotaService.obterPorNumeroDaCota(listNumeroCotasEstudo);

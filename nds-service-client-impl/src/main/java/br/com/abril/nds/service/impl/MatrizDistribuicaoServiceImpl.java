@@ -623,6 +623,11 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		    
 		    cota.setReparteInicial(cota.getReparte());
 		    
+		    if(estudoCota.getClassificacao().equals("MX") || estudoCota.getClassificacao().equals("FX")){
+		    	cota.setClassificacao(estudoCota.getClassificacao());
+		    } 
+		    	
+		    
 		    retorno.add(cota);
 		}
 		
@@ -635,6 +640,8 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		BigInteger totalFixacao = BigInteger.ZERO;
 		BigInteger totalMix = BigInteger.ZERO;
 		BigInteger totalReparte = BigInteger.ZERO;
+		
+		boolean estudosComMesmosICD = false;
 	
 		Lancamento lancamento = lancamentoRepository.buscarPorIdSemEstudo(vo.getIdLancamento());
 		EstudoGerado estudoCopia = obterCopiaDeEstudo(estudo, lancamento, vo.getPacotePadrao());
@@ -643,6 +650,13 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		LinkedList<EstudoCotaGerado> cotasSelecionadas = new LinkedList<>(estudo.getEstudoCotas());
 		ProdutoEdicao edicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(vo.getCodigoProduto(), vo.getNumeroEdicao().longValue());
 		Map<Long, CotaEstudo> mapCotas = carregarInformacoesCotaEstudo(edicao);
+		
+		if(edicao.getProduto() != null && edicao.getProduto().getCodigoICD() != null && estudo.getProdutoEdicao() != null
+				&& estudo.getProdutoEdicao().getProduto() != null && estudo.getProdutoEdicao().getProduto().getCodigoICD() != null){
+			if(edicao.getProduto().getCodigoICD().equalsIgnoreCase(estudo.getProdutoEdicao().getProduto().getCodigoICD())){
+				estudosComMesmosICD = true;
+			}
+		}
 	
 		cotasSelecionadas = copiarListaDeCotas(cotasSelecionadas, estudoCopia, vo.isFixacao());
 	
@@ -696,6 +710,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 		// somar totais de reparte fixado e reparte minimo da cota mix
 		for (EstudoCotaGerado cota : cotas) {
+			
 			if (cota.getReparte() != null) {
 				totalReparte = totalReparte.add(cota.getReparte());
 			}
@@ -710,8 +725,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 						
 					} else if (cotaEstudo.getClassificacao().equals(
 							ClassificacaoCota.CotaMix)) {
-						totalMix = totalMix
-								.add(cotaEstudo.getIntervaloMinimo());
+						totalMix = totalMix.add(cotaEstudo.getIntervaloMinimo());
 					}
 				}
 			}
@@ -724,104 +738,104 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		// distribuicao para as cotas fixadas
 		if (vo.isFixacao()) {
 			if (totalReparteFixado.compareTo(reparteDistribuir) > 0) {
-				throw new ValidacaoException(TipoMensagem.WARNING,
-						"Fixação é maior que o reparte");
+				throw new ValidacaoException(TipoMensagem.WARNING,"Fixação é maior que o reparte");
 			} else {
-				reparteDistribuir = reparteDistribuir
-						.subtract(totalReparteFixado);
+				reparteDistribuir = reparteDistribuir.subtract(totalReparteFixado);
 			}
 		}
 
-		BigDecimal totalReparteNaoFixado = new BigDecimal(
-				totalReparte.subtract(totalReparteFixado));
+		BigDecimal totalReparteNaoFixado = new BigDecimal(totalReparte.subtract(totalReparteFixado));
 		BigDecimal indiceProporcional = BigDecimal.ZERO;
+		
 		if (totalReparteNaoFixado.compareTo(BigDecimal.ZERO) > 0) {
-			indiceProporcional = new BigDecimal(reparteDistribuir).divide(
-					totalReparteNaoFixado, 3, BigDecimal.ROUND_HALF_UP);
+			indiceProporcional = new BigDecimal(reparteDistribuir).divide(totalReparteNaoFixado, 3, BigDecimal.ROUND_HALF_UP);
 		}
 		// distribuicao para as outras cotas
 		if (reparteDistribuir.compareTo(BigInteger.ZERO) > 0) {
 			for (EstudoCotaGerado cota : cotas) {
-				if (!vo.isFixacao() || !cota.getClassificacao().equals("FX")) {
+				if (!vo.isFixacao() || !(cota.getClassificacao().equals("FX") || cota.getClassificacao().equals("MX"))) {
 					BigDecimal reparte = new BigDecimal(cota.getReparte())
 							.multiply(indiceProporcional);
 					// arredondamento por pacote padrao
-					if (pacotePadrao != null
-							&& pacotePadrao.compareTo(BigInteger.ZERO) > 0) {
+					if (pacotePadrao != null && pacotePadrao.compareTo(BigInteger.ZERO) > 0) {
 						reparte = reparte.divide(new BigDecimal(pacotePadrao),
 								0, BigDecimal.ROUND_HALF_UP).multiply(
 								new BigDecimal(pacotePadrao));
+						
 						reparte = reparte.setScale(0, BigDecimal.ROUND_HALF_UP);
 					} else {
 						reparte = reparte.setScale(0, BigDecimal.ROUND_HALF_UP);
 					}
+					
 					cota.setReparte(reparte.toBigInteger());
-					reparteDistribuir = reparteDistribuir.subtract(reparte
-							.toBigInteger());
+					reparteDistribuir = reparteDistribuir.subtract(reparte.toBigInteger());
+					
 				}
 			}
 		}
 
 		// verificacao dos repartes minimo e maximo para cotas mix
 		for (EstudoCotaGerado cota : cotas) {
+			
+			BigInteger intervaloMinimo = BigInteger.ZERO;
+			BigInteger intervaloMaximo = BigInteger.ZERO;
+			
 			CotaEstudo cotaEstudo = mapCotas.get(cota.getCota().getId());
 			if (cotaEstudo != null && cotaEstudo.getClassificacao() != null) {
-				if (cotaEstudo.getClassificacao().equals(
-						ClassificacaoCota.CotaMix)) {
+				if (cotaEstudo.getClassificacao().equals(ClassificacaoCota.CotaMix)) {
+
 					cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
+					
+					if(estudosComMesmosICD){
+						intervaloMinimo = cota.getReparteMinimo();
+						intervaloMaximo = cota.getReparteMaximo();
+					}else{ 
+						intervaloMinimo = cotaEstudo.getIntervaloMinimo();
+						intervaloMaximo = cotaEstudo.getIntervaloMaximo();
+					}
+					
 					if (cota.getReparte() == null) {
 						cota.setReparte(BigInteger.ZERO);
 					}
+					
 					// multiplos
-					if (pacotePadrao != null
-							&& pacotePadrao.compareTo(BigInteger.ZERO) > 0) {
-						if (pacotePadrao.compareTo(cotaEstudo
-								.getIntervaloMaximo()) > 0) {
-							BigInteger variacao = cotaEstudo
-									.getIntervaloMaximo().subtract(
-											cota.getReparte());
+					if (pacotePadrao != null && pacotePadrao.compareTo(BigInteger.ZERO) > 0) {
+						
+						if (pacotePadrao.compareTo(intervaloMaximo) > 0) {
+							
+							BigInteger variacao = intervaloMaximo.subtract(cota.getReparte());
 
-							cota.setReparte(cotaEstudo.getIntervaloMaximo());
-							cota.setClassificacao(ClassificacaoCota.CotaMix
-									.getCodigo());
+							cota.setReparte(intervaloMaximo);
+							cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
 
-							reparteDistribuir = reparteDistribuir
-									.subtract(variacao);
-						} else if (pacotePadrao.compareTo(cotaEstudo
-								.getIntervaloMinimo()) < 0) {
-							BigInteger variacao = cotaEstudo
-									.getIntervaloMinimo().subtract(
-											cota.getReparte());
+							reparteDistribuir = reparteDistribuir.subtract(variacao);
+						
+						} else if (pacotePadrao.compareTo(intervaloMinimo) < 0) {
+							
+							BigInteger variacao = intervaloMinimo.subtract(cota.getReparte());
 
-							cota.setReparte(cotaEstudo.getIntervaloMinimo());
-							cota.setClassificacao(ClassificacaoCota.CotaMix
-									.getCodigo());
+							cota.setReparte(intervaloMinimo);
+							cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
 
-							reparteDistribuir = reparteDistribuir
-									.subtract(variacao);
+							reparteDistribuir = reparteDistribuir.subtract(variacao);
 						}
+					
 					} else { // nao multiplos
-						if (cota.getReparte().compareTo(
-								cotaEstudo.getIntervaloMinimo()) < 0) {
-							BigInteger variacao = cotaEstudo
-									.getIntervaloMinimo().subtract(
-											cota.getReparte());
+						
+						if (cota.getReparte().compareTo(intervaloMinimo) < 0) {
+							BigInteger variacao = intervaloMinimo.subtract(cota.getReparte());
 
-							cota.setReparte(cotaEstudo.getIntervaloMinimo());
-							cota.setClassificacao(ClassificacaoCota.CotaMix
-									.getCodigo());
+							cota.setReparte(intervaloMinimo);
+							cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
 
-							reparteDistribuir = reparteDistribuir
-									.subtract(variacao);
-						} else if (cota.getReparte().compareTo(
-								cotaEstudo.getIntervaloMaximo()) > 0) {
-							BigInteger variacao = cotaEstudo
-									.getIntervaloMinimo().subtract(
-											cota.getReparte());
+							reparteDistribuir = reparteDistribuir.subtract(variacao);
+						
+						} else if (cota.getReparte().compareTo(intervaloMaximo) > 0) {
+							
+							BigInteger variacao = intervaloMaximo.subtract(cota.getReparte());
 
-							cota.setReparte(cotaEstudo.getIntervaloMaximo());
-							cota.setClassificacao(ClassificacaoCota.CotaMix
-									.getCodigo());
+							cota.setReparte(intervaloMaximo);
+							cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
 
 							reparteDistribuir = reparteDistribuir.add(variacao);
 						}
@@ -842,6 +856,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		
 		for (EstudoCotaGerado cota : cotas) {
 			soma = soma.add(cota.getReparte());
+			
 			if (!vo.isFixacao() && cota.getClassificacao().equals("FX")) {
 				cota.setClassificacao(ClassificacaoCota.BancaSemHistorico.getCodigo());
 			}
@@ -940,11 +955,8 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 				cota.setReparteInicial(cota.getReparte());
 			}
 			
-//			estudoCotaGeradoRepository.adicionar(cota);
 		}
 		
-//		estudoCotaGeradoRepository.gravarCotasEstudoCotaGerado(cotas);
-
 		estudoCopia.setEstudoCotas(new HashSet<EstudoCotaGerado>(cotas));
 		
 		List<EdicaoBaseEstudoDTO> edicaoBaseEstudoDTOs = estudoProdutoEdicaoBaseService.obterEdicoesBase(vo.getIdEstudo());
@@ -954,10 +966,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 					edicaoBaseEstudoDTO.isParcial(), edicaoBaseEstudoDTO.isEdicaoAberta(), edicaoBaseEstudoDTO.getPeriodoParcial());
 		}
 		
-//		estudoCotaGeradoRepository.inserirProdutoBase(estudoCopia);
-		
 		this.atualizarPercentualAbrangencia(estudoCopia.getId());
-		
 		
 		ResumoEstudoHistogramaPosAnaliseDTO resumo = estudoService.obterResumoEstudo(estudoCopia.getId(), null, null);
 	        
@@ -970,14 +979,13 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
       return estudoCopia;
 	}
 
-	private Map<Long, CotaEstudo> carregarInformacoesCotaEstudo(
-			ProdutoEdicao produtoEdicao) {
-		List<CotaEstudo> cotasEstudo = cotaRepository
-				.getInformacoesCotaEstudo(produtoEdicao);
+	private Map<Long, CotaEstudo> carregarInformacoesCotaEstudo(ProdutoEdicao produtoEdicao) {
+		
+		List<CotaEstudo> cotasEstudo = cotaRepository.getInformacoesCotaEstudo(produtoEdicao);
 		Map<Long, CotaEstudo> mapCotas = new HashMap<>();
+		
 		for (CotaEstudo cotaEstudo : cotasEstudo) {
-			if (cotaEstudo.getReparteFixado() != null
-					&& cotaEstudo.getReparteFixado().compareTo(BigInteger.ZERO) >= 0) {
+			if (cotaEstudo.getReparteFixado() != null && cotaEstudo.getReparteFixado().compareTo(BigInteger.ZERO) >= 0) {
 				cotaEstudo.setClassificacao(ClassificacaoCota.ReparteFixado);
 			}
 			if (cotaEstudo.isMix()) {

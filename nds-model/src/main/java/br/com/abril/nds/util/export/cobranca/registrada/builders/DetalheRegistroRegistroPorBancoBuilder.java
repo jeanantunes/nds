@@ -245,7 +245,7 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable {
 
         try {
             registro01.setDataVencimento(Util.formataData(boleto.getDataVencimento()));
-            registro01.setDataLimiteCocessaoDesconto(Util.formataData(boleto.getDataVencimento()));
+            registro01.setDataLimiteCocessaoDesconto("000000");
             registro01.setDataEmissaoTitulo(Util.formataData(boleto.getDataEmissao()));
         } catch (Exception e) {
             throw new ValidationException("Erro ao Formatar a Data Vencimento / Emissão");
@@ -274,10 +274,20 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable {
 
         registro01.setValorAbatimento("0");
 
+        registro01.setNumeroIncricaoPagador(StringUtils.leftPad(pessoaSacado.replace(".", "").replace("/", "").replace("-", ""), 14, '0'));
 
-        registro01.setNumeroIncricaoPagador(pessoaSacado.replace(".", "").replace("/", "").replace("-", ""));
-
-        registro01.setNomePagador("");
+        if(boleto.getCota().getPessoa().getNome()!=null && !boleto.getCota().getPessoa().getNome().isEmpty()){
+        	registro01.setNomePagador(boleto.getCota().getPessoa().getNome());
+        }else if(boleto.getCota().getPessoa() instanceof PessoaJuridica){
+        	PessoaJuridica pj =(PessoaJuridica) boleto.getCota().getPessoa();
+        	if(pj.getRazaoSocial()!=null && !pj.getRazaoSocial().isEmpty()){
+        		registro01.setNomePagador(pj.getRazaoSocial());
+        	}
+        }else{
+        	registro01.setNomePagador(StringUtils.leftPad(("NOME NAO IDENTIFICADO"),40," "));
+        }
+        
+        
 
         registro01.setMensagemCompleto("");
 
