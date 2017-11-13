@@ -208,6 +208,11 @@ public class CotaDAO {
 //    					+ "and tipo_classificacao_produto_id = :tipo_classificacao_id order by usar_icd_estudo asc ", 
     					
     					paramMap, Boolean.class);
+    			
+    			if(isUsarICDMIX == null){
+    				isUsarICDMIX = true;
+    			}
+    			
 			} catch (Exception e) {
 				isUsarICDMIX = true;
 			}
@@ -223,6 +228,11 @@ public class CotaDAO {
     			isUsarICDFixacao = (Boolean)jdbcTemplate.queryForObject(
     					"select usar_icd_estudo from fixacao_reparte where codigo_icd = :codigo_icd "
     				  + "and id_classificacao_edicao = :tipo_classificacao_id order by usar_icd_estudo asc limit 1", paramMap, Boolean.class);
+    			
+    			if(isUsarICDFixacao == null){
+    				isUsarICDFixacao = true;
+    			}
+    			
 			} catch (Exception e) {
 				isUsarICDFixacao = true;
 			}
@@ -245,7 +255,7 @@ public class CotaDAO {
 		
 		StringBuilder queryCota = new StringBuilder();
 		
-		if(!isUsarICDMIX || !isUsarICDFixacao){
+		if( (isUsarICDMIX == null || !isUsarICDMIX) || (isUsarICDFixacao == null || !isUsarICDFixacao)){
 			queryCota.append(queryCotasNaoUsarICD_Part1);
 			
 			

@@ -251,9 +251,17 @@ var analiseEstudoController = $.extend(true, {
   	
   	autoCompleteEstudo : function(numEstudo){
   		 
-  		$.postJSON(contextPath + "/distribuicao/analiseEstudo/buscarEstudos", {'filtro.numEstudo' : numEstudo},
+  		if(numEstudo == undefined || numEstudo.trim() == ""){
+  			return;
+  		}
+  		
+  		$.postJSON(contextPath + "/distribuicao/analiseEstudo/autoCompleteEstudo", {'filtro.numEstudo' : numEstudo},
 			function(data){
-	 			exibirMensagem("WARNING", ["estudo encontrado! "]);
+  				$("#codProduto", analiseEstudoController.workspace).val(data.codigoProduto);
+  				$("#analise-estudo-produto", analiseEstudoController.workspace).val(data.nomeProduto);
+  				$("#edicaoProd", analiseEstudoController.workspace).val(data.numeroEdicaoProduto);
+  				$("#dataLancamento", analiseEstudoController.workspace).val(data.dataLancamento);
+  				$("#comboClassificacao", analiseEstudoController.workspace).val(data.idTpClassifProd);
 			},
 		 	function(data){
 		 		exibirMensagem(data);
