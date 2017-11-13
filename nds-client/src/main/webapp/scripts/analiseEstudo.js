@@ -90,6 +90,10 @@ var analiseEstudoController = $.extend(true, {
 			analiseEstudoController.validarData($("#dataLancamento", analiseEstudoController.workspace).val());
 		});
 		
+		$('#idEstudo').change(function (){
+			analiseEstudoController.autoCompleteEstudo($("#idEstudo", analiseEstudoController.workspace).val());
+		});
+		
 		$("#dataLancamento", analiseEstudoController.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/images/calendar.gif",
@@ -242,7 +246,19 @@ var analiseEstudoController = $.extend(true, {
     			if (ano < 1970 || ano > 2070)
     				analiseEstudoController.exibirMensagem("Verifique o Ano.");
     	  }
-	  	},
+  	},
+  	
+  	
+  	autoCompleteEstudo : function(numEstudo){
+  		 
+  		$.postJSON(contextPath + "/distribuicao/analiseEstudo/buscarEstudos", {'filtro.numEstudo' : numEstudo},
+			function(data){
+	 			exibirMensagem("WARNING", ["estudo encontrado! "]);
+			},
+		 	function(data){
+		 		exibirMensagem(data);
+		 	});
+  	},
 	  	
   	exibirMensagem : function exibirMensagem(mensagem){
 

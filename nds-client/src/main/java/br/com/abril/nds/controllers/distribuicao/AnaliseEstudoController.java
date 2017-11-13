@@ -175,4 +175,21 @@ public class AnaliseEstudoController extends BaseController {
 		this.result.use(Results.json()).from("").serialize();
 	}
 	
+	@Post
+	@Path("/autoCompleteEstudo")
+	public void autoCompleteEstudo(FiltroAnaliseEstudoDTO filtro) {
+		
+		AnaliseEstudoDTO estudo = new AnaliseEstudoDTO();
+		
+		List<AnaliseEstudoDTO> listaEstudos = analiseEstudoService.buscarTodosEstudos(filtro);
+		
+		if(listaEstudos != null && !listaEstudos.isEmpty()){
+			estudo = listaEstudos.get(0);
+		}else{
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Estudo não encontrado!"));
+		}
+		
+		result.use(Results.json()).withoutRoot().from(estudo).recursive().serialize();
+	}
+	
 }
