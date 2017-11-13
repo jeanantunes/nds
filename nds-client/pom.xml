@@ -292,18 +292,18 @@
 			</exclusions>
 		</dependency>
 
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.5.3</version>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.apache.httpcomponents</groupId>-->
+			<!--<artifactId>httpclient</artifactId>-->
+			<!--<version>4.5.3</version>-->
+		<!--</dependency>-->
 		
-			
+		<!--
 		<dependency>
 		    <groupId>org.apache.tomcat</groupId>
 		    <artifactId>tomcat-util</artifactId>
 		    <version>8.0.0-RC1</version>
-		</dependency>
+		</dependency> -->
 
 
 	</dependencies>

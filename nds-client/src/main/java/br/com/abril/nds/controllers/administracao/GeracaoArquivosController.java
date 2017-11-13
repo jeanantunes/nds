@@ -33,8 +33,8 @@ import java.util.zip.ZipOutputStream;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.tomcat.util.codec.binary.Base64;
+//import org.apache.http.impl.client.HttpClientBuilder;
+//import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.http.HttpHeaders;
 import org.springframework.scheduling.annotation.Async;
 
@@ -284,31 +284,32 @@ public class GeracaoArquivosController extends BaseController {
 		result.use(Results.json()).from(new ValidacaoVO(tipoMensagem, mensagem), "result").recursive().serialize();
 	}
 
-	@Async
+
 	private void acionarProcessoImportacaoTPJ() {
-		try {
-			HttpGet request = new HttpGet(parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.SERVICO_TPJ).getValor());
-			String auth = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.USUARIO_TPJ).getValor() + ":" + parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.SENHA_TPJ).getValor();
-			byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(Charset.forName("ISO-8859-1")));
-			String authHeader = "Basic " + new String(encodedAuth);
-			request.setHeader("Authorization", authHeader);
 
-			HttpClient client = HttpClientBuilder.create().build();
-			org.apache.http.HttpResponse response = client.execute(request);
-
-			int statusCode = response.getStatusLine().getStatusCode();
-			System.out.println(statusCode);
-			HttpEntity entity = response.getEntity();
-
-			InputStream content = entity.getContent();
-			BufferedReader in = new BufferedReader(new InputStreamReader(content));
-			String line;
-			while ((line = in.readLine()) != null) {
-				System.out.println(line);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			HttpGet request = new HttpGet(parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.SERVICO_TPJ).getValor());
+//			String auth = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.USUARIO_TPJ).getValor() + ":" + parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.SENHA_TPJ).getValor();
+//			byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(Charset.forName("ISO-8859-1")));
+//			String authHeader = "Basic " + new String(encodedAuth);
+//			request.setHeader("Authorization", authHeader);
+//
+//		//	HttpClient client = HttpClientBuilder.create().build();
+//		//	org.apache.http.HttpResponse response = client.execute(request);
+//
+//			int statusCode = response.getStatusLine().getStatusCode();
+//			System.out.println(statusCode);
+//			HttpEntity entity = response.getEntity();
+//
+//			InputStream content = entity.getContent();
+//			BufferedReader in = new BufferedReader(new InputStreamReader(content));
+//			String line;
+//			while ((line = in.readLine()) != null) {
+//				System.out.println(line);
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 
 	}
 

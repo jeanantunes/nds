@@ -5,7 +5,6 @@ public class CotaConsignadaDetalheCouchDTO {
 	private String versao;
 	private String tipo;
 	private String distribuidor;
-	private String numeroCota;
 	private String codigoCota;
 	private String codigoPDV;
 	private String dataLancamento;
@@ -36,12 +35,6 @@ public class CotaConsignadaDetalheCouchDTO {
 	}
 	public void setDistribuidor(String distribuidor) {
 		this.distribuidor = distribuidor;
-	}
-	public String getNumeroCota() {
-		return numeroCota;
-	}
-	public void setNumeroCota(String numeroCota) {
-		this.numeroCota = numeroCota;
 	}
 	public String getCodigoCota() {
 		return codigoCota;

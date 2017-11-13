@@ -91,7 +91,7 @@ public class ExporteCouchImpl implements ExporteCouch {
 		try {
 			
 			couchDbClient = getCouchDBClient(COTAS_CONSIGNADO_COUCH);
-			String docName = "consignado_" + cotaConsignada.getCotaConsignadaDetalhes().get(0).getNumeroCota() + "_"
+			String docName = "consignado_" + cotaConsignada.getCotaConsignadaDetalhes().get(0).getCodigoCota() + "_"
 					+ cotaConsignada.getCotaConsignadaDetalhes().get(0).getDistribuidor();
 			try {
 				JsonObject jsonDoc = couchDbClient.find(JsonObject.class, docName);

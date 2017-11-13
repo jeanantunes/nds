@@ -5077,7 +5077,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		final StringBuilder SQL = new StringBuilder();
 
 		SQL.append(" SELECT  '01' as versao, 'L' as tipo, lpad(dst.COD_DISTRIBUIDOR_DINAP,7,0) as distribuidor, ")
-				.append(" lpad(c.NUMERO_COTA,7,0) AS numeroCota, lpad(c.NUMERO_COTA,5,0) AS codigoCota, lpad(c.NUMERO_COTA,5,0) AS codigoPDV, ")
+				.append(" lpad(c.NUMERO_COTA,7,0) AS codigoCota, lpad(c.NUMERO_COTA,5,0) AS codigoPDV, ")
 				.append(" replace(lcto.data_lcto_distribuidor,'-','') as dataLancamento, lpad(PR.codigo,8,0) as CODIGO, ")
 				.append(" lpad(PE.NUMERO_EDICAO,4,0) as EDICAO, lpad(coalesce(pe.CODIGO_DE_BARRAS,null,' '),18,0) as codigoBarras, ")
 				.append(" rpad(trim(PR.NOME),30,' ') as nomeProduto, ")
@@ -5110,7 +5110,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.addScalar("versao", StandardBasicTypes.STRING);
 		query.addScalar("tipo", StandardBasicTypes.STRING);
 		query.addScalar("distribuidor", StandardBasicTypes.STRING);
-		query.addScalar("numeroCota", StandardBasicTypes.STRING);
 		query.addScalar("codigoCota", StandardBasicTypes.STRING);
 		query.addScalar("codigoPDV", StandardBasicTypes.STRING);
 		query.addScalar("dataLancamento", StandardBasicTypes.STRING);
