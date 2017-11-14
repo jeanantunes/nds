@@ -150,7 +150,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 				}
 			} catch (Exception ee) {
-
 				LOGGER.error("Falha ao gerar arquivo caruso.", ee);
 			}
 
@@ -167,7 +166,9 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 			for (CotaCouchDTO reparte : lista) {
 				reparte.setProdutos(cotaRepository.getProdutoLancamento(reparte.getIdCota(), formatter.parse(reparte.getDataMovimento())));
 			}
-			exporteCouch.exportarLancamentoRecolhimento(lista, "Lancamento");
+
+			if(!lista.isEmpty())
+				exporteCouch.exportarLancamentoRecolhimento(lista, "Lancamento");
 			
 		} catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
