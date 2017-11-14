@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -221,8 +222,8 @@ public class PainelProcessamentoController extends BaseController {
         
         final FiltroInterfacesDTO filtro = carregarFiltroInterfaces(codigoDistribuidor, sortorder, sortname, page, rp);
         
-        final List<InterfaceDTO> resultado = painelProcessamentoService.listarInterfaces(filtro);
-        
+        List<InterfaceDTO> resultado = painelProcessamentoService.listarInterfaces(filtro);
+        resultado = removerInterfaceExecucaoMicroDistribuicao(resultado);
         if (resultado == null || resultado.isEmpty()) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
         } else {
@@ -244,7 +245,6 @@ public class PainelProcessamentoController extends BaseController {
     public void pesquisarInterfacesMicroDistribuicao() throws Exception {
         
     	 List<InterfaceDTO> resultado = painelProcessamentoService.listarInterfacesExecucaoMicroDistribuicao();
-        
         if (resultado == null || resultado.isEmpty()) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
         } else {
@@ -257,6 +257,17 @@ public class PainelProcessamentoController extends BaseController {
             result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
         }
         
+    }
+
+    private List<InterfaceDTO> removerInterfaceExecucaoMicroDistribuicao(List<InterfaceDTO> listaInterface) {
+        List<InterfaceDTO> listaRetorno = new ArrayList<InterfaceDTO>();
+        for (InterfaceDTO interfaceDTO : listaInterface) {
+            if (interfaceDTO.getTipoInterfaceExecucao() == null
+                    || !interfaceDTO.getTipoInterfaceExecucao().equalsIgnoreCase("microDistribuicao")) {
+                listaRetorno.add(interfaceDTO);
+            }
+        }
+        return listaRetorno;
     }
     
     /**
