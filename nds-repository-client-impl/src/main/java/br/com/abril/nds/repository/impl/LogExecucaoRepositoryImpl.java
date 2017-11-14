@@ -55,6 +55,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 				.addScalar("extensaoArquivo", StandardBasicTypes.STRING)
 				.addScalar("dataInicio", StandardBasicTypes.TIMESTAMP)
 				.addScalar("idInterface", StandardBasicTypes.LONG)
+				.addScalar("tipoInterfaceExecucao", StandardBasicTypes.STRING)
 				.setResultTransformer(Transformers.aliasToBean(ConsultaInterfacesDTO.class));
 
 			query.setParameter("codigoDistribuidor", filtro.getCodigoDistribuidor());
@@ -93,7 +94,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		}
 		
 		sql.append("select le.id as idLogExecucao, ie.id, ie.nome, ie.extensao_arquivo ");
-		sql.append("	, ie.descricao, ie.extensao_arquivo as extensaoArquivo, ");
+		sql.append("	, ie.descricao, ie.extensao_arquivo as extensaoArquivo, ie.tipo_interface_execucao as tipoInterfaceExecucao, ");
 		sql.append("	case when (le.status = 'S' and lem.nome_arquivo is null and ie.extensao_arquivo <> 'BANCO') then 'V' "); 
 		sql.append("	else coalesce(le.status, 'N') end as status ");
 		sql.append("	, le.data_inicio as dataInicio, lem.nome_arquivo as nomeArquivo, ");
