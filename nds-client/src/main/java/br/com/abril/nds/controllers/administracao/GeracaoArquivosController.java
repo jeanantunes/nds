@@ -335,7 +335,7 @@ public class GeracaoArquivosController extends BaseController {
 
             httpClient.getCredentialsProvider().setCredentials(
                     new AuthScope("localhost", 9090),
-                    new UsernamePasswordCredentials("admin@tpj.com", "admin"));
+                    new UsernamePasswordCredentials(parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.USUARIO_TPJ).getValor(), parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.SENHA_TPJ).getValor()));
 
             HttpGet httpget = new HttpGet(parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.SERVICO_TPJ).getValor());
 
