@@ -4191,21 +4191,21 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		.append(" endereco.CIDADE as enderecoCidade, ")
 		.append(" endereco.UF as enderecoUf ");
 		
-		sql.append("   FROM cota c ");
-		sql.append(" left outer join pessoa pc on pc.id = c.PESSOA_ID ");
-		sql.append(" JOIN pdv pdv ON pdv.cota_id = c.id ");
-		sql.append(" left outer join endereco_pdv endpdv on endpdv.pdv_id = pdv.id and endpdv.PRINCIPAL = true  ");
-		sql.append(" left outer join endereco on endereco.id = endpdv.endereco_id ");
-		sql.append("        JOIN estudo_cota_gerado ecg ");
-		sql.append("           ON ecg.COTA_ID = c.ID ");
-		sql.append("        JOIN estudo_gerado eg  ");
-		sql.append("           ON ecg.ESTUDO_ID = eg.ID ");
-		sql.append("       JOIN lancamento lan ON lan.ESTUDO_ID = eg.id       ");
-		sql.append("  WHERE  lan.DATA_LCTO_DISTRIBUIDOR = :data and lan.STATUS in ('BALANCEADO', 'EXPEDIDO') ");
-		sql.append("           AND pdv.PONTO_PRINCIPAL = true ");
-		sql.append("           AND ecg.QTDE_EFETIVA > 0 ");
-		sql.append("           AND c.UTILIZA_IPV = TRUE ");
-		sql.append("           AND c.tipo_transmissao='SERVICO' ");
+		sql.append("   FROM cota c ")
+		.append(" left outer join pessoa pc on pc.id = c.PESSOA_ID ")
+		.append(" JOIN pdv pdv ON pdv.cota_id = c.id ")
+		.append(" left outer join endereco_pdv endpdv on endpdv.pdv_id = pdv.id and endpdv.PRINCIPAL = true  ")
+		.append(" left outer join endereco on endereco.id = endpdv.endereco_id ")
+		.append("        JOIN estudo_cota_gerado ecg ")
+		.append("           ON ecg.COTA_ID = c.ID ")
+		.append("        JOIN estudo_gerado eg  ")
+		.append("           ON ecg.ESTUDO_ID = eg.ID ")
+		.append("       JOIN lancamento lan ON lan.ESTUDO_ID = eg.id       ")
+		.append("  WHERE  lan.DATA_LCTO_DISTRIBUIDOR = :data and lan.STATUS in ('BALANCEADO', 'EXPEDIDO') ")
+		.append("           AND pdv.PONTO_PRINCIPAL = true ")
+		.append("           AND ecg.QTDE_EFETIVA > 0 ")
+		.append("           AND c.UTILIZA_IPV = TRUE ")
+		.append("           AND c.tipo_transmissao='SERVICO' ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		

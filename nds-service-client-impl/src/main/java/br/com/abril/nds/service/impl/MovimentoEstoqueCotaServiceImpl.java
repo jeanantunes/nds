@@ -421,7 +421,6 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	@Override
 	public void atualizarDescontosDaCota(Cota cota,Double descontoAtual,Double novoDesconto){
 
-
 		this.produtoEdicaoRepository.atualizarDescontoCota(cota.getId(),descontoAtual,novoDesconto);
 
 		List<MovimentoEstoqueCota> movimentoEstoqueCotas = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaFinanceiroNaoProcessadoDaCota(cota.getId());
@@ -432,7 +431,6 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 			if(mec.getValoresAplicados().getValorDesconto().equals(BigDecimal.valueOf(descontoAtual))){
 
 				ProdutoEdicao produtoEdicao = mec.getProdutoEdicao();
-
 
 				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 				BigDecimal valoAtualizado = precoVenda.min(precoVenda.multiply(desconto.divide(BigDecimal.valueOf(100))));

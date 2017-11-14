@@ -5076,54 +5076,51 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	public List<CotaConsignadaDetalheCouchDTO> getCotasConsignadaExportCouch(String numeroCota) {
 		final StringBuilder SQL = new StringBuilder();
 
-		SQL.append(" SELECT  '01' as versao, 'L' as tipo, lpad(dst.COD_DISTRIBUIDOR_DINAP,7,0) as distribuidor, ")
-				.append(" lpad(c.NUMERO_COTA,7,0) AS numeroCota, lpad(c.NUMERO_COTA,5,0) AS codigoCota, lpad(c.NUMERO_COTA,5,0) AS codigoPDV, ")
-				.append(" replace(lcto.data_lcto_distribuidor,'-','') as dataLancamento, lpad(PR.codigo,8,0) as CODIGO, ")
-				.append(" lpad(PE.NUMERO_EDICAO,4,0) as EDICAO, lpad(coalesce(pe.CODIGO_DE_BARRAS,null,' '),18,0) as codigoBarras, ")
-				.append(" rpad(trim(PR.NOME),30,' ') as nomeProduto, ")
-				.append(" lpad(round(SUM(CASE WHEN TM.OPERACAO_ESTOQUE = 'ENTRADA' THEN MEC.QTDE ELSE 0 END - (CASE  WHEN TM.OPERACAO_ESTOQUE = 'SAIDA' THEN MEC.QTDE ELSE 0 END)),0 ),8,0)    AS consignado, ")
-				.append(" rpad(trim(ps_edi.RAZAO_SOCIAL),35,' ') as EDITOR, lpad(replace(round(PE.PRECO_VENDA,2) ,'.',''),10,0) precoCapa, lpad(replace(round(mec.preco_com_desconto,2) ,'.',''),10,0) precoCusto, rpad(trim(coalesce(pe.CHAMADA_CAPA,null,' ')),30,' ') as chamadaCapa, replace(lcto.data_lcto_distribuidor,'-','') as dataLancamento, '        ' ")
-				.append(" FROM MOVIMENTO_ESTOQUE_COTA MEC ")
-				.append(" INNER JOIN LANCAMENTO LCTO ON ( MEC.LANCAMENTO_ID=LCTO.ID) ")
-				.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ").append(" INNER JOIN PESSOA P ON C.PESSOA_ID=P.ID ")
-				.append(" inner join distribuidor dst  INNER JOIN TIPO_MOVIMENTO TM ON MEC.TIPO_MOVIMENTO_ID=TM.ID ")
-				.append(" INNER JOIN PRODUTO_EDICAO PE ON MEC.PRODUTO_EDICAO_ID = PE.ID  ")
-				.append(" INNER JOIN PRODUTO PR ON PE.PRODUTO_ID=PR.ID  ")
-				.append(" INNER JOIN PRODUTO_FORNECEDOR F ON PR.ID=F.PRODUTO_ID ")
-				.append(" INNER JOIN FORNECEDOR forn ON F.fornecedores_ID=forn.ID ")
-				.append(" INNER JOIN PESSOA PJ ON forn.JURIDICA_ID=PJ.ID  ")
-				.append(" INNER JOIN EDITOR ed on ed.ID = PR.EDITOR_ID ")
-				.append(" INNER JOIN pessoa ps_edi on ed.JURIDICA_ID = ps_edi.id ")
-				.append(" WHERE MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ")
-				.append(" and c.numero_cota =:numeroCota and mec.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME' ")
-				.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN ( 'ESTORNO_REPARTE_COTA_FURO_PUBLICACAO' ) ")
-				.append(" AND LCTO.STATUS not in ( 'FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO' ) ")
-				.append(" AND ((( c.TIPO_COTA = 'A_VISTA' AND (  c.DEVOLVE_ENCALHE = TRUE  OR c.DEVOLVE_ENCALHE is null )) ")
-				.append(" OR ( c.TIPO_COTA <> 'A_VISTA' AND (  MEC.STATUS_ESTOQUE_FINANCEIRO is null  OR MEC.STATUS_ESTOQUE_FINANCEIRO = 'FINANCEIRO_NAO_PROCESSADO' )))) ")
-				.append(" GROUP BY numeroCota, PR.codigo, PE.NUMERO_EDICAO, lcto.data_lcto_distribuidor ")
-				.append(" ORDER BY numeroCota asc,  lcto.data_lcto_distribuidor, PR.codigo, PE.NUMERO_EDICAO limit 999999999; ");
+		SQL.append(" SELECT dst.COD_DISTRIBUIDOR_DINAP AS codigoDistribuidor, ")
+			.append(" c.NUMERO_COTA  AS codigoCota, pdv.numero_pdv AS codigoPDV, ")
+			.append(" lcto.data_lcto_distribuidor AS dataLancamento, PR.codigo AS codigoPublicacao, ")
+			.append(" PE.NUMERO_EDICAO AS numeroEdicao, pe.CODIGO_DE_BARRAS AS codigoBarras, ")
+			.append(" PR.NOME AS nomePublicacao, ")
+			.append(" round(SUM(CASE WHEN TM.OPERACAO_ESTOQUE = 'ENTRADA' THEN MEC.QTDE ELSE 0 END - (CASE  WHEN TM.OPERACAO_ESTOQUE = 'SAIDA' THEN MEC.QTDE ELSE 0 END)),0 ) AS quantidadeReparte, ")
+			.append(" ps_edi.RAZAO_SOCIAL AS nomeEditora, round(PE.PRECO_VENDA,2) AS precoCapa, round(mec.preco_com_desconto,2) AS precoCusto, pe.CHAMADA_CAPA AS chamadaCapa ")
+			.append(" FROM MOVIMENTO_ESTOQUE_COTA MEC ")
+			.append(" INNER JOIN LANCAMENTO LCTO ON ( MEC.LANCAMENTO_ID=LCTO.ID) ")
+			.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ")
+			.append(" LEFT JOIN pdv pdv ON pdv.cota_id = c.id ")
+			.append(" INNER JOIN PESSOA P ON C.PESSOA_ID=P.ID ")
+			.append(" inner join distribuidor dst  INNER JOIN TIPO_MOVIMENTO TM ON MEC.TIPO_MOVIMENTO_ID=TM.ID ")
+			.append(" INNER JOIN PRODUTO_EDICAO PE ON MEC.PRODUTO_EDICAO_ID = PE.ID  ")
+			.append(" INNER JOIN PRODUTO PR ON PE.PRODUTO_ID=PR.ID  ")
+			.append(" INNER JOIN PRODUTO_FORNECEDOR F ON PR.ID=F.PRODUTO_ID ")
+			.append(" INNER JOIN FORNECEDOR forn ON F.fornecedores_ID=forn.ID ")
+			.append(" INNER JOIN PESSOA PJ ON forn.JURIDICA_ID=PJ.ID  ")
+			.append(" INNER JOIN EDITOR ed on ed.ID = PR.EDITOR_ID ")
+			.append(" INNER JOIN pessoa ps_edi on ed.JURIDICA_ID = ps_edi.id ")
+			.append(" WHERE MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ")
+			.append(" and c.numero_cota =:numeroCota and mec.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME' ")
+			.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN ( 'ESTORNO_REPARTE_COTA_FURO_PUBLICACAO' ) ")
+			.append(" AND LCTO.STATUS not in ( 'FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO' ) ")
+			.append(" AND ((( c.TIPO_COTA = 'A_VISTA' AND (  c.DEVOLVE_ENCALHE = TRUE  OR c.DEVOLVE_ENCALHE is null )) ")
+			.append(" OR ( c.TIPO_COTA <> 'A_VISTA' AND (  MEC.STATUS_ESTOQUE_FINANCEIRO is null  OR MEC.STATUS_ESTOQUE_FINANCEIRO = 'FINANCEIRO_NAO_PROCESSADO' )))) ")
+			.append(" GROUP BY PR.codigo, PE.NUMERO_EDICAO, lcto.data_lcto_distribuidor ")
+			.append(" ORDER BY lcto.data_lcto_distribuidor, PR.codigo, PE.NUMERO_EDICAO limit 999999999; ");
 
 		final SQLQuery query = getSession().createSQLQuery(SQL.toString());
 
 		query.setParameter("numeroCota", numeroCota);
 
-		query.addScalar("versao", StandardBasicTypes.STRING);
-		query.addScalar("tipo", StandardBasicTypes.STRING);
-		query.addScalar("distribuidor", StandardBasicTypes.STRING);
-		query.addScalar("numeroCota", StandardBasicTypes.STRING);
-		query.addScalar("codigoCota", StandardBasicTypes.STRING);
-		query.addScalar("codigoPDV", StandardBasicTypes.STRING);
+		query.addScalar("codigoDistribuidor", StandardBasicTypes.INTEGER);
+		query.addScalar("codigoCota", StandardBasicTypes.INTEGER);
+		query.addScalar("codigoPDV", StandardBasicTypes.INTEGER);
 		query.addScalar("dataLancamento", StandardBasicTypes.STRING);
-		query.addScalar("codigo", StandardBasicTypes.STRING);
-		query.addScalar("edicao", StandardBasicTypes.STRING);
-		
+		query.addScalar("codigoPublicacao", StandardBasicTypes.INTEGER);
+		query.addScalar("numeroEdicao", StandardBasicTypes.INTEGER);
 		query.addScalar("codigoBarras", StandardBasicTypes.STRING);
-		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
-		query.addScalar("consignado", StandardBasicTypes.STRING);
-		query.addScalar("editor", StandardBasicTypes.STRING);
-		
-		query.addScalar("precoCapa", StandardBasicTypes.STRING);
-		query.addScalar("precoCusto", StandardBasicTypes.STRING);
+		query.addScalar("nomePublicacao", StandardBasicTypes.STRING);
+		query.addScalar("quantidadeReparte", StandardBasicTypes.INTEGER);
+		query.addScalar("nomeEditora", StandardBasicTypes.STRING);
+		query.addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("precoCusto", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaConsignadaDetalheCouchDTO.class));

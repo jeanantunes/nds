@@ -35,12 +35,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.tomcat.util.codec.binary.Base64;
-import org.springframework.http.HttpHeaders;
 import org.springframework.scheduling.annotation.Async;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
@@ -51,9 +48,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -268,19 +262,25 @@ public class GeracaoArquivosController extends BaseController {
 	@Rules(Permissao.ROLE_ADMINISTRACAO_GERACAO_ARQUIVO_ALTERACAO)
 	public void gerarConsignado(String numeroCota) {
 		TipoMensagem tipoMensagem = TipoMensagem.SUCCESS;
-		String mensagem = "Cotas exportadas com sucesso";
+		String mensagem = "Nenhuma cota a ser exportadas";
 		try {
 			List<CotaConsignadaDetalheCouchDTO> listaCotasConsignadas = movimentoEstoqueCotaService
 					.getCotasConsignadaExportCouch(numeroCota);
-			CotaConsignadaCouchDTO cotaConsignadaCouchDTO = new CotaConsignadaCouchDTO();
-			cotaConsignadaCouchDTO.setCotaConsignadaDetalhes(listaCotasConsignadas);
 
-			exporteCouch.exportarCotaConsignada(cotaConsignadaCouchDTO);
+			if(!listaCotasConsignadas.isEmpty()) {
+				CotaConsignadaCouchDTO cotaConsignadaCouchDTO = new CotaConsignadaCouchDTO();
+				cotaConsignadaCouchDTO.setCotaConsignadaDetalhes(listaCotasConsignadas);
+
+				exporteCouch.exportarCotaConsignada(cotaConsignadaCouchDTO);
+				mensagem = "Cotas exportadas com sucesso";
+				acionarProcessoImportacaoTPJ();
+			}
+
 		} catch (Exception e) {
 			tipoMensagem = TipoMensagem.ERROR;
 			mensagem = "Ocorreu uma falha durante o processo de exportacao";
 		}
-		acionarProcessoImportacaoTPJ();
+
 		result.use(Results.json()).from(new ValidacaoVO(tipoMensagem, mensagem), "result").recursive().serialize();
 	}
 
@@ -307,7 +307,7 @@ public class GeracaoArquivosController extends BaseController {
 				System.out.println(line);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 
 	}

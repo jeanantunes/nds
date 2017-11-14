@@ -23,6 +23,8 @@ import br.com.abril.nds.service.UsuarioService;
 @Service
 public class ExporteCouchImpl implements ExporteCouch {
 
+	private static Logger LOGGER = LoggerFactory.getLogger(ExporteCouchImpl.class);
+
 	@Autowired
 	private CouchDbProperties couchDbProperties;
 
@@ -39,16 +41,20 @@ public class ExporteCouchImpl implements ExporteCouch {
 
 	private static String LANCAMENTO_RECOLHIMENTO_COUCH = "db_carga_tpj_lancamentos_recolhimentos";
 	private static String COTAS_CONSIGNADO_COUCH = "db_carga_tpj_cota_consignada";
-	private static Logger LOGGER = LoggerFactory.getLogger(ExporteCouchImpl.class);
+
 
 	public void exportarLancamentoRecolhimento(List<CotaCouchDTO> listaReparte, String nomeEntidadeIntegrada) {
 		try {
+
 			String data = listaReparte.get(0).getDataMovimento();
 			this.couchDbClient = getCouchDBClient(LANCAMENTO_RECOLHIMENTO_COUCH);
-			StringBuilder docName = new StringBuilder();
-			docName.append(nomeEntidadeIntegrada).append("_").append(data).append("_");
+			StringBuilder docName = new StringBuilder(nomeEntidadeIntegrada);
+			docName.append("_")
+					.append(data).append("_")
+					.append(listaReparte.get(0).getCodigoDistribuidor()).append("_");
+
 			for (CotaCouchDTO reparte : listaReparte) {
-				String keyEntity =docName.toString()+reparte.getCodigoDistribuidor();
+				String keyEntity = docName.toString() + reparte.getCodigoCota();
 				try {
 					JsonObject jsonDoc = couchDbClient.find(JsonObject.class,keyEntity);
 					this.couchDbClient.remove(jsonDoc);
@@ -91,8 +97,8 @@ public class ExporteCouchImpl implements ExporteCouch {
 		try {
 			
 			couchDbClient = getCouchDBClient(COTAS_CONSIGNADO_COUCH);
-			String docName = "consignado_" + cotaConsignada.getCotaConsignadaDetalhes().get(0).getNumeroCota() + "_"
-					+ cotaConsignada.getCotaConsignadaDetalhes().get(0).getDistribuidor();
+			String docName = "consignado_" + cotaConsignada.getCotaConsignadaDetalhes().get(0).getCodigoCota() + "_"
+					+ cotaConsignada.getCotaConsignadaDetalhes().get(0).getCodigoDistribuidor();
 			try {
 				JsonObject jsonDoc = couchDbClient.find(JsonObject.class, docName);
 				this.couchDbClient.remove(jsonDoc);
@@ -110,8 +116,9 @@ public class ExporteCouchImpl implements ExporteCouch {
 					StatusExecucaoEnum.SUCESSO, "CONSIGNADO",
 					logExecucaoRepository.findByNome("CONSIGN"));
 		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 			logInterfaceExecucao.salvar("A exportação das cotas consignadas não foi realizada com sucesso" + e.getMessage(), usuarioService.getUsuarioLogado(), new Date(),
-					StatusExecucaoEnum.FALHA, null,
+					StatusExecucaoEnum.FALHA, "CONSIGNADO",
 					logExecucaoRepository.findByNome("CONSIGN"));
 		}
 
