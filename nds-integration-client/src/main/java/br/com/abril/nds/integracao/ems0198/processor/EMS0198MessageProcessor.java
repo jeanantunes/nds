@@ -141,7 +141,6 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		}
 		
 		try {
-            // TODO - Gerar log no padrão das interfaces do NDS - p/ acompanhamento no Painel
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			List<CotaCouchDTO> lista = cotaRepository.getCotaRecolhimento(dataLctoDistrib);
 

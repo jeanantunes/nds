@@ -33,18 +33,11 @@ import java.util.zip.ZipOutputStream;
 import org.apache.http.HttpEntity;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.springframework.http.HttpHeaders;
-import org.springframework.scheduling.annotation.Async;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -54,12 +47,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
@@ -115,8 +107,6 @@ import br.com.caelum.vraptor.view.Results;
 public class GeracaoArquivosController extends BaseController {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(GeracaoArquivosController.class);
-	@Autowired
-	private ApplicationContext applicationContext;
 
 	@Autowired
 	private EMS0129Route route129;
@@ -291,15 +281,21 @@ public class GeracaoArquivosController extends BaseController {
 		result.use(Results.json()).from(new ValidacaoVO(tipoMensagem, mensagem), "result").recursive().serialize();
 	}
 
-	@Async
+//	@Async // TODO - Estrutrar p/ ser assync
     private void acionarProcessoImportacaoTPJ() {
 
         try {
-            DefaultHttpClient httpClient = new DefaultHttpClient();
 
-            httpClient.getCredentialsProvider().setCredentials(
-                    new AuthScope("localhost", 9090),
-                    new UsernamePasswordCredentials(parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.USUARIO_TPJ).getValor(), parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.SENHA_TPJ).getValor()));
+			String tpjUser = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.USUARIO_TPJ).getValor();
+			String tpjPassword = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.SENHA_TPJ).getValor();
+
+			CredentialsProvider provider = new BasicCredentialsProvider();
+			UsernamePasswordCredentials credentials
+					= new UsernamePasswordCredentials(tpjUser, tpjPassword);
+			provider.setCredentials(AuthScope.ANY, credentials);
+
+			DefaultHttpClient httpClient = new DefaultHttpClient();
+			httpClient.setCredentialsProvider(provider);
 
             HttpGet httpget = new HttpGet(parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.SERVICO_TPJ).getValor());
 
@@ -317,22 +313,6 @@ public class GeracaoArquivosController extends BaseController {
             LOGGER.error(e.getMessage(), e);
         }
     }
-
-	/*
-	 * private void acionarProcessoImportacaoTPJ(){ try { DefaultHttpClient
-	 * httpClient = new DefaultHttpClient(); ParametroSistema url =
-	 * parametroSistemaService.buscarParametroPorTipoParametro(
-	 * TipoParametroSistema.URL_TPJ);
-	 * 
-	 * HttpGet getRequest = new HttpGet( url.getValor());
-	 * getRequest.addHeader("accept", "application/json"); HttpResponse response
-	 * = httpClient.execute(getRequest); }catch(Exception e){ LOGGER.
-	 * error("Não foi possivel iniciar o processo de exportação das cotas consignadas no TPJ"
-	 * ); e.printStackTrace(); }
-	 * 
-	 * 
-	 * }
-	 */
 
 	// gerar arquivo com vendas reparte agregado ( caso caruso )
 	@Post
@@ -915,21 +895,7 @@ public class GeracaoArquivosController extends BaseController {
 			ret.append("Compactado resultado para " + arqDinapFc + "</br>");
 			session.putValue("PATH_VENDA", dirOut + "/" + arqDinapFc);
 			result.use(Results.json()).from(ret.toString(), "result").serialize();
-			/*
-			 * InputStream isFile = new FileInputStream(new
-			 * File(dirOut+"/"+arqDinapFc));
-			 * 
-			 * 
-			 * byte[] arquivo = IOUtils.toByteArray(isFile);
-			 * httpServletResponse.setContentType("application/zip");
-			 * httpServletResponse.setHeader("Content-Disposition",
-			 * "attachment; filename=" + arqDinapFc);
-			 * 
-			 * final OutputStream output =
-			 * httpServletResponse.getOutputStream(); output.write(arquivo);
-			 * 
-			 * httpServletResponse.flushBuffer();
-			 */
+
 		} catch (Exception err) {
 			err.printStackTrace();
 			String erro = "";
