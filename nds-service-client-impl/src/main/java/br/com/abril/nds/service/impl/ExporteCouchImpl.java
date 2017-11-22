@@ -86,7 +86,7 @@ public class ExporteCouchImpl implements ExporteCouch {
 				.setCreateDbIfNotExist(true).setProtocol(couchDbProperties.getProtocol())
 				.setHost(couchDbProperties.getHost()).setPort(couchDbProperties.getPort())
 				.setUsername(couchDbProperties.getUsername()).setPassword(couchDbProperties.getPassword())
-				.setMaxConnections(100).setConnectionTimeout(500);
+				.setMaxConnections(100).setConnectionTimeout(30000);
 
 		return new CouchDbClient(properties);
 
