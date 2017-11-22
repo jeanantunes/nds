@@ -28,6 +28,7 @@ import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
@@ -641,6 +642,8 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		BigInteger totalMix = BigInteger.ZERO;
 		BigInteger totalReparte = BigInteger.ZERO;
 		
+		List<Long> idCotasEstudo = new ArrayList<>();
+		
 		boolean estudosComMesmosICD = false;
 	
 		Lancamento lancamento = lancamentoRepository.buscarPorIdSemEstudo(vo.getIdLancamento());
@@ -664,6 +667,8 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		LinkedList<EstudoCotaGerado> cotas = new LinkedList<>();
 		for (EstudoCotaGerado cota : cotasSelecionadas) {
 		    	CotaEstudo cotaEstudo = mapCotas.get(cota.getCota().getId());
+		    	
+		    	idCotasEstudo.add(cota.getCota().getId());
 			    
 		    	if (cotaEstudo != null) {
 					if (cotaEstudo.getStatus() != null && cotaEstudo.getStatus().equals("SUSPENSO")) {
@@ -929,6 +934,35 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		if(cotasSelecionadas.size() > 0){
 			cotas.addAll(cotasSelecionadas);
 		}
+		
+		// tratar cotas ativas fora do estudo
+		
+		List<Cota> cotasAtivasForaDoEstudo = cotaRepository.obterCotasAtivasForaDoEstudo(idCotasEstudo);
+		
+		if(cotasAtivasForaDoEstudo != null && !cotasAtivasForaDoEstudo.isEmpty()){
+			for (Cota cota : cotasAtivasForaDoEstudo) {
+				EstudoCotaGerado estudoCota = new EstudoCotaGerado();
+				
+				estudoCota.setCota(cota);
+				estudoCota.setClassificacao(ClassificacaoCota.SemClassificacao.getCodigo());
+				estudoCota.setEstudo(estudoCopia);
+				estudoCota.setReparteInicial(BigInteger.ZERO);
+				estudoCota.setVendaMedia(BigDecimal.ZERO);
+				estudoCota.setReparteMinimo(BigInteger.ZERO);
+				estudoCota.setCotaNova(false);
+				estudoCota.setMix(0);
+				
+				if(cota.getPdvs() != null){
+					estudoCota.setQuantidadePDVS(cota.getPdvs().size());
+				}else{
+					estudoCota.setQuantidadePDVS(1);
+				}
+				
+				cotas.add(estudoCota);
+			}
+		}
+		
+		
 		// ~salvando no banco~ Preparando pra salvar no banco
 		for (EstudoCotaGerado cota : cotas) {
 			if (cota.getReparte() == null) {
