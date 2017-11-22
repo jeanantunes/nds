@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.Query;
+
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.baixaboleto.TipoEmissaoDocumento;
 import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
@@ -478,4 +480,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
 
 	List<Long> buscarCotasQueNaoRecebeFornecedorDoProduto(Long idProdutoEdicao);
+
+
+	List<Cota> obterCotasAtivasForaDoEstudo(List<Long> idCotas);
 }
