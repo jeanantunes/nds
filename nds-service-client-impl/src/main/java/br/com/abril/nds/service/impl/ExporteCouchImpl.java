@@ -64,9 +64,7 @@ public class ExporteCouchImpl implements ExporteCouch {
 				reparte.set_id(keyEntity);
 				this.couchDbClient.save(reparte);
 			}
-			if (couchDbClient != null) {
-				couchDbClient.shutdown();
-			}
+
 			String mensagem = String.format("A exportação dos %ss foi efetuada com sucesso", nomeEntidadeIntegrada);
 			logInterfaceExecucao.salvar(mensagem, usuarioService.getUsuarioLogado(), new Date(),
 					StatusExecucaoEnum.SUCESSO, "LCT",
@@ -78,7 +76,11 @@ public class ExporteCouchImpl implements ExporteCouch {
 			logInterfaceExecucao.salvar(mensagem, usuarioService.getUsuarioLogado(), new Date(),
 					StatusExecucaoEnum.FALHA, "LCT",
 					logExecucaoRepository.findByNome(nomeEntidadeIntegrada.substring(0, 7).toUpperCase()));
-		}
+		}finally{
+            if (couchDbClient != null) {
+                couchDbClient.shutdown();
+            }
+        }
 	}
 
 	private CouchDbClient getCouchDBClient(String dbBanco) {
@@ -86,7 +88,7 @@ public class ExporteCouchImpl implements ExporteCouch {
 				.setCreateDbIfNotExist(true).setProtocol(couchDbProperties.getProtocol())
 				.setHost(couchDbProperties.getHost()).setPort(couchDbProperties.getPort())
 				.setUsername(couchDbProperties.getUsername()).setPassword(couchDbProperties.getPassword())
-				.setMaxConnections(100).setConnectionTimeout(30000);
+				.setConnectionTimeout(30000);
 
 		return new CouchDbClient(properties);
 
@@ -108,9 +110,6 @@ public class ExporteCouchImpl implements ExporteCouch {
 			cotaConsignada.set_id(docName);
 			this.couchDbClient.save(cotaConsignada);
 
-			if (couchDbClient != null) {
-				couchDbClient.shutdown();
-			}
 			String mensagem = "A exportação das cotas consignadas foi realizada com sucesso";
 			logInterfaceExecucao.salvar(mensagem, usuarioService.getUsuarioLogado(), new Date(),
 					StatusExecucaoEnum.SUCESSO, "CONSIGNADO",
@@ -120,7 +119,12 @@ public class ExporteCouchImpl implements ExporteCouch {
 			logInterfaceExecucao.salvar("A exportação das cotas consignadas não foi realizada com sucesso" + e.getMessage(), usuarioService.getUsuarioLogado(), new Date(),
 					StatusExecucaoEnum.FALHA, "CONSIGNADO",
 					logExecucaoRepository.findByNome("CONSIGN"));
-		}
+		}finally{
+
+            if (couchDbClient != null) {
+                couchDbClient.shutdown();
+            }
+        }
 
 	}
 
