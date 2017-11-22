@@ -260,7 +260,7 @@ var painelProcessamentoController = $.extend(true, {
 			}
 
 			if(row.cell.nome=='LANCAME' || row.cell.nome=='RECOLHI' || row.cell.nome=='CONSIGN'){
-				row.cell.reprocessar = "";
+				row.cell.reprocessar = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.idLogExecucao + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
 			}
 			
 			//row.cell.nome = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterface(" + row.cell.idLogProcessamento + ")'>" + row.cell.nome + "</href>";
