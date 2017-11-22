@@ -19,6 +19,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import br.com.abril.nds.dto.ProdutoCouchDTO;
+import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
@@ -78,6 +80,9 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 	@Autowired
 	private ExporteCouch exporteCouch;
+
+	@Autowired
+	private DescontoProdutoEdicaoRepository descontoProdutoEdicaoRepository;
 
 	private Date dataLctoDistrib;
 
@@ -164,7 +169,14 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 			List<CotaCouchDTO> lista = cotaRepository.getCotaLancamento(dataLctoDistrib);
 
 			for (CotaCouchDTO reparte : lista) {
-				reparte.setProdutos(cotaRepository.getProdutoLancamento(reparte.getIdCota(), formatter.parse(reparte.getDataMovimento())));
+				List<ProdutoCouchDTO> produtos = cotaRepository.getProdutoLancamento(reparte.getIdCota(), formatter.parse(reparte.getDataMovimento()));
+				for(ProdutoCouchDTO produto: produtos){
+					DescontoDTO desconto =	descontoService.obterDescontoPor(new Integer(reparte.getCodigoCota()),produto.getCodigoProduto(),new Long(produto.getNumeroEdicao()));
+
+					BigDecimal valorDesconto = new BigDecimal(produto.getPrecoCapa()).multiply((desconto.getValor().divide(new BigDecimal(100))));
+					produto.setPrecoCusto(new BigDecimal(produto.getPrecoCapa()).subtract(valorDesconto).toString());
+				}
+				reparte.setProdutos(produtos);
 			}
 
 			if(!lista.isEmpty())
@@ -175,6 +187,9 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		}
 
 	}
+
+
+
 
 	public void cat(File origem, File destino) throws IOException {
 

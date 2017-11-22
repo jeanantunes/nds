@@ -44,6 +44,7 @@ public class ExporteCouchImpl implements ExporteCouch {
 
 
 	public void exportarLancamentoRecolhimento(List<CotaCouchDTO> listaReparte, String nomeEntidadeIntegrada) {
+		LOGGER.info("iniciando o processo de exportação dos lançamentos e recolhimentos para o couch ");
 		try {
 
 			String data = listaReparte.get(0).getDataMovimento();
@@ -69,6 +70,7 @@ public class ExporteCouchImpl implements ExporteCouch {
 			logInterfaceExecucao.salvar(mensagem, usuarioService.getUsuarioLogado(), new Date(),
 					StatusExecucaoEnum.SUCESSO, "LCT",
 					logExecucaoRepository.findByNome(nomeEntidadeIntegrada.substring(0, 7).toUpperCase()));
+			LOGGER.info("finalizado o processo de exportação dos lançamentos e recolhimentos para o couch ");
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 			String mensagem = String.format("A exportação dos %ss não efetuada com sucesso, %s", nomeEntidadeIntegrada,
