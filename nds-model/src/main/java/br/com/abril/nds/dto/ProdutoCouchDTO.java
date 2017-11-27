@@ -1,7 +1,12 @@
 package br.com.abril.nds.dto;
 
-public class ProdutoCouchDTO {
-	
+import java.io.Serializable;
+
+public class ProdutoCouchDTO implements Serializable{
+
+
+	private static final long serialVersionUID = 2143016091763024910L;
+
 	private String codigoProduto;
 	private String numeroEdicao;
 	private String codigoBarrasProduto;
@@ -14,6 +19,7 @@ public class ProdutoCouchDTO {
 	private String dataLancamento;
 	private String dataPrimeiroLancamentoParcial;
 	private String dataRecolhimento;
+	private Integer codigoEditora;
 	
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -88,4 +94,11 @@ public class ProdutoCouchDTO {
 		this.dataRecolhimento = dataRecolhimento;
 	}
 
+	public Integer getCodigoEditora() {
+		return codigoEditora;
+	}
+
+	public void setCodigoEditora(Integer codigoEditora) {
+		this.codigoEditora = codigoEditora;
+	}
 }

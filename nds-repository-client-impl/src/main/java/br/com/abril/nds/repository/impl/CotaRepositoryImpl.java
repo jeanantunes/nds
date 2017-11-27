@@ -4307,6 +4307,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append("       p.NOME AS nomeProduto, ");
 		sql.append("       CAST(ROUND(ecg.QTDE_EFETIVA, 0) AS CHAR) AS reparte, ");
 		sql.append("       pes.RAZAO_SOCIAL AS nomeEditora, ");
+        sql.append("       edt.CODIGO AS codigoEditora, ");
 		sql.append("       CAST(ROUND(pe.PRECO_VENDA, 2) AS CHAR) AS precoCapa, ");
 		sql.append("       CAST(ROUND(pe.PRECO_CUSTO, 2) AS CHAR) AS precoCusto, ");
 		sql.append("       pe.CHAMADA_CAPA AS chamadaCapa, ");
@@ -4362,6 +4363,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
 		query.addScalar("dataLancamento", StandardBasicTypes.STRING);
 		query.addScalar("dataPrimeiroLancamentoParcial", StandardBasicTypes.STRING);
+        query.addScalar("codigoEditora", StandardBasicTypes.INTEGER);
+
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoCouchDTO.class));
 
@@ -4384,6 +4387,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append("      , p.NOME as nomeProduto");
 		sql.append("      , CAST(ROUND(cec.QTDE_PREVISTA, 0) as CHAR) as reparte ");
 		sql.append("      , pes.RAZAO_SOCIAL as nomeEditora ");
+        sql.append("      , edt.CODIGO AS codigoEditora ");
 		sql.append("      , CAST(ROUND(mec.PRECO_VENDA, 2) as CHAR) as precoCapa ");
 		sql.append("      , CAST(ROUND(mec.PRECO_COM_DESCONTO, 2) as CHAR) as precoCusto ");
 		sql.append("      , pe.CHAMADA_CAPA as chamadaCapa ");
@@ -4420,6 +4424,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		query.addScalar("precoCusto", StandardBasicTypes.STRING);
 		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
 		query.addScalar("dataRecolhimento", StandardBasicTypes.STRING);
+        query.addScalar("codigoEditora", StandardBasicTypes.INTEGER);
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoCouchDTO.class));
 

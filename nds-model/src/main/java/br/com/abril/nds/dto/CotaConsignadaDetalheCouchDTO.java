@@ -20,6 +20,7 @@ public class CotaConsignadaDetalheCouchDTO implements Serializable {
     private BigDecimal precoCapa;
     private BigDecimal precoCusto;
     private String chamadaCapa;
+    private Integer codigoEditora;
 
     public Integer getCodigoDistribuidor() {
         return codigoDistribuidor;
@@ -123,6 +124,14 @@ public class CotaConsignadaDetalheCouchDTO implements Serializable {
 
     public void setChamadaCapa(String chamadaCapa) {
         this.chamadaCapa = chamadaCapa;
+    }
+
+    public Integer getCodigoEditora() {
+        return codigoEditora;
+    }
+
+    public void setCodigoEditora(Integer codigoEditora) {
+        this.codigoEditora = codigoEditora;
     }
 
     @Override

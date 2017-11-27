@@ -5080,7 +5080,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			.append(" c.NUMERO_COTA  AS codigoCota, pdv.numero_pdv AS codigoPDV, ")
 			.append(" lcto.data_lcto_distribuidor AS dataLancamento, PR.codigo AS codigoPublicacao, ")
 			.append(" PE.NUMERO_EDICAO AS numeroEdicao, pe.CODIGO_DE_BARRAS AS codigoBarras, ")
-			.append(" PR.NOME AS nomePublicacao, ")
+			.append(" PR.NOME AS nomePublicacao, ed.codigo as codigoEditora, ")
 			.append(" round(SUM(CASE WHEN TM.OPERACAO_ESTOQUE = 'ENTRADA' THEN MEC.QTDE ELSE 0 END - (CASE  WHEN TM.OPERACAO_ESTOQUE = 'SAIDA' THEN MEC.QTDE ELSE 0 END)),0 ) AS quantidadeReparte, ")
 			.append(" ps_edi.RAZAO_SOCIAL AS nomeEditora, round(PE.PRECO_VENDA,2) AS precoCapa, round(mec.preco_com_desconto,2) AS precoCusto, pe.CHAMADA_CAPA AS chamadaCapa ")
 			.append(" FROM MOVIMENTO_ESTOQUE_COTA MEC ")
@@ -5122,6 +5122,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("precoCusto", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
+		query.addScalar("codigoEditora", StandardBasicTypes.INTEGER);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaConsignadaDetalheCouchDTO.class));
 
