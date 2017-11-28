@@ -1918,26 +1918,26 @@ if ( dto.getRepartePrevisto() != null) {
                     
                     if (anaDTO.getVendaMedia() != null){
                         
-                        vendaMedia = vendaMedia.add(new BigDecimal(anaDTO.getVendaMedia()).setScale(2, RoundingMode.HALF_EVEN));
+                        vendaMedia = vendaMedia.add(new BigDecimal(anaDTO.getVendaMedia()));
                     }
                     
                     if (anaDTO.getReparteMedio() != null){
                         
-                        reparteMedio = reparteMedio.add(new BigDecimal(anaDTO.getReparteMedio()).setScale(2, RoundingMode.HALF_EVEN));
+                        reparteMedio = reparteMedio.add(new BigDecimal(anaDTO.getReparteMedio()));
                     }
                 }
                 
-                obj.setVdaTotal(vendaMedia.setScale(2, RoundingMode.HALF_EVEN));
-                obj.setRepTotal(reparteMedio.setScale(2, RoundingMode.HALF_EVEN));
+                obj.setVdaTotal(vendaMedia);
+                obj.setRepTotal(reparteMedio);
             }
             
             if (obj.getQtdeCotas().compareTo(BigInteger.ZERO) != 0){
-            	obj.setRepMedio(obj.getRepTotal().divide(new BigDecimal(obj.getQtdeCotas()), RoundingMode.HALF_EVEN));
-            	obj.setVdaMedio(obj.getVdaTotal().divide(new BigDecimal(obj.getQtdeCotas()), RoundingMode.HALF_EVEN));
+            	obj.setRepMedio(obj.getRepTotal().divide(new BigDecimal(obj.getQtdeCotas()), RoundingMode.HALF_UP));
+            	obj.setVdaMedio(obj.getVdaTotal().divide(new BigDecimal(obj.getQtdeCotas()), RoundingMode.HALF_UP));
             }
             
             if (obj.getRepTotal().compareTo(BigDecimal.ZERO) != 0){
-            	obj.setPercVenda(obj.getVdaTotal().multiply(CEM).divide(obj.getRepTotal(), 2, RoundingMode.HALF_EVEN));
+            	obj.setPercVenda(obj.getVdaTotal().multiply(CEM).divide(obj.getRepTotal(), 2, RoundingMode.HALF_UP));
             }
             
             obj.executeScaleValues(edicoes.length);
@@ -1967,28 +1967,29 @@ if ( dto.getRepartePrevisto() != null) {
         totalizar.setCotasEsmagadas(cotasEsmagadas);
         totalizar.setVendaEsmagadas(vendaEsmagadas);
         totalizar.setQtdeCotasSemVenda(qtdeCotasSemVenda);
-        totalizar.setRepMedio(reparteTotal.divide(new BigDecimal(qtdeCotas), 2, RoundingMode.HALF_EVEN));
-        totalizar.setVdaMedio(vendaTotal.divide(new BigDecimal(qtdeCotas), 2, RoundingMode.HALF_EVEN));
-        totalizar.setPercVenda(vendaTotal.multiply(CEM).divide(reparteTotal, 2, RoundingMode.HALF_EVEN));
-        totalizar.setEncalheMedio(reparteTotal.subtract(vendaTotal).divide(new BigDecimal(qtdeCotas), 2, RoundingMode.HALF_EVEN));
+        totalizar.setRepMedio(reparteTotal.divide(new BigDecimal(qtdeCotas), 2, RoundingMode.HALF_UP));
+        totalizar.setVdaMedio(vendaTotal.divide(new BigDecimal(qtdeCotas), 2, RoundingMode.HALF_UP));
+        totalizar.setPercVenda(vendaTotal.multiply(CEM).divide(reparteTotal, 2, RoundingMode.HALF_UP));
+        totalizar.setEncalheMedio(reparteTotal.subtract(vendaTotal).divide(new BigDecimal(qtdeCotas), 2, RoundingMode.HALF_UP));
         totalizar.setQtdeTotalCotasAtivas(cotaRepository.obterQuantidadeCotas(SituacaoCadastro.ATIVO));
         totalizar.setReparteDistribuido(movimentoEstoqueService.obterReparteDistribuidoProduto(codigoProduto));
         totalizar.setIdCotaStr(strCotas.toString());
         
         for (final AnaliseHistogramaDTO aDto : list){
-        	aDto.setPartReparte(aDto.getRepTotal().multiply(CEM).divide(totalizar.getRepTotal(), 2, RoundingMode.HALF_EVEN));
+        	aDto.setPartReparte(aDto.getRepTotal().multiply(CEM).divide(totalizar.getRepTotal(), 2, RoundingMode.HALF_UP));
+        	
         	if(totalizar.getVdaTotal().compareTo(BigDecimal.ZERO) > 0) {
-        		aDto.setPartVenda(aDto.getVdaTotal().multiply(CEM).divide(totalizar.getVdaTotal(), 2, RoundingMode.HALF_EVEN));
+        		aDto.setPartVenda(aDto.getVdaTotal().multiply(CEM).divide(totalizar.getVdaTotal(), 2, RoundingMode.HALF_UP));
         	} else {
-        		aDto.setPartVenda(aDto.getVdaTotal().multiply(CEM).divide(totalizar.getRepTotal(), 2, RoundingMode.HALF_EVEN));
+        		aDto.setPartVenda(aDto.getVdaTotal().multiply(CEM).divide(totalizar.getRepTotal(), 2, RoundingMode.HALF_UP));
         	}
             
             partReparte = partReparte.add(aDto.getPartReparte());
             partVenda = partVenda.add(aDto.getPartVenda());
         }
         
-        totalizar.setPartReparte(partReparte.setScale(0, RoundingMode.HALF_EVEN));
-        totalizar.setPartVenda(partVenda.setScale(0, RoundingMode.HALF_EVEN));
+        totalizar.setPartReparte(partReparte.setScale(0, RoundingMode.HALF_UP));
+        totalizar.setPartVenda(partVenda.setScale(0, RoundingMode.HALF_UP));
         
         list.add(totalizar);
         
