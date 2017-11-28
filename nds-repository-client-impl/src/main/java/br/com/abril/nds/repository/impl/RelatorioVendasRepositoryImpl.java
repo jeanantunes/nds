@@ -1,14 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -754,6 +747,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("         consolidado.PRODUTO_EDICAO_ID AS idProdutoEdicao, ");
 		sql.append("         consolidado.CODIGO_PRODUTO AS codigoProduto, ");
 		sql.append("         consolidado.NOME_PRODUTO AS nomeProduto, ");
+		sql.append("         consolidado.classificacaoProduto, ");
 		sql.append("         consolidado.NUMERO_EDICAO AS edicaoProduto, ");
 		sql.append("         @valorAcumulado\\:=@valorAcumulado + consolidado.valor as participacaoAcumulada, ");
 		sql.append("         @posicaoRanking\\:=@posicaoRanking + 1 as rkProduto, ");
@@ -784,6 +778,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("             temp.tipoPDV as tipoPDV, ");
 		sql.append("             temp.precoCapa, ");
 		sql.append("             temp.nomeEditor, ");
+		sql.append("         	 temp.classificacaoProduto, ");
 		sql.append("             temp.descricaoSegmento ");
 		sql.append("         FROM ");
 		sql.append("             (                       ");
@@ -801,6 +796,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                 T.tipoPDV as tipoPDV, ");
 		sql.append("                 T.precoCapa, ");
 		sql.append("                 T.nomeEditor, ");
+		sql.append("         		 T.classificacaoProduto, ");
 		sql.append("                 T.descricaoSegmento ");
 		sql.append("             FROM ");
 		sql.append("                 (SELECT ");
@@ -856,6 +852,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                     	  when pessoaeditor.tipo = 'F' then pessoaeditor.nome ");
 		sql.append("                     end as nomeEditor, ");
 		sql.append("                     tsp.descricao as descricaoSegmento, ");
+		sql.append("         	 		 tcp.descricao as classificacaoProduto, ");
 		sql.append("                     COALESCE(PE.PRECO_VENDA, 0) as precoCapa ");
 		sql.append("                 FROM ");
 		sql.append("                     lancamento l                               ");
@@ -908,6 +905,9 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                 JOIN ");
 		sql.append("                     tipo_segmento_produto tsp                         ");
 		sql.append("                         on tsp.id = p.TIPO_SEGMENTO_PRODUTO_ID               ");
+		sql.append("                 JOIN ");
+		sql.append("                     tipo_classificacao_produto tcp                          ");
+		sql.append("                         on tcp.id = pe.tipo_classificacao_produto_id              ");
 		sql.append("                 WHERE ");
 		sql.append("                     l.status in ('EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO')                   ");
 		sql.append("                     and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE'   ");
@@ -953,6 +953,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		query.addScalar("nomeCota", StandardBasicTypes.STRING);
 		
 		query.addScalar("tipoPDV", StandardBasicTypes.STRING);
+		query.addScalar("classificacaoProduto", StandardBasicTypes.STRING);
 		
 		query.addScalar("nomeEditor", StandardBasicTypes.STRING);
 		query.addScalar("descricaoSegmento", StandardBasicTypes.STRING);
