@@ -78,6 +78,8 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 	
 	private Long idProdutoEdicao;
 	
+	private String classificacaoProduto;
+	
 	
 	private BigDecimal precoCapa;
 	
@@ -276,6 +278,14 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 
 	public void setPrecoCapaFormatado(String precoCapaFormatado) {
 		this.precoCapaFormatado = precoCapaFormatado;
+	}
+
+	public String getClassificacaoProduto() {
+		return classificacaoProduto;
+	}
+
+	public void setClassificacaoProduto(String classificacaoProduto) {
+		this.classificacaoProduto = classificacaoProduto;
 	}
 	
 }

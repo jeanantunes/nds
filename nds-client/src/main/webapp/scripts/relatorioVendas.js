@@ -353,6 +353,12 @@ var relatorioVendasController = $.extend(true, {
 				width : 140,
 				sortable : true,
 				align : 'left'
+			},{
+				display : 'Classificação',
+				name : 'classificacaoProduto',
+				width : 80,
+				sortable : true,
+				align : 'left'
 			}, {
 				display : 'Segmento',
 				name : 'descricaoSegmento',
