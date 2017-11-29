@@ -341,6 +341,11 @@ public class MixCotaProdutoController extends BaseController {
 	@Path("/excluirTodosPorProduto")
 	public void excluirTodosPorProduto(String codigoICD) {
 		
+		if(codigoICD != null && codigoICD.length() > 6){
+			Produto produto = this.produtoService.obterProdutoPorCodigo(codigoICD);
+			codigoICD = produto.getCodigoICD();
+		}
+		
 		mixCotaProdutoService.excluirMixProdutoPorCodigoICD(codigoICD);
 		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
