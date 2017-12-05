@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * Tipo Nota Fiscal Eletrônica
- * 
+ *
  * <p>Java class for TNFe complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TNFe">
  *   &lt;complexContent>
@@ -2860,28 +2860,28 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TNFe", propOrder = {
-    "infNFe",
-    "signature"
+        "infNFe",
+        "signature"
 })
 public class TNFe {
 
-    @XmlElement(name = "NFe", namespace = "http://www.portalfiscal.inf.br/nfe", required = true)
+    @XmlElement(required = true)
     protected TNFe.InfNFe infNFe;
     @XmlElement(name = "Signature", namespace = "http://www.w3.org/2000/09/xmldsig#", required = true)
     protected SignatureType signature;
 
     /**
      * Gets the value of the infNFe property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TNFe.InfNFe }
-     *     
+     *
      */
     public TNFe.InfNFe getInfNFe() {
         return infNFe;
@@ -2889,11 +2889,11 @@ public class TNFe {
 
     /**
      * Sets the value of the infNFe property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TNFe.InfNFe }
-     *     
+     *
      */
     public void setInfNFe(TNFe.InfNFe value) {
         this.infNFe = value;
@@ -2901,11 +2901,11 @@ public class TNFe {
 
     /**
      * Gets the value of the signature property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SignatureType }
-     *     
+     *
      */
     public SignatureType getSignature() {
         return signature;
@@ -2913,11 +2913,11 @@ public class TNFe {
 
     /**
      * Sets the value of the signature property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SignatureType }
-     *     
+     *
      */
     public void setSignature(SignatureType value) {
         this.signature = value;
@@ -2926,9 +2926,9 @@ public class TNFe {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -5748,27 +5748,27 @@ public class TNFe {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
-        "ide",
-        "emit",
-        "avulsa",
-        "dest",
-        "retirada",
-        "entrega",
-        "autXML",
-        "det",
-        "total",
-        "transp",
-        "cobr",
-        "pag",
-        "infAdic",
-        "exporta",
-        "compra",
-        "cana"
+            "ide",
+            "emit",
+            "avulsa",
+            "dest",
+            "retirada",
+            "entrega",
+            "autXML",
+            "det",
+            "total",
+            "transp",
+            "cobr",
+            "pag",
+            "infAdic",
+            "exporta",
+            "compra",
+            "cana"
     })
     public static class InfNFe {
 
@@ -5802,11 +5802,11 @@ public class TNFe {
 
         /**
          * Gets the value of the ide property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TNFe.InfNFe.Ide }
-         *     
+         *
          */
         public TNFe.InfNFe.Ide getIde() {
             return ide;
@@ -5814,11 +5814,11 @@ public class TNFe {
 
         /**
          * Sets the value of the ide property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TNFe.InfNFe.Ide }
-         *     
+         *
          */
         public void setIde(TNFe.InfNFe.Ide value) {
             this.ide = value;
@@ -5826,11 +5826,11 @@ public class TNFe {
 
         /**
          * Gets the value of the emit property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TNFe.InfNFe.Emit }
-         *     
+         *
          */
         public TNFe.InfNFe.Emit getEmit() {
             return emit;
@@ -5838,11 +5838,11 @@ public class TNFe {
 
         /**
          * Sets the value of the emit property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TNFe.InfNFe.Emit }
-         *     
+         *
          */
         public void setEmit(TNFe.InfNFe.Emit value) {
             this.emit = value;
@@ -5850,11 +5850,11 @@ public class TNFe {
 
         /**
          * Gets the value of the avulsa property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TNFe.InfNFe.Avulsa }
-         *     
+         *
          */
         public TNFe.InfNFe.Avulsa getAvulsa() {
             return avulsa;
@@ -5862,11 +5862,11 @@ public class TNFe {
 
         /**
          * Sets the value of the avulsa property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TNFe.InfNFe.Avulsa }
-         *     
+         *
          */
         public void setAvulsa(TNFe.InfNFe.Avulsa value) {
             this.avulsa = value;
@@ -5874,11 +5874,11 @@ public class TNFe {
 
         /**
          * Gets the value of the dest property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TNFe.InfNFe.Dest }
-         *     
+         *
          */
         public TNFe.InfNFe.Dest getDest() {
             return dest;
@@ -5886,11 +5886,11 @@ public class TNFe {
 
         /**
          * Sets the value of the dest property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TNFe.InfNFe.Dest }
-         *     
+         *
          */
         public void setDest(TNFe.InfNFe.Dest value) {
             this.dest = value;
@@ -5898,11 +5898,11 @@ public class TNFe {
 
         /**
          * Gets the value of the retirada property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TLocal }
-         *     
+         *
          */
         public TLocal getRetirada() {
             return retirada;
@@ -5910,11 +5910,11 @@ public class TNFe {
 
         /**
          * Sets the value of the retirada property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TLocal }
-         *     
+         *
          */
         public void setRetirada(TLocal value) {
             this.retirada = value;
@@ -5922,11 +5922,11 @@ public class TNFe {
 
         /**
          * Gets the value of the entrega property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TLocal }
-         *     
+         *
          */
         public TLocal getEntrega() {
             return entrega;
@@ -5934,11 +5934,11 @@ public class TNFe {
 
         /**
          * Sets the value of the entrega property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TLocal }
-         *     
+         *
          */
         public void setEntrega(TLocal value) {
             this.entrega = value;
@@ -5946,25 +5946,25 @@ public class TNFe {
 
         /**
          * Gets the value of the autXML property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the autXML property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getAutXML().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link TNFe.InfNFe.AutXML }
-         * 
-         * 
+         *
+         *
          */
         public List<TNFe.InfNFe.AutXML> getAutXML() {
             if (autXML == null) {
@@ -5975,25 +5975,25 @@ public class TNFe {
 
         /**
          * Gets the value of the det property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the det property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getDet().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link TNFe.InfNFe.Det }
-         * 
-         * 
+         *
+         *
          */
         public List<TNFe.InfNFe.Det> getDet() {
             if (det == null) {
@@ -6004,11 +6004,11 @@ public class TNFe {
 
         /**
          * Gets the value of the total property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TNFe.InfNFe.Total }
-         *     
+         *
          */
         public TNFe.InfNFe.Total getTotal() {
             return total;
@@ -6016,11 +6016,11 @@ public class TNFe {
 
         /**
          * Sets the value of the total property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TNFe.InfNFe.Total }
-         *     
+         *
          */
         public void setTotal(TNFe.InfNFe.Total value) {
             this.total = value;
@@ -6028,11 +6028,11 @@ public class TNFe {
 
         /**
          * Gets the value of the transp property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TNFe.InfNFe.Transp }
-         *     
+         *
          */
         public TNFe.InfNFe.Transp getTransp() {
             return transp;
@@ -6040,11 +6040,11 @@ public class TNFe {
 
         /**
          * Sets the value of the transp property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TNFe.InfNFe.Transp }
-         *     
+         *
          */
         public void setTransp(TNFe.InfNFe.Transp value) {
             this.transp = value;
@@ -6052,11 +6052,11 @@ public class TNFe {
 
         /**
          * Gets the value of the cobr property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TNFe.InfNFe.Cobr }
-         *     
+         *
          */
         public TNFe.InfNFe.Cobr getCobr() {
             return cobr;
@@ -6064,11 +6064,11 @@ public class TNFe {
 
         /**
          * Sets the value of the cobr property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TNFe.InfNFe.Cobr }
-         *     
+         *
          */
         public void setCobr(TNFe.InfNFe.Cobr value) {
             this.cobr = value;
@@ -6076,25 +6076,25 @@ public class TNFe {
 
         /**
          * Gets the value of the pag property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the pag property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getPag().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link TNFe.InfNFe.Pag }
-         * 
-         * 
+         *
+         *
          */
         public List<TNFe.InfNFe.Pag> getPag() {
             if (pag == null) {
@@ -6105,11 +6105,11 @@ public class TNFe {
 
         /**
          * Gets the value of the infAdic property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TNFe.InfNFe.InfAdic }
-         *     
+         *
          */
         public TNFe.InfNFe.InfAdic getInfAdic() {
             return infAdic;
@@ -6117,11 +6117,11 @@ public class TNFe {
 
         /**
          * Sets the value of the infAdic property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TNFe.InfNFe.InfAdic }
-         *     
+         *
          */
         public void setInfAdic(TNFe.InfNFe.InfAdic value) {
             this.infAdic = value;
@@ -6129,11 +6129,11 @@ public class TNFe {
 
         /**
          * Gets the value of the exporta property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TNFe.InfNFe.Exporta }
-         *     
+         *
          */
         public TNFe.InfNFe.Exporta getExporta() {
             return exporta;
@@ -6141,11 +6141,11 @@ public class TNFe {
 
         /**
          * Sets the value of the exporta property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TNFe.InfNFe.Exporta }
-         *     
+         *
          */
         public void setExporta(TNFe.InfNFe.Exporta value) {
             this.exporta = value;
@@ -6153,11 +6153,11 @@ public class TNFe {
 
         /**
          * Gets the value of the compra property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TNFe.InfNFe.Compra }
-         *     
+         *
          */
         public TNFe.InfNFe.Compra getCompra() {
             return compra;
@@ -6165,11 +6165,11 @@ public class TNFe {
 
         /**
          * Sets the value of the compra property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TNFe.InfNFe.Compra }
-         *     
+         *
          */
         public void setCompra(TNFe.InfNFe.Compra value) {
             this.compra = value;
@@ -6177,11 +6177,11 @@ public class TNFe {
 
         /**
          * Gets the value of the cana property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link TNFe.InfNFe.Cana }
-         *     
+         *
          */
         public TNFe.InfNFe.Cana getCana() {
             return cana;
@@ -6189,11 +6189,11 @@ public class TNFe {
 
         /**
          * Sets the value of the cana property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link TNFe.InfNFe.Cana }
-         *     
+         *
          */
         public void setCana(TNFe.InfNFe.Cana value) {
             this.cana = value;
@@ -6201,11 +6201,11 @@ public class TNFe {
 
         /**
          * Gets the value of the versao property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getVersao() {
             return versao;
@@ -6213,11 +6213,11 @@ public class TNFe {
 
         /**
          * Sets the value of the versao property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setVersao(String value) {
             this.versao = value;
@@ -6225,11 +6225,11 @@ public class TNFe {
 
         /**
          * Gets the value of the id property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getId() {
             return id;
@@ -6237,11 +6237,11 @@ public class TNFe {
 
         /**
          * Sets the value of the id property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setId(String value) {
             this.id = value;
@@ -6250,9 +6250,9 @@ public class TNFe {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -6265,13 +6265,13 @@ public class TNFe {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "cnpj",
-            "cpf"
+                "cnpj",
+                "cpf"
         })
         public static class AutXML {
 
@@ -6282,11 +6282,11 @@ public class TNFe {
 
             /**
              * Gets the value of the cnpj property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getCNPJ() {
                 return cnpj;
@@ -6294,11 +6294,11 @@ public class TNFe {
 
             /**
              * Sets the value of the cnpj property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setCNPJ(String value) {
                 this.cnpj = value;
@@ -6306,11 +6306,11 @@ public class TNFe {
 
             /**
              * Gets the value of the cpf property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getCPF() {
                 return cpf;
@@ -6318,11 +6318,11 @@ public class TNFe {
 
             /**
              * Sets the value of the cpf property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setCPF(String value) {
                 this.cpf = value;
@@ -6333,9 +6333,9 @@ public class TNFe {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -6399,22 +6399,22 @@ public class TNFe {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "cnpj",
-            "xOrgao",
-            "matr",
-            "xAgente",
-            "fone",
-            "uf",
-            "ndar",
-            "dEmi",
-            "vdar",
-            "repEmi",
-            "dPag"
+                "cnpj",
+                "xOrgao",
+                "matr",
+                "xAgente",
+                "fone",
+                "uf",
+                "ndar",
+                "dEmi",
+                "vdar",
+                "repEmi",
+                "dPag"
         })
         public static class Avulsa {
 
@@ -6440,11 +6440,11 @@ public class TNFe {
 
             /**
              * Gets the value of the cnpj property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getCNPJ() {
                 return cnpj;
@@ -6452,11 +6452,11 @@ public class TNFe {
 
             /**
              * Sets the value of the cnpj property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setCNPJ(String value) {
                 this.cnpj = value;
@@ -6464,11 +6464,11 @@ public class TNFe {
 
             /**
              * Gets the value of the xOrgao property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getXOrgao() {
                 return xOrgao;
@@ -6476,11 +6476,11 @@ public class TNFe {
 
             /**
              * Sets the value of the xOrgao property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setXOrgao(String value) {
                 this.xOrgao = value;
@@ -6488,11 +6488,11 @@ public class TNFe {
 
             /**
              * Gets the value of the matr property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getMatr() {
                 return matr;
@@ -6500,11 +6500,11 @@ public class TNFe {
 
             /**
              * Sets the value of the matr property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setMatr(String value) {
                 this.matr = value;
@@ -6512,11 +6512,11 @@ public class TNFe {
 
             /**
              * Gets the value of the xAgente property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getXAgente() {
                 return xAgente;
@@ -6524,11 +6524,11 @@ public class TNFe {
 
             /**
              * Sets the value of the xAgente property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setXAgente(String value) {
                 this.xAgente = value;
@@ -6536,11 +6536,11 @@ public class TNFe {
 
             /**
              * Gets the value of the fone property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getFone() {
                 return fone;
@@ -6548,11 +6548,11 @@ public class TNFe {
 
             /**
              * Sets the value of the fone property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setFone(String value) {
                 this.fone = value;
@@ -6560,11 +6560,11 @@ public class TNFe {
 
             /**
              * Gets the value of the uf property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link TUfEmi }
-             *     
+             *
              */
             public TUfEmi getUF() {
                 return uf;
@@ -6572,11 +6572,11 @@ public class TNFe {
 
             /**
              * Sets the value of the uf property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link TUfEmi }
-             *     
+             *
              */
             public void setUF(TUfEmi value) {
                 this.uf = value;
@@ -6584,11 +6584,11 @@ public class TNFe {
 
             /**
              * Gets the value of the ndar property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getNDAR() {
                 return ndar;
@@ -6596,11 +6596,11 @@ public class TNFe {
 
             /**
              * Sets the value of the ndar property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setNDAR(String value) {
                 this.ndar = value;
@@ -6608,11 +6608,11 @@ public class TNFe {
 
             /**
              * Gets the value of the dEmi property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getDEmi() {
                 return dEmi;
@@ -6620,11 +6620,11 @@ public class TNFe {
 
             /**
              * Sets the value of the dEmi property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setDEmi(String value) {
                 this.dEmi = value;
@@ -6632,11 +6632,11 @@ public class TNFe {
 
             /**
              * Gets the value of the vdar property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getVDAR() {
                 return vdar;
@@ -6644,11 +6644,11 @@ public class TNFe {
 
             /**
              * Sets the value of the vdar property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setVDAR(String value) {
                 this.vdar = value;
@@ -6656,11 +6656,11 @@ public class TNFe {
 
             /**
              * Gets the value of the repEmi property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getRepEmi() {
                 return repEmi;
@@ -6668,11 +6668,11 @@ public class TNFe {
 
             /**
              * Sets the value of the repEmi property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setRepEmi(String value) {
                 this.repEmi = value;
@@ -6680,11 +6680,11 @@ public class TNFe {
 
             /**
              * Gets the value of the dPag property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getDPag() {
                 return dPag;
@@ -6692,11 +6692,11 @@ public class TNFe {
 
             /**
              * Sets the value of the dPag property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setDPag(String value) {
                 this.dPag = value;
@@ -6707,9 +6707,9 @@ public class TNFe {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -6780,21 +6780,21 @@ public class TNFe {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "safra",
-            "ref",
-            "forDia",
-            "qTotMes",
-            "qTotAnt",
-            "qTotGer",
-            "deduc",
-            "vFor",
-            "vTotDed",
-            "vLiqFor"
+                "safra",
+                "ref",
+                "forDia",
+                "qTotMes",
+                "qTotAnt",
+                "qTotGer",
+                "deduc",
+                "vFor",
+                "vTotDed",
+                "vLiqFor"
         })
         public static class Cana {
 
@@ -6820,11 +6820,11 @@ public class TNFe {
 
             /**
              * Gets the value of the safra property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getSafra() {
                 return safra;
@@ -6832,11 +6832,11 @@ public class TNFe {
 
             /**
              * Sets the value of the safra property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setSafra(String value) {
                 this.safra = value;
@@ -6844,11 +6844,11 @@ public class TNFe {
 
             /**
              * Gets the value of the ref property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getRef() {
                 return ref;
@@ -6856,11 +6856,11 @@ public class TNFe {
 
             /**
              * Sets the value of the ref property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setRef(String value) {
                 this.ref = value;
@@ -6868,25 +6868,25 @@ public class TNFe {
 
             /**
              * Gets the value of the forDia property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the forDia property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getForDia().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link TNFe.InfNFe.Cana.ForDia }
-             * 
-             * 
+             *
+             *
              */
             public List<TNFe.InfNFe.Cana.ForDia> getForDia() {
                 if (forDia == null) {
@@ -6897,11 +6897,11 @@ public class TNFe {
 
             /**
              * Gets the value of the qTotMes property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getQTotMes() {
                 return qTotMes;
@@ -6909,11 +6909,11 @@ public class TNFe {
 
             /**
              * Sets the value of the qTotMes property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setQTotMes(String value) {
                 this.qTotMes = value;
@@ -6921,11 +6921,11 @@ public class TNFe {
 
             /**
              * Gets the value of the qTotAnt property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getQTotAnt() {
                 return qTotAnt;
@@ -6933,11 +6933,11 @@ public class TNFe {
 
             /**
              * Sets the value of the qTotAnt property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setQTotAnt(String value) {
                 this.qTotAnt = value;
@@ -6945,11 +6945,11 @@ public class TNFe {
 
             /**
              * Gets the value of the qTotGer property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getQTotGer() {
                 return qTotGer;
@@ -6957,11 +6957,11 @@ public class TNFe {
 
             /**
              * Sets the value of the qTotGer property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setQTotGer(String value) {
                 this.qTotGer = value;
@@ -6969,25 +6969,25 @@ public class TNFe {
 
             /**
              * Gets the value of the deduc property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the deduc property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getDeduc().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link TNFe.InfNFe.Cana.Deduc }
-             * 
-             * 
+             *
+             *
              */
             public List<TNFe.InfNFe.Cana.Deduc> getDeduc() {
                 if (deduc == null) {
@@ -6998,11 +6998,11 @@ public class TNFe {
 
             /**
              * Gets the value of the vFor property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getVFor() {
                 return vFor;
@@ -7010,11 +7010,11 @@ public class TNFe {
 
             /**
              * Sets the value of the vFor property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setVFor(String value) {
                 this.vFor = value;
@@ -7022,11 +7022,11 @@ public class TNFe {
 
             /**
              * Gets the value of the vTotDed property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getVTotDed() {
                 return vTotDed;
@@ -7034,11 +7034,11 @@ public class TNFe {
 
             /**
              * Sets the value of the vTotDed property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setVTotDed(String value) {
                 this.vTotDed = value;
@@ -7046,11 +7046,11 @@ public class TNFe {
 
             /**
              * Gets the value of the vLiqFor property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getVLiqFor() {
                 return vLiqFor;
@@ -7058,11 +7058,11 @@ public class TNFe {
 
             /**
              * Sets the value of the vLiqFor property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setVLiqFor(String value) {
                 this.vLiqFor = value;
@@ -7071,9 +7071,9 @@ public class TNFe {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -7093,13 +7093,13 @@ public class TNFe {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "xDed",
-                "vDed"
+                    "xDed",
+                    "vDed"
             })
             public static class Deduc {
 
@@ -7110,11 +7110,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the xDed property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getXDed() {
                     return xDed;
@@ -7122,11 +7122,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the xDed property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setXDed(String value) {
                     this.xDed = value;
@@ -7134,11 +7134,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vDed property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVDed() {
                     return vDed;
@@ -7146,11 +7146,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vDed property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVDed(String value) {
                     this.vDed = value;
@@ -7161,9 +7161,9 @@ public class TNFe {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -7183,12 +7183,12 @@ public class TNFe {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "qtde"
+                    "qtde"
             })
             public static class ForDia {
 
@@ -7199,11 +7199,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the qtde property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getQtde() {
                     return qtde;
@@ -7211,11 +7211,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the qtde property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setQtde(String value) {
                     this.qtde = value;
@@ -7223,11 +7223,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the dia property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getDia() {
                     return dia;
@@ -7235,11 +7235,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the dia property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setDia(String value) {
                     this.dia = value;
@@ -7252,9 +7252,9 @@ public class TNFe {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -7306,13 +7306,13 @@ public class TNFe {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "fat",
-            "dup"
+                "fat",
+                "dup"
         })
         public static class Cobr {
 
@@ -7321,11 +7321,11 @@ public class TNFe {
 
             /**
              * Gets the value of the fat property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link TNFe.InfNFe.Cobr.Fat }
-             *     
+             *
              */
             public TNFe.InfNFe.Cobr.Fat getFat() {
                 return fat;
@@ -7333,11 +7333,11 @@ public class TNFe {
 
             /**
              * Sets the value of the fat property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link TNFe.InfNFe.Cobr.Fat }
-             *     
+             *
              */
             public void setFat(TNFe.InfNFe.Cobr.Fat value) {
                 this.fat = value;
@@ -7345,25 +7345,25 @@ public class TNFe {
 
             /**
              * Gets the value of the dup property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the dup property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getDup().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link TNFe.InfNFe.Cobr.Dup }
-             * 
-             * 
+             *
+             *
              */
             public List<TNFe.InfNFe.Cobr.Dup> getDup() {
                 if (dup == null) {
@@ -7375,9 +7375,9 @@ public class TNFe {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -7398,14 +7398,14 @@ public class TNFe {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "nDup",
-                "dVenc",
-                "vDup"
+                    "nDup",
+                    "dVenc",
+                    "vDup"
             })
             public static class Dup {
 
@@ -7416,11 +7416,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the nDup property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getNDup() {
                     return nDup;
@@ -7428,11 +7428,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the nDup property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setNDup(String value) {
                     this.nDup = value;
@@ -7440,11 +7440,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the dVenc property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getDVenc() {
                     return dVenc;
@@ -7452,11 +7452,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the dVenc property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setDVenc(String value) {
                     this.dVenc = value;
@@ -7464,11 +7464,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vDup property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVDup() {
                     return vDup;
@@ -7476,11 +7476,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vDup property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVDup(String value) {
                     this.vDup = value;
@@ -7491,9 +7491,9 @@ public class TNFe {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -7515,15 +7515,15 @@ public class TNFe {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "nFat",
-                "vOrig",
-                "vDesc",
-                "vLiq"
+                    "nFat",
+                    "vOrig",
+                    "vDesc",
+                    "vLiq"
             })
             public static class Fat {
 
@@ -7534,11 +7534,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the nFat property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getNFat() {
                     return nFat;
@@ -7546,11 +7546,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the nFat property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setNFat(String value) {
                     this.nFat = value;
@@ -7558,11 +7558,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vOrig property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVOrig() {
                     return vOrig;
@@ -7570,11 +7570,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vOrig property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVOrig(String value) {
                     this.vOrig = value;
@@ -7582,11 +7582,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vDesc property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVDesc() {
                     return vDesc;
@@ -7594,11 +7594,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vDesc property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVDesc(String value) {
                     this.vDesc = value;
@@ -7606,11 +7606,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vLiq property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVLiq() {
                     return vLiq;
@@ -7618,11 +7618,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vLiq property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVLiq(String value) {
                     this.vLiq = value;
@@ -7635,9 +7635,9 @@ public class TNFe {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -7672,14 +7672,14 @@ public class TNFe {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "xnEmp",
-            "xPed",
-            "xCont"
+                "xnEmp",
+                "xPed",
+                "xCont"
         })
         public static class Compra {
 
@@ -7690,11 +7690,11 @@ public class TNFe {
 
             /**
              * Gets the value of the xnEmp property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getXNEmp() {
                 return xnEmp;
@@ -7702,11 +7702,11 @@ public class TNFe {
 
             /**
              * Sets the value of the xnEmp property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setXNEmp(String value) {
                 this.xnEmp = value;
@@ -7714,11 +7714,11 @@ public class TNFe {
 
             /**
              * Gets the value of the xPed property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getXPed() {
                 return xPed;
@@ -7726,11 +7726,11 @@ public class TNFe {
 
             /**
              * Sets the value of the xPed property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setXPed(String value) {
                 this.xPed = value;
@@ -7738,11 +7738,11 @@ public class TNFe {
 
             /**
              * Gets the value of the xCont property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getXCont() {
                 return xCont;
@@ -7750,11 +7750,11 @@ public class TNFe {
 
             /**
              * Sets the value of the xCont property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setXCont(String value) {
                 this.xCont = value;
@@ -7765,9 +7765,9 @@ public class TNFe {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -7835,21 +7835,21 @@ public class TNFe {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "cnpj",
-            "cpf",
-            "idEstrangeiro",
-            "xNome",
-            "enderDest",
-            "indIEDest",
-            "ie",
-            "isuf",
-            "im",
-            "email"
+                "cnpj",
+                "cpf",
+                "idEstrangeiro",
+                "xNome",
+                "enderDest",
+                "indIEDest",
+                "ie",
+                "isuf",
+                "im",
+                "email"
         })
         public static class Dest {
 
@@ -7872,11 +7872,11 @@ public class TNFe {
 
             /**
              * Gets the value of the cnpj property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getCNPJ() {
                 return cnpj;
@@ -7884,11 +7884,11 @@ public class TNFe {
 
             /**
              * Sets the value of the cnpj property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setCNPJ(String value) {
                 this.cnpj = value;
@@ -7896,11 +7896,11 @@ public class TNFe {
 
             /**
              * Gets the value of the cpf property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getCPF() {
                 return cpf;
@@ -7908,11 +7908,11 @@ public class TNFe {
 
             /**
              * Sets the value of the cpf property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setCPF(String value) {
                 this.cpf = value;
@@ -7920,11 +7920,11 @@ public class TNFe {
 
             /**
              * Gets the value of the idEstrangeiro property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getIdEstrangeiro() {
                 return idEstrangeiro;
@@ -7932,11 +7932,11 @@ public class TNFe {
 
             /**
              * Sets the value of the idEstrangeiro property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setIdEstrangeiro(String value) {
                 this.idEstrangeiro = value;
@@ -7944,11 +7944,11 @@ public class TNFe {
 
             /**
              * Gets the value of the xNome property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getXNome() {
                 return xNome;
@@ -7956,11 +7956,11 @@ public class TNFe {
 
             /**
              * Sets the value of the xNome property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setXNome(String value) {
                 this.xNome = value;
@@ -7968,11 +7968,11 @@ public class TNFe {
 
             /**
              * Gets the value of the enderDest property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link TEndereco }
-             *     
+             *
              */
             public TEndereco getEnderDest() {
                 return enderDest;
@@ -7980,11 +7980,11 @@ public class TNFe {
 
             /**
              * Sets the value of the enderDest property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link TEndereco }
-             *     
+             *
              */
             public void setEnderDest(TEndereco value) {
                 this.enderDest = value;
@@ -7992,11 +7992,11 @@ public class TNFe {
 
             /**
              * Gets the value of the indIEDest property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getIndIEDest() {
                 return indIEDest;
@@ -8004,11 +8004,11 @@ public class TNFe {
 
             /**
              * Sets the value of the indIEDest property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setIndIEDest(String value) {
                 this.indIEDest = value;
@@ -8016,11 +8016,11 @@ public class TNFe {
 
             /**
              * Gets the value of the ie property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getIE() {
                 return ie;
@@ -8028,11 +8028,11 @@ public class TNFe {
 
             /**
              * Sets the value of the ie property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setIE(String value) {
                 this.ie = value;
@@ -8040,11 +8040,11 @@ public class TNFe {
 
             /**
              * Gets the value of the isuf property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getISUF() {
                 return isuf;
@@ -8052,11 +8052,11 @@ public class TNFe {
 
             /**
              * Sets the value of the isuf property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setISUF(String value) {
                 this.isuf = value;
@@ -8064,11 +8064,11 @@ public class TNFe {
 
             /**
              * Gets the value of the im property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getIM() {
                 return im;
@@ -8076,11 +8076,11 @@ public class TNFe {
 
             /**
              * Sets the value of the im property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setIM(String value) {
                 this.im = value;
@@ -8088,11 +8088,11 @@ public class TNFe {
 
             /**
              * Gets the value of the email property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getEmail() {
                 return email;
@@ -8100,11 +8100,11 @@ public class TNFe {
 
             /**
              * Sets the value of the email property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setEmail(String value) {
                 this.email = value;
@@ -8115,9 +8115,9 @@ public class TNFe {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -9862,15 +9862,15 @@ public class TNFe {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "prod",
-            "imposto",
-            "impostoDevol",
-            "infAdProd"
+                "prod",
+                "imposto",
+                "impostoDevol",
+                "infAdProd"
         })
         public static class Det {
 
@@ -9885,11 +9885,11 @@ public class TNFe {
 
             /**
              * Gets the value of the prod property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link TNFe.InfNFe.Det.Prod }
-             *     
+             *
              */
             public TNFe.InfNFe.Det.Prod getProd() {
                 return prod;
@@ -9897,11 +9897,11 @@ public class TNFe {
 
             /**
              * Sets the value of the prod property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link TNFe.InfNFe.Det.Prod }
-             *     
+             *
              */
             public void setProd(TNFe.InfNFe.Det.Prod value) {
                 this.prod = value;
@@ -9909,11 +9909,11 @@ public class TNFe {
 
             /**
              * Gets the value of the imposto property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link TNFe.InfNFe.Det.Imposto }
-             *     
+             *
              */
             public TNFe.InfNFe.Det.Imposto getImposto() {
                 return imposto;
@@ -9921,11 +9921,11 @@ public class TNFe {
 
             /**
              * Sets the value of the imposto property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link TNFe.InfNFe.Det.Imposto }
-             *     
+             *
              */
             public void setImposto(TNFe.InfNFe.Det.Imposto value) {
                 this.imposto = value;
@@ -9933,11 +9933,11 @@ public class TNFe {
 
             /**
              * Gets the value of the impostoDevol property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link TNFe.InfNFe.Det.ImpostoDevol }
-             *     
+             *
              */
             public TNFe.InfNFe.Det.ImpostoDevol getImpostoDevol() {
                 return impostoDevol;
@@ -9945,11 +9945,11 @@ public class TNFe {
 
             /**
              * Sets the value of the impostoDevol property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link TNFe.InfNFe.Det.ImpostoDevol }
-             *     
+             *
              */
             public void setImpostoDevol(TNFe.InfNFe.Det.ImpostoDevol value) {
                 this.impostoDevol = value;
@@ -9957,11 +9957,11 @@ public class TNFe {
 
             /**
              * Gets the value of the infAdProd property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getInfAdProd() {
                 return infAdProd;
@@ -9969,11 +9969,11 @@ public class TNFe {
 
             /**
              * Sets the value of the infAdProd property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setInfAdProd(String value) {
                 this.infAdProd = value;
@@ -9981,11 +9981,11 @@ public class TNFe {
 
             /**
              * Gets the value of the nItem property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getNItem() {
                 return nItem;
@@ -9993,11 +9993,11 @@ public class TNFe {
 
             /**
              * Sets the value of the nItem property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setNItem(String value) {
                 this.nItem = value;
@@ -10006,9 +10006,9 @@ public class TNFe {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -11109,54 +11109,54 @@ public class TNFe {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "content"
+                    "content"
             })
             public static class Imposto {
 
                 @XmlElementRefs({
-                    @XmlElementRef(name = "COFINS", namespace = "http://www.portalfiscal.inf.br/nfe", type = JAXBElement.class, required = false),
-                    @XmlElementRef(name = "vTotTrib", namespace = "http://www.portalfiscal.inf.br/nfe", type = JAXBElement.class, required = false),
-                    @XmlElementRef(name = "II", namespace = "http://www.portalfiscal.inf.br/nfe", type = JAXBElement.class, required = false),
-                    @XmlElementRef(name = "ICMS", namespace = "http://www.portalfiscal.inf.br/nfe", type = JAXBElement.class, required = false),
-                    @XmlElementRef(name = "PISST", namespace = "http://www.portalfiscal.inf.br/nfe", type = JAXBElement.class, required = false),
-                    @XmlElementRef(name = "IPI", namespace = "http://www.portalfiscal.inf.br/nfe", type = JAXBElement.class, required = false),
-                    @XmlElementRef(name = "ISSQN", namespace = "http://www.portalfiscal.inf.br/nfe", type = JAXBElement.class, required = false),
-                    @XmlElementRef(name = "PIS", namespace = "http://www.portalfiscal.inf.br/nfe", type = JAXBElement.class, required = false),
-                    @XmlElementRef(name = "COFINSST", namespace = "http://www.portalfiscal.inf.br/nfe", type = JAXBElement.class, required = false)
+                        @XmlElementRef(name = "COFINS", namespace = "http://www.portalfiscal.inf.br/nfe", type = JAXBElement.class, required = false),
+                        @XmlElementRef(name = "vTotTrib", namespace = "http://www.portalfiscal.inf.br/nfe", type = JAXBElement.class, required = false),
+                        @XmlElementRef(name = "II", namespace = "http://www.portalfiscal.inf.br/nfe", type = JAXBElement.class, required = false),
+                        @XmlElementRef(name = "ICMS", namespace = "http://www.portalfiscal.inf.br/nfe", type = JAXBElement.class, required = false),
+                        @XmlElementRef(name = "PISST", namespace = "http://www.portalfiscal.inf.br/nfe", type = JAXBElement.class, required = false),
+                        @XmlElementRef(name = "IPI", namespace = "http://www.portalfiscal.inf.br/nfe", type = JAXBElement.class, required = false),
+                        @XmlElementRef(name = "ISSQN", namespace = "http://www.portalfiscal.inf.br/nfe", type = JAXBElement.class, required = false),
+                        @XmlElementRef(name = "PIS", namespace = "http://www.portalfiscal.inf.br/nfe", type = JAXBElement.class, required = false),
+                        @XmlElementRef(name = "COFINSST", namespace = "http://www.portalfiscal.inf.br/nfe", type = JAXBElement.class, required = false)
                 })
                 protected List<JAXBElement<?>> content;
 
                 /**
-                 * Gets the rest of the content model. 
-                 * 
+                 * Gets the rest of the content model.
+                 *
                  * <p>
-                 * You are getting this "catch-all" property because of the following reason: 
-                 * The field name "IPI" is used by two different parts of a schema. See: 
+                 * You are getting this "catch-all" property because of the following reason:
+                 * The field name "IPI" is used by two different parts of a schema. See:
                  * line 3174 of file:/home/sergio/Projects/DGB/NDS/nfe/src/main/resources/xsd/v3.10/leiauteNFe_v3.10.xsd
                  * line 3142 of file:/home/sergio/Projects/DGB/NDS/nfe/src/main/resources/xsd/v3.10/leiauteNFe_v3.10.xsd
                  * <p>
-                 * To get rid of this property, apply a property customization to one 
-                 * of both of the following declarations to change their names: 
+                 * To get rid of this property, apply a property customization to one
+                 * of both of the following declarations to change their names:
                  * Gets the value of the content property.
-                 * 
+                 *
                  * <p>
                  * This accessor method returns a reference to the live list,
                  * not a snapshot. Therefore any modification you make to the
                  * returned list will be present inside the JAXB object.
                  * This is why there is not a <CODE>set</CODE> method for the content property.
-                 * 
+                 *
                  * <p>
                  * For example, to add a new item, do as follows:
                  * <pre>
                  *    getContent().add(newItem);
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  * <p>
                  * Objects of the following type(s) are allowed in the list
                  * {@link JAXBElement }{@code <}{@link TNFe.InfNFe.Det.Imposto.COFINS }{@code >}
@@ -11168,8 +11168,8 @@ public class TNFe {
                  * {@link JAXBElement }{@code <}{@link TNFe.InfNFe.Det.Imposto.ISSQN }{@code >}
                  * {@link JAXBElement }{@code <}{@link TNFe.InfNFe.Det.Imposto.PIS }{@code >}
                  * {@link JAXBElement }{@code <}{@link TNFe.InfNFe.Det.Imposto.COFINSST }{@code >}
-                 * 
-                 * 
+                 *
+                 *
                  */
                 public List<JAXBElement<?>> getContent() {
                     if (content == null) {
@@ -11181,9 +11181,9 @@ public class TNFe {
 
                 /**
                  * <p>Java class for anonymous complex type.
-                 * 
+                 *
                  * <p>The following schema fragment specifies the expected content contained within this class.
-                 * 
+                 *
                  * <pre>
                  * &lt;complexType>
                  *   &lt;complexContent>
@@ -11311,15 +11311,15 @@ public class TNFe {
                  *   &lt;/complexContent>
                  * &lt;/complexType>
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  */
                 @XmlAccessorType(XmlAccessType.FIELD)
                 @XmlType(name = "", propOrder = {
-                    "cofinsAliq",
-                    "cofinsQtde",
-                    "cofinsnt",
-                    "cofinsOutr"
+                        "cofinsAliq",
+                        "cofinsQtde",
+                        "cofinsnt",
+                        "cofinsOutr"
                 })
                 public static class COFINS {
 
@@ -11334,11 +11334,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cofinsAliq property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.COFINS.COFINSAliq }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.COFINS.COFINSAliq getCOFINSAliq() {
                         return cofinsAliq;
@@ -11346,11 +11346,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cofinsAliq property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.COFINS.COFINSAliq }
-                     *     
+                     *
                      */
                     public void setCOFINSAliq(TNFe.InfNFe.Det.Imposto.COFINS.COFINSAliq value) {
                         this.cofinsAliq = value;
@@ -11358,11 +11358,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cofinsQtde property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.COFINS.COFINSQtde }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.COFINS.COFINSQtde getCOFINSQtde() {
                         return cofinsQtde;
@@ -11370,11 +11370,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cofinsQtde property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.COFINS.COFINSQtde }
-                     *     
+                     *
                      */
                     public void setCOFINSQtde(TNFe.InfNFe.Det.Imposto.COFINS.COFINSQtde value) {
                         this.cofinsQtde = value;
@@ -11382,11 +11382,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cofinsnt property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.COFINS.COFINSNT }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.COFINS.COFINSNT getCOFINSNT() {
                         return cofinsnt;
@@ -11394,11 +11394,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cofinsnt property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.COFINS.COFINSNT }
-                     *     
+                     *
                      */
                     public void setCOFINSNT(TNFe.InfNFe.Det.Imposto.COFINS.COFINSNT value) {
                         this.cofinsnt = value;
@@ -11406,11 +11406,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cofinsOutr property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.COFINS.COFINSOutr }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.COFINS.COFINSOutr getCOFINSOutr() {
                         return cofinsOutr;
@@ -11418,11 +11418,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cofinsOutr property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.COFINS.COFINSOutr }
-                     *     
+                     *
                      */
                     public void setCOFINSOutr(TNFe.InfNFe.Det.Imposto.COFINS.COFINSOutr value) {
                         this.cofinsOutr = value;
@@ -11431,9 +11431,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -11456,15 +11456,15 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "cst",
-                        "vbc",
-                        "pcofins",
-                        "vcofins"
+                            "cst",
+                            "vbc",
+                            "pcofins",
+                            "vcofins"
                     })
                     public static class COFINSAliq {
 
@@ -11479,11 +11479,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -11491,11 +11491,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -11503,11 +11503,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbc property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBC() {
                             return vbc;
@@ -11515,11 +11515,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbc property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBC(String value) {
                             this.vbc = value;
@@ -11527,11 +11527,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pcofins property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPCOFINS() {
                             return pcofins;
@@ -11539,11 +11539,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pcofins property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPCOFINS(String value) {
                             this.pcofins = value;
@@ -11551,11 +11551,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vcofins property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVCOFINS() {
                             return vcofins;
@@ -11563,11 +11563,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vcofins property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVCOFINS(String value) {
                             this.vcofins = value;
@@ -11578,9 +11578,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -11604,12 +11604,12 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "cst"
+                            "cst"
                     })
                     public static class COFINSNT {
 
@@ -11618,11 +11618,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -11630,11 +11630,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -11645,9 +11645,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -11700,17 +11700,17 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "cst",
-                        "vbc",
-                        "pcofins",
-                        "qbcProd",
-                        "vAliqProd",
-                        "vcofins"
+                            "cst",
+                            "vbc",
+                            "pcofins",
+                            "qbcProd",
+                            "vAliqProd",
+                            "vcofins"
                     })
                     public static class COFINSOutr {
 
@@ -11728,11 +11728,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -11740,11 +11740,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -11752,11 +11752,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbc property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBC() {
                             return vbc;
@@ -11764,11 +11764,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbc property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBC(String value) {
                             this.vbc = value;
@@ -11776,11 +11776,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pcofins property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPCOFINS() {
                             return pcofins;
@@ -11788,11 +11788,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pcofins property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPCOFINS(String value) {
                             this.pcofins = value;
@@ -11800,11 +11800,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the qbcProd property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getQBCProd() {
                             return qbcProd;
@@ -11812,11 +11812,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the qbcProd property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setQBCProd(String value) {
                             this.qbcProd = value;
@@ -11824,11 +11824,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vAliqProd property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVAliqProd() {
                             return vAliqProd;
@@ -11836,11 +11836,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vAliqProd property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVAliqProd(String value) {
                             this.vAliqProd = value;
@@ -11848,11 +11848,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vcofins property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVCOFINS() {
                             return vcofins;
@@ -11860,11 +11860,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vcofins property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVCOFINS(String value) {
                             this.vcofins = value;
@@ -11875,9 +11875,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -11898,15 +11898,15 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "cst",
-                        "qbcProd",
-                        "vAliqProd",
-                        "vcofins"
+                            "cst",
+                            "qbcProd",
+                            "vAliqProd",
+                            "vcofins"
                     })
                     public static class COFINSQtde {
 
@@ -11921,11 +11921,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -11933,11 +11933,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -11945,11 +11945,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the qbcProd property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getQBCProd() {
                             return qbcProd;
@@ -11957,11 +11957,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the qbcProd property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setQBCProd(String value) {
                             this.qbcProd = value;
@@ -11969,11 +11969,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vAliqProd property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVAliqProd() {
                             return vAliqProd;
@@ -11981,11 +11981,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vAliqProd property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVAliqProd(String value) {
                             this.vAliqProd = value;
@@ -11993,11 +11993,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vcofins property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVCOFINS() {
                             return vcofins;
@@ -12005,11 +12005,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vcofins property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVCOFINS(String value) {
                             this.vcofins = value;
@@ -12022,9 +12022,9 @@ public class TNFe {
 
                 /**
                  * <p>Java class for anonymous complex type.
-                 * 
+                 *
                  * <p>The following schema fragment specifies the expected content contained within this class.
-                 * 
+                 *
                  * <pre>
                  * &lt;complexType>
                  *   &lt;complexContent>
@@ -12046,16 +12046,16 @@ public class TNFe {
                  *   &lt;/complexContent>
                  * &lt;/complexType>
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  */
                 @XmlAccessorType(XmlAccessType.FIELD)
                 @XmlType(name = "", propOrder = {
-                    "vbc",
-                    "pcofins",
-                    "qbcProd",
-                    "vAliqProd",
-                    "vcofins"
+                        "vbc",
+                        "pcofins",
+                        "qbcProd",
+                        "vAliqProd",
+                        "vcofins"
                 })
                 public static class COFINSST {
 
@@ -12071,11 +12071,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vbc property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVBC() {
                         return vbc;
@@ -12083,11 +12083,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vbc property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVBC(String value) {
                         this.vbc = value;
@@ -12095,11 +12095,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the pcofins property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getPCOFINS() {
                         return pcofins;
@@ -12107,11 +12107,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the pcofins property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setPCOFINS(String value) {
                         this.pcofins = value;
@@ -12119,11 +12119,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the qbcProd property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getQBCProd() {
                         return qbcProd;
@@ -12131,11 +12131,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the qbcProd property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setQBCProd(String value) {
                         this.qbcProd = value;
@@ -12143,11 +12143,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vAliqProd property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVAliqProd() {
                         return vAliqProd;
@@ -12155,11 +12155,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vAliqProd property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVAliqProd(String value) {
                         this.vAliqProd = value;
@@ -12167,11 +12167,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vcofins property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVCOFINS() {
                         return vcofins;
@@ -12179,11 +12179,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vcofins property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVCOFINS(String value) {
                         this.vcofins = value;
@@ -12194,9 +12194,9 @@ public class TNFe {
 
                 /**
                  * <p>Java class for anonymous complex type.
-                 * 
+                 *
                  * <p>The following schema fragment specifies the expected content contained within this class.
-                 * 
+                 *
                  * <pre>
                  * &lt;complexType>
                  *   &lt;complexContent>
@@ -12904,28 +12904,28 @@ public class TNFe {
                  *   &lt;/complexContent>
                  * &lt;/complexType>
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  */
                 @XmlAccessorType(XmlAccessType.FIELD)
                 @XmlType(name = "", propOrder = {
-                    "icms00",
-                    "icms10",
-                    "icms20",
-                    "icms30",
-                    "icms40",
-                    "icms51",
-                    "icms60",
-                    "icms70",
-                    "icms90",
-                    "icmsPart",
-                    "icmsst",
-                    "icmssn101",
-                    "icmssn102",
-                    "icmssn201",
-                    "icmssn202",
-                    "icmssn500",
-                    "icmssn900"
+                        "icms00",
+                        "icms10",
+                        "icms20",
+                        "icms30",
+                        "icms40",
+                        "icms51",
+                        "icms60",
+                        "icms70",
+                        "icms90",
+                        "icmsPart",
+                        "icmsst",
+                        "icmssn101",
+                        "icmssn102",
+                        "icmssn201",
+                        "icmssn202",
+                        "icmssn500",
+                        "icmssn900"
                 })
                 public static class ICMS {
 
@@ -12966,11 +12966,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the icms00 property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMS00 }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.ICMS.ICMS00 getICMS00() {
                         return icms00;
@@ -12978,11 +12978,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the icms00 property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMS00 }
-                     *     
+                     *
                      */
                     public void setICMS00(TNFe.InfNFe.Det.Imposto.ICMS.ICMS00 value) {
                         this.icms00 = value;
@@ -12990,11 +12990,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the icms10 property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMS10 }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.ICMS.ICMS10 getICMS10() {
                         return icms10;
@@ -13002,11 +13002,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the icms10 property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMS10 }
-                     *     
+                     *
                      */
                     public void setICMS10(TNFe.InfNFe.Det.Imposto.ICMS.ICMS10 value) {
                         this.icms10 = value;
@@ -13014,11 +13014,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the icms20 property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMS20 }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.ICMS.ICMS20 getICMS20() {
                         return icms20;
@@ -13026,11 +13026,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the icms20 property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMS20 }
-                     *     
+                     *
                      */
                     public void setICMS20(TNFe.InfNFe.Det.Imposto.ICMS.ICMS20 value) {
                         this.icms20 = value;
@@ -13038,11 +13038,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the icms30 property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMS30 }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.ICMS.ICMS30 getICMS30() {
                         return icms30;
@@ -13050,11 +13050,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the icms30 property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMS30 }
-                     *     
+                     *
                      */
                     public void setICMS30(TNFe.InfNFe.Det.Imposto.ICMS.ICMS30 value) {
                         this.icms30 = value;
@@ -13062,11 +13062,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the icms40 property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMS40 }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.ICMS.ICMS40 getICMS40() {
                         return icms40;
@@ -13074,11 +13074,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the icms40 property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMS40 }
-                     *     
+                     *
                      */
                     public void setICMS40(TNFe.InfNFe.Det.Imposto.ICMS.ICMS40 value) {
                         this.icms40 = value;
@@ -13086,11 +13086,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the icms51 property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMS51 }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.ICMS.ICMS51 getICMS51() {
                         return icms51;
@@ -13098,11 +13098,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the icms51 property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMS51 }
-                     *     
+                     *
                      */
                     public void setICMS51(TNFe.InfNFe.Det.Imposto.ICMS.ICMS51 value) {
                         this.icms51 = value;
@@ -13110,11 +13110,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the icms60 property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMS60 }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.ICMS.ICMS60 getICMS60() {
                         return icms60;
@@ -13122,11 +13122,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the icms60 property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMS60 }
-                     *     
+                     *
                      */
                     public void setICMS60(TNFe.InfNFe.Det.Imposto.ICMS.ICMS60 value) {
                         this.icms60 = value;
@@ -13134,11 +13134,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the icms70 property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMS70 }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.ICMS.ICMS70 getICMS70() {
                         return icms70;
@@ -13146,11 +13146,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the icms70 property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMS70 }
-                     *     
+                     *
                      */
                     public void setICMS70(TNFe.InfNFe.Det.Imposto.ICMS.ICMS70 value) {
                         this.icms70 = value;
@@ -13158,11 +13158,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the icms90 property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMS90 }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.ICMS.ICMS90 getICMS90() {
                         return icms90;
@@ -13170,11 +13170,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the icms90 property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMS90 }
-                     *     
+                     *
                      */
                     public void setICMS90(TNFe.InfNFe.Det.Imposto.ICMS.ICMS90 value) {
                         this.icms90 = value;
@@ -13182,11 +13182,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the icmsPart property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMSPart }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.ICMS.ICMSPart getICMSPart() {
                         return icmsPart;
@@ -13194,11 +13194,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the icmsPart property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMSPart }
-                     *     
+                     *
                      */
                     public void setICMSPart(TNFe.InfNFe.Det.Imposto.ICMS.ICMSPart value) {
                         this.icmsPart = value;
@@ -13206,11 +13206,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the icmsst property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMSST }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.ICMS.ICMSST getICMSST() {
                         return icmsst;
@@ -13218,11 +13218,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the icmsst property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMSST }
-                     *     
+                     *
                      */
                     public void setICMSST(TNFe.InfNFe.Det.Imposto.ICMS.ICMSST value) {
                         this.icmsst = value;
@@ -13230,11 +13230,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the icmssn101 property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN101 }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN101 getICMSSN101() {
                         return icmssn101;
@@ -13242,11 +13242,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the icmssn101 property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN101 }
-                     *     
+                     *
                      */
                     public void setICMSSN101(TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN101 value) {
                         this.icmssn101 = value;
@@ -13254,11 +13254,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the icmssn102 property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN102 }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN102 getICMSSN102() {
                         return icmssn102;
@@ -13266,11 +13266,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the icmssn102 property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN102 }
-                     *     
+                     *
                      */
                     public void setICMSSN102(TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN102 value) {
                         this.icmssn102 = value;
@@ -13278,11 +13278,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the icmssn201 property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN201 }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN201 getICMSSN201() {
                         return icmssn201;
@@ -13290,11 +13290,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the icmssn201 property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN201 }
-                     *     
+                     *
                      */
                     public void setICMSSN201(TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN201 value) {
                         this.icmssn201 = value;
@@ -13302,11 +13302,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the icmssn202 property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN202 }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN202 getICMSSN202() {
                         return icmssn202;
@@ -13314,11 +13314,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the icmssn202 property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN202 }
-                     *     
+                     *
                      */
                     public void setICMSSN202(TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN202 value) {
                         this.icmssn202 = value;
@@ -13326,11 +13326,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the icmssn500 property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN500 }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN500 getICMSSN500() {
                         return icmssn500;
@@ -13338,11 +13338,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the icmssn500 property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN500 }
-                     *     
+                     *
                      */
                     public void setICMSSN500(TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN500 value) {
                         this.icmssn500 = value;
@@ -13350,11 +13350,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the icmssn900 property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN900 }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN900 getICMSSN900() {
                         return icmssn900;
@@ -13362,11 +13362,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the icmssn900 property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN900 }
-                     *     
+                     *
                      */
                     public void setICMSSN900(TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN900 value) {
                         this.icmssn900 = value;
@@ -13375,9 +13375,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -13411,17 +13411,17 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "orig",
-                        "cst",
-                        "modBC",
-                        "vbc",
-                        "picms",
-                        "vicms"
+                            "orig",
+                            "cst",
+                            "modBC",
+                            "vbc",
+                            "picms",
+                            "vicms"
                     })
                     public static class ICMS00 {
 
@@ -13440,11 +13440,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the orig property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getOrig() {
                             return orig;
@@ -13452,11 +13452,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the orig property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setOrig(String value) {
                             this.orig = value;
@@ -13464,11 +13464,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -13476,11 +13476,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -13488,11 +13488,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the modBC property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getModBC() {
                             return modBC;
@@ -13500,11 +13500,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the modBC property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setModBC(String value) {
                             this.modBC = value;
@@ -13512,11 +13512,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbc property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBC() {
                             return vbc;
@@ -13524,11 +13524,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbc property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBC(String value) {
                             this.vbc = value;
@@ -13536,11 +13536,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the picms property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPICMS() {
                             return picms;
@@ -13548,11 +13548,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the picms property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPICMS(String value) {
                             this.picms = value;
@@ -13560,11 +13560,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicms property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMS() {
                             return vicms;
@@ -13572,11 +13572,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicms property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMS(String value) {
                             this.vicms = value;
@@ -13587,9 +13587,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -13641,23 +13641,23 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "orig",
-                        "cst",
-                        "modBC",
-                        "vbc",
-                        "picms",
-                        "vicms",
-                        "modBCST",
-                        "pmvast",
-                        "pRedBCST",
-                        "vbcst",
-                        "picmsst",
-                        "vicmsst"
+                            "orig",
+                            "cst",
+                            "modBC",
+                            "vbc",
+                            "picms",
+                            "vicms",
+                            "modBCST",
+                            "pmvast",
+                            "pRedBCST",
+                            "vbcst",
+                            "picmsst",
+                            "vicmsst"
                     })
                     public static class ICMS10 {
 
@@ -13687,11 +13687,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the orig property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getOrig() {
                             return orig;
@@ -13699,11 +13699,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the orig property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setOrig(String value) {
                             this.orig = value;
@@ -13711,11 +13711,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -13723,11 +13723,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -13735,11 +13735,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the modBC property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getModBC() {
                             return modBC;
@@ -13747,11 +13747,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the modBC property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setModBC(String value) {
                             this.modBC = value;
@@ -13759,11 +13759,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbc property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBC() {
                             return vbc;
@@ -13771,11 +13771,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbc property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBC(String value) {
                             this.vbc = value;
@@ -13783,11 +13783,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the picms property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPICMS() {
                             return picms;
@@ -13795,11 +13795,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the picms property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPICMS(String value) {
                             this.picms = value;
@@ -13807,11 +13807,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicms property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMS() {
                             return vicms;
@@ -13819,11 +13819,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicms property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMS(String value) {
                             this.vicms = value;
@@ -13831,11 +13831,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the modBCST property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getModBCST() {
                             return modBCST;
@@ -13843,11 +13843,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the modBCST property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setModBCST(String value) {
                             this.modBCST = value;
@@ -13855,11 +13855,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pmvast property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPMVAST() {
                             return pmvast;
@@ -13867,11 +13867,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pmvast property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPMVAST(String value) {
                             this.pmvast = value;
@@ -13879,11 +13879,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pRedBCST property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPRedBCST() {
                             return pRedBCST;
@@ -13891,11 +13891,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pRedBCST property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPRedBCST(String value) {
                             this.pRedBCST = value;
@@ -13903,11 +13903,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbcst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBCST() {
                             return vbcst;
@@ -13915,11 +13915,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbcst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBCST(String value) {
                             this.vbcst = value;
@@ -13927,11 +13927,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the picmsst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPICMSST() {
                             return picmsst;
@@ -13939,11 +13939,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the picmsst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPICMSST(String value) {
                             this.picmsst = value;
@@ -13951,11 +13951,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSST() {
                             return vicmsst;
@@ -13963,11 +13963,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSST(String value) {
                             this.vicmsst = value;
@@ -13978,9 +13978,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -14028,20 +14028,20 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "orig",
-                        "cst",
-                        "modBC",
-                        "pRedBC",
-                        "vbc",
-                        "picms",
-                        "vicms",
-                        "vicmsDeson",
-                        "motDesICMS"
+                            "orig",
+                            "cst",
+                            "modBC",
+                            "pRedBC",
+                            "vbc",
+                            "picms",
+                            "vicms",
+                            "vicmsDeson",
+                            "motDesICMS"
                     })
                     public static class ICMS20 {
 
@@ -14065,11 +14065,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the orig property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getOrig() {
                             return orig;
@@ -14077,11 +14077,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the orig property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setOrig(String value) {
                             this.orig = value;
@@ -14089,11 +14089,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -14101,11 +14101,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -14113,11 +14113,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the modBC property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getModBC() {
                             return modBC;
@@ -14125,11 +14125,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the modBC property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setModBC(String value) {
                             this.modBC = value;
@@ -14137,11 +14137,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pRedBC property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPRedBC() {
                             return pRedBC;
@@ -14149,11 +14149,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pRedBC property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPRedBC(String value) {
                             this.pRedBC = value;
@@ -14161,11 +14161,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbc property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBC() {
                             return vbc;
@@ -14173,11 +14173,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbc property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBC(String value) {
                             this.vbc = value;
@@ -14185,11 +14185,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the picms property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPICMS() {
                             return picms;
@@ -14197,11 +14197,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the picms property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPICMS(String value) {
                             this.picms = value;
@@ -14209,11 +14209,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicms property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMS() {
                             return vicms;
@@ -14221,11 +14221,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicms property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMS(String value) {
                             this.vicms = value;
@@ -14233,11 +14233,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsDeson property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSDeson() {
                             return vicmsDeson;
@@ -14245,11 +14245,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsDeson property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSDeson(String value) {
                             this.vicmsDeson = value;
@@ -14257,11 +14257,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the motDesICMS property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getMotDesICMS() {
                             return motDesICMS;
@@ -14269,11 +14269,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the motDesICMS property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setMotDesICMS(String value) {
                             this.motDesICMS = value;
@@ -14284,9 +14284,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -14337,21 +14337,21 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "orig",
-                        "cst",
-                        "modBCST",
-                        "pmvast",
-                        "pRedBCST",
-                        "vbcst",
-                        "picmsst",
-                        "vicmsst",
-                        "vicmsDeson",
-                        "motDesICMS"
+                            "orig",
+                            "cst",
+                            "modBCST",
+                            "pmvast",
+                            "pRedBCST",
+                            "vbcst",
+                            "picmsst",
+                            "vicmsst",
+                            "vicmsDeson",
+                            "motDesICMS"
                     })
                     public static class ICMS30 {
 
@@ -14376,11 +14376,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the orig property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getOrig() {
                             return orig;
@@ -14388,11 +14388,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the orig property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setOrig(String value) {
                             this.orig = value;
@@ -14400,11 +14400,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -14412,11 +14412,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -14424,11 +14424,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the modBCST property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getModBCST() {
                             return modBCST;
@@ -14436,11 +14436,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the modBCST property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setModBCST(String value) {
                             this.modBCST = value;
@@ -14448,11 +14448,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pmvast property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPMVAST() {
                             return pmvast;
@@ -14460,11 +14460,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pmvast property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPMVAST(String value) {
                             this.pmvast = value;
@@ -14472,11 +14472,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pRedBCST property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPRedBCST() {
                             return pRedBCST;
@@ -14484,11 +14484,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pRedBCST property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPRedBCST(String value) {
                             this.pRedBCST = value;
@@ -14496,11 +14496,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbcst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBCST() {
                             return vbcst;
@@ -14508,11 +14508,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbcst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBCST(String value) {
                             this.vbcst = value;
@@ -14520,11 +14520,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the picmsst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPICMSST() {
                             return picmsst;
@@ -14532,11 +14532,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the picmsst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPICMSST(String value) {
                             this.picmsst = value;
@@ -14544,11 +14544,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSST() {
                             return vicmsst;
@@ -14556,11 +14556,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSST(String value) {
                             this.vicmsst = value;
@@ -14568,11 +14568,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsDeson property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSDeson() {
                             return vicmsDeson;
@@ -14580,11 +14580,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsDeson property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSDeson(String value) {
                             this.vicmsDeson = value;
@@ -14592,11 +14592,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the motDesICMS property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getMotDesICMS() {
                             return motDesICMS;
@@ -14604,11 +14604,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the motDesICMS property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setMotDesICMS(String value) {
                             this.motDesICMS = value;
@@ -14619,9 +14619,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -14663,15 +14663,15 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "orig",
-                        "cst",
-                        "vicmsDeson",
-                        "motDesICMS"
+                            "orig",
+                            "cst",
+                            "vicmsDeson",
+                            "motDesICMS"
                     })
                     public static class ICMS40 {
 
@@ -14685,11 +14685,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the orig property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getOrig() {
                             return orig;
@@ -14697,11 +14697,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the orig property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setOrig(String value) {
                             this.orig = value;
@@ -14709,11 +14709,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -14721,11 +14721,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -14733,11 +14733,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsDeson property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSDeson() {
                             return vicmsDeson;
@@ -14745,11 +14745,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsDeson property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSDeson(String value) {
                             this.vicmsDeson = value;
@@ -14757,11 +14757,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the motDesICMS property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getMotDesICMS() {
                             return motDesICMS;
@@ -14769,11 +14769,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the motDesICMS property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setMotDesICMS(String value) {
                             this.motDesICMS = value;
@@ -14784,9 +14784,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -14824,21 +14824,21 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "orig",
-                        "cst",
-                        "modBC",
-                        "pRedBC",
-                        "vbc",
-                        "picms",
-                        "vicmsOp",
-                        "pDif",
-                        "vicmsDif",
-                        "vicms"
+                            "orig",
+                            "cst",
+                            "modBC",
+                            "pRedBC",
+                            "vbc",
+                            "picms",
+                            "vicmsOp",
+                            "pDif",
+                            "vicmsDif",
+                            "vicms"
                     })
                     public static class ICMS51 {
 
@@ -14862,11 +14862,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the orig property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getOrig() {
                             return orig;
@@ -14874,11 +14874,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the orig property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setOrig(String value) {
                             this.orig = value;
@@ -14886,11 +14886,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -14898,11 +14898,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -14910,11 +14910,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the modBC property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getModBC() {
                             return modBC;
@@ -14922,11 +14922,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the modBC property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setModBC(String value) {
                             this.modBC = value;
@@ -14934,11 +14934,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pRedBC property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPRedBC() {
                             return pRedBC;
@@ -14946,11 +14946,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pRedBC property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPRedBC(String value) {
                             this.pRedBC = value;
@@ -14958,11 +14958,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbc property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBC() {
                             return vbc;
@@ -14970,11 +14970,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbc property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBC(String value) {
                             this.vbc = value;
@@ -14982,11 +14982,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the picms property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPICMS() {
                             return picms;
@@ -14994,11 +14994,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the picms property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPICMS(String value) {
                             this.picms = value;
@@ -15006,11 +15006,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsOp property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSOp() {
                             return vicmsOp;
@@ -15018,11 +15018,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsOp property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSOp(String value) {
                             this.vicmsOp = value;
@@ -15030,11 +15030,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pDif property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPDif() {
                             return pDif;
@@ -15042,11 +15042,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pDif property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPDif(String value) {
                             this.pDif = value;
@@ -15054,11 +15054,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsDif property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSDif() {
                             return vicmsDif;
@@ -15066,11 +15066,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsDif property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSDif(String value) {
                             this.vicmsDif = value;
@@ -15078,11 +15078,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicms property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMS() {
                             return vicms;
@@ -15090,11 +15090,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicms property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMS(String value) {
                             this.vicms = value;
@@ -15105,9 +15105,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -15131,15 +15131,15 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "orig",
-                        "cst",
-                        "vbcstRet",
-                        "vicmsstRet"
+                            "orig",
+                            "cst",
+                            "vbcstRet",
+                            "vicmsstRet"
                     })
                     public static class ICMS60 {
 
@@ -15154,11 +15154,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the orig property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getOrig() {
                             return orig;
@@ -15166,11 +15166,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the orig property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setOrig(String value) {
                             this.orig = value;
@@ -15178,11 +15178,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -15190,11 +15190,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -15202,11 +15202,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbcstRet property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBCSTRet() {
                             return vbcstRet;
@@ -15214,11 +15214,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbcstRet property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBCSTRet(String value) {
                             this.vbcstRet = value;
@@ -15226,11 +15226,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsstRet property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSSTRet() {
                             return vicmsstRet;
@@ -15238,11 +15238,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsstRet property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSSTRet(String value) {
                             this.vicmsstRet = value;
@@ -15253,9 +15253,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -15321,26 +15321,26 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "orig",
-                        "cst",
-                        "modBC",
-                        "pRedBC",
-                        "vbc",
-                        "picms",
-                        "vicms",
-                        "modBCST",
-                        "pmvast",
-                        "pRedBCST",
-                        "vbcst",
-                        "picmsst",
-                        "vicmsst",
-                        "vicmsDeson",
-                        "motDesICMS"
+                            "orig",
+                            "cst",
+                            "modBC",
+                            "pRedBC",
+                            "vbc",
+                            "picms",
+                            "vicms",
+                            "modBCST",
+                            "pmvast",
+                            "pRedBCST",
+                            "vbcst",
+                            "picmsst",
+                            "vicmsst",
+                            "vicmsDeson",
+                            "motDesICMS"
                     })
                     public static class ICMS70 {
 
@@ -15375,11 +15375,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the orig property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getOrig() {
                             return orig;
@@ -15387,11 +15387,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the orig property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setOrig(String value) {
                             this.orig = value;
@@ -15399,11 +15399,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -15411,11 +15411,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -15423,11 +15423,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the modBC property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getModBC() {
                             return modBC;
@@ -15435,11 +15435,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the modBC property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setModBC(String value) {
                             this.modBC = value;
@@ -15447,11 +15447,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pRedBC property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPRedBC() {
                             return pRedBC;
@@ -15459,11 +15459,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pRedBC property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPRedBC(String value) {
                             this.pRedBC = value;
@@ -15471,11 +15471,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbc property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBC() {
                             return vbc;
@@ -15483,11 +15483,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbc property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBC(String value) {
                             this.vbc = value;
@@ -15495,11 +15495,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the picms property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPICMS() {
                             return picms;
@@ -15507,11 +15507,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the picms property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPICMS(String value) {
                             this.picms = value;
@@ -15519,11 +15519,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicms property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMS() {
                             return vicms;
@@ -15531,11 +15531,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicms property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMS(String value) {
                             this.vicms = value;
@@ -15543,11 +15543,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the modBCST property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getModBCST() {
                             return modBCST;
@@ -15555,11 +15555,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the modBCST property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setModBCST(String value) {
                             this.modBCST = value;
@@ -15567,11 +15567,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pmvast property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPMVAST() {
                             return pmvast;
@@ -15579,11 +15579,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pmvast property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPMVAST(String value) {
                             this.pmvast = value;
@@ -15591,11 +15591,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pRedBCST property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPRedBCST() {
                             return pRedBCST;
@@ -15603,11 +15603,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pRedBCST property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPRedBCST(String value) {
                             this.pRedBCST = value;
@@ -15615,11 +15615,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbcst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBCST() {
                             return vbcst;
@@ -15627,11 +15627,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbcst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBCST(String value) {
                             this.vbcst = value;
@@ -15639,11 +15639,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the picmsst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPICMSST() {
                             return picmsst;
@@ -15651,11 +15651,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the picmsst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPICMSST(String value) {
                             this.picmsst = value;
@@ -15663,11 +15663,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSST() {
                             return vicmsst;
@@ -15675,11 +15675,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSST(String value) {
                             this.vicmsst = value;
@@ -15687,11 +15687,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsDeson property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSDeson() {
                             return vicmsDeson;
@@ -15699,11 +15699,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsDeson property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSDeson(String value) {
                             this.vicmsDeson = value;
@@ -15711,11 +15711,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the motDesICMS property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getMotDesICMS() {
                             return motDesICMS;
@@ -15723,11 +15723,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the motDesICMS property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setMotDesICMS(String value) {
                             this.motDesICMS = value;
@@ -15738,9 +15738,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -15810,26 +15810,26 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "orig",
-                        "cst",
-                        "modBC",
-                        "vbc",
-                        "pRedBC",
-                        "picms",
-                        "vicms",
-                        "modBCST",
-                        "pmvast",
-                        "pRedBCST",
-                        "vbcst",
-                        "picmsst",
-                        "vicmsst",
-                        "vicmsDeson",
-                        "motDesICMS"
+                            "orig",
+                            "cst",
+                            "modBC",
+                            "vbc",
+                            "pRedBC",
+                            "picms",
+                            "vicms",
+                            "modBCST",
+                            "pmvast",
+                            "pRedBCST",
+                            "vbcst",
+                            "picmsst",
+                            "vicmsst",
+                            "vicmsDeson",
+                            "motDesICMS"
                     })
                     public static class ICMS90 {
 
@@ -15861,11 +15861,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the orig property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getOrig() {
                             return orig;
@@ -15873,11 +15873,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the orig property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setOrig(String value) {
                             this.orig = value;
@@ -15885,11 +15885,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -15897,11 +15897,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -15909,11 +15909,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the modBC property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getModBC() {
                             return modBC;
@@ -15921,11 +15921,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the modBC property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setModBC(String value) {
                             this.modBC = value;
@@ -15933,11 +15933,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbc property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBC() {
                             return vbc;
@@ -15945,11 +15945,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbc property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBC(String value) {
                             this.vbc = value;
@@ -15957,11 +15957,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pRedBC property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPRedBC() {
                             return pRedBC;
@@ -15969,11 +15969,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pRedBC property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPRedBC(String value) {
                             this.pRedBC = value;
@@ -15981,11 +15981,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the picms property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPICMS() {
                             return picms;
@@ -15993,11 +15993,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the picms property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPICMS(String value) {
                             this.picms = value;
@@ -16005,11 +16005,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicms property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMS() {
                             return vicms;
@@ -16017,11 +16017,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicms property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMS(String value) {
                             this.vicms = value;
@@ -16029,11 +16029,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the modBCST property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getModBCST() {
                             return modBCST;
@@ -16041,11 +16041,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the modBCST property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setModBCST(String value) {
                             this.modBCST = value;
@@ -16053,11 +16053,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pmvast property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPMVAST() {
                             return pmvast;
@@ -16065,11 +16065,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pmvast property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPMVAST(String value) {
                             this.pmvast = value;
@@ -16077,11 +16077,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pRedBCST property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPRedBCST() {
                             return pRedBCST;
@@ -16089,11 +16089,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pRedBCST property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPRedBCST(String value) {
                             this.pRedBCST = value;
@@ -16101,11 +16101,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbcst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBCST() {
                             return vbcst;
@@ -16113,11 +16113,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbcst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBCST(String value) {
                             this.vbcst = value;
@@ -16125,11 +16125,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the picmsst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPICMSST() {
                             return picmsst;
@@ -16137,11 +16137,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the picmsst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPICMSST(String value) {
                             this.picmsst = value;
@@ -16149,11 +16149,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSST() {
                             return vicmsst;
@@ -16161,11 +16161,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSST(String value) {
                             this.vicmsst = value;
@@ -16173,11 +16173,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsDeson property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSDeson() {
                             return vicmsDeson;
@@ -16185,11 +16185,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsDeson property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSDeson(String value) {
                             this.vicmsDeson = value;
@@ -16197,11 +16197,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the motDesICMS property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getMotDesICMS() {
                             return motDesICMS;
@@ -16209,11 +16209,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the motDesICMS property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setMotDesICMS(String value) {
                             this.motDesICMS = value;
@@ -16224,9 +16224,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -16282,26 +16282,26 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "orig",
-                        "cst",
-                        "modBC",
-                        "vbc",
-                        "pRedBC",
-                        "picms",
-                        "vicms",
-                        "modBCST",
-                        "pmvast",
-                        "pRedBCST",
-                        "vbcst",
-                        "picmsst",
-                        "vicmsst",
-                        "pbcOp",
-                        "ufst"
+                            "orig",
+                            "cst",
+                            "modBC",
+                            "vbc",
+                            "pRedBC",
+                            "picms",
+                            "vicms",
+                            "modBCST",
+                            "pmvast",
+                            "pRedBCST",
+                            "vbcst",
+                            "picmsst",
+                            "vicmsst",
+                            "pbcOp",
+                            "ufst"
                     })
                     public static class ICMSPart {
 
@@ -16336,11 +16336,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the orig property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getOrig() {
                             return orig;
@@ -16348,11 +16348,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the orig property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setOrig(String value) {
                             this.orig = value;
@@ -16360,11 +16360,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -16372,11 +16372,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -16384,11 +16384,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the modBC property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getModBC() {
                             return modBC;
@@ -16396,11 +16396,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the modBC property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setModBC(String value) {
                             this.modBC = value;
@@ -16408,11 +16408,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbc property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBC() {
                             return vbc;
@@ -16420,11 +16420,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbc property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBC(String value) {
                             this.vbc = value;
@@ -16432,11 +16432,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pRedBC property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPRedBC() {
                             return pRedBC;
@@ -16444,11 +16444,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pRedBC property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPRedBC(String value) {
                             this.pRedBC = value;
@@ -16456,11 +16456,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the picms property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPICMS() {
                             return picms;
@@ -16468,11 +16468,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the picms property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPICMS(String value) {
                             this.picms = value;
@@ -16480,11 +16480,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicms property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMS() {
                             return vicms;
@@ -16492,11 +16492,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicms property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMS(String value) {
                             this.vicms = value;
@@ -16504,11 +16504,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the modBCST property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getModBCST() {
                             return modBCST;
@@ -16516,11 +16516,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the modBCST property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setModBCST(String value) {
                             this.modBCST = value;
@@ -16528,11 +16528,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pmvast property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPMVAST() {
                             return pmvast;
@@ -16540,11 +16540,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pmvast property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPMVAST(String value) {
                             this.pmvast = value;
@@ -16552,11 +16552,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pRedBCST property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPRedBCST() {
                             return pRedBCST;
@@ -16564,11 +16564,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pRedBCST property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPRedBCST(String value) {
                             this.pRedBCST = value;
@@ -16576,11 +16576,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbcst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBCST() {
                             return vbcst;
@@ -16588,11 +16588,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbcst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBCST(String value) {
                             this.vbcst = value;
@@ -16600,11 +16600,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the picmsst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPICMSST() {
                             return picmsst;
@@ -16612,11 +16612,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the picmsst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPICMSST(String value) {
                             this.picmsst = value;
@@ -16624,11 +16624,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSST() {
                             return vicmsst;
@@ -16636,11 +16636,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSST(String value) {
                             this.vicmsst = value;
@@ -16648,11 +16648,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pbcOp property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPBCOp() {
                             return pbcOp;
@@ -16660,11 +16660,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pbcOp property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPBCOp(String value) {
                             this.pbcOp = value;
@@ -16672,11 +16672,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the ufst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link TUf }
-                         *     
+                         *
                          */
                         public TUf getUFST() {
                             return ufst;
@@ -16684,11 +16684,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the ufst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link TUf }
-                         *     
+                         *
                          */
                         public void setUFST(TUf value) {
                             this.ufst = value;
@@ -16699,9 +16699,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -16723,15 +16723,15 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "orig",
-                        "csosn",
-                        "pCredSN",
-                        "vCredICMSSN"
+                            "orig",
+                            "csosn",
+                            "pCredSN",
+                            "vCredICMSSN"
                     })
                     public static class ICMSSN101 {
 
@@ -16746,11 +16746,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the orig property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getOrig() {
                             return orig;
@@ -16758,11 +16758,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the orig property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setOrig(String value) {
                             this.orig = value;
@@ -16770,11 +16770,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the csosn property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCSOSN() {
                             return csosn;
@@ -16782,11 +16782,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the csosn property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCSOSN(String value) {
                             this.csosn = value;
@@ -16794,11 +16794,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pCredSN property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPCredSN() {
                             return pCredSN;
@@ -16806,11 +16806,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pCredSN property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPCredSN(String value) {
                             this.pCredSN = value;
@@ -16818,11 +16818,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vCredICMSSN property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVCredICMSSN() {
                             return vCredICMSSN;
@@ -16830,11 +16830,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vCredICMSSN property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVCredICMSSN(String value) {
                             this.vCredICMSSN = value;
@@ -16845,9 +16845,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -16870,13 +16870,13 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "orig",
-                        "csosn"
+                            "orig",
+                            "csosn"
                     })
                     public static class ICMSSN102 {
 
@@ -16887,11 +16887,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the orig property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getOrig() {
                             return orig;
@@ -16899,11 +16899,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the orig property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setOrig(String value) {
                             this.orig = value;
@@ -16911,11 +16911,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the csosn property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCSOSN() {
                             return csosn;
@@ -16923,11 +16923,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the csosn property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCSOSN(String value) {
                             this.csosn = value;
@@ -16938,9 +16938,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -16980,21 +16980,21 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "orig",
-                        "csosn",
-                        "modBCST",
-                        "pmvast",
-                        "pRedBCST",
-                        "vbcst",
-                        "picmsst",
-                        "vicmsst",
-                        "pCredSN",
-                        "vCredICMSSN"
+                            "orig",
+                            "csosn",
+                            "modBCST",
+                            "pmvast",
+                            "pRedBCST",
+                            "vbcst",
+                            "picmsst",
+                            "vicmsst",
+                            "pCredSN",
+                            "vCredICMSSN"
                     })
                     public static class ICMSSN201 {
 
@@ -17020,11 +17020,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the orig property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getOrig() {
                             return orig;
@@ -17032,11 +17032,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the orig property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setOrig(String value) {
                             this.orig = value;
@@ -17044,11 +17044,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the csosn property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCSOSN() {
                             return csosn;
@@ -17056,11 +17056,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the csosn property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCSOSN(String value) {
                             this.csosn = value;
@@ -17068,11 +17068,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the modBCST property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getModBCST() {
                             return modBCST;
@@ -17080,11 +17080,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the modBCST property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setModBCST(String value) {
                             this.modBCST = value;
@@ -17092,11 +17092,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pmvast property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPMVAST() {
                             return pmvast;
@@ -17104,11 +17104,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pmvast property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPMVAST(String value) {
                             this.pmvast = value;
@@ -17116,11 +17116,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pRedBCST property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPRedBCST() {
                             return pRedBCST;
@@ -17128,11 +17128,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pRedBCST property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPRedBCST(String value) {
                             this.pRedBCST = value;
@@ -17140,11 +17140,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbcst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBCST() {
                             return vbcst;
@@ -17152,11 +17152,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbcst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBCST(String value) {
                             this.vbcst = value;
@@ -17164,11 +17164,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the picmsst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPICMSST() {
                             return picmsst;
@@ -17176,11 +17176,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the picmsst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPICMSST(String value) {
                             this.picmsst = value;
@@ -17188,11 +17188,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSST() {
                             return vicmsst;
@@ -17200,11 +17200,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSST(String value) {
                             this.vicmsst = value;
@@ -17212,11 +17212,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pCredSN property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPCredSN() {
                             return pCredSN;
@@ -17224,11 +17224,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pCredSN property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPCredSN(String value) {
                             this.pCredSN = value;
@@ -17236,11 +17236,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vCredICMSSN property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVCredICMSSN() {
                             return vCredICMSSN;
@@ -17248,11 +17248,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vCredICMSSN property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVCredICMSSN(String value) {
                             this.vCredICMSSN = value;
@@ -17263,9 +17263,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -17304,19 +17304,19 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "orig",
-                        "csosn",
-                        "modBCST",
-                        "pmvast",
-                        "pRedBCST",
-                        "vbcst",
-                        "picmsst",
-                        "vicmsst"
+                            "orig",
+                            "csosn",
+                            "modBCST",
+                            "pmvast",
+                            "pRedBCST",
+                            "vbcst",
+                            "picmsst",
+                            "vicmsst"
                     })
                     public static class ICMSSN202 {
 
@@ -17338,11 +17338,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the orig property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getOrig() {
                             return orig;
@@ -17350,11 +17350,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the orig property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setOrig(String value) {
                             this.orig = value;
@@ -17362,11 +17362,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the csosn property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCSOSN() {
                             return csosn;
@@ -17374,11 +17374,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the csosn property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCSOSN(String value) {
                             this.csosn = value;
@@ -17386,11 +17386,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the modBCST property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getModBCST() {
                             return modBCST;
@@ -17398,11 +17398,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the modBCST property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setModBCST(String value) {
                             this.modBCST = value;
@@ -17410,11 +17410,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pmvast property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPMVAST() {
                             return pmvast;
@@ -17422,11 +17422,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pmvast property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPMVAST(String value) {
                             this.pmvast = value;
@@ -17434,11 +17434,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pRedBCST property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPRedBCST() {
                             return pRedBCST;
@@ -17446,11 +17446,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pRedBCST property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPRedBCST(String value) {
                             this.pRedBCST = value;
@@ -17458,11 +17458,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbcst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBCST() {
                             return vbcst;
@@ -17470,11 +17470,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbcst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBCST(String value) {
                             this.vbcst = value;
@@ -17482,11 +17482,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the picmsst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPICMSST() {
                             return picmsst;
@@ -17494,11 +17494,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the picmsst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPICMSST(String value) {
                             this.picmsst = value;
@@ -17506,11 +17506,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSST() {
                             return vicmsst;
@@ -17518,11 +17518,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSST(String value) {
                             this.vicmsst = value;
@@ -17533,9 +17533,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -17559,15 +17559,15 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "orig",
-                        "csosn",
-                        "vbcstRet",
-                        "vicmsstRet"
+                            "orig",
+                            "csosn",
+                            "vbcstRet",
+                            "vicmsstRet"
                     })
                     public static class ICMSSN500 {
 
@@ -17582,11 +17582,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the orig property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getOrig() {
                             return orig;
@@ -17594,11 +17594,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the orig property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setOrig(String value) {
                             this.orig = value;
@@ -17606,11 +17606,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the csosn property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCSOSN() {
                             return csosn;
@@ -17618,11 +17618,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the csosn property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCSOSN(String value) {
                             this.csosn = value;
@@ -17630,11 +17630,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbcstRet property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBCSTRet() {
                             return vbcstRet;
@@ -17642,11 +17642,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbcstRet property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBCSTRet(String value) {
                             this.vbcstRet = value;
@@ -17654,11 +17654,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsstRet property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSSTRet() {
                             return vicmsstRet;
@@ -17666,11 +17666,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsstRet property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSSTRet(String value) {
                             this.vicmsstRet = value;
@@ -17681,9 +17681,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -17744,26 +17744,26 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "orig",
-                        "csosn",
-                        "modBC",
-                        "vbc",
-                        "pRedBC",
-                        "picms",
-                        "vicms",
-                        "modBCST",
-                        "pmvast",
-                        "pRedBCST",
-                        "vbcst",
-                        "picmsst",
-                        "vicmsst",
-                        "pCredSN",
-                        "vCredICMSSN"
+                            "orig",
+                            "csosn",
+                            "modBC",
+                            "vbc",
+                            "pRedBC",
+                            "picms",
+                            "vicms",
+                            "modBCST",
+                            "pmvast",
+                            "pRedBCST",
+                            "vbcst",
+                            "picmsst",
+                            "vicmsst",
+                            "pCredSN",
+                            "vCredICMSSN"
                     })
                     public static class ICMSSN900 {
 
@@ -17794,11 +17794,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the orig property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getOrig() {
                             return orig;
@@ -17806,11 +17806,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the orig property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setOrig(String value) {
                             this.orig = value;
@@ -17818,11 +17818,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the csosn property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCSOSN() {
                             return csosn;
@@ -17830,11 +17830,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the csosn property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCSOSN(String value) {
                             this.csosn = value;
@@ -17842,11 +17842,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the modBC property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getModBC() {
                             return modBC;
@@ -17854,11 +17854,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the modBC property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setModBC(String value) {
                             this.modBC = value;
@@ -17866,11 +17866,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbc property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBC() {
                             return vbc;
@@ -17878,11 +17878,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbc property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBC(String value) {
                             this.vbc = value;
@@ -17890,11 +17890,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pRedBC property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPRedBC() {
                             return pRedBC;
@@ -17902,11 +17902,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pRedBC property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPRedBC(String value) {
                             this.pRedBC = value;
@@ -17914,11 +17914,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the picms property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPICMS() {
                             return picms;
@@ -17926,11 +17926,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the picms property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPICMS(String value) {
                             this.picms = value;
@@ -17938,11 +17938,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicms property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMS() {
                             return vicms;
@@ -17950,11 +17950,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicms property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMS(String value) {
                             this.vicms = value;
@@ -17962,11 +17962,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the modBCST property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getModBCST() {
                             return modBCST;
@@ -17974,11 +17974,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the modBCST property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setModBCST(String value) {
                             this.modBCST = value;
@@ -17986,11 +17986,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pmvast property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPMVAST() {
                             return pmvast;
@@ -17998,11 +17998,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pmvast property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPMVAST(String value) {
                             this.pmvast = value;
@@ -18010,11 +18010,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pRedBCST property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPRedBCST() {
                             return pRedBCST;
@@ -18022,11 +18022,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pRedBCST property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPRedBCST(String value) {
                             this.pRedBCST = value;
@@ -18034,11 +18034,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbcst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBCST() {
                             return vbcst;
@@ -18046,11 +18046,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbcst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBCST(String value) {
                             this.vbcst = value;
@@ -18058,11 +18058,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the picmsst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPICMSST() {
                             return picmsst;
@@ -18070,11 +18070,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the picmsst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPICMSST(String value) {
                             this.picmsst = value;
@@ -18082,11 +18082,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSST() {
                             return vicmsst;
@@ -18094,11 +18094,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSST(String value) {
                             this.vicmsst = value;
@@ -18106,11 +18106,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the pCredSN property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPCredSN() {
                             return pCredSN;
@@ -18118,11 +18118,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the pCredSN property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPCredSN(String value) {
                             this.pCredSN = value;
@@ -18130,11 +18130,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vCredICMSSN property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVCredICMSSN() {
                             return vCredICMSSN;
@@ -18142,11 +18142,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vCredICMSSN property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVCredICMSSN(String value) {
                             this.vCredICMSSN = value;
@@ -18157,9 +18157,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -18183,17 +18183,17 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "orig",
-                        "cst",
-                        "vbcstRet",
-                        "vicmsstRet",
-                        "vbcstDest",
-                        "vicmsstDest"
+                            "orig",
+                            "cst",
+                            "vbcstRet",
+                            "vicmsstRet",
+                            "vbcstDest",
+                            "vicmsstDest"
                     })
                     public static class ICMSST {
 
@@ -18212,11 +18212,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the orig property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getOrig() {
                             return orig;
@@ -18224,11 +18224,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the orig property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setOrig(String value) {
                             this.orig = value;
@@ -18236,11 +18236,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -18248,11 +18248,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -18260,11 +18260,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbcstRet property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBCSTRet() {
                             return vbcstRet;
@@ -18272,11 +18272,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbcstRet property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBCSTRet(String value) {
                             this.vbcstRet = value;
@@ -18284,11 +18284,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsstRet property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSSTRet() {
                             return vicmsstRet;
@@ -18296,11 +18296,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsstRet property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSSTRet(String value) {
                             this.vicmsstRet = value;
@@ -18308,11 +18308,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbcstDest property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBCSTDest() {
                             return vbcstDest;
@@ -18320,11 +18320,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbcstDest property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBCSTDest(String value) {
                             this.vbcstDest = value;
@@ -18332,11 +18332,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vicmsstDest property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVICMSSTDest() {
                             return vicmsstDest;
@@ -18344,11 +18344,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vicmsstDest property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVICMSSTDest(String value) {
                             this.vicmsstDest = value;
@@ -18361,9 +18361,9 @@ public class TNFe {
 
                 /**
                  * <p>Java class for anonymous complex type.
-                 * 
+                 *
                  * <p>The following schema fragment specifies the expected content contained within this class.
-                 * 
+                 *
                  * <pre>
                  * &lt;complexType>
                  *   &lt;complexContent>
@@ -18378,15 +18378,15 @@ public class TNFe {
                  *   &lt;/complexContent>
                  * &lt;/complexType>
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  */
                 @XmlAccessorType(XmlAccessType.FIELD)
                 @XmlType(name = "", propOrder = {
-                    "vbc",
-                    "vDespAdu",
-                    "vii",
-                    "viof"
+                        "vbc",
+                        "vDespAdu",
+                        "vii",
+                        "viof"
                 })
                 public static class II {
 
@@ -18401,11 +18401,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vbc property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVBC() {
                         return vbc;
@@ -18413,11 +18413,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vbc property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVBC(String value) {
                         this.vbc = value;
@@ -18425,11 +18425,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vDespAdu property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVDespAdu() {
                         return vDespAdu;
@@ -18437,11 +18437,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vDespAdu property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVDespAdu(String value) {
                         this.vDespAdu = value;
@@ -18449,11 +18449,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vii property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVII() {
                         return vii;
@@ -18461,11 +18461,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vii property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVII(String value) {
                         this.vii = value;
@@ -18473,11 +18473,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the viof property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVIOF() {
                         return viof;
@@ -18485,11 +18485,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the viof property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVIOF(String value) {
                         this.viof = value;
@@ -18500,9 +18500,9 @@ public class TNFe {
 
                 /**
                  * <p>Java class for anonymous complex type.
-                 * 
+                 *
                  * <p>The following schema fragment specifies the expected content contained within this class.
-                 * 
+                 *
                  * <pre>
                  * &lt;complexType>
                  *   &lt;complexContent>
@@ -18566,27 +18566,27 @@ public class TNFe {
                  *   &lt;/complexContent>
                  * &lt;/complexType>
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  */
                 @XmlAccessorType(XmlAccessType.FIELD)
                 @XmlType(name = "", propOrder = {
-                    "vbc",
-                    "vAliq",
-                    "vissqn",
-                    "cMunFG",
-                    "cListServ",
-                    "vDeducao",
-                    "vOutro",
-                    "vDescIncond",
-                    "vDescCond",
-                    "vissRet",
-                    "indISS",
-                    "cServico",
-                    "cMun",
-                    "cPais",
-                    "nProcesso",
-                    "indIncentivo"
+                        "vbc",
+                        "vAliq",
+                        "vissqn",
+                        "cMunFG",
+                        "cListServ",
+                        "vDeducao",
+                        "vOutro",
+                        "vDescIncond",
+                        "vDescCond",
+                        "vissRet",
+                        "indISS",
+                        "cServico",
+                        "cMun",
+                        "cPais",
+                        "nProcesso",
+                        "indIncentivo"
                 })
                 public static class ISSQN {
 
@@ -18617,11 +18617,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vbc property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVBC() {
                         return vbc;
@@ -18629,11 +18629,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vbc property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVBC(String value) {
                         this.vbc = value;
@@ -18641,11 +18641,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vAliq property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVAliq() {
                         return vAliq;
@@ -18653,11 +18653,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vAliq property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVAliq(String value) {
                         this.vAliq = value;
@@ -18665,11 +18665,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vissqn property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVISSQN() {
                         return vissqn;
@@ -18677,11 +18677,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vissqn property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVISSQN(String value) {
                         this.vissqn = value;
@@ -18689,11 +18689,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cMunFG property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCMunFG() {
                         return cMunFG;
@@ -18701,11 +18701,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cMunFG property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCMunFG(String value) {
                         this.cMunFG = value;
@@ -18713,11 +18713,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cListServ property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCListServ() {
                         return cListServ;
@@ -18725,11 +18725,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cListServ property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCListServ(String value) {
                         this.cListServ = value;
@@ -18737,11 +18737,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vDeducao property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVDeducao() {
                         return vDeducao;
@@ -18749,11 +18749,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vDeducao property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVDeducao(String value) {
                         this.vDeducao = value;
@@ -18761,11 +18761,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vOutro property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVOutro() {
                         return vOutro;
@@ -18773,11 +18773,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vOutro property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVOutro(String value) {
                         this.vOutro = value;
@@ -18785,11 +18785,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vDescIncond property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVDescIncond() {
                         return vDescIncond;
@@ -18797,11 +18797,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vDescIncond property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVDescIncond(String value) {
                         this.vDescIncond = value;
@@ -18809,11 +18809,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vDescCond property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVDescCond() {
                         return vDescCond;
@@ -18821,11 +18821,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vDescCond property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVDescCond(String value) {
                         this.vDescCond = value;
@@ -18833,11 +18833,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vissRet property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVISSRet() {
                         return vissRet;
@@ -18845,11 +18845,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vissRet property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVISSRet(String value) {
                         this.vissRet = value;
@@ -18857,11 +18857,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the indISS property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getIndISS() {
                         return indISS;
@@ -18869,11 +18869,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the indISS property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setIndISS(String value) {
                         this.indISS = value;
@@ -18881,11 +18881,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cServico property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCServico() {
                         return cServico;
@@ -18893,11 +18893,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cServico property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCServico(String value) {
                         this.cServico = value;
@@ -18905,11 +18905,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cMun property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCMun() {
                         return cMun;
@@ -18917,11 +18917,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cMun property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCMun(String value) {
                         this.cMun = value;
@@ -18929,11 +18929,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cPais property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCPais() {
                         return cPais;
@@ -18941,11 +18941,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cPais property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCPais(String value) {
                         this.cPais = value;
@@ -18953,11 +18953,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the nProcesso property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getNProcesso() {
                         return nProcesso;
@@ -18965,11 +18965,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the nProcesso property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setNProcesso(String value) {
                         this.nProcesso = value;
@@ -18977,11 +18977,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the indIncentivo property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getIndIncentivo() {
                         return indIncentivo;
@@ -18989,11 +18989,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the indIncentivo property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setIndIncentivo(String value) {
                         this.indIncentivo = value;
@@ -19004,9 +19004,9 @@ public class TNFe {
 
                 /**
                  * <p>Java class for anonymous complex type.
-                 * 
+                 *
                  * <p>The following schema fragment specifies the expected content contained within this class.
-                 * 
+                 *
                  * <pre>
                  * &lt;complexType>
                  *   &lt;complexContent>
@@ -19135,15 +19135,15 @@ public class TNFe {
                  *   &lt;/complexContent>
                  * &lt;/complexType>
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  */
                 @XmlAccessorType(XmlAccessType.FIELD)
                 @XmlType(name = "", propOrder = {
-                    "pisAliq",
-                    "pisQtde",
-                    "pisnt",
-                    "pisOutr"
+                        "pisAliq",
+                        "pisQtde",
+                        "pisnt",
+                        "pisOutr"
                 })
                 public static class PIS {
 
@@ -19158,11 +19158,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the pisAliq property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.PIS.PISAliq }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.PIS.PISAliq getPISAliq() {
                         return pisAliq;
@@ -19170,11 +19170,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the pisAliq property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.PIS.PISAliq }
-                     *     
+                     *
                      */
                     public void setPISAliq(TNFe.InfNFe.Det.Imposto.PIS.PISAliq value) {
                         this.pisAliq = value;
@@ -19182,11 +19182,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the pisQtde property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.PIS.PISQtde }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.PIS.PISQtde getPISQtde() {
                         return pisQtde;
@@ -19194,11 +19194,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the pisQtde property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.PIS.PISQtde }
-                     *     
+                     *
                      */
                     public void setPISQtde(TNFe.InfNFe.Det.Imposto.PIS.PISQtde value) {
                         this.pisQtde = value;
@@ -19206,11 +19206,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the pisnt property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.PIS.PISNT }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.PIS.PISNT getPISNT() {
                         return pisnt;
@@ -19218,11 +19218,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the pisnt property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.PIS.PISNT }
-                     *     
+                     *
                      */
                     public void setPISNT(TNFe.InfNFe.Det.Imposto.PIS.PISNT value) {
                         this.pisnt = value;
@@ -19230,11 +19230,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the pisOutr property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Imposto.PIS.PISOutr }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Imposto.PIS.PISOutr getPISOutr() {
                         return pisOutr;
@@ -19242,11 +19242,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the pisOutr property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Imposto.PIS.PISOutr }
-                     *     
+                     *
                      */
                     public void setPISOutr(TNFe.InfNFe.Det.Imposto.PIS.PISOutr value) {
                         this.pisOutr = value;
@@ -19255,9 +19255,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -19280,15 +19280,15 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "cst",
-                        "vbc",
-                        "ppis",
-                        "vpis"
+                            "cst",
+                            "vbc",
+                            "ppis",
+                            "vpis"
                     })
                     public static class PISAliq {
 
@@ -19303,11 +19303,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -19315,11 +19315,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -19327,11 +19327,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbc property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBC() {
                             return vbc;
@@ -19339,11 +19339,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbc property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBC(String value) {
                             this.vbc = value;
@@ -19351,11 +19351,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the ppis property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPPIS() {
                             return ppis;
@@ -19363,11 +19363,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the ppis property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPPIS(String value) {
                             this.ppis = value;
@@ -19375,11 +19375,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vpis property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVPIS() {
                             return vpis;
@@ -19387,11 +19387,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vpis property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVPIS(String value) {
                             this.vpis = value;
@@ -19402,9 +19402,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -19428,12 +19428,12 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "cst"
+                            "cst"
                     })
                     public static class PISNT {
 
@@ -19442,11 +19442,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -19454,11 +19454,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -19469,9 +19469,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -19524,17 +19524,17 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "cst",
-                        "vbc",
-                        "ppis",
-                        "qbcProd",
-                        "vAliqProd",
-                        "vpis"
+                            "cst",
+                            "vbc",
+                            "ppis",
+                            "qbcProd",
+                            "vAliqProd",
+                            "vpis"
                     })
                     public static class PISOutr {
 
@@ -19552,11 +19552,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -19564,11 +19564,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -19576,11 +19576,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vbc property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVBC() {
                             return vbc;
@@ -19588,11 +19588,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vbc property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVBC(String value) {
                             this.vbc = value;
@@ -19600,11 +19600,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the ppis property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getPPIS() {
                             return ppis;
@@ -19612,11 +19612,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the ppis property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setPPIS(String value) {
                             this.ppis = value;
@@ -19624,11 +19624,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the qbcProd property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getQBCProd() {
                             return qbcProd;
@@ -19636,11 +19636,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the qbcProd property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setQBCProd(String value) {
                             this.qbcProd = value;
@@ -19648,11 +19648,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vAliqProd property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVAliqProd() {
                             return vAliqProd;
@@ -19660,11 +19660,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vAliqProd property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVAliqProd(String value) {
                             this.vAliqProd = value;
@@ -19672,11 +19672,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vpis property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVPIS() {
                             return vpis;
@@ -19684,11 +19684,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vpis property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVPIS(String value) {
                             this.vpis = value;
@@ -19699,9 +19699,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -19723,15 +19723,15 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "cst",
-                        "qbcProd",
-                        "vAliqProd",
-                        "vpis"
+                            "cst",
+                            "qbcProd",
+                            "vAliqProd",
+                            "vpis"
                     })
                     public static class PISQtde {
 
@@ -19746,11 +19746,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cst property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCST() {
                             return cst;
@@ -19758,11 +19758,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cst property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCST(String value) {
                             this.cst = value;
@@ -19770,11 +19770,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the qbcProd property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getQBCProd() {
                             return qbcProd;
@@ -19782,11 +19782,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the qbcProd property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setQBCProd(String value) {
                             this.qbcProd = value;
@@ -19794,11 +19794,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vAliqProd property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVAliqProd() {
                             return vAliqProd;
@@ -19806,11 +19806,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vAliqProd property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVAliqProd(String value) {
                             this.vAliqProd = value;
@@ -19818,11 +19818,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vpis property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVPIS() {
                             return vpis;
@@ -19830,11 +19830,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vpis property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVPIS(String value) {
                             this.vpis = value;
@@ -19847,9 +19847,9 @@ public class TNFe {
 
                 /**
                  * <p>Java class for anonymous complex type.
-                 * 
+                 *
                  * <p>The following schema fragment specifies the expected content contained within this class.
-                 * 
+                 *
                  * <pre>
                  * &lt;complexType>
                  *   &lt;complexContent>
@@ -19871,16 +19871,16 @@ public class TNFe {
                  *   &lt;/complexContent>
                  * &lt;/complexType>
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  */
                 @XmlAccessorType(XmlAccessType.FIELD)
                 @XmlType(name = "", propOrder = {
-                    "vbc",
-                    "ppis",
-                    "qbcProd",
-                    "vAliqProd",
-                    "vpis"
+                        "vbc",
+                        "ppis",
+                        "qbcProd",
+                        "vAliqProd",
+                        "vpis"
                 })
                 public static class PISST {
 
@@ -19896,11 +19896,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vbc property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVBC() {
                         return vbc;
@@ -19908,11 +19908,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vbc property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVBC(String value) {
                         this.vbc = value;
@@ -19920,11 +19920,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the ppis property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getPPIS() {
                         return ppis;
@@ -19932,11 +19932,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the ppis property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setPPIS(String value) {
                         this.ppis = value;
@@ -19944,11 +19944,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the qbcProd property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getQBCProd() {
                         return qbcProd;
@@ -19956,11 +19956,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the qbcProd property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setQBCProd(String value) {
                         this.qbcProd = value;
@@ -19968,11 +19968,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vAliqProd property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVAliqProd() {
                         return vAliqProd;
@@ -19980,11 +19980,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vAliqProd property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVAliqProd(String value) {
                         this.vAliqProd = value;
@@ -19992,11 +19992,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vpis property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVPIS() {
                         return vpis;
@@ -20004,11 +20004,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vpis property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVPIS(String value) {
                         this.vpis = value;
@@ -20021,9 +20021,9 @@ public class TNFe {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -20046,13 +20046,13 @@ public class TNFe {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "pDevol",
-                "ipi"
+                    "pDevol",
+                    "ipi"
             })
             public static class ImpostoDevol {
 
@@ -20063,11 +20063,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the pDevol property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getPDevol() {
                     return pDevol;
@@ -20075,11 +20075,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the pDevol property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setPDevol(String value) {
                     this.pDevol = value;
@@ -20087,11 +20087,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the ipi property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link TNFe.InfNFe.Det.ImpostoDevol.IPI }
-                 *     
+                 *
                  */
                 public TNFe.InfNFe.Det.ImpostoDevol.IPI getIPI() {
                     return ipi;
@@ -20099,11 +20099,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the ipi property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link TNFe.InfNFe.Det.ImpostoDevol.IPI }
-                 *     
+                 *
                  */
                 public void setIPI(TNFe.InfNFe.Det.ImpostoDevol.IPI value) {
                     this.ipi = value;
@@ -20112,9 +20112,9 @@ public class TNFe {
 
                 /**
                  * <p>Java class for anonymous complex type.
-                 * 
+                 *
                  * <p>The following schema fragment specifies the expected content contained within this class.
-                 * 
+                 *
                  * <pre>
                  * &lt;complexType>
                  *   &lt;complexContent>
@@ -20126,12 +20126,12 @@ public class TNFe {
                  *   &lt;/complexContent>
                  * &lt;/complexType>
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  */
                 @XmlAccessorType(XmlAccessType.FIELD)
                 @XmlType(name = "", propOrder = {
-                    "vipiDevol"
+                        "vipiDevol"
                 })
                 public static class IPI {
 
@@ -20140,11 +20140,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vipiDevol property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVIPIDevol() {
                         return vipiDevol;
@@ -20152,11 +20152,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vipiDevol property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVIPIDevol(String value) {
                         this.vipiDevol = value;
@@ -20169,9 +20169,9 @@ public class TNFe {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -20768,41 +20768,41 @@ public class TNFe {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "cProd",
-                "cean",
-                "xProd",
-                "ncm",
-                "nve",
-                "extipi",
-                "cfop",
-                "uCom",
-                "qCom",
-                "vUnCom",
-                "vProd",
-                "ceanTrib",
-                "uTrib",
-                "qTrib",
-                "vUnTrib",
-                "vFrete",
-                "vSeg",
-                "vDesc",
-                "vOutro",
-                "indTot",
-                "di",
-                "detExport",
-                "xPed",
-                "nItemPed",
-                "nfci",
-                "veicProd",
-                "med",
-                "arma",
-                "comb",
-                "nrecopi"
+                    "cProd",
+                    "cean",
+                    "xProd",
+                    "ncm",
+                    "nve",
+                    "extipi",
+                    "cfop",
+                    "uCom",
+                    "qCom",
+                    "vUnCom",
+                    "vProd",
+                    "ceanTrib",
+                    "uTrib",
+                    "qTrib",
+                    "vUnTrib",
+                    "vFrete",
+                    "vSeg",
+                    "vDesc",
+                    "vOutro",
+                    "indTot",
+                    "di",
+                    "detExport",
+                    "xPed",
+                    "nItemPed",
+                    "nfci",
+                    "veicProd",
+                    "med",
+                    "arma",
+                    "comb",
+                    "nrecopi"
             })
             public static class Prod {
 
@@ -20858,11 +20858,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the cProd property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getCProd() {
                     return cProd;
@@ -20870,11 +20870,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the cProd property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setCProd(String value) {
                     this.cProd = value;
@@ -20882,11 +20882,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the cean property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getCEAN() {
                     return cean;
@@ -20894,11 +20894,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the cean property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setCEAN(String value) {
                     this.cean = value;
@@ -20906,11 +20906,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the xProd property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getXProd() {
                     return xProd;
@@ -20918,11 +20918,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the xProd property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setXProd(String value) {
                     this.xProd = value;
@@ -20930,11 +20930,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the ncm property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getNCM() {
                     return ncm;
@@ -20942,11 +20942,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the ncm property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setNCM(String value) {
                     this.ncm = value;
@@ -20954,25 +20954,25 @@ public class TNFe {
 
                 /**
                  * Gets the value of the nve property.
-                 * 
+                 *
                  * <p>
                  * This accessor method returns a reference to the live list,
                  * not a snapshot. Therefore any modification you make to the
                  * returned list will be present inside the JAXB object.
                  * This is why there is not a <CODE>set</CODE> method for the nve property.
-                 * 
+                 *
                  * <p>
                  * For example, to add a new item, do as follows:
                  * <pre>
                  *    getNVE().add(newItem);
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  * <p>
                  * Objects of the following type(s) are allowed in the list
                  * {@link String }
-                 * 
-                 * 
+                 *
+                 *
                  */
                 public List<String> getNVE() {
                     if (nve == null) {
@@ -20983,11 +20983,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the extipi property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getEXTIPI() {
                     return extipi;
@@ -20995,11 +20995,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the extipi property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setEXTIPI(String value) {
                     this.extipi = value;
@@ -21007,11 +21007,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the cfop property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getCFOP() {
                     return cfop;
@@ -21019,11 +21019,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the cfop property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setCFOP(String value) {
                     this.cfop = value;
@@ -21031,11 +21031,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the uCom property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getUCom() {
                     return uCom;
@@ -21043,11 +21043,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the uCom property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setUCom(String value) {
                     this.uCom = value;
@@ -21055,11 +21055,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the qCom property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getQCom() {
                     return qCom;
@@ -21067,11 +21067,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the qCom property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setQCom(String value) {
                     this.qCom = value;
@@ -21079,11 +21079,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vUnCom property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVUnCom() {
                     return vUnCom;
@@ -21091,11 +21091,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vUnCom property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVUnCom(String value) {
                     this.vUnCom = value;
@@ -21103,11 +21103,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vProd property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVProd() {
                     return vProd;
@@ -21115,11 +21115,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vProd property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVProd(String value) {
                     this.vProd = value;
@@ -21127,11 +21127,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the ceanTrib property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getCEANTrib() {
                     return ceanTrib;
@@ -21139,11 +21139,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the ceanTrib property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setCEANTrib(String value) {
                     this.ceanTrib = value;
@@ -21151,11 +21151,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the uTrib property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getUTrib() {
                     return uTrib;
@@ -21163,11 +21163,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the uTrib property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setUTrib(String value) {
                     this.uTrib = value;
@@ -21175,11 +21175,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the qTrib property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getQTrib() {
                     return qTrib;
@@ -21187,11 +21187,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the qTrib property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setQTrib(String value) {
                     this.qTrib = value;
@@ -21199,11 +21199,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vUnTrib property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVUnTrib() {
                     return vUnTrib;
@@ -21211,11 +21211,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vUnTrib property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVUnTrib(String value) {
                     this.vUnTrib = value;
@@ -21223,11 +21223,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vFrete property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVFrete() {
                     return vFrete;
@@ -21235,11 +21235,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vFrete property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVFrete(String value) {
                     this.vFrete = value;
@@ -21247,11 +21247,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vSeg property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVSeg() {
                     return vSeg;
@@ -21259,11 +21259,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vSeg property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVSeg(String value) {
                     this.vSeg = value;
@@ -21271,11 +21271,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vDesc property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVDesc() {
                     return vDesc;
@@ -21283,11 +21283,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vDesc property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVDesc(String value) {
                     this.vDesc = value;
@@ -21295,11 +21295,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vOutro property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVOutro() {
                     return vOutro;
@@ -21307,11 +21307,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vOutro property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVOutro(String value) {
                     this.vOutro = value;
@@ -21319,11 +21319,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the indTot property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getIndTot() {
                     return indTot;
@@ -21331,11 +21331,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the indTot property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setIndTot(String value) {
                     this.indTot = value;
@@ -21343,25 +21343,25 @@ public class TNFe {
 
                 /**
                  * Gets the value of the di property.
-                 * 
+                 *
                  * <p>
                  * This accessor method returns a reference to the live list,
                  * not a snapshot. Therefore any modification you make to the
                  * returned list will be present inside the JAXB object.
                  * This is why there is not a <CODE>set</CODE> method for the di property.
-                 * 
+                 *
                  * <p>
                  * For example, to add a new item, do as follows:
                  * <pre>
                  *    getDI().add(newItem);
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  * <p>
                  * Objects of the following type(s) are allowed in the list
                  * {@link TNFe.InfNFe.Det.Prod.DI }
-                 * 
-                 * 
+                 *
+                 *
                  */
                 public List<TNFe.InfNFe.Det.Prod.DI> getDI() {
                     if (di == null) {
@@ -21372,25 +21372,25 @@ public class TNFe {
 
                 /**
                  * Gets the value of the detExport property.
-                 * 
+                 *
                  * <p>
                  * This accessor method returns a reference to the live list,
                  * not a snapshot. Therefore any modification you make to the
                  * returned list will be present inside the JAXB object.
                  * This is why there is not a <CODE>set</CODE> method for the detExport property.
-                 * 
+                 *
                  * <p>
                  * For example, to add a new item, do as follows:
                  * <pre>
                  *    getDetExport().add(newItem);
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  * <p>
                  * Objects of the following type(s) are allowed in the list
                  * {@link TNFe.InfNFe.Det.Prod.DetExport }
-                 * 
-                 * 
+                 *
+                 *
                  */
                 public List<TNFe.InfNFe.Det.Prod.DetExport> getDetExport() {
                     if (detExport == null) {
@@ -21401,11 +21401,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the xPed property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getXPed() {
                     return xPed;
@@ -21413,11 +21413,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the xPed property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setXPed(String value) {
                     this.xPed = value;
@@ -21425,11 +21425,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the nItemPed property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getNItemPed() {
                     return nItemPed;
@@ -21437,11 +21437,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the nItemPed property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setNItemPed(String value) {
                     this.nItemPed = value;
@@ -21449,11 +21449,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the nfci property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getNFCI() {
                     return nfci;
@@ -21461,11 +21461,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the nfci property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setNFCI(String value) {
                     this.nfci = value;
@@ -21473,11 +21473,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the veicProd property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link TNFe.InfNFe.Det.Prod.VeicProd }
-                 *     
+                 *
                  */
                 public TNFe.InfNFe.Det.Prod.VeicProd getVeicProd() {
                     return veicProd;
@@ -21485,11 +21485,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the veicProd property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link TNFe.InfNFe.Det.Prod.VeicProd }
-                 *     
+                 *
                  */
                 public void setVeicProd(TNFe.InfNFe.Det.Prod.VeicProd value) {
                     this.veicProd = value;
@@ -21497,25 +21497,25 @@ public class TNFe {
 
                 /**
                  * Gets the value of the med property.
-                 * 
+                 *
                  * <p>
                  * This accessor method returns a reference to the live list,
                  * not a snapshot. Therefore any modification you make to the
                  * returned list will be present inside the JAXB object.
                  * This is why there is not a <CODE>set</CODE> method for the med property.
-                 * 
+                 *
                  * <p>
                  * For example, to add a new item, do as follows:
                  * <pre>
                  *    getMed().add(newItem);
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  * <p>
                  * Objects of the following type(s) are allowed in the list
                  * {@link TNFe.InfNFe.Det.Prod.Med }
-                 * 
-                 * 
+                 *
+                 *
                  */
                 public List<TNFe.InfNFe.Det.Prod.Med> getMed() {
                     if (med == null) {
@@ -21526,25 +21526,25 @@ public class TNFe {
 
                 /**
                  * Gets the value of the arma property.
-                 * 
+                 *
                  * <p>
                  * This accessor method returns a reference to the live list,
                  * not a snapshot. Therefore any modification you make to the
                  * returned list will be present inside the JAXB object.
                  * This is why there is not a <CODE>set</CODE> method for the arma property.
-                 * 
+                 *
                  * <p>
                  * For example, to add a new item, do as follows:
                  * <pre>
                  *    getArma().add(newItem);
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  * <p>
                  * Objects of the following type(s) are allowed in the list
                  * {@link TNFe.InfNFe.Det.Prod.Arma }
-                 * 
-                 * 
+                 *
+                 *
                  */
                 public List<TNFe.InfNFe.Det.Prod.Arma> getArma() {
                     if (arma == null) {
@@ -21555,11 +21555,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the comb property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link TNFe.InfNFe.Det.Prod.Comb }
-                 *     
+                 *
                  */
                 public TNFe.InfNFe.Det.Prod.Comb getComb() {
                     return comb;
@@ -21567,11 +21567,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the comb property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link TNFe.InfNFe.Det.Prod.Comb }
-                 *     
+                 *
                  */
                 public void setComb(TNFe.InfNFe.Det.Prod.Comb value) {
                     this.comb = value;
@@ -21579,11 +21579,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the nrecopi property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getNRECOPI() {
                     return nrecopi;
@@ -21591,11 +21591,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the nrecopi property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setNRECOPI(String value) {
                     this.nrecopi = value;
@@ -21604,9 +21604,9 @@ public class TNFe {
 
                 /**
                  * <p>Java class for anonymous complex type.
-                 * 
+                 *
                  * <p>The following schema fragment specifies the expected content contained within this class.
-                 * 
+                 *
                  * <pre>
                  * &lt;complexType>
                  *   &lt;complexContent>
@@ -21650,15 +21650,15 @@ public class TNFe {
                  *   &lt;/complexContent>
                  * &lt;/complexType>
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  */
                 @XmlAccessorType(XmlAccessType.FIELD)
                 @XmlType(name = "", propOrder = {
-                    "tpArma",
-                    "nSerie",
-                    "nCano",
-                    "descr"
+                        "tpArma",
+                        "nSerie",
+                        "nCano",
+                        "descr"
                 })
                 public static class Arma {
 
@@ -21673,11 +21673,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the tpArma property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getTpArma() {
                         return tpArma;
@@ -21685,11 +21685,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the tpArma property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setTpArma(String value) {
                         this.tpArma = value;
@@ -21697,11 +21697,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the nSerie property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getNSerie() {
                         return nSerie;
@@ -21709,11 +21709,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the nSerie property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setNSerie(String value) {
                         this.nSerie = value;
@@ -21721,11 +21721,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the nCano property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getNCano() {
                         return nCano;
@@ -21733,11 +21733,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the nCano property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setNCano(String value) {
                         this.nCano = value;
@@ -21745,11 +21745,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the descr property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getDescr() {
                         return descr;
@@ -21757,11 +21757,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the descr property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setDescr(String value) {
                         this.descr = value;
@@ -21772,9 +21772,9 @@ public class TNFe {
 
                 /**
                  * <p>Java class for anonymous complex type.
-                 * 
+                 *
                  * <p>The following schema fragment specifies the expected content contained within this class.
-                 * 
+                 *
                  * <pre>
                  * &lt;complexType>
                  *   &lt;complexContent>
@@ -21810,17 +21810,17 @@ public class TNFe {
                  *   &lt;/complexContent>
                  * &lt;/complexType>
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  */
                 @XmlAccessorType(XmlAccessType.FIELD)
                 @XmlType(name = "", propOrder = {
-                    "cProdANP",
-                    "pMixGN",
-                    "codif",
-                    "qTemp",
-                    "ufCons",
-                    "cide"
+                        "cProdANP",
+                        "pMixGN",
+                        "codif",
+                        "qTemp",
+                        "ufCons",
+                        "cide"
                 })
                 public static class Comb {
 
@@ -21837,11 +21837,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cProdANP property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCProdANP() {
                         return cProdANP;
@@ -21849,11 +21849,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cProdANP property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCProdANP(String value) {
                         this.cProdANP = value;
@@ -21861,11 +21861,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the pMixGN property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getPMixGN() {
                         return pMixGN;
@@ -21873,11 +21873,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the pMixGN property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setPMixGN(String value) {
                         this.pMixGN = value;
@@ -21885,11 +21885,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the codif property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCODIF() {
                         return codif;
@@ -21897,11 +21897,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the codif property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCODIF(String value) {
                         this.codif = value;
@@ -21909,11 +21909,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the qTemp property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getQTemp() {
                         return qTemp;
@@ -21921,11 +21921,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the qTemp property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setQTemp(String value) {
                         this.qTemp = value;
@@ -21933,11 +21933,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the ufCons property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TUf }
-                     *     
+                     *
                      */
                     public TUf getUFCons() {
                         return ufCons;
@@ -21945,11 +21945,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the ufCons property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TUf }
-                     *     
+                     *
                      */
                     public void setUFCons(TUf value) {
                         this.ufCons = value;
@@ -21957,11 +21957,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cide property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Prod.Comb.CIDE }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Prod.Comb.CIDE getCIDE() {
                         return cide;
@@ -21969,11 +21969,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cide property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Prod.Comb.CIDE }
-                     *     
+                     *
                      */
                     public void setCIDE(TNFe.InfNFe.Det.Prod.Comb.CIDE value) {
                         this.cide = value;
@@ -21982,9 +21982,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -21998,14 +21998,14 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "qbcProd",
-                        "vAliqProd",
-                        "vcide"
+                            "qbcProd",
+                            "vAliqProd",
+                            "vcide"
                     })
                     public static class CIDE {
 
@@ -22018,11 +22018,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the qbcProd property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getQBCProd() {
                             return qbcProd;
@@ -22030,11 +22030,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the qbcProd property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setQBCProd(String value) {
                             this.qbcProd = value;
@@ -22042,11 +22042,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vAliqProd property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVAliqProd() {
                             return vAliqProd;
@@ -22054,11 +22054,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vAliqProd property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVAliqProd(String value) {
                             this.vAliqProd = value;
@@ -22066,11 +22066,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vcide property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVCIDE() {
                             return vcide;
@@ -22078,11 +22078,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vcide property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVCIDE(String value) {
                             this.vcide = value;
@@ -22095,9 +22095,9 @@ public class TNFe {
 
                 /**
                  * <p>Java class for anonymous complex type.
-                 * 
+                 *
                  * <p>The following schema fragment specifies the expected content contained within this class.
-                 * 
+                 *
                  * <pre>
                  * &lt;complexType>
                  *   &lt;complexContent>
@@ -22136,13 +22136,13 @@ public class TNFe {
                  *   &lt;/complexContent>
                  * &lt;/complexType>
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  */
                 @XmlAccessorType(XmlAccessType.FIELD)
                 @XmlType(name = "", propOrder = {
-                    "nDraw",
-                    "exportInd"
+                        "nDraw",
+                        "exportInd"
                 })
                 public static class DetExport {
 
@@ -22151,11 +22151,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the nDraw property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getNDraw() {
                         return nDraw;
@@ -22163,11 +22163,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the nDraw property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setNDraw(String value) {
                         this.nDraw = value;
@@ -22175,11 +22175,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the exportInd property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TNFe.InfNFe.Det.Prod.DetExport.ExportInd }
-                     *     
+                     *
                      */
                     public TNFe.InfNFe.Det.Prod.DetExport.ExportInd getExportInd() {
                         return exportInd;
@@ -22187,11 +22187,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the exportInd property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TNFe.InfNFe.Det.Prod.DetExport.ExportInd }
-                     *     
+                     *
                      */
                     public void setExportInd(TNFe.InfNFe.Det.Prod.DetExport.ExportInd value) {
                         this.exportInd = value;
@@ -22200,9 +22200,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -22223,14 +22223,14 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "nre",
-                        "chNFe",
-                        "qExport"
+                            "nre",
+                            "chNFe",
+                            "qExport"
                     })
                     public static class ExportInd {
 
@@ -22243,11 +22243,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the nre property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getNRE() {
                             return nre;
@@ -22255,11 +22255,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the nre property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setNRE(String value) {
                             this.nre = value;
@@ -22267,11 +22267,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the chNFe property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getChNFe() {
                             return chNFe;
@@ -22279,11 +22279,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the chNFe property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setChNFe(String value) {
                             this.chNFe = value;
@@ -22291,11 +22291,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the qExport property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getQExport() {
                             return qExport;
@@ -22303,11 +22303,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the qExport property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setQExport(String value) {
                             this.qExport = value;
@@ -22320,9 +22320,9 @@ public class TNFe {
 
                 /**
                  * <p>Java class for anonymous complex type.
-                 * 
+                 *
                  * <p>The following schema fragment specifies the expected content contained within this class.
-                 * 
+                 *
                  * <pre>
                  * &lt;complexType>
                  *   &lt;complexContent>
@@ -22435,23 +22435,23 @@ public class TNFe {
                  *   &lt;/complexContent>
                  * &lt;/complexType>
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  */
                 @XmlAccessorType(XmlAccessType.FIELD)
                 @XmlType(name = "", propOrder = {
-                    "ndi",
-                    "ddi",
-                    "xLocDesemb",
-                    "ufDesemb",
-                    "dDesemb",
-                    "tpViaTransp",
-                    "vafrmm",
-                    "tpIntermedio",
-                    "cnpj",
-                    "ufTerceiro",
-                    "cExportador",
-                    "adi"
+                        "ndi",
+                        "ddi",
+                        "xLocDesemb",
+                        "ufDesemb",
+                        "dDesemb",
+                        "tpViaTransp",
+                        "vafrmm",
+                        "tpIntermedio",
+                        "cnpj",
+                        "ufTerceiro",
+                        "cExportador",
+                        "adi"
                 })
                 public static class DI {
 
@@ -22482,11 +22482,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the ndi property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getNDI() {
                         return ndi;
@@ -22494,11 +22494,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the ndi property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setNDI(String value) {
                         this.ndi = value;
@@ -22506,11 +22506,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the ddi property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getDDI() {
                         return ddi;
@@ -22518,11 +22518,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the ddi property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setDDI(String value) {
                         this.ddi = value;
@@ -22530,11 +22530,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the xLocDesemb property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getXLocDesemb() {
                         return xLocDesemb;
@@ -22542,11 +22542,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the xLocDesemb property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setXLocDesemb(String value) {
                         this.xLocDesemb = value;
@@ -22554,11 +22554,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the ufDesemb property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TUfEmi }
-                     *     
+                     *
                      */
                     public TUfEmi getUFDesemb() {
                         return ufDesemb;
@@ -22566,11 +22566,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the ufDesemb property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TUfEmi }
-                     *     
+                     *
                      */
                     public void setUFDesemb(TUfEmi value) {
                         this.ufDesemb = value;
@@ -22578,11 +22578,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the dDesemb property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getDDesemb() {
                         return dDesemb;
@@ -22590,11 +22590,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the dDesemb property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setDDesemb(String value) {
                         this.dDesemb = value;
@@ -22602,11 +22602,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the tpViaTransp property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getTpViaTransp() {
                         return tpViaTransp;
@@ -22614,11 +22614,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the tpViaTransp property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setTpViaTransp(String value) {
                         this.tpViaTransp = value;
@@ -22626,11 +22626,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vafrmm property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVAFRMM() {
                         return vafrmm;
@@ -22638,11 +22638,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vafrmm property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVAFRMM(String value) {
                         this.vafrmm = value;
@@ -22650,11 +22650,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the tpIntermedio property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getTpIntermedio() {
                         return tpIntermedio;
@@ -22662,11 +22662,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the tpIntermedio property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setTpIntermedio(String value) {
                         this.tpIntermedio = value;
@@ -22674,11 +22674,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cnpj property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCNPJ() {
                         return cnpj;
@@ -22686,11 +22686,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cnpj property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCNPJ(String value) {
                         this.cnpj = value;
@@ -22698,11 +22698,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the ufTerceiro property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link TUfEmi }
-                     *     
+                     *
                      */
                     public TUfEmi getUFTerceiro() {
                         return ufTerceiro;
@@ -22710,11 +22710,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the ufTerceiro property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link TUfEmi }
-                     *     
+                     *
                      */
                     public void setUFTerceiro(TUfEmi value) {
                         this.ufTerceiro = value;
@@ -22722,11 +22722,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cExportador property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCExportador() {
                         return cExportador;
@@ -22734,11 +22734,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cExportador property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCExportador(String value) {
                         this.cExportador = value;
@@ -22746,25 +22746,25 @@ public class TNFe {
 
                     /**
                      * Gets the value of the adi property.
-                     * 
+                     *
                      * <p>
                      * This accessor method returns a reference to the live list,
                      * not a snapshot. Therefore any modification you make to the
                      * returned list will be present inside the JAXB object.
                      * This is why there is not a <CODE>set</CODE> method for the adi property.
-                     * 
+                     *
                      * <p>
                      * For example, to add a new item, do as follows:
                      * <pre>
                      *    getAdi().add(newItem);
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      * <p>
                      * Objects of the following type(s) are allowed in the list
                      * {@link TNFe.InfNFe.Det.Prod.DI.Adi }
-                     * 
-                     * 
+                     *
+                     *
                      */
                     public List<TNFe.InfNFe.Det.Prod.DI.Adi> getAdi() {
                         if (adi == null) {
@@ -22776,9 +22776,9 @@ public class TNFe {
 
                     /**
                      * <p>Java class for anonymous complex type.
-                     * 
+                     *
                      * <p>The following schema fragment specifies the expected content contained within this class.
-                     * 
+                     *
                      * <pre>
                      * &lt;complexType>
                      *   &lt;complexContent>
@@ -22822,16 +22822,16 @@ public class TNFe {
                      *   &lt;/complexContent>
                      * &lt;/complexType>
                      * </pre>
-                     * 
-                     * 
+                     *
+                     *
                      */
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = {
-                        "nAdicao",
-                        "nSeqAdic",
-                        "cFabricante",
-                        "vDescDI",
-                        "nDraw"
+                            "nAdicao",
+                            "nSeqAdic",
+                            "cFabricante",
+                            "vDescDI",
+                            "nDraw"
                     })
                     public static class Adi {
 
@@ -22846,11 +22846,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the nAdicao property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getNAdicao() {
                             return nAdicao;
@@ -22858,11 +22858,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the nAdicao property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setNAdicao(String value) {
                             this.nAdicao = value;
@@ -22870,11 +22870,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the nSeqAdic property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getNSeqAdic() {
                             return nSeqAdic;
@@ -22882,11 +22882,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the nSeqAdic property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setNSeqAdic(String value) {
                             this.nSeqAdic = value;
@@ -22894,11 +22894,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the cFabricante property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getCFabricante() {
                             return cFabricante;
@@ -22906,11 +22906,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the cFabricante property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setCFabricante(String value) {
                             this.cFabricante = value;
@@ -22918,11 +22918,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the vDescDI property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getVDescDI() {
                             return vDescDI;
@@ -22930,11 +22930,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the vDescDI property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setVDescDI(String value) {
                             this.vDescDI = value;
@@ -22942,11 +22942,11 @@ public class TNFe {
 
                         /**
                          * Gets the value of the nDraw property.
-                         * 
+                         *
                          * @return
                          *     possible object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public String getNDraw() {
                             return nDraw;
@@ -22954,11 +22954,11 @@ public class TNFe {
 
                         /**
                          * Sets the value of the nDraw property.
-                         * 
+                         *
                          * @param value
                          *     allowed object is
                          *     {@link String }
-                         *     
+                         *
                          */
                         public void setNDraw(String value) {
                             this.nDraw = value;
@@ -22971,9 +22971,9 @@ public class TNFe {
 
                 /**
                  * <p>Java class for anonymous complex type.
-                 * 
+                 *
                  * <p>The following schema fragment specifies the expected content contained within this class.
-                 * 
+                 *
                  * <pre>
                  * &lt;complexType>
                  *   &lt;complexContent>
@@ -22996,16 +22996,16 @@ public class TNFe {
                  *   &lt;/complexContent>
                  * &lt;/complexType>
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  */
                 @XmlAccessorType(XmlAccessType.FIELD)
                 @XmlType(name = "", propOrder = {
-                    "nLote",
-                    "qLote",
-                    "dFab",
-                    "dVal",
-                    "vpmc"
+                        "nLote",
+                        "qLote",
+                        "dFab",
+                        "dVal",
+                        "vpmc"
                 })
                 public static class Med {
 
@@ -23022,11 +23022,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the nLote property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getNLote() {
                         return nLote;
@@ -23034,11 +23034,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the nLote property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setNLote(String value) {
                         this.nLote = value;
@@ -23046,11 +23046,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the qLote property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getQLote() {
                         return qLote;
@@ -23058,11 +23058,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the qLote property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setQLote(String value) {
                         this.qLote = value;
@@ -23070,11 +23070,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the dFab property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getDFab() {
                         return dFab;
@@ -23082,11 +23082,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the dFab property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setDFab(String value) {
                         this.dFab = value;
@@ -23094,11 +23094,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the dVal property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getDVal() {
                         return dVal;
@@ -23106,11 +23106,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the dVal property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setDVal(String value) {
                         this.dVal = value;
@@ -23118,11 +23118,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vpmc property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVPMC() {
                         return vpmc;
@@ -23130,11 +23130,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vpmc property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVPMC(String value) {
                         this.vpmc = value;
@@ -23145,9 +23145,9 @@ public class TNFe {
 
                 /**
                  * <p>Java class for anonymous complex type.
-                 * 
+                 *
                  * <p>The following schema fragment specifies the expected content contained within this class.
-                 * 
+                 *
                  * <pre>
                  * &lt;complexType>
                  *   &lt;complexContent>
@@ -23365,35 +23365,35 @@ public class TNFe {
                  *   &lt;/complexContent>
                  * &lt;/complexType>
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  */
                 @XmlAccessorType(XmlAccessType.FIELD)
                 @XmlType(name = "", propOrder = {
-                    "tpOp",
-                    "chassi",
-                    "cCor",
-                    "xCor",
-                    "pot",
-                    "cilin",
-                    "pesoL",
-                    "pesoB",
-                    "nSerie",
-                    "tpComb",
-                    "nMotor",
-                    "cmt",
-                    "dist",
-                    "anoMod",
-                    "anoFab",
-                    "tpPint",
-                    "tpVeic",
-                    "espVeic",
-                    "vin",
-                    "condVeic",
-                    "cMod",
-                    "cCorDENATRAN",
-                    "lota",
-                    "tpRest"
+                        "tpOp",
+                        "chassi",
+                        "cCor",
+                        "xCor",
+                        "pot",
+                        "cilin",
+                        "pesoL",
+                        "pesoB",
+                        "nSerie",
+                        "tpComb",
+                        "nMotor",
+                        "cmt",
+                        "dist",
+                        "anoMod",
+                        "anoFab",
+                        "tpPint",
+                        "tpVeic",
+                        "espVeic",
+                        "vin",
+                        "condVeic",
+                        "cMod",
+                        "cCorDENATRAN",
+                        "lota",
+                        "tpRest"
                 })
                 public static class VeicProd {
 
@@ -23448,11 +23448,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the tpOp property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getTpOp() {
                         return tpOp;
@@ -23460,11 +23460,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the tpOp property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setTpOp(String value) {
                         this.tpOp = value;
@@ -23472,11 +23472,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the chassi property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getChassi() {
                         return chassi;
@@ -23484,11 +23484,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the chassi property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setChassi(String value) {
                         this.chassi = value;
@@ -23496,11 +23496,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cCor property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCCor() {
                         return cCor;
@@ -23508,11 +23508,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cCor property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCCor(String value) {
                         this.cCor = value;
@@ -23520,11 +23520,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the xCor property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getXCor() {
                         return xCor;
@@ -23532,11 +23532,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the xCor property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setXCor(String value) {
                         this.xCor = value;
@@ -23544,11 +23544,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the pot property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getPot() {
                         return pot;
@@ -23556,11 +23556,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the pot property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setPot(String value) {
                         this.pot = value;
@@ -23568,11 +23568,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cilin property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCilin() {
                         return cilin;
@@ -23580,11 +23580,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cilin property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCilin(String value) {
                         this.cilin = value;
@@ -23592,11 +23592,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the pesoL property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getPesoL() {
                         return pesoL;
@@ -23604,11 +23604,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the pesoL property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setPesoL(String value) {
                         this.pesoL = value;
@@ -23616,11 +23616,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the pesoB property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getPesoB() {
                         return pesoB;
@@ -23628,11 +23628,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the pesoB property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setPesoB(String value) {
                         this.pesoB = value;
@@ -23640,11 +23640,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the nSerie property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getNSerie() {
                         return nSerie;
@@ -23652,11 +23652,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the nSerie property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setNSerie(String value) {
                         this.nSerie = value;
@@ -23664,11 +23664,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the tpComb property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getTpComb() {
                         return tpComb;
@@ -23676,11 +23676,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the tpComb property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setTpComb(String value) {
                         this.tpComb = value;
@@ -23688,11 +23688,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the nMotor property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getNMotor() {
                         return nMotor;
@@ -23700,11 +23700,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the nMotor property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setNMotor(String value) {
                         this.nMotor = value;
@@ -23712,11 +23712,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cmt property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCMT() {
                         return cmt;
@@ -23724,11 +23724,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cmt property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCMT(String value) {
                         this.cmt = value;
@@ -23736,11 +23736,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the dist property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getDist() {
                         return dist;
@@ -23748,11 +23748,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the dist property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setDist(String value) {
                         this.dist = value;
@@ -23760,11 +23760,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the anoMod property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getAnoMod() {
                         return anoMod;
@@ -23772,11 +23772,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the anoMod property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setAnoMod(String value) {
                         this.anoMod = value;
@@ -23784,11 +23784,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the anoFab property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getAnoFab() {
                         return anoFab;
@@ -23796,11 +23796,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the anoFab property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setAnoFab(String value) {
                         this.anoFab = value;
@@ -23808,11 +23808,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the tpPint property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getTpPint() {
                         return tpPint;
@@ -23820,11 +23820,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the tpPint property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setTpPint(String value) {
                         this.tpPint = value;
@@ -23832,11 +23832,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the tpVeic property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getTpVeic() {
                         return tpVeic;
@@ -23844,11 +23844,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the tpVeic property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setTpVeic(String value) {
                         this.tpVeic = value;
@@ -23856,11 +23856,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the espVeic property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getEspVeic() {
                         return espVeic;
@@ -23868,11 +23868,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the espVeic property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setEspVeic(String value) {
                         this.espVeic = value;
@@ -23880,11 +23880,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the vin property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getVIN() {
                         return vin;
@@ -23892,11 +23892,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the vin property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setVIN(String value) {
                         this.vin = value;
@@ -23904,11 +23904,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the condVeic property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCondVeic() {
                         return condVeic;
@@ -23916,11 +23916,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the condVeic property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCondVeic(String value) {
                         this.condVeic = value;
@@ -23928,11 +23928,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cMod property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCMod() {
                         return cMod;
@@ -23940,11 +23940,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cMod property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCMod(String value) {
                         this.cMod = value;
@@ -23952,11 +23952,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cCorDENATRAN property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCCorDENATRAN() {
                         return cCorDENATRAN;
@@ -23964,11 +23964,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cCorDENATRAN property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCCorDENATRAN(String value) {
                         this.cCorDENATRAN = value;
@@ -23976,11 +23976,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the lota property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getLota() {
                         return lota;
@@ -23988,11 +23988,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the lota property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setLota(String value) {
                         this.lota = value;
@@ -24000,11 +24000,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the tpRest property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getTpRest() {
                         return tpRest;
@@ -24012,11 +24012,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the tpRest property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setTpRest(String value) {
                         this.tpRest = value;
@@ -24031,9 +24031,9 @@ public class TNFe {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -24095,21 +24095,21 @@ public class TNFe {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "cnpj",
-            "cpf",
-            "xNome",
-            "xFant",
-            "enderEmit",
-            "ie",
-            "iest",
-            "im",
-            "cnae",
-            "crt"
+                "cnpj",
+                "cpf",
+                "xNome",
+                "xFant",
+                "enderEmit",
+                "ie",
+                "iest",
+                "im",
+                "cnae",
+                "crt"
         })
         public static class Emit {
 
@@ -24135,11 +24135,11 @@ public class TNFe {
 
             /**
              * Gets the value of the cnpj property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getCNPJ() {
                 return cnpj;
@@ -24147,11 +24147,11 @@ public class TNFe {
 
             /**
              * Sets the value of the cnpj property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setCNPJ(String value) {
                 this.cnpj = value;
@@ -24159,11 +24159,11 @@ public class TNFe {
 
             /**
              * Gets the value of the cpf property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getCPF() {
                 return cpf;
@@ -24171,11 +24171,11 @@ public class TNFe {
 
             /**
              * Sets the value of the cpf property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setCPF(String value) {
                 this.cpf = value;
@@ -24183,11 +24183,11 @@ public class TNFe {
 
             /**
              * Gets the value of the xNome property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getXNome() {
                 return xNome;
@@ -24195,11 +24195,11 @@ public class TNFe {
 
             /**
              * Sets the value of the xNome property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setXNome(String value) {
                 this.xNome = value;
@@ -24207,11 +24207,11 @@ public class TNFe {
 
             /**
              * Gets the value of the xFant property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getXFant() {
                 return xFant;
@@ -24219,11 +24219,11 @@ public class TNFe {
 
             /**
              * Sets the value of the xFant property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setXFant(String value) {
                 this.xFant = value;
@@ -24231,11 +24231,11 @@ public class TNFe {
 
             /**
              * Gets the value of the enderEmit property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link TEnderEmi }
-             *     
+             *
              */
             public TEnderEmi getEnderEmit() {
                 return enderEmit;
@@ -24243,11 +24243,11 @@ public class TNFe {
 
             /**
              * Sets the value of the enderEmit property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link TEnderEmi }
-             *     
+             *
              */
             public void setEnderEmit(TEnderEmi value) {
                 this.enderEmit = value;
@@ -24255,11 +24255,11 @@ public class TNFe {
 
             /**
              * Gets the value of the ie property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getIE() {
                 return ie;
@@ -24267,11 +24267,11 @@ public class TNFe {
 
             /**
              * Sets the value of the ie property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setIE(String value) {
                 this.ie = value;
@@ -24279,11 +24279,11 @@ public class TNFe {
 
             /**
              * Gets the value of the iest property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getIEST() {
                 return iest;
@@ -24291,11 +24291,11 @@ public class TNFe {
 
             /**
              * Sets the value of the iest property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setIEST(String value) {
                 this.iest = value;
@@ -24303,11 +24303,11 @@ public class TNFe {
 
             /**
              * Gets the value of the im property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getIM() {
                 return im;
@@ -24315,11 +24315,11 @@ public class TNFe {
 
             /**
              * Sets the value of the im property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setIM(String value) {
                 this.im = value;
@@ -24327,11 +24327,11 @@ public class TNFe {
 
             /**
              * Gets the value of the cnae property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getCNAE() {
                 return cnae;
@@ -24339,11 +24339,11 @@ public class TNFe {
 
             /**
              * Sets the value of the cnae property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setCNAE(String value) {
                 this.cnae = value;
@@ -24351,11 +24351,11 @@ public class TNFe {
 
             /**
              * Gets the value of the crt property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getCRT() {
                 return crt;
@@ -24363,11 +24363,11 @@ public class TNFe {
 
             /**
              * Sets the value of the crt property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setCRT(String value) {
                 this.crt = value;
@@ -24378,9 +24378,9 @@ public class TNFe {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -24408,14 +24408,14 @@ public class TNFe {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "ufSaidaPais",
-            "xLocExporta",
-            "xLocDespacho"
+                "ufSaidaPais",
+                "xLocExporta",
+                "xLocDespacho"
         })
         public static class Exporta {
 
@@ -24427,11 +24427,11 @@ public class TNFe {
 
             /**
              * Gets the value of the ufSaidaPais property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link TUfEmi }
-             *     
+             *
              */
             public TUfEmi getUFSaidaPais() {
                 return ufSaidaPais;
@@ -24439,11 +24439,11 @@ public class TNFe {
 
             /**
              * Sets the value of the ufSaidaPais property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link TUfEmi }
-             *     
+             *
              */
             public void setUFSaidaPais(TUfEmi value) {
                 this.ufSaidaPais = value;
@@ -24451,11 +24451,11 @@ public class TNFe {
 
             /**
              * Gets the value of the xLocExporta property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getXLocExporta() {
                 return xLocExporta;
@@ -24463,11 +24463,11 @@ public class TNFe {
 
             /**
              * Sets the value of the xLocExporta property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setXLocExporta(String value) {
                 this.xLocExporta = value;
@@ -24475,11 +24475,11 @@ public class TNFe {
 
             /**
              * Gets the value of the xLocDespacho property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getXLocDespacho() {
                 return xLocDespacho;
@@ -24487,11 +24487,11 @@ public class TNFe {
 
             /**
              * Sets the value of the xLocDespacho property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setXLocDespacho(String value) {
                 this.xLocDespacho = value;
@@ -24502,9 +24502,9 @@ public class TNFe {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -24760,35 +24760,35 @@ public class TNFe {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "cuf",
-            "cnf",
-            "natOp",
-            "indPag",
-            "mod",
-            "serie",
-            "nnf",
-            "dhEmi",
-            "dhSaiEnt",
-            "tpNF",
-            "idDest",
-            "cMunFG",
-            "tpImp",
-            "tpEmis",
-            "cdv",
-            "tpAmb",
-            "finNFe",
-            "indFinal",
-            "indPres",
-            "procEmi",
-            "verProc",
-            "dhCont",
-            "xJust",
-            "nFref"
+                "cuf",
+                "cnf",
+                "natOp",
+                "indPag",
+                "mod",
+                "serie",
+                "nnf",
+                "dhEmi",
+                "dhSaiEnt",
+                "tpNF",
+                "idDest",
+                "cMunFG",
+                "tpImp",
+                "tpEmis",
+                "cdv",
+                "tpAmb",
+                "finNFe",
+                "indFinal",
+                "indPres",
+                "procEmi",
+                "verProc",
+                "dhCont",
+                "xJust",
+                "nFref"
         })
         public static class Ide {
 
@@ -24840,11 +24840,11 @@ public class TNFe {
 
             /**
              * Gets the value of the cuf property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getCUF() {
                 return cuf;
@@ -24852,11 +24852,11 @@ public class TNFe {
 
             /**
              * Sets the value of the cuf property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setCUF(String value) {
                 this.cuf = value;
@@ -24864,11 +24864,11 @@ public class TNFe {
 
             /**
              * Gets the value of the cnf property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getCNF() {
                 return cnf;
@@ -24876,11 +24876,11 @@ public class TNFe {
 
             /**
              * Sets the value of the cnf property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setCNF(String value) {
                 this.cnf = value;
@@ -24888,11 +24888,11 @@ public class TNFe {
 
             /**
              * Gets the value of the natOp property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getNatOp() {
                 return natOp;
@@ -24900,11 +24900,11 @@ public class TNFe {
 
             /**
              * Sets the value of the natOp property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setNatOp(String value) {
                 this.natOp = value;
@@ -24912,11 +24912,11 @@ public class TNFe {
 
             /**
              * Gets the value of the indPag property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getIndPag() {
                 return indPag;
@@ -24924,11 +24924,11 @@ public class TNFe {
 
             /**
              * Sets the value of the indPag property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setIndPag(String value) {
                 this.indPag = value;
@@ -24936,11 +24936,11 @@ public class TNFe {
 
             /**
              * Gets the value of the mod property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getMod() {
                 return mod;
@@ -24948,11 +24948,11 @@ public class TNFe {
 
             /**
              * Sets the value of the mod property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setMod(String value) {
                 this.mod = value;
@@ -24960,11 +24960,11 @@ public class TNFe {
 
             /**
              * Gets the value of the serie property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getSerie() {
                 return serie;
@@ -24972,11 +24972,11 @@ public class TNFe {
 
             /**
              * Sets the value of the serie property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setSerie(String value) {
                 this.serie = value;
@@ -24984,11 +24984,11 @@ public class TNFe {
 
             /**
              * Gets the value of the nnf property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getNNF() {
                 return nnf;
@@ -24996,11 +24996,11 @@ public class TNFe {
 
             /**
              * Sets the value of the nnf property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setNNF(String value) {
                 this.nnf = value;
@@ -25008,11 +25008,11 @@ public class TNFe {
 
             /**
              * Gets the value of the dhEmi property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getDhEmi() {
                 return dhEmi;
@@ -25020,11 +25020,11 @@ public class TNFe {
 
             /**
              * Sets the value of the dhEmi property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setDhEmi(String value) {
                 this.dhEmi = value;
@@ -25032,11 +25032,11 @@ public class TNFe {
 
             /**
              * Gets the value of the dhSaiEnt property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getDhSaiEnt() {
                 return dhSaiEnt;
@@ -25044,11 +25044,11 @@ public class TNFe {
 
             /**
              * Sets the value of the dhSaiEnt property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setDhSaiEnt(String value) {
                 this.dhSaiEnt = value;
@@ -25056,11 +25056,11 @@ public class TNFe {
 
             /**
              * Gets the value of the tpNF property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getTpNF() {
                 return tpNF;
@@ -25068,11 +25068,11 @@ public class TNFe {
 
             /**
              * Sets the value of the tpNF property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setTpNF(String value) {
                 this.tpNF = value;
@@ -25080,11 +25080,11 @@ public class TNFe {
 
             /**
              * Gets the value of the idDest property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getIdDest() {
                 return idDest;
@@ -25092,11 +25092,11 @@ public class TNFe {
 
             /**
              * Sets the value of the idDest property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setIdDest(String value) {
                 this.idDest = value;
@@ -25104,11 +25104,11 @@ public class TNFe {
 
             /**
              * Gets the value of the cMunFG property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getCMunFG() {
                 return cMunFG;
@@ -25116,11 +25116,11 @@ public class TNFe {
 
             /**
              * Sets the value of the cMunFG property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setCMunFG(String value) {
                 this.cMunFG = value;
@@ -25128,11 +25128,11 @@ public class TNFe {
 
             /**
              * Gets the value of the tpImp property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getTpImp() {
                 return tpImp;
@@ -25140,11 +25140,11 @@ public class TNFe {
 
             /**
              * Sets the value of the tpImp property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setTpImp(String value) {
                 this.tpImp = value;
@@ -25152,11 +25152,11 @@ public class TNFe {
 
             /**
              * Gets the value of the tpEmis property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getTpEmis() {
                 return tpEmis;
@@ -25164,11 +25164,11 @@ public class TNFe {
 
             /**
              * Sets the value of the tpEmis property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setTpEmis(String value) {
                 this.tpEmis = value;
@@ -25176,11 +25176,11 @@ public class TNFe {
 
             /**
              * Gets the value of the cdv property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getCDV() {
                 return cdv;
@@ -25188,11 +25188,11 @@ public class TNFe {
 
             /**
              * Sets the value of the cdv property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setCDV(String value) {
                 this.cdv = value;
@@ -25200,11 +25200,11 @@ public class TNFe {
 
             /**
              * Gets the value of the tpAmb property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getTpAmb() {
                 return tpAmb;
@@ -25212,11 +25212,11 @@ public class TNFe {
 
             /**
              * Sets the value of the tpAmb property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setTpAmb(String value) {
                 this.tpAmb = value;
@@ -25224,11 +25224,11 @@ public class TNFe {
 
             /**
              * Gets the value of the finNFe property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getFinNFe() {
                 return finNFe;
@@ -25236,11 +25236,11 @@ public class TNFe {
 
             /**
              * Sets the value of the finNFe property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setFinNFe(String value) {
                 this.finNFe = value;
@@ -25248,11 +25248,11 @@ public class TNFe {
 
             /**
              * Gets the value of the indFinal property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getIndFinal() {
                 return indFinal;
@@ -25260,11 +25260,11 @@ public class TNFe {
 
             /**
              * Sets the value of the indFinal property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setIndFinal(String value) {
                 this.indFinal = value;
@@ -25272,11 +25272,11 @@ public class TNFe {
 
             /**
              * Gets the value of the indPres property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getIndPres() {
                 return indPres;
@@ -25284,11 +25284,11 @@ public class TNFe {
 
             /**
              * Sets the value of the indPres property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setIndPres(String value) {
                 this.indPres = value;
@@ -25296,11 +25296,11 @@ public class TNFe {
 
             /**
              * Gets the value of the procEmi property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getProcEmi() {
                 return procEmi;
@@ -25308,11 +25308,11 @@ public class TNFe {
 
             /**
              * Sets the value of the procEmi property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setProcEmi(String value) {
                 this.procEmi = value;
@@ -25320,11 +25320,11 @@ public class TNFe {
 
             /**
              * Gets the value of the verProc property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getVerProc() {
                 return verProc;
@@ -25332,11 +25332,11 @@ public class TNFe {
 
             /**
              * Sets the value of the verProc property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setVerProc(String value) {
                 this.verProc = value;
@@ -25344,11 +25344,11 @@ public class TNFe {
 
             /**
              * Gets the value of the dhCont property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getDhCont() {
                 return dhCont;
@@ -25356,11 +25356,11 @@ public class TNFe {
 
             /**
              * Sets the value of the dhCont property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setDhCont(String value) {
                 this.dhCont = value;
@@ -25368,11 +25368,11 @@ public class TNFe {
 
             /**
              * Gets the value of the xJust property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getXJust() {
                 return xJust;
@@ -25380,11 +25380,11 @@ public class TNFe {
 
             /**
              * Sets the value of the xJust property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setXJust(String value) {
                 this.xJust = value;
@@ -25392,25 +25392,25 @@ public class TNFe {
 
             /**
              * Gets the value of the nFref property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the nFref property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getNFref().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link TNFe.InfNFe.Ide.NFref }
-             * 
-             * 
+             *
+             *
              */
             public List<TNFe.InfNFe.Ide.NFref> getNFref() {
                 if (nFref == null) {
@@ -25422,9 +25422,9 @@ public class TNFe {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -25538,16 +25538,16 @@ public class TNFe {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "refNFe",
-                "refNF",
-                "refNFP",
-                "refCTe",
-                "refECF"
+                    "refNFe",
+                    "refNF",
+                    "refNFP",
+                    "refCTe",
+                    "refECF"
             })
             public static class NFref {
 
@@ -25559,11 +25559,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the refNFe property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getRefNFe() {
                     return refNFe;
@@ -25571,11 +25571,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the refNFe property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setRefNFe(String value) {
                     this.refNFe = value;
@@ -25583,11 +25583,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the refNF property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link TNFe.InfNFe.Ide.NFref.RefNF }
-                 *     
+                 *
                  */
                 public TNFe.InfNFe.Ide.NFref.RefNF getRefNF() {
                     return refNF;
@@ -25595,11 +25595,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the refNF property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link TNFe.InfNFe.Ide.NFref.RefNF }
-                 *     
+                 *
                  */
                 public void setRefNF(TNFe.InfNFe.Ide.NFref.RefNF value) {
                     this.refNF = value;
@@ -25607,11 +25607,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the refNFP property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link TNFe.InfNFe.Ide.NFref.RefNFP }
-                 *     
+                 *
                  */
                 public TNFe.InfNFe.Ide.NFref.RefNFP getRefNFP() {
                     return refNFP;
@@ -25619,11 +25619,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the refNFP property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link TNFe.InfNFe.Ide.NFref.RefNFP }
-                 *     
+                 *
                  */
                 public void setRefNFP(TNFe.InfNFe.Ide.NFref.RefNFP value) {
                     this.refNFP = value;
@@ -25631,11 +25631,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the refCTe property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getRefCTe() {
                     return refCTe;
@@ -25643,11 +25643,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the refCTe property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setRefCTe(String value) {
                     this.refCTe = value;
@@ -25655,11 +25655,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the refECF property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link TNFe.InfNFe.Ide.NFref.RefECF }
-                 *     
+                 *
                  */
                 public TNFe.InfNFe.Ide.NFref.RefECF getRefECF() {
                     return refECF;
@@ -25667,11 +25667,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the refECF property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link TNFe.InfNFe.Ide.NFref.RefECF }
-                 *     
+                 *
                  */
                 public void setRefECF(TNFe.InfNFe.Ide.NFref.RefECF value) {
                     this.refECF = value;
@@ -25680,9 +25680,9 @@ public class TNFe {
 
                 /**
                  * <p>Java class for anonymous complex type.
-                 * 
+                 *
                  * <p>The following schema fragment specifies the expected content contained within this class.
-                 * 
+                 *
                  * <pre>
                  * &lt;complexType>
                  *   &lt;complexContent>
@@ -25719,14 +25719,14 @@ public class TNFe {
                  *   &lt;/complexContent>
                  * &lt;/complexType>
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  */
                 @XmlAccessorType(XmlAccessType.FIELD)
                 @XmlType(name = "", propOrder = {
-                    "mod",
-                    "necf",
-                    "ncoo"
+                        "mod",
+                        "necf",
+                        "ncoo"
                 })
                 public static class RefECF {
 
@@ -25739,11 +25739,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the mod property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getMod() {
                         return mod;
@@ -25751,11 +25751,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the mod property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setMod(String value) {
                         this.mod = value;
@@ -25763,11 +25763,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the necf property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getNECF() {
                         return necf;
@@ -25775,11 +25775,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the necf property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setNECF(String value) {
                         this.necf = value;
@@ -25787,11 +25787,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the ncoo property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getNCOO() {
                         return ncoo;
@@ -25799,11 +25799,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the ncoo property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setNCOO(String value) {
                         this.ncoo = value;
@@ -25814,9 +25814,9 @@ public class TNFe {
 
                 /**
                  * <p>Java class for anonymous complex type.
-                 * 
+                 *
                  * <p>The following schema fragment specifies the expected content contained within this class.
-                 * 
+                 *
                  * <pre>
                  * &lt;complexType>
                  *   &lt;complexContent>
@@ -25847,17 +25847,17 @@ public class TNFe {
                  *   &lt;/complexContent>
                  * &lt;/complexType>
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  */
                 @XmlAccessorType(XmlAccessType.FIELD)
                 @XmlType(name = "", propOrder = {
-                    "cuf",
-                    "aamm",
-                    "cnpj",
-                    "mod",
-                    "serie",
-                    "nnf"
+                        "cuf",
+                        "aamm",
+                        "cnpj",
+                        "mod",
+                        "serie",
+                        "nnf"
                 })
                 public static class RefNF {
 
@@ -25876,11 +25876,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cuf property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCUF() {
                         return cuf;
@@ -25888,11 +25888,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cuf property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCUF(String value) {
                         this.cuf = value;
@@ -25900,11 +25900,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the aamm property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getAAMM() {
                         return aamm;
@@ -25912,11 +25912,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the aamm property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setAAMM(String value) {
                         this.aamm = value;
@@ -25924,11 +25924,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cnpj property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCNPJ() {
                         return cnpj;
@@ -25936,11 +25936,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cnpj property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCNPJ(String value) {
                         this.cnpj = value;
@@ -25948,11 +25948,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the mod property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getMod() {
                         return mod;
@@ -25960,11 +25960,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the mod property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setMod(String value) {
                         this.mod = value;
@@ -25972,11 +25972,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the serie property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getSerie() {
                         return serie;
@@ -25984,11 +25984,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the serie property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setSerie(String value) {
                         this.serie = value;
@@ -25996,11 +25996,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the nnf property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getNNF() {
                         return nnf;
@@ -26008,11 +26008,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the nnf property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setNNF(String value) {
                         this.nnf = value;
@@ -26023,9 +26023,9 @@ public class TNFe {
 
                 /**
                  * <p>Java class for anonymous complex type.
-                 * 
+                 *
                  * <p>The following schema fragment specifies the expected content contained within this class.
-                 * 
+                 *
                  * <pre>
                  * &lt;complexType>
                  *   &lt;complexContent>
@@ -26061,19 +26061,19 @@ public class TNFe {
                  *   &lt;/complexContent>
                  * &lt;/complexType>
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  */
                 @XmlAccessorType(XmlAccessType.FIELD)
                 @XmlType(name = "", propOrder = {
-                    "cuf",
-                    "aamm",
-                    "cnpj",
-                    "cpf",
-                    "ie",
-                    "mod",
-                    "serie",
-                    "nnf"
+                        "cuf",
+                        "aamm",
+                        "cnpj",
+                        "cpf",
+                        "ie",
+                        "mod",
+                        "serie",
+                        "nnf"
                 })
                 public static class RefNFP {
 
@@ -26096,11 +26096,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cuf property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCUF() {
                         return cuf;
@@ -26108,11 +26108,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cuf property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCUF(String value) {
                         this.cuf = value;
@@ -26120,11 +26120,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the aamm property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getAAMM() {
                         return aamm;
@@ -26132,11 +26132,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the aamm property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setAAMM(String value) {
                         this.aamm = value;
@@ -26144,11 +26144,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cnpj property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCNPJ() {
                         return cnpj;
@@ -26156,11 +26156,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cnpj property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCNPJ(String value) {
                         this.cnpj = value;
@@ -26168,11 +26168,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the cpf property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getCPF() {
                         return cpf;
@@ -26180,11 +26180,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the cpf property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setCPF(String value) {
                         this.cpf = value;
@@ -26192,11 +26192,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the ie property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getIE() {
                         return ie;
@@ -26204,11 +26204,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the ie property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setIE(String value) {
                         this.ie = value;
@@ -26216,11 +26216,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the mod property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getMod() {
                         return mod;
@@ -26228,11 +26228,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the mod property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setMod(String value) {
                         this.mod = value;
@@ -26240,11 +26240,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the serie property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getSerie() {
                         return serie;
@@ -26252,11 +26252,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the serie property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setSerie(String value) {
                         this.serie = value;
@@ -26264,11 +26264,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the nnf property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getNNF() {
                         return nnf;
@@ -26276,11 +26276,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the nnf property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setNNF(String value) {
                         this.nnf = value;
@@ -26295,9 +26295,9 @@ public class TNFe {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -26406,16 +26406,16 @@ public class TNFe {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "infAdFisco",
-            "infCpl",
-            "obsCont",
-            "obsFisco",
-            "procRef"
+                "infAdFisco",
+                "infCpl",
+                "obsCont",
+                "obsFisco",
+                "procRef"
         })
         public static class InfAdic {
 
@@ -26427,11 +26427,11 @@ public class TNFe {
 
             /**
              * Gets the value of the infAdFisco property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getInfAdFisco() {
                 return infAdFisco;
@@ -26439,11 +26439,11 @@ public class TNFe {
 
             /**
              * Sets the value of the infAdFisco property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setInfAdFisco(String value) {
                 this.infAdFisco = value;
@@ -26451,11 +26451,11 @@ public class TNFe {
 
             /**
              * Gets the value of the infCpl property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getInfCpl() {
                 return infCpl;
@@ -26463,11 +26463,11 @@ public class TNFe {
 
             /**
              * Sets the value of the infCpl property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setInfCpl(String value) {
                 this.infCpl = value;
@@ -26475,25 +26475,25 @@ public class TNFe {
 
             /**
              * Gets the value of the obsCont property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the obsCont property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getObsCont().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link TNFe.InfNFe.InfAdic.ObsCont }
-             * 
-             * 
+             *
+             *
              */
             public List<TNFe.InfNFe.InfAdic.ObsCont> getObsCont() {
                 if (obsCont == null) {
@@ -26504,25 +26504,25 @@ public class TNFe {
 
             /**
              * Gets the value of the obsFisco property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the obsFisco property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getObsFisco().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link TNFe.InfNFe.InfAdic.ObsFisco }
-             * 
-             * 
+             *
+             *
              */
             public List<TNFe.InfNFe.InfAdic.ObsFisco> getObsFisco() {
                 if (obsFisco == null) {
@@ -26533,25 +26533,25 @@ public class TNFe {
 
             /**
              * Gets the value of the procRef property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the procRef property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getProcRef().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link TNFe.InfNFe.InfAdic.ProcRef }
-             * 
-             * 
+             *
+             *
              */
             public List<TNFe.InfNFe.InfAdic.ProcRef> getProcRef() {
                 if (procRef == null) {
@@ -26563,9 +26563,9 @@ public class TNFe {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -26592,12 +26592,12 @@ public class TNFe {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "xTexto"
+                    "xTexto"
             })
             public static class ObsCont {
 
@@ -26608,11 +26608,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the xTexto property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getXTexto() {
                     return xTexto;
@@ -26620,11 +26620,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the xTexto property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setXTexto(String value) {
                     this.xTexto = value;
@@ -26632,11 +26632,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the xCampo property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getXCampo() {
                     return xCampo;
@@ -26644,11 +26644,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the xCampo property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setXCampo(String value) {
                     this.xCampo = value;
@@ -26659,9 +26659,9 @@ public class TNFe {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -26688,12 +26688,12 @@ public class TNFe {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "xTexto"
+                    "xTexto"
             })
             public static class ObsFisco {
 
@@ -26704,11 +26704,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the xTexto property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getXTexto() {
                     return xTexto;
@@ -26716,11 +26716,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the xTexto property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setXTexto(String value) {
                     this.xTexto = value;
@@ -26728,11 +26728,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the xCampo property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getXCampo() {
                     return xCampo;
@@ -26740,11 +26740,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the xCampo property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setXCampo(String value) {
                     this.xCampo = value;
@@ -26755,9 +26755,9 @@ public class TNFe {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -26788,13 +26788,13 @@ public class TNFe {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "nProc",
-                "indProc"
+                    "nProc",
+                    "indProc"
             })
             public static class ProcRef {
 
@@ -26805,11 +26805,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the nProc property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getNProc() {
                     return nProc;
@@ -26817,11 +26817,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the nProc property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setNProc(String value) {
                     this.nProc = value;
@@ -26829,11 +26829,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the indProc property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getIndProc() {
                     return indProc;
@@ -26841,11 +26841,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the indProc property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setIndProc(String value) {
                     this.indProc = value;
@@ -26858,9 +26858,9 @@ public class TNFe {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -26920,14 +26920,14 @@ public class TNFe {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "tPag",
-            "vPag",
-            "card"
+                "tPag",
+                "vPag",
+                "card"
         })
         public static class Pag {
 
@@ -26939,11 +26939,11 @@ public class TNFe {
 
             /**
              * Gets the value of the tPag property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getTPag() {
                 return tPag;
@@ -26951,11 +26951,11 @@ public class TNFe {
 
             /**
              * Sets the value of the tPag property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setTPag(String value) {
                 this.tPag = value;
@@ -26963,11 +26963,11 @@ public class TNFe {
 
             /**
              * Gets the value of the vPag property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getVPag() {
                 return vPag;
@@ -26975,11 +26975,11 @@ public class TNFe {
 
             /**
              * Sets the value of the vPag property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setVPag(String value) {
                 this.vPag = value;
@@ -26987,11 +26987,11 @@ public class TNFe {
 
             /**
              * Gets the value of the card property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link TNFe.InfNFe.Pag.Card }
-             *     
+             *
              */
             public TNFe.InfNFe.Pag.Card getCard() {
                 return card;
@@ -26999,11 +26999,11 @@ public class TNFe {
 
             /**
              * Sets the value of the card property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link TNFe.InfNFe.Pag.Card }
-             *     
+             *
              */
             public void setCard(TNFe.InfNFe.Pag.Card value) {
                 this.card = value;
@@ -27012,9 +27012,9 @@ public class TNFe {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -27046,14 +27046,14 @@ public class TNFe {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "cnpj",
-                "tBand",
-                "cAut"
+                    "cnpj",
+                    "tBand",
+                    "cAut"
             })
             public static class Card {
 
@@ -27066,11 +27066,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the cnpj property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getCNPJ() {
                     return cnpj;
@@ -27078,11 +27078,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the cnpj property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setCNPJ(String value) {
                     this.cnpj = value;
@@ -27090,11 +27090,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the tBand property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getTBand() {
                     return tBand;
@@ -27102,11 +27102,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the tBand property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setTBand(String value) {
                     this.tBand = value;
@@ -27114,11 +27114,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the cAut property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getCAut() {
                     return cAut;
@@ -27126,11 +27126,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the cAut property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setCAut(String value) {
                     this.cAut = value;
@@ -27143,9 +27143,9 @@ public class TNFe {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -27233,14 +27233,14 @@ public class TNFe {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "icmsTot",
-            "issqNtot",
-            "retTrib"
+                "icmsTot",
+                "issqNtot",
+                "retTrib"
         })
         public static class Total {
 
@@ -27252,11 +27252,11 @@ public class TNFe {
 
             /**
              * Gets the value of the icmsTot property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link TNFe.InfNFe.Total.ICMSTot }
-             *     
+             *
              */
             public TNFe.InfNFe.Total.ICMSTot getICMSTot() {
                 return icmsTot;
@@ -27264,11 +27264,11 @@ public class TNFe {
 
             /**
              * Sets the value of the icmsTot property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link TNFe.InfNFe.Total.ICMSTot }
-             *     
+             *
              */
             public void setICMSTot(TNFe.InfNFe.Total.ICMSTot value) {
                 this.icmsTot = value;
@@ -27276,11 +27276,11 @@ public class TNFe {
 
             /**
              * Gets the value of the issqNtot property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link TNFe.InfNFe.Total.ISSQNtot }
-             *     
+             *
              */
             public TNFe.InfNFe.Total.ISSQNtot getISSQNtot() {
                 return issqNtot;
@@ -27288,11 +27288,11 @@ public class TNFe {
 
             /**
              * Sets the value of the issqNtot property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link TNFe.InfNFe.Total.ISSQNtot }
-             *     
+             *
              */
             public void setISSQNtot(TNFe.InfNFe.Total.ISSQNtot value) {
                 this.issqNtot = value;
@@ -27300,11 +27300,11 @@ public class TNFe {
 
             /**
              * Gets the value of the retTrib property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link TNFe.InfNFe.Total.RetTrib }
-             *     
+             *
              */
             public TNFe.InfNFe.Total.RetTrib getRetTrib() {
                 return retTrib;
@@ -27312,11 +27312,11 @@ public class TNFe {
 
             /**
              * Sets the value of the retTrib property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link TNFe.InfNFe.Total.RetTrib }
-             *     
+             *
              */
             public void setRetTrib(TNFe.InfNFe.Total.RetTrib value) {
                 this.retTrib = value;
@@ -27325,9 +27325,9 @@ public class TNFe {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -27354,27 +27354,27 @@ public class TNFe {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "vbc",
-                "vicms",
-                "vicmsDeson",
-                "vbcst",
-                "vst",
-                "vProd",
-                "vFrete",
-                "vSeg",
-                "vDesc",
-                "vii",
-                "vipi",
-                "vpis",
-                "vcofins",
-                "vOutro",
-                "vnf",
-                "vTotTrib"
+                    "vbc",
+                    "vicms",
+                    "vicmsDeson",
+                    "vbcst",
+                    "vst",
+                    "vProd",
+                    "vFrete",
+                    "vSeg",
+                    "vDesc",
+                    "vii",
+                    "vipi",
+                    "vpis",
+                    "vcofins",
+                    "vOutro",
+                    "vnf",
+                    "vTotTrib"
             })
             public static class ICMSTot {
 
@@ -27412,11 +27412,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vbc property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVBC() {
                     return vbc;
@@ -27424,11 +27424,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vbc property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVBC(String value) {
                     this.vbc = value;
@@ -27436,11 +27436,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vicms property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVICMS() {
                     return vicms;
@@ -27448,11 +27448,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vicms property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVICMS(String value) {
                     this.vicms = value;
@@ -27460,11 +27460,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vicmsDeson property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVICMSDeson() {
                     return vicmsDeson;
@@ -27472,11 +27472,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vicmsDeson property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVICMSDeson(String value) {
                     this.vicmsDeson = value;
@@ -27484,11 +27484,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vbcst property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVBCST() {
                     return vbcst;
@@ -27496,11 +27496,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vbcst property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVBCST(String value) {
                     this.vbcst = value;
@@ -27508,11 +27508,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vst property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVST() {
                     return vst;
@@ -27520,11 +27520,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vst property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVST(String value) {
                     this.vst = value;
@@ -27532,11 +27532,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vProd property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVProd() {
                     return vProd;
@@ -27544,11 +27544,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vProd property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVProd(String value) {
                     this.vProd = value;
@@ -27556,11 +27556,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vFrete property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVFrete() {
                     return vFrete;
@@ -27568,11 +27568,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vFrete property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVFrete(String value) {
                     this.vFrete = value;
@@ -27580,11 +27580,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vSeg property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVSeg() {
                     return vSeg;
@@ -27592,11 +27592,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vSeg property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVSeg(String value) {
                     this.vSeg = value;
@@ -27604,11 +27604,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vDesc property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVDesc() {
                     return vDesc;
@@ -27616,11 +27616,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vDesc property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVDesc(String value) {
                     this.vDesc = value;
@@ -27628,11 +27628,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vii property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVII() {
                     return vii;
@@ -27640,11 +27640,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vii property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVII(String value) {
                     this.vii = value;
@@ -27652,11 +27652,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vipi property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVIPI() {
                     return vipi;
@@ -27664,11 +27664,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vipi property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVIPI(String value) {
                     this.vipi = value;
@@ -27676,11 +27676,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vpis property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVPIS() {
                     return vpis;
@@ -27688,11 +27688,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vpis property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVPIS(String value) {
                     this.vpis = value;
@@ -27700,11 +27700,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vcofins property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVCOFINS() {
                     return vcofins;
@@ -27712,11 +27712,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vcofins property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVCOFINS(String value) {
                     this.vcofins = value;
@@ -27724,11 +27724,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vOutro property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVOutro() {
                     return vOutro;
@@ -27736,11 +27736,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vOutro property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVOutro(String value) {
                     this.vOutro = value;
@@ -27748,11 +27748,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vnf property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVNF() {
                     return vnf;
@@ -27760,11 +27760,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vnf property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVNF(String value) {
                     this.vnf = value;
@@ -27772,11 +27772,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vTotTrib property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVTotTrib() {
                     return vTotTrib;
@@ -27784,11 +27784,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vTotTrib property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVTotTrib(String value) {
                     this.vTotTrib = value;
@@ -27799,9 +27799,9 @@ public class TNFe {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -27836,23 +27836,23 @@ public class TNFe {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "vServ",
-                "vbc",
-                "viss",
-                "vpis",
-                "vcofins",
-                "dCompet",
-                "vDeducao",
-                "vOutro",
-                "vDescIncond",
-                "vDescCond",
-                "vissRet",
-                "cRegTrib"
+                    "vServ",
+                    "vbc",
+                    "viss",
+                    "vpis",
+                    "vcofins",
+                    "dCompet",
+                    "vDeducao",
+                    "vOutro",
+                    "vDescIncond",
+                    "vDescCond",
+                    "vissRet",
+                    "cRegTrib"
             })
             public static class ISSQNtot {
 
@@ -27877,11 +27877,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vServ property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVServ() {
                     return vServ;
@@ -27889,11 +27889,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vServ property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVServ(String value) {
                     this.vServ = value;
@@ -27901,11 +27901,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vbc property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVBC() {
                     return vbc;
@@ -27913,11 +27913,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vbc property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVBC(String value) {
                     this.vbc = value;
@@ -27925,11 +27925,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the viss property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVISS() {
                     return viss;
@@ -27937,11 +27937,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the viss property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVISS(String value) {
                     this.viss = value;
@@ -27949,11 +27949,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vpis property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVPIS() {
                     return vpis;
@@ -27961,11 +27961,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vpis property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVPIS(String value) {
                     this.vpis = value;
@@ -27973,11 +27973,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vcofins property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVCOFINS() {
                     return vcofins;
@@ -27985,11 +27985,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vcofins property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVCOFINS(String value) {
                     this.vcofins = value;
@@ -27997,11 +27997,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the dCompet property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getDCompet() {
                     return dCompet;
@@ -28009,11 +28009,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the dCompet property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setDCompet(String value) {
                     this.dCompet = value;
@@ -28021,11 +28021,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vDeducao property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVDeducao() {
                     return vDeducao;
@@ -28033,11 +28033,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vDeducao property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVDeducao(String value) {
                     this.vDeducao = value;
@@ -28045,11 +28045,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vOutro property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVOutro() {
                     return vOutro;
@@ -28057,11 +28057,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vOutro property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVOutro(String value) {
                     this.vOutro = value;
@@ -28069,11 +28069,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vDescIncond property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVDescIncond() {
                     return vDescIncond;
@@ -28081,11 +28081,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vDescIncond property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVDescIncond(String value) {
                     this.vDescIncond = value;
@@ -28093,11 +28093,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vDescCond property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVDescCond() {
                     return vDescCond;
@@ -28105,11 +28105,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vDescCond property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVDescCond(String value) {
                     this.vDescCond = value;
@@ -28117,11 +28117,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vissRet property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVISSRet() {
                     return vissRet;
@@ -28129,11 +28129,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vissRet property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVISSRet(String value) {
                     this.vissRet = value;
@@ -28141,11 +28141,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the cRegTrib property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getCRegTrib() {
                     return cRegTrib;
@@ -28153,11 +28153,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the cRegTrib property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setCRegTrib(String value) {
                     this.cRegTrib = value;
@@ -28168,9 +28168,9 @@ public class TNFe {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -28188,18 +28188,18 @@ public class TNFe {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "vRetPIS",
-                "vRetCOFINS",
-                "vRetCSLL",
-                "vbcirrf",
-                "virrf",
-                "vbcRetPrev",
-                "vRetPrev"
+                    "vRetPIS",
+                    "vRetCOFINS",
+                    "vRetCSLL",
+                    "vbcirrf",
+                    "virrf",
+                    "vbcRetPrev",
+                    "vRetPrev"
             })
             public static class RetTrib {
 
@@ -28216,11 +28216,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vRetPIS property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVRetPIS() {
                     return vRetPIS;
@@ -28228,11 +28228,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vRetPIS property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVRetPIS(String value) {
                     this.vRetPIS = value;
@@ -28240,11 +28240,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vRetCOFINS property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVRetCOFINS() {
                     return vRetCOFINS;
@@ -28252,11 +28252,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vRetCOFINS property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVRetCOFINS(String value) {
                     this.vRetCOFINS = value;
@@ -28264,11 +28264,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vRetCSLL property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVRetCSLL() {
                     return vRetCSLL;
@@ -28276,11 +28276,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vRetCSLL property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVRetCSLL(String value) {
                     this.vRetCSLL = value;
@@ -28288,11 +28288,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vbcirrf property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVBCIRRF() {
                     return vbcirrf;
@@ -28300,11 +28300,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vbcirrf property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVBCIRRF(String value) {
                     this.vbcirrf = value;
@@ -28312,11 +28312,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the virrf property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVIRRF() {
                     return virrf;
@@ -28324,11 +28324,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the virrf property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVIRRF(String value) {
                     this.virrf = value;
@@ -28336,11 +28336,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vbcRetPrev property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVBCRetPrev() {
                     return vbcRetPrev;
@@ -28348,11 +28348,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vbcRetPrev property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVBCRetPrev(String value) {
                     this.vbcRetPrev = value;
@@ -28360,11 +28360,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vRetPrev property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVRetPrev() {
                     return vRetPrev;
@@ -28372,11 +28372,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vRetPrev property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVRetPrev(String value) {
                     this.vRetPrev = value;
@@ -28389,9 +28389,9 @@ public class TNFe {
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -28553,19 +28553,19 @@ public class TNFe {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "modFrete",
-            "transporta",
-            "retTransp",
-            "veicTransp",
-            "reboque",
-            "vagao",
-            "balsa",
-            "vol"
+                "modFrete",
+                "transporta",
+                "retTransp",
+                "veicTransp",
+                "reboque",
+                "vagao",
+                "balsa",
+                "vol"
         })
         public static class Transp {
 
@@ -28581,11 +28581,11 @@ public class TNFe {
 
             /**
              * Gets the value of the modFrete property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getModFrete() {
                 return modFrete;
@@ -28593,11 +28593,11 @@ public class TNFe {
 
             /**
              * Sets the value of the modFrete property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setModFrete(String value) {
                 this.modFrete = value;
@@ -28605,11 +28605,11 @@ public class TNFe {
 
             /**
              * Gets the value of the transporta property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link TNFe.InfNFe.Transp.Transporta }
-             *     
+             *
              */
             public TNFe.InfNFe.Transp.Transporta getTransporta() {
                 return transporta;
@@ -28617,11 +28617,11 @@ public class TNFe {
 
             /**
              * Sets the value of the transporta property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link TNFe.InfNFe.Transp.Transporta }
-             *     
+             *
              */
             public void setTransporta(TNFe.InfNFe.Transp.Transporta value) {
                 this.transporta = value;
@@ -28629,11 +28629,11 @@ public class TNFe {
 
             /**
              * Gets the value of the retTransp property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link TNFe.InfNFe.Transp.RetTransp }
-             *     
+             *
              */
             public TNFe.InfNFe.Transp.RetTransp getRetTransp() {
                 return retTransp;
@@ -28641,11 +28641,11 @@ public class TNFe {
 
             /**
              * Sets the value of the retTransp property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link TNFe.InfNFe.Transp.RetTransp }
-             *     
+             *
              */
             public void setRetTransp(TNFe.InfNFe.Transp.RetTransp value) {
                 this.retTransp = value;
@@ -28653,11 +28653,11 @@ public class TNFe {
 
             /**
              * Gets the value of the veicTransp property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link TVeiculo }
-             *     
+             *
              */
             public TVeiculo getVeicTransp() {
                 return veicTransp;
@@ -28665,11 +28665,11 @@ public class TNFe {
 
             /**
              * Sets the value of the veicTransp property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link TVeiculo }
-             *     
+             *
              */
             public void setVeicTransp(TVeiculo value) {
                 this.veicTransp = value;
@@ -28677,25 +28677,25 @@ public class TNFe {
 
             /**
              * Gets the value of the reboque property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the reboque property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getReboque().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link TVeiculo }
-             * 
-             * 
+             *
+             *
              */
             public List<TVeiculo> getReboque() {
                 if (reboque == null) {
@@ -28706,11 +28706,11 @@ public class TNFe {
 
             /**
              * Gets the value of the vagao property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getVagao() {
                 return vagao;
@@ -28718,11 +28718,11 @@ public class TNFe {
 
             /**
              * Sets the value of the vagao property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setVagao(String value) {
                 this.vagao = value;
@@ -28730,11 +28730,11 @@ public class TNFe {
 
             /**
              * Gets the value of the balsa property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getBalsa() {
                 return balsa;
@@ -28742,11 +28742,11 @@ public class TNFe {
 
             /**
              * Sets the value of the balsa property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setBalsa(String value) {
                 this.balsa = value;
@@ -28754,25 +28754,25 @@ public class TNFe {
 
             /**
              * Gets the value of the vol property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the vol property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getVol().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link TNFe.InfNFe.Transp.Vol }
-             * 
-             * 
+             *
+             *
              */
             public List<TNFe.InfNFe.Transp.Vol> getVol() {
                 if (vol == null) {
@@ -28784,9 +28784,9 @@ public class TNFe {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -28803,17 +28803,17 @@ public class TNFe {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "vServ",
-                "vbcRet",
-                "picmsRet",
-                "vicmsRet",
-                "cfop",
-                "cMunFG"
+                    "vServ",
+                    "vbcRet",
+                    "picmsRet",
+                    "vicmsRet",
+                    "cfop",
+                    "cMunFG"
             })
             public static class RetTransp {
 
@@ -28832,11 +28832,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vServ property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVServ() {
                     return vServ;
@@ -28844,11 +28844,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vServ property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVServ(String value) {
                     this.vServ = value;
@@ -28856,11 +28856,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vbcRet property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVBCRet() {
                     return vbcRet;
@@ -28868,11 +28868,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vbcRet property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVBCRet(String value) {
                     this.vbcRet = value;
@@ -28880,11 +28880,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the picmsRet property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getPICMSRet() {
                     return picmsRet;
@@ -28892,11 +28892,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the picmsRet property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setPICMSRet(String value) {
                     this.picmsRet = value;
@@ -28904,11 +28904,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the vicmsRet property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getVICMSRet() {
                     return vicmsRet;
@@ -28916,11 +28916,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the vicmsRet property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setVICMSRet(String value) {
                     this.vicmsRet = value;
@@ -28928,11 +28928,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the cfop property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getCFOP() {
                     return cfop;
@@ -28940,11 +28940,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the cfop property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setCFOP(String value) {
                     this.cfop = value;
@@ -28952,11 +28952,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the cMunFG property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getCMunFG() {
                     return cMunFG;
@@ -28964,11 +28964,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the cMunFG property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setCMunFG(String value) {
                     this.cMunFG = value;
@@ -28979,9 +28979,9 @@ public class TNFe {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -29022,18 +29022,18 @@ public class TNFe {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "cnpj",
-                "cpf",
-                "xNome",
-                "ie",
-                "xEnder",
-                "xMun",
-                "uf"
+                    "cnpj",
+                    "cpf",
+                    "xNome",
+                    "ie",
+                    "xEnder",
+                    "xMun",
+                    "uf"
             })
             public static class Transporta {
 
@@ -29051,11 +29051,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the cnpj property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getCNPJ() {
                     return cnpj;
@@ -29063,11 +29063,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the cnpj property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setCNPJ(String value) {
                     this.cnpj = value;
@@ -29075,11 +29075,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the cpf property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getCPF() {
                     return cpf;
@@ -29087,11 +29087,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the cpf property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setCPF(String value) {
                     this.cpf = value;
@@ -29099,11 +29099,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the xNome property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getXNome() {
                     return xNome;
@@ -29111,11 +29111,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the xNome property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setXNome(String value) {
                     this.xNome = value;
@@ -29123,11 +29123,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the ie property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getIE() {
                     return ie;
@@ -29135,11 +29135,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the ie property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setIE(String value) {
                     this.ie = value;
@@ -29147,11 +29147,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the xEnder property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getXEnder() {
                     return xEnder;
@@ -29159,11 +29159,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the xEnder property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setXEnder(String value) {
                     this.xEnder = value;
@@ -29171,11 +29171,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the xMun property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getXMun() {
                     return xMun;
@@ -29183,11 +29183,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the xMun property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setXMun(String value) {
                     this.xMun = value;
@@ -29195,11 +29195,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the uf property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link TUf }
-                 *     
+                 *
                  */
                 public TUf getUF() {
                     return uf;
@@ -29207,11 +29207,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the uf property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link TUf }
-                 *     
+                 *
                  */
                 public void setUF(TUf value) {
                     this.uf = value;
@@ -29222,9 +29222,9 @@ public class TNFe {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -29287,18 +29287,18 @@ public class TNFe {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
-                "qVol",
-                "esp",
-                "marca",
-                "nVol",
-                "pesoL",
-                "pesoB",
-                "lacres"
+                    "qVol",
+                    "esp",
+                    "marca",
+                    "nVol",
+                    "pesoL",
+                    "pesoB",
+                    "lacres"
             })
             public static class Vol {
 
@@ -29312,11 +29312,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the qVol property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getQVol() {
                     return qVol;
@@ -29324,11 +29324,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the qVol property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setQVol(String value) {
                     this.qVol = value;
@@ -29336,11 +29336,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the esp property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getEsp() {
                     return esp;
@@ -29348,11 +29348,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the esp property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setEsp(String value) {
                     this.esp = value;
@@ -29360,11 +29360,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the marca property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getMarca() {
                     return marca;
@@ -29372,11 +29372,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the marca property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setMarca(String value) {
                     this.marca = value;
@@ -29384,11 +29384,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the nVol property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getNVol() {
                     return nVol;
@@ -29396,11 +29396,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the nVol property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setNVol(String value) {
                     this.nVol = value;
@@ -29408,11 +29408,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the pesoL property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getPesoL() {
                     return pesoL;
@@ -29420,11 +29420,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the pesoL property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setPesoL(String value) {
                     this.pesoL = value;
@@ -29432,11 +29432,11 @@ public class TNFe {
 
                 /**
                  * Gets the value of the pesoB property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getPesoB() {
                     return pesoB;
@@ -29444,11 +29444,11 @@ public class TNFe {
 
                 /**
                  * Sets the value of the pesoB property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setPesoB(String value) {
                     this.pesoB = value;
@@ -29456,25 +29456,25 @@ public class TNFe {
 
                 /**
                  * Gets the value of the lacres property.
-                 * 
+                 *
                  * <p>
                  * This accessor method returns a reference to the live list,
                  * not a snapshot. Therefore any modification you make to the
                  * returned list will be present inside the JAXB object.
                  * This is why there is not a <CODE>set</CODE> method for the lacres property.
-                 * 
+                 *
                  * <p>
                  * For example, to add a new item, do as follows:
                  * <pre>
                  *    getLacres().add(newItem);
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  * <p>
                  * Objects of the following type(s) are allowed in the list
                  * {@link TNFe.InfNFe.Transp.Vol.Lacres }
-                 * 
-                 * 
+                 *
+                 *
                  */
                 public List<TNFe.InfNFe.Transp.Vol.Lacres> getLacres() {
                     if (lacres == null) {
@@ -29486,9 +29486,9 @@ public class TNFe {
 
                 /**
                  * <p>Java class for anonymous complex type.
-                 * 
+                 *
                  * <p>The following schema fragment specifies the expected content contained within this class.
-                 * 
+                 *
                  * <pre>
                  * &lt;complexType>
                  *   &lt;complexContent>
@@ -29507,12 +29507,12 @@ public class TNFe {
                  *   &lt;/complexContent>
                  * &lt;/complexType>
                  * </pre>
-                 * 
-                 * 
+                 *
+                 *
                  */
                 @XmlAccessorType(XmlAccessType.FIELD)
                 @XmlType(name = "", propOrder = {
-                    "nLacre"
+                        "nLacre"
                 })
                 public static class Lacres {
 
@@ -29521,11 +29521,11 @@ public class TNFe {
 
                     /**
                      * Gets the value of the nLacre property.
-                     * 
+                     *
                      * @return
                      *     possible object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public String getNLacre() {
                         return nLacre;
@@ -29533,11 +29533,11 @@ public class TNFe {
 
                     /**
                      * Sets the value of the nLacre property.
-                     * 
+                     *
                      * @param value
                      *     allowed object is
                      *     {@link String }
-                     *     
+                     *
                      */
                     public void setNLacre(String value) {
                         this.nLacre = value;
