@@ -106,7 +106,7 @@ public class EMS0140Input extends IntegracaoDocumentMaster<EMS0140InputItem> imp
 	}
 
 	@Override
-	public List<EMS0140InputItem> getItems() {
+	public List<EMS0140InputItem> getItens() {
 		return this.itens;
 	}
 

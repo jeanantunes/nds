@@ -90,6 +90,10 @@ var analiseEstudoController = $.extend(true, {
 			analiseEstudoController.validarData($("#dataLancamento", analiseEstudoController.workspace).val());
 		});
 		
+		$('#idEstudo').change(function (){
+			analiseEstudoController.autoCompleteEstudo($("#idEstudo", analiseEstudoController.workspace).val());
+		});
+		
 		$("#dataLancamento", analiseEstudoController.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/images/calendar.gif",
@@ -242,7 +246,27 @@ var analiseEstudoController = $.extend(true, {
     			if (ano < 1970 || ano > 2070)
     				analiseEstudoController.exibirMensagem("Verifique o Ano.");
     	  }
-	  	},
+  	},
+  	
+  	
+  	autoCompleteEstudo : function(numEstudo){
+  		 
+  		if(numEstudo == undefined || numEstudo.trim() == ""){
+  			return;
+  		}
+  		
+  		$.postJSON(contextPath + "/distribuicao/analiseEstudo/autoCompleteEstudo", {'filtro.numEstudo' : numEstudo},
+			function(data){
+  				$("#codProduto", analiseEstudoController.workspace).val(data.codigoProduto);
+  				$("#analise-estudo-produto", analiseEstudoController.workspace).val(data.nomeProduto);
+  				$("#edicaoProd", analiseEstudoController.workspace).val(data.numeroEdicaoProduto);
+  				$("#dataLancamento", analiseEstudoController.workspace).val(data.dataLancamento);
+  				$("#comboClassificacao", analiseEstudoController.workspace).val(data.idTpClassifProd);
+			},
+		 	function(data){
+		 		exibirMensagem(data);
+		 	});
+  	},
 	  	
   	exibirMensagem : function exibirMensagem(mensagem){
 

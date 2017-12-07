@@ -4431,5 +4431,23 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return (List<ProdutoCouchDTO>) query.list();
 	
 	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+    public List<Cota> obterCotasAtivasForaDoEstudo(List<Long> idCotas) {
+        
+    	final StringBuilder hql = new StringBuilder(" ");
+			hql.append(" select c ");
+			hql.append(" from Cota c ");
+			hql.append(" where c.situacaoCadastro = :situacaoCadastro ");
+			hql.append(" AND  c.id not in(:idCotas) ");
+        
+        final Query query = this.getSession().createQuery(hql.toString());
+        
+        query.setParameter("situacaoCadastro", SituacaoCadastro.ATIVO);
+        query.setParameterList("idCotas", idCotas);
+        
+        return query.list();
+    }
 	
 }

@@ -1192,7 +1192,7 @@ public Map<Integer, EdicoesProdutosDTO> buscaHistoricoCotasPorBase(List<Long> li
     	query.setParameterList("statusLanc", statusLancamento);
     	query.setParameter("de", queryDTO.getFilterSortFrom());
     	query.setParameter("ate", queryDTO.getFilterSortTo());
-    	
+
     	if(queryDTO.possuiOrdenacaoQtdDeVenda()){
     		query.setParameter("qtdEdicoes", listProdutoEdicaoId.size());
     	}

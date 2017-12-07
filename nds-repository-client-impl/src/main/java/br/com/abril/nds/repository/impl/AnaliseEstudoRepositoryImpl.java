@@ -34,6 +34,7 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		hql.append(" produto.nome AS nomeProduto, ");
 		hql.append(" produto.periodicidade AS periodoProduto, ");
 		hql.append(" coalesce(tpClassifProduto.descricao, '') AS descicaoTpClassifProd, ");
+		hql.append(" tpClassifProduto.id AS idTpClassifProd, ");
 		
 		hql.append(" (case when(periodoLancamentoParcial.numeroPeriodo > 1) then true else false end) as permiteParcial, ");
 //		hql.append(" estudo.status AS statusEstudo, ");

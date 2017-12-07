@@ -22,6 +22,7 @@ public class AnaliseEstudoDTO implements Serializable {
 	private ProdutoEdicao prodEdicao;
 	private Long numeroEdicaoProduto;
 	private String descicaoTpClassifProd;
+	private Long idTpClassifProd;
 	private boolean permiteParcial;
 	
 	private Integer codPeriodoProd;
@@ -140,6 +141,12 @@ public class AnaliseEstudoDTO implements Serializable {
 		}else{
 			this.descricaoStatus = "Gerado";
 		}
+	}
+	public Long getIdTpClassifProd() {
+		return idTpClassifProd;
+	}
+	public void setIdTpClassifProd(Long idTpClassifProd) {
+		this.idTpClassifProd = idTpClassifProd;
 	}
 	
 }

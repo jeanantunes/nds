@@ -59,6 +59,12 @@ public class MixCotaProduto {
 	@Column(name = "CODIGO_ICD")
 	private String codigoICD;
 	
+	@Column(name = "CODIGO_PRODUTO")
+	private String codigoProduto;
+	
+	@Column(name = "USAR_ICD_ESTUDO")
+	private boolean usarICDEstudo = true;
+	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "TIPO_CLASSIFICACAO_PRODUTO_ID")
 	private TipoClassificacaoProduto tipoClassificacaoProduto;
@@ -66,6 +72,9 @@ public class MixCotaProduto {
 	@Cascade({CascadeType.ALL})
 	@OneToMany(mappedBy="mixCotaProduto")
 	List<RepartePDV> repartesPDV;
+	
+	@Column(name = "ID_PRODUTO")
+	private Long idProduto;
 	
 	public Long getId() {
 		return id;
@@ -163,5 +172,30 @@ public class MixCotaProduto {
 			TipoClassificacaoProduto tipoClassificacaoProduto) {
 		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
 	}
+
+	public String getCodigoProduto() {
+		return codigoProduto;
+	}
+
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
+	}
+
+	public boolean isUsarICDEstudo() {
+		return usarICDEstudo;
+	}
+
+	public void setUsarICDEstudo(boolean usarICDEstudo) {
+		this.usarICDEstudo = usarICDEstudo;
+	}
+
+	public Long getIdProduto() {
+		return idProduto;
+	}
+
+	public void setIdProduto(Long idProduto) {
+		this.idProduto = idProduto;
+	}
+	
 	
 }

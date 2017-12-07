@@ -29,6 +29,7 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
+import br.com.abril.nds.dto.RegistroRankingSegmentoCotaDTO;
 import br.com.abril.nds.dto.RegistroRankingSegmentoDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
@@ -233,16 +234,46 @@ public class RelatorioVendasController extends BaseController {
 		FiltroRankingSegmentoDTO filtro = (FiltroRankingSegmentoDTO) this.session.getAttribute(FILTRO_PESQUISA_RANKING_SEGMENTO);
 		
 		if (filtro == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Realiza uma pesquisa.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Realizar uma pesquisa.");
 		}
 		
 		filtro.setPaginacao(null);
 		
-		List<RegistroRankingSegmentoDTO> rankingSegmento = this.relatorioVendasService.obterRankingSegmento(filtro);
+		if(!filtro.isPesquisaPorCota()){
+			List<RegistroRankingSegmentoDTO> rankingSegmento = this.relatorioVendasService.obterRankingSegmento(filtro);
+
+			FileExporter.to("ranking-segmento", fileType).inHTTPResponse(
+					this.getNDSFileHeader(), filtro, rankingSegmento, RegistroRankingSegmentoDTO.class, this.httpServletResponse
+					);
+		}else{
+			List<RegistroRankingSegmentoDTO> rankingSegmento = this.relatorioVendasService.obterRankingSegmento(filtro);
+			
+			if(rankingSegmento == null || rankingSegmento.isEmpty()){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados resultados para exportação. ");
+			}
+
+			filtro.setDescricaoTipoSegmento("Varios! ");
+			
+			List<RegistroRankingSegmentoCotaDTO> registros = new ArrayList<>();
+			
+			for (RegistroRankingSegmentoDTO registroRankingSegmentoDTO : rankingSegmento) {
+				RegistroRankingSegmentoCotaDTO registro = new RegistroRankingSegmentoCotaDTO();
+				
+				registro.setRanking(registroRankingSegmentoDTO.getRanking());
+				registro.setSegmentoDescricao(registroRankingSegmentoDTO.getSegmentoDescricao());
+				registro.setFaturamentoCapaFormatado(registroRankingSegmentoDTO.getFaturamentoCapaFormatado());
+				registro.setParticipacaoFormatado(registroRankingSegmentoDTO.getParticipacaoFormatado());
+				registro.setParticipacaoAcumuladaFormatado(registroRankingSegmentoDTO.getParticipacaoAcumuladaFormatado());
+				
+				registros.add(registro);
+			}
+
+			FileExporter.to("ranking-segmento", fileType).inHTTPResponse(
+					this.getNDSFileHeader(), filtro, registros, RegistroRankingSegmentoCotaDTO.class, this.httpServletResponse
+					);
+		}
 		
-		FileExporter.to("ranking-segmento", fileType).inHTTPResponse(
-			this.getNDSFileHeader(), filtro, rankingSegmento, RegistroRankingSegmentoDTO.class, this.httpServletResponse
-		);
+		
 		
 		this.result.nothing();
 	}
@@ -487,10 +518,17 @@ public class RelatorioVendasController extends BaseController {
 
 	@Post
 	@Path("/pesquisarRankingSegmentacao")
-	public void pesquisarRankingSegmentacao(Long idSegmentacao, String descricaoSegmento, Date dataDe, Date dataAte, 
-			String sortorder, String sortname, int page, int rp) {
+	public void pesquisarRankingSegmentacao(Long idSegmentacao, String descricaoSegmento, Date dataDe, Date dataAte, Long cota,  
+			String sortorder, String sortname, int page, int rp, boolean pesquisaPorCota, Integer numeroCota) {
 		
 		FiltroRankingSegmentoDTO filtro = new FiltroRankingSegmentoDTO(dataDe, dataAte, idSegmentacao, page, rp, sortorder, sortname);
+		
+		filtro.setPesquisaPorCota(pesquisaPorCota);
+		
+		if(numeroCota != null){
+			filtro.setNumeroCota(numeroCota);
+			filtro.setListSegmentos(tipoSegmentoProdutoService.obterTipoSegmentoProdutoOrdenados(Ordenacao.ASC));
+		}
 		
 		pesquisarPorSegmento(descricaoSegmento, filtro);
 	}

@@ -138,10 +138,24 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 	    Map<String, BigInteger> mapTotaisEd = new HashMap<>();
     	
 	    if ((queryDTO.getModoAnalise() != null && queryDTO.getModoAnalise().equalsIgnoreCase("NORMAL")) || 
-    			queryDTO.getModoAnalise() != null && queryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL") && queryDTO.isMudarBaseVisualizacao() 
-    			|| queryDTO.isParcialComEdicaoBaseNormal()) {
+    			queryDTO.getModoAnalise() != null && queryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL") 
+    			&& queryDTO.isMudarBaseVisualizacao() || queryDTO.isParcialComEdicaoBaseNormal()) {
 	    	
 	    	Map<String, List<EdicoesProdutosDTO>> mapHistoricoCotasEdicoesParciais = new HashMap<>();
+	    	
+	    	// Map Order AUX
+	    	Map<String, Integer> mapOrdemAux = new HashMap<>();
+
+	    	if(queryDTO.getEdicoesBase() != null){
+	    		List<EdicoesProdutosDTO> edicoesBase = queryDTO.getEdicoesBase();
+	    		
+	    		for (EdicoesProdutosDTO edicoesProdutosDTO : edicoesBase) {
+	    			String mapKey = obterMapKey(edicoesProdutosDTO);
+	    			
+	    			mapOrdemAux.put(mapKey, edicoesProdutosDTO.getOrdemExibicao());
+	    		}
+	    	}
+	    	// DONE!
         	
             if (queryDTO.getEdicoesBase() == null) {
             	List<EdicoesProdutosDTO> edicoesBaseList = analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoId());
@@ -307,7 +321,6 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                     // reparte, venda e dataLancamento
                     for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
                     		
-                    	
                     	EdicoesProdutosDTO historicoEdicaoBase = edicao.getHistoricoReparteVendaEdicaoBase().get(item.getCotaId());
                     	
                     	EdicoesProdutosDTO ed = new EdicoesProdutosDTO();
@@ -427,6 +440,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 for (String key : chaveMaps) {
 					EdicoesProdutosDTO edicaoBaseCota = edicoesProdutosDTOMap.get(key);
 					putMapSomatorioTotaisEdicao(mapTotaisEd, edicaoBaseCota);
+					
+					edicaoBaseCota.setOrdemExibicao(mapOrdemAux.get(key) != null ? mapOrdemAux.get(key) : 9); 
 					
 					edicoesBasesList.add(edicaoBaseCota);
 				}

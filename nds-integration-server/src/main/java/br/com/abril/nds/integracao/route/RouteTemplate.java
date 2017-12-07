@@ -22,29 +22,30 @@ public abstract class RouteTemplate extends AbstractRepository {
 	private DynamicRouterServer dynamicRouter;
 	
 	private String userName;
-	
+	private Long codigoDistribuidor;
+
 	private Map<String, Object> parameters = new HashMap<String, Object>();
-	
+
 	/**
 	 * Metodo para configurar a rota da mensagem
-	 * 
+	 *
 	 * 		public void setupRoute() {
 	 *			setMessageProcessor(new TestProcessor());
 	 *			setUri("c:/test/test.txt");
 	 *			addTypeMapping(new FixedLengthField(1, 1, "A"), TestFixedModelHeader.class);
 	 *			addTypeMapping(new FixedLengthField(1, 1, "B"), TestFixedModelDetail.class);
-	 *			addTypeMapping(new FixedLengthField(1, 1, "C"), TestFixedModelFooter.class);				
+	 *			addTypeMapping(new FixedLengthField(1, 1, "C"), TestFixedModelFooter.class);
 	 *		}
 	 *
 	 */
 	public void setupRoute() {
 		// OBTEM OS PARAMETROS DO BANCO DE DADOS
 		parameters.putAll(parameterProvider.getParameters());
-		
+
 		// CONFIGURA OS MAPEAMENTOS DE TIPO DE REGISTRO
 		setupTypeMapping();
 	}
-	
+
 	public boolean isCommitAtEnd() {
 		return false;
 	}
@@ -56,28 +57,28 @@ public abstract class RouteTemplate extends AbstractRepository {
 	public Map<String, Object> getParameters() {
 		return parameters;
 	}
-	
+
 	/**
 	 * Configura os mapeamento dos tipos de registro para classes POJO (Java Bean)
-	 * 
+	 *
 	 */
 	public abstract void setupTypeMapping();
 
 	/**
 	 * Retorna a URI da mensagem de entrada
-	 * 
+	 *
 	 * @return String com a URI
 	 */
 	public abstract String getUri();
-	
+
 	public String getUserName() {
 		return userName;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public Long getCodigoDistribuidor() {
+		return codigoDistribuidor;
 	}
-	
+
 	public void onStart() {
 		
 	}
@@ -86,9 +87,10 @@ public abstract class RouteTemplate extends AbstractRepository {
 		
 	}
 	
-	public void execute(String userName) {
+	public void execute(String userName, Long codigoDistribuidor) {
 		this.userName = userName;
-		
+		this.codigoDistribuidor = codigoDistribuidor;
+
 		dynamicRouter.route(this);
 	}
 	

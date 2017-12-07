@@ -1,9 +1,29 @@
 package br.com.abril.nds.integracao.ems2021.processor;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
+import br.com.abril.nds.integracao.log.NdsServerLoggerFactory;
+import br.com.abril.nds.integracao.model.InterfaceEnum;
+import br.com.abril.nds.integracao.model.canonic.EMS2021Input;
+import br.com.abril.nds.integracao.model.canonic.EMS2021InputItem;
+import br.com.abril.nds.integracao.service.IcdObjectService;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.model.integracao.InterfaceExecucao;
+import br.com.abril.nds.model.integracao.icd.IcdEdicaoBaseEstrategia;
+import br.com.abril.nds.model.integracao.icd.IcdEstrategia;
+import br.com.abril.nds.repository.ParametroSistemaRepository;
+import org.hibernate.Session;
+import org.lightcouch.CouchDbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.integracao.Message;
@@ -15,111 +35,102 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EMS2021MessageProcessor.class);
 
-    //Autowired
-	//private SessionFactory sessionFactoryIcd;
-    
-    /*
-    private Session session = null;
-	
-	protected Session getSessionIcd() {
-		
-		if (session == null) {
-			try {
-				session = sessionFactoryIcd.getCurrentSession();
-			} catch(Exception e) {
-				LOGGER.error("Erro ao obter sessão do Hibernate.", e);
-			}
-			if(session == null) {
-				session = sessionFactoryIcd.openSession();
-			}
-		}
-		return session;
-	}
-	*/
+    @Autowired
+    private IcdObjectService icdObjectService;
+
+    @Autowired
+    private NdsServerLoggerFactory ndsServerLoggerFactory;
+
+    @Autowired
+    private ParametroSistemaRepository parametroSistemaRepository;
+
     @Override
     public void preProcess(AtomicReference<Object> tempVar) {
-
-    	/*
-	List<Object> objs = new ArrayList<Object>();
-	Object dummyObj = new Object();
-	objs.add(dummyObj);
-	tempVar.set(objs);
-	*/
+        LOGGER.info("EMS2021 - preProcess " + tempVar);
+        List<Object> objs = new ArrayList<Object>();
+        Object dummyObj = new Object();
+        objs.add(dummyObj);
+        tempVar.set(objs);
     }
 
     @Override
     public void processMessage(Message message) {
 
-    /*
-	CouchDbClient cdbc = null;
-	List<IcdEstrategia> estrategias = obterEstrategias();
-	IcdEstrategia estrategiaTemp = null;
-	for (IcdEstrategia estrategia : estrategias) {
-	    try {
-		estrategia.setTipoDocumento("EMS2021");
-		if ((estrategiaTemp != null) && (estrategia.getCodigoEstrategia().equals(estrategiaTemp.getCodigoEstrategia()))) {
-			estrategia.setBasesEstrategia(estrategiaTemp.getBasesEstrategia());
-		} else {
-			estrategia.setBasesEstrategia(obterEdicaoBaseEstrategia(estrategia));
-		}
-		cdbc = this.getCouchDBClient(estrategia.getCodigoDistribuidor().toString());
-		cdbc.save(estrategia);
-	    } catch (Exception e) {
-		LOGGER.error("Erro executando importação de Estratégias ICD.", e);
-	    } finally {
-		if (cdbc != null) {
-		    cdbc.shutdown();
-		}
-	    }
-	    estrategiaTemp = estrategia;
-	}
-	*/
+        CouchDbClient couchDbClient = null;
+        try {
+
+            Long p_codigoDistribuidor = (Long) message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue());
+
+            String diretorio    = parametroSistemaRepository.getParametro("INBOUND_DIR");
+            String pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
+
+            List<String> distribuidores = this.getDistribuidores(diretorio, p_codigoDistribuidor);
+
+            for (String distribuidor : distribuidores) {
+
+                if (new File(diretorio + distribuidor + File.separator + pastaInterna + File.separator).exists()) {
+
+                    LOGGER.info("# Iniciando carga das estratégias para o distribuidor {                //if (new File(diretorio + distribuidor + File.separator + pastaInterna + File.separator).exists()) {\n} . ", distribuidor);
+
+                    couchDbClient = super.getCouchDBClient(distribuidor, true);
+                    List<EMS2021Input> estrategias = icdObjectService.obterEstrategias(Long.valueOf(distribuidor));
+
+                    for (EMS2021Input estrategia : estrategias) {
+
+                        estrategia.setTipoDocumento(InterfaceEnum.EMS2021.name());
+                        List<EMS2021InputItem> edicoesBase = icdObjectService.obterEdicaoBaseEstrategia(estrategia.getCodigoPraca(), estrategia.getCodigoLancamentoEdicao());
+                        estrategia.setItens(edicoesBase);
+
+                        couchDbClient.save(estrategia);
+                        LOGGER.info(":: Estrategia do produto {} edição {} salva! - Total de {} edições base.", estrategia.getCodigoProduto(), estrategia.getNumeroEdicao(), edicoesBase.size());
+
+                    }
+
+                }
+            }
+
+
+        } catch (Exception e) {
+            LOGGER.error("Erro executando carga de Estratégias ICD.", e);
+            ndsServerLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
+
+        } finally {
+            if (couchDbClient != null) {
+                couchDbClient.shutdown();
+            }
+
+        }
+
     }
 
-    /*
-    private List<IcdEstrategia> obterEstrategias() {
-
-	StringBuilder sql = new StringBuilder();
-	sql.append("SELECT EMD.COD_ESTRATEGIA codigoEstrategia, ");
-	sql.append("       TO_CHAR(LPAD(LEP.COD_PUBLICACAO_ADABAS, 8, '0')) AS codigoProduto, ");
-	sql.append("       LEP.NUM_EDICAO numeroEdicao, ");
-	sql.append("       P.COD_DISTRIBUIDOR codigoDistribuidor, ");
-	sql.append("       EMD.TXT_OPORTUNIDADE_VENDA oportunidadeVenda, ");
-	sql.append("       EMD.QTD_REPARTE_MINIMO reparteMinimo, ");
-	sql.append("       EMD.PCT_ABRANGENCIA_DISTBCAO abrangenciaDistribuicao, ");
-	sql.append("       null cesta, ");
-	sql.append("       null tipoDocumento ");
-	sql.append("  FROM ESTRATEGIA_MICRO_DISTBCAO EMD ");
-	sql.append("  JOIN LANCTO_EDICAO_PUBLICACAO LEP ON EMD.COD_LANCTO_EDICAO = LEP.COD_LANCTO_EDICAO ");
-	sql.append("  JOIN PUBLICACAO_DINAP PD ON PD.COD_PUBLICACAO = LEP.COD_PUBLICACAO ");
-	sql.append("  JOIN ESTRATEGIA_LANCTO_PRACA ELP ON ELP.COD_ESTRATEGIA = EMD.COD_ESTRATEGIA ");
-	sql.append("   AND ELP.COD_LANCTO_EDICAO = LEP.COD_LANCTO_EDICAO ");
-	sql.append("  JOIN PRACA P ON P.COD_PRACA = ELP.COD_PRACA AND P.IND_PRACA_ATIVA = 'S' ");
-	sql.append(" WHERE (EMD.DAT_ALT > (SYSDATE - 5) OR EMD.DAT_INC > (SYSDATE - 5)) ");
-
-	Query query = getSessionIcd().createSQLQuery(sql.toString()).addEntity(IcdEstrategia.class);
-	return query.list();
-    }
-    
-    private List<IcdEdicaoBaseEstrategia> obterEdicaoBaseEstrategia(IcdEstrategia estrategia) {
-
-	StringBuilder sql = new StringBuilder();
-	sql.append("SELECT TO_CHAR(LPAD(LEP.COD_PUBLICACAO_ADABAS, 8, '0')) AS codigoProduto, ");
-	sql.append("       LEP.NUM_EDICAO numeroEdicao, ");
-	sql.append("       CBC.COD_ESTRATEGIA estrategia, ");
-	sql.append("       null periodo, ");
-	sql.append("       null peso ");
-	sql.append("  FROM COMPOSICAO_BASE_CALCULO CBC ");
-	sql.append("  JOIN LANCTO_EDICAO_PUBLICACAO LEP ON LEP.COD_LANCTO_EDICAO = CBC.COD_LANCTO_EDICAO ");
-	sql.append(" WHERE CBC.COD_ESTRATEGIA = :COD_ESTRATEGIA ");
-
-	Query query = getSessionIcd().createSQLQuery(sql.toString()).addEntity(IcdEdicaoBaseEstrategia.class);
-	query.setBigDecimal("COD_ESTRATEGIA", estrategia.getCodigoEstrategia());
-	return query.list();
-    }
-
-*/
     @Override
     public void posProcess(Object tempVar) {
+        LOGGER.info("EMS2021 - posProcess " + tempVar);
+    }
+
+    /**
+     * Recupera distribuidores a serem processados.
+     */
+    protected List<String> getDistribuidores(String diretorio, Long codigoDistribuidor) {
+
+        List<String> distribuidores = new ArrayList<String>();
+
+        if (codigoDistribuidor == null) {
+
+            FilenameFilter numericFilter = new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return name.matches("\\d+");
+                }
+            };
+
+            File dirDistribs = new File(diretorio);
+            distribuidores.addAll(Arrays.asList(dirDistribs.list( numericFilter )));
+
+        } else {
+
+            distribuidores.add(codigoDistribuidor.toString());
+        }
+
+        return distribuidores;
     }
 }

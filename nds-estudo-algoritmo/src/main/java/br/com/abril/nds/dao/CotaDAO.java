@@ -54,6 +54,12 @@ public class CotaDAO {
 
     @Value("#{query_estudo.queryCotas}")
     private String queryCotas;
+    
+    @Value("#{query_estudo.queryCotasNaoUsarICD_Part1}")
+    private String queryCotasNaoUsarICD_Part1;
+    
+    @Value("#{query_estudo.queryCotasNaoUsarICD_Part2}")
+    private String queryCotasNaoUsarICD_Part2;
 
     @Value("#{query_estudo.queryHistoricoCotaParcial}")
     private String queryHistoricoCotaParcial;
@@ -179,6 +185,59 @@ public class CotaDAO {
     }
 
     public List<CotaEstudo> getCotas(final EstudoTransient estudo) {
+    	
+    	Boolean isUsarICDMIX = true;
+    	Boolean isUsarICDFixacao = true;
+    	
+    	if(estudo.isUsarMix()){
+    		
+    		Map<String, Object> paramMap = new HashMap<>();
+    		paramMap.put("tipo_classificacao_id", estudo.getProdutoEdicaoEstudo().getTipoClassificacaoProduto().getId());
+    		paramMap.put("codigo_icd", estudo.getProdutoEdicaoEstudo().getProduto().getCodigoICD());
+    		paramMap.put("idProduto", estudo.getProdutoEdicaoEstudo().getProduto().getId());
+    		
+    		try {
+    			isUsarICDMIX = (Boolean)jdbcTemplate.queryForObject(
+    					" select case when (select count(id) from mix_cota_produto where id_produto = :idProduto) > 0 then   " 
+    				   +" 	(select usar_icd_estudo from mix_cota_produto where id_produto = :idProduto)  "
+    				   +" else   "
+    				   +" 	(select usar_icd_estudo from mix_cota_produto where codigo_icd = :codigo_icd and tipo_classificacao_produto_id = :tipo_classificacao_id order by usar_icd_estudo desc limit 1)  "
+    				   +" end as usarIcd  ",
+    					
+//    					"select usar_icd_estudo from mix_cota_produto where codigo_icd = :codigo_icd "
+//    					+ "and tipo_classificacao_produto_id = :tipo_classificacao_id order by usar_icd_estudo asc ", 
+    					
+    					paramMap, Boolean.class);
+    			
+    			if(isUsarICDMIX == null){
+    				isUsarICDMIX = true;
+    			}
+    			
+			} catch (Exception e) {
+				isUsarICDMIX = true;
+			}
+    	}
+    	
+    	if(estudo.isUsarFixacao()){
+    		
+    		Map<String, Object> paramMap = new HashMap<>();
+    		paramMap.put("tipo_classificacao_id", estudo.getProdutoEdicaoEstudo().getTipoClassificacaoProduto().getId());
+    		paramMap.put("codigo_icd", estudo.getProdutoEdicaoEstudo().getProduto().getCodigoICD());
+    		
+    		try {
+    			isUsarICDFixacao = (Boolean)jdbcTemplate.queryForObject(
+    					"select usar_icd_estudo from fixacao_reparte where codigo_icd = :codigo_icd "
+    				  + "and id_classificacao_edicao = :tipo_classificacao_id order by usar_icd_estudo asc limit 1", paramMap, Boolean.class);
+    			
+    			if(isUsarICDFixacao == null){
+    				isUsarICDFixacao = true;
+    			}
+    			
+			} catch (Exception e) {
+				isUsarICDFixacao = true;
+			}
+    		
+    	}
 	
     	Map<String, Object> params = new HashMap<>();
 		params.put("tipo_segmento_produto_id", estudo.getProdutoEdicaoEstudo().getProduto().getTipoSegmentoProduto().getId());
@@ -191,9 +250,34 @@ public class CotaDAO {
 				new HashMap(), String.class);
 		
 		
-		 params.put("maxDataRanking", maxDataRanking);
+		params.put("maxDataRanking", maxDataRanking);
+		 
+		
+		StringBuilder queryCota = new StringBuilder();
+		
+		if( (isUsarICDMIX == null || !isUsarICDMIX) || (isUsarICDFixacao == null || !isUsarICDFixacao)){
+			queryCota.append(queryCotasNaoUsarICD_Part1);
+			
+			
+			if(isUsarICDMIX){
+				queryCota.append(" LEFT JOIN mix_cota_produto mcp ON mcp.id_cota = c.id AND mcp.codigo_icd = p.codigo_icd AND mcp.usar_icd_estudo = 1 AND mcp.tipo_classificacao_produto_id = pe.tipo_classificacao_produto_id");
+			}else{
+				queryCota.append(" LEFT JOIN mix_cota_produto mcp ON mcp.id_cota = c.id AND mcp.codigo_produto = p.codigo AND mcp.usar_icd_estudo = 0 AND mcp.tipo_classificacao_produto_id = pe.tipo_classificacao_produto_id");
+			}
+			
+			if(isUsarICDFixacao){
+				queryCota.append(" LEFT JOIN fixacao_reparte fr ON fr.id_cota = c.id AND fr.codigo_icd = p.codigo_icd AND fr.usar_icd_estudo = 1 AND fr.id_classificacao_edicao = pe.tipo_classificacao_produto_id ");
+			}else{
+				queryCota.append(" LEFT JOIN fixacao_reparte fr ON fr.id_cota = c.id AND fr.codigo_produto = p.codigo AND fr.usar_icd_estudo = 0 AND fr.id_classificacao_edicao = pe.tipo_classificacao_produto_id ");
+			}
+			
+			queryCota.append(queryCotasNaoUsarICD_Part2);
+			
+		}else{
+			queryCota.append(queryCotas);
+		}
 	
-		 List<CotaEstudo> retorno = jdbcTemplate.query(queryCotas, params, new RowMapper<CotaEstudo>() {
+		List<CotaEstudo> retorno = jdbcTemplate.query(queryCota.toString(), params, new RowMapper<CotaEstudo>() {
 
 	    @Override
 	    public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {

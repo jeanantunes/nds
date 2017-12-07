@@ -4,6 +4,8 @@ package br.com.abril.nds.integracao.route;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -21,6 +23,8 @@ import br.com.abril.nds.repository.AbstractRepository;
 @Component
 public class DBImportDataRouter extends AbstractRepository implements BaseRouter {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(DBImportDataRouter.class);
+
 	@Autowired
 	private PlatformTransactionManager transactionManager;
 	
@@ -33,14 +37,13 @@ public class DBImportDataRouter extends AbstractRepository implements BaseRouter
 		final MessageProcessor messageProcessor = inputModel.getMessageProcessor();
 	
 		final AtomicReference<Object> tempVar = new AtomicReference<Object>();
-		// Processamento a ser executado ANTES do processamento principal:
-		
-		TransactionTemplate template = new TransactionTemplate(transactionManager);		
+
+		TransactionTemplate template = new TransactionTemplate(transactionManager);
 		template.execute(new TransactionCallback<Void>() {
 			
 			@Override
 			public Void doInTransaction(TransactionStatus status) {
-				
+				// Processamento a ser executado ANTES do processamento principal:
 				messageProcessor.preProcess(tempVar);
 		
 				for (Object o : (List<Object>)tempVar.get() ) {
@@ -48,6 +51,7 @@ public class DBImportDataRouter extends AbstractRepository implements BaseRouter
 					final Message message = new Message();
 					message.getHeader().put(MessageHeaderProperties.URI.getValue(), inputModel.getRouteInterface().getName());
 					message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), inputModel.getUserName());
+					message.getHeader().put(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue(), inputModel.getCodigoDistribuidor());
 					message.setTempVar(tempVar);
 									
 					message.setBody(o);
@@ -57,18 +61,17 @@ public class DBImportDataRouter extends AbstractRepository implements BaseRouter
 						messageProcessor.processMessage(message);
 						
 					} catch(Exception e) {
+						LOGGER.error(e.getMessage(), e);
 						ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
 					}
-					
-										
+
 				}		
                 // Processamento a ser executado APÓS o processamento principal:
 				messageProcessor.posProcess(tempVar);
 				return null;
 			}
 		});
-	
-				
+
 	}
 		
 }

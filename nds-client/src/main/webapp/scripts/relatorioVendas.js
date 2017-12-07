@@ -252,19 +252,19 @@ var relatorioVendasController = $.extend(true, {
 			colModel : [{ 
 				display : 'Rk.Prod.',
 				name : 'rkProduto',
-				width : 50,
+				width : 42,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Rk.Cota.',
 				name : 'rkCota',
-				width : 50,
+				width : 43,
 				sortable : true,
 				align : 'left'
 			},  {
 				display : 'Cota',
 				name : 'numeroCota',
-				width : 60,
+				width : 40,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -273,10 +273,16 @@ var relatorioVendasController = $.extend(true, {
 				width : 145,
 				sortable : true,
 				align : 'left'
+			},{
+				display : 'Tipo PDV',
+				name : 'tipoPDV',
+				width : 50,
+				sortable : true,
+				align : 'left'
 			}, {
 				display : 'Município',
 				name : 'municipio',
-				width : 160,
+				width : 120,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -286,17 +292,23 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Venda Exs.',
-				name : 'vendaExemplaresFormatado',
-				width : 90,
+				display : 'Reparte',
+				name : 'reparteFormatado',
+				width : 42,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Faturamento Capa R$',
-				name : 'faturamentoCapaFormatado',
-				width : 90,
+				display : 'Venda',
+				name : 'vendaExemplaresFormatado',
+				width : 40,
 				sortable : true,
-				align : 'right'
+				align : 'center'
+			}, {
+				display : 'Faturam. Capa R$',
+				name : 'faturamentoCapaFormatado',
+				width : 100,
+				sortable : true,
+				align : 'left'
 			}, {
 				display : 'Part. %',
 				name : 'participacaoFormatado',
@@ -326,9 +338,9 @@ var relatorioVendasController = $.extend(true, {
 			colModel : [ { 
 				display : 'Ranking',
 				name : 'rkProduto',
-				width : 50,
+				width : 40,
 				sortable : true,
-				align : 'left'
+				align : 'center'
 			},{
 				display : 'Código',
 				name : 'codigoProduto',
@@ -338,51 +350,75 @@ var relatorioVendasController = $.extend(true, {
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
-				width : 170,
+				width : 140,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Classificação',
+				name : 'classificacaoProduto',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Segmento',
+				name : 'descricaoSegmento',
+				width : 150,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Editor',
+				name : 'nomeEditor',
+				width : 150,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'edicaoProduto',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Reparte',
-				name : 'reparteFormatado',
-				width : 80,
+				width : 40,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Venda Exs.',
+				display : 'Reparte',
+				name : 'reparteFormatado',
+				width : 40,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Venda',
 				name : 'vendaExemplaresFormatado',
-				width : 90,
+				width : 40,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Venda %',
 				name : 'porcentagemVendaFormatado',
-				width : 90,
+				width : 40,
 				sortable : true,
-				align : 'right'
+				align : 'center'
 			}, {
-				display : 'Faturamento R$',
-				name : 'faturamentoFormatado',
-				width : 100,
+				display : 'Preço Capa',
+				name : 'precoCapaFormatado',
+				width : 60,
 				sortable : true,
-				align : 'right'
+				align : 'center'
+			}, {
+				display : 'Fatu. R$',
+				name : 'faturamentoFormatado',
+				width : 60,
+				sortable : true,
+				align : 'center'
 			}, {
 				display : 'Part. %',
 				name : 'participacaoFormatado',
-				width : 50,
+				width : 40,
 				sortable : true,
-				align : 'right'
+				align : 'center'
 			}, {
 				display : 'Part. Acum. %',
 				name : 'participacaoAcumuladaFormatado',
 				width : 70,
 				sortable : true,
-				align : 'right'
+				align : 'center'
 			} ],
 			sortname : "faturamento",
 			sortorder : "desc",
@@ -412,10 +448,54 @@ var relatorioVendasController = $.extend(true, {
 			}, {
 				display : 'Nome',
 				name : 'nomeCota',
-				width : 500,
+				width : 400,
 				sortable : false,
 				align : 'left'
+			},{
+				display : 'Faturamento Capa R$',
+				name : 'faturamentoCapaFormatado',
+				width : 130,
+				sortable : false,
+				align : 'right'
 			}, {
+				display : 'Part. %',
+				name : 'participacaoFormatado',
+				width : 50,
+				sortable : false,
+				align : 'right'
+			}, {
+				display : 'Part. Acum. %',
+				name : 'participacaoAcumuladaFormatado',
+				width : 70,
+				sortable : true,
+				align : 'right'
+			} ],
+			sortname : "ranking",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 960,
+			height : 255
+		});
+		
+		$(".segmentacaoGridPorCota",relatorioVendasController.workspace).flexigrid({
+			preProcess: relatorioVendasController.executarPreProcessamentoSegmentacaoPorCota,
+			dataType : 'json',
+			colModel : [ { 
+				display : 'Ranking',
+				name : 'ranking',
+				width : 50,
+				sortable : false,
+				align : 'left'
+			},{
+				display : 'Segmento',
+				name : 'segmentoDescricao',
+				width : 460,
+				sortable : false,
+				align : 'left'
+			},{
 				display : 'Faturamento Capa R$',
 				name : 'faturamentoCapaFormatado',
 				width : 130,
@@ -575,20 +655,39 @@ var relatorioVendasController = $.extend(true, {
 		
 		} else if ($('#filtro_segmentacao', relatorioVendasController.workspace).attr("checked") == "checked") {
 			
-			var idSegmentacao = $('#selectSegmentacao', relatorioVendasController.workspace).val();
-			var descricaoSegmento = $('#selectSegmentacao option:selected', relatorioVendasController.workspace).text();
+			if($('#isSegmentoPorCota', relatorioVendasController.workspace).attr("checked") == "checked"){
+				
+				var numeroCota = $('#cotaSegmento', relatorioVendasController.workspace).val();
+				
+				$(".segmentacaoGridPorCota", relatorioVendasController.workspace).flexOptions({
+					url: contextPath + "/lancamento/relatorioVendas/pesquisarRankingSegmentacao",
+					params: [
+						{name:'dataDe', value: dataDe},
+						{name:'dataAte', value: dataAte},
+						{name:'numeroCota', value: numeroCota},
+						{name:'pesquisaPorCota', value: true}
+						],
+						newp: 1,
+				});
+				$(".segmentacaoGridPorCota", relatorioVendasController.workspace).flexReload();
+				
+			}else{
+				var idSegmentacao = $('#selectSegmentacao', relatorioVendasController.workspace).val();
+				var descricaoSegmento = $('#selectSegmentacao option:selected', relatorioVendasController.workspace).text();
+				
+				$(".segmentacaoGrid", relatorioVendasController.workspace).flexOptions({
+					url: contextPath + "/lancamento/relatorioVendas/pesquisarRankingSegmentacao",
+					params: [
+						{name:'dataDe', value: dataDe},
+						{name:'dataAte', value: dataAte},
+						{name:'idSegmentacao', value: idSegmentacao},
+						{name:'descricaoSegmento', value: descricaoSegmento}
+						],
+						newp: 1,
+				});
+				$(".segmentacaoGrid", relatorioVendasController.workspace).flexReload();
+			}
 			
-			$(".segmentacaoGrid", relatorioVendasController.workspace).flexOptions({
-				url: contextPath + "/lancamento/relatorioVendas/pesquisarRankingSegmentacao",
-				params: [
-			         {name:'dataDe', value: dataDe},
-			         {name:'dataAte', value: dataAte},
-			         {name:'idSegmentacao', value: idSegmentacao},
-			         {name:'descricaoSegmento', value: descricaoSegmento}
-			    ],
-			    newp: 1,
-			});
-			$(".segmentacaoGrid", relatorioVendasController.workspace).flexReload();
 			$(".areaBts", relatorioVendasController.workspace).show();
 		}
 	},
@@ -846,7 +945,6 @@ var relatorioVendasController = $.extend(true, {
 
 		var pathExportacaoRelatorioPDF = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=PDF&tipoRelatorio=3';
 		var pathExportacaoRelatorioXLS = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=XLS&tipoRelatorio=3';
-			
 		$(".impressaoPDFRelatorioVendas").attr("href", pathExportacaoRelatorioPDF);
 		$(".impressaoXLSRelatorioVendas").attr("href", pathExportacaoRelatorioXLS);
 		
@@ -893,6 +991,22 @@ var relatorioVendasController = $.extend(true, {
 
 		$(".impressaoPDFRelatorioVendas").attr("href", pathExportacaoRelatorioPDF);
 		$(".impressaoXLSRelatorioVendas").attr("href", pathExportacaoRelatorioXLS);
+	},
+	
+	segmentoCota : function(elemento){
+		
+		$('#cotaSegmento', relatorioVendasController.workspace).val("");
+		$('#cotaSegmentoNome', relatorioVendasController.workspace).val("");
+		
+		if(elemento.checked){
+			$("#divSegmento").hide();
+			$("#divCotaSegmento2").show();
+			$("#divCotaSegmento").show();
+		}else{
+			$("#divSegmento").show();
+			$("#divCotaSegmento2").hide();
+			$("#divCotaSegmento").hide();
+		}
 	},
 
 	popup_editor : function() {
@@ -1016,6 +1130,41 @@ var relatorioVendasController = $.extend(true, {
 		
 		$("#totalFaturamentoCapaSegmento", relatorioVendasController.workspace).html(totalFaturamentoCapa);
 		$(".grids", relatorioVendasController.workspace).show();
+		
+		$("#relatorioSegmentacao", relatorioVendasController.workspace).show();
+		$("#relatorioSegmentacaoPorCota", relatorioVendasController.workspace).hide();
+		
+		return tableModel;
+	},
+	
+	executarPreProcessamentoSegmentacaoPorCota: function(result) {
+		
+		if (result.mensagens) {
+			exibirMensagem(
+				result.mensagens.tipoMensagem, 
+				result.mensagens.listaMensagens
+			);
+			$(".grids", relatorioVendasController.workspace).hide();
+			return result;
+		}
+		
+		var tableModel = null;
+		var totalFaturamentoCapa = 0;
+		
+		$.each(result, function(index, item) {
+			
+			if (item[0] === 'tableModel') {
+				tableModel = item[1];
+			} else if (item[0] === 'totalFaturamentoCapa') {
+				totalFaturamentoCapa = item[1];
+			}
+		});
+		
+		$("#totalFaturamentoCapaSegmentoCota", relatorioVendasController.workspace).html(totalFaturamentoCapa);
+		$(".grids", relatorioVendasController.workspace).show();
+		$("#relatorioSegmentacaoPorCota", relatorioVendasController.workspace).show();
+		$("#relatorioSegmentacao", relatorioVendasController.workspace).hide();
+		
 		return tableModel;
 	},
 	

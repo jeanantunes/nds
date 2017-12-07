@@ -6,7 +6,7 @@ public abstract class IntegracaoDocumentMaster<T extends IntegracaoDocumentDetai
 
 	public abstract void addItem(IntegracaoDocumentDetail docD);
 
-	public abstract List<T> getItems();
+	public abstract List<T> getItens();
 
 	public abstract boolean sameObject(IntegracaoDocumentMaster<?> docM);
 }

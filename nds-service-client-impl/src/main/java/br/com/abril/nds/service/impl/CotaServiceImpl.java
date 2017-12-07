@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -3262,8 +3263,12 @@ public class CotaServiceImpl implements CotaService {
         DecimalFormat f = new DecimalFormat("##.00");
         
         if(qtdEdicoes != 0){
-        	analiseHistoricoDTO.setReparteMedio(Double.valueOf(f.format(reparteMedio / qtdEdicoes).replace(',', '.')));
-        	analiseHistoricoDTO.setVendaMedia(Double.valueOf(f.format(vendaMedia / qtdEdicoes).replace(',', '.')));
+//        	analiseHistoricoDTO.setReparteMedio(Double.valueOf(f.format(reparteMedio / qtdEdicoes).replace(',', '.')));
+//        	analiseHistoricoDTO.setVendaMedia(Double.valueOf(f.format(vendaMedia / qtdEdicoes).replace(',', '.')));
+        	
+        	analiseHistoricoDTO.setReparteMedio(new BigDecimal(reparteMedio).divide( new BigDecimal(qtdEdicoes), 3, RoundingMode.HALF_UP).doubleValue());
+        	analiseHistoricoDTO.setVendaMedia(new BigDecimal(vendaMedia).divide( new BigDecimal(qtdEdicoes), 3, RoundingMode.HALF_UP).doubleValue());
+
         }else{
         	analiseHistoricoDTO.setReparteMedio(Double.valueOf(f.format(reparteMedio).replace(',', '.')));
         	analiseHistoricoDTO.setVendaMedia(Double.valueOf(f.format(vendaMedia).replace(',', '.')));

@@ -42,4 +42,6 @@ public interface MixCotaProdutoRepository extends Repository<MixCotaProduto, Lon
     void atualizarReparte(boolean isPDVUnico, Long mixID, Long reparte, Usuario usuario, Date data);
 
 	boolean verificarMixDefinidoPorPDV(Long idMix);
+
+	void atualizarFlagUsarICDEstudo(Long idClassificacaoPraAtualizar, String icdProdutoPraAtualizar, String codProdutoPraAtualizar, boolean isUsarICDEstudo, Long produtoId);
 }

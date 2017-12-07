@@ -87,5 +87,7 @@ public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryMod
 		id.setNumeroSequencia(pkItem.getNumeroSequencia());
 		return (MotivoSituacaoFaltaSobra) getSessionGfs().get(MotivoSituacaoFaltaSobra.class, id);		
 	}
+
+
 	
 }
