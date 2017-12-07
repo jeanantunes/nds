@@ -483,6 +483,10 @@ public class HistoricoVendaController extends BaseController {
 		
 		Boolean isFiltroTodasCotas = (Boolean) session.getAttribute("isFiltroTodasCotas");
 		
+		if(isFiltroTodasCotas == null){
+			isFiltroTodasCotas = false;
+		}
+		
 		List<AnaliseHistoricoDTO> listDto = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota, null, null, isFiltroTodasCotas);
 		
 		if (fileType == FileType.XLS) {
@@ -494,7 +498,7 @@ public class HistoricoVendaController extends BaseController {
 			parseListaRetorno(listDto, cotaComdadosPdvDTO, listCotasComPDV);
 
 			String pathSystem = getPathFileSystem();
-
+			
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 
 			try {
@@ -502,7 +506,7 @@ public class HistoricoVendaController extends BaseController {
 				String fileName = "Analise Historico Venda - " + DateUtil.formatarDataPTBR(new Date());
 
 				String pathFileName = pathSystem + "histOutTemp.xls";
-
+				
 				FileExporter.to(fileName, fileType).inOutputStream(this.getNDSFileHeader(), null, null, listCotasComPDV,
 						AnaliseHistoricoXLSDTO.class, os);
 
@@ -619,7 +623,7 @@ public class HistoricoVendaController extends BaseController {
 		File diretorioRaiz = new File(pathFile);
 		diretorioRaiz.mkdirs();
 		
-		pathFile += File.pathSeparator;
+		pathFile += File.separatorChar;
 		
 		return pathFile;
 		

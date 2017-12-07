@@ -480,14 +480,20 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
 
 	List<Long> buscarCotasQueNaoRecebeFornecedorDoProduto(Long idProdutoEdicao);
+
 	
 	List<CotaCouchDTO> getCotaLancamento(Date data);
 	
+	
 	List<ProdutoCouchDTO> getProdutoLancamento(Long idCota, Date data);
 
-
+	
 	List<CotaCouchDTO> getCotaRecolhimento(Date dataLctoDistrib);
 	
-	 List<ProdutoCouchDTO> getProdutoRecolhimento(Long idCota, Date data); 
 	
+	List<ProdutoCouchDTO> getProdutoRecolhimento(Long idCota, Date data); 
+	
+	
+	List<Cota> obterCotasAtivasForaDoEstudo(List<Long> idCotas);
+
 }

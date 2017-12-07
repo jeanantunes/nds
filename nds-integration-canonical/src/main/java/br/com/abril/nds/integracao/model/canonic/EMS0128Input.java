@@ -88,7 +88,7 @@ public class EMS0128Input extends IntegracaoDocumentMaster<EMS0128InputItem> imp
 		item.add((EMS0128InputItem) docD);		
 	}
 	@Override
-	public List<EMS0128InputItem> getItems() {
+	public List<EMS0128InputItem> getItens() {
 		return item;
 	}
 	@Override

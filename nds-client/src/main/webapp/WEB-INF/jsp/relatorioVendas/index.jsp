@@ -121,12 +121,29 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 				<tr class="linhaSegmentacao">
 					<td>&nbsp;</td>
 					<td colspan="3">&nbsp;</td>
-					<td>&nbsp;</td>
-					<td>&nbsp;</td>
+					<td> &nbsp; </td>
+					<td> &nbsp; </td>
+					
 					<td colspan="9">
-						<div style="float:right;">
+						<div style="float:left;">
+							<label>por cota?</label> 
+							<input type="checkbox" onclick="relatorioVendasController.segmentoCota(this);" id="isSegmentoPorCota" name="segmentoPorCota" style="margin-top: 10px; margin-left: 5px;">
+						</div>
+						
+						<div id="divCotaSegmento" style="float: left; margin-left: 15px; display: none;">
+							<label>Cota:</label> 
+							<input type="text" name="cotaSegmento" id="cotaSegmento" style="width: 50px; margin-top: 5px; margin-left: 5px;"
+						   		onchange="pesquisaCotaFiltroConsulta.pesquisarPorNumeroCota('#cotaSegmento', '#cotaSegmentoNome',false,null,null);" />
+						</div>
+						
+						<div id="divCotaSegmento2" style="float: left; margin-left: 15px; display: none;">
+							<label>Nome:</label> 
+							<input type="text" style="width: 170px; margin-left: 5px; margin-top: 5px;" id="cotaSegmentoNome" name="cotaSegmentoNome" />
+						</div>
+						
+						<div id="divSegmento" style="float:right;">
 							<label>Segmento:</label> 
-							<select id="selectSegmentacao">
+							<select id="selectSegmentacao" style="margin-top: 5px;margin-left: 10px;">
 								<c:forEach items="${segmentacoes}" var="segmentacao">
 									<option value="${segmentacao.id}">${segmentacao.descricao}</option>
 								</c:forEach>
@@ -294,6 +311,19 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 						<td width="73"><strong>Total:</strong></td>
 						<td width="205"></td>
 						<td width="240">R$ <span id="totalFaturamentoCapaSegmento"></td>
+					</tr>
+				</table>
+			</fieldset>
+			
+			<fieldset class="classFieldset" id="relatorioSegmentacaoPorCota" style="display: none;">
+				<legend>Segmento</legend>
+				<table class="segmentacaoGridPorCota"></table>
+				<table width="950" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td width="432">&nbsp;</td>
+						<td width="73"><strong>Total:</strong></td>
+						<td width="205"></td>
+						<td width="240">R$ <span id="totalFaturamentoCapaSegmentoCota"></td>
 					</tr>
 				</table>
 			</fieldset>

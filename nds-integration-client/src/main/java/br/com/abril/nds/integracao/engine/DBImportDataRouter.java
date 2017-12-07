@@ -22,6 +22,7 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 @Component("dbImportDataRouter")
 public class DBImportDataRouter extends AbstractRepository implements ContentBasedRouter {
 
+
 	@Autowired
 	private PlatformTransactionManager transactionManager;
 	

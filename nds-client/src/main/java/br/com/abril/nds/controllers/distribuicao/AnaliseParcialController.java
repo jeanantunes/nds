@@ -295,6 +295,10 @@ public class AnaliseParcialController extends BaseController {
                      Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao, 
                      String numeroCotaStr,Long estudoOrigem,String dataLancamentoEdicao, Integer numeroParcial, String cotasFiltro, boolean isMudarBaseVisualizacao) {
     	
+    	
+    	
+    	edicoesBase = validarEdicoesBases(edicoesBase);
+    	
         AnaliseParcialQueryDTO filtroQueryDTO = new AnaliseParcialQueryDTO();
         filtroQueryDTO.setSortName(sortname);
         filtroQueryDTO.setSortOrder(sortorder);
@@ -383,6 +387,40 @@ public class AnaliseParcialController extends BaseController {
     	
     	result.use(Results.json()).from(vo).recursive().serialize();
     }
+
+	private List<EdicoesProdutosDTO> validarEdicoesBases(List<EdicoesProdutosDTO> edicoesBase) {
+		
+		if(edicoesBase != null){
+    		List<EdicoesProdutosDTO> edicoesValidadas = new ArrayList<>();
+    		List<EdicoesProdutosDTO> edicoesParaRemocao = new ArrayList<>();
+    		
+    		for (EdicoesProdutosDTO edicao : edicoesBase) {
+    			
+    			if(edicoesValidadas.isEmpty()){
+    				edicoesValidadas.add(edicao);
+    				continue;
+    			}
+    			
+    			for (EdicoesProdutosDTO edicaoValidada : edicoesValidadas) {
+    				if(edicao.getCodigoProduto().equals(edicaoValidada.getCodigoProduto()) &&
+    						edicao.getEdicao().equals(edicaoValidada.getEdicao())){
+    					if(edicao.isParcial()){
+    						if(edicao.getPeriodo().equals(edicaoValidada.getPeriodo())){
+    							edicoesParaRemocao.add(edicao);
+	    					}
+    					}else{
+    						edicoesParaRemocao.add(edicao);
+    					}
+    				}
+    			}
+    			edicoesValidadas.add(edicao);
+    		}
+    		edicoesValidadas.removeAll(edicoesParaRemocao);
+    		edicoesBase = edicoesValidadas;	
+		}
+		
+		return edicoesBase;
+	}
 
 	private int verificarPaginacaoComFiltro(int page, String filterSortName, Double filterSortFrom, Double filterSortTo) {
 		if(session.getAttribute("filtrarPor") != null){

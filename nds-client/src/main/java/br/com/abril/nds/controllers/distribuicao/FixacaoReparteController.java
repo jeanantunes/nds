@@ -264,6 +264,7 @@ public class FixacaoReparteController extends BaseController {
 	public void adicionarFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO){
 		
 		String fixacaoInvalida = validaFixacao(fixacaoReparteDTO);
+		
 		if (fixacaoInvalida != null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, fixacaoInvalida);
 		}

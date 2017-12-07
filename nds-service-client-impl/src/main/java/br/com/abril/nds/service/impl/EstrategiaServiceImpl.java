@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import br.com.abril.nds.model.planejamento.EdicaoBaseEstrategia;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,9 +21,22 @@ public class EstrategiaServiceImpl implements EstrategiaService {
     public void inserirEstrategia(Estrategia estrategia) {
     	estrategiaRepository.adicionar(estrategia);
     }
-    
+
+    @Override
     @Transactional
-    public Estrategia buscarPorProdutoEdicao(ProdutoEdicao produtoEdicao) {
-    	return estrategiaRepository.buscarPorProdutoEdicao(produtoEdicao);
+    public Estrategia buscarPorProdutoEdicaoId(ProdutoEdicao produtoEdicao) {
+    	return estrategiaRepository.buscarPorProdutoEdicaoId(produtoEdicao);
+    }
+
+    @Override
+    @Transactional
+    public Estrategia buscarPorCodigoProdutoNumeroEdicao(final String codigoProduto, final Long numeroEdicao){
+        return estrategiaRepository.buscarPorCodigoProdutoNumeroEdicao(codigoProduto, numeroEdicao);
+    }
+
+    @Override
+    @Transactional
+    public EdicaoBaseEstrategia buscarBasePorCodigoProdutoNumEdicao(Long estrategiaID, String codigoProduto, Long numeroEdicao){
+        return estrategiaRepository.buscarBasePorCodigoProdutoNumEdicao(estrategiaID, codigoProduto, numeroEdicao);
     }
 }

@@ -341,6 +341,11 @@ public class MixCotaProdutoController extends BaseController {
 	@Path("/excluirTodosPorProduto")
 	public void excluirTodosPorProduto(String codigoICD) {
 		
+		if(codigoICD != null && codigoICD.length() > 6){
+			Produto produto = this.produtoService.obterProdutoPorCodigo(codigoICD);
+			codigoICD = produto.getCodigoICD();
+		}
+		
 		mixCotaProdutoService.excluirMixProdutoPorCodigoICD(codigoICD);
 		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
@@ -377,16 +382,18 @@ public class MixCotaProdutoController extends BaseController {
 	
 	@Post
 	@Path("/adicionarMixProduto")
-	public void adicionarMixProduto(List<MixCotaProdutoDTO>listaNovosMixProduto,String produtoId) {
+	public void adicionarMixProduto(List<MixCotaProdutoDTO>listaNovosMixProduto, String produtoId) {
 		
 		for (MixCotaProdutoDTO mixCotaProdutoDTO: listaNovosMixProduto) {
 			
-			String codigoICD = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto()).getCodigoICD();
-			mixCotaProdutoDTO.setCodigoICD(codigoICD);
-			mixCotaProdutoDTO.setCodigoProduto(produtoId);
+			Produto produto = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
+			
+			mixCotaProdutoDTO.setCodigoICD(produto.getCodigoICD());
+			mixCotaProdutoDTO.setCodigoProduto(produto.getCodigo());
+			mixCotaProdutoDTO.setProdutoId(produto.getId());
 		}
 		
-		List<String> mensagens = mixCotaProdutoService.adicionarListaMixPorProduto(listaNovosMixProduto,produtoId);
+		List<String> mensagens = mixCotaProdutoService.adicionarListaMixPorProduto(listaNovosMixProduto, produtoId);
 		
 		if (!mensagens.isEmpty()) {
 			
@@ -401,9 +408,10 @@ public class MixCotaProdutoController extends BaseController {
 	public void adicionarMixCota(List<MixCotaProdutoDTO>listaNovosMixCota, Integer cotaId){
 		
 		for (MixCotaProdutoDTO mixCotaProdutoDTO: listaNovosMixCota) {
+			Produto produtoMix = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
 			
-			String codigoICD = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto()).getCodigoICD();
-			mixCotaProdutoDTO.setCodigoICD(codigoICD);
+			mixCotaProdutoDTO.setCodigoICD(produtoMix.getCodigoICD());
+			mixCotaProdutoDTO.setProdutoId(produtoMix.getId());
 		}
 		
 		List<String> mensagens = mixCotaProdutoService.adicionarListaMixPorCota(listaNovosMixCota,cotaId);

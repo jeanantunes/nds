@@ -76,6 +76,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
         .append(" f.edicoesAtendidas as edicoesAtendidas, ")
         .append(" f.cotaFixada.numeroCota as cotaFixada,")
         .append(" f.cotaFixada.id as cotaFixadaId,")
+        .append(" f.usarICDEstudo as usarICDFixacao, ")
         .append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '')  as nomeCota,")
         .append(" coalesce(classificacao.descricao, '') as classificacaoProduto,")
         .append(" classificacao.id as classificacaoProdutoId,")
@@ -146,6 +147,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
         .append(" f.edicaoInicial as edicaoInicial, ")
         .append(" f.edicaoFinal as edicaoFinal, ")
         .append(" f.dataHora as data, ")
+        .append(" f.usarICDEstudo as usarICDFixacao, ")
         .append(" TIME(f.dataHora) as hora , ")
         .append(" f.edicaoFinal - f.edicaoInicial as edicoesAtendidas, ")
         .append(" f.cotaFixada.numeroCota as cotaFixada, ")
@@ -588,5 +590,34 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		query.setParameter("fixacaoID", fixacaoID);
 		
 		query.executeUpdate();
+	}
+	
+	@Override
+	public void atualizarFlagUsarICDEstudo(Long idClassificacaoPraAtualizar, String icdProdutoPraAtualizar, String codProdutoPraAtualizar, boolean isUsarICDEstudo){
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" update fixacao_reparte set   ");
+		
+		if(isUsarICDEstudo){
+			sql.append(" codigo_icd =  :icdProdutoPraAtualizar, ");
+	    }else{
+	    	sql.append(" codigo_produto =  :codProdutoPraAtualizar, ");
+	    }
+		
+		sql.append(" usar_icd_estudo = :isUsarICDEstudo ");
+		sql.append(" where codigo_icd = :icdProdutoPraAtualizar and id_classificacao_edicao = :idClassificacao ");
+		
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
+	    query.setParameter("idClassificacao", idClassificacaoPraAtualizar);
+	    query.setParameter("isUsarICDEstudo", isUsarICDEstudo);
+    	query.setParameter("icdProdutoPraAtualizar", icdProdutoPraAtualizar);
+
+	    if(!isUsarICDEstudo){
+	    	query.setParameter("codProdutoPraAtualizar", codProdutoPraAtualizar);
+	    }
+	    
+	    query.executeUpdate();
+		
 	}
 }

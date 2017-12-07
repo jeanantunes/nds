@@ -266,6 +266,7 @@ public class EMS0127Input extends IntegracaoDocumentMaster<EMS0127InputItem> imp
 		this.chamadaEncalheItens = itens;
 	}
 
+	@Override
 	public List<EMS0127InputItem> getItens() {
 		return chamadaEncalheItens;
 	}
@@ -277,11 +278,6 @@ public class EMS0127Input extends IntegracaoDocumentMaster<EMS0127InputItem> imp
 	@Override
 	public void addItem(IntegracaoDocumentDetail docD) {
 		chamadaEncalheItens.add((EMS0127InputItem) docD);		
-	}
-	
-	@Override
-	public List<EMS0127InputItem> getItems() {
-		return chamadaEncalheItens;
 	}
 	
 	@Override

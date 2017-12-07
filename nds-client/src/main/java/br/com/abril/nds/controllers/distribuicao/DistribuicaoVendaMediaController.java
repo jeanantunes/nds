@@ -176,7 +176,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	}
 	
 	List<ProdutoEdicaoVendaMediaDTO> selecionados = new ArrayList<>();
-	Estrategia estrategia = estrategiaService.buscarPorProdutoEdicao(produtoEdicao);
+	Estrategia estrategia = estrategiaService.buscarPorProdutoEdicaoId(produtoEdicao);
 	EstrategiaDTO estrat = new EstrategiaDTO();
 	
 	if (estrategia != null) {

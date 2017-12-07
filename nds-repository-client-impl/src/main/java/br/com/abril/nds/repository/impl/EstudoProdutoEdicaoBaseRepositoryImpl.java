@@ -42,6 +42,7 @@ public class EstudoProdutoEdicaoBaseRepositoryImpl extends AbstractRepositoryMod
 		hql.append(" INNER JOIN produto_edicao ON produto_edicao.id = estudo_produto_edicao_base.PRODUTO_EDICAO_ID  ");
 		hql.append(" INNER JOIN produto ON produto_edicao.produto_id = produto.id ");
 		hql.append(" where ESTUDO_ID = :estudoId");
+		hql.append(" order by estudo_produto_edicao_base.periodo_parcial desc ");
 
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
 		

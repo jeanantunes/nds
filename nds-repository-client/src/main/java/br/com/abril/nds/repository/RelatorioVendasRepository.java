@@ -2,6 +2,10 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
+
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
 import br.com.abril.nds.client.vo.RegistroHistoricoEditorVO;
@@ -40,5 +44,7 @@ public interface RelatorioVendasRepository {
 	List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro);
 	
 	List<RegistroRankingSegmentoDTO> obterRankingSegmento(FiltroRankingSegmentoDTO filtro);
+
+	List<RegistroRankingSegmentoDTO> obterRelatorioVendaSegmentoPorCota(FiltroRankingSegmentoDTO filtro);
 	
 }

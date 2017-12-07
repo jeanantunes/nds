@@ -43,7 +43,8 @@ public enum InterfaceEnum {
 	EMS0139(139L, null, EMS0139Input.class),
 	EMS0140(140L, null, EMS0140InputItem.class, EMS0140Input.class, TipoInterfaceEnum.DETALHE_INLINE),
 	EMS0185(185L, null, null),
-	EMS3100(3100L, null, null, TipoInterfaceEnum.DB);
+	EMS3100(3100L, null, null, TipoInterfaceEnum.DB),
+	EMS2021(2021L, null, null, TipoInterfaceEnum.DB);
 
 	private Long codigoInterface;
 	private Integer tamanhoLinha;
