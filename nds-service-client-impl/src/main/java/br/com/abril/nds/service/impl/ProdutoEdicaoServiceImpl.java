@@ -1209,20 +1209,22 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                 produtoEdicao.setBrinde(brinde);
             }
         }
-        
+
+        final Produto produto = produtoRepository.obterProdutoPorCodigoProdin(dto.getCodigoProduto());
+
         if (produtoEdicao.getId() == null) {
             // Salvar:
-            
-            final Produto produto = produtoRepository.obterProdutoPorCodigoProdin(dto.getCodigoProduto());
-            
             produtoEdicao.setProduto(produto);
+            produto.setProdutoEdicao(Collections.singletonList(produtoEdicao));
             
             produtoEdicaoRepository.adicionar(produtoEdicao);
+            produtoRepository.adicionar(produto);
         } else {
             // Atualizar:
             produtoEdicaoRepository.alterar(produtoEdicao);
+            produtoRepository.alterar(produto);
         }
-        
+
         return produtoEdicao;
     }
     
