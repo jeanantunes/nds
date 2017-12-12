@@ -265,6 +265,10 @@ public class AnaliseParcialController extends BaseController {
     @Post
     public void reparteTotalEVendaTotalPorEdicao(List<EdicoesProdutosDTO> edicoesBase, String estudoId) {
         
+    	if(edicoesBase == null){
+    		result.use(Results.json()).withoutRoot().from(edicoesBase).serialize();
+    		return;
+    	}
     	
     	for (EdicoesProdutosDTO edicoesDTO : edicoesBase) {
     		
