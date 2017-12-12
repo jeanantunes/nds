@@ -792,19 +792,9 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 					cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
 					
 					if(estudosComMesmosICD){
-						
-						if(cota.getReparteMinimo() == null || cota.getReparteMaximo() == null){
-							System.out.println("reparte null");
-						}
-						
 						intervaloMinimo = cota.getReparteMinimo() != null ? cota.getReparteMinimo() : BigInteger.ZERO;
 						intervaloMaximo = cota.getReparteMaximo() != null ? cota.getReparteMaximo() : BigInteger.ZERO;
 					}else{ 
-						
-						if(cotaEstudo.getIntervaloMinimo() == null || cotaEstudo.getIntervaloMaximo() == null){
-							System.out.println("intervalo null");
-						}
-						
 						intervaloMinimo = cotaEstudo.getIntervaloMinimo() != null ? cotaEstudo.getIntervaloMinimo() : BigInteger.ZERO;
 						intervaloMaximo = cotaEstudo.getIntervaloMaximo() != null ? cotaEstudo.getIntervaloMaximo() : BigInteger.ZERO;
 					}
