@@ -471,5 +471,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	List<Long> buscarIdLancamentoPorDataLancamentoCodProdutoNumEdicaoDataLancamento(String codProduto, Long numEdicao, Date dtLancamento);
 
 	void atualizarLancamentoSetDadosLED(List<Long> idLancamentos, String dataLed, String horaLEd);
-	
+
+	List<Long> getIDByDataRecolhimento(List<Date> datas);
+
 }

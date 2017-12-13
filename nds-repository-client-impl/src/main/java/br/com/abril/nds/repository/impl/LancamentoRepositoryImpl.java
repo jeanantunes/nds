@@ -3657,5 +3657,16 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 		
 		return resultado;
 	}
+
+	public List<Long> getIDByDataRecolhimento(List<Date> datas){
+		StringBuilder SQL = new StringBuilder();
+		SQL.append("select id from lancamento where data_rec_distrib in (:datas) ");
+
+		Query query = getSession().createSQLQuery(SQL.toString()).addScalar("id", StandardBasicTypes.LONG);
+
+		query.setParameterList("datas",datas);
+
+		return  query.list();
+	}
 	
 }

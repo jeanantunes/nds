@@ -4273,72 +4273,75 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<CotaReparteDTO> obterReparte(final Set<Long> idsLancamento, Long cotaId) {
+        try {
+            final StringBuilder sql = new StringBuilder();
 
-		final StringBuilder sql = new StringBuilder();
+            sql.append(" select cota as cota, ");
+            sql.append(" mec.cotaContribuinteExigeNF as cotaContribuinteExigeNF, ");
+            sql.append(" sum( ");
+            sql.append(" 	case when (tipoMovimento.grupoMovimentoEstoque.operacaoEstoque = 'SAIDA') ");
+            sql.append(" 	then (-mec.qtde) ");
+            sql.append(" 	else (mec.qtde) end ");
+            sql.append(" ) as reparte, ");
+            sql.append(" lancamento.id as idLancamento ");
 
-		sql.append(" select cota as cota, ");
-		sql.append(" mec.cotaContribuinteExigeNF as cotaContribuinteExigeNF, ");
-		sql.append(" sum( ");
-		sql.append(" 	case when (tipoMovimento.grupoMovimentoEstoque.operacaoEstoque = 'SAIDA') ");
-		sql.append(" 	then (-mec.qtde) ");
-		sql.append(" 	else (mec.qtde) end ");
-		sql.append(" ) as reparte, ");
-		sql.append(" lancamento.id as idLancamento ");
+            sql.append(" from MovimentoEstoqueCota mec ");
 
-		sql.append(" from MovimentoEstoqueCota mec ");
+            sql.append(" join mec.cota cota ");
 
-		sql.append(" join mec.cota cota ");
+            sql.append(" join mec.lancamento lancamento ");
 
-		sql.append(" join mec.lancamento lancamento ");
+            sql.append(" join mec.tipoMovimento tipoMovimento ");
 
-		sql.append(" join mec.tipoMovimento tipoMovimento ");
+            sql.append(" join mec.produtoEdicao produtoEdicao ");
 
-		sql.append(" join mec.produtoEdicao produtoEdicao ");
+            sql.append(" join lancamento.produtoEdicao produtoEdicaoLcto ");
 
-		sql.append(" join lancamento.produtoEdicao produtoEdicaoLcto ");
+            sql.append(" left join mec.movimentoEstoqueCotaFuro mecFuro ");
 
-		sql.append(" left join mec.movimentoEstoqueCotaFuro mecFuro ");
+            sql.append(" where lancamento.id IN (:idsLancamento) ");
 
-		sql.append(" where lancamento.id IN (:idsLancamento) ");
+            if (cotaId != null) {
+                sql.append(" and mec.cota.id = :cotaId ");
+            }
 
-		if (cotaId != null) {
-			sql.append(" and mec.cota.id = :cotaId ");
-		}
+            sql.append(" and produtoEdicao.id = produtoEdicaoLcto.id ");
 
-		sql.append(" and produtoEdicao.id = produtoEdicaoLcto.id ");
+            sql.append(" and mecFuro.id is null ");
 
-		sql.append(" and mecFuro.id is null ");
+            sql.append(" and tipoMovimento.grupoMovimentoEstoque not in (:gruposMovimentoReparte) ");
 
-		sql.append(" and tipoMovimento.grupoMovimentoEstoque not in (:gruposMovimentoReparte) ");
+            sql.append(" and (mec.statusEstoqueFinanceiro is null ");
 
-		sql.append(" and (mec.statusEstoqueFinanceiro is null ");
+            sql.append(
+                    " or (mec.statusEstoqueFinanceiro = :processado and cota.devolveEncalhe = true and cota.tipoCota = 'A_VISTA') ");
 
-		sql.append(
-				" or (mec.statusEstoqueFinanceiro = :processado and cota.devolveEncalhe = true and cota.tipoCota = 'A_VISTA') ");
+            sql.append(" or ( mec.statusEstoqueFinanceiro != :processado and cota.tipoCota = 'CONSIGNADO'  ))");
+            // ajustando o group by
+            sql.append(" group by mec.cota.id, produtoEdicao.id, lancamento.id ");
 
-		sql.append(" or ( mec.statusEstoqueFinanceiro != :processado and cota.tipoCota = 'CONSIGNADO'  ))");
-		// ajustando o group by
-		sql.append(" group by mec.cota.id, produtoEdicao.id, lancamento.id ");
+            sql.append(" order by mec.cota.numeroCota ");
 
-		sql.append(" order by mec.cota.numeroCota ");
+            final Query query = this.getSession().createQuery(sql.toString());
 
-		final Query query = this.getSession().createQuery(sql.toString());
+            query.setParameterList("idsLancamento", idsLancamento);
 
-		query.setParameterList("idsLancamento", idsLancamento);
+            query.setParameterList("gruposMovimentoReparte",
+                    Arrays.asList(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO));
 
-		query.setParameterList("gruposMovimentoReparte",
-				Arrays.asList(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO));
+            query.setParameter("processado", StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO);
 
-		query.setParameter("processado", StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO);
+            if (cotaId != null) {
+                query.setParameter("cotaId", cotaId);
+            }
 
-		if (cotaId != null) {
-			query.setParameter("cotaId", cotaId);
-		}
-
-		query.setResultTransformer(Transformers.aliasToBean(CotaReparteDTO.class));
-
-		return query.list();
-	}
+            query.setResultTransformer(Transformers.aliasToBean(CotaReparteDTO.class));
+            return query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 	@Override
 	public void updateByIdConsolidadoAndGrupos(Long idConsolidado, List<String> grupoMovimentoFinaceiros, String motivo,

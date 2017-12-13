@@ -383,7 +383,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		List<ProdutoEdicaoECota> listaChamadao = getChamadao(idsLancamento,
 				this.distribuidorRepository.obterDataOperacaoDistribuidor());
 
-		this.gerarChamadasEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana, usuario, listaChamadao);
+		this.gerarChamadasEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana, usuario, listaChamadao, datasConfirmadas);
 
 		return matrizConfirmada;
 	}
@@ -583,7 +583,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 * @param usuario
 	 */
 	private void gerarChamadasEncalhe(Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos, Integer numeroSemana,
-			Usuario usuario, List<ProdutoEdicaoECota> listaChamadao) {
+			Usuario usuario, List<ProdutoEdicaoECota> listaChamadao, List<Date> datasConfirmadas) {
 
 		if (mapaDataRecolhimentoLancamentos == null || mapaDataRecolhimentoLancamentos.isEmpty()) {
 
@@ -602,6 +602,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			}
 
 			Integer sequencia = this.chamadaEncalheRepository.obterMaiorSequenciaPorDiaSQLNativo(dataRecolhimento);
+
+			idsLancamento = new TreeSet<Long>(lancamentoRepository.getIDByDataRecolhimento(datasConfirmadas));
+
+		//	Set<Long> ids = new TreeSet<Long>(lancamentoRepository.getIDByDataRecolhimento(datasConfirmadas));
 
 			List<CotaReparteDTO> cotasReparte = this.movimentoEstoqueCotaRepository.obterReparte(idsLancamento, null);
 
@@ -704,14 +708,18 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 								lancamento.getDataLancamentoDistribuidor(), cotaReparte.isCotaContribuinteExigeNF(),
 								usuario, cotaReparte.isParcialFinal());
 					}else{
-
+						boolean existeChamadao= false;
 						for (ProdutoEdicaoECota chamadao : listaChamadao) {
-							if (!chamadao.getCotaID().equals(cota.getId())
-									&& !chamadao.getProdutoEdicaoID().equals(lancamento.getProdutoEdicao().getId())) {
-								this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe,
-										lancamento.getDataLancamentoDistribuidor(), cotaReparte.isCotaContribuinteExigeNF(),
-										usuario, cotaReparte.isParcialFinal());
+							chamadao.getProdutoEdicaoID();
+							chamadao.getCotaID();
+							if(chamadao.getCotaID().equals(cota.getId()) && chamadao.getProdutoEdicaoID().equals(lancamento.getProdutoEdicao().getId()) ) {
+								existeChamadao = true;
 							}
+						}
+						if(!existeChamadao){
+							this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe,
+									lancamento.getDataLancamentoDistribuidor(), cotaReparte.isCotaContribuinteExigeNF(),
+									usuario, cotaReparte.isParcialFinal());
 						}
 					}
 
