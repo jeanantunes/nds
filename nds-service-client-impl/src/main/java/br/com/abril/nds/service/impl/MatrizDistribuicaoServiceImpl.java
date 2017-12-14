@@ -993,17 +993,34 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		
 		estudoCopia.setEstudoCotas(new HashSet<EstudoCotaGerado>(cotas));
 		
-		List<EdicaoBaseEstudoDTO> edicaoBaseEstudoDTOs = estudoProdutoEdicaoBaseService.obterEdicoesBase(vo.getIdEstudo());
+		List<EdicaoBaseEstudoDTO> edicoesBaseEstudo = new ArrayList<>();
 		
 		EdicaoBaseEstudoDTO edicaoBaseEstudoOrigem = estudoProdutoEdicaoBaseService.obterEdicoesBaseEstudoOrigemCopiaEstudo(vo.getIdEstudo());
 		
 		if(edicaoBaseEstudoOrigem != null){
-			edicaoBaseEstudoDTOs.add(edicaoBaseEstudoOrigem);
+			edicoesBaseEstudo.add(edicaoBaseEstudoOrigem);
+		}
+
+		List<EdicaoBaseEstudoDTO> edicaoBaseEstudoDTOs = estudoProdutoEdicaoBaseService.obterEdicoesBase(vo.getIdEstudo());
+		
+		if(edicaoBaseEstudoDTOs != null && !edicaoBaseEstudoDTOs.isEmpty()){
+			edicoesBaseEstudo.addAll(edicaoBaseEstudoDTOs);	
 		}
 		
-		for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicaoBaseEstudoDTOs) {
-			estudoCotaGeradoRepository.inserirProdutoBase(estudoCopia.getId(), edicaoBaseEstudoDTO.getIdProdutoEdicao(), edicaoBaseEstudoDTO.getPeso().longValue(), 
-					edicaoBaseEstudoDTO.isParcial(), edicaoBaseEstudoDTO.isEdicaoAberta(), edicaoBaseEstudoDTO.getPeriodoParcial());
+		if(edicoesBaseEstudo.size() > 6){
+			int i = 0;
+			for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicoesBaseEstudo) {
+				if(i <= 6 ){ // tratamento paliativo, add no máximo 6 edicoes bases
+					estudoCotaGeradoRepository.inserirProdutoBase(estudoCopia.getId(), edicaoBaseEstudoDTO.getIdProdutoEdicao(), edicaoBaseEstudoDTO.getPeso().longValue(), 
+							edicaoBaseEstudoDTO.isParcial(), edicaoBaseEstudoDTO.isEdicaoAberta(), edicaoBaseEstudoDTO.getPeriodoParcial());
+				}
+				++i;
+			}
+		}else{
+			for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicoesBaseEstudo) {
+					estudoCotaGeradoRepository.inserirProdutoBase(estudoCopia.getId(), edicaoBaseEstudoDTO.getIdProdutoEdicao(), edicaoBaseEstudoDTO.getPeso().longValue(), 
+							edicaoBaseEstudoDTO.isParcial(), edicaoBaseEstudoDTO.isEdicaoAberta(), edicaoBaseEstudoDTO.getPeriodoParcial());
+			}
 		}
 		
 		this.atualizarPercentualAbrangencia(estudoCopia.getId());
