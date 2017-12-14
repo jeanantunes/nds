@@ -28,5 +28,11 @@ public class EstudoProdutoEdicaoBaseServiceImpl implements EstudoProdutoEdicaoBa
 		estudoProdutoEdicaoBaseRepository.copiarEdicoesBase(idOrigem, estudoDividido);
 		
 	}
+	
+	@Override
+	@Transactional
+	public EdicaoBaseEstudoDTO obterEdicoesBaseEstudoOrigemCopiaEstudo(Long estudoId){
+		return estudoProdutoEdicaoBaseRepository.obterEdicoesBaseEstudoOrigemCopiaEstudo(estudoId);
+	}
 
 }
