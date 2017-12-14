@@ -1010,7 +1010,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends AbstractRepositoryModel<Ch
 
 		hql.append(" and l.id in (:idLancamento) ");
 
-		hql.append(" and ce.data_recolhimento >= date_add(:dataOperacao , interval -60 DAY) ");
+		hql.append(" and ce.data_recolhimento >= date_add(:dataOperacao , interval -365 DAY) ");
 
 		SQLQuery query = getSession().createSQLQuery(hql.toString());
 
