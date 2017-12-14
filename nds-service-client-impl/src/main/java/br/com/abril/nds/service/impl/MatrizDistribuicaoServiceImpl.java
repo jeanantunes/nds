@@ -995,6 +995,12 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		
 		List<EdicaoBaseEstudoDTO> edicaoBaseEstudoDTOs = estudoProdutoEdicaoBaseService.obterEdicoesBase(vo.getIdEstudo());
 		
+		EdicaoBaseEstudoDTO edicaoBaseEstudoOrigem = estudoProdutoEdicaoBaseService.obterEdicoesBaseEstudoOrigemCopiaEstudo(vo.getIdEstudo());
+		
+		if(edicaoBaseEstudoOrigem != null){
+			edicaoBaseEstudoDTOs.add(edicaoBaseEstudoOrigem);
+		}
+		
 		for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicaoBaseEstudoDTOs) {
 			estudoCotaGeradoRepository.inserirProdutoBase(estudoCopia.getId(), edicaoBaseEstudoDTO.getIdProdutoEdicao(), edicaoBaseEstudoDTO.getPeso().longValue(), 
 					edicaoBaseEstudoDTO.isParcial(), edicaoBaseEstudoDTO.isEdicaoAberta(), edicaoBaseEstudoDTO.getPeriodoParcial());

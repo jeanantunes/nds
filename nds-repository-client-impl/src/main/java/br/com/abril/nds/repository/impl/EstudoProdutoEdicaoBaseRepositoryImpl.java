@@ -42,7 +42,7 @@ public class EstudoProdutoEdicaoBaseRepositoryImpl extends AbstractRepositoryMod
 		hql.append(" INNER JOIN produto_edicao ON produto_edicao.id = estudo_produto_edicao_base.PRODUTO_EDICAO_ID  ");
 		hql.append(" INNER JOIN produto ON produto_edicao.produto_id = produto.id ");
 		hql.append(" where ESTUDO_ID = :estudoId");
-		hql.append(" order by estudo_produto_edicao_base.periodo_parcial desc ");
+		hql.append(" order by produto_edicao.numero_edicao desc, estudo_produto_edicao_base.periodo_parcial desc ");
 
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
 		
@@ -62,6 +62,44 @@ public class EstudoProdutoEdicaoBaseRepositoryImpl extends AbstractRepositoryMod
 		query.setResultTransformer(new AliasToBeanResultTransformer(EdicaoBaseEstudoDTO.class));
 		 
 		return query.list();
+	}
+	
+	@Override
+	public EdicaoBaseEstudoDTO obterEdicoesBaseEstudoOrigemCopiaEstudo(Long estudoId) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select   ");
+		sql.append(" 	eg.produto_edicao_id as idProdutoEdicao,  ");
+		sql.append(" 	1 as peso,  ");
+		sql.append(" 	(case when lc.periodo_lancamento_parcial_id is not null then 1 else 0 end) as isparcial,  ");
+		sql.append("  	(case when lc.status = 'FECHADO' or lc.status = 'RECOLHIDO' then 0 else 1 end) as isEdicaoAberta,  ");
+		sql.append(" 	(case when lc.periodo_lancamento_parcial_id is not null then plp.numero_periodo else null end) as periodoParcial  ");
+		sql.append(" from estudo_gerado eg   ");
+		sql.append(" join produto_edicao pe  ");
+		sql.append(" 	on eg.produto_edicao_id = pe.id  ");
+		sql.append(" join produto pd  ");
+		sql.append(" 	on pe.produto_id = pd.id  ");
+		sql.append(" join lancamento lc   ");
+		sql.append("  	on lc.produto_edicao_id = pe.id   ");
+		sql.append(" join periodo_lancamento_parcial plp  ");
+		sql.append("  	on lc.periodo_lancamento_parcial_id = plp.id  ");
+		sql.append(" where eg.id = :estudoId and lc.data_lcto_distribuidor = eg.data_lancamento  ");
+		
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("estudoId", estudoId);
+		
+		query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
+		query.addScalar("peso", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("isParcial", StandardBasicTypes.BOOLEAN);
+		query.addScalar("isEdicaoAberta", StandardBasicTypes.BOOLEAN);
+		query.addScalar("periodoParcial", StandardBasicTypes.LONG);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(EdicaoBaseEstudoDTO.class));
+		 
+		return (EdicaoBaseEstudoDTO) query.uniqueResult();
 	}
 
 	@Override

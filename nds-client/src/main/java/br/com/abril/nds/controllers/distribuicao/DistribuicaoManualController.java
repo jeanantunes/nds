@@ -199,7 +199,7 @@ public class DistribuicaoManualController extends BaseController {
     		
     		parseNumCotaIdCotaParseDto(cotasParaDistribuicao, estudoDTO);
     		
-    		// validar status - Ativo, suspenso. Inibir Inativo e Pendente
+    		// validar status - Ativo, suspenso. Inibir Inativo, Pendente e suspenso
     		validarStatusCota(cotasParaDistribuicao);
     		
     		try {
@@ -256,7 +256,8 @@ public class DistribuicaoManualController extends BaseController {
 		for (EstudoCotaDTO estudoCota : cotasParaDistribuicao) {
 			
 			if(estudoCota.getSituacaoCadastroCota() == SituacaoCadastro.INATIVO 
-					|| estudoCota.getSituacaoCadastroCota() == SituacaoCadastro.PENDENTE){
+					|| estudoCota.getSituacaoCadastroCota() == SituacaoCadastro.PENDENTE
+					|| estudoCota.getSituacaoCadastroCota() == SituacaoCadastro.SUSPENSO){
 				cotasInaptas.add(estudoCota);
 			}
 
