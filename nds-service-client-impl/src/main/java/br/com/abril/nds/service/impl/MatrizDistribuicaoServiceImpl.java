@@ -1008,7 +1008,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		}
 		
 		if(edicoesBaseEstudo.size() > 6){
-			int i = 0;
+			int i = 1;
 			for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicoesBaseEstudo) {
 				if(i <= 6 ){ // tratamento paliativo, add no máximo 6 edicoes bases
 					estudoCotaGeradoRepository.inserirProdutoBase(estudoCopia.getId(), edicaoBaseEstudoDTO.getIdProdutoEdicao(), edicaoBaseEstudoDTO.getPeso().longValue(), 
