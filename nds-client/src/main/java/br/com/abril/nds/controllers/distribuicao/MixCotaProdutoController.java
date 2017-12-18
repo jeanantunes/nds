@@ -391,6 +391,8 @@ public class MixCotaProdutoController extends BaseController {
 			mixCotaProdutoDTO.setCodigoICD(produto.getCodigoICD());
 			mixCotaProdutoDTO.setCodigoProduto(produto.getCodigo());
 			mixCotaProdutoDTO.setProdutoId(produto.getId());
+			
+			produtoId = produto.getId().toString();
 		}
 		
 		List<String> mensagens = mixCotaProdutoService.adicionarListaMixPorProduto(listaNovosMixProduto, produtoId);
