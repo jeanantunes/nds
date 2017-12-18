@@ -3668,5 +3668,19 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 
 		return  query.list();
 	}
-	
+
+	public List<Long> getIDsOrdenadosPeloNomeComercialDoProdutoEdica(List<Long> ids){
+
+		StringBuilder SQL = new StringBuilder();
+
+		SQL.append("select l.id from lancamento as l inner join produto_edicao pe on pe.id=l.produto_edicao_id where l.id in (:ids) order by pe.nome_comercial asc");
+
+		Query query = getSession().createSQLQuery(SQL.toString()).
+				addScalar("id", StandardBasicTypes.LONG);
+
+		query.setParameterList("ids",ids);
+
+		return  query.list();
+	}
+
 }
