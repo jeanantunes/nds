@@ -474,4 +474,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	List<Long> getIDByDataRecolhimento(List<Date> datas);
 
+	List<Long> getIDsOrdenadosPeloNomeComercialDoProdutoEdica(List<Long> ids);
+
 }

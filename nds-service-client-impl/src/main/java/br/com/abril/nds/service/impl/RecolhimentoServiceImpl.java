@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.comparators.ComparatorChain;
@@ -314,6 +315,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento, Integer numeroSemana,
 			List<Date> datasConfirmadas, Usuario usuario, List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados) {
 
+
 		if (matrizRecolhimento == null || matrizRecolhimento.isEmpty()) {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Matriz de recolhimento não informada!");
@@ -590,6 +592,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			return;
 		}
 
+
 		for (Map.Entry<Date, Set<Long>> entry : mapaDataRecolhimentoLancamentos.entrySet()) {
 
 			Set<Long> idsLancamento = entry.getValue();
@@ -603,16 +606,16 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 			Integer sequencia = this.chamadaEncalheRepository.obterMaiorSequenciaPorDiaSQLNativo(dataRecolhimento);
 
-			idsLancamento = new TreeSet<Long>(lancamentoRepository.getIDByDataRecolhimento(datasConfirmadas));
-
-		//	Set<Long> ids = new TreeSet<Long>(lancamentoRepository.getIDByDataRecolhimento(datasConfirmadas));
-
 			List<CotaReparteDTO> cotasReparte = this.movimentoEstoqueCotaRepository.obterReparte(idsLancamento, null);
 
 			List<ChamadaEncalhe> listaChamadaEncalhe = this.chamadaEncalheRepository
 					.obterChamadasEncalheLancamentos(idsLancamento, false);
-			
-			for (Long idLancamento : idsLancamento) {
+
+
+
+			List<Long>ids=lancamentoRepository.getIDsOrdenadosPeloNomeComercialDoProdutoEdica(Lists.newArrayList(idsLancamento));
+
+			for (Long idLancamento : ids) {
 
 				Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
 
