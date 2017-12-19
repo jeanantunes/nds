@@ -248,15 +248,13 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		sql.append(" 		 join cota c on cec.COTA_ID = c.ID  ");
 		sql.append(" 		 join lancamento l on l.PRODUTO_EDICAO_ID = pe.ID ");
 		sql.append(" 		 join produto p on p.id = pe.produto_id  ");
-		sql.append(" 		 LEFT join pdv on pdv.COTA_ID = c.ID ");
+		sql.append(" 		 LEFT join pdv on pdv.COTA_ID = c.ID and pdv.PONTO_PRINCIPAL is true ");
 		sql.append("      LEFT join editor edt ON p.EDITOR_ID = edt.ID ");
 		sql.append("      join pessoa pes ON edt.JURIDICA_ID = pes.ID  ");
 		sql.append("      join movimento_estoque_cota mec on mec.LANCAMENTO_ID = l.ID and mec.COTA_ID = c.ID ");
 
 		sql.append("      where  ");
-		
-		sql.append("      pdv.PONTO_PRINCIPAL = true ");
-		sql.append("      and ce.DATA_RECOLHIMENTO = :dataRecolhimento ");
+		sql.append("      ce.DATA_RECOLHIMENTO = :dataRecolhimento ");
 		sql.append("      and c.id = :idCota ");
 		sql.append("      and c.UTILIZA_IPV = :true ");
 		sql.append("      group by c.NUMERO_COTA,ce.PRODUTO_EDICAO_ID");
