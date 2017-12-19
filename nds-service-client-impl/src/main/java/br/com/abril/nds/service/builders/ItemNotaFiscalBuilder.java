@@ -136,11 +136,11 @@ public class ItemNotaFiscalBuilder  {
 
                     if(movimentoEstoque.getProdutoEdicao().getCodigoDeBarras() == null) {
 
-                        codigoBarras = StringUtils.leftPad("0", 13, '0').substring(0, 13);
+                        codigoBarras = StringUtils.leftPad("0", 18, '0').substring(0, 18);
                     } else {
 
                         String cb = movimentoEstoque.getProdutoEdicao().getCodigoDeBarras();
-                        codigoBarras = StringUtils.leftPad(cb, 13, '0').substring(0, 13);
+                        codigoBarras = StringUtils.leftPad(cb, 18, '0').substring(0, 18);
                     }
 
                 } catch (Exception e) {
