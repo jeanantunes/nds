@@ -135,8 +135,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 				while (it.hasNext()) {
 					File file = (File) it.next();
-					String name = file.getName(); // nome neste formato
-					// 0757350.00023.20151005.RCL
+					String name = file.getName();
 					Integer cota = Integer.parseInt(name.split("\\.")[1]);
 					Integer cotaMaster = controleCotaService.buscarCotaMaster(cota);
 					if (cotaMaster != null && !cotaMaster.equals(cota)) { // tem cota master, appendar no arquivo
@@ -170,6 +169,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 			for (CotaCouchDTO reparte : lista) {
 				List<ProdutoCouchDTO> produtos = cotaRepository.getProdutoLancamento(reparte.getIdCota(), formatter.parse(reparte.getDataMovimento()));
+
 				for(ProdutoCouchDTO produto: produtos){
 					DescontoDTO desconto =	descontoService.obterDescontoPor(new Integer(reparte.getCodigoCota()),produto.getCodigoProduto(),new Long(produto.getNumeroEdicao()));
 
@@ -201,7 +201,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		String aLine = null;
 		while ((aLine = in.readLine()) != null) {
-			// Process each line and add output to Dest.txt file
 			out.write(aLine);
 			out.newLine();
 		}
@@ -335,7 +334,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		EMS0197Detalhe outDetalhe = createDetalhes(ipvLancamento);
 
-		// print.print(fixedFormatManager.export(outDetalhe)+"\n");
 		print.write(fixedFormatManager.export(outDetalhe), 0, 204);
 		print.print("\r\n");
 	}
@@ -376,24 +374,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		detalhe = TirarAcento.removerAcentuacao(detalhe);
 		outDetalhe.setDetalhes(detalhe);
-
-		// outDetalhe.setCodigoCota(pickingDTO.getNumeroCota().toString());
-		//
-		// outDetalhe.setCodProduto(pickingDTO.getCodigoProduto());
-		//
-		// outDetalhe.setNumEdicao(pickingDTO.getCodigoEdicao().toString());
-		//
-		// outDetalhe.setNomeProduto(pickingDTO.getNomeProduto());
-		//
-		// outDetalhe.setCodigoDeBarrasPE(pickingDTO.getCodigoDeBarrasProdutoEdicao());
-		//
-		// outDetalhe.setPrecoCustoPE(pickingDTO.getPrecoCustoProdutoEdicao().toString());
-		//
-		// outDetalhe.setPrecoVendaPE(pickingDTO.getPrecoVendaProdutoEdicao().toString());
-		//
-		// outDetalhe.setDescontoPE(pickingDTO.getValorDescontoMEC().toString());
-		//
-		// outDetalhe.setQtdeMEC(pickingDTO.getQtdeMEC().toString());
 
 		return outDetalhe;
 	}
