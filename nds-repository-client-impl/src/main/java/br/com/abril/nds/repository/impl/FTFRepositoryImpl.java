@@ -311,7 +311,6 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		// .append(" produto.CENTRO_LUCRO_CORPORATIVO as centroLucroCorporativo ")
 		.append(" from nota_fiscal_produto_servico nfps ")
 		.append(" inner join nota_fiscal_novo nfn ON nfn.id = nfps.NOTA_FISCAL_ID ")
-		.append(" inner join nota_fiscal_valor_calculado nfvc on nfvc.id = nfn.NOTA_FISCAL_VALOR_CALCULADO_ID ")
 		.append(" left join natureza_operacao no ON no.ID = nfn.NATUREZA_OPERACAO_ID ")
 		.append(" inner join produto_edicao pe ON pe.id = nfps.PRODUTO_EDICAO_ID ")
 		.append(" inner join produto produto ON pe.PRODUTO_ID = produto.ID ")
