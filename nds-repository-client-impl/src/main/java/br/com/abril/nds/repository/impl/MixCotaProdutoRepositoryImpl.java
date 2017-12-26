@@ -611,8 +611,8 @@ public class MixCotaProdutoRepositoryImpl extends AbstractRepositoryModel<MixCot
 		
 		if(isUsarICDEstudo){
 			sql.append(" codigo_icd =  :icdProdutoPraAtualizar, ");
-			sql.append(" codigo_produto =  '', ");
-			sql.append(" ID_PRODUTO =  '', ");
+			sql.append(" codigo_produto =  null, ");
+			sql.append(" ID_PRODUTO =  null, ");
 	    }else{
 	    	sql.append(" codigo_produto =  :codProdutoPraAtualizar, ");
 	    	sql.append(" ID_PRODUTO =  :idProdutoPraAtualizar, ");
