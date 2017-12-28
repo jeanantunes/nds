@@ -136,11 +136,11 @@ public class ItemNotaFiscalBuilder  {
 
                     if(movimentoEstoque.getProdutoEdicao().getCodigoDeBarras() == null) {
 
-                        codigoBarras = StringUtils.leftPad("0", 13, '0').substring(0, 13);
+                        codigoBarras = StringUtils.leftPad("0", 18, '0').substring(0, 18);
                     } else {
 
                         String cb = movimentoEstoque.getProdutoEdicao().getCodigoDeBarras();
-                        codigoBarras = StringUtils.leftPad(cb, 13, '0').substring(0, 13);
+                        codigoBarras = StringUtils.leftPad(cb, 18, '0').substring(0, 18);
                     }
 
                 } catch (Exception e) {
@@ -242,7 +242,7 @@ public class ItemNotaFiscalBuilder  {
 
         produtoServico.setValorUnitario(valorUnitario);
 
-        produtoServico.setValorTotalBruto(CurrencyUtil.truncateDecimal(valorUnitario.multiply(new BigDecimal(produtoServico.getQuantidade())), 2));
+        produtoServico.setValorTotalBruto(CurrencyUtil.truncateDecimal(valorUnitario.multiply(new BigDecimal(produtoServico.getQuantidade())), 3));
 
         produtoServico.setValorCompoeValorNF(true);
 
@@ -870,7 +870,7 @@ public class ItemNotaFiscalBuilder  {
         }
 
         produtoServico.setQuantidade(produtoServico.getQuantidade().add(movimentoFechamentoFiscal.getQtde()));
-        produtoServico.setValorTotalBruto(CurrencyUtil.arredondarValorParaDuasCasas(produtoServico.getValorTotalBruto().add(valorTotalBruto)));
+        produtoServico.setValorTotalBruto(CurrencyUtil.truncateDecimal(produtoServico.getValorTotalBruto().add(valorTotalBruto), 3));
         produtoServico.setValorUnitario(valorUnitario);
 
         // produtoServico.setValorDesconto(BigDecimal.ZERO);

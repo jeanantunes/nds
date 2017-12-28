@@ -5080,7 +5080,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		final StringBuilder SQL = new StringBuilder();
 
 		SQL.append(" SELECT dst.COD_DISTRIBUIDOR_DINAP AS codigoDistribuidor, ")
-			.append(" c.NUMERO_COTA  AS codigoCota, pdv.numero_pdv AS codigoPDV, ")
+			.append(" c.NUMERO_COTA  AS codigoCota, coalesce(pdv.numero_pdv,pdv.ID) AS codigoPDV, ")
 			.append(" lcto.data_lcto_distribuidor AS dataLancamento, PR.codigo AS codigoPublicacao, ")
 			.append(" PE.NUMERO_EDICAO AS numeroEdicao, pe.CODIGO_DE_BARRAS AS codigoBarras, ")
 			.append(" PR.NOME AS nomePublicacao, ed.codigo as codigoEditora, ")
@@ -5089,7 +5089,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			.append(" FROM MOVIMENTO_ESTOQUE_COTA MEC ")
 			.append(" INNER JOIN LANCAMENTO LCTO ON ( MEC.LANCAMENTO_ID=LCTO.ID) ")
 			.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ")
-			.append(" LEFT JOIN pdv pdv ON pdv.cota_id = c.id ")
+			.append(" LEFT JOIN pdv pdv ON pdv.cota_id = c.id and pdv.PONTO_PRINCIPAL is true ")
 			.append(" INNER JOIN PESSOA P ON C.PESSOA_ID=P.ID ")
 			.append(" inner join distribuidor dst  INNER JOIN TIPO_MOVIMENTO TM ON MEC.TIPO_MOVIMENTO_ID=TM.ID ")
 			.append(" INNER JOIN PRODUTO_EDICAO PE ON MEC.PRODUTO_EDICAO_ID = PE.ID  ")

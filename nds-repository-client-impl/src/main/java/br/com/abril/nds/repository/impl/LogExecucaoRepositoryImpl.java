@@ -36,9 +36,6 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		super(LogExecucao.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.repository.LogExecucaoRepository#obterResultadoPaginado(java.lang.String, java.lang.String, int, int)
-	 */
 	@SuppressWarnings({"unchecked"})
 	@Override
 	public List<ConsultaInterfacesDTO> obterInterfaces(FiltroInterfacesDTO filtro) {

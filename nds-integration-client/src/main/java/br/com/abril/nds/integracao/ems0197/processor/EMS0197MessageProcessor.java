@@ -135,8 +135,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 				while (it.hasNext()) {
 					File file = (File) it.next();
-					String name = file.getName(); // nome neste formato
-					// 0757350.00023.20151005.RCL
+					String name = file.getName();
 					Integer cota = Integer.parseInt(name.split("\\.")[1]);
 					Integer cotaMaster = controleCotaService.buscarCotaMaster(cota);
 					if (cotaMaster != null && !cotaMaster.equals(cota)) { // tem cota master, appendar no arquivo
@@ -170,6 +169,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 			for (CotaCouchDTO reparte : lista) {
 				List<ProdutoCouchDTO> produtos = cotaRepository.getProdutoLancamento(reparte.getIdCota(), formatter.parse(reparte.getDataMovimento()));
+
 				for(ProdutoCouchDTO produto: produtos){
 					DescontoDTO desconto =	descontoService.obterDescontoPor(new Integer(reparte.getCodigoCota()),produto.getCodigoProduto(),new Long(produto.getNumeroEdicao()));
 
@@ -201,7 +201,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		String aLine = null;
 		while ((aLine = in.readLine()) != null) {
-			// Process each line and add output to Dest.txt file
 			out.write(aLine);
 			out.newLine();
 		}
@@ -335,7 +334,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		EMS0197Detalhe outDetalhe = createDetalhes(ipvLancamento);
 
-		// print.print(fixedFormatManager.export(outDetalhe)+"\n");
 		print.write(fixedFormatManager.export(outDetalhe), 0, 204);
 		print.print("\r\n");
 	}
@@ -376,24 +374,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		detalhe = TirarAcento.removerAcentuacao(detalhe);
 		outDetalhe.setDetalhes(detalhe);
-
-		// outDetalhe.setCodigoCota(pickingDTO.getNumeroCota().toString());
-		//
-		// outDetalhe.setCodProduto(pickingDTO.getCodigoProduto());
-		//
-		// outDetalhe.setNumEdicao(pickingDTO.getCodigoEdicao().toString());
-		//
-		// outDetalhe.setNomeProduto(pickingDTO.getNomeProduto());
-		//
-		// outDetalhe.setCodigoDeBarrasPE(pickingDTO.getCodigoDeBarrasProdutoEdicao());
-		//
-		// outDetalhe.setPrecoCustoPE(pickingDTO.getPrecoCustoProdutoEdicao().toString());
-		//
-		// outDetalhe.setPrecoVendaPE(pickingDTO.getPrecoVendaProdutoEdicao().toString());
-		//
-		// outDetalhe.setDescontoPE(pickingDTO.getValorDescontoMEC().toString());
-		//
-		// outDetalhe.setQtdeMEC(pickingDTO.getQtdeMEC().toString());
 
 		return outDetalhe;
 	}
@@ -511,8 +491,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("       CAST(coalesce(c.numero_jornaleiro_ipv,c.PESSOA_ID) AS CHAR) AS codJornaleiro, ");
 		sql.append("       CAST(c.NUMERO_COTA AS CHAR) AS codCota, ");
 		sql.append("       CAST(coalesce(pdvs.numero_pdv,pdvs.ID) AS CHAR )  AS codPDV, ");
-		// sql.append(" DATE_FORMAT((eg.DATA_LANCAMENTO), '%Y%m%d') AS
-		// dataMovimento, ");
 		sql.append("       DATE_FORMAT((lct.DATA_LCTO_DISTRIBUIDOR), '%Y%m%d') AS dataMovimento, ");
 		sql.append("       CAST(SUBSTRING(p.CODIGO, -8) AS CHAR) AS codProduto, ");
 		sql.append("       CAST(pe.NUMERO_EDICAO AS CHAR) AS numEdicao, ");
@@ -524,12 +502,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		sql.append("       pe.CHAMADA_CAPA AS chamadaCapa, ");
 		sql.append("       DATE_FORMAT((lct.DATA_LCTO_DISTRIBUIDOR), '%Y%m%d') AS dataLancamento, ");
-		// trocado apos chamado 4666108 -- date_format (((eg.DATA_LANCAMENTO),
-		// '%Y%m%d') AS dataLancamento, ");
-		// sql.append(" DATE_FORMAT(((select l.DATA_LCTO_DISTRIBUIDOR from
-		// lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by
-		// l.DATA_LCTO_DISTRIBUIDOR asc limit 1)), '%Y%m%d') AS
-		// dataPrimeiroLancamentoParcial, ");
 		sql.append("   '        '  as dataPrimeiroLancamentoParcial,");
 		sql.append("       CAST(lct.ID AS CHAR) as idLancamento, ");
 		sql.append("       CAST(pe.ID AS CHAR) as idProdutoEdicao, ");
@@ -539,40 +511,28 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		sql.append("   FROM estudo_cota_gerado ecg ");
 
-		sql.append("     JOIN estudo_gerado eg   ");
-		sql.append("       ON ecg.ESTUDO_ID = eg.ID ");
-		sql.append("     JOIN lancamento lct  ");
-		sql.append("       ON eg.LANCAMENTO_ID = lct.ID ");
-		sql.append("     JOIN produto_edicao pe  ");
-		sql.append("       ON lct.PRODUTO_EDICAO_ID = pe.ID ");
-		sql.append("     JOIN produto p ");
-		sql.append("       ON pe.PRODUTO_ID = p.ID ");
-		sql.append("     JOIN cota c  ");
-		sql.append("       ON ecg.COTA_ID = c.ID ");
-		sql.append("     JOIN pdv pdvs ");
-		sql.append("       ON pdvs.COTA_ID = c.ID ");
-		sql.append("     LEFT JOIN editor edt ");
-		sql.append("       ON p.EDITOR_ID = edt.ID ");
-		sql.append("     JOIN pessoa pes ");
-		sql.append("       ON edt.JURIDICA_ID = pes.ID ");
-		sql.append("     LEFT JOIN produto_fornecedor pf  ");
-		sql.append("       ON pf.PRODUTO_ID = p.ID ");
-		sql.append("     LEFT JOIN fornecedor f ");
-		sql.append("       ON pf.fornecedores_ID = f.ID ");
+		sql.append("     JOIN estudo_gerado eg ON ecg.ESTUDO_ID = eg.ID ");
+		sql.append("     JOIN lancamento lct ON eg.LANCAMENTO_ID = lct.ID ");
+		sql.append("     JOIN produto_edicao pe  ON lct.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append("     JOIN produto p ON pe.PRODUTO_ID = p.ID ");
+		sql.append("     JOIN cota c ON ecg.COTA_ID = c.ID ");
+		sql.append("     JOIN pdv pdvs ON pdvs.COTA_ID = c.ID and pdvs.ponto_principal is true");
+		sql.append("     LEFT JOIN editor edt ON p.EDITOR_ID = edt.ID ");
+		sql.append("     JOIN pessoa pes ON edt.JURIDICA_ID = pes.ID ");
+		sql.append("     LEFT JOIN produto_fornecedor pf ON pf.PRODUTO_ID = p.ID ");
+		sql.append("     LEFT JOIN fornecedor f ON pf.fornecedores_ID = f.ID ");
 
 		sql.append("       WHERE lct.DATA_LCTO_DISTRIBUIDOR = :data ");
 		sql.append("       		and lct.STATUS in (:statusLancamento) ");
-		sql.append("       		and ecg.REPARTE is not null ");
 		sql.append("       		and ecg.REPARTE > 0 ");
 		sql.append(" 	 		and c.id = :idCota");
-		sql.append(" 	 		and c.UTILIZA_IPV = :true and  pdvs.ponto_principal = true");
+		sql.append(" 	 		and c.UTILIZA_IPV is true ");
 		sql.append(" 	 		order by lct.SEQUENCIA_MATRIZ ");
 
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 
 		query.setParameter("data", data);
 		query.setParameter("idCota", idCota);
-		query.setParameter("true", true);
 		query.setParameterList("statusLancamento",
 				LancamentoHelper.getStatusLancamentosPosBalanceamentoLancamentoString());
 

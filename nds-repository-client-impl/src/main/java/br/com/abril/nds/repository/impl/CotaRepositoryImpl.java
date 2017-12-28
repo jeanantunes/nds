@@ -105,6 +105,7 @@ import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.QueryUtil;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade
@@ -4173,6 +4174,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 	
 	@SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
 	public List<CotaCouchDTO> getCotaLancamento(Date data) {
 
 		StringBuilder sql = new StringBuilder();
@@ -4180,12 +4182,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append(" SELECT DISTINCT ")
 		.append(" c.id AS idCota, ")
 		.append("  c.numero_cota AS codigoCota, ")
-		.append("  pdv.numero_pdv AS codigoPontoVenda, ")
+		.append("  coalesce(pdv.numero_pdv,pdv.ID) AS codigoPontoVenda, ")
 		.append("  c.numero_jornaleiro_ipv AS jornaleiro, ")
 		.append("  lan.DATA_LCTO_DISTRIBUIDOR AS dataMovimento, ")
-		.append(" (SELECT if (d.COD_DISTRIBUIDOR_DINAP != 0,d.COD_DISTRIBUIDOR_DINAP,d.COD_DISTRIBUIDOR_FC) FROM distribuidor d LIMIT 1) AS codigoDistribuidor, ")
+		.append(" (SELECT coalesce(d.COD_DISTRIBUIDOR_DINAP, d.COD_DISTRIBUIDOR_FC) FROM distribuidor d LIMIT 1) AS codigoDistribuidor, ")
 		.append(" c.SISTEMA_ORIGEM as sistema, ")
-		.append(" case when pc.tipo = 'J' then pc.razao_social else  coalesce(pc.nome,' ') end as nome, ")
+		.append(" case when pc.tipo = 'J' then pc.razao_social else pc.nome end as nome, ")
 		.append(" endereco.TIPO_LOGRADOURO as tipoLogradouro, ")
 		.append(" endereco.LOGRADOURO as enderecoLogradouro, ")
 		.append(" endereco.NUMERO as enderecoNumero,  ")
@@ -4193,23 +4195,20 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		.append(" endereco.BAIRRO as enderecoBairro, ")
 		.append(" endereco.CEP as enderecoCep, ")
 		.append(" endereco.CIDADE as enderecoCidade, ")
-		.append(" endereco.UF as enderecoUf ");
+		.append(" endereco.UF as enderecoUf ")
 		
-		sql.append("   FROM cota c ")
-		.append(" left outer join pessoa pc on pc.id = c.PESSOA_ID ")
-		.append(" JOIN pdv pdv ON pdv.cota_id = c.id ")
-		.append(" left outer join endereco_pdv endpdv on endpdv.pdv_id = pdv.id and endpdv.PRINCIPAL = true  ")
-		.append(" left outer join endereco on endereco.id = endpdv.endereco_id ")
-		.append("        JOIN estudo_cota_gerado ecg ")
-		.append("           ON ecg.COTA_ID = c.ID ")
-		.append("        JOIN estudo_gerado eg  ")
-		.append("           ON ecg.ESTUDO_ID = eg.ID ")
-		.append("       JOIN lancamento lan ON lan.ESTUDO_ID = eg.id       ")
+		.append("   FROM cota c ")
+		.append("       left outer join pessoa pc on pc.id = c.PESSOA_ID ")
+		.append("       left join pdv pdv ON pdv.cota_id = c.id and pdv.PONTO_PRINCIPAL is true ")
+		.append("       left outer join endereco_pdv endpdv on endpdv.pdv_id = pdv.id and endpdv.PRINCIPAL is true  ")
+		.append("       left outer join endereco on endereco.id = endpdv.endereco_id ")
+		.append("       JOIN estudo_cota_gerado ecg ON ecg.COTA_ID = c.ID ")
+		.append("       JOIN estudo_gerado eg ON ecg.ESTUDO_ID = eg.ID ")
+		.append("       JOIN lancamento lan ON lan.ESTUDO_ID = eg.id  ")
 		.append("  WHERE  lan.DATA_LCTO_DISTRIBUIDOR = :data and lan.STATUS in ('BALANCEADO', 'EXPEDIDO') ")
-		.append("           AND pdv.PONTO_PRINCIPAL = true ")
-		.append("           AND ecg.QTDE_EFETIVA > 0 ")
-		.append("           AND c.UTILIZA_IPV = TRUE ")
-		.append("           AND c.tipo_transmissao='SERVICO' ");
+		.append("       AND ecg.QTDE_EFETIVA > 0 ")
+		.append("       AND c.UTILIZA_IPV is true ")
+		.append("       AND c.tipo_transmissao='SERVICO' ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
@@ -4238,42 +4237,44 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 	
 	@SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
 	public List<CotaCouchDTO> getCotaRecolhimento(Date data) {
 
 		StringBuilder sql = new StringBuilder();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		
-		sql.append("  select  ");
-		sql.append("     CAST(cec.COTA_ID as CHAR) as idCota, ");
-		sql.append("     CAST(cota.NUMERO_COTA as CHAR) as codigoCota, ")
+		sql.append("  select  ")
+		.append("  cec.COTA_ID as idCota, ")
+		.append("  cota.NUMERO_COTA as codigoCota, ")
 		.append("  cota.numero_jornaleiro_ipv AS jornaleiro, ")
-		.append("  pdv.numero_pdv AS codigoPontoVenda, ")
-		.append("     ce.DATA_RECOLHIMENTO as dataMovimento, ")
-		.append("     CAST((if (dtb.COD_DISTRIBUIDOR_DINAP != 0,dtb.COD_DISTRIBUIDOR_DINAP,dtb.COD_DISTRIBUIDOR_FC)) as CHAR) as codigoDistribuidor, ")
-		.append(" coalesce(cota.SISTEMA_ORIGEM,' ') as sistema, ")
-		.append(" case when pc.tipo = 'J' then pc.razao_social else  coalesce(pc.nome,null,' ') end as nome, ")    
-		.append(" endereco.TIPO_LOGRADOURO as tipoLogradouro, ")
-		.append(" endereco.LOGRADOURO as enderecoLogradouro, ")
-		.append(" endereco.NUMERO as enderecoNumero,  ")
-		.append(" endereco.COMPLEMENTO as enderecoComplemento, ")
-		.append(" endereco.BAIRRO as enderecoBairro, ")
-		.append(" endereco.CEP as enderecoCep, ")
-		.append(" endereco.CIDADE as enderecoCidade, ")
-		.append(" endereco.UF as enderecoUf ")
-		.append("  from distribuidor dtb, chamada_encalhe ce ")
-		.append("   join chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID ")
-		.append("   join cota ON cec.COTA_ID = cota.ID ")
-		.append("   join pdv on pdv.COTA_ID = cota.ID ")
+		.append("  coalesce(pdv.numero_pdv,pdv.ID) AS codigoPontoVenda, ")
+		.append("  ce.DATA_RECOLHIMENTO as dataMovimento, ")
+		.append("  coalesce(dtb.COD_DISTRIBUIDOR_DINAP, dtb.COD_DISTRIBUIDOR_FC) as codigoDistribuidor, ")
+		.append("  cota.SISTEMA_ORIGEM as sistema, ")
+		.append("  case when pc.tipo = 'J' then pc.razao_social else  pc.nome end as nome, ")
+		.append("  endereco.TIPO_LOGRADOURO as tipoLogradouro, ")
+		.append("  endereco.LOGRADOURO as enderecoLogradouro, ")
+		.append("  endereco.NUMERO as enderecoNumero,  ")
+		.append("  endereco.COMPLEMENTO as enderecoComplemento, ")
+		.append("  endereco.BAIRRO as enderecoBairro, ")
+		.append("  endereco.CEP as enderecoCep, ")
+		.append("  endereco.CIDADE as enderecoCidade, ")
+		.append("  endereco.UF as enderecoUf ")
+		.append("   from distribuidor dtb, chamada_encalhe ce ")
+		.append(" join chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID ")
+		.append(" join cota ON cec.COTA_ID = cota.ID ")
+		.append(" left join pdv on pdv.COTA_ID = cota.ID and pdv.PONTO_PRINCIPAL is true")
 		.append(" left outer join pessoa pc on pc.id = cota.PESSOA_ID ")
 		.append(" left outer join endereco_pdv endpdv on  endpdv.pdv_id = pdv.id and endpdv.PRINCIPAL = true  ")
 		.append(" left outer join endereco on endereco.id = endpdv.endereco_id ")
-		.append("  where pdv.PONTO_PRINCIPAL = true  ")
-		.append(" 		and ce.DATA_RECOLHIMENTO ='"+simpleDateFormat.format(data)+"'")
-		.append(" 		and cota.UTILIZA_IPV = true ")
+		.append("  where ")
+		.append(" 		ce.DATA_RECOLHIMENTO = :data ")
+		.append(" 		and cota.UTILIZA_IPV is true ")
 		.append(" 		and cota.tipo_transmissao = 'SERVICO'")
 		.append(" 		group by cota.NUMERO_COTA ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+        query.setParameter("data", simpleDateFormat.format(data));
 		
 		query.addScalar("codigoDistribuidor", StandardBasicTypes.STRING);
 		query.addScalar("idCota", StandardBasicTypes.LONG);
@@ -4300,54 +4301,43 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	
 
 	@SuppressWarnings("unchecked")
+    @Transactional(readOnly = true)
 	public List<ProdutoCouchDTO> getProdutoLancamento(Long idCota, Date data) {
 
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("   SELECT ");
-		sql.append("       CAST(SUBSTRING(p.CODIGO, -8) AS CHAR) AS codigoProduto, ");
-		sql.append("       CAST(pe.NUMERO_EDICAO AS CHAR) AS numeroEdicao, ");
-		sql.append("       CAST(pe.CODIGO_DE_BARRAS AS CHAR) AS codigoBarrasProduto, ");
+		sql.append("       SUBSTRING(p.CODIGO, -8) AS codigoProduto, ");
+		sql.append("       pe.NUMERO_EDICAO AS numeroEdicao, ");
+		sql.append("       pe.CODIGO_DE_BARRAS AS codigoBarrasProduto, ");
 		sql.append("       p.NOME AS nomeProduto, ");
-		sql.append("       CAST(ROUND(ecg.QTDE_EFETIVA, 0) AS CHAR) AS reparte, ");
+		sql.append("       ROUND(SUM(ecg.QTDE_EFETIVA), 0) AS reparte, ");
 		sql.append("       pes.RAZAO_SOCIAL AS nomeEditora, ");
         sql.append("       edt.CODIGO AS codigoEditora, ");
-		sql.append("       CAST(ROUND(pe.PRECO_VENDA, 2) AS CHAR) AS precoCapa, ");
-		sql.append("       CAST(ROUND(pe.PRECO_CUSTO, 2) AS CHAR) AS precoCusto, ");
+		sql.append("       ROUND(pe.PRECO_VENDA, 2) AS precoCapa, ");
+		sql.append("       ROUND(pe.PRECO_CUSTO, 2) AS precoCusto, ");
 		sql.append("       pe.CHAMADA_CAPA AS chamadaCapa, ");
 		sql.append("       lct.DATA_LCTO_DISTRIBUIDOR AS dataLancamento, ");
 		sql.append(" (select l.DATA_LCTO_DISTRIBUIDOR from lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1) as dataPrimeiroLancamentoParcial ");
 
 		sql.append("   FROM estudo_cota_gerado ecg ");
 
-		sql.append("     JOIN estudo_gerado eg   ");
-		sql.append("       ON ecg.ESTUDO_ID = eg.ID ");
-		sql.append("     JOIN lancamento lct  ");
-		sql.append("       ON eg.LANCAMENTO_ID = lct.ID ");
-		sql.append("     JOIN produto_edicao pe  ");
-		sql.append("       ON lct.PRODUTO_EDICAO_ID = pe.ID ");
-		sql.append("     JOIN produto p ");
-		sql.append("       ON pe.PRODUTO_ID = p.ID ");
-		sql.append("     JOIN cota c  ");
-		sql.append("       ON ecg.COTA_ID = c.ID ");
-		sql.append("     JOIN pdv pdvs ");
-		sql.append("       ON pdvs.COTA_ID = c.ID ");
-		sql.append("     LEFT JOIN editor edt ");
-		sql.append("       ON p.EDITOR_ID = edt.ID ");
-		sql.append("     JOIN pessoa pes ");
-		sql.append("       ON edt.JURIDICA_ID = pes.ID ");
-		sql.append("     LEFT JOIN produto_fornecedor pf  ");
-		sql.append("       ON pf.PRODUTO_ID = p.ID ");
-		sql.append("     LEFT JOIN fornecedor f ");
-		sql.append("       ON pf.fornecedores_ID = f.ID ");
-
+		sql.append("     JOIN estudo_gerado eg ON ecg.ESTUDO_ID = eg.ID ");
+		sql.append("     JOIN lancamento lct ON eg.LANCAMENTO_ID = lct.ID ");
+		sql.append("     JOIN produto_edicao pe ON lct.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append("     JOIN produto p ON pe.PRODUTO_ID = p.ID ");
+		sql.append("     JOIN cota c  ON ecg.COTA_ID = c.ID ");
+		sql.append("     LEFT JOIN editor edt ON p.EDITOR_ID = edt.ID ");
+		sql.append("     JOIN pessoa pes ON edt.JURIDICA_ID = pes.ID ");
+		sql.append("     LEFT JOIN produto_fornecedor pf ON pf.PRODUTO_ID = p.ID ");
+		sql.append("     LEFT JOIN fornecedor f ON pf.fornecedores_ID = f.ID ");
 		sql.append("       WHERE lct.DATA_LCTO_DISTRIBUIDOR = :data ");
 		sql.append("       		and lct.STATUS in (:statusLancamento) ");
-		sql.append("       		and ecg.REPARTE is not null ");
 		sql.append("       		and ecg.REPARTE > 0 ");
 		sql.append(" 	 		and c.id = :idCota");
-		sql.append(" 	 		and c.UTILIZA_IPV = true and  pdvs.ponto_principal = true");
-		sql.append(" 	 		order by lct.SEQUENCIA_MATRIZ ");
+		sql.append(" 	 		and c.UTILIZA_IPV is true ");
+		sql.append(" 	 	GROUP BY  c.id, c.numero_cota, p.CODIGO, pe.NUMERO_EDICAO,lct.DATA_LCTO_DISTRIBUIDOR ");
+		sql.append(" 	 	order by lct.SEQUENCIA_MATRIZ ");
 
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 
@@ -4369,7 +4359,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		query.addScalar("dataPrimeiroLancamentoParcial", StandardBasicTypes.STRING);
         query.addScalar("codigoEditora", StandardBasicTypes.INTEGER);
 
-
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoCouchDTO.class));
 
 		return (List<ProdutoCouchDTO>) query.list();
@@ -4377,46 +4366,45 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<ProdutoCouchDTO> getProdutoRecolhimento(Long idCota, Date data) {
+    @Transactional(readOnly = true)
+    public List<ProdutoCouchDTO> getProdutoRecolhimento(Long idCota, Date data) {
 
 		StringBuilder sql = new StringBuilder();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		sql.append("  select  ");
-
-		sql.append("      coalesce(ce.DATA_RECOLHIMENTO,' ') as dataRecolhimento ");
-		sql.append("      , CAST(SUBSTRING(p.CODIGO, -8) as CHAR) as codigoProduto ");
-		sql.append("      , CAST(pe.NUMERO_EDICAO as CHAR) as numeroEdicao ");
-		sql.append("      , CAST(pe.CODIGO_DE_BARRAS as CHAR) as codigoBarrasProduto ");
+		sql.append("      ce.DATA_RECOLHIMENTO as dataRecolhimento ");
+		sql.append("      , SUBSTRING(p.CODIGO, -8) as codigoProduto ");
+		sql.append("      , pe.NUMERO_EDICAO as numeroEdicao ");
+		sql.append("      , pe.CODIGO_DE_BARRAS as codigoBarrasProduto ");
 		sql.append("      , p.NOME as nomeProduto");
-		sql.append("      , CAST(ROUND(cec.QTDE_PREVISTA, 0) as CHAR) as reparte ");
+		sql.append("      , ROUND(cec.QTDE_PREVISTA, 0) as reparte ");
 		sql.append("      , pes.RAZAO_SOCIAL as nomeEditora ");
         sql.append("      , edt.CODIGO AS codigoEditora ");
-		sql.append("      , CAST(ROUND(mec.PRECO_VENDA, 2) as CHAR) as precoCapa ");
-		sql.append("      , CAST(ROUND(mec.PRECO_COM_DESCONTO, 2) as CHAR) as precoCusto ");
+		sql.append("      , ROUND(mec.PRECO_VENDA, 2) as precoCapa ");
+		sql.append("      , ROUND(mec.PRECO_COM_DESCONTO, 2) as precoCusto ");
 		sql.append("      , pe.CHAMADA_CAPA as chamadaCapa ");
 
 		sql.append("      from chamada_encalhe ce  ");
-		sql.append("      JOIN chamada_encalhe_cota cec ON cec.CHAMADA_ENCALHE_ID = ce.ID ");
+		sql.append("         JOIN chamada_encalhe_cota cec ON cec.CHAMADA_ENCALHE_ID = ce.ID ");
 		sql.append(" 		 join produto_edicao pe on ce.PRODUTO_EDICAO_ID = pe.ID ");
 		sql.append(" 		 join cota c on cec.COTA_ID = c.ID  ");
 		sql.append(" 		 join lancamento l on l.PRODUTO_EDICAO_ID = pe.ID ");
 		sql.append(" 		 join produto p on p.id = pe.produto_id  ");
-		sql.append(" 		 LEFT join pdv on pdv.COTA_ID = c.ID ");
-		sql.append("      LEFT join editor edt ON p.EDITOR_ID = edt.ID ");
-		sql.append("      join pessoa pes ON edt.JURIDICA_ID = pes.ID  ");
-		sql.append("      join movimento_estoque_cota mec on mec.LANCAMENTO_ID = l.ID and mec.COTA_ID = c.ID ");
+		//sql.append(" 		 LEFT join pdv on pdv.COTA_ID = c.ID ");
+		sql.append("         LEFT join editor edt ON p.EDITOR_ID = edt.ID ");
+		sql.append("         join pessoa pes ON edt.JURIDICA_ID = pes.ID  ");
+		sql.append("         join movimento_estoque_cota mec on mec.LANCAMENTO_ID = l.ID and mec.COTA_ID = c.ID ");
 
-		sql.append("      where  ");
-		sql.append("      pdv.PONTO_PRINCIPAL = true ");
-		sql.append("      and ce.DATA_RECOLHIMENTO ='"+simpleDateFormat.format(data)+"'");
-		sql.append("      and c.id = :idCota ");
-		sql.append("      and c.UTILIZA_IPV = true ");
+		sql.append("      where c.id = :idCota ");
+		sql.append("      and ce.DATA_RECOLHIMENTO = :data");
+		sql.append("      and c.UTILIZA_IPV is true ");
 		sql.append("      group by c.NUMERO_COTA,ce.PRODUTO_EDICAO_ID");
 		sql.append("      order by ce.SEQUENCIA, c.NUMERO_COTA, ce.PRODUTO_EDICAO_ID  ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		query.setParameter("idCota", idCota);
+        query.setParameter("data", simpleDateFormat.format(data));
 
 		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
 		query.addScalar("numeroEdicao", StandardBasicTypes.STRING);
