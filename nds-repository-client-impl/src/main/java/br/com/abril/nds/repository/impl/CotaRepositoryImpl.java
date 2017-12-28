@@ -3615,7 +3615,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     
     @Override
 	@SuppressWarnings("unchecked")
-    public List<CotaDTO> buscarCotasCom_e_SemRaparte() {
+    public List<CotaDTO> buscarCotasAtivasSemRaparte(List<Integer> cotas) {
         
         final StringBuilder sql = new StringBuilder();
         
@@ -3625,11 +3625,15 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         sql.append(" from cota ct  ");
         sql.append(" 	left join Pessoa pessoa   ");
         sql.append(" 		on ct.pessoa_id = pessoa.id  ");
-        sql.append(" where ct.situacao_cadastro in ('ATIVO', 'SUSPENSO')  ");
+        sql.append(" where ct.situacao_cadastro = :statusCadastro  ");
+        sql.append(" 	   and ct.numero_cota not in (:numCotas ) ");
         sql.append(" group by ct.id order by ct.numero_cota  ");
         
         
         final Query query = super.getSession().createSQLQuery(sql.toString());
+        
+        query.setParameter("statusCadastro", SituacaoCadastro.ATIVO.name());
+        query.setParameterList("numCotas", cotas);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
         

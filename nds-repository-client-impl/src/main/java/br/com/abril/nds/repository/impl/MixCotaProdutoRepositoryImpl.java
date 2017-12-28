@@ -621,7 +621,6 @@ public class MixCotaProdutoRepositoryImpl extends AbstractRepositoryModel<MixCot
 		sql.append(" usar_icd_estudo = :isUsarICDEstudo ");
 		sql.append(" where codigo_icd = :icdProdutoPraAtualizar and tipo_classificacao_produto_id = :idClassificacao ");
 		
-		
 		Query query = this.getSession().createSQLQuery(sql.toString());
 	    query.setParameter("idClassificacao", idClassificacaoPraAtualizar);
 	    query.setParameter("isUsarICDEstudo", isUsarICDEstudo);
