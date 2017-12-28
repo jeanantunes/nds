@@ -473,7 +473,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	Long obterIdPorNumerDaCota(Integer numeroCota);
 
 
-	List<CotaDTO> buscarCotasCom_e_SemRaparte();
+	List<CotaDTO> buscarCotasAtivasSemRaparte(List<Integer> cotas);
 
 
 	List<AnaliseHistoricoDTO> buscarDadosCotasSemHistorico(List<Integer> listCota);

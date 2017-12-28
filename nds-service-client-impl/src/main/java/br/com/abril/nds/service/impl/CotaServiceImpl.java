@@ -64,7 +64,6 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
-import br.com.abril.nds.model.StatusTransmissaoEnum;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -3365,16 +3364,21 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional
     public List<CotaDTO> buscarCotasComEsemReparte(List<ProdutoEdicaoDTO> listProdutoEdicaoDTO){
     	
-//    	List<Long> listIdsProdutoEdicao = new ArrayList<>();
-//    	
-//    	for (ProdutoEdicaoDTO produtoEdicaoDTO : listProdutoEdicaoDTO) {
-//    		
-//    		String[] numeroEdicao = {produtoEdicaoDTO.getNumeroEdicao().toString()};
-//    		
-//    		listIdsProdutoEdicao.addAll(produtoEdicaoRepository.obterIdsEdicoesPorCodigoNumeroEdicoes(produtoEdicaoDTO.getCodigoProduto(), numeroEdicao));
-//		}
+    	List<CotaDTO> listCotas =  cotaRepository.buscarCotasHistorico(listProdutoEdicaoDTO, false);
     	
-    	return cotaRepository.buscarCotasCom_e_SemRaparte();
+    	List<Integer> numCotas = new ArrayList<>();
+    	
+    	for (CotaDTO cota : listCotas) {
+			numCotas.add(cota.getNumeroCota());
+		}
+    	
+    	List<CotaDTO> listCotasAtivasSemReparte = cotaRepository.buscarCotasAtivasSemRaparte(numCotas);
+    	
+    	if(listCotasAtivasSemReparte != null && !listCotasAtivasSemReparte.isEmpty()){
+    		listCotas.addAll(listCotasAtivasSemReparte);
+    	}
+    	
+    	return listCotas;
     }
     
     @Transactional(readOnly = true)
