@@ -236,7 +236,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodTipoNaturezaOperacao(String codTipoNaturezaOperacao) {
-		codTipoNaturezaOperacao = codTipoNaturezaOperacao != null ? StringUtils.leftPad(codTipoNaturezaOperacao, 4, '0') : StringUtils.leftPad(codTipoNaturezaOperacao, 4, '0');
+		codTipoNaturezaOperacao = codTipoNaturezaOperacao != null ? StringUtils.leftPad(codTipoNaturezaOperacao, 3, '0') : StringUtils.leftPad(codTipoNaturezaOperacao, 3, '0');
 		this.codTipoNaturezaOperacao = codTipoNaturezaOperacao;
 	}
 
