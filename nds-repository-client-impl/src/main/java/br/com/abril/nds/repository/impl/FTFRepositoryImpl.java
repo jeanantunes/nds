@@ -458,14 +458,14 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 		sqlBuilder.append(" select ");
 		sqlBuilder.append(" '5' as tipoRegistro, ");
-		sqlBuilder.append(" paramFtf.CODIGO_ESTABELECIMENTO_EMISSOR_GFF as codigoEstabelecimentoEmissor, ");
-		sqlBuilder.append(" paramFtf.CNPJ_EMISSOR as cnpjEmpresaEmissora, ");
-		sqlBuilder.append(" paramFtf.ESTABELECIMENTO as codLocal, ");
+		sqlBuilder.append(" '07' as codigoEstabelecimentoEmissor, ");
+		sqlBuilder.append(" '61438248000123' as cnpjEmpresaEmissora, ");
+		sqlBuilder.append(" 'DINAP09' as codLocal, ");
 		concatenarTipoPedidoBy(idNF, sqlBuilder);
 		sqlBuilder.append(" LPAD(cast(nfn.id as char), 8, '0') as numeroDocOrigem, ");
 		sqlBuilder.append(" '00' as numParcela,  "); 
 		sqlBuilder.append(" '00' as qtdeDiasParaPagamento, ");
-		sqlBuilder.append(" lpad(replace(cast(TRUNCATE(VALOR_NF, 2) as char), '.', ''), 15, '0') as valorParcela, ");
+		sqlBuilder.append(" lpad(replace(cast(TRUNCATE(sum(nfps.QUANTIDADE_COMERCIAL * VALOR_UNITARIO_COMERCIAL), 2) as char), '.', ''), 15, '0') as valorParcela, ");
 		sqlBuilder.append(" '' dataVencimentoParcela, ");
 		sqlBuilder.append(" '' dataCotacao, ");
 		sqlBuilder.append(" '' as percentualDescontoCondicional, ");
@@ -481,7 +481,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" inner join nota_fiscal_valor_calculado nfvc on nfn.NOTA_FISCAL_VALOR_CALCULADO_ID = nfvc.id");
 		sqlBuilder.append(" inner join produto_edicao pe on nfps.PRODUTO_EDICAO_ID = pe.ID ");
 		sqlBuilder.append(" left join natureza_operacao no ON no.ID = nfn.NATUREZA_OPERACAO_ID ");
-		sqlBuilder.append(" join parametros_ftf_geracao paramFtf ON no.ID = paramftf.NATUREZA_OPERACAO_ID ");
+		//sqlBuilder.append(" join parametros_ftf_geracao paramFtf ON no.ID = paramftf.NATUREZA_OPERACAO_ID ");
 		sqlBuilder.append(" left join nota_fiscal_endereco endereco on endereco.ID = nfn.ENDERECO_ID_DESTINATARIO ");
 		sqlBuilder.append(" left join nota_fiscal_pessoa nfp on nfp.ID = nfn.PESSOA_DESTINATARIO_ID_REFERENCIA ");
 
