@@ -304,9 +304,28 @@ public class MixCotaProdutoRepositoryImpl extends AbstractRepositoryModel<MixCot
 			sql.append(" select ") 
 			.append(" coalesce(round(avg(epc.qtde_recebida), 0),0) as reparteMedio, ")
 			.append(" coalesce(round(avg(epc.qtde_recebida - epc.qtde_devolvida), 0),0) as vendaMedia, ")
-			.append(" coalesce((select ec.reparte from estudo_cota ec  join estudo et on ec.estudo_id = et.id ")
-			.append("  join produto_edicao pe on et.produto_edicao_id = pe.id where ec.cota_id = :idCota ")
-			.append("  and pe.produto_id = :idProduto order by ec.id desc limit 1), 0) as ultimoReparte ")
+			.append("coalesce((select  cast(sum( case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE ") 
+			.append("			else - mecReparte.QTDE end ) as unsigned int ) as reparte ")
+			.append("	 from  movimento_estoque_cota mecReparte join tipo_movimento tipo on tipo.id = ") 
+			.append("	 	mecReparte.tipo_movimento_id join lancamento l on l.id = mecReparte.lancamento_id ") 
+			.append("		join produto_edicao pe on l.PRODUTO_EDICAO_ID = pe.ID join produto p ")
+			.append("		on pe.PRODUTO_ID = p.id join cota c on c.id = mecReparte.cota_id  ")
+			.append("	 where  tipo.GRUPO_MOVIMENTO_ESTOQUE <> 'ENVIO_ENCALHE'  ")
+			.append("	 	and mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null  ")
+			.append("	 	and pe.id = (select mec.produto_edicao_id from movimento_estoque_cota mec ")
+			.append("				 	join produto_edicao pe on mec.produto_edicao_id = pe.id ")
+			.append("			 		join produto pd on pe.produto_id = :idProduto ")
+			.append("					join tipo_movimento tm on mec.tipo_movimento_id = tm.id ")
+			.append("					join lancamento lc on lc.produto_edicao_id = pe.id ")
+			.append("				 	where mec.cota_id = :idCota and lc.status in ('EXPEDIDO', 'EM_BALANCEAMENTO_RECOLHIMENTO', ")
+			.append("					'BALANCEADO_RECOLHIMENTO', 'EM_RECOLHIMENTO', 'RECOLHIDO','FECHADO')  group by  pe.numero_edicao, pe.id, ")  
+			.append("				 	mec.cota_id  order by lc.data_lcto_distribuidor desc limit 1) ")	
+			.append("	 	and mecReparte.cota_id = :idCota  group by  pe.numero_edicao,  pe.id,  mecReparte.cota_id ")  
+			.append("	 order by  l.ID desc), 0 ) as ultimoReparte ") 
+			
+//			.append(" coalesce((select ec.reparte from estudo_cota ec  join estudo et on ec.estudo_id = et.id ")
+//			.append("  join produto_edicao pe on et.produto_edicao_id = pe.id where ec.cota_id = :idCota ")
+//			.append("  and pe.produto_id = :idProduto order by ec.id desc limit 1), 0) as ultimoReparte ")
 			.append(" from estoque_produto_cota epc ")
 			.append(" left join produto_edicao pe ON pe.ID = epc.PRODUTO_EDICAO_ID ")
 			.append(" left join lancamento on lancamento.PRODUTO_EDICAO_ID = pe.ID ")
@@ -323,7 +342,8 @@ public class MixCotaProdutoRepositoryImpl extends AbstractRepositoryModel<MixCot
 			for (Map object : list2) {
 				mixCotaDTO.setReparteMedio((BigDecimal)object.get("reparteMedio"));
 				mixCotaDTO.setVendaMedia((BigDecimal)object.get("vendaMedia"));
-				mixCotaDTO.setUltimoReparte((BigDecimal)object.get("ultimoReparte"));
+				
+				mixCotaDTO.setUltimoReparte(object.get("ultimoReparte") != null ? new BigDecimal((BigInteger)object.get("ultimoReparte")) : BigDecimal.ZERO);
 				
 			}
 		}
