@@ -28,15 +28,12 @@
 <br />
 <br />
 <br />
-<br />
-<br />
-<br />
 
 <form name="form" action="<c:url value='j_spring_security_check'/>" method="POST" onload="$('#username').focus()" onsubmit="form.submit();">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <input:hidden id="logout_true" name="logout_true" />
   <tr >
-    <td align="center" ><img src="images/Logo_Total_Express.png" border="0" alt="Treelog"  /></td>
+    <td align="center" ><img src="images/Logo-Total-Publicacoes.jpg" border="0" alt="Treelog" style="width: 300px;"  /></td>
   </tr>
   <tr>
     <td style="padding-bottom:5px;">&nbsp;
