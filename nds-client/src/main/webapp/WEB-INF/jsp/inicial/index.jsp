@@ -26,7 +26,7 @@ $(function() {
 <div class="area">
 	
 		<div class="box_home saudacao">
-		   	<img src="${pageContext.request.contextPath}/images/logo_sistema_new.png" alt="Novo Distrib" class="logoHome" />
+		   	<img src="${pageContext.request.contextPath}/images/Logo-Total-Publicacoes.jpg" alt="Novo Distrib" class="logoHome" style="width: 140px;" />
 		
 		    <h1>Seja bem-vindo ao NDS</h1>
 		    
@@ -62,19 +62,21 @@ $(function() {
 		    	
 		    <h2>Suporte</h2>
 		    <br clear="all" />
-		    <img src="${pageContext.request.contextPath}/images/ico_email.gif" border="0" align="left" style="margin-right:10px;" />
-		    <h3>E-mail</h3>
+		    <img src="${pageContext.request.contextPath}/images/ico_email.gif" border="0" align="left" style="margin-right:10px; padding-top: 17px;" />
+		    <h3 style="padding-top: 17px;">E-mail</h3>
 		    <p>E-mail: <a href="mailto:Treelog-SAD@abril.com.br">Treelog-SAD@abril.com.br</a></p>
 		    
 		    <br clear="all" />
-		    <img src="${pageContext.request.contextPath}/images/ico_telefone.gif" border="0" align="left" style="margin-right:10px;" />
-		    <h3>Telefone:</h3>
-		    <p>11 - 3789 - 3192 / 3193 / 3194 / 3195</p>
+		    <img src="${pageContext.request.contextPath}/images/ico_telefone.gif" border="0" align="left" style="margin-right:10px; padding-top: 15px;" />
+		    <h3 style="padding-top: 15px;">Telefone:</h3>
+		    <p>11 - 3789 - 3193</p>
 		    
 		    <br clear="all" />
+		    <!--  
 		    <img src="${pageContext.request.contextPath}/images/ico_site.gif" border="0" align="left" style="margin-right:10px;" />
 		    <h3>Site:</h3>
 		    <p>www.treelog.com.br</p>
+		    -->
 		
 		</div>
 		
