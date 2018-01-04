@@ -465,7 +465,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" LPAD(cast(nfn.id as char), 8, '0') as numeroDocOrigem, ");
 		sqlBuilder.append(" '00' as numParcela,  "); 
 		sqlBuilder.append(" '00' as qtdeDiasParaPagamento, ");
-		sqlBuilder.append(" lpad(replace(cast(TRUNCATE(sum(nfps.QUANTIDADE_COMERCIAL * VALOR_UNITARIO_COMERCIAL), 2) as char), '.', ''), 15, '0') as valorParcela, ");
+		sqlBuilder.append(" LPAD(replace(cast(round(sum(truncate(nfps.QUANTIDADE_COMERCIAL * VALOR_UNITARIO_COMERCIAL,2)),2) as CHAR), '.', ''), 15, '0') as valorParcela, ");
 		sqlBuilder.append(" '' dataVencimentoParcela, ");
 		sqlBuilder.append(" '' dataCotacao, ");
 		sqlBuilder.append(" '' as percentualDescontoCondicional, ");
