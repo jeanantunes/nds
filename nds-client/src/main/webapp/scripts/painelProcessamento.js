@@ -241,7 +241,7 @@ var painelProcessamentoController = $.extend(true, {
 		
 		$.each(resultado.rows, function(index, row) {
 			
-			console.log(row.cell.nome);
+
 			
 			if(row.cell.tipoInterfaceExecucao=='microDistribuicao'){
 				btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterfaceMicroDistribuicao(\"" + row.cell.nome+ "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
@@ -249,6 +249,7 @@ var painelProcessamentoController = $.extend(true, {
 			}else{
 				btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterface(\"" + row.cell.idInterface + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
 				brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.idLogExecucao + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
+
 			}
 			
 			

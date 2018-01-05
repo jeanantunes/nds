@@ -9,18 +9,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
+import br.com.abril.nds.dto.*;
 import org.hibernate.Query;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
-import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
-import br.com.abril.nds.dto.InformeEncalheDTO;
-import br.com.abril.nds.dto.InformeLancamentoDTO;
-import br.com.abril.nds.dto.LancamentoDTO;
-import br.com.abril.nds.dto.ProdutoLancamentoCanceladoDTO;
-import br.com.abril.nds.dto.ProdutoLancamentoDTO;
-import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
-import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
-import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.integracao.micro.Ems0106Deapr;
 import br.com.abril.nds.dto.integracao.micro.Ems0107Deajo;
@@ -475,5 +467,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	List<Long> getIDByDataRecolhimento(List<Date> datas);
 
 	List<Long> getIDsOrdenadosPeloNomeComercialDoProdutoEdica(List<Long> ids);
+
+	List<LancamentoCapaDetalheCouchDTO> getLancamentoCapaCouch(Date data,String codigoDistribucao);
 
 }
