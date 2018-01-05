@@ -38,12 +38,13 @@ public class EMS9103MessageProcessor implements MessageProcessor {
     @Override
     public void processMessage(Message message) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-        String dateInString = "8-ago-2016";
+    //    String dateInString = "8-ago-2016";
+
 
         Distribuidor distribuidor=distribuidorRepository.obter();
         try {
             LancamentoCapaCouchDTO lancamentoCapaCouchDTO = new LancamentoCapaCouchDTO();
-            lancamentoCapaCouchDTO.setLancamentoCapaDetalheCouchDTO(lancamentoRepository.getLancamentoCapaCouch(formatter.parse(dateInString), distribuidor.getCodigoDistribuidorDinap()));
+            lancamentoCapaCouchDTO.setLancamentoCapaDetalheCouchDTO(lancamentoRepository.getLancamentoCapaCouch(formatter.parse(formatter.format(new Date())), distribuidor.getCodigoDistribuidorDinap()));
             exporteCouch.exportarLancamentoCapa(lancamentoCapaCouchDTO);
         } catch (ParseException e) {
             e.printStackTrace();

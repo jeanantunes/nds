@@ -160,7 +160,7 @@ public class ExporteCouchImpl implements ExporteCouch {
 					logExecucaoRepository.findByNome("LAN_CAP"));
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			logInterfaceExecucao.salvar("A exportação das lancamentosnão foi realizada com sucesso" + e.getMessage(), usuarioService.getUsuarioLogado(), new Date(),
+			logInterfaceExecucao.salvar("Ocorreu um erro durante a exportação das lancamentos capas: " + e.getMessage(), usuarioService.getUsuarioLogado(), new Date(),
 					StatusExecucaoEnum.FALHA, "LancamentoCapa",
 					logExecucaoRepository.findByNome("LAN_CAP"));
 		}finally{
