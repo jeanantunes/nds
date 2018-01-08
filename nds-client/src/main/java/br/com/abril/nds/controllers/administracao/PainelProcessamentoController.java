@@ -218,8 +218,12 @@ public class PainelProcessamentoController extends BaseController {
      * @throws Exception
      */
     @Path("/pesquisarInterfaces")
-    public void pesquisarInterfaces(final String codigoDistribuidor, final String sortname, final String sortorder, final int rp, final int page) throws Exception {
+    public void pesquisarInterfaces(String codigoDistribuidor, final String sortname, final String sortorder, final int rp, final int page) throws Exception {
         
+       if(codigoDistribuidor==null){
+           codigoDistribuidor= distribuidorService.obter().getCodigoDistribuidorDinap();
+       }
+
         final FiltroInterfacesDTO filtro = carregarFiltroInterfaces(codigoDistribuidor, sortorder, sortname, page, rp);
         
         List<InterfaceDTO> resultado = painelProcessamentoService.listarInterfaces(filtro);

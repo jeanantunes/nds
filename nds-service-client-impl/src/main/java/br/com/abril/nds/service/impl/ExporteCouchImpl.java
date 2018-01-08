@@ -1,8 +1,10 @@
 package br.com.abril.nds.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.LancamentoCapaCouchDTO;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
 import org.slf4j.Logger;
@@ -39,8 +41,11 @@ public class ExporteCouchImpl implements ExporteCouch {
 	@Autowired
 	private LogExecucaoRepository logExecucaoRepository;
 
+	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
 	private static String LANCAMENTO_RECOLHIMENTO_COUCH = "db_carga_tpj_lancamentos_recolhimentos";
 	private static String COTAS_CONSIGNADO_COUCH = "db_carga_tpj_cota_consignada";
+	private static String LANCAMENTO_CAPA_COUCH = "db_carga_lancamento_capa";
 
 
 	public void exportarLancamentoRecolhimento(List<CotaCouchDTO> listaReparte, String nomeEntidadeIntegrada) {
@@ -129,5 +134,43 @@ public class ExporteCouchImpl implements ExporteCouch {
         }
 
 	}
+
+
+	public void exportarLancamentoCapa(LancamentoCapaCouchDTO lancamentoCapaCouchDTO) {
+		try {
+			couchDbClient = getCouchDBClient(LANCAMENTO_CAPA_COUCH);
+
+			String codigoDistribuidor = lancamentoCapaCouchDTO.getLancamentoCapaDetalheCouchDTO().get(0).getCodigoDistribuidor();
+			String dataLancamento = lancamentoCapaCouchDTO.getLancamentoCapaDetalheCouchDTO().get(0).getDataLancamento();
+			String docName = "lancamento_" +dataLancamento +"_"+codigoDistribuidor;
+
+			try {
+				JsonObject jsonDoc = couchDbClient.find(JsonObject.class, docName);
+				this.couchDbClient.remove(jsonDoc);
+			} catch (NoDocumentException e) {
+
+			}
+
+			lancamentoCapaCouchDTO.set_id(docName);
+			this.couchDbClient.save(lancamentoCapaCouchDTO);
+
+			String mensagem = "A exportação dos lancamento capas foi realizada com sucesso";
+			logInterfaceExecucao.salvar(mensagem, usuarioService.getUsuarioLogado(), new Date(),
+					StatusExecucaoEnum.SUCESSO, "LancamentoCapa",
+					logExecucaoRepository.findByNome("LAN_CAP"));
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			logInterfaceExecucao.salvar("Ocorreu um erro durante a exportação das lancamentos capas: " + e.getMessage(), usuarioService.getUsuarioLogado(), new Date(),
+					StatusExecucaoEnum.FALHA, "LancamentoCapa",
+					logExecucaoRepository.findByNome("LAN_CAP"));
+		}finally{
+
+			if (couchDbClient != null) {
+				couchDbClient.shutdown();
+			}
+		}
+
+	}
+
 
 }

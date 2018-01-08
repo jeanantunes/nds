@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import br.com.abril.nds.dto.*;
 import org.hibernate.Criteria;
 import org.hibernate.LockOptions;
 import org.hibernate.Query;
@@ -34,16 +35,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
-import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
-import br.com.abril.nds.dto.InformeEncalheDTO;
-import br.com.abril.nds.dto.InformeLancamentoDTO;
-import br.com.abril.nds.dto.LancamentoDTO;
-import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
-import br.com.abril.nds.dto.ProdutoLancamentoCanceladoDTO;
-import br.com.abril.nds.dto.ProdutoLancamentoDTO;
-import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
-import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
-import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.dto.integracao.micro.Ems0106Deapr;
 import br.com.abril.nds.dto.integracao.micro.Ems0107Deajo;
@@ -3679,6 +3670,37 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 				addScalar("id", StandardBasicTypes.LONG);
 
 		query.setParameterList("ids",ids);
+
+		return  query.list();
+	}
+
+	@Override
+	public List<LancamentoCapaDetalheCouchDTO> getLancamentoCapaCouch(Date data,String codigoDistribuidor) {
+
+		StringBuilder SQL = new StringBuilder();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+
+		SQL.append(" select p.codigo as codigoProduto ,pe.numero_edicao as numeroEdicao,p.nome as nomeProduto,l.DATA_LCTO_DISTRIBUIDOR as dataLancamento, :codigoDistribuidor as codigoDistribuidor from lancamento as l ")
+		.append(" inner join produto_edicao as pe on pe.id = l.produto_edicao_id ")
+		.append(" inner join produto as p on p.id = pe.produto_id ")
+		.append(" where l.DATA_LCTO_DISTRIBUIDOR=:data and l.status='EXPEDIDO' ");
+
+
+		SQLQuery query = getSession().createSQLQuery(SQL.toString());
+
+		query.setParameter("data",simpleDateFormat.format(data));
+		query.setParameter("codigoDistribuidor",codigoDistribuidor);
+
+		query.addScalar("codigoProduto",StandardBasicTypes.STRING);
+		query.addScalar("numeroEdicao",StandardBasicTypes.STRING);
+		query.addScalar("nomeProduto",StandardBasicTypes.STRING);
+		query.addScalar("codigoDistribuidor",StandardBasicTypes.STRING);
+		query.addScalar("nomeProduto",StandardBasicTypes.STRING);
+		query.addScalar("dataLancamento",StandardBasicTypes.STRING);
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(LancamentoCapaDetalheCouchDTO.class));
+
 
 		return  query.list();
 	}

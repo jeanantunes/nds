@@ -24,6 +24,7 @@ public enum InterfaceEnum {
 	EMS0137(137L, null, EMS0137InputItem.class, EMS0137Input.class, TipoInterfaceEnum.DETALHE_INLINE),
 	EMS3100(3100L, null, EMS3100InputItem.class, EMS3100Input.class, TipoInterfaceEnum.DETALHE_INLINE);
 
+
 	private Long codigoInterface;
 	private Integer tamanhoLinha;
 	private Class<? extends IntegracaoDocument> classeLinha;
