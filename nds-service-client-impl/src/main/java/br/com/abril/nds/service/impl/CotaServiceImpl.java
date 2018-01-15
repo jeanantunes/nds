@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import br.com.abril.nds.model.cadastro.*;
+import br.com.abril.nds.repository.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
@@ -65,41 +67,6 @@ import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.CotaBase;
-import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
-import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
-import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.EnderecoCota;
-import br.com.abril.nds.model.cadastro.Entregador;
-import br.com.abril.nds.model.cadastro.FlagPendenteAtivacao;
-import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.HistoricoNumeroCota;
-import br.com.abril.nds.model.cadastro.HistoricoNumeroCotaPK;
-import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
-import br.com.abril.nds.model.cadastro.ModalidadeCobranca;
-import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
-import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
-import br.com.abril.nds.model.cadastro.ParametroCobrancaDistribuicaoCota;
-import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
-import br.com.abril.nds.model.cadastro.ParametrosCotaNotaFiscalEletronica;
-import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
-import br.com.abril.nds.model.cadastro.Pessoa;
-import br.com.abril.nds.model.cadastro.PessoaFisica;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
-import br.com.abril.nds.model.cadastro.ReferenciaCota;
-import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.SocioCota;
-import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.model.cadastro.TelefoneCota;
-import br.com.abril.nds.model.cadastro.TipoCota;
-import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
-import br.com.abril.nds.model.cadastro.TipoEndereco;
-import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
@@ -111,33 +78,6 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoProduto;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDistribuicao;
-import br.com.abril.nds.repository.AssociacaoVeiculoMotoristaRotaRepository;
-import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
-import br.com.abril.nds.repository.CobrancaRepository;
-import br.com.abril.nds.repository.CotaBaseRepository;
-import br.com.abril.nds.repository.CotaGarantiaRepository;
-import br.com.abril.nds.repository.CotaRepository;
-import br.com.abril.nds.repository.DistribuidorClassificacaoCotaRepository;
-import br.com.abril.nds.repository.DistribuidorRepository;
-import br.com.abril.nds.repository.EnderecoCotaRepository;
-import br.com.abril.nds.repository.EnderecoPDVRepository;
-import br.com.abril.nds.repository.EnderecoRepository;
-import br.com.abril.nds.repository.EntregadorRepository;
-import br.com.abril.nds.repository.FlagPendenteAtivacaoRepository;
-import br.com.abril.nds.repository.GrupoRepository;
-import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
-import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
-import br.com.abril.nds.repository.ParametroCobrancaDistribuicaoCotaRepository;
-import br.com.abril.nds.repository.ParametroSistemaRepository;
-import br.com.abril.nds.repository.PdvRepository;
-import br.com.abril.nds.repository.PessoaFisicaRepository;
-import br.com.abril.nds.repository.PessoaJuridicaRepository;
-import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.repository.ReferenciaCotaRepository;
-import br.com.abril.nds.repository.RotaRepository;
-import br.com.abril.nds.repository.SocioCotaRepository;
-import br.com.abril.nds.repository.TelefoneCotaRepository;
-import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaBaseService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
@@ -306,7 +246,10 @@ public class CotaServiceImpl implements CotaService {
     
     @Autowired	
     private ProdutoService produtoService;
-    
+
+    @Autowired
+    private AcessoNaRepository acessoNaRepository;
+
     @Transactional(readOnly = true)
     @Override
     public List<CotaDTO> obterCotas(final FiltroCotaDTO filtro) {
@@ -359,13 +302,7 @@ public class CotaServiceImpl implements CotaService {
             
             return null;
         }
-        /*
-		if (listaCotas.size() > 1) {
-			
-			throw new ValidacaoException(
-				TipoMensagem.ERROR, "Mais de um resultado encontrado para a cota com nome \"" + nome + "\"");
-		}
-         */
+
         return listaCotas;
     }
     
@@ -427,7 +364,6 @@ public class CotaServiceImpl implements CotaService {
     /**
      * ENDERECO
      * 
-     * @see br.com.abril.nds.service.CotaService#processarEnderecos(java.util.Long, java.util.List, java.util.List)
      */
     @Override
     @Transactional
@@ -1348,14 +1284,12 @@ public class CotaServiceImpl implements CotaService {
     public CotaDTO obterDadosCadastraisCota(final Long idCota){
         
         if (idCota == null) {
-        	
             throw new ValidacaoException(TipoMensagem.WARNING, "Número da Cota não deve ser nulo.");
         }
         
         final Cota cota  = cotaRepository.buscarPorId(idCota);
         
         if (cota == null) {
-        	
             throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
 		}
 		
@@ -1403,12 +1337,17 @@ public class CotaServiceImpl implements CotaService {
 		}
 		cotaDTO.setSistema(cota.getSistema());
 		cotaDTO.setTipoTransmissao(cota.getTipoTransmissao());
-		
+
+        AcessoNA acessoNA = acessoNaRepository.obterPorIdCota(cota.getId());
+        if(acessoNA != null){
+            cotaDTO.setAcessoNA(cota.getAcessoNA().isAcessoAtivo());
+        }
+
         return cotaDTO;
     }
     
     @Transactional
-    private List<CotaBaseDTO> atribuirCotaBase(final Integer numeroCota) {
+    public List<CotaBaseDTO> atribuirCotaBase(final Integer numeroCota) {
         
         List<CotaBaseDTO> listaCotaBase = new ArrayList<CotaBaseDTO>();
         
@@ -1538,7 +1477,7 @@ public class CotaServiceImpl implements CotaService {
     }
     
     @Transactional
-    private void atribuirInicioEFimPeriodoCota(CotaDTO cotaDTO, Long idCota){
+    public void atribuirInicioEFimPeriodoCota(CotaDTO cotaDTO, Long idCota){
     	
     	CotaBase cotaBase = cotaBaseRepository.obterSituacaoCota(idCota);
     	
@@ -1601,12 +1540,15 @@ public class CotaServiceImpl implements CotaService {
 		
 		if(cotaDto.getIdCota()!= null){
 			cota = cotaRepository.buscarPorId(cotaDto.getIdCota());
+
+            AcessoNA acessoNA = acessoNaRepository.obterPorIdCota(cota.getId());
+            cota.setAcessoNA(acessoNA);
 		}
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		boolean incluirPDV = false;
-
+        String loginUsuarioLogado = usuarioService.getUsuarioLogado().getLogin();
 
         // Flag indica criação de uma nova cota
         boolean newCota = false;
@@ -1615,13 +1557,13 @@ public class CotaServiceImpl implements CotaService {
             cota.setInicioAtividade(dataOperacao);
             cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
             cota.setDataInclusao(new Date());
-            cota.setUsuarioInclusao(usuarioService.getUsuarioLogado().getLogin());
+            cota.setUsuarioInclusao(loginUsuarioLogado);
             //cota.setStatusTransmissaoEnum(StatusTransmissaoEnum.PENDENTE);
             incluirPDV = true;
             newCota = true;
         }else{
         	cota.setDataAlteracao(new Date());
-        	cota.setUsuarioAlteracao(usuarioService.getUsuarioLogado().getLogin());
+        	cota.setUsuarioAlteracao(loginUsuarioLogado);
         }
         
         // Flag indica a mudança de número da cota
@@ -1667,10 +1609,34 @@ public class CotaServiceImpl implements CotaService {
 		}
         
         cota.setParametrosCotaNotaFiscalEletronica(getParamNFE(cota, cotaDto));
+
+        // Ordem p/ ativar e desativar acesso NA
+        if(cotaDto.isAcessoNA() || cota.getAcessoNA() != null){
+            // Atualizar apenas se tiver sido alterada
+            if(cota.getAcessoNA() != null &&
+                    cota.getAcessoNA().isAcessoAtivo() != cotaDto.isAcessoNA()) {
+                AcessoNA naExistente = cota.getAcessoNA();
+                naExistente.setDataAlteracao(new Date());
+                naExistente.setUsuarioAlteracao(loginUsuarioLogado);
+                naExistente.setAcessoAtivo(cotaDto.isAcessoNA());
+
+            } else {
+                AcessoNA novaNA = new AcessoNA();
+                novaNA.setCota(cota);
+                novaNA.setAcessoAtivo(cotaDto.isAcessoNA());
+                novaNA.setDataInclusao(new Date());
+                novaNA.setUsuarioInclusao(loginUsuarioLogado);
+                novaNA.setDataAlteracao(new Date());
+                novaNA.setUsuarioAlteracao(loginUsuarioLogado);
+
+                cota.setAcessoNA(novaNA);
+
+            }
+
+        }
         
         cota  = cotaRepository.merge(cota);
         
-      //
         if(newCota) {
             
             final HistoricoSituacaoCota hsc = new HistoricoSituacaoCota();
@@ -1693,10 +1659,9 @@ public class CotaServiceImpl implements CotaService {
         processarDadosReferenciaCota(baseReferenciaCota, cotaDto);
         
         if(incluirPDV) {
-        	
             persisteDadosPDV(cota, cotaDto);
         }
-        
+
         return cota.getId();
     }
     

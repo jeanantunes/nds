@@ -46,19 +46,17 @@ public abstract class NdsiRunner {
 			username = args[1];
 		}
 
-		DistribuidorService distribuidorService = getDistribuidorService();
+		DistribuidorService distribuidorService = NdsiRunner.getDistribuidorService();
 		
 		String codigoDistribuidorDinap = distribuidorService.codigoDistribuidorDinap();
 		
 		if (codigoDistribuidorDinap != null) {
-
 			getRouteTemplate(args[0]).execute(username, codigoDistribuidorDinap);
 		}
 		
 		String codigoDistribuidorFC = distribuidorService.codigoDistribuidorFC();
 		
 		if (codigoDistribuidorFC != null) {
-		
 			getRouteTemplate(args[0]).execute(username, codigoDistribuidorFC);
 		}
 		
@@ -76,7 +74,7 @@ public abstract class NdsiRunner {
 	private static DistribuidorService getDistribuidorService() {
 		
 		try {
-			return (DistribuidorService) applicationContext.getBean(DistribuidorService.class);
+			return applicationContext.getBean(DistribuidorService.class);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

@@ -8,18 +8,23 @@ package br.com.abril.nds.model.cadastro.pdv;
  */
 public enum StatusPDV {
 	
-	ATIVO("Ativo"), 
+	ATIVO("Ativo", "ATV"),
 	
-	SUSPENSO("Suspenso");
+	SUSPENSO("Suspenso", "SUS");
 	
 	private String descricao;
+	private String descricaoIcd;
 
-	private StatusPDV(String descricao) {
+	StatusPDV(String descricao, String descricaoIcd) {
 		this.descricao = descricao;
+		this.descricaoIcd = descricaoIcd;
 	}
 	
 	public String getDescricao() {
 		return descricao;
 	}
 
+	public String getDescricaoIcd() {
+		return descricaoIcd;
+	}
 }

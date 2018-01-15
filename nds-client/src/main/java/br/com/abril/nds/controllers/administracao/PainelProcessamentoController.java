@@ -80,7 +80,7 @@ public class PainelProcessamentoController extends BaseController {
     
     @Autowired
     private HttpSession session;
-    
+
     private static final String FILTRO_PESQUISA_INTERFACES_SESSION_ATTRIBUTE = "filtroPesquisaInterfaces";
     private static final String FILTRO_PESQUISA_PROCESSOS_SESSION_ATTRIBUTE = "filtroPesquisaProcessos";
     
@@ -131,7 +131,7 @@ public class PainelProcessamentoController extends BaseController {
     
     @Path("/")
     public void index() {
-        
+
     	String codigoDinap = this.distribuidorService.codigoDistribuidorDinap();
         String codigoFC = this.distribuidorService.codigoDistribuidorFC();
         
@@ -605,7 +605,6 @@ public class PainelProcessamentoController extends BaseController {
     @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
     public void executarInterface(final String idInterface) throws Exception {
 
-
         // FIXME - Ou chamamos com o distribuidor FC, ou com o DINAP ! Os dois é realmente necessário ?????
         String codigoDistribuidorFC = distribuidorService.codigoDistribuidorFC();
         if(!codigoDistribuidorFC.equals("0"))
@@ -835,9 +834,7 @@ public class PainelProcessamentoController extends BaseController {
     			gerarArquivoMatrizService.gerarArquivoDeapr(date, getUsuarioLogado());
     			gerarArquivoMatrizService.gerarArquivoDeajo(date, getUsuarioLogado());
     		}
-		//	gerarArquivoMatrizService.gerarArquivoDeapr(cl.getTime());  // 9002
-		//	gerarArquivoMatrizService.gerarArquivoDeajo(cl.getTime());  // 9002
-			
+
 			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Arquivo enviado com sucesso!"),"result").recursive().serialize();
 		}
     	
