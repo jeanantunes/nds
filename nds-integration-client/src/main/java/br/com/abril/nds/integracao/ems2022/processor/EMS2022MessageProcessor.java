@@ -2,7 +2,6 @@ package br.com.abril.nds.integracao.ems2022.processor;
 
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
@@ -14,6 +13,7 @@ import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -27,18 +27,13 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EMS2022MessageProcessor.class);
 
-    private static final String DB_DRIVER = "oracle.jdbc.driver.OracleDriver";
-    private static final String DB_CONNECTION = "jdbc:oracle:thin:@10.198.20.19:1521:TD152";
-    private static final String DB_USER = "icd";
-    private static final String DB_PASSWORD = "icd";
+    @Autowired
+    private Environment env;
 
     private static final String PROC_INTERFACE_NDS_NAW = "{call PROC_INTERFACE_NDS_NAW(?,?,?,?,?)}";
 
     @Autowired
     private LogExecucaoRepository logExecucaoRepository;
-
-    @Autowired
-    private NdsiLoggerFactory ndsiLoggerFactory;
 
     @Override
     public void preProcess(AtomicReference<Object> tempVar) {
@@ -54,7 +49,7 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
     @Override
     public void processMessage(Message message) {
 
-        LOGGER.info(":: Carregando Acessos NA {}", message.getBody());
+        LOGGER.info(":: Carregando Acessos NA");
 
         Connection con = null;
         Statement stmt = null;
@@ -63,7 +58,7 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
         try {
 
             String nomeInterface = message.getHeader().get(MessageHeaderProperties.URI.getValue()).toString();
-            Date dataUltimaExecucao = logExecucaoRepository.buscarDataUltimaExecucao("EMS2022");
+            Date dataUltimaExecucao = logExecucaoRepository.buscarDataUltimaExecucao(nomeInterface);
 
             /**
              * Busca código do distribuidor e cotas que possuem registro na AcessoNA e é foram atualizadas desde a ultima execução
@@ -100,7 +95,7 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
                 long qtdPontoVenda = rs.getLong(1);
 
                 if(qtdPontoVenda == 0L){
-                    System.out.println(":: INSERIR REGISTRO NA PONTO_VENDA");
+                    LOGGER.info(":: INSERIR REGISTRO NA PONTO_VENDA");
 
                     con.setAutoCommit(false);
 
@@ -139,10 +134,10 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
                     pstmt.setString     (paramIndex++, codigoDistribuidorDinap);
                     pstmt.setLong       (paramIndex++, cota.getNumeroCota());
                     pstmt.setString     (paramIndex++, pdvPrincipal.getStatus().getDescricaoIcd());
-                    pstmt.setLong       (paramIndex++, cota.getPessoa().getId()); // TODO - Identificar origem codigo jornaleiro -
+                    pstmt.setLong       (paramIndex++, cota.getPessoa().getId()); // Alinhado com o Sergio
                     pstmt.setString     (paramIndex++, cota.getPessoa().getNome().length() > 35 ? cota.getPessoa().getNome().substring(0, 35) : cota.getPessoa().getNome() );
                     // cod_ponto_venda_sdc_ptvd || codigo agente devedor
-                    pstmt.setLong       (paramIndex++, pdvPrincipal.getId()); // TODO - Identificar origem
+                    pstmt.setLong       (paramIndex++, pdvPrincipal.getId()); // Alinhado com o Sergio
                     pstmt.setNull       (paramIndex++, Types.INTEGER);
                     pstmt.setString     (paramIndex++, tipoLogradouro.length() > 5 ? tipoLogradouro.substring(0,5) : tipoLogradouro);
                     pstmt.setString     (paramIndex++, enderecoPDV.getEndereco().getLogradouro());
@@ -150,13 +145,13 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
                     pstmt.setString     (paramIndex++, enderecoPDV.getEndereco().getComplemento());
                     pstmt.setInt        (paramIndex++, enderecoPDV.getEndereco().getCodigoUf()); // TODO - Codigo bairro NÃO ESTÁ MAPEADO NA ENTIDADE
                     pstmt.setString     (paramIndex++, enderecoPDV.getEndereco().getBairro());
-                    pstmt.setString     (paramIndex++, enderecoPDV.getEndereco().getBairro()); // FIXME - NDS POSSUI ESSA INFORMAÇÃO? -- Municipio ??
+                    pstmt.setString     (paramIndex++, enderecoPDV.getEndereco().getCidade());
                     pstmt.setString     (paramIndex++, enderecoPDV.getEndereco().getUf());
                     pstmt.setString     (paramIndex++, enderecoPDV.getEndereco().getCep());
                     pstmt.setString     (paramIndex++, telefone.getTelefone().getDdd());
-                    pstmt.setString     (paramIndex++, telefone.getTelefone().getNumero());
-                    pstmt.setString     (paramIndex++, "S"); // TODO - CONFIRMAR SIGNIFICADO DE ind_municipio_indefinido
-                    pstmt.setString     (paramIndex++, "S"); // TODO - CONFIRMAR SIGNIFICADO DE ind_na_web
+                    pstmt.setString     (paramIndex++, telefone.getTelefone().getNumeroSemFormatacao());
+                    pstmt.setString     (paramIndex++, "S");
+                    pstmt.setString     (paramIndex++, "S");
                     pstmt.setString     (paramIndex++, pdvPrincipal.getEmail());
 
                     int insertCount = pstmt.executeUpdate();
@@ -213,12 +208,17 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
         LOGGER.info("EMS2022 posProcess Client: {}", tempVar);
     }
 
-    private static Connection getDBConnection() {
+    private Connection getDBConnection() {
         Connection dbConnection = null;
 
+        String driverClassName = env.getProperty("icddb.driverClassName");
+        String url = env.getProperty("icddb.url");
+        String username = env.getProperty("icddb.username");
+        String password = env.getProperty("icddb.password");
+
         try {
-            Class.forName(DB_DRIVER);
-            dbConnection = DriverManager.getConnection(DB_CONNECTION, DB_USER,DB_PASSWORD);
+            Class.forName(driverClassName);
+            dbConnection = DriverManager.getConnection(url, username,password);
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

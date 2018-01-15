@@ -10,7 +10,7 @@
 		<property name="url" value="${database.url}" />
 		<property name="username" value="${database.username}" />
 		<property name="password" value="${database.password}" />
-	</bean>	
+	</bean>
 	
 	<bean id="couchDbProperties" class="br.com.abril.nds.integracao.couchdb.CouchDbProperties">
 		<property name="protocol" value="${couchdb.protocol}"/>
