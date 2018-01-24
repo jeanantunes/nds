@@ -319,7 +319,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
 				}
 			}
 			if(todosParcial) {
-				selecionados.get(0).setIndicePeso(new BigDecimal(2));
+				if(selecionados!=null && selecionados.size()>0) {
+					selecionados.get(0).setIndicePeso(new BigDecimal(2));
+				}
 			}
 		}
 
