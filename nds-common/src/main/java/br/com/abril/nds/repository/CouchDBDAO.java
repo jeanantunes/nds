@@ -91,9 +91,11 @@ public class CouchDBDAO implements CouchDBRepository {
                 .build();
 		
 		CouchDbInstance dbInstance = new StdCouchDbInstance(authenticatedHttpClient);
-	
-		this.couchDbConnector = dbInstance.createConnector(DB_NAME, true);
-				
+		try {
+			this.couchDbConnector = dbInstance.createConnector(DB_NAME, true);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

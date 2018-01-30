@@ -87,8 +87,12 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
                 .password(couchDbProperties.getPassword())
                 .build();
 		CouchDbInstance dbInstance = new StdCouchDbInstance(authenticatedHttpClient);
-		this.couchDbConnector = dbInstance.createConnector(DB_NAME, true);
-				
+		try {
+			this.couchDbConnector = dbInstance.createConnector(DB_NAME, true);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
 	}	
 	
 	/**
@@ -437,6 +441,7 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		query.setParameter("cidade", cidade);
 		query.setParameter("inativo", SituacaoCadastro.INATIVO);
 		
+
 		return query.list();
 	}
 	
