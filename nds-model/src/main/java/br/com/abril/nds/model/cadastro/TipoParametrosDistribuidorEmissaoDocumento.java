@@ -2,13 +2,13 @@ package br.com.abril.nds.model.cadastro;
 
 public enum TipoParametrosDistribuidorEmissaoDocumento {
 
-	SLIP("Slip"),
 	BOLETO("Boleto"),
 	BOLETO_SLIP("Boleto + Slip"),
-	RECIBO("Recibo"),
+	CHAMADA_ENCALHE("Chamada de Encalhe"),
 	NOTA_ENVIO("Nota de Envio"),
-	CHAMADA_ENCALHE("Chamada de Encalhe");
-	
+	RECIBO("Recibo"),
+	SLIP("Slip");
+
 	private String descricao;
 	
 	private TipoParametrosDistribuidorEmissaoDocumento(String descricao) {
