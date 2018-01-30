@@ -3680,11 +3680,10 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 		StringBuilder SQL = new StringBuilder();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-
 		SQL.append(" select p.codigo as codigoProduto ,pe.numero_edicao as numeroEdicao,p.nome as nomeProduto,l.DATA_LCTO_DISTRIBUIDOR as dataLancamento, :codigoDistribuidor as codigoDistribuidor from lancamento as l ")
 		.append(" inner join produto_edicao as pe on pe.id = l.produto_edicao_id ")
 		.append(" inner join produto as p on p.id = pe.produto_id ")
-		.append(" where l.DATA_LCTO_DISTRIBUIDOR=:data and l.status='EXPEDIDO' ");
+		.append(" where l.DATA_LCTO_DISTRIBUIDOR=:data and l.status IN ('EXPEDIDO', 'BALANCEADO') ");
 
 
 		SQLQuery query = getSession().createSQLQuery(SQL.toString());
