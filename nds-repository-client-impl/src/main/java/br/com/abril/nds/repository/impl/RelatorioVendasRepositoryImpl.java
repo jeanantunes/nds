@@ -424,7 +424,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("             	on tpp.id = pdv.TIPO_PONTO_PDV_id ");
 		sql.append("         WHERE ");
 		sql.append("             l.status in (:statusLancamento) ");
-		sql.append("             and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE'   ");
+		sql.append("             and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' and pdv.ponto_principal = true  ");
 		
 		sql.append(this.getWhereFiltroCurvaABC(filtro, null));
 		
@@ -684,7 +684,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                         on tpp.id = pdv.TIPO_PONTO_PDV_id               ");
 		sql.append("             WHERE ");
 		sql.append("                  l.status in ('EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO')  ");
-		sql.append(" 		             and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
+		sql.append(" 		             and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' AND PDV.PONTO_PRINCIPAL = TRUE ");
 		sql.append(              this.getWhereFiltroCurvaABC(filtro, null));
 		sql.append("             group by ");
 		sql.append("                 pe.numero_edicao, ");
@@ -910,7 +910,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                         on tcp.id = pe.tipo_classificacao_produto_id              ");
 		sql.append("                 WHERE ");
 		sql.append("                     l.status in ('EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO')                   ");
-		sql.append("                     and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE'   ");
+		sql.append("                     and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' AND PDV.ponto_principal = true");
 		sql.append(              this.getWhereFiltroCurvaABC(filtro, null));
 		sql.append("                 group by ");
 		sql.append("                     pe.numero_edicao, ");
