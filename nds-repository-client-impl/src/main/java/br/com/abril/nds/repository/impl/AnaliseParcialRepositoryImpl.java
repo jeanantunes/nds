@@ -576,7 +576,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append(" 					where ");
         sql.append(" 						mec.produto_edicao_id = T.produtoEdicaoId ");
         sql.append(" 						and tm.tipo_movimento_encalhe is true ");
-        sql.append(" 						and mec.`DATA` >= DATE_ADD(T.dataLancamento,interval 8 day) ");
+        sql.append(" 						and mec.`DATA` >= DATE_ADD(T.dataLancamento,interval 5 day) ");
         sql.append(" 						and mec.`DATA` <= DATE_ADD(T.dataRec,interval 7 day)  ");
         sql.append(" 						and mec.cota_id = T.cotaID) ");
         sql.append(" 				, 0 ) ) ");
@@ -975,7 +975,7 @@ public Map<Integer, EdicoesProdutosDTO> buscaHistoricoCotasPorBase(List<Long> li
 		sql.append(" 							mec.produto_edicao_id = T.produtoEdicaoId  ");
 		sql.append(" 							and tm.tipo_movimento_encalhe is true  ");
 		sql.append(" 							and mec.cota_id = T.idCota  ");
-		sql.append(" 							and mec.`DATA` >= DATE_ADD(T.dataLancamento,interval 8 day)  ");
+		sql.append(" 							and mec.`DATA` >= DATE_ADD(T.dataLancamento,interval 5 day)  ");
 		sql.append(" 							and mec.`DATA` <= DATE_ADD(T.dataRec,interval 7 day) )  ");
 		sql.append(" 					, 0 ) )  ");
 		sql.append(" 			else 0  ");

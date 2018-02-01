@@ -2295,7 +2295,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		sql.append("  						mec.produto_edicao_id = T.id  ");
 		sql.append("  						and mec.cota_id = t.cotaID  ");
 		sql.append("  						and tm.tipo_movimento_encalhe is true  ");
-		sql.append("  						and mec.`DATA` >= DATE_ADD(T.dataLancamento,interval 8 day)  ");
+		sql.append("  						and mec.`DATA` >= DATE_ADD(T.dataLancamento,interval 5 day)  ");
 		sql.append("  						and mec.`DATA` <= DATE_ADD(T.dataRec,interval 7 day) )  ");
 		sql.append("  				, 0 ) )  ");
 		sql.append("  		else 0  ");
