@@ -76,7 +76,7 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
     protected String formaComercializacao;
     protected String classificacao;
     protected String segmento;
-    protected Long codNCM;
+    private Long codNCM;
     
     @Field(offset = 1, length = 7)
     public String getCodDistrib() {
