@@ -66,63 +66,63 @@ public class RegistroCurvaABCExportacaoDistribuidorVO {
 		return registroCurvaABCDistribuidorVO.getParticipacaoAcumuladaFormatado();
 	}
 	
-	@Export(label = "segmentacao", exhibitionOrder = 11, columnType = ColumnType.DECIMAL)
+//	@Export(label = "segmentacao", exhibitionOrder = 11, columnType = ColumnType.DECIMAL)
 	public String getSegmento(){
 		return registroCurvaABCDistribuidorVO.getSegmento();
 	}
 	
 	
-	@Export(label = "codigo", exhibitionOrder = 12,  columnType = ColumnType.STRING)
+//	@Export(label = "codigo", exhibitionOrder = 12,  columnType = ColumnType.STRING)
 	public String getProdutoCodigo(){
 		return registroCurvaABCDistribuidorVO.getProdutoCodigo();
 	}
 	
-	@Export(label = "nome", exhibitionOrder = 13,   columnType = ColumnType.STRING)
+//	@Export(label = "nome", exhibitionOrder = 13,   columnType = ColumnType.STRING)
 	public String getProdutoNome(){
 		return registroCurvaABCDistribuidorVO.getProdutoNome();
 	}
 	
-	@Export(label = "editor", exhibitionOrder = 14,   columnType = ColumnType.STRING)
+//	@Export(label = "editor", exhibitionOrder = 14,   columnType = ColumnType.STRING)
 	public String getEditorCodigo(){
 		return registroCurvaABCDistribuidorVO.getEditorCodigo();
 	}
 	
-	@Export(label = "cod.Barra", exhibitionOrder = 15,   columnType = ColumnType.STRING)
+//	@Export(label = "cod.Barra", exhibitionOrder = 15,   columnType = ColumnType.STRING)
 	public String getCodigoBarra(){
 		return registroCurvaABCDistribuidorVO.getCodigoBarra();
 	}
 	
-	@Export(label = "peb", exhibitionOrder = 16,   columnType = ColumnType.STRING)
+//	@Export(label = "peb", exhibitionOrder = 16,   columnType = ColumnType.STRING)
 	public String getPeb(){
 		return registroCurvaABCDistribuidorVO.getPeb();
 	}
 	
-	@Export(label = "edicao", exhibitionOrder = 17,   columnType = ColumnType.STRING)
+//	@Export(label = "edicao", exhibitionOrder = 17,   columnType = ColumnType.STRING)
 	public String getNumeroEdicao(){
 		return registroCurvaABCDistribuidorVO.getNumeroEdicao();
 	}
 	
-	@Export(label = "lancamento", exhibitionOrder = 18,   columnType = ColumnType.STRING)
+//	@Export(label = "lancamento", exhibitionOrder = 18,   columnType = ColumnType.STRING)
 	public String getDataLancamento(){
 		return registroCurvaABCDistribuidorVO.getDataLancamento();
 	}
 	
-	@Export(label = "recolhimento", exhibitionOrder = 19,   columnType = ColumnType.STRING)
+//	@Export(label = "recolhimento", exhibitionOrder = 19,   columnType = ColumnType.STRING)
 	public String getDataRecolhimento(){
 		return registroCurvaABCDistribuidorVO.getDataRecolhimento();
 	}
 	
-	@Export(label = "classificacao", exhibitionOrder = 20,   columnType = ColumnType.STRING)
+//	@Export(label = "classificacao", exhibitionOrder = 20,   columnType = ColumnType.STRING)
 	public String getClassificacao(){
 		return registroCurvaABCDistribuidorVO.getClassificacao();
 	}
 	
-	@Export(label = "venda", exhibitionOrder = 21,   columnType = ColumnType.STRING)
+//	@Export(label = "venda", exhibitionOrder = 21,   columnType = ColumnType.STRING)
 	public String getVenda(){
 		return registroCurvaABCDistribuidorVO.getVenda();
 	}
 	
-	@Export(label = "preco", exhibitionOrder = 22,   columnType = ColumnType.STRING)
+//	@Export(label = "preco", exhibitionOrder = 22,   columnType = ColumnType.STRING)
 	public String getPreco(){
 		return registroCurvaABCDistribuidorVO.getPreco();
 	}

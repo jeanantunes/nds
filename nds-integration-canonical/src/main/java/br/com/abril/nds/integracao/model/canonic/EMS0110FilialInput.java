@@ -16,6 +16,9 @@ public class EMS0110FilialInput extends EMS0110Input implements Serializable {
     private static final long serialVersionUID = 1L;
    
     private String codigoBarrasCorporativo;
+
+    private Long codNCM;
+
     
     @Field(offset = 94, length = 18)
     public String getCodigoBarrasCorporativo() {
@@ -100,7 +103,7 @@ public class EMS0110FilialInput extends EMS0110Input implements Serializable {
     public String getFormaComercializacao() {
         return formaComercializacao;
     }
-    
+
     @Field(offset = 204, length = 1)
     @FixedFormatBoolean(trueValue = "S", falseValue = "N")
     public boolean isContemBrinde() {
@@ -277,13 +280,19 @@ public class EMS0110FilialInput extends EMS0110Input implements Serializable {
     public void setSegmento(final String segmento) {
         this.segmento = segmento;
     }
-    
+
     @Field(offset = 205, length = 10)
-    public Long getcodNCM() {
+    @Override
+    public Long getCodNCM() {
         return codNCM;
     }
-    
-	@Override
+
+    @Override
+    public void setCodNCM(Long codNCM) {
+        this.codNCM = codNCM;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
