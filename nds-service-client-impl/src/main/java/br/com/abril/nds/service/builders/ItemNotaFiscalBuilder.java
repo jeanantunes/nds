@@ -242,7 +242,7 @@ public class ItemNotaFiscalBuilder  {
 
         produtoServico.setValorUnitario(valorUnitario);
 
-        produtoServico.setValorTotalBruto(CurrencyUtil.truncateDecimal(valorUnitario.multiply(new BigDecimal(produtoServico.getQuantidade())), 3));
+        produtoServico.setValorTotalBruto(CurrencyUtil.truncateDecimal(valorUnitario.multiply(new BigDecimal(produtoServico.getQuantidade())), 2));
 
         produtoServico.setValorCompoeValorNF(true);
 
