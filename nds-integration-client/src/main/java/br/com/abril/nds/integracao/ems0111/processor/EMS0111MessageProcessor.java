@@ -261,7 +261,25 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 
         if(produtoEdicao.isParcial()) // se parcial retorna sem nada alterar pois pode ter mais de um lancamento
         {
-        	this.ndsiLoggerFactory.getLogger().logInfo(message,
+
+			if(input.getRepartePrevisto()!=null) {
+				final BigInteger repartePrevisto = BigInteger.valueOf(input.getRepartePrevisto());
+
+				if (null != repartePrevisto && null != lancamento.getReparte() && !lancamento.getReparte().equals(repartePrevisto)) {
+
+					this.ndsiLoggerFactory.getLogger().logInfo(message,
+							EventoExecucaoEnum.INF_DADO_ALTERADO,
+							"Alteração do REPARTE PREVISTO"
+									+ " de " + lancamento.getReparte()
+									+ " para " + repartePrevisto
+									+ " Produto " + codigoProduto
+									+ " Edição " + edicao);
+
+					lancamento.setReparte(repartePrevisto);
+				}
+			}
+
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Produto Parcial. Nao atualizando dados do lancamento do"
 							+ " Produto "+codigoProduto
