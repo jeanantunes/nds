@@ -97,6 +97,9 @@ public class Banco implements Serializable {
 	@Column(name = "SEQUENCIAL_ARQUIVO_COBRANCA")
 	private String sequencialArquivoCobranca;
 
+	@Column(name = "CONVENIO")
+	private String convenio;
+
 	public Long getId() {
 		return id;
 	}
@@ -285,5 +288,12 @@ public class Banco implements Serializable {
 	public void setSequencialArquivoCobranca(String sequencialArquivoCobranca) {
 		this.sequencialArquivoCobranca = sequencialArquivoCobranca;
 	}
-	
+
+	public String getConvenio() {
+		return convenio;
+	}
+
+	public void setConvenio(String convenio) {
+		this.convenio = convenio;
+	}
 }

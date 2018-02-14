@@ -1938,7 +1938,41 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					cobranca = new CobrancaOutros();
 				break;
 			}
-			
+
+			List<Banco> listBancos = bancoService.findAll();
+
+			banco = new Banco();
+
+			for (Banco bancoAtivo : listBancos) {
+				if (bancoAtivo.isAtivo() == true){
+
+					banco.setId(bancoAtivo.getId());
+					banco.setAgencia(bancoAtivo.getAgencia());
+					banco.setApelido(bancoAtivo.getApelido());
+					banco.setCarteira(bancoAtivo.getCarteira());
+					banco.setPessoaJuridicaCedente(bancoAtivo.getPessoaJuridicaCedente());
+					banco.setCodigoCedente(bancoAtivo.getCodigoCedente());
+					banco.setDigitoCodigoCedente(bancoAtivo.getDigitoCodigoCedente());
+					banco.setConta(bancoAtivo.getConta());
+					banco.setDvAgencia(bancoAtivo.getDvAgencia());
+					banco.setDvConta(bancoAtivo.getDvConta());
+					banco.setInstrucoes1(bancoAtivo.getInstrucoes1());
+					banco.setInstrucoes2(bancoAtivo.getInstrucoes2());
+					banco.setInstrucoes3(bancoAtivo.getInstrucoes3());
+					banco.setInstrucoes4(bancoAtivo.getInstrucoes4());
+					banco.setJuros(bancoAtivo.getJuros());
+					banco.setMulta(bancoAtivo.getMulta());
+					banco.setNome(bancoAtivo.getNome());
+					banco.setNumeroBanco(bancoAtivo.getNumeroBanco());
+					banco.setVrMulta(bancoAtivo.getVrMulta());
+					banco.setExibirValorMonetario(bancoAtivo.isExibirValorMonetario());
+					banco.setCodigoEmpresa(bancoAtivo.getCodigoEmpresa());
+					banco.setSequencialArquivoCobranca(bancoAtivo.getSequencialArquivoCobranca());
+					banco.setConvenio(bancoAtivo.getConvenio());
+
+				}
+			}
+
 			cobranca.setBanco(banco);
 			cobranca.setCota(cota);
 			cobranca.setDataEmissao(dataOperacao);
@@ -1948,7 +1982,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			cobranca.setVias(0);
 			cobranca.setEnviarPorEmail(formaCobrancaPrincipal.isRecebeCobrancaEmail());
 			cobranca.setCobrancaNFe(isCobrancaNFe);
-			
+
 			String nossoNumero =
 				Util.gerarNossoNumero(
 					cota.getNumeroCota(), 
@@ -1965,7 +1999,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			cobranca.setFornecedor(fornecedor);
 			cobranca.setNossoNumero(nossoNumero);
 			
-			String digitoVerificador; 
+			String digitoVerificador;
 			
 			if(banco.getNumeroBanco().equals("237")){
 				digitoVerificador = Util.calcularDigitoBradesco(StringUtils.leftPad(banco.getCarteira().toString(),2,"0") , nossoNumero);
