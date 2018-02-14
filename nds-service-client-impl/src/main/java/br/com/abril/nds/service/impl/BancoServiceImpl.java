@@ -299,4 +299,9 @@ public class BancoServiceImpl implements BancoService {
 		
 	}
 
+	@Override
+	public List<Banco> findAll() {
+		return bancoRepository.buscarTodos();
+	}
+
 }
