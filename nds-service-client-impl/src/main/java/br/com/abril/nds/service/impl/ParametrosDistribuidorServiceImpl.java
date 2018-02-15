@@ -98,6 +98,8 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.vo.EnderecoVO;
 
+import static br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento.*;
+
 /**
  * Implementação da interface de serviços do parametrosDistribuidorVO
  * @author InfoA2
@@ -755,60 +757,53 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		distribuidor.setUtilizaSugestaoIncrementoCodigo(parametrosDistribuidor.isUtilizaSugestaoIncrementoCodigo());
 
-		// Emissão de Documentos
-		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoBoleto = new ParametrosDistribuidorEmissaoDocumento();
-		parametrosDistribuidorEmissaoDocumentoBoleto.setDistribuidor(distribuidor);
-		parametrosDistribuidorEmissaoDocumentoBoleto.setTipoParametrosDistribuidorEmissaoDocumento(TipoParametrosDistribuidorEmissaoDocumento.BOLETO);
-		parametrosDistribuidorEmissaoDocumentoBoleto.setUtilizaEmail(parametrosDistribuidor.getBoletoEmail());
-		parametrosDistribuidorEmissaoDocumentoBoleto.setUtilizaImpressao(parametrosDistribuidor.getBoletoImpressao());
+		//Parametros Distribuidor >>> Documentos
+		List<ParametrosDistribuidorEmissaoDocumento> list =	parametrosDistribuidorEmissaoDocumentoRepository.buscarTodos();
 
-		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoBoletoSlip = new ParametrosDistribuidorEmissaoDocumento();
-		parametrosDistribuidorEmissaoDocumentoBoletoSlip.setDistribuidor(distribuidor);
-		parametrosDistribuidorEmissaoDocumentoBoletoSlip.setTipoParametrosDistribuidorEmissaoDocumento(TipoParametrosDistribuidorEmissaoDocumento.BOLETO_SLIP);
-		parametrosDistribuidorEmissaoDocumentoBoletoSlip.setUtilizaEmail(parametrosDistribuidor.getBoletoSlipEmail());
-		parametrosDistribuidorEmissaoDocumentoBoletoSlip.setUtilizaImpressao(parametrosDistribuidor.getBoletoSlipImpressao());
+			for (ParametrosDistribuidorEmissaoDocumento param : list) {
 
-		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoChamadaEncalhe = new ParametrosDistribuidorEmissaoDocumento();
-		parametrosDistribuidorEmissaoDocumentoChamadaEncalhe.setDistribuidor(distribuidor);
-		parametrosDistribuidorEmissaoDocumentoChamadaEncalhe.setTipoParametrosDistribuidorEmissaoDocumento(TipoParametrosDistribuidorEmissaoDocumento.CHAMADA_ENCALHE);
-		parametrosDistribuidorEmissaoDocumentoChamadaEncalhe.setUtilizaEmail(parametrosDistribuidor.getChamadaEncalheEmail());
-		parametrosDistribuidorEmissaoDocumentoChamadaEncalhe.setUtilizaImpressao(parametrosDistribuidor.getChamadaEncalheImpressao());
+				String tipo = param.getTipoParametrosDistribuidorEmissaoDocumento().getDescTipoParametrosDistribuidorEmissaoDocumento();
 
-		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoNotaEnvio = new ParametrosDistribuidorEmissaoDocumento();
-		parametrosDistribuidorEmissaoDocumentoNotaEnvio.setDistribuidor(distribuidor);
-		parametrosDistribuidorEmissaoDocumentoNotaEnvio.setTipoParametrosDistribuidorEmissaoDocumento(TipoParametrosDistribuidorEmissaoDocumento.NOTA_ENVIO);
-		parametrosDistribuidorEmissaoDocumentoNotaEnvio.setUtilizaEmail(parametrosDistribuidor.getNotaEnvioEmail());
-		parametrosDistribuidorEmissaoDocumentoNotaEnvio.setUtilizaImpressao(parametrosDistribuidor.getNotaEnvioImpressao());
+				if (tipo == "Boleto"){
+					//BOLETO
+					param.setUtilizaImpressao(parametrosDistribuidor.getBoletoImpressao());
+					param.setUtilizaEmail(parametrosDistribuidor.getBoletoEmail());
 
-		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoRecibo = new ParametrosDistribuidorEmissaoDocumento();
-		parametrosDistribuidorEmissaoDocumentoRecibo.setDistribuidor(distribuidor);
-		parametrosDistribuidorEmissaoDocumentoRecibo.setTipoParametrosDistribuidorEmissaoDocumento(TipoParametrosDistribuidorEmissaoDocumento.RECIBO);
-		parametrosDistribuidorEmissaoDocumentoRecibo.setUtilizaEmail(parametrosDistribuidor.getReciboEmail());
-		parametrosDistribuidorEmissaoDocumentoRecibo.setUtilizaImpressao(parametrosDistribuidor.getReciboImpressao());
+					parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(param);
+				}
+				if (tipo == "Boleto + Slip"){
+					//BOLETO + SLIP
+					param.setUtilizaImpressao(parametrosDistribuidor.getBoletoSlipImpressao());
+					param.setUtilizaEmail(parametrosDistribuidor.getBoletoSlipEmail());
 
-		ParametrosDistribuidorEmissaoDocumento parametrosDistribuidorEmissaoDocumentoSlip = new ParametrosDistribuidorEmissaoDocumento();
-		parametrosDistribuidorEmissaoDocumentoSlip.setDistribuidor(distribuidor);
-		parametrosDistribuidorEmissaoDocumentoSlip.setTipoParametrosDistribuidorEmissaoDocumento(TipoParametrosDistribuidorEmissaoDocumento.SLIP);
-		parametrosDistribuidorEmissaoDocumentoSlip.setUtilizaEmail(parametrosDistribuidor.getSlipEmail());
-		parametrosDistribuidorEmissaoDocumentoSlip.setUtilizaImpressao(parametrosDistribuidor.getSlipImpressao());
+					parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(param);
+				}
+				if (tipo == "Chamada de Encalhe"){
+					//Chamada de Encalhe
+					param.setUtilizaImpressao(parametrosDistribuidor.getChamadaEncalheImpressao());
+					param.setUtilizaEmail(parametrosDistribuidor.getChamadaEncalheEmail());
 
-		List<ParametrosDistribuidorEmissaoDocumento> listaParametrosDistribuidorEmissaoDocumentos = new ArrayList<ParametrosDistribuidorEmissaoDocumento>();
+					parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(param);
+				}
+				if (tipo == "Nota de Envio"){
+					//Nota de Envio
+					param.setUtilizaImpressao(parametrosDistribuidor.getNotaEnvioImpressao());
+					param.setUtilizaEmail(parametrosDistribuidor.getNotaEnvioEmail());
 
-		parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(parametrosDistribuidorEmissaoDocumentoBoleto);
-		parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(parametrosDistribuidorEmissaoDocumentoBoletoSlip);
-		parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(parametrosDistribuidorEmissaoDocumentoChamadaEncalhe);
-		parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(parametrosDistribuidorEmissaoDocumentoNotaEnvio);
-		parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(parametrosDistribuidorEmissaoDocumentoRecibo);
-		parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(parametrosDistribuidorEmissaoDocumentoSlip);
-		
-		listaParametrosDistribuidorEmissaoDocumentos.add(parametrosDistribuidorEmissaoDocumentoBoleto);
-		listaParametrosDistribuidorEmissaoDocumentos.add(parametrosDistribuidorEmissaoDocumentoBoletoSlip);
-		listaParametrosDistribuidorEmissaoDocumentos.add(parametrosDistribuidorEmissaoDocumentoChamadaEncalhe);
-		listaParametrosDistribuidorEmissaoDocumentos.add(parametrosDistribuidorEmissaoDocumentoNotaEnvio);
-		listaParametrosDistribuidorEmissaoDocumentos.add(parametrosDistribuidorEmissaoDocumentoRecibo);
-		listaParametrosDistribuidorEmissaoDocumentos.add(parametrosDistribuidorEmissaoDocumentoSlip);
-		distribuidor.setParametrosDistribuidorEmissaoDocumentos(listaParametrosDistribuidorEmissaoDocumentos);
-		
+					parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(param);
+				}
+				if (tipo == "Slip"){
+					//Slip
+					param.setUtilizaImpressao(parametrosDistribuidor.getSlipImpressao());
+					param.setUtilizaEmail(parametrosDistribuidor.getSlipEmail());
+
+					parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(param);
+				}
+
+			}
+
+		distribuidor.setParametrosDistribuidorEmissaoDocumentos(list);
+
 		// Impressão Interface LED
 		if (parametrosDistribuidor.getImpressaoInterfaceLED() != null && !parametrosDistribuidor.getImpressaoInterfaceLED().isEmpty() &&  !parametrosDistribuidor.getImpressaoInterfaceLED().equalsIgnoreCase(UNDEFINED)) {
 			TipoImpressaoInterfaceLED tipoImpressaoInterfaceLED = Enum.valueOf(TipoImpressaoInterfaceLED.class, parametrosDistribuidor.getImpressaoInterfaceLED());

@@ -53,4 +53,6 @@ public interface BancoService {
 	List<ItemDTO<Integer, String>> getComboBancosBoletoAvulso();
 	
 	void atualizarSequencialArquivoCobranca(Long bancoID);
+
+	List<Banco> findAll();
 }
