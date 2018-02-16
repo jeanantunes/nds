@@ -5082,7 +5082,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		SQL.append(" SELECT dst.COD_DISTRIBUIDOR_DINAP AS codigoDistribuidor, ")
 			.append(" c.NUMERO_COTA  AS codigoCota, coalesce(pdv.numero_pdv,pdv.ID) AS codigoPDV, ")
 			.append(" lcto.data_lcto_distribuidor AS dataLancamento, PR.codigo AS codigoPublicacao, ")
-			.append(" PE.NUMERO_EDICAO AS numeroEdicao, pe.CODIGO_DE_BARRAS AS codigoBarras, ")
+			.append(" PE.NUMERO_EDICAO AS numeroEdicao, coalesce(pe.CODIGO_DE_BARRAS,0) AS codigoBarras, ")
 			.append(" PR.NOME AS nomePublicacao, ed.codigo as codigoEditora, ")
 			.append(" round(SUM(CASE WHEN TM.OPERACAO_ESTOQUE = 'ENTRADA' THEN MEC.QTDE ELSE 0 END - (CASE  WHEN TM.OPERACAO_ESTOQUE = 'SAIDA' THEN MEC.QTDE ELSE 0 END)),0 ) AS quantidadeReparte, ")
 			.append(" ps_edi.RAZAO_SOCIAL AS nomeEditora, round(PE.PRECO_VENDA,2) AS precoCapa, round(mec.preco_com_desconto,2) AS precoCusto, pe.CHAMADA_CAPA AS chamadaCapa ")
