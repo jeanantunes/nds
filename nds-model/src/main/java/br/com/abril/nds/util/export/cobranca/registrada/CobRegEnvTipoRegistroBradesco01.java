@@ -248,7 +248,7 @@ public class CobRegEnvTipoRegistroBradesco01 extends CobRegBaseDTO {
 	}
 
 	public void setDescontoBonificacao(String descontoBonificacao) {
-		this.descontoBonificacao = StringUtils.leftPad(descontoBonificacao, 10, ' ');
+		this.descontoBonificacao = StringUtils.leftPad(descontoBonificacao, 10, '0');
 	}
 
 	public String getCondicaoEmissaoPapeleta() {
