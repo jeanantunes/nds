@@ -63,9 +63,9 @@
        <smtpPort>25</smtpPort>
       <from>novodistrib@dgb.com.br</from>
     
-       <to>odemir.olivatti_vector@abril.com.br</to>
-       <to>luiz.moreira_VECTOR@abril.com.br</to>
-       <to>felipe.ballario_VECTOR@abril.com.br</to>
+       <!-- <to>odemir.olivatti_vector@abril.com.br</to> -->
+       <!-- <to>luiz.moreira_VECTOR@abril.com.br</to> -->
+       <!-- <to>felipe.ballario_VECTOR@abril.com.br</to> -->
     
       <username>Relay_NDS</username>
     <password>$QZNr5m%H34WATSc</password>
