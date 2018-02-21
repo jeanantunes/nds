@@ -1939,40 +1939,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				break;
 			}
 
-			List<Banco> listBancos = bancoService.findAll();
-
-			banco = new Banco();
-
-			for (Banco bancoAtivo : listBancos) {
-				if (bancoAtivo.isAtivo() == true){
-
-					banco.setId(bancoAtivo.getId());
-					banco.setAgencia(bancoAtivo.getAgencia());
-					banco.setApelido(bancoAtivo.getApelido());
-					banco.setCarteira(bancoAtivo.getCarteira());
-					banco.setPessoaJuridicaCedente(bancoAtivo.getPessoaJuridicaCedente());
-					banco.setCodigoCedente(bancoAtivo.getCodigoCedente());
-					banco.setDigitoCodigoCedente(bancoAtivo.getDigitoCodigoCedente());
-					banco.setConta(bancoAtivo.getConta());
-					banco.setDvAgencia(bancoAtivo.getDvAgencia());
-					banco.setDvConta(bancoAtivo.getDvConta());
-					banco.setInstrucoes1(bancoAtivo.getInstrucoes1());
-					banco.setInstrucoes2(bancoAtivo.getInstrucoes2());
-					banco.setInstrucoes3(bancoAtivo.getInstrucoes3());
-					banco.setInstrucoes4(bancoAtivo.getInstrucoes4());
-					banco.setJuros(bancoAtivo.getJuros());
-					banco.setMulta(bancoAtivo.getMulta());
-					banco.setNome(bancoAtivo.getNome());
-					banco.setNumeroBanco(bancoAtivo.getNumeroBanco());
-					banco.setVrMulta(bancoAtivo.getVrMulta());
-					banco.setExibirValorMonetario(bancoAtivo.isExibirValorMonetario());
-					banco.setCodigoEmpresa(bancoAtivo.getCodigoEmpresa());
-					banco.setSequencialArquivoCobranca(bancoAtivo.getSequencialArquivoCobranca());
-					banco.setConvenio(bancoAtivo.getConvenio());
-
-				}
-			}
-
 			cobranca.setBanco(banco);
 			cobranca.setCota(cota);
 			cobranca.setDataEmissao(dataOperacao);
@@ -1985,20 +1951,20 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
 			String nossoNumero =
 				Util.gerarNossoNumero(
-					cota.getNumeroCota(), 
-					cobranca.getDataEmissao(), 
+					cota.getNumeroCota(),
+					cobranca.getDataEmissao(),
 					banco != null ? banco.getNumeroBanco() : "0",
 					fornecedor != null ? fornecedor.getId() : null,
 					novaDivida.getId(),
 					banco != null ? banco.getAgencia() : 0,
 					banco != null ? banco.getConta() : 0,
 					banco != null && banco.getCarteira() != null ? banco.getCarteira() : null,
-					banco != null && banco.getCodigoCedente() != null ? banco.getCodigoCedente() : null, 
+					banco != null && banco.getCodigoCedente() != null ? banco.getCodigoCedente() : null,
 					banco != null && banco.getDigitoCodigoCedente() != null ? banco.getDigitoCodigoCedente() : null);
-			
+
 			cobranca.setFornecedor(fornecedor);
 			cobranca.setNossoNumero(nossoNumero);
-			
+
 			String digitoVerificador;
 			
 			if(banco.getNumeroBanco().equals("237")){
@@ -2026,7 +1992,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
      * 
      * @param cota
      * @param qtdDiasNovaCobranca
-     * @param msgs
+     * @param msgsgit
      * @param fornecedor
      * @param consolidadoFinanceiroCota
      * @param vlMovFinanTotal
