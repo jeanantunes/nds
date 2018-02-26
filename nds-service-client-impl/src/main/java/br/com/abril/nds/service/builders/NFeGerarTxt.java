@@ -2,6 +2,7 @@ package br.com.abril.nds.service.builders;
 
 import java.math.BigDecimal;
 
+import br.com.abril.nds.util.CurrencyUtil;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.enums.TipoMensagem;
@@ -253,13 +254,13 @@ public class NFeGerarTxt {
 							.append(det.getProdutoServico().getCfop()).append("|")
 							.append(det.getProdutoServico().getUnidade()).append("|")
 							.append(det.getProdutoServico().getQuantidade()).append("|")
-							.append(det.getProdutoServico().getValorUnitario()).append("|")
+							.append(CurrencyUtil.truncateDecimal(det.getProdutoServico().getValorUnitario(),2)).append("|")
 							.append(det.getProdutoServico().getValorTotalBruto()).append("|")
 							.append("").append("|")
 							.append(det.getProdutoServico().getUnidade()).append("|")
 							// qTrib
 							.append(det.getProdutoServico().getQuantidade()).append("|")
-							.append(det.getProdutoServico().getValorUnitario().toString()).append("|")
+							.append(CurrencyUtil.truncateDecimal(det.getProdutoServico().getValorUnitario(),2)).append("|")
 							.append(det.getProdutoServico().getValorFrete()).append("|")
 							.append(det.getProdutoServico().getValorSeguro()).append("|")
 							.append(det.getProdutoServico().getValorDesconto()).append("|")
