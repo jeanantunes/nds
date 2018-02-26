@@ -870,7 +870,7 @@ public class ItemNotaFiscalBuilder  {
         }
 
         produtoServico.setQuantidade(produtoServico.getQuantidade().add(movimentoFechamentoFiscal.getQtde()));
-        produtoServico.setValorTotalBruto(CurrencyUtil.truncateDecimal(produtoServico.getValorTotalBruto().add(valorTotalBruto), 3));
+        produtoServico.setValorTotalBruto(CurrencyUtil.truncateDecimal(produtoServico.getValorTotalBruto().add(valorTotalBruto), 2));
         produtoServico.setValorUnitario(valorUnitario);
 
         // produtoServico.setValorDesconto(BigDecimal.ZERO);
