@@ -4336,7 +4336,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append("       		and ecg.REPARTE > 0 ");
 		sql.append(" 	 		and c.id = :idCota");
 		sql.append(" 	 		and c.UTILIZA_IPV is true ");
-		sql.append(" 	 	GROUP BY  c.id, c.numero_cota, p.CODIGO, pe.NUMERO_EDICAO,lct.DATA_LCTO_DISTRIBUIDOR ");
+		sql.append(" 	 	GROUP BY  c.id, c.numero_cota, p.CODIGO, pe.NUMERO_EDICAO ");
 		sql.append(" 	 	order by lct.SEQUENCIA_MATRIZ ");
 
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
