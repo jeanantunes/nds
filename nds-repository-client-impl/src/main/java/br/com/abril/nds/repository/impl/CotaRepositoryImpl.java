@@ -3245,10 +3245,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
                                 "     	inner join ROTA rota on r.ID=rota.ROTEIRO_ID ").append(
                                         "     	inner join ROTA_PDV rp on rota.ID=rp.ROTA_ID ").append(
                                                 "     	inner join PDV pdv on rp.PDV_ID=pdv.ID ").append("     	inner join COTA c on pdv.COTA_ID=c.ID ")
-                                                .append("     	inner join ESTUDO_COTA ec on c.ID=ec.COTA_ID ").append(
-                                                        "     	inner join ESTUDO e on ec.ESTUDO_ID=e.ID ");
+                                                .append("     	inner join ESTUDO_COTA ec2 on c.ID=ec2.COTA_ID ").append(
+                                                        "     	inner join ESTUDO e2 on ec2.ESTUDO_ID=e2.ID ");
         
-        hql.append(" 	where rot.box_id is not null ) ").append(" ) ");
+        hql.append(" 	where rot.box_id is not null and e2.id = e.id ) ").append(" ) ");
         
         if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null) {
             hql.append(" and ( ").append(" 	c.NUMERO_COTA between :de and :ate ").append(" ) ");
