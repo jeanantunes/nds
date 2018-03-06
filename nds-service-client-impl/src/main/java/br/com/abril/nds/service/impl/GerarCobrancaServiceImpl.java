@@ -2181,7 +2181,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 		}
 		
-		if(cobranca.getTipoCobranca().equals(TipoCobranca.BOLETO_AVULSO)) {			
+		if(cobranca==null || cobranca.getTipoCobranca()==null || cobranca.getTipoCobranca().equals(TipoCobranca.BOLETO_AVULSO) )  {
 			LOGGER.debug("Não remover quando for Boleto Avulso");
 		} else {
 			this.dividaRepository.remover(divida);
