@@ -55,6 +55,12 @@ git clone git@github.com:<yourgithubuser>/NDS.git
 cd NDS
 mvn clean install
 
+
+Como rodar o integration-client ou o integration-server
+-------------------------------------------------------------
+você precisará criar uma pasta config na raiz do projeto, onde será alocado os arquivo que o spring  injeta durante a execução desses batchs
+
+
 to run
 ------
 
