@@ -1,19 +1,11 @@
 package br.com.abril.nds.controllers.administracao;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+
+import java.io.*;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,15 +22,18 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -47,8 +42,14 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,6 +98,19 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
+
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 /**
  * @author InfoA2 Controller de Cadastro de Tipo de Notas
@@ -262,29 +276,55 @@ public class GeracaoArquivosController extends BaseController {
 		TipoMensagem tipoMensagem = TipoMensagem.SUCCESS;
         String mensagem = "Nenhuma cota a ser exportadas";
 		try {
-			List<CotaConsignadaDetalheCouchDTO> listaCotasConsignadas = movimentoEstoqueCotaService
-					.getCotasConsignadaExportCouch(numeroCota);
-
-            if(!listaCotasConsignadas.isEmpty()) {
-                CotaConsignadaCouchDTO cotaConsignadaCouchDTO = new CotaConsignadaCouchDTO();
-                cotaConsignadaCouchDTO.setCotaConsignadaDetalhes(listaCotasConsignadas);
-
-                exporteCouch.exportarCotaConsignada(cotaConsignadaCouchDTO);
-                mensagem = "Cotas exportadas com sucesso";
-                acionarProcessoImportacaoTPJ();
-            }
-
+			exportarCouch(numeroCota, mensagem);
         } catch (Exception e) {
 			tipoMensagem = TipoMensagem.ERROR;
-			mensagem = "Ocorreu uma falha durante o processo de exportacao";
+			mensagem = "Ocorreu uma falha durante o processo de exportacao para o couch";
 		}
+
 		result.use(Results.json()).from(new ValidacaoVO(tipoMensagem, mensagem), "result").recursive().serialize();
+	}
+
+
+	private String gerarJsonConsignado(){
+
+
+
+
+
+		return "";
+	}
+
+
+	private String exportarCouch(String numeroCota, String mensagem){
+			List<CotaConsignadaDetalheCouchDTO> listaCotasConsignadas = movimentoEstoqueCotaService
+				.getCotasConsignadaExportCouch(numeroCota);
+
+		if(!listaCotasConsignadas.isEmpty()) {
+			CotaConsignadaCouchDTO cotaConsignadaCouchDTO = new CotaConsignadaCouchDTO();
+			cotaConsignadaCouchDTO.setCotaConsignadaDetalhes(listaCotasConsignadas);
+
+
+         //   Gson gson = new Gson();
+
+
+
+			exporteCouch.exportarCotaConsignada(cotaConsignadaCouchDTO);
+			mensagem = "Cotas exportadas com sucesso";
+			acionarProcessoImportacaoTPJ();
+		}
+
+
+
+
+
+		return mensagem;
 	}
 
 //	@Async // TODO - Estrutrar p/ ser assync
     private void acionarProcessoImportacaoTPJ() {
 
-        try {
+		try {
 
 			String tpjUser = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.USUARIO_TPJ).getValor();
 			String tpjPassword = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.SENHA_TPJ).getValor();
@@ -297,21 +337,21 @@ public class GeracaoArquivosController extends BaseController {
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			httpClient.setCredentialsProvider(provider);
 
-            HttpGet httpget = new HttpGet(parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.SERVICO_TPJ).getValor());
+			HttpGet httpget = new HttpGet(parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.SERVICO_TPJ).getValor());
 
-            System.out.println("executing request" + httpget.getRequestLine());
-            HttpResponse response = httpClient.execute(httpget);
-            HttpEntity entity = response.getEntity();
+			System.out.println("executing request" + httpget.getRequestLine());
+			HttpResponse response = httpClient.execute(httpget);
+			HttpEntity entity = response.getEntity();
 
-            InputStream content = entity.getContent();
-            BufferedReader in = new BufferedReader(new InputStreamReader(content));
-            String line;
-            while ((line = in.readLine()) != null) {
-                System.out.println(line);
-            }
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+			InputStream content = entity.getContent();
+			BufferedReader in = new BufferedReader(new InputStreamReader(content));
+			String line;
+			while ((line = in.readLine()) != null) {
+				System.out.println(line);
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
     }
 
 	// gerar arquivo com vendas reparte agregado ( caso caruso )

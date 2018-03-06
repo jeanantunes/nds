@@ -353,8 +353,12 @@ function montarTextoMensagem(campoTexto, mensagens) {
 		if (campoTexto.html() != '') {
 			campoTexto.append('</br>');
 		}
-		
-		campoTexto.append(value.replace(/\n/g, '<br />'));
+
+		if(value!=null){
+            campoTexto.append(value.replace(/\n/g, '<br />'));
+		}
+
+
 	});
 }
 
