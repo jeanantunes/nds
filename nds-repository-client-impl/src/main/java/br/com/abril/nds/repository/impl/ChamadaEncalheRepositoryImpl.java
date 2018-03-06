@@ -578,10 +578,10 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		switch(coluna) {
 			case NOME: 
-				nome = " nomeCota ";
+				nome = " numCota ";
 				break;
 			default:
-				nome = " numCota ";
+				nome = " nomeCota ";
 				break;
 		}
 		
