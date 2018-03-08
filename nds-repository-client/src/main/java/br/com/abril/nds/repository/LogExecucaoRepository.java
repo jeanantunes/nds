@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ConsultaInterfacesDTO;
@@ -34,6 +35,8 @@ public interface LogExecucaoRepository extends Repository<LogExecucao, Long> {
 	
 	InterfaceExecucao findByID(Long id);
 	
-	InterfaceExecucao findByNome(String nome); 
+	InterfaceExecucao findByNome(String nome);
+
+	Date buscarDataUltimaExecucao(String nome);
 	
 }

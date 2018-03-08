@@ -82,6 +82,10 @@ public class Telefone implements Serializable {
 		this.numero = numero;
 	}
 
+	public String getNumeroSemFormatacao() {
+		return numero.replaceAll("\\D+","");
+	}
+
 	public String getRamal() {
 		return ramal;
 	}

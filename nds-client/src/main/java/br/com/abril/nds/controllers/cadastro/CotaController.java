@@ -660,7 +660,7 @@ public class CotaController extends BaseController {
 		
 		cotaDTO.setTipoPessoa(TipoPessoa.JURIDICA);
 
-		cotaDTO = salvarDadosCota(cotaDTO);
+		cotaDTO = this.salvarDadosCota(cotaDTO);
 		
 		cotaDTO.setNumeroCnpj(Util.adicionarMascaraCNPJ(cotaDTO.getNumeroCnpj()));
 		
@@ -774,7 +774,7 @@ public class CotaController extends BaseController {
 		
 		cotaDTO.setTipoPessoa(TipoPessoa.FISICA);
 		
-		cotaDTO = salvarDadosCota(cotaDTO);
+		cotaDTO = this.salvarDadosCota(cotaDTO);
 		
 		cotaDTO.setNumeroCPF(Util.adicionarMascaraCPF(cotaDTO.getNumeroCPF()));
 		
@@ -806,7 +806,7 @@ public class CotaController extends BaseController {
 		
 		Long idCota = cotaService.salvarCota(cotaDTO);
 						
-		return cotaDTO = cotaService.obterDadosCadastraisCota(idCota);
+		return cotaService.obterDadosCadastraisCota(idCota);
 	}
 	
 	/**
