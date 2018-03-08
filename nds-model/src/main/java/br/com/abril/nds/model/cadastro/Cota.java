@@ -33,7 +33,6 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import br.com.abril.nds.model.StatusTransmissaoEnum;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -42,7 +41,6 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 
 @Entity
@@ -225,16 +223,12 @@ public class Cota implements Serializable {
 	@Column(name = "TIPO_TRANSMISSAO")
 	private String tipoTransmissao;
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "STATUS_TRANSMISSAO")
-//	private StatusTransmissaoEnum statusTransmissaoEnum;
-	
 	@Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DATA_INCLUSAO")
 	private Date dataInclusao;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-   @Column(name = "DATA_ALTERACAO")
+    @Column(name = "DATA_ALTERACAO")
 	private Date dataAlteracao;
 	
 	@Column(name = "USUARIO_INCLUSAO")
@@ -242,13 +236,15 @@ public class Cota implements Serializable {
 	
 	@Column(name = "USUARIO_ALTERACAO")
 	private String usuarioAlteracao;
-	
+
+	@OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinColumn(name="ACESSO_NA_ID")
+	private AcessoNA acessoNA;
 	
 	public Cota() {
         this.inicioAtividade = new Date();
         this.inicioTitularidade = new Date();
     }
-	
 	
 	public Cota(Long id) {
 		this.id = id;
@@ -793,14 +789,6 @@ public class Cota implements Serializable {
 		this.dataInclusao = dataInclusao;
 	}
 
-//	public StatusTransmissaoEnum getStatusTransmissaoEnum() {
-//		return statusTransmissaoEnum;
-//	}
-//
-//	public void setStatusTransmissaoEnum(StatusTransmissaoEnum statusTransmissaoEnum) {
-//		this.statusTransmissaoEnum = statusTransmissaoEnum;
-//	}
-
 	public String getUsuarioInclusao() {
 		return usuarioInclusao;
 	}
@@ -818,6 +806,14 @@ public class Cota implements Serializable {
 
 	public void setUsuarioAlteracao(String usuarioAlteracao) {
 		this.usuarioAlteracao = usuarioAlteracao;
+	}
+
+	public AcessoNA getAcessoNA() {
+		return acessoNA;
+	}
+
+	public void setAcessoNA(AcessoNA acessoNA) {
+		this.acessoNA = acessoNA;
 	}
 
 	@Override

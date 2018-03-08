@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
@@ -240,11 +241,6 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		Calendar dataInicio = Calendar.getInstance();
 
 		dataInicio.setTime(dataOperacao);
-		/*dataInicio.add(Calendar.DAY_OF_MONTH, -1);
-		dataInicio.set(Calendar.HOUR_OF_DAY, 23);
-		dataInicio.set(Calendar.MINUTE, 59);
-		dataInicio.set(Calendar.SECOND, 59);
-		dataInicio.set(Calendar.MILLISECOND, 999);*/
 		dataInicio.set(Calendar.HOUR_OF_DAY, 0);
 		dataInicio.set(Calendar.MINUTE, 0);
 		dataInicio.set(Calendar.SECOND, 0);
@@ -257,11 +253,6 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		Calendar dataFim = Calendar.getInstance();
 		
 		dataFim.setTime(dataOperacao);
-		/*dataFim.add(Calendar.DAY_OF_MONTH, 1);
-		dataFim.set(Calendar.HOUR_OF_DAY, 0);
-		dataFim.set(Calendar.MINUTE, 0);
-		dataFim.set(Calendar.SECOND, 0);
-		dataFim.set(Calendar.MILLISECOND, 0);*/
 		dataFim.set(Calendar.HOUR_OF_DAY, 23);
 		dataFim.set(Calendar.MINUTE, 59);
 		dataFim.set(Calendar.SECOND, 59);
@@ -310,6 +301,21 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		Criteria criteria = getSession().createCriteria(InterfaceExecucao.class);
 		criteria.add(Restrictions.eq("nome", nome));
 		return (InterfaceExecucao) criteria.uniqueResult();
+	}
+
+	@Transactional(readOnly = true)
+	public Date buscarDataUltimaExecucao(String nome) {
+		Criteria criteria = getSession().createCriteria(LogExecucao.class);
+		criteria.setFetchMode("interfaceExecucao", FetchMode.JOIN);
+		criteria.createAlias("interfaceExecucao", "ie");
+		criteria.add(Restrictions.eq("ie.nome", nome));
+		criteria.add(Restrictions.eq("status", StatusExecucaoEnum.SUCESSO));
+		criteria.addOrder(Order.desc("dataInicio"));
+		criteria.setMaxResults(1);
+
+		LogExecucao logExecucao = (LogExecucao) criteria.uniqueResult();
+
+		return logExecucao != null ? logExecucao.getDataInicio() : null;
 	}
 	
 	

@@ -30,7 +30,12 @@
 			  </c:forEach>
 	  </select></td>
 	  <td>Utiliza IPV?</td>
-      <td><input type="checkbox" name="cotaDTO.utilizaIPV" id="utilizaIPV" /></td>
+      <td>
+          <input type="checkbox" name="cotaDTO.utilizaIPV" id="utilizaIPV" />
+
+          <strong style="padding-left: 150px;">Acesso NA?</strong>
+          <input type="checkbox" name="cotaDTO.acessoNA" id="acessoNA" />
+      </td>
     </tr>
   
     <tr>

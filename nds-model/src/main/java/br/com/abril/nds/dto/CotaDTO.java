@@ -95,6 +95,8 @@ public class CotaDTO implements Serializable {
     
     private String sistema;
     private String tipoTransmissao;
+
+    private boolean acessoNA;
     
     /*
      * Detalhes Cota Analise estudo
@@ -837,5 +839,12 @@ public class CotaDTO implements Serializable {
 	public void setTipoTransmissao(String tipoTransmissao) {
 		this.tipoTransmissao = tipoTransmissao;
 	}
-	
+
+    public boolean isAcessoNA() {
+        return acessoNA;
+    }
+
+    public void setAcessoNA(boolean acessoNA) {
+        this.acessoNA = acessoNA;
+    }
 }

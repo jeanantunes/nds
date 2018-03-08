@@ -1279,6 +1279,8 @@ var COTA_CNPJ = $.extend(true, {
         $('[name="cotaDTO.tipoDistribuicaoCota"]', this.workspace).val(result.tipoDistribuicaoCota);
         
         $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
+
+        $("#acessoNA", this.workspace).attr("checked", (result.acessoNA == true) ? "checked" : null);
         
       
         
@@ -1518,9 +1520,8 @@ var COTA_CPF = $.extend(true, {
         $("#sistema", this.workspace).val(result.sistema);
         $("#tipoTransmissao", this.workspace).val(result.tipoTransmissao);
         $('[name="cotaDTO.tipoDistribuicaoCota"]', this.workspace).val(result.tipoDistribuicaoCota);
-        
-//        //Ajuste 0153
-//        $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
+
+        $("#acessoNA", this.workspace).attr("checked", (result.acessoNA == true) ? "checked" : null);
         
        if ( result.cotasBases != null ) {
 	       try {

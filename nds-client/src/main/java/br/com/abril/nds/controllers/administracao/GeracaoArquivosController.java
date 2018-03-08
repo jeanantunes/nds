@@ -22,8 +22,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import br.com.abril.nds.dto.*;
+import com.google.gson.*;
+import integration.efacil.ConectionEfacil;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
@@ -56,15 +57,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.CaracteristicaDistribuicaoSimplesDTO;
-import br.com.abril.nds.dto.ConsignadoCotaDTO;
-import br.com.abril.nds.dto.ConsultaEncalheDTO;
-import br.com.abril.nds.dto.ControleCotaDTO;
-import br.com.abril.nds.dto.CotaConsignadaCouchDTO;
-import br.com.abril.nds.dto.CotaConsignadaDetalheCouchDTO;
-import br.com.abril.nds.dto.EncalheCotaDTO;
-import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
-import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoSimplesDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
@@ -229,7 +221,7 @@ public class GeracaoArquivosController extends BaseController {
 		String path = (String) session.getValue("PATH_VENDA");
 		byte[] arquivo = ("Nao encontrado " + path).getBytes();
 		if (path == null) { // se nao foi gerado agora pegar o o mais novo, caso
-							// senha
+			// senha
 			// LOGGER.warn("Arquivo nao gerado");
 			// result.use(Results.nothing());
 			// return;
@@ -274,10 +266,10 @@ public class GeracaoArquivosController extends BaseController {
 	@Rules(Permissao.ROLE_ADMINISTRACAO_GERACAO_ARQUIVO_ALTERACAO)
 	public void gerarConsignado(String numeroCota) {
 		TipoMensagem tipoMensagem = TipoMensagem.SUCCESS;
-        String mensagem = "Nenhuma cota a ser exportadas";
+		String mensagem = "Nenhuma cota a ser exportadas";
 		try {
-			exportarCouch(numeroCota, mensagem);
-        } catch (Exception e) {
+			exportar(numeroCota, mensagem);
+		} catch (Exception e) {
 			tipoMensagem = TipoMensagem.ERROR;
 			mensagem = "Ocorreu uma falha durante o processo de exportacao para o couch";
 		}
@@ -296,8 +288,8 @@ public class GeracaoArquivosController extends BaseController {
 	}
 
 
-	private String exportarCouch(String numeroCota, String mensagem){
-			List<CotaConsignadaDetalheCouchDTO> listaCotasConsignadas = movimentoEstoqueCotaService
+	private String exportar(String numeroCota, String mensagem){
+		List<CotaConsignadaDetalheCouchDTO> listaCotasConsignadas = movimentoEstoqueCotaService
 				.getCotasConsignadaExportCouch(numeroCota);
 
 		if(!listaCotasConsignadas.isEmpty()) {
@@ -305,13 +297,27 @@ public class GeracaoArquivosController extends BaseController {
 			cotaConsignadaCouchDTO.setCotaConsignadaDetalhes(listaCotasConsignadas);
 
 
-         //   Gson gson = new Gson();
-
-
 
 			exporteCouch.exportarCotaConsignada(cotaConsignadaCouchDTO);
-			mensagem = "Cotas exportadas com sucesso";
-			acionarProcessoImportacaoTPJ();
+			mensagem = "Cotas exportadas para o couch com sucesso";
+
+
+
+
+		//	ConectionEfacil c = new ConectionEfacil();
+		//	EfacilDTO efacilDTO = new EfacilDTO();
+	//		efacilDTO.setDados(createJsonConsignado(listaCotasConsignadas).toString());
+//			efacilDTO.setMetodo("POST");
+//			efacilDTO.setPrivateKey("jytCqej8a50GlPp0Esio4mk1qrc39g8pBSURCeZepsD5vtgXREr31XMR5kevvtXhSEnCGxyIqLPCLX1dFxH7yMTLoigdZV32LZOL");
+//			efacilDTO.setToken("fea6261d13e6dd2911ac8aa11f90d3fa");
+//			efacilDTO.setURL("https://gerenciador.efacil.net/rest/banca/consignacao");
+
+//			c.conectar(efacilDTO);
+
+
+
+
+				acionarProcessoImportacaoTPJ();
 		}
 
 
@@ -321,8 +327,60 @@ public class GeracaoArquivosController extends BaseController {
 		return mensagem;
 	}
 
-//	@Async // TODO - Estrutrar p/ ser assync
-    private void acionarProcessoImportacaoTPJ() {
+	private JsonArray createJsonConsignado(List<CotaConsignadaDetalheCouchDTO>  listaCotasConsignadas){
+
+		JsonArray jsonItens = new JsonArray();
+
+
+		for(CotaConsignadaDetalheCouchDTO item: listaCotasConsignadas){
+
+			JsonObject jsonItem = new JsonObject();
+
+			jsonItem.addProperty("codigoPublicacao", item.getCodigoPublicacao());
+
+			jsonItem.addProperty("numeroEdicao", item.getNumeroEdicao());
+
+			jsonItem.addProperty("codigoBarras", item.getCodigoBarras());
+
+			jsonItem.addProperty("nomePublicacao", item.getNomePublicacao());
+
+			jsonItem.addProperty("quantidadeReparte", item.getQuantidadeReparte());
+
+			jsonItem.addProperty("codigoEditora", item.getCodigoEditora());
+
+			jsonItem.addProperty("nomeEditora", item.getNomeEditora());
+
+			jsonItem.addProperty("precoCapa", item.getPrecoCapa());
+
+			jsonItem.addProperty("precoCusto", item.getPrecoCusto());
+
+			jsonItem.addProperty("chamadaCapa", item.getChamadaCapa());
+
+			jsonItem.addProperty("dataLancamento", item.getDataLancamento());
+
+			jsonItem.addProperty("dataPrimeiroLancamentoParcial", "");
+
+			jsonItens.add(jsonItem);
+		}
+
+
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("codigoCota", listaCotasConsignadas.get(0).getCodigoCota());
+		jsonObject.addProperty("codigoDistribuidor", listaCotasConsignadas.get(0).getCodigoDistribuidor());
+		jsonObject.add("itens",jsonItens);
+
+		JsonArray jsonFather = new JsonArray();
+		jsonFather.add(jsonObject);
+
+
+
+		return jsonFather;
+	}
+
+
+
+	//	@Async // TODO - Estrutrar p/ ser assync
+	private void acionarProcessoImportacaoTPJ() {
 
 		try {
 
@@ -352,7 +410,7 @@ public class GeracaoArquivosController extends BaseController {
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
-    }
+	}
 
 	// gerar arquivo com vendas reparte agregado ( caso caruso )
 	@Post
@@ -382,12 +440,12 @@ public class GeracaoArquivosController extends BaseController {
 
 					lista = new HashSet();
 					lista.add(cc.getNumeroCotaMaster()); // insere cota master
-															// na lista, just in
-															// case nao esteja
-															// cadastrada
-															// como cota
-															// agrupada a ela
-															// mesmo ..
+					// na lista, just in
+					// case nao esteja
+					// cadastrada
+					// como cota
+					// agrupada a ela
+					// mesmo ..
 
 				}
 				lista.add(cc.getNumeroCota());
@@ -404,37 +462,37 @@ public class GeracaoArquivosController extends BaseController {
 			 * ARTE COM MAOS CUP CAKE 00000002CASA DOIS COMUNICACAO LTDA
 			 * 0000001999000000139930 MODELOS PASSO A PASSO 0209201500000002
 			 * select '011',lpad(trim(b.cod_filial_prodin),7,0) as cod_filial,
-			 * 
+			 *
 			 * lpad(a.cod_jornaleiro,7,0) as cod_jornaleiro,
-			 * 
+			 *
 			 * lpad(a.cod_jornaleiro,5,0) as cod_jornaleiro,
-			 * 
+			 *
 			 * lpad(a.cod_jornaleiro,5,0) as cod_jornaleiro,
-			 * 
+			 *
 			 * replace(a.dt_mov,'/','') as dat_mov,
-			 * 
+			 *
 			 * lpad(a.cod_publicacao,8,0) as cod_edicao,
-			 * 
+			 *
 			 * lpad(trim(a.edicao_capa),4,'0') as edicao_capa,
-			 * 
+			 *
 			 * lpad(a.cod_barra,18,0) as cod_barra,
-			 * 
+			 *
 			 * rpad(trim(a.desc_public),30,' ') as desc_public,
-			 * 
+			 *
 			 * lpad(a.reparte,8,0) as reparte,
-			 * 
+			 *
 			 * rpad(trim(d.nome_editor),35,' ') as nome_editor,
-			 * 
+			 *
 			 * replace(to_char(lpad(trunc(vr_venda,2),11,0)),'.','') as
 			 * vr_venda,
-			 * 
+			 *
 			 * replace(to_char(lpad(trunc(vr_custo,2),11,0)),'.','') as
 			 * vr_custo,
-			 * 
+			 *
 			 * rpad(trim(a.rep_capa),30,' ') as rep_capa,
-			 * 
+			 *
 			 * replace(a.dt_mov,'/','') as dat_mov,
-			 * 
+			 *
 			 * lpad(a.devol,8,0) as devol
 			 */
 
@@ -552,13 +610,13 @@ public class GeracaoArquivosController extends BaseController {
 									String.format("%011.2f", vrCusto.floatValue()).replace(",", "").replace("\\.", ""));
 
 							String repCapa = consignado.getChamadaCapa();// produtoEdicao.getChamadaCapa()!=
-																			// null
-																			// ?produtoEdicao.getChamadaCapa():""
-																			// ;//"30
-																			// MODELOS
-																			// PASSO
-																			// A
-																			// PASSO";
+							// null
+							// ?produtoEdicao.getChamadaCapa():""
+							// ;//"30
+							// MODELOS
+							// PASSO
+							// A
+							// PASSO";
 
 							sb.append(StringUtils.rightPad(repCapa, 30, ' ').substring(0, 30));
 
@@ -648,10 +706,10 @@ public class GeracaoArquivosController extends BaseController {
 						sb.append(String.format("%011.2f", vrCusto.floatValue()).replace(",", "").replace("\\.", ""));
 
 						String repCapa = pe.getChamadaCapa() != null ? pe.getChamadaCapa() : "";// "30
-																								// MODELOS
-																								// PASSO
-																								// A
-																								// PASSO";
+						// MODELOS
+						// PASSO
+						// A
+						// PASSO";
 
 						sb.append(StringUtils.rightPad(repCapa, 30, ' ').substring(0, 30));
 
@@ -672,23 +730,23 @@ public class GeracaoArquivosController extends BaseController {
 				/*
 				 * comentando, enquanto email nao habilitado AnexoEmail
 				 * anexoEmail = new AnexoEmail(); anexoEmail.setNome(path);
-				 * 
+				 *
 				 * mensagem.append("Enviado email para  "+email+"</br>");
-				 * 
+				 *
 				 * List<AnexoEmail> anexosEmail = new ArrayList<AnexoEmail>();
-				 * 
-				 * 
-				 * 
+				 *
+				 *
+				 *
 				 * byte[] anexo =
 				 * java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path
 				 * ));
-				 * 
-				 * 
-				 * 
+				 *
+				 *
+				 *
 				 * anexosEmail.add(new
 				 * AnexoEmail(cotaMaster.toString()+DateUtil.formatarData(data,
 				 * "ddMMyyyy"),anexo,TipoAnexo.ENP));
-				 * 
+				 *
 				 * this.emailService.enviar("Arquivo Unificado",
 				 * "Segue arquivo em anexo.", new String[]{email}, anexosEmail);
 				 */
@@ -839,8 +897,8 @@ public class GeracaoArquivosController extends BaseController {
 			// identificar codigos do FC e DINAP
 
 			String filialFc = "0757350"; // defaults para arj - abaixo, sera
-											// identificado pela primeira parte
-											// do nome dos arquivos
+			// identificado pela primeira parte
+			// do nome dos arquivos
 			String filialDinap = "5318019";
 
 			File dir = new File(dirFc);
