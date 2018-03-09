@@ -278,7 +278,7 @@ public class BancoServiceImpl implements BancoService {
 
 		List<ItemDTO<Integer,String>> comboBancos =  new ArrayList<ItemDTO<Integer,String>>();
 
-		List<Banco> bancos = bancoRepository.obterBancoBoletoAvulso();
+		List<Banco> bancos = bancoRepository.obterBancosPorStatus(true);
 
 		for (Banco itemBanco : bancos){
 
