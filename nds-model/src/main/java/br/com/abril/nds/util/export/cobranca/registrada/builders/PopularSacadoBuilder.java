@@ -2,6 +2,7 @@ package br.com.abril.nds.util.export.cobranca.registrada.builders;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroCaixa01;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.cadastro.Cota;
@@ -125,4 +126,40 @@ public class PopularSacadoBuilder implements Serializable {
         
         EnderecoSacadoBuilder.enderecoSacado(registro01, enderecoSacado, nomeSacado);
 	}
+
+    public static void popularSacadoCobrancaCaixa(CobRegEnvTipoRegistroCaixa01 registro01, Boleto boleto) {
+
+        final Cota cota = boleto.getCota();
+
+        final Pessoa pessoaSacado = cota.getPessoa();
+
+        Endereco enderecoSacado = cota.getEnderecoPrincipal().getEndereco();
+
+        //DADOS DO SACADO
+        String nomeSacado = null;
+
+        String documentoSacado = null;
+
+        if (pessoaSacado instanceof PessoaFisica) {
+
+            nomeSacado = ((PessoaFisica) pessoaSacado).getNome();
+            documentoSacado = ((PessoaFisica) pessoaSacado).getCpf();
+            registro01.setIdentificacaoTipoIncricaoPagador(CODIGO_INSCRICAO_FISICA);
+            registro01.setNumeroDocumento(documentoSacado.replace(".", "").replace("-", "").replace("/", ""));
+
+        }
+        if (pessoaSacado instanceof PessoaJuridica) {
+            nomeSacado = ((PessoaJuridica) pessoaSacado).getRazaoSocial();
+            documentoSacado = ((PessoaJuridica) pessoaSacado).getCnpj();
+            registro01.setIdentificacaoTipoIncricaoPagador(CODIGO_INSCRICAO_JURIDICA);
+            registro01.setNumeroDocumento(documentoSacado.replace(".", "").replace("-", "").replace("/", ""));
+        }
+
+
+        registro01.setSacadoAvalista(TirarAcento.removerAcentuacao(nomeSacado.trim()));
+
+        EnderecoSacadoBuilder.enderecoSacadoCaixa(registro01, enderecoSacado, nomeSacado.trim());
+
+        registro01.setNomeSacado(TirarAcento.removerAcentuacao(nomeSacado.trim()));
+    }
 }

@@ -2,6 +2,7 @@ package br.com.abril.nds.util.export.cobranca.registrada.builders;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroCaixa01;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -26,7 +27,29 @@ public class EnderecoSacadoBuilder implements Serializable {
 		registro01.setPrazoProtesto("99");
 		registro01.setCodigoMoeda("00");
 	}
-	
+
+	public static void enderecoSacadoCaixa(final CobRegEnvTipoRegistroCaixa01 registro01, final Endereco enderecoSacado, final String nomeSacado){
+
+	    StringBuilder sb = new StringBuilder();
+
+        sb.append(TirarAcento.removerAcentuacao(enderecoSacado.getTipoLogradouro().trim()))
+                .append(" ")
+				.append(TirarAcento.removerAcentuacao(enderecoSacado.getLogradouro().trim()))
+				.append(" ")
+				.append(TirarAcento.removerAcentuacao(enderecoSacado.getNumero().trim()))
+				.append(" ")
+				.append(TirarAcento.removerAcentuacao(enderecoSacado.getBairro().trim()))
+				.append(" ")
+                .append(TirarAcento.removerAcentuacao(enderecoSacado.getCep().trim()))
+                .append(" ")
+                .append(TirarAcento.removerAcentuacao(enderecoSacado.getCidade().trim()))
+                .append(" ")
+                .append(TirarAcento.removerAcentuacao(enderecoSacado.getUf().trim()));
+
+        registro01.setEnderecoSacado(sb.toString().trim());
+
+        }
+
 	public static void enderecoSacado(CobRegEnvTipoRegistroItau01 registro01, Endereco enderecoSacado, String nomeSacado) {
 		//ENDERECO DO SACADO
         registro01.setEnderecoSacado(TirarAcento.removerAcentuacao(enderecoSacado.getTipoLogradouro().trim()) +". "+ TirarAcento.removerAcentuacao(enderecoSacado.getLogradouro().trim()) + "," + enderecoSacado.getNumero().trim());

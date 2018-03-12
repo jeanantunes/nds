@@ -22,6 +22,7 @@ import java.util.TreeSet;
 
 import javax.xml.bind.ValidationException;
 
+import br.com.abril.nds.util.export.cobranca.registrada.*;
 import org.jrimum.domkee.financeiro.banco.febraban.Titulo.EnumAceite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,13 +142,6 @@ import br.com.abril.nds.util.NomeBanco;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.cnab.UtilitarioCNAB;
-import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro00;
-import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro01;
-import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro09;
-import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroBradesco00;
-import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroBradesco01;
-import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroItau00;
-import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroItau01;
 import br.com.abril.nds.util.export.cobranca.registrada.builders.DetalheRegistroRegistroPorBancoBuilder;
 import br.com.abril.nds.util.export.cobranca.registrada.builders.PopularSacadoBuilder;
 import br.com.abril.nds.util.export.cobranca.registrada.builders.RegistroPorBancoBuilder;
@@ -3064,6 +3058,8 @@ public class BoletoServiceImpl implements BoletoService {
 
 		CobRegEnvTipoRegistroItau00 registroItau = null;
 
+        CobRegEnvTipoRegistroCaixa00 registroCaixa = null;
+
 		CobRegEnvTipoRegistroBradesco00 registroBradesco = null;
 
 		switch (banco.getNumeroBanco()) {
@@ -3081,7 +3077,7 @@ public class BoletoServiceImpl implements BoletoService {
 				registro00 = this.montarRegistro00(banco, pessoaCedente);
 				break;
 			case UtilitarioCNAB.BANCO_CAIXA_ECONOMICA_FEDERAL:
-				registro00 = this.montarRegistro00(banco, pessoaCedente);
+				registroCaixa = this.montarRegistroCaixa(banco, pessoaCedente);
 				break;
 			case UtilitarioCNAB.BANCO_SANTANDER:
 				registro00 = this.montarRegistro00(banco, pessoaCedente);
@@ -3098,7 +3094,10 @@ public class BoletoServiceImpl implements BoletoService {
 		} else if(registroBradesco != null) {
 			list.add(registroBradesco);
 			count = qtdeSequenciaRegistro(registro00, registroBradesco);
-		}
+		} else if(registroCaixa != null) {
+            list.add(registroCaixa);
+            count = qtdeSequenciaRegistro(registro00, registroCaixa);
+        }
 
 
 		int somaSquencial = 0;
@@ -3134,6 +3133,10 @@ public class BoletoServiceImpl implements BoletoService {
         				CobRegEnvTipoRegistroBradesco01 detalheBradesco = this.montarRegistroBradesco01(boleto, pessoaCedente, banco, count);
         				list.add(detalheBradesco);
         				break;
+                    case UtilitarioCNAB.BANCO_CAIXA_ECONOMICA_FEDERAL:
+                        CobRegEnvTipoRegistroCaixa01 detalheCaixa = this.montarRegistroCaixa01(boleto, pessoaCedente, banco, count);
+                        list.add(detalheCaixa);
+                        break;
         			default :
         				CobRegEnvTipoRegistro01 registro01 = this.montarRegistro01(boleto, pessoaCedente, banco, count);
         				list.add(registro01);
@@ -3192,10 +3195,19 @@ public class BoletoServiceImpl implements BoletoService {
 		return count;
 	}
 
+    private int qtdeSequenciaRegistro(CobRegEnvTipoRegistro00 registro00, CobRegEnvTipoRegistroCaixa00 registroCaixa) {
+        int count = Integer.valueOf(String.valueOf(registro00 == null ? registroCaixa.getSequencial() : registro00.getSequencial()))+1;
+        return count;
+    }
+
 	// metodo comum a todos os arquivos
 	private CobRegEnvTipoRegistro00 montarRegistro00(Banco banco, Pessoa pessoaCedente) throws ValidationException {
 		return RegistroPorBancoBuilder.registroPorBanco(banco, pessoaCedente);
 	}
+
+    private CobRegEnvTipoRegistroCaixa00 montarRegistroCaixa(Banco banco, Pessoa pessoaCedente) throws ValidationException {
+        return RegistroPorBancoBuilder.registroPorBancoCaixa(banco, pessoaCedente);
+    }
 
 	private CobRegEnvTipoRegistroItau00 montarRegistroItau(Banco banco, Pessoa pessoaCedente) throws ValidationException {
 		return RegistroPorBancoBuilder.registroPorBancoItau(banco, pessoaCedente);
@@ -3241,6 +3253,10 @@ public class BoletoServiceImpl implements BoletoService {
 	private CobRegEnvTipoRegistroBradesco01 montarRegistroBradesco01(Boleto boleto, Pessoa pessoaCedente, Banco banco, int count) throws ValidationException {
 		return DetalheRegistroRegistroPorBancoBuilder.detalheRegistroPorBancoBradesco(boleto, banco, count);
 	}
+
+    private CobRegEnvTipoRegistroCaixa01 montarRegistroCaixa01(Boleto boleto, Pessoa pessoaCedente, Banco banco, int count) throws ValidacaoException, ValidationException {
+        return DetalheRegistroRegistroPorBancoBuilder.detalheRegistroPorBancoCaixa(boleto, banco, count);
+    }
 
 	private CobRegEnvTipoRegistro01 detalheRegistroPorBanco(Boleto boleto, Banco banco, int count, CobRegEnvTipoRegistro01 registro01) throws ValidationException {
 		registro01.setTipoRegistro("1");

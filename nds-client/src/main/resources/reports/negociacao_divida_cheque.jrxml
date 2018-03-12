@@ -28,8 +28,8 @@
 	<field name="numeroCota" class="java.lang.Integer">
 		<fieldDescription><![CDATA[numeroCota]]></fieldDescription>
 	</field>
-	<field name="numeroBanco" class="java.lang.String">
-		<fieldDescription><![CDATA[numeroBanco]]></fieldDescription>
+	<field name="codigoBanco" class="java.lang.String">
+		<fieldDescription><![CDATA[codigoBanco]]></fieldDescription>
 	</field>
 	<field name="nomeBanco" class="java.lang.String">
 		<fieldDescription><![CDATA[nomeBanco]]></fieldDescription>
@@ -177,7 +177,7 @@
 			<textField>
 				<reportElement uuid="8bb5278a-9301-47ea-b0a0-bf6135394f34" x="295" y="40" width="260" height="20"/>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{numeroBanco} + " - " + $F{nomeBanco} + " Ag. " + $F{agenciaBanco} + " C/C: " + $F{contaBanco}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{codigoBanco} + " - " + $F{nomeBanco} + " Ag. " + $F{agenciaBanco} + " C/C: " + $F{contaBanco}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

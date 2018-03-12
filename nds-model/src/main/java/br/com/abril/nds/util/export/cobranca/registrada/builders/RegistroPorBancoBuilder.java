@@ -16,6 +16,7 @@ import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro00;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroBradesco00;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroItau00;
+import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroCaixa00;
 
 @Component
 public class RegistroPorBancoBuilder implements Serializable {
@@ -71,7 +72,32 @@ public class RegistroPorBancoBuilder implements Serializable {
 //			}
 //			return registro00;
 	}
-	
+
+	public static CobRegEnvTipoRegistroCaixa00 registroPorBancoCaixa(Banco banco, Pessoa pessoaCedente) throws ValidationException {
+
+		CobRegEnvTipoRegistroCaixa00 registro00 = new CobRegEnvTipoRegistroCaixa00();
+
+		registro00.setTipoRegistro("0");
+		registro00.setIdentificacaoArquivoRemessa("1");
+		registro00.setIdentificacaoExtenso("REMESSA");
+		registro00.setCodigoServico("01");
+		registro00.setLiteralServicos("COBRANCA");
+		registro00.setAgenciaCedente(String.valueOf(banco.getAgencia()));
+		registro00.setContaCliente(String.valueOf(banco.getConta()));
+		registro00.setFiller("");
+		String nomeCliente = obterNomeCliente(pessoaCedente);
+		registro00.setNomeCliente(nomeCliente);
+		registro00.setNumeroBanco(banco.getNumeroBanco());
+		registro00.setNomeBanco(banco.getNome());
+		registro00.setDataGravacaoArquivo(setarDataFomatada());
+		registro00.setFiller2("");
+		registro00.setSequencialA(banco.getSequencialArquivoCobranca() != null ? banco.getSequencialArquivoCobranca() : "0000"+1);
+		registro00.setSequencialB("000001");
+
+		return registro00;
+	}
+
+
 	public static CobRegEnvTipoRegistroItau00 registroPorBancoItau(Banco banco, Pessoa pessoaCedente) throws ValidationException {
 		
 		CobRegEnvTipoRegistroItau00 registro00 = new CobRegEnvTipoRegistroItau00();

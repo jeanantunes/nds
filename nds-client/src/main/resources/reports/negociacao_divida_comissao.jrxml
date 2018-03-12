@@ -18,8 +18,8 @@
 	<field name="comissaoAtualCota" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[comissaoAtualCota]]></fieldDescription>
 	</field>
-	<field name="numeroBanco" class="java.lang.String">
-		<fieldDescription><![CDATA[numeroBanco]]></fieldDescription>
+	<field name="codigoBanco" class="java.lang.String">
+		<fieldDescription><![CDATA[codigoBanco]]></fieldDescription>
 	</field>
 	<field name="totalDividaSelecionada" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[totalDividaSelecionada]]></fieldDescription>

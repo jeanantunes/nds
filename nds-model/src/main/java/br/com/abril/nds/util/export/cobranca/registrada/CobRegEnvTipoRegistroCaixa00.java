@@ -1,14 +1,14 @@
 package br.com.abril.nds.util.export.cobranca.registrada;
 
-import org.apache.commons.lang.StringUtils;
-
 import br.com.abril.nds.util.export.cobranca.util.CobRegBaseDTO;
 import br.com.abril.nds.util.export.cobranca.util.CobRegfield;
+import org.apache.commons.lang.StringUtils;
 
-public class CobRegEnvTipoRegistro00 extends CobRegBaseDTO {
+public class CobRegEnvTipoRegistroCaixa00 extends CobRegBaseDTO {
+
 
 	@CobRegfield(tamanho = 1, tipo="char", ordem=1)
-	private String tipoRegistro="0";
+	private String tipoRegistro;
 
 	@CobRegfield(tamanho = 1, tipo="char", ordem=2)
 	private String identificacaoArquivoRemessa;
@@ -25,38 +25,34 @@ public class CobRegEnvTipoRegistro00 extends CobRegBaseDTO {
 	@CobRegfield(tamanho = 4, tipo="char", ordem=6)
 	private String agenciaCedente;
 
-	@CobRegfield(tamanho = 2, tipo="char", ordem=7)
-	private String filler;
-
-	@CobRegfield(tamanho = 7, tipo="char", ordem=8)
+	@CobRegfield(tamanho = 6, tipo="char", ordem=7)
 	private String contaCliente;
 
-	@CobRegfield(tamanho = 1, tipo="char", ordem=9)
-	private String digitoConta;
+	@CobRegfield(tamanho = 10, tipo="char", ordem=8)
+	private String filler;
 
-	@CobRegfield(tamanho=6, tipo="char", ordem=10)
-	private String filler2;
-
-	@CobRegfield(tamanho = 30, tipo="char", ordem=11)
+	@CobRegfield(tamanho = 30, tipo="char", ordem=9)
 	private String nomeCliente;
 
-	@CobRegfield(tamanho = 3, tipo="char", ordem=12)
+	@CobRegfield(tamanho = 3, tipo="char", ordem=10)
 	private String numeroBanco;
 
-	@CobRegfield(tamanho = 15, tipo="char", ordem=13)
+	@CobRegfield(tamanho = 15, tipo="char", ordem=11)
 	private String nomeBanco;
 
-	@CobRegfield(tamanho = 6, tipo="char", ordem=14)
+	@CobRegfield(tamanho = 6, tipo="char", ordem=12)
 	private String dataGravacaoArquivo;
 
-	@CobRegfield(tamanho = 3, tipo="char", ordem=15)
-	private String codigoUsuario;
+	@CobRegfield(tamanho=289, tipo="char", ordem=13)
+	private String filler2;
 
-	@CobRegfield(tamanho = 291, tipo="char", ordem=16)
-	private String filler3;
+	@CobRegfield(tamanho = 5, tipo="char", ordem=14)
+	private String sequencialA;
 
-	@CobRegfield(tamanho = 6, tipo="char", ordem=17)
-	private String sequencial;
+	@CobRegfield(tamanho = 6, tipo="char", ordem=15)
+	private String sequencialB;
+
+	private int sequencial;
 
 	public String getTipoRegistro() {
 		return tipoRegistro;
@@ -111,7 +107,7 @@ public class CobRegEnvTipoRegistro00 extends CobRegBaseDTO {
 	}
 
 	public void setFiller(String filler) {
-		this.filler = StringUtils.leftPad(filler, 2, '0');
+		this.filler = StringUtils.leftPad(filler, 2, ' ');
 	}
 
 	public String getContaCliente() {
@@ -122,20 +118,12 @@ public class CobRegEnvTipoRegistro00 extends CobRegBaseDTO {
 		this.contaCliente = StringUtils.leftPad(contaCliente, 7, '0');
 	}
 
-	public String getDigitoConta() {
-		return digitoConta;
-	}
-
-	public void setDigitoConta(String digitoConta) {
-		this.digitoConta = digitoConta;
-	}
-
 	public String getFiller2() {
 		return filler2;
 	}
 
 	public void setFiller2(String filler2) {
-		this.filler2 =  StringUtils.leftPad(filler, 6, ' ');
+		this.filler2 =  StringUtils.leftPad(filler, 289, ' ');
 	}
 
 	public String getNomeCliente() {
@@ -170,27 +158,23 @@ public class CobRegEnvTipoRegistro00 extends CobRegBaseDTO {
 		this.dataGravacaoArquivo = dataGravacaoArquivo;
 	}
 
-	public String getCodigoUsuario() {
-		return codigoUsuario;
+	public String getSequencialA() {
+		return sequencialA;
 	}
 
-	public void setCodigoUsuario(String codigoUsuario) {
-		this.codigoUsuario = codigoUsuario;
+	public void setSequencialA(String sequencialA) {
+		this.sequencialA = StringUtils.leftPad(sequencialA,5,"0");
 	}
 
-	public String getFiller3() {
-		return filler3;
+	public String getSequencialB() {
+		return sequencialB;
 	}
 
-	public void setFiller3(String filler3) {
-		this.filler3 = filler3;
+	public void setSequencialB(String sequencialB) {
+		this.sequencialB = StringUtils.leftPad(sequencialB, 6,"0");
 	}
 
-	public String getSequencial() {
+	public int getSequencial() {
 		return sequencial;
-	}
-
-	public void setSequencial(String sequencial) {
-		this.sequencial = StringUtils.leftPad(sequencial, 6, '0');;
 	}
 }

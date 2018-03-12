@@ -10,6 +10,7 @@ import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro01;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroBradesco01;
+import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroCaixa01;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroItau01;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
@@ -320,4 +321,65 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable {
         }
     }
 
+    public static CobRegEnvTipoRegistroCaixa01 detalheRegistroPorBancoCaixa(Boleto boleto, Banco banco, int count) throws ValidationException {
+
+        CobRegEnvTipoRegistroCaixa01 registro01 = new CobRegEnvTipoRegistroCaixa01();
+            //FIXME: Boleto CAIXA - DONE
+            registro01.setTipoRegistro("1");
+            PopularSacadoBuilder.popularSacadoCobrancaCaixa(registro01, boleto);
+            registro01.setCodigoInscricaoSacado(registro01.getIdentificacaoTipoIncricaoPagador());
+            registro01.setNumeroCNPJCPF(registro01.getNumeroDocumento());
+            registro01.setAgenciaCedente(String.valueOf(banco.getAgencia()));
+            registro01.setCodBeneficiario(banco.getCodigoEmpresa());
+            registro01.setIdEmissao("2");
+            registro01.setIdPostagem("0");
+            registro01.setTaxaPermanencia("00");
+            registro01.setEmpresaBeneficiario(boleto.getNossoNumero());
+            registro01.setNossoNumero(boleto.getNossoNumero());
+            registro01.setFiller("");
+            registro01.setUsoLivre("1");
+            registro01.setMensagem("");
+            registro01.setCarteira("01");
+            registro01.setCodOcorrencia("01");
+            registro01.setNumero(boleto.getNossoNumero());
+        try {
+            registro01.setDataVencimentoTitulo(Util.formataData(boleto.getDataVencimento()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        registro01.setValorTitulo(CurrencyUtil.formatarValor(boleto.getValor()).replace(".", "").replace(",",""));
+            registro01.setCodigoBanco(banco.getNumeroBanco());
+            registro01.setAgencia("00000");
+            registro01.setEspecieTitulo("02");
+            registro01.setAceite("A");
+        try {
+            registro01.setDataEmissao(Util.formataData(boleto.getDataEmissao()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        registro01.setInstrucao1("");
+            registro01.setInstrucao2("00");
+            registro01.setJurosMora("0");
+            registro01.setDataDesconto("0");
+            registro01.setValorDesconto("0");
+            registro01.setValorIOF("0");
+            registro01.setValorAbatimento("0");
+            registro01.setIdentificacaoTipoIncricaoPagador(registro01.getIdentificacaoTipoIncricaoPagador());
+            registro01.setNumeroDocumento(registro01.getNumeroDocumento());
+            registro01.setSacadoAvalista(registro01.getNomeSacado());
+            registro01.setEnderecoSacado(registro01.getEnderecoSacado());
+        try {
+            registro01.setDataMulta(Util.formataData(boleto.getDataVencimento()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        registro01.setValorMulta(" ");
+            registro01.setNomeSacado(registro01.getNomeSacado());
+            registro01.setInstrucao3("0");
+            registro01.setPrazoProtesto("90");
+            registro01.setCodigoMoeda("1");
+            registro01.setNumeroSequencial(String.valueOf(count));
+
+            return registro01;
+    }
 }

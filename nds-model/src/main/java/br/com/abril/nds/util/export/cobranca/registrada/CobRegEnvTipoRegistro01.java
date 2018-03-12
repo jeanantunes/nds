@@ -6,16 +6,16 @@ import br.com.abril.nds.util.export.cobranca.util.CobRegBaseDTO;
 import br.com.abril.nds.util.export.cobranca.util.CobRegfield;
 
 public class CobRegEnvTipoRegistro01 extends CobRegBaseDTO {
-	
+
 	@CobRegfield(tamanho=1, tipo="char", ordem=1)
 	private String tipoRegistro = "1";
-	
+
 	@CobRegfield(tamanho = 16, tipo = "char", ordem = 2)
 	private String filler;
 
 	@CobRegfield(tamanho = 4, tipo = "char", ordem = 3)
 	private String agenciaCedente;
-	
+
 	@CobRegfield(tamanho = 2, tipo = "char", ordem = 4)
 	private String filler1;
 
@@ -24,118 +24,118 @@ public class CobRegEnvTipoRegistro01 extends CobRegBaseDTO {
 
 	@CobRegfield(tamanho = 1, tipo = "char", ordem = 6)
 	private String digitoConta;
-	
+
 	@CobRegfield(tamanho = 2, tipo="char", ordem=7)
 	private String taxa;
-	
+
 	@CobRegfield(tamanho = 4, tipo="char", ordem=8)
 	private String filler2;
-	
+
 	@CobRegfield(tamanho = 25, tipo="char", ordem=9)
 	private String numeroControle;
-	
+
 	@CobRegfield(tamanho = 7, tipo="char", ordem=10)
 	private String nossoNumero;
-	
+
 	@CobRegfield(tamanho = 1, tipo="char", ordem=11)
 	private String digitoNossoNumero;
-	
+
 	@CobRegfield(tamanho = 10, tipo="char", ordem=12)
 	private String numeroContrato;
-	
+
 	@CobRegfield(tamanho = 6, tipo="char", ordem=13)
 	private String dataSegundoDesconto;
-	
+
 	@CobRegfield(tamanho = 13, tipo="numeric", ordem=14)
 	private String valorSegundoDesconto;
-	
+
 	@CobRegfield(tamanho = 8, tipo="char", ordem=15)
 	private String filler3;
-	
+
 	@CobRegfield(tamanho = 1, tipo="char", ordem=16)
 	private String carteira;
-	
+
 	@CobRegfield(tamanho = 2, tipo="char", ordem=17)
 	private String codigoServico;
-	
+
 	@CobRegfield(tamanho = 10, tipo="char", ordem=18)
 	private String numero;
-	
+
 	@CobRegfield(tamanho = 6, tipo="char", ordem=19)
 	private String dataVencimento;
-	
+
 	@CobRegfield(tamanho= 13, tipo="numeric", ordem=20)
 	private String valorTitulo;
-	
+
 	@CobRegfield(tamanho= 3, tipo="char", ordem=21)
 	private String numeroBanco;
-	
+
 	@CobRegfield(tamanho = 4, tipo="char", ordem=22)
 	private String agencia;
-	
+
 	@CobRegfield(tamanho = 1, tipo="char", ordem=23)
 	private String filler4;
-	
+
 	@CobRegfield(tamanho = 2, tipo="char", ordem=24)
 	private String especie;
-	
+
 	@CobRegfield(tamanho = 1, tipo="char", ordem=25)
 	private String aceite;
-	
+
 	@CobRegfield(tamanho = 6, tipo="char", ordem=26)
 	private String dataEmissao;
-	
+
 	@CobRegfield(tamanho = 4, tipo="char", ordem=27)
 	private String codigoInstrucao;
-	
+
 	@CobRegfield(tamanho = 13, tipo="char", ordem=28)
 	private String jurosDia;
-	
+
 	@CobRegfield(tamanho = 6, tipo="char", ordem=29)
 	private String dataDesconto;
-	
+
 	@CobRegfield(tamanho = 13, tipo="char", ordem=30)
 	private String valorDesconto;
-	
+
 	@CobRegfield(tamanho = 13, tipo="char", ordem=31)
 	private String valorIOC;
-	
+
 	@CobRegfield(tamanho = 13, tipo="char", ordem=32)
 	private String valorAbatimento;
-	
+
 	@CobRegfield(tamanho = 2, tipo="char", ordem=33)
 	private String codigoInscricaoSacado;
-	
+
 	@CobRegfield(tamanho = 14, tipo="char", ordem=34)
 	private String numeroCNPJCPF;
-	
+
 	@CobRegfield(tamanho = 40, tipo="char", ordem=35)
 	private String nomeSacado;
-	
+
 	@CobRegfield(tamanho = 40, tipo="char", ordem=36)
 	private String enderecoSacado;
-	
+
 	@CobRegfield(tamanho = 12, tipo="char", ordem=37)
 	private String complemento;
-	
+
 	@CobRegfield(tamanho = 8, tipo="char", ordem=38)
 	private String CEP;
-	
+
 	@CobRegfield(tamanho = 15, tipo="char", ordem=39)
 	private String cidade;
-	
+
 	@CobRegfield(tamanho = 2, tipo="char", ordem=40)
 	private String UF;
-	
+
 	@CobRegfield(tamanho = 40, tipo="char", ordem=41)
 	private String mensagemCedenteNomeSacadorAvalista;
-	
+
 	@CobRegfield(tamanho = 2, tipo="char", ordem=42)
 	private String prazoProtesto;
-	
+
 	@CobRegfield(tamanho = 1, tipo="char", ordem=43)
 	private String codigoMoeda;
-	
+
 	@CobRegfield(tamanho = 6, tipo="char", ordem=44)
 	private String sequencialRegistro;
 
@@ -346,7 +346,7 @@ public class CobRegEnvTipoRegistro01 extends CobRegBaseDTO {
 	public void setDataEmissao(String dataEmissao) {
 		this.dataEmissao = dataEmissao;
 	}
-	
+
 	public String getCodigoInstrucao() {
 		return codigoInstrucao;
 	}
