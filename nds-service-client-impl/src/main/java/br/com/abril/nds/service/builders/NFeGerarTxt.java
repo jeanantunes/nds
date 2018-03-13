@@ -255,7 +255,7 @@ public class NFeGerarTxt {
 							.append(det.getProdutoServico().getUnidade()).append("|")
 							.append(det.getProdutoServico().getQuantidade()).append("|")
 							.append(CurrencyUtil.truncateDecimal(det.getProdutoServico().getValorUnitario(),2)).append("|")
-							.append(det.getProdutoServico().getValorTotalBruto()).append("|")
+							.append(CurrencyUtil.truncateDecimal(det.getProdutoServico().getValorTotalBruto(),2)).append("|")
 							.append("").append("|")
 							.append(det.getProdutoServico().getUnidade()).append("|")
 							// qTrib
