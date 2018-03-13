@@ -43,17 +43,17 @@ public class EnderecoSacadoBuilder implements Serializable {
 		
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append(TirarAcento.removerAcentuacao(enderecoSacado.getTipoLogradouro().trim()))
-		  .append(" ")	
-		  .append(TirarAcento.removerAcentuacao(enderecoSacado.getLogradouro().trim()))
+		sb.append(removerAcentuacao(enderecoSacado.getTipoLogradouro()))
+		  .append(" ")
+		  .append(removerAcentuacao(enderecoSacado.getLogradouro()))
 		  .append(" ")
 		  .append(enderecoSacado.getNumero().trim())
 		  .append(" ")
-		  .append(TirarAcento.removerAcentuacao(enderecoSacado.getBairro().trim()))
+		  .append(removerAcentuacao(enderecoSacado.getBairro()))
 		  .append(" ")
-		  .append(TirarAcento.removerAcentuacao(enderecoSacado.getCidade().trim()))
+		  .append(removerAcentuacao(enderecoSacado.getCidade()))
 		  .append(" ")
-		  .append(enderecoSacado.getUf().trim());
+		  .append(removerAcentuacao(enderecoSacado.getUf()));
 		
         registro01.setEnderecoCompleto(sb.toString().trim());
         
@@ -61,5 +61,12 @@ public class EnderecoSacadoBuilder implements Serializable {
 		
 		registro01.setSacadoAvalista(TirarAcento.removerAcentuacao(TirarAcento.removerAcentuacao(nomeSacado).trim()));
 		
+	}
+
+	private static String removerAcentuacao(String texto){
+		if(texto!=null && !texto.isEmpty()){
+			return TirarAcento.removerAcentuacao(texto.trim());
+		}
+		return " ";
 	}
 }
