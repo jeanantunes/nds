@@ -47,19 +47,19 @@ public class EnderecoSacadoBuilder implements Serializable {
 		  .append(" ")
 		  .append(removerAcentuacao(enderecoSacado.getLogradouro()))
 		  .append(" ")
-		  .append(enderecoSacado.getNumero().trim())
+		  .append(removerAcentuacao(enderecoSacado.getNumero().trim()))
 		  .append(" ")
 		  .append(removerAcentuacao(enderecoSacado.getBairro()))
 		  .append(" ")
 		  .append(removerAcentuacao(enderecoSacado.getCidade()))
 		  .append(" ")
 		  .append(removerAcentuacao(enderecoSacado.getUf()));
-		
-        registro01.setEnderecoCompleto(sb.toString().trim());
+
+        registro01.setEnderecoCompleto(sb.toString().replace("-","").replace(".","").replace(",","").trim().toUpperCase());
         
-		registro01.setCepCompleto(enderecoSacado.getCep().trim());
+		registro01.setCepCompleto(enderecoSacado.getCep().replace("-","").trim());
 		
-		registro01.setSacadoAvalista(TirarAcento.removerAcentuacao(TirarAcento.removerAcentuacao(nomeSacado).trim()));
+		registro01.setSacadoAvalista(TirarAcento.removerAcentuacao(nomeSacado.replace(".","").replace("-","").toUpperCase()).trim());
 		
 	}
 

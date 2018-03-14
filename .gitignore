@@ -15,6 +15,7 @@ META-INF/
 /NDS_replica.eap
 /nds-client/src/main/webapp/capas/13.jpg
 /nds-client/src/main/java/applicationContext.xml
+nds-client/src/main/resources/applicationContext.xml
 /nds-client/velocity.log
 /nds-client/.externalToolBuilders/*
 packages
@@ -33,7 +34,8 @@ nds-integration-server/src/main/resources/prophecies.properties
 nds-integration-server/src/main/resources/ndsi-database.properties
 nds-integration-server/src/main/resources/couchdb.properties
 nds-integration-client/src/main/resources/prophecies.properties
-nds-integration-client/src/main/resources/ndsi-database.properties
+nds-integration-client/conf/ndsi-database.properties
+
 nds-integration-client/src/main/resources/couchdb.properties
 nds-rollout/*.log
 nds-rollout/logs/*.log
