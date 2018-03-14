@@ -7,6 +7,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.TirarAcento;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistro01;
 import br.com.abril.nds.util.export.cobranca.registrada.CobRegEnvTipoRegistroBradesco01;
@@ -278,11 +279,11 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable {
         registro01.setNumeroIncricaoPagador(StringUtils.leftPad(pessoaSacado.replace(".", "").replace("/", "").replace("-", ""), 14, '0'));
 
         if(boleto.getCota().getPessoa().getNome()!=null && !boleto.getCota().getPessoa().getNome().isEmpty()){
-        	registro01.setNomePagador(boleto.getCota().getPessoa().getNome());
+        	registro01.setNomePagador(TirarAcento.removerAcentuacao(boleto.getCota().getPessoa().getNome()));
         }else if(boleto.getCota().getPessoa() instanceof PessoaJuridica){
         	PessoaJuridica pj =(PessoaJuridica) boleto.getCota().getPessoa();
         	if(pj.getRazaoSocial()!=null && !pj.getRazaoSocial().isEmpty()){
-        		registro01.setNomePagador(pj.getRazaoSocial());
+        		registro01.setNomePagador(TirarAcento.removerAcentuacao(pj.getRazaoSocial()));
         	}
         }else{
         	registro01.setNomePagador(StringUtils.leftPad(("NOME NAO IDENTIFICADO"),40," "));

@@ -85,7 +85,7 @@ public class BancoServiceImpl implements BancoService {
 
 	/**
 	 * Método responsável por obter banco por id
-	 * @param idbanco
+	 * @param idBanco
 	 * @return  {@link br.com.abril.nds.model.cadastro.Banco}
 	 */
 	@Transactional(readOnly=true)
@@ -168,7 +168,7 @@ public class BancoServiceImpl implements BancoService {
 
 	/**
 	 * Método responsável por desativar banco
-	 * @param idbanco
+	 * @param idBanco
 	 */
 	@Transactional
 	@Override
@@ -178,7 +178,7 @@ public class BancoServiceImpl implements BancoService {
 
 	/**
 	 * Método responsável por excluir banco
-	 * @param idbanco
+	 * @param idBanco
 	 */
 	@Transactional
 	@Override
@@ -269,7 +269,6 @@ public class BancoServiceImpl implements BancoService {
 
 	/**
 	 * Método responsável por obter bancos para preencher combo da camada view
-	 * @param ativo - Define se a busca retornará Bancos ativos(true), inativos(false) ou todos (null).
 	 * @return comboBancos: bancos cadastrados
 	 */
 	@Transactional(readOnly=true)
