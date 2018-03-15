@@ -7,8 +7,10 @@ import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.integracao.Message;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.LogExecucaoRepository;
+import br.com.abril.nds.repository.ParametroSistemaRepository;
 import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,12 @@ import java.util.concurrent.atomic.AtomicReference;
 public class EMS2022MessageProcessor extends AbstractRepository implements MessageProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EMS2022MessageProcessor.class);
+
+    private static final String driverOracle = "oracle.jdbc.driver.OracleDriver";
+
+    @Autowired
+    private ParametroSistemaRepository parametroSistemaRepository;
+
 
     @Autowired
     private Environment env;
@@ -77,9 +85,9 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
 
             List<Cota> cotas = query.list();
 
-            if(!cotas.isEmpty())
+            if(!cotas.isEmpty()) {
                 con = this.getDBConnection();
-
+            }
             /**
              * Validamos se existe registro na tabela PONTO_VENDA no ICD, se não existir criamos o registro. Em seguida, chamamos a PROC que atualizará os acessos
              * ao numeros atrasados
@@ -211,10 +219,10 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
     private Connection getDBConnection() {
         Connection dbConnection = null;
 
-        String driverClassName = env.getProperty("icddb.driverClassName");
-        String url = env.getProperty("icddb.url");
-        String username = env.getProperty("icddb.username");
-        String password = env.getProperty("icddb.password");
+        String driverClassName = driverOracle;
+        String url =  parametroSistemaRepository.getParametro("ICDDB_URL");
+        String username =  parametroSistemaRepository.getParametro("ICDDB_USERNAME");
+        String password =  parametroSistemaRepository.getParametro("ICDDB_PASSWORD");
 
         try {
             Class.forName(driverClassName);

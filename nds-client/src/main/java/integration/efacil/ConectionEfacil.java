@@ -16,7 +16,7 @@ import java.net.URL;
 public class ConectionEfacil {
 
         public String conectar(EfacilDTO efacilDTO){
-            String strResponse = null;
+            String strResponse = "";
             try {
                 String privatekey= "jytCqej8a50GlPp0Esio4mk1qrc39g8pBSURCeZepsD5vtgXREr31XMR5kevvtXhSEnCGxyIqLPCLX1dFxH7yMTLoigdZV32LZOL/dSX5qwytqas+qyr95JRfCRxBpeb+g2sTiO9WB+kxUyvVIqBRuw+8883XX68gDGYP17CcHU=";
                 efacilDTO.setDados(new String(efacilDTO.getDados().getBytes(), "UTF-8"));
@@ -67,8 +67,9 @@ public class ConectionEfacil {
                 BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
                 String line;
 
-                while ((line = br.readLine()) != null)
+                while ((line = br.readLine()) != null) {
                     strResponse += line;
+                }
 
                 if (erro) {
                     if (strResponse.contains("\"erro\":")) {
