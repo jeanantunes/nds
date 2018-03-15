@@ -136,6 +136,9 @@ public enum TipoParametroSistema {
 	SERVICO_TPJ,
 	USUARIO_TPJ,
 	SENHA_TPJ,
+	ICDDB_URL,
+	ICDDB_USERNAME,
+	ICDDB_PASSWORD
 	;
 
 	

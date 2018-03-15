@@ -6,7 +6,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
-@PropertySource("classpath:ndsi-database.properties")
+// Não descomente isso porque nós trocamos a estrategia de como setar os parametros do banco
+//@PropertySource("classpath:ndsi-database.properties")
 public class NdasiDatabaseConfig {
 
    @Bean
