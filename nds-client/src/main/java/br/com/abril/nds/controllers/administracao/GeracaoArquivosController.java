@@ -306,13 +306,13 @@ public class GeracaoArquivosController extends BaseController {
 
 //			ConectionEfacil c = new ConectionEfacil();
 //			EfacilDTO efacilDTO = new EfacilDTO();
-//			efacilDTO.setDados(createJsonConsignado(listaCotasConsignadas).toString());
-//			efacilDTO.git psetMetodo("POST");
-//			efacilDTO.setPrivateKey("jytCqej8a50GlPp0Esio4mk1qrc39g8pBSURCeZepsD5vtgXREr31XMR5kevvtXhSEnCGxyIqLPCLX1dFxH7yMTLoigdZV32LZOL");
-//			efacilDTO.setToken("fea6261d13e6dd2911ac8aa11f90d3fa");
-//			efacilDTO.setURL("https://gerenciador.efacil.net/rest/banca/consignacao");
+			//efacilDTO.setDados(createJsonConsignado(listaCotasConsignadas).toString());
+			//efacilDTO.setMetodo("POST");
+			//efacilDTO.setPrivateKey("jytCqej8a50GlPp0Esio4mk1qrc39g8pBSURCeZepsD5vtgXREr31XMR5kevvtXhSEnCGxyIqLPCLX1dFxH7yMTLoigdZV32LZOL");
+			//efacilDTO.setToken("fea6261d13e6dd2911ac8aa11f90d3fa");
+			//efacilDTO.setURL("https://gerenciador.efacil.net/rest/banca/consignacao");
 
-//			c.conectar(efacilDTO);
+			//c.conectar(efacilDTO);
 
 
 

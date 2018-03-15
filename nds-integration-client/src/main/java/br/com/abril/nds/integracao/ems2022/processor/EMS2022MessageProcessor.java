@@ -57,7 +57,7 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
     @Override
     public void processMessage(Message message) {
 
-        LOGGER.info(":: Carregando Acessos NA");
+        LOGGER.error(":: Carregando Acessos NA");
 
         Connection con = null;
         Statement stmt = null;
@@ -71,7 +71,12 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
             /**
              * Busca código do distribuidor e cotas que possuem registro na AcessoNA e é foram atualizadas desde a ultima execução
              */
+
+            LOGGER.error("get codigo do distribuidor");
+
             String codigoDistribuidorDinap = message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
+
+
             StringBuilder sql = new StringBuilder(" from Cota c inner join fetch c.acessoNA na join fetch c.pessoa where 1 = 1 ");
             if(dataUltimaExecucao != null) {
                 sql.append(" and na.dataAlteracao >= :dataUltimaExecucao");
@@ -85,6 +90,7 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
 
             List<Cota> cotas = query.list();
 
+            LOGGER.error("Quantas cotas tem ? {}", cotas.size());
             if(!cotas.isEmpty()) {
                 con = this.getDBConnection();
             }
@@ -94,6 +100,7 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
              */
             for (Cota cota: cotas) {
 
+                LOGGER.error("Vou executar a procedure");
                 PreparedStatement preparedStatement = con.prepareStatement("select count(1) from ponto_venda where cod_distribuidor = ? and cod_cota = ?");
                 preparedStatement.setString (1, codigoDistribuidorDinap);
                 preparedStatement.setLong   (2, cota.getNumeroCota());
@@ -102,7 +109,9 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
                 rs.next();
                 long qtdPontoVenda = rs.getLong(1);
 
+
                 if(qtdPontoVenda == 0L){
+                    LOGGER.error("Havia quantidade de ponto de venda e seu valor era:", qtdPontoVenda );
                     LOGGER.info(":: INSERIR REGISTRO NA PONTO_VENDA");
 
                     con.setAutoCommit(false);
@@ -163,11 +172,13 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
                     pstmt.setString     (paramIndex++, pdvPrincipal.getEmail());
 
                     int insertCount = pstmt.executeUpdate();
+                    LOGGER.error("Commit 1");
                     con.commit();
                     con.setAutoCommit(true);
 
                 }
 
+                LOGGER.error("procedure PROC_INTERFACE_NDS_NAW vai ser executada");
                 CallableStatement callableStatement = con.prepareCall(PROC_INTERFACE_NDS_NAW);
 
                 callableStatement.setInt    (1, Integer.valueOf(codigoDistribuidorDinap));
@@ -175,12 +186,11 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
                 callableStatement.setString (3, cota.getPDVPrincipal().getEmail());
                 callableStatement.setString (4, cota.getAcessoNA().isAcessoAtivo() ? "ATV" : "SUS");
                 callableStatement.registerOutParameter(5, Types.VARCHAR);
-
                 callableStatement.executeUpdate();
-
+                LOGGER.error("procedure PROC_INTERFACE_NDS_NAW executada");
                 String p_retorno = callableStatement.getString(5);
 
-                LOGGER.info("Retorno da PROC: {}", p_retorno);
+                LOGGER.error("Retorno da PROC_INTERFACE_NDS_NAW: {}", p_retorno);
 
                 if(!"SUCESSO".equals(p_retorno)) {
                     message.getHeader().put(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue(), "Erro ao processar PROC. Retorno" + p_retorno);
@@ -189,7 +199,7 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
 
             } // Fim do For
 
-            LOGGER.info(":: Carga finalizada");
+            LOGGER.error(":: Carga finalizada");
 
 
         } catch (Exception e) {
@@ -226,8 +236,9 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
 
         try {
             Class.forName(driverClassName);
+            LOGGER.error("Eu vou me conectar no ICD");
             dbConnection = DriverManager.getConnection(url, username,password);
-
+            LOGGER.error("Eu me conectei: ", dbConnection );
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
