@@ -29,6 +29,7 @@ public class TirarAcento {
         mapCharSubstituir.put('î', 'i');
         mapCharSubstituir.put('Î', 'I');
         mapCharSubstituir.put('Ó', 'O');
+        mapCharSubstituir.put('ó', 'o');
         mapCharSubstituir.put('ò', 'o');
         mapCharSubstituir.put('Ò', 'O');
         mapCharSubstituir.put('õ', 'o');
