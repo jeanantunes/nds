@@ -56,7 +56,7 @@ public class FiltroDividaGeradaDTO implements Serializable {
 	
 	private boolean reprocessar;
 	
-	private boolean arquivoCobrancaRegistrada = false;
+	private boolean arquivoCobrancaRegistrada = true;
 	
 	public FiltroDividaGeradaDTO() {}
 	

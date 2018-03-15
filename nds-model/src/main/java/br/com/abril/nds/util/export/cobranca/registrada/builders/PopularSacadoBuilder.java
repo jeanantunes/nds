@@ -156,10 +156,10 @@ public class PopularSacadoBuilder implements Serializable {
         }
 
 
-        registro01.setSacadoAvalista(TirarAcento.removerAcentuacao(nomeSacado.trim()));
+        registro01.setSacadoAvalista(TirarAcento.removerAcentuacao(nomeSacado.replace(".","").replace("-","").toUpperCase()).trim());
 
         EnderecoSacadoBuilder.enderecoSacadoCaixa(registro01, enderecoSacado, nomeSacado.trim());
 
-        registro01.setNomeSacado(TirarAcento.removerAcentuacao(nomeSacado.trim()));
+        registro01.setNomeSacado(TirarAcento.removerAcentuacao(nomeSacado.replace(".","").replace("-","").toUpperCase()).trim());
     }
 }

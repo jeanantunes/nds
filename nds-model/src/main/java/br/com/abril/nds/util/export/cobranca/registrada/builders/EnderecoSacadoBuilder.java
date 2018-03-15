@@ -32,21 +32,21 @@ public class EnderecoSacadoBuilder implements Serializable {
 
 	    StringBuilder sb = new StringBuilder();
 
-        sb.append(TirarAcento.removerAcentuacao(enderecoSacado.getTipoLogradouro().trim()))
+        sb.append(removerAcentuacao(enderecoSacado.getTipoLogradouro().trim()))
                 .append(" ")
-				.append(TirarAcento.removerAcentuacao(enderecoSacado.getLogradouro().trim()))
+				.append(removerAcentuacao(enderecoSacado.getLogradouro().trim()))
 				.append(" ")
-				.append(TirarAcento.removerAcentuacao(enderecoSacado.getNumero().trim()))
+				.append(removerAcentuacao(enderecoSacado.getNumero().trim()))
 				.append(" ")
-				.append(TirarAcento.removerAcentuacao(enderecoSacado.getBairro().trim()))
+				.append(removerAcentuacao(enderecoSacado.getBairro().trim()))
 				.append(" ")
-                .append(TirarAcento.removerAcentuacao(enderecoSacado.getCep().trim()))
+                .append(removerAcentuacao(enderecoSacado.getCep().trim()))
                 .append(" ")
-                .append(TirarAcento.removerAcentuacao(enderecoSacado.getCidade().trim()))
+                .append(removerAcentuacao(enderecoSacado.getCidade().trim()))
                 .append(" ")
-                .append(TirarAcento.removerAcentuacao(enderecoSacado.getUf().trim()));
+                .append(removerAcentuacao(enderecoSacado.getUf().trim()));
 
-        registro01.setEnderecoSacado(sb.toString().trim());
+        registro01.setEnderecoSacado(sb.toString().replace("-","").replace(".","").replace(",","").trim().toUpperCase());
 
         }
 
