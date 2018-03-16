@@ -53,7 +53,7 @@ public class PopularSacadoBuilder implements Serializable {
         
         registro01.setNumeroDocumento(documentoSacado.replace(".", "").replace("-", "").replace("/", ""));
                 
-        registro01.setSacadoAvalista(TirarAcento.removerAcentuacao(nomeSacado.trim()));
+        registro01.setSacadoAvalista(TirarAcento.removerAcentuacao(nomeSacado.trim().toUpperCase()));
         
         
         EnderecoSacadoBuilder.enderecoSacado(registro01, enderecoSacado, nomeSacado.trim());
