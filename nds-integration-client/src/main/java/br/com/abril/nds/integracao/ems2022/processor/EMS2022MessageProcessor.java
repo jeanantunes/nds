@@ -91,6 +91,7 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
             List<Cota> cotas = query.list();
 
             LOGGER.error("Quantas cotas tem ? {}", cotas.size());
+
             if(!cotas.isEmpty()) {
                 con = this.getDBConnection();
             }
@@ -183,7 +184,7 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
 
                 callableStatement.setInt    (1, Integer.valueOf(codigoDistribuidorDinap));
                 callableStatement.setInt    (2, cota.getNumeroCota());
-                callableStatement.setString (3, cota.getPDVPrincipal().getEmail());
+                callableStatement.setString (3, cota.getPessoa().getEmail());
                 callableStatement.setString (4, cota.getAcessoNA().isAcessoAtivo() ? "ATV" : "SUS");
                 callableStatement.registerOutParameter(5, Types.VARCHAR);
                 callableStatement.executeUpdate();
