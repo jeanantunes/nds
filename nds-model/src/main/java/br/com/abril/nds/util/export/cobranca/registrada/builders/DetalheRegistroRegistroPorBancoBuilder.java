@@ -279,7 +279,7 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable {
         registro01.setNumeroIncricaoPagador(StringUtils.leftPad(pessoaSacado.replace(".", "").replace("/", "").replace("-", ""), 14, '0'));
 
         if(boleto.getCota().getPessoa().getNome()!=null && !boleto.getCota().getPessoa().getNome().isEmpty()){
-        	registro01.setNomePagador(TirarAcento.removerAcentuacao(boleto.getCota().getPessoa().getNome()));
+        	registro01.setNomePagador(TirarAcento.removerAcentuacao(boleto.getCota().getPessoa().getNome()).toUpperCase());
         }else if(boleto.getCota().getPessoa() instanceof PessoaJuridica){
         	PessoaJuridica pj =(PessoaJuridica) boleto.getCota().getPessoa();
         	if(pj.getRazaoSocial()!=null && !pj.getRazaoSocial().isEmpty()){
