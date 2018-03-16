@@ -5105,7 +5105,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			.append(" AND LCTO.STATUS not in ( 'FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO' ) ")
 			.append(" AND ((( c.TIPO_COTA = 'A_VISTA' AND (  c.DEVOLVE_ENCALHE = TRUE  OR c.DEVOLVE_ENCALHE is null )) ")
 			.append(" OR ( c.TIPO_COTA <> 'A_VISTA' AND (  MEC.STATUS_ESTOQUE_FINANCEIRO is null  OR MEC.STATUS_ESTOQUE_FINANCEIRO = 'FINANCEIRO_NAO_PROCESSADO' )))) ")
-			.append(" GROUP BY PR.codigo, PE.NUMERO_EDICAO, lcto.data_lcto_distribuidor ")
+			.append(" GROUP BY PR.codigo, PE.NUMERO_EDICAO")
 			.append(" ORDER BY lcto.data_lcto_distribuidor, PR.codigo, PE.NUMERO_EDICAO limit 999999999; ");
 
 		final SQLQuery query = getSession().createSQLQuery(SQL.toString());
