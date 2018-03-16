@@ -255,7 +255,7 @@ public class DetalheRegistroRegistroPorBancoBuilder implements Serializable {
 
         BigDecimal valorDuasCadasDecimais = CurrencyUtil.truncateDecimal(boleto.getValor(), 2);
 
-        registro01.setValorTitulo(Util.getValorString(valorDuasCadasDecimais.toEngineeringString()).replace(",",""));
+        registro01.setValorTitulo(Util.getValorString(valorDuasCadasDecimais.toEngineeringString()));
 
         registro01.setBancoEncarregadoCobranca("0");
         registro01.setAgenciaDepositaria("0");
