@@ -72,8 +72,6 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
              * Busca código do distribuidor e cotas que possuem registro na AcessoNA e é foram atualizadas desde a ultima execução
              */
 
-            LOGGER.error("get codigo do distribuidor");
-
             String codigoDistribuidorDinap = message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
 
 
@@ -90,8 +88,6 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
 
             List<Cota> cotas = query.list();
 
-            LOGGER.error("Quantas cotas tem ? {}", cotas.size());
-
             if(!cotas.isEmpty()) {
                 con = this.getDBConnection();
             }
@@ -101,7 +97,6 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
              */
             for (Cota cota: cotas) {
 
-                LOGGER.error("Vou executar a procedure");
                 PreparedStatement preparedStatement = con.prepareStatement("select count(1) from ponto_venda where cod_distribuidor = ? and cod_cota = ?");
                 preparedStatement.setString (1, codigoDistribuidorDinap);
                 preparedStatement.setLong   (2, cota.getNumeroCota());
@@ -112,7 +107,6 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
 
 
                 if(qtdPontoVenda == 0L){
-                    LOGGER.error("Havia quantidade de ponto de venda e seu valor era:", qtdPontoVenda );
                     LOGGER.info(":: INSERIR REGISTRO NA PONTO_VENDA");
 
                     con.setAutoCommit(false);
@@ -179,7 +173,6 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
 
                 }
 
-                LOGGER.error("procedure PROC_INTERFACE_NDS_NAW vai ser executada");
                 CallableStatement callableStatement = con.prepareCall(PROC_INTERFACE_NDS_NAW);
 
                 callableStatement.setInt    (1, Integer.valueOf(codigoDistribuidorDinap));
@@ -188,7 +181,6 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
                 callableStatement.setString (4, cota.getAcessoNA().isAcessoAtivo() ? "ATV" : "SUS");
                 callableStatement.registerOutParameter(5, Types.VARCHAR);
                 callableStatement.executeUpdate();
-                LOGGER.error("procedure PROC_INTERFACE_NDS_NAW executada");
                 String p_retorno = callableStatement.getString(5);
 
                 LOGGER.error("Retorno da PROC_INTERFACE_NDS_NAW: {}", p_retorno);
@@ -200,7 +192,7 @@ public class EMS2022MessageProcessor extends AbstractRepository implements Messa
 
             } // Fim do For
 
-            LOGGER.error(":: Carga finalizada");
+            LOGGER.error(":: A Carga da EMS2022 foi finalizada");
 
 
         } catch (Exception e) {
