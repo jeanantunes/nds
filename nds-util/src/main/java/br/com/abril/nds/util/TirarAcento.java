@@ -54,6 +54,10 @@ public class TirarAcento {
         mapCharSubstituir.put('&', ' ');
         mapCharSubstituir.put('´', ' ');
         mapCharSubstituir.put('/', ' ');
+        mapCharSubstituir.put('(', ' ');
+        mapCharSubstituir.put(')', ' ');
+        mapCharSubstituir.put('.', ' ');
+        mapCharSubstituir.put('-', ' ');
     }
 
     public static String removerAcentuacao(String texto) {
