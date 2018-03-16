@@ -42,7 +42,7 @@ public class ConectionEfacil {
                 conn.setRequestProperty("Authorization", "Bearer " + authorization);
                 conn.setRequestProperty("Content-Type", "application/json");
                 conn.setRequestProperty("Accept-Charset", "UTF-8");
-               conn.setRequestProperty("Content-Length", String.valueOf(efacilDTO.getDados().getBytes().length));
+                conn.setRequestProperty("Content-Length", String.valueOf(efacilDTO.getDados().getBytes().length));
 
                 conn.setRequestMethod(efacilDTO.getMetodo());
 
