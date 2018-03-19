@@ -30,7 +30,11 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 
     @Override
     public void executar(EstudoTransient estudo) throws Exception {
-	
+
+    	if(estudo.getReparteComplementar() == null){
+			estudo.setReparteComplementar(BigInteger.ZERO);
+		}
+
     	if(BigIntegerUtil.isMaiorQueZero(estudo.getReparteDistribuir())){
     		estudo.setReparteComplementar(estudo.getReparteComplementar().add(estudo.getReparteDistribuir()));
     		estudo.setReparteDistribuir(BigInteger.ZERO);

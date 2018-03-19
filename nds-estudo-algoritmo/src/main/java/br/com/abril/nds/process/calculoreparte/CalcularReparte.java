@@ -267,6 +267,9 @@ public class CalcularReparte extends ProcessoAbstrato {
 	});
 
 	BigDecimal somaRepartes = new BigDecimal(getSomaReparteCalculadoCotas(estudo));
+	if(estudo.getReparteComplementar() == null){
+		estudo.setReparteComplementar(BigInteger.ZERO);
+	}
 	if (estudo.getReparteComplementar() != null) {
 	    somaRepartes = somaRepartes.add(new BigDecimal(estudo.getReparteComplementar()));
 	}
