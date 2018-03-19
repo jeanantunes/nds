@@ -20,7 +20,7 @@ public class RotaServiceImpl implements RotaService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<Rota> obterRotas() {
-		return rotaRepository.buscarRota("descricaoRota", Ordenacao.ASC);
+		return rotaRepository.buscarRota("id", Ordenacao.ASC);
 	}
 
 	@Override
