@@ -35,6 +35,8 @@ public class ImpressaoNegociacaoDTO implements Serializable {
 	private Long agenciaBanco;
 	
 	private Long contaBanco;
+
+	private Long codigoBanco;
 	
 	private boolean recebePorEmail;
 	
@@ -204,5 +206,13 @@ public class ImpressaoNegociacaoDTO implements Serializable {
 
 	public void setDataOperacao(String data) {
 		this.dataOperacao = data;
+	}
+
+	public Long getCodigoBanco() {
+		return codigoBanco;
+	}
+
+	public void setCodigoBanco(Long codigoBanco) {
+		this.codigoBanco = codigoBanco;
 	}
 }
