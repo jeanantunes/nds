@@ -56,8 +56,10 @@ public class FiltroDividaGeradaDTO implements Serializable {
 	
 	private boolean reprocessar;
 	
-	private boolean arquivoCobrancaRegistrada = true;
-	
+	private boolean arquivoCobrancaRegistrada;
+
+	private boolean grid;
+
 	public FiltroDividaGeradaDTO() {}
 	
 	public FiltroDividaGeradaDTO(Date dataMovimento, Long idBox , Long idRota, Long idRoteiro,Integer numeroCota,TipoCobranca tipoCobranca, Long idBanco ) {
@@ -319,6 +321,14 @@ public class FiltroDividaGeradaDTO implements Serializable {
 
 	public void setArquivoCobrancaRegistrada(boolean arquivoCobrancaRegistrada) {
 		this.arquivoCobrancaRegistrada = arquivoCobrancaRegistrada;
+	}
+
+	public boolean isGrid() {
+		return grid;
+	}
+
+	public void setGrid(boolean grid) {
+		this.grid = grid;
 	}
 
 	/* (non-Javadoc)
