@@ -20,7 +20,7 @@ public class AcessoNaRepositoryImpl extends AbstractRepositoryModel<AcessoNA, Lo
         Criteria criteria = getSession().createCriteria(AcessoNA.class);
         criteria.add(Restrictions.eq("cota.id", idCota));
 
-        return (AcessoNA) criteria.uniqueResult();
+        return (AcessoNA) criteria.setMaxResults(1).uniqueResult();
     }
 
 }
