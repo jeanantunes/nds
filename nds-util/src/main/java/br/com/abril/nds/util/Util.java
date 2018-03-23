@@ -978,14 +978,14 @@ public abstract class Util {
 		int resto = somaParcial % 11;
 		int valorDividido  = somaParcial/11;
 		int resultado = 11-resto;
-		
-		
-		if(resultado==11){
-			return "0";
-		}else if(resultado==10){
-			return "p";
-		}
-		System.out.println("resultado final: " +resultado);
+
+
+        if(resto==1){
+            return "P";
+        }else if(resto==0){
+            return "0";
+        }
+
 		return String.valueOf(resultado);
 	}	
 	

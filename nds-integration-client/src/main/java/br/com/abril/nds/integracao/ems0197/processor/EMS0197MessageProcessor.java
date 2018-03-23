@@ -19,8 +19,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import br.com.abril.nds.dto.ProdutoCouchDTO;
+import br.com.abril.nds.dto.*;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
@@ -33,9 +35,6 @@ import org.springframework.stereotype.Component;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
-import br.com.abril.nds.dto.CotaCouchDTO;
-import br.com.abril.nds.dto.DetalhesPickingDTO;
-import br.com.abril.nds.dto.IpvLancamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -179,13 +178,44 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 				reparte.setProdutos(produtos);
 			}
 
-			if(!lista.isEmpty())
+			if(!lista.isEmpty()) {
+			//	createJsonLancamento(lista);
 				exporteCouch.exportarLancamentoRecolhimento(lista, "Lancamento");
-			
+			}
 		} catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
 		}
 
+	}
+
+
+	private JsonArray createJsonLancamento(List<CotaCouchDTO>  listaLancamento){
+
+		JsonArray jsonFather = new JsonArray();
+
+		JsonArray jsonCotaLancamentoArray = new JsonArray();
+
+
+		for(CotaCouchDTO cotaLancamento: listaLancamento){
+
+			JsonObject jsonCotaLancamento = new JsonObject();
+			jsonCotaLancamento.addProperty("codigoCota", cotaLancamento.getCodigoCota());
+			jsonCotaLancamento.addProperty("codigoDistribuidor", cotaLancamento.getCodigoDistribuidor());
+			jsonCotaLancamento.addProperty("dataMovimento", cotaLancamento.getDataMovimento());
+
+			for(ProdutoCouchDTO produto: cotaLancamento.getProdutos()){
+				JsonObject jsonProduto = new JsonObject();
+				jsonProduto.addProperty("codigoPublicacao", produto.getCodigoProduto());
+
+				jsonCotaLancamento.add("itens",jsonProduto);
+			}
+
+			jsonCotaLancamentoArray.add(jsonCotaLancamento);
+		}
+		jsonFather.add(jsonCotaLancamentoArray);
+
+
+		return jsonFather;
 	}
 
 
