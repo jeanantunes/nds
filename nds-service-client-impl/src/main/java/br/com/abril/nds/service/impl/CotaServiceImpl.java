@@ -1610,29 +1610,24 @@ public class CotaServiceImpl implements CotaService {
         
         cota.setParametrosCotaNotaFiscalEletronica(getParamNFE(cota, cotaDto));
 
-        // Ordem p/ ativar e desativar acesso NA
-        if(cotaDto.isAcessoNA() || cota.getAcessoNA() != null){
-            // Atualizar apenas se tiver sido alterada
-            if(cota.getAcessoNA() != null &&
-                    cota.getAcessoNA().isAcessoAtivo() != cotaDto.isAcessoNA()) {
-                AcessoNA naExistente = cota.getAcessoNA();
-                naExistente.setDataAlteracao(new Date());
-                naExistente.setUsuarioAlteracao(loginUsuarioLogado);
-                naExistente.setAcessoAtivo(cotaDto.isAcessoNA());
+        // Inserir/Alterar ACESSO_NA
+        AcessoNA naExistente = cota.getAcessoNA();
+        if (cota.getAcessoNA() != null && naExistente.getCota().getAcessoNA() != null) {
+            naExistente.setDataAlteracao(new Date());
+            naExistente.setUsuarioAlteracao(loginUsuarioLogado);
+            naExistente.setAcessoAtivo(cotaDto.isAcessoNA());
+        }else if (cotaDto.isAcessoNA() == true) {
+            AcessoNA novaNA = new AcessoNA();
+            novaNA.setCota(cota);
+            novaNA.setAcessoAtivo(cotaDto.isAcessoNA());
+            novaNA.setDataInclusao(new Date());
+            novaNA.setUsuarioInclusao(loginUsuarioLogado);
+            novaNA.setDataAlteracao(new Date());
+            novaNA.setUsuarioAlteracao(loginUsuarioLogado);
 
-            } else {
-                AcessoNA novaNA = new AcessoNA();
-                novaNA.setCota(cota);
-                novaNA.setAcessoAtivo(cotaDto.isAcessoNA());
-                novaNA.setDataInclusao(new Date());
-                novaNA.setUsuarioInclusao(loginUsuarioLogado);
-                novaNA.setDataAlteracao(new Date());
-                novaNA.setUsuarioAlteracao(loginUsuarioLogado);
-
-                cota.setAcessoNA(novaNA);
-
-            }
-
+            cota.setAcessoNA(novaNA);
+        }else {
+            LOGGER.info("Não foram atualizados dados em ACESSO_NA");
         }
         
         cota  = cotaRepository.merge(cota);
