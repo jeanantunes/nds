@@ -1612,11 +1612,11 @@ public class CotaServiceImpl implements CotaService {
 
         // Inserir/Alterar ACESSO_NA
         AcessoNA naExistente = cota.getAcessoNA();
-        if (cota.getAcessoNA() != null && naExistente.getCota().getAcessoNA() != null) {
+        if (naExistente != null && cotaDto.isAcessoNA() != cota.getAcessoNA().isAcessoAtivo()) {
             naExistente.setDataAlteracao(new Date());
             naExistente.setUsuarioAlteracao(loginUsuarioLogado);
             naExistente.setAcessoAtivo(cotaDto.isAcessoNA());
-        }else if (cotaDto.isAcessoNA() == true) {
+        }else if (cotaDto.isAcessoNA() == true && naExistente == null) {
             AcessoNA novaNA = new AcessoNA();
             novaNA.setCota(cota);
             novaNA.setAcessoAtivo(cotaDto.isAcessoNA());
