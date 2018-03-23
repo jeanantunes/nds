@@ -18,6 +18,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import br.com.abril.nds.dto.EfacilDTO;
+import br.com.abril.nds.dto.ProdutoCouchDTO;
+import br.com.abril.nds.efacil.ConectionEfacil;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
@@ -146,6 +151,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 				for (CotaCouchDTO reparte : lista) {
 					reparte.setProdutos(cotaRepository.getProdutoRecolhimento(reparte.getIdCota(), simpleDateFormat.parse(reparte.getDataMovimento())));
 				}
+		//		exportarRecolhimentoEfacil(lista);
 				exporteCouch.exportarLancamentoRecolhimento(lista, "Recolhimento");
 			}
 		} catch (Exception e) {
@@ -153,6 +159,77 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		}
 		
 	}
+
+	private void exportarRecolhimentoEfacil(List<CotaCouchDTO> lista ){
+		ConectionEfacil c = new ConectionEfacil();
+		EfacilDTO efacilDTO = new EfacilDTO();
+		efacilDTO.setDados(createJsonRecolhimento(lista).toString());
+		efacilDTO.setMetodo("POST");
+		efacilDTO.setPrivateKey("jytCqej8a50GlPp0Esio4mk1qrc39g8pBSURCeZepsD5vtgXREr31XMR5kevvtXhSEnCGxyIqLPCLX1dFxH7yMTLoigdZV32LZOL");
+		efacilDTO.setToken("fea6261d13e6dd2911ac8aa11f90d3fa");
+		efacilDTO.setURL("https://gerenciador.efacil.net/rest/banca/recolhimento");
+		c.postEfacil(efacilDTO);
+	}
+
+
+	private JsonArray createJsonRecolhimento(List<CotaCouchDTO>  listaRecolhimento){
+
+		JsonArray jsonCotaRecolhimentoArray = new JsonArray();
+
+
+
+		for(CotaCouchDTO cotaRecolhimento : listaRecolhimento){
+
+			JsonObject jsonCotaRecolhimento = new JsonObject();
+			jsonCotaRecolhimento.addProperty("codigoCota", cotaRecolhimento.getCodigoCota());
+			jsonCotaRecolhimento.addProperty("codigoDistribuidor", cotaRecolhimento.getCodigoDistribuidor());
+			jsonCotaRecolhimento.addProperty("dataMovimento", cotaRecolhimento.getDataMovimento());
+			jsonCotaRecolhimento.addProperty("dataRecolhimento", cotaRecolhimento.getDataMovimento());
+
+			JsonArray jsonProdutos = new JsonArray();
+			for(ProdutoCouchDTO produto: cotaRecolhimento.getProdutos()){
+				JsonObject jsonProduto = new JsonObject();
+				jsonProduto.addProperty("codigoPublicacao", produto.getCodigoProduto());
+				jsonProduto.addProperty("numeroEdicao", produto.getNumeroEdicao());
+				jsonProduto.addProperty("codigoBarras", produto.getCodigoBarrasProduto());
+				jsonProduto.addProperty("nomePublicacao", produto.getNomeProduto());
+				if(produto.getReparte()!=null){
+					jsonProduto.addProperty("quantidadeReparte", produto.getReparte());
+				}else{
+					jsonProduto.addProperty("quantidadeReparte", 0);
+
+				}
+				jsonProduto.addProperty("codigoEditora", produto.getCodigoEditora());
+				jsonProduto.addProperty("nomeEditora", produto.getNomeEditora());
+
+				if(produto.getReparte()!=null){
+					jsonProduto.addProperty("precoCapa", produto.getPrecoCapa());
+				}else{
+					jsonProduto.addProperty("precoCapa", 0);
+
+				}
+
+				if(produto.getReparte()!=null){
+					jsonProduto.addProperty("precoCusto", produto.getPrecoCusto());
+				}else{
+					jsonProduto.addProperty("precoCusto", 0);
+
+				}
+
+				jsonProduto.addProperty("chamadaCapa", produto.getChamadaCapa());
+				jsonProduto.addProperty("dataLancamento", produto.getDataLancamento());
+				jsonProduto.addProperty("dataPrimeiroLancamentoParcial", "");
+				jsonProdutos.add(jsonProduto);
+
+
+			}
+			jsonCotaRecolhimento.add("itens",jsonProdutos);
+			jsonCotaRecolhimentoArray.add(jsonCotaRecolhimento);
+		}
+
+		return jsonCotaRecolhimentoArray;
+	}
+
 
 	private void compactarArquivos(Message message) {
 		

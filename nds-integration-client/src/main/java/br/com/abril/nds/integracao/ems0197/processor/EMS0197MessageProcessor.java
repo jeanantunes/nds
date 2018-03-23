@@ -54,6 +54,8 @@ import br.com.abril.nds.service.ExporteCouch;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TirarAcento;
 
+import br.com.abril.nds.efacil.ConectionEfacil;
+
 @Component
 public class EMS0197MessageProcessor extends AbstractRepository implements MessageProcessor {
 
@@ -179,7 +181,8 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 			}
 
 			if(!lista.isEmpty()) {
-			//	createJsonLancamento(lista);
+		//		exportarLancamentoEfacil(lista);
+
 				exporteCouch.exportarLancamentoRecolhimento(lista, "Lancamento");
 			}
 		} catch (Exception e) {
@@ -188,12 +191,22 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 	}
 
+	private void exportarLancamentoEfacil(List<CotaCouchDTO> lista ){
+		ConectionEfacil c = new ConectionEfacil();
+				EfacilDTO efacilDTO = new EfacilDTO();
+				efacilDTO.setDados(createJsonLancamento(lista).toString());
+				efacilDTO.setMetodo("POST");
+				efacilDTO.setPrivateKey("jytCqej8a50GlPp0Esio4mk1qrc39g8pBSURCeZepsD5vtgXREr31XMR5kevvtXhSEnCGxyIqLPCLX1dFxH7yMTLoigdZV32LZOL");
+				efacilDTO.setToken("fea6261d13e6dd2911ac8aa11f90d3fa");
+				efacilDTO.setURL("https://gerenciador.efacil.net/rest/banca/lancamento");
+				c.postEfacil(efacilDTO);
+	}
+
 
 	private JsonArray createJsonLancamento(List<CotaCouchDTO>  listaLancamento){
 
-		JsonArray jsonFather = new JsonArray();
-
 		JsonArray jsonCotaLancamentoArray = new JsonArray();
+
 
 
 		for(CotaCouchDTO cotaLancamento: listaLancamento){
@@ -203,19 +216,51 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 			jsonCotaLancamento.addProperty("codigoDistribuidor", cotaLancamento.getCodigoDistribuidor());
 			jsonCotaLancamento.addProperty("dataMovimento", cotaLancamento.getDataMovimento());
 
+
+			JsonArray jsonProdutos = new JsonArray();
 			for(ProdutoCouchDTO produto: cotaLancamento.getProdutos()){
 				JsonObject jsonProduto = new JsonObject();
 				jsonProduto.addProperty("codigoPublicacao", produto.getCodigoProduto());
+				jsonProduto.addProperty("numeroEdicao", produto.getNumeroEdicao());
+				jsonProduto.addProperty("codigoBarras", produto.getCodigoBarrasProduto());
+				jsonProduto.addProperty("nomePublicacao", produto.getNomeProduto());
+				if(produto.getReparte()!=null){
+					jsonProduto.addProperty("quantidadeReparte", produto.getReparte());
+				}else{
+					jsonProduto.addProperty("quantidadeReparte", 0);
 
-				jsonCotaLancamento.add("itens",jsonProduto);
+				}
+				jsonProduto.addProperty("codigoEditora", produto.getCodigoEditora());
+				jsonProduto.addProperty("nomeEditora", produto.getNomeEditora());
+
+				if(produto.getReparte()!=null){
+					jsonProduto.addProperty("precoCapa", produto.getPrecoCapa());
+				}else{
+					jsonProduto.addProperty("precoCapa", 0);
+
+				}
+
+				if(produto.getReparte()!=null){
+					jsonProduto.addProperty("precoCusto", produto.getPrecoCusto());
+				}else{
+					jsonProduto.addProperty("precoCusto", 0);
+
+				}
+
+				jsonProduto.addProperty("chamadaCapa", produto.getChamadaCapa());
+				jsonProduto.addProperty("dataLancamento", produto.getDataLancamento());
+				jsonProduto.addProperty("dataPrimeiroLancamentoParcial", "");
+				jsonProdutos.add(jsonProduto);
+
+
 			}
-
+			jsonCotaLancamento.add("itens",jsonProdutos);
 			jsonCotaLancamentoArray.add(jsonCotaLancamento);
 		}
-		jsonFather.add(jsonCotaLancamentoArray);
 
 
-		return jsonFather;
+
+		return jsonCotaLancamentoArray;
 	}
 
 

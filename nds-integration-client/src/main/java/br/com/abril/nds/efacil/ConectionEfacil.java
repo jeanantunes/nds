@@ -1,4 +1,4 @@
-package integration.efacil;
+package br.com.abril.nds.efacil;
 
 import br.com.abril.nds.dto.EfacilDTO;
 import com.google.gson.Gson;
@@ -10,12 +10,11 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 public class ConectionEfacil {
 
-        public String postCotaConsignada(EfacilDTO efacilDTO){
+        public String postEfacil(EfacilDTO efacilDTO){
             String strResponse = "";
             try {
                 String privatekey= "jytCqej8a50GlPp0Esio4mk1qrc39g8pBSURCeZepsD5vtgXREr31XMR5kevvtXhSEnCGxyIqLPCLX1dFxH7yMTLoigdZV32LZOL/dSX5qwytqas+qyr95JRfCRxBpeb+g2sTiO9WB+kxUyvVIqBRuw+8883XX68gDGYP17CcHU=";
@@ -90,6 +89,8 @@ public class ConectionEfacil {
             }
 
         }
+
+
 
 
 
