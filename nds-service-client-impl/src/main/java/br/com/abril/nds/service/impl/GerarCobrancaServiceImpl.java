@@ -1965,13 +1965,19 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			cobranca.setFornecedor(fornecedor);
 			cobranca.setNossoNumero(nossoNumero);
 
-			String digitoVerificador;
-			
+			String digitoVerificador = null;
+
 			if(banco.getNumeroBanco().equals("237")){
 				digitoVerificador = Util.calcularDigitoBradesco(StringUtils.leftPad(banco.getCarteira().toString(),2,"0") , nossoNumero);
-			}else{
+			}else if (banco.getNumeroBanco() != null){
 				digitoVerificador =
 						Util.calcularDigitoVerificador(nossoNumero, banco != null ? banco.getCodigoCedente() : "0", cobranca.getDataVencimento(), banco != null ? banco.getNumeroBanco() : null);
+			}else if (cobranca.getTipoCobranca().equals("Cheque") ||
+					cobranca.getTipoCobranca().equals("Dinheiro") ||
+					cobranca.getTipoCobranca().equals("Outros")){
+				LOGGER.info("Tipo de Cobrança não utiliza Banco Ativo: " + cobranca.getTipoCobranca().getDescricao());
+			}else{
+				LOGGER.error("Erro ao gerar Cobrança " + " TipoCobrança: " + cobranca.getTipoCobranca().getDescricao() + "Banco: " + banco.getNumeroBanco());
 			}
 			
 			
