@@ -24,6 +24,9 @@ public class FormaCobrancaFornecedorDTO implements Serializable {
 	}
 
 	public Long getIdCota() {
+		if (idCota == null){
+			idCota = 0l;
+		}
 		return idCota;
 	}
 
@@ -32,6 +35,9 @@ public class FormaCobrancaFornecedorDTO implements Serializable {
 	}
 
 	public Long getNumeroCota() {
+		if (numeroCota == null){
+			numeroCota = 0l;
+		}
 		return numeroCota;
 	}
 

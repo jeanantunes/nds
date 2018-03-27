@@ -1967,23 +1967,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
 			String digitoVerificador = null;
 
-			if (cobranca.getTipoCobranca().equals("Cheque") ||
-					cobranca.getTipoCobranca().equals("Dinheiro") ||
-					cobranca.getTipoCobranca().equals("Outros")){
-				LOGGER.info("Tipo de Cobrança não utiliza Banco Ativo: " + cobranca.getTipoCobranca().getDescricao());
-			}else if (cobranca.getTipoCobranca().equals("Boleto") ||
-					cobranca.getTipoCobranca().equals("Boleto em branco") ||
-					cobranca.getTipoCobranca().equals("Deposito") ||
-					cobranca.getTipoCobranca().equals("Transferencia Bancaria") ||
-					cobranca.getTipoCobranca().equals("Boleto Avulso") ||
-					cobranca.getTipoCobranca().equals("Boleto NFe")){
+			if(banco != null && banco.getNumeroBanco().equals("237")){
+				digitoVerificador = Util.calcularDigitoBradesco(StringUtils.leftPad(banco.getCarteira().toString(),2,"0") , nossoNumero);
+			}else if(banco != null){
 				digitoVerificador =
 						Util.calcularDigitoVerificador(nossoNumero, banco != null ? banco.getCodigoCedente() : "0", cobranca.getDataVencimento(), banco != null ? banco.getNumeroBanco() : null);
-			}
-			else if(banco.getNumeroBanco().equals("237")) {
-				digitoVerificador = Util.calcularDigitoBradesco(StringUtils.leftPad(banco.getCarteira().toString(), 2, "0"), nossoNumero);
-			}else{
-				LOGGER.error("Erro ao gerar Cobrança " + " TipoCobrança: " + cobranca.getTipoCobranca().getDescricao() + "Banco: " + banco.getNumeroBanco());
 			}
 			
 			
