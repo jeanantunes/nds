@@ -24,9 +24,6 @@ public class FormaCobrancaFornecedorDTO implements Serializable {
 	}
 
 	public Long getIdCota() {
-		if (idCota == null){
-			idCota = 0l;
-		}
 		return idCota;
 	}
 
