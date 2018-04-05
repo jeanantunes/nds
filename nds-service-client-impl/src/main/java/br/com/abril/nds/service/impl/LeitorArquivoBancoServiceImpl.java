@@ -9,9 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.com.abril.nds.enums.TipoParametroSistema;
+import br.com.abril.nds.model.integracao.ParametroSistema;
+import br.com.abril.nds.repository.ParametroSistemaRepository;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
@@ -36,7 +40,10 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LeitorArquivoBancoServiceImpl.class);
 	
 	private static final String[] EXTENSOES_ARQUIVO_VALIDAS = {"dat", "ret","txt"};
-	
+
+	@Autowired
+	private ParametroSistemaRepository parametroSistemaRepository;
+
 	public ArquivoPagamentoBancoDTO obterPagamentosBanco(File file, String nomeArquivo) {
 	    
 		this.validarDadosEntrada(file, nomeArquivo);
@@ -118,7 +125,10 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		String codigoBanco = padraoCNAB.obterCodigoBanco(primeiraLinha);
 		
 		CNAB bancoCNAB = CNAB.obterCNAB(padraoCNAB, codigoBanco);
-		
+
+		String tipoPagamentos [] = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.BAIXA_FINANCEIRA_TIPO_PAGAMENTO_VALIDO).getValor().split(",");
+
+
 		String strNumeroAgencia = null;
 		String strNumeroConta = null;
 		String strNumeroRegistro = null;
@@ -181,8 +191,16 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 				} else {
 					pagamento = new PagamentoDTO();
 					pagamento.setNumeroRegistro(this.parseLong(strNumeroRegistro));
-					mapaPagamento.put(this.parseLong(strNumeroRegistro), pagamento);
+
+					String strTipoPagamento = bancoCNAB.obterCodigoOcorrencia(line);
+
+
+				for(String tipoPagamento:tipoPagamentos){
+					if(strTipoPagamento.equals(tipoPagamento)){
+						mapaPagamento.put(this.parseLong(strNumeroRegistro), pagamento);
+					}
 				}
+			}
 				
 				if(bancoCNAB.containsDataPagamento(line)) {
 					strDataPagamento 	= bancoCNAB.obterDataPagamento(line);
